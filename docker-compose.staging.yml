@@ -1,0 +1,40 @@
+version: "2"
+
+services:
+  staging-deps:
+    image: registry.gitlab.com/medienportal/web
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - PRISMA_ENDPOINT=http://api:3000
+      - APP_SECRET=appsecret
+    networks:
+      - default
+    depends_on:
+      - api
+
+  staging:
+    image: node:12-alpine
+    volumes:
+      - .:/usr/src/service
+    working_dir: /usr/src/service
+    networks:
+      - default
+    environment:
+      - webUrl=http://staging-deps:4000
+    command: npm run test:staging
+
+  api:
+    image: registry.gitlab.com/medienportal/web
+    networks:
+      - default
+
+  clean:
+    extends:
+      service: staging
+    command: rm -rf node_modules
+
+  install:
+    extends:
+      service: staging
+    command: npm install

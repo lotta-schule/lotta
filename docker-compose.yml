@@ -1,0 +1,13 @@
+version: "3.4"
+
+services:
+  app:
+    image: node:12
+    volumes:
+      - .:/usr/src/svc
+    working_dir: /usr/src/svc
+    ports:
+      - 3000:3000
+    command: bash -c "npm install && npm run start"
+    environment:
+      - PRISMA_ENDPOINT="http://prisma:4466/medienportal/dev"
