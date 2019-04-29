@@ -33,5 +33,3 @@ COPY --from=build /src/build /usr/share/nginx/html
 #     --timeout=5s \
 #     --retries=6 \
 #     CMD curl -fs http://localhost:80/_health || exit 1
-
-CMD ["node", "dist/index.js"]
