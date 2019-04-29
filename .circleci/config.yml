@@ -19,5 +19,9 @@ jobs:
           name: Push application Docker image
           command: |
             docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
-            docker tag app "medienportal/web:${CIRCLE_BRANCH}"
-            docker push "medienportal/web:${CIRCLE_BRANCH}"
+            docker tag app "medienportal/web:${CIRCLE_SHA1}"
+            docker push "medienportal/web:${CIRCLE_SHA1}"
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == "develop" ]
+              docker tag app "medienportal/web:${CIRCLE_BRANCH}"
+              docker push "medienportal/web:${CIRCLE_BRANCH}"
+            fi
