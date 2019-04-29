@@ -6,7 +6,7 @@ ci:
 		# staging-down
 
 docker-build:
-	docker build -t medienportal/web:$(TAG) .
+	docker build -t medienportal/web .
 
 clean:
 	docker-compose -f docker-compose.staging.yml run --rm clean
