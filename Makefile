@@ -1,12 +1,12 @@
 ci:
 	make docker-build \
-		clean \
-		install \
-		staging \
-		staging-down
+		# clean \
+		# install \
+		# staging \
+		# staging-down
 
 docker-build:
-	docker build -t registry.gitlab.com/medienportal/web .
+	docker build -t medienportal/web:$(TAG) .
 
 clean:
 	docker-compose -f docker-compose.staging.yml run --rm clean

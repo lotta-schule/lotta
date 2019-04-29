@@ -2,7 +2,7 @@ import React, { FunctionComponent, memo } from 'react';
 import { Grid, Typography, Avatar } from '@material-ui/core';
 
 export const UserNavigation: FunctionComponent = memo(() => (
-    <Grid container>
+    <Grid container justify={'space-evenly'}>
         <Grid item xs style={{ display: 'flex' }} justify={'center'}>
             <Typography variant={'body1'} align={'center'}>
                 <Avatar alt={'Nutzer Name'} src={'https://avatars.dicebear.com/v2/avataaars/medienportal.svg'} />
