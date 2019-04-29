@@ -21,7 +21,8 @@ jobs:
             docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
             docker tag "medienportal/web" "medienportal/web:${CIRCLE_SHA1}"
             docker push "medienportal/web:${CIRCLE_SHA1}"
-            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == "develop" ]
+            if [ "${CIRCLE_BRANCH}" -eq "master" ] || [ "${CIRCLE_BRANCH}" -eq "develop" ]
+            then
               docker tag "medienportal/web" "medienportal/web:${CIRCLE_BRANCH}"
               docker push "medienportal/web:${CIRCLE_BRANCH}"
             fi
