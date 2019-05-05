@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: medienportal-webapp
+  labels:
+    app: medienportal-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: medienportal-webapp
+  template:
+    metadata:
+      labels:
+        app: medienportal-webapp
+    spec:
+      containers:
+      - name: medienportal-webapp
+        image: medienportal/web
