@@ -2,20 +2,26 @@ import React, { FunctionComponent, memo } from 'react';
 import { Grid } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { UserNavigation } from './navigation/UserNavigation';
+import { connect } from 'react-redux';
+import { CategoryModel } from '../../model';
+import { State } from '../../store/State';
 
+export interface PageLayoutStateProps {
+    categories?: CategoryModel[];
+}
 
-export interface PageLayoutProps {
+export interface PageLayoutProps extends PageLayoutStateProps {
     sidebar?: JSX.Element;
 }
 
-export const PageLayout: FunctionComponent<PageLayoutProps> = memo(({ children, sidebar }) => {
+const PageLayout: FunctionComponent<PageLayoutProps> = memo(({ children, sidebar, categories }) => {
     return (
         <Grid container direction={'column'} justify={'flex-start'}>
             <Grid item component={'header'}>
                 <div>
                     <img src={'https://via.placeholder.com/939x100'} alt={'Banner'} />
                 </div>
-                <Navbar />
+                <Navbar categories={categories} />
             </Grid>
             <Grid item component={'main'} style={{ marginTop: '.5em' }}>
                 <Grid container spacing={16} justify={'flex-start'}>
@@ -33,3 +39,9 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = memo(({ children, 
         </Grid>
     );
 });
+
+export default connect<PageLayoutStateProps, {}, PageLayoutProps, State>(
+    state => ({
+        categories: state.content.categories
+    })
+)(PageLayout);

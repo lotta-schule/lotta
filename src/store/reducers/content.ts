@@ -6,6 +6,32 @@ import { AddArticleAction, AddPageAction, UpdateContentModuleAction, AddContentM
 export type ContentActions = AddArticleAction | AddPageAction | AddContentModuleAction | UpdateContentModuleAction;
 
 export const initialContentState: ContentState = {
+    categories: [
+        {
+            id: 'C0001',
+            title: 'Profil'
+        },
+        {
+            id: 'C0002',
+            title: 'GTA'
+        },
+        {
+            id: 'C0003',
+            title: 'Projekte'
+        },
+        {
+            id: 'C0004',
+            title: 'Fächer'
+        },
+        {
+            id: 'C0005',
+            title: 'Material'
+        },
+        {
+            id: 'C0006',
+            title: 'Galerien'
+        },
+    ],
     articles: [
         {
             id: 'A01',

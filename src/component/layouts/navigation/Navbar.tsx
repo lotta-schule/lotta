@@ -1,19 +1,16 @@
 import React, { FunctionComponent, memo } from 'react';
 import { AppBar, Toolbar, Button } from '@material-ui/core';
+import { CategoryModel } from '../../../model';
 
-export interface NavbarProps { }
+export interface NavbarProps {
+    categories?: CategoryModel[];
+}
 
-export const Navbar: FunctionComponent<NavbarProps> = memo(() => {
+export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
     return (
         <AppBar position={'sticky'}>
             <Toolbar>
-                <Button color="inherit">Startseite</Button>
-                <Button color="inherit">Profil</Button>
-                <Button color="inherit">GTA</Button>
-                <Button color="inherit">Projekte</Button>
-                <Button color="inherit">Fächer</Button>
-                <Button color="inherit">Material</Button>
-                <Button color="inherit">Galerien</Button>
+                {categories && categories.map(category => <Button key={category.id}>{category.title}</Button>)}
             </Toolbar>
         </AppBar>
     );

@@ -1,7 +1,7 @@
-import React, { FunctionComponent, memo } from 'react';
-import { PageLayout } from './PageLayout';
-import { Card, CardContent, Typography, CardMedia, Divider, TextField, Button } from '@material-ui/core';
 import { ArticleModel } from '../../model';
+import { Card, CardContent, Typography, CardMedia, Divider, TextField, Button } from '@material-ui/core';
+import PageLayout from './PageLayout';
+import React, { FunctionComponent, memo } from 'react';
 
 // const style: StyleRulesCallback = () => ({
 //     card: {
