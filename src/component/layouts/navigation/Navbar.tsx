@@ -1,6 +1,7 @@
 import React, { FunctionComponent, memo } from 'react';
 import { AppBar, Toolbar, Button } from '@material-ui/core';
 import { CategoryModel } from '../../../model';
+import { Link } from 'react-router-dom';
 
 export interface NavbarProps {
     categories?: CategoryModel[];
@@ -10,7 +11,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
     return (
         <AppBar position={'sticky'}>
             <Toolbar>
-                {categories && categories.map(category => <Button key={category.id}>{category.title}</Button>)}
+                {categories && categories.map(category => <Button key={category.id}><Link to={'/category'}>{category.title}</Link></Button>)}
             </Toolbar>
         </AppBar>
     );
