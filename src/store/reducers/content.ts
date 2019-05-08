@@ -1,9 +1,9 @@
 import { find } from 'lodash';
 import { ContentModuleModel, ContentModuleType } from '../../model';
 import { ContentState } from '../State';
-import { AddArticleAction, AddPageAction, UpdateContentModuleAction, AddContentModuleAction, ContentActionType } from '../actions/content';
+import { AddArticleAction, AddCategoryAction, UpdateContentModuleAction, AddContentModuleAction, ContentActionType } from '../actions/content';
 
-export type ContentActions = AddArticleAction | AddPageAction | AddContentModuleAction | UpdateContentModuleAction;
+export type ContentActions = AddArticleAction | AddCategoryAction | AddContentModuleAction | UpdateContentModuleAction;
 
 export const initialContentState: ContentState = {
     categories: [
@@ -125,25 +125,18 @@ export const contentReducer = (s: ContentState = initialContentState, action: Co
         case ContentActionType.ADD_ARTICLE:
             return {
                 ...s,
-                articles: s.articles.map(page => {
-                    return page.id === action.pageId
-                        ? {
-                            ...page,
-                            articles: [...s.articles, action.article]
-                        }
-                        : page;
-                })
+                articles: [...s.articles, action.article]
             };
-        case ContentActionType.ADD_PAGE:
-            const foundPage = find(s.articles, { id: action.page.id });
-            return foundPage
+        case ContentActionType.ADD_CATEGORY:
+            const foundCategory = find(s.articles, { id: action.category.id });
+            return foundCategory
                 ? {
                     ...s,
-                    articles: s.articles.map(page => (page.id === action.page.id ? action.page : page))
+                    categories: s.categories.map(category => (category.id === action.category.id ? action.category : category))
                 }
                 : {
                     ...s,
-                    articles: action.page ? s.articles.concat(action.page) : s.articles
+                    categories: action.category ? s.categories.concat(action.category) : s.categories
                 };
         case ContentActionType.ADD_CONTENT_MODULE:
             return {
@@ -151,7 +144,7 @@ export const contentReducer = (s: ContentState = initialContentState, action: Co
                 articles: s.articles.map(article => ({
                     ...article,
                     modules:
-                        article.id === action.pageId
+                        article.id === action.articleId
                             ? article.modules.concat([action.contentModule])
                             : article.modules
                 }))
