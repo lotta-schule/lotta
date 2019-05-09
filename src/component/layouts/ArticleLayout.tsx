@@ -117,7 +117,7 @@ export const ArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ arti
                         <Typography variant={'subtitle1'} color="textSecondary">
                             15.07.2019 &bull; Oskarverleihung &bull; 18 Views &bull; Autor: Lola &bull; Bewertung
                         </Typography>
-                        <Typography variant={'subheading'} color="textSecondary">
+                        <Typography variant={'subtitle1'} color="textSecondary">
                             (Füge hier einen kurzen Vorschautext von etwa 30 Wörtern ein)
                         </Typography>
                     </CardContent>

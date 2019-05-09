@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from 'react';
 import { Grid } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
-import { UserNavigation } from './navigation/UserNavigation';
+import { ConnectedUserNavigation } from './navigation/ConnectedUserNavigation';
 import { connect } from 'react-redux';
 import { CategoryModel } from '../../model';
 import { State } from '../../store/State';
@@ -31,7 +31,7 @@ const PageLayout: FunctionComponent<PageLayoutProps> = memo(({ children, sidebar
                         </main>
                     </Grid>
                     <Grid item xs={3} lg={2}>
-                        <UserNavigation />
+                        <ConnectedUserNavigation />
                         {sidebar}
                     </Grid>
                 </Grid>

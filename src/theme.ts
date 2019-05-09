@@ -9,6 +9,9 @@ export const theme = createMuiTheme({
         secondary: blue,
         error: red,
     },
+    typography: {
+        useNextVariants: true,
+    },
     shadows: [
         'none',
         'none',
@@ -37,6 +40,11 @@ export const theme = createMuiTheme({
         'none'
     ],
     overrides: {
+        MuiLink: {
+            root: {
+                cursor: 'pointer'
+            }
+        },
         MuiAppBar: {
             root: {
                 boxShadow: 'initial'

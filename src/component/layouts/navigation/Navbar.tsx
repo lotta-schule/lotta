@@ -11,7 +11,15 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
     return (
         <AppBar position={'sticky'}>
             <Toolbar>
-                {categories && categories.map(category => <Button key={category.id}><Link to={'/category'}>{category.title}</Link></Button>)}
+                {categories && categories.map(category => (
+                    <Button
+                        key={category.id}
+                        component={({ children, href, ...props }) => <Link to={href!} {...props}>{children}</Link>}
+                        href={'/category'}
+                    >
+                        {category.title}
+                    </Button>
+                ))}
             </Toolbar>
         </AppBar>
     );
