@@ -1,5 +1,5 @@
 import { ArticleModel } from '../../model';
-import { Card, CardContent, Typography, CardMedia, Divider, TextField, Button } from '@material-ui/core';
+import { Card, CardContent, CardMedia, Divider, TextField, Button } from '@material-ui/core';
 import BaseLayout from './BaseLayout';
 import React, { FunctionComponent, memo } from 'react';
 import { Article } from '../article/Article';
@@ -15,7 +15,7 @@ export interface ArticleLayoutProps {
     article: ArticleModel;
 }
 
-export const ArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article }) => {
+export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article }) => {
     return (
         <BaseLayout sidebar={(
             <Card>
@@ -104,7 +104,7 @@ export const ArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ arti
                 </CardContent>
             </Card>
         )}>
-            <Article article={article} />
+            <Article article={article} isEditModeEnabled />
         </BaseLayout>
     );
 });
