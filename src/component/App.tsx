@@ -1,4 +1,4 @@
-import { ArticleLayout } from './layouts/ArticleLayout';
+import { EditArticleLayout } from './layouts/EditArticleLayout';
 import { CategoryLayout } from './layouts/CategoryLayout';
 import { createBrowserHistory } from "history";
 import { MuiThemeProvider } from '@material-ui/core';
@@ -10,7 +10,7 @@ import React, { memo } from 'react';
 import store from '../store/Store';
 
 function App() {
-  const ArticlePage = () => <ArticleLayout article={store.getState().content.articles[0]} />;
+  const ArticlePage = () => <EditArticleLayout article={store.getState().content.articles[0]} />;
   const CategoryPage = () => <CategoryLayout category={store.getState().content.categories[0]} articles={store.getState().content.articles} />;
   return (
     <MuiThemeProvider theme={theme}>

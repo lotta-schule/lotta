@@ -1,12 +1,15 @@
 import React, { FunctionComponent, memo } from 'react';
 import { Card, CardMedia, CardContent, Typography } from '@material-ui/core';
 import { ArticleModel } from '../../model';
+import { ConnectedUserArticleBar } from './ConnectedUserArticleBar';
+import { mockUsers } from '../../mockData';
 
 interface ArticleProps {
     article: ArticleModel;
+    isEditModeEnabled?: boolean;
 }
 
-export const Article: FunctionComponent<ArticleProps> = memo(({ article }) => (
+export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditModeEnabled }) => (
     <article>
         <Card>
             <div style={{ display: 'flex' }}>
@@ -28,6 +31,9 @@ export const Article: FunctionComponent<ArticleProps> = memo(({ article }) => (
                 </CardContent>
             </div>
         </Card>
+        {!isEditModeEnabled && (
+            <ConnectedUserArticleBar article={article} />
+        )}
         {article.modules.map(contentModule => (
             <Card key={contentModule.id} component={'section'}>
                 <CardContent>

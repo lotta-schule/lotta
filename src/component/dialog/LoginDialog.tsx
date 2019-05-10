@@ -1,6 +1,7 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog } from '@material-ui/core';
 import { UserModel } from '../../model';
+import { mockUsers } from '../../mockData';
 
 export interface LoginDialogProps {
     isOpen: boolean;
@@ -70,13 +71,10 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                             // TODO: send to api
                             await new Promise(resolve => setTimeout(resolve, 1000));
                             setIsLoading(false);
-                            if (password === 'medienportal') {
+                            const user = mockUsers.find(user => user.email === email && user.password === password);
+                            if (user) {
                                 resetForm();
-                                onLogin({
-                                    id: email,
-                                    email,
-                                    name: email
-                                }, '')
+                                onLogin(user, '')
                             } else {
                                 setPassword('');
                                 setErrorMessage('Nutzername oder Passwort falsch.');
