@@ -16,6 +16,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                         key={category.id}
                         component={({ children, href, ...props }) => <Link to={href!} {...props}>{children}</Link>}
                         href={'/category'}
+                        color={'inherit'}
                     >
                         {category.title}
                     </Button>

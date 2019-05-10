@@ -5,6 +5,7 @@ export interface ArticleModel {
     id: string;
     title: string;
     preview?: string;
+    previewImage?: string;
     modules: ContentModuleModel[];
     category?: CategoryModel;
     pageName?: string;

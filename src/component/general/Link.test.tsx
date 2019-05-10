@@ -16,4 +16,10 @@ describe('component/general/Link', () => {
         expect(link.href).toMatch(/\/bla$/);
         expect(link).toHaveTextContent('Bla');
     });
+
+    it('should style a link', () => {
+        const { container } = render(<Router history={createBrowserHistory()}><Link to={'/bla'} style={{ color: 'red' }}>Bla</Link></Router>);
+        const link = container.querySelector('a') as HTMLAnchorElement;
+        expect(link).toHaveStyle('color: red');
+    });
 });
