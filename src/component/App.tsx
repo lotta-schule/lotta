@@ -1,12 +1,13 @@
 import { ArticleLayout } from './layouts/ArticleLayout';
-import { MuiThemeProvider } from '@material-ui/core';
-import { Provider } from 'react-redux';
-import { theme } from '../theme';
-import React from 'react';
-import store from '../store/Store';
-import { Router, Route, Redirect, Switch } from 'react-router';
 import { CategoryLayout } from './layouts/CategoryLayout';
 import { createBrowserHistory } from "history";
+import { MuiThemeProvider } from '@material-ui/core';
+import { PageLayout } from './layouts/PageLayout';
+import { Provider } from 'react-redux';
+import { Router, Route, Redirect, Switch, RouteComponentProps } from 'react-router';
+import { theme } from '../theme';
+import React, { memo } from 'react';
+import store from '../store/Store';
 
 function App() {
   const ArticlePage = () => <ArticleLayout article={store.getState().content.articles[0]} />;
@@ -18,6 +19,14 @@ function App() {
           <Switch>
             <Route path="/article" component={ArticlePage} />
             <Route path="/category" component={CategoryPage} />
+            <Route path="/page/:pageId" component={memo<RouteComponentProps<{ pageId: string }>>(({ match }) => (
+              <PageLayout
+                title={match.params.pageId}
+                articles={store.getState().content.articles.filter(article => (
+                  article.pageName === match.params.pageId || article.id === match.params.pageId
+                ))}
+              />
+            ))} />
             <Redirect to={'/category'} />
           </Switch>
         </Router>
