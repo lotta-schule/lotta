@@ -5,6 +5,7 @@ import { ConnectedUserNavigation } from './navigation/ConnectedUserNavigation';
 import { connect } from 'react-redux';
 import { CategoryModel } from '../../model';
 import { State } from '../../store/State';
+import Typography from '@material-ui/core/Typography';
 
 export interface PageLayoutStateProps {
     categories?: CategoryModel[];
@@ -17,10 +18,9 @@ export interface PageLayoutProps extends PageLayoutStateProps {
 const BaseLayout: FunctionComponent<PageLayoutProps> = memo(({ children, sidebar, categories }) => {
     return (
         <Grid container direction={'column'} justify={'flex-start'}>
-            <Grid item component={'header'}>
-                <div>
-                    <img src={'https://via.placeholder.com/939x100'} alt={'Banner'} />
-                </div>
+            <Grid component={'header'}>
+                <Typography variant="h4" gutterBottom>Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch
+                </Typography>
                 <Navbar categories={categories} />
             </Grid>
             <Grid item component={'main'} style={{ marginTop: '.5em' }}>
@@ -30,7 +30,7 @@ const BaseLayout: FunctionComponent<PageLayoutProps> = memo(({ children, sidebar
                             {children}
                         </main>
                     </Grid>
-                    <Grid item xs={3} lg={2}>
+                    <Grid item xs={4} lg={3}>
                         <ConnectedUserNavigation />
                         {sidebar}
                     </Grid>

@@ -17,7 +17,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                     title={`Vorschaubild zu ${article.title}`}
                 />
             <CardContent>
-                <Typography variant="h4" component="h3">
+                <Typography component="h2" variant="headline" gutterBottom>
                     <Link color='inherit' underline='none' to={`/page/${article.pageName || article.id}`}>
                         Titel: {article.title}
                     </Link>
