@@ -17,8 +17,7 @@ export const clientReducer = (s: ClientState = initialClientState, action: Clien
             return s.client
                 ? {
                     client: {
-                        ...s.client,
-                        categories: s.client.categories.concat([action.category])
+                        ...s.client
                     }
                 }
                 : s;
