@@ -12,7 +12,7 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ar
     return (
         <BaseLayout>
             {articles && articles.map(article => (
-                <ArticlePreview article={article} />
+                <ArticlePreview key={article.id} article={article} />
             ))}
         </BaseLayout>
     );

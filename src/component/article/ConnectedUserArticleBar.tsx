@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { UserModel, ArticleModel } from '../../model';
 import { State } from '../../store/State';
 import { UserArticleBar } from './UserArticleBar';
-import { createLoginAction, createLogoutAction } from '../../store/actions/user';
 
 interface ConnectedUserArticleBarStateProps {
     user: UserModel | null;

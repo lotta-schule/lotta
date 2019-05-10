@@ -43,6 +43,8 @@ export const mockData: State = {
         articles: [
             {
                 id: 'A01',
+                createdAt: new Date(2019, 5, 18, 14, 12, 24),
+                updatedAt: new Date(2019, 5, 18, 14, 12, 24),
                 title: 'And the oskar goes to ...',
                 preview: 'Hallo hallo hallo',
                 previewImage: 'https://placeimg.com/640/480/animals',
@@ -65,6 +67,8 @@ export const mockData: State = {
             },
             {
                 id: 'A02',
+                createdAt: new Date(2018, 4, 7, 12, 15, 45),
+                updatedAt: new Date(2018, 4, 7, 12, 15, 45),
                 title: 'Landesfinale Volleyball WK IV',
                 preview: 'Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale "Jugend trainiert für Europa" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...',
                 previewImage: 'https://placeimg.com/640/480/architecture',
@@ -87,6 +91,8 @@ export const mockData: State = {
             },
             {
                 id: 'A03',
+                createdAt: new Date(2019, 4, 3, 7, 56, 1),
+                updatedAt: new Date(2019, 4, 3, 7, 56, 1),
                 title: 'Der Podcast zum WB 2',
                 preview: 'Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.',
                 category: {
@@ -110,6 +116,8 @@ export const mockData: State = {
             },
             {
                 id: 'A04',
+                createdAt: new Date(2019, 5, 8, 23, 18, 47),
+                updatedAt: new Date(2019, 5, 8, 23, 18, 47),
                 title: 'Der Vorausscheid',
                 preview: 'Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.',
                 category: {

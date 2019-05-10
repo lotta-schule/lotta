@@ -1,5 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import { blue, red, indigo, cyan, grey } from '@material-ui/core/colors';
+import { red, indigo, cyan } from '@material-ui/core/colors';
 
 // All the following keys are optional.
 // We try our best to provide a great default value.
@@ -12,7 +12,7 @@ export const theme = createMuiTheme({
             contrastText: 'white',
         },
         secondary: {
-            main: cyan [700]
+            main: cyan[700]
         },
         error: red,
     },

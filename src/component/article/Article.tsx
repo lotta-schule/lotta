@@ -2,7 +2,6 @@ import React, { FunctionComponent, memo } from 'react';
 import { Card, CardContent, Typography } from '@material-ui/core';
 import { ArticleModel } from '../../model';
 import { ConnectedUserArticleBar } from './ConnectedUserArticleBar';
-import { mockUsers } from '../../mockData';
 import { ArticlePreview } from './ArticlePreview';
 
 interface ArticleProps {

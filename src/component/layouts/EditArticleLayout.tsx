@@ -1,8 +1,8 @@
 import { ArticleModel } from '../../model';
-import { Card, CardContent, CardMedia, Divider, TextField, Button } from '@material-ui/core';
 import BaseLayout from './BaseLayout';
-import React, { FunctionComponent, memo } from 'react';
+import React, { FunctionComponent, memo, useState } from 'react';
 import { Article } from '../article/Article';
+import { EditArticleSidebar } from './editArticle/EditArticleSidebar';
 
 // const style: StyleRulesCallback = () => ({
 //     card: {
@@ -16,95 +16,10 @@ export interface ArticleLayoutProps {
 }
 
 export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article }) => {
+    const [editedArticle, setEditedArticle] = useState(article);
     return (
-        <BaseLayout sidebar={(
-            <Card>
-                <CardContent>
-                    <TextField
-                        label="Titel des Beitrags"
-                        placeholder="Placeholder"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Vorschautext"
-                        placeholder="Füge hier einen kurzen Vorschautext ein"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Datum"
-                        type={'date'}
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Kategorie"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <CardContent>
-                    <TextField
-                        label="Seite"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardMedia
-                    style={{ width: 150 }}
-                    image={'https://via.placeholder.com/150x150'}
-                    title={`Vorschaubild zu ${article.title}`}
-                />
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Autoren"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Sichtbarkeit"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <Button fullWidth>speichern</Button>
-                    <Button fullWidth>speichern</Button>
-                    <Button fullWidth>speichern</Button>
-                </CardContent>
-            </Card>
-        )}>
-            <Article article={article} isEditModeEnabled />
+        <BaseLayout sidebar={<EditArticleSidebar article={editedArticle} onUpdate={setEditedArticle} onSave={() => { }} />}>
+            <Article article={editedArticle} isEditModeEnabled />
         </BaseLayout>
     );
 });
