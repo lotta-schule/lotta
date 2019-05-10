@@ -1,8 +1,8 @@
 import { CategoryModel, ArticleModel } from '../../model';
 import { Card, CardContent, Typography, CardMedia } from '@material-ui/core';
-import PageLayout from './PageLayout';
+import BaseLayout from './BaseLayout';
 import React, { FunctionComponent, memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '../general/Link';
 
 export interface CategoryLayoutProps {
     category: CategoryModel;
@@ -11,7 +11,7 @@ export interface CategoryLayoutProps {
 
 export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ articles }) => {
     return (
-        <PageLayout>
+        <BaseLayout>
             {articles && articles.map(article => (
                 <Card key={article.id}>
                     <div style={{ display: 'flex' }}>
@@ -22,7 +22,7 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ar
                         />
                         <CardContent>
                             <Typography variant="h4" component="h3">
-                                <Link to={'/article'}>
+                                <Link to={`/page/${article.pageName || article.id}`}>
                                     {article.title}
                                 </Link>
                             </Typography>
@@ -36,6 +36,6 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ar
                     </div>
                 </Card>
             ))}
-        </PageLayout>
+        </BaseLayout>
     );
 });
