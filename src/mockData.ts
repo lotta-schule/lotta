@@ -45,6 +45,7 @@ export const mockData: State = {
                 id: 'A01',
                 title: 'And the oskar goes to ...',
                 preview: 'Hallo hallo hallo',
+                previewImage: 'https://placeimg.com/640/480/animals',
                 category: {
                     id: 'C0001',
                     title: 'Profil'
@@ -66,6 +67,7 @@ export const mockData: State = {
                 id: 'A02',
                 title: 'Landesfinale Volleyball WK IV',
                 preview: 'Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale "Jugend trainiert für Europa" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...',
+                previewImage: 'https://placeimg.com/640/480/architecture',
                 category: {
                     id: 'C0001',
                     title: 'Profil'
@@ -92,6 +94,7 @@ export const mockData: State = {
                     title: 'Profil'
                 },
                 pageName: 'KleinKunst 2018',
+                previewImage: 'https://placeimg.com/640/480/people',
                 modules: [
                     {
                         id: 'M01',
@@ -114,6 +117,7 @@ export const mockData: State = {
                     title: 'Profil'
                 },
                 pageName: 'KleinKunst 2018',
+                previewImage: 'https://placeimg.com/640/480/tech',
                 modules: [
                     {
                         id: 'M01',
