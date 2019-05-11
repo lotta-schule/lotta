@@ -6,6 +6,7 @@ import {
 } from 'react-testing-library';
 import userEvent from 'user-event';
 import { LoginDialog } from './LoginDialog';
+import { mockUsers } from '../../mockData';
 
 afterEach(cleanup);
 
@@ -51,20 +52,21 @@ describe('component/dialog/LoginDialog', () => {
     });
 
     it('should login the user when correct data is given', done => {
+        const user = mockUsers[0];
         const { getByPlaceholderText, getByText } = render(
             <LoginDialog
                 isOpen={true}
                 onAbort={() => { }}
-                onLogin={(user) => {
-                    expect(user.email).toBe('beispiel@medienportal.org');
+                onLogin={(loggedUser) => {
+                    expect(loggedUser.email).toBe(user.email);
                     done();
                 }}
             />);
         const emailInput = getByPlaceholderText(/beispiel@medienportal.org/);
         const passwordInput = getByPlaceholderText(/Passwort/);
         const confirmButton = getByText('Anmelden');
-        userEvent.type(emailInput, 'beispiel@medienportal.org');
-        userEvent.type(passwordInput, 'medienportal');
+        userEvent.type(emailInput, user.email);
+        userEvent.type(passwordInput, user.password);
         userEvent.click(confirmButton);
     });
 
