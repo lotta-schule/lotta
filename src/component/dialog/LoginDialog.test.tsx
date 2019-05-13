@@ -2,7 +2,8 @@ import React from 'react';
 import {
     render,
     cleanup,
-    waitForElement
+    waitForElement,
+    fireEvent
 } from 'react-testing-library';
 import userEvent from 'user-event';
 import { LoginDialog } from './LoginDialog';
@@ -42,13 +43,27 @@ describe('component/dialog/LoginDialog', () => {
             />);
         const emailInput = getByPlaceholderText(/beispiel@medienportal.org/);
         const passwordInput = getByPlaceholderText(/Passwort/);
-        const confirmButton = getByText('Anmelden');
+        const confirmButton = getByText('Anmelden').parentElement as HTMLButtonElement;
         userEvent.type(emailInput, 'beispiel@medienportal.org');
         userEvent.type(passwordInput, 'test123');
         userEvent.click(confirmButton);
         expect(emailInput).toHaveProperty('disabled', true);
         expect(passwordInput).toHaveProperty('disabled', true);
-        expect(confirmButton.parentElement).toHaveProperty('disabled', true);
+        expect(confirmButton).toHaveProperty('disabled', true);
+    });
+
+    it('should send the form on enter key press', () => {
+        const { getByPlaceholderText } = render(
+            <LoginDialog
+                isOpen={true}
+                onAbort={() => { }}
+                onLogin={() => { }}
+            />);
+        const emailInput = getByPlaceholderText(/beispiel@medienportal.org/);
+        const passwordInput = getByPlaceholderText(/Passwort/);
+        userEvent.type(emailInput, 'beispiel@medienportal.org');
+        userEvent.type(passwordInput, 'test123');
+        fireEvent.keyDown(passwordInput!, { key: 'Enter', code: 13 });
     });
 
     it('should login the user when correct data is given', done => {
@@ -64,7 +79,7 @@ describe('component/dialog/LoginDialog', () => {
             />);
         const emailInput = getByPlaceholderText(/beispiel@medienportal.org/);
         const passwordInput = getByPlaceholderText(/Passwort/);
-        const confirmButton = getByText('Anmelden');
+        const confirmButton = getByText('Anmelden').parentElement as HTMLButtonElement;
         userEvent.type(emailInput, user.email);
         userEvent.type(passwordInput, user.password);
         userEvent.click(confirmButton);

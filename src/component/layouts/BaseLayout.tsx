@@ -24,7 +24,7 @@ const BaseLayout: FunctionComponent<PageLayoutProps> = memo(({ children, sidebar
                 <Navbar categories={categories} />
             </Grid>
             <Grid item component={'main'} style={{ marginTop: '.5em' }}>
-                <Grid container spacing={16} justify={'flex-start'}>
+                <Grid container spacing={8} justify={'flex-start'}>
                     <Grid item xs>
                         <main style={{ width: '100%', height: '100%' }}>
                             {children}

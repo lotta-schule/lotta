@@ -1,9 +1,9 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ArticleModel } from '../../model';
-import { Card, CardMedia, CardContent, Typography } from '@material-ui/core';
-import { Link } from '../general/Link';
+import { Card, CardMedia, CardContent, Typography, Link } from '@material-ui/core';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { CollisionLink } from '../general/CollisionLink';
 
 
 interface ArticlePreviewProps {
@@ -20,7 +20,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
             />
             <CardContent>
                 <Typography component={'h4'} variant={'h4'} gutterBottom>
-                    <Link color='inherit' underline='none' to={`/page/${article.pageName || article.id}`}>
+                    <Link component={CollisionLink} color='inherit' underline='none' to={`/page/${article.pageName || article.id}`}>
                         {article.title}
                     </Link>
                 </Typography>
