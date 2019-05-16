@@ -19,10 +19,22 @@ export interface ArticleLayoutProps {
     onUpdateArticle?(article: ArticleModel): void;
 }
 
-export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article }) => {
+export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
     const [editedArticle, setEditedArticle] = useState(article);
     return (
-        <BaseLayout sidebar={<EditArticleSidebar article={editedArticle} onUpdate={setEditedArticle} onSave={() => { }} />}>
+        <BaseLayout
+            sidebar={(
+                <EditArticleSidebar
+                    article={editedArticle}
+                    onUpdate={setEditedArticle}
+                    onSave={() => {
+                        if (onUpdateArticle) {
+                            onUpdateArticle(editedArticle);
+                        }
+                    }}
+                />
+            )}
+        >
             <Article article={editedArticle} isEditModeEnabled onUpdateArticle={setEditedArticle} />
             <div>
                 <Button
