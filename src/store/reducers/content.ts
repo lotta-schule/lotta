@@ -19,7 +19,7 @@ export const contentReducer = (s: ContentState = initialContentState, action: Co
                 ...s,
                 articles: s.articles.map(article =>
                     article.id === action.article.id ?
-                        action.article :
+                        Object.assign({}, article, action.article) :
                         article
                 )
             };
@@ -28,7 +28,7 @@ export const contentReducer = (s: ContentState = initialContentState, action: Co
             return foundCategory
                 ? {
                     ...s,
-                    categories: s.categories.map(category => (category.id === action.category.id ? action.category : category))
+                    categories: s.categories.map(category => (category.id === action.category.id ? Object.assign({}, category, action.category) : category))
                 }
                 : {
                     ...s,

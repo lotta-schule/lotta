@@ -1,9 +1,8 @@
 import { CategoryLayout } from './layouts/CategoryLayout';
-import { createBrowserHistory } from "history";
 import { ThemeProvider } from '@material-ui/styles';
 import { PageLayout } from './layouts/PageLayout';
 import { Provider } from 'react-redux';
-import { Router, Route, Redirect, Switch, RouteComponentProps } from 'react-router';
+import { Route, BrowserRouter, Redirect, Switch, RouteComponentProps } from 'react-router-dom';
 import { theme } from '../theme';
 import React, { memo, FunctionComponent } from 'react';
 import { ConnectedEditArticleLayout } from './layouts/ConnectedEditArticleLayout';
@@ -14,11 +13,12 @@ export const App: FunctionComponent = () => {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <Router history={createBrowserHistory()}>
+        <BrowserRouter>
           <Switch>
-            <Route path="/article/:id" component={memo<RouteComponentProps<{ id: string }>>(({ match }) => <ConnectedEditArticleLayout articleId={match.params.id} />)} />
-            <Route path="/category" component={CategoryPage} />
-            <Route path="/page/:id" component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
+            <Route path={'/'} component={CategoryPage} />
+            <Route path={'/article/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => <ConnectedEditArticleLayout articleId={match.params.id} />)} />
+            <Route path={'/category'} component={CategoryPage} />
+            <Route path={'/page/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
               <PageLayout
                 title={match.params.id}
                 articles={store.getState().content.articles.filter(article => (
@@ -28,7 +28,7 @@ export const App: FunctionComponent = () => {
             ))} />
             <Redirect to={'/category'} />
           </Switch>
-        </Router>
+        </BrowserRouter>
       </Provider>
     </ThemeProvider>
   );

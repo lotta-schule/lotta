@@ -23,13 +23,14 @@ describe('content reducer', () => {
     });
 
     it('should handle ADD_ARTICLE', () => {
+        const [createdAt, updatedAt] = [new Date(), new Date()];
         expect(
             contentReducer({ articles: [], categories: [] }, {
                 type: ContentActionType.ADD_ARTICLE,
                 article: {
                     id: 'A001',
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
+                    createdAt,
+                    updatedAt,
                     modules: [],
                     preview: 'Hallo',
                     title: 'Artikel 001'
@@ -39,6 +40,8 @@ describe('content reducer', () => {
             categories: [],
             articles: [{
                 id: 'A001',
+                createdAt,
+                updatedAt,
                 modules: [],
                 preview: 'Hallo',
                 title: 'Artikel 001'
@@ -47,12 +50,13 @@ describe('content reducer', () => {
     });
 
     it('should handle UPDATE_ARTICLE', () => {
+        const [createdAt, updatedAt] = [new Date(), new Date()];
         expect(
             contentReducer({
                 articles: [{
                     id: 'A001',
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
+                    createdAt,
+                    updatedAt,
                     modules: [{
                         id: 'CM001',
                         type: ContentModuleType.Text
@@ -65,8 +69,8 @@ describe('content reducer', () => {
                     type: ContentActionType.UPDATE_ARTICLE,
                     article: {
                         id: 'A001',
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
+                        createdAt,
+                        updatedAt,
                         title: 'Mein Beitrag',
                         modules: [{
                             id: 'CM001',
@@ -79,13 +83,15 @@ describe('content reducer', () => {
             categories: [],
             articles: [{
                 id: 'A001',
+                createdAt,
+                updatedAt,
                 modules: [{
                     id: 'CM001',
                     type: ContentModuleType.Text,
                     text: 'New Text'
                 }],
                 preview: 'Hallo',
-                title: 'Artikel 001'
+                title: 'Mein Beitrag'
             }]
         });
     });
