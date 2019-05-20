@@ -4,7 +4,7 @@ import {
     cleanup
 } from 'react-testing-library';
 import { UserNavigation } from './UserNavigation';
-import { UserModel } from '../../../model';
+import { UserModel, UserGroup } from '../../../model';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
 import userEvent from 'user-event';
@@ -14,7 +14,9 @@ afterEach(cleanup);
 const user: UserModel = {
     id: 'U001',
     email: 'user001@medienportal.org',
-    name: 'User 001'
+    name: 'User 001',
+    group: UserGroup.STUDENT,
+    avatar: 'https://avatars.dicebear.com/v2/avataaars/user001.svg'
 };
 
 describe('component/layouts/navigation/UserNavigation', () => {

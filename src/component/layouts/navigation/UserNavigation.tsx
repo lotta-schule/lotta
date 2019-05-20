@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { Grid, Typography, Avatar, Link as MuiLink } from '@material-ui/core';
+import { Grid, Typography, Avatar, Link } from '@material-ui/core';
 import { UserModel } from '../../../model';
-import { Link } from '../../general/Link';
+import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
 
 export interface UserNavigationProps {
@@ -20,9 +20,9 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                         <div>
                             <Avatar alt={'Nutzer Name'} src={user.avatar} />
                             <Typography align={'center'}>
-                                <Link to={'/profile'}>
+                                <Link component={CollisionLink} to={'/profile'}>
                                     Profil
-                        </Link>
+                                </Link>
                             </Typography>
                         </div>
                     )}
@@ -31,8 +31,8 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                     <Typography variant={'body1'} component={'nav'} align={'right'}>
                         <ul>
                             {user ?
-                                <li><MuiLink onClick={() => onLogout()}>Abmelden</MuiLink></li> :
-                                <li><MuiLink onClick={() => setLoginModalIsOpen(true)}>Anmelden</MuiLink></li>
+                                <li><Link onClick={() => onLogout()}>Abmelden</Link></li> :
+                                <li><Link onClick={() => setLoginModalIsOpen(true)}>Anmelden</Link></li>
                             }
                             <li>Impressum</li>
                             <li>Datenschutz</li>

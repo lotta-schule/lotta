@@ -1,8 +1,6 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 import { red, indigo, cyan } from '@material-ui/core/colors';
 
-// All the following keys are optional.
-// We try our best to provide a great default value.
 export const theme = createMuiTheme({
     palette: {
         primary: {
@@ -17,7 +15,6 @@ export const theme = createMuiTheme({
         error: red,
     },
     typography: {
-        useNextVariants: true,
         fontFamily: 'Muli',
     },
     shadows: [

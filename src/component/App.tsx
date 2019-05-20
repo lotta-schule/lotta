@@ -1,38 +1,35 @@
-import { EditArticleLayout } from './layouts/EditArticleLayout';
 import { CategoryLayout } from './layouts/CategoryLayout';
-import { createBrowserHistory } from "history";
-import { MuiThemeProvider } from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/styles';
 import { PageLayout } from './layouts/PageLayout';
 import { Provider } from 'react-redux';
-import { Router, Route, Redirect, Switch, RouteComponentProps } from 'react-router';
+import { Route, BrowserRouter, Redirect, Switch, RouteComponentProps } from 'react-router-dom';
 import { theme } from '../theme';
-import React, { memo } from 'react';
+import React, { memo, FunctionComponent } from 'react';
+import { ConnectedEditArticleLayout } from './layouts/ConnectedEditArticleLayout';
 import store from '../store/Store';
 
-function App() {
-  const ArticlePage = () => <EditArticleLayout article={store.getState().content.articles[0]} />;
+export const App: FunctionComponent = () => {
   const CategoryPage = () => <CategoryLayout category={store.getState().content.categories[0]} articles={store.getState().content.articles} />;
   return (
-    <MuiThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <Router history={createBrowserHistory()}>
+        <BrowserRouter>
           <Switch>
-            <Route path="/article" component={ArticlePage} />
-            <Route path="/category" component={CategoryPage} />
-            <Route path="/page/:pageId" component={memo<RouteComponentProps<{ pageId: string }>>(({ match }) => (
+            <Route path={'/'} component={CategoryPage} />
+            <Route path={'/article/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => <ConnectedEditArticleLayout articleId={match.params.id} />)} />
+            <Route path={'/category'} component={CategoryPage} />
+            <Route path={'/page/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
               <PageLayout
-                title={match.params.pageId}
+                title={match.params.id}
                 articles={store.getState().content.articles.filter(article => (
-                  article.pageName === match.params.pageId || article.id === match.params.pageId
+                  article.pageName === match.params.id || article.id === match.params.id
                 ))}
               />
             ))} />
             <Redirect to={'/category'} />
           </Switch>
-        </Router>
+        </BrowserRouter>
       </Provider>
-    </MuiThemeProvider>
+    </ThemeProvider>
   );
 }
-
-export default App;

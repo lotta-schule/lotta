@@ -12,7 +12,7 @@ export interface PageLayoutProps {
 export const PageLayout: FunctionComponent<PageLayoutProps> = memo(({ articles, title }) => {
     return (
         <BaseLayout>
-        {title && <Typography variant={'title'}>{title}</Typography>}
+        {title && <Typography variant={'h3'}>{title}</Typography>}
             {articles && articles.map(article => (
                 <Article key={article.id} article={article} />
             ))}
