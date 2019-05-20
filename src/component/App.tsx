@@ -15,7 +15,7 @@ export const App: FunctionComponent = () => {
       <Provider store={store}>
         <BrowserRouter>
           <Switch>
-            <Route path={'/'} component={CategoryPage} />
+            <Route exact path={'/'} component={CategoryPage} />
             <Route path={'/article/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => <ConnectedEditArticleLayout articleId={match.params.id} />)} />
             <Route path={'/category'} component={CategoryPage} />
             <Route path={'/page/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
