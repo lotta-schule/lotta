@@ -1,5 +1,5 @@
 import { CategoryModel, ArticleModel } from '../../model';
-import BaseLayout from './BaseLayout';
+import { ConnectedBaseLayout } from './ConnectedBaseLayout';
 import React, { FunctionComponent, memo } from 'react';
 import { ArticlePreview } from '../article/ArticlePreview';
 
@@ -10,10 +10,10 @@ export interface CategoryLayoutProps {
 
 export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ articles }) => {
     return (
-        <BaseLayout>
+        <ConnectedBaseLayout>
             {articles && articles.map(article => (
                 <ArticlePreview key={article.id} article={article} />
             ))}
-        </BaseLayout>
+        </ConnectedBaseLayout>
     );
 });

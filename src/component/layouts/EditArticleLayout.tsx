@@ -1,5 +1,5 @@
 import { ArticleModel, ContentModuleType } from '../../model';
-import BaseLayout from './BaseLayout';
+import { ConnectedBaseLayout } from './ConnectedBaseLayout';
 import React, { FunctionComponent, memo, useState } from 'react';
 import { Article } from '../article/Article';
 import { EditArticleSidebar } from './editArticle/EditArticleSidebar';
@@ -22,7 +22,7 @@ export interface ArticleLayoutProps {
 export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
     const [editedArticle, setEditedArticle] = useState(article);
     return (
-        <BaseLayout
+        <ConnectedBaseLayout
             sidebar={(
                 <EditArticleSidebar
                     article={editedArticle}
@@ -58,6 +58,6 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                     + TEXT
                 </Button>
             </div>
-        </BaseLayout>
+        </ConnectedBaseLayout>
     );
 });

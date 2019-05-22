@@ -5,7 +5,7 @@ metadata:
   labels:
     app: medienportal-webapp
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: medienportal-webapp
@@ -16,4 +16,4 @@ spec:
     spec:
       containers:
       - name: medienportal-webapp
-        image: medienportal/web
+        image: medienportal/web:0189a603966693e8e9fb9318bd98e3b1bbd2b060

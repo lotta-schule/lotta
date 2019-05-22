@@ -39,6 +39,48 @@ export const mockData: State = {
                 id: 'C0006',
                 title: 'Galerien'
             },
+            // Fächer >
+            {
+                id: 'C0007',
+                title: 'Sport',
+                categoryId: 'C0004'
+            },
+            {
+                id: 'C0008',
+                title: 'Kunst',
+                categoryId: 'C0004'
+            },
+            {
+                id: 'C0009',
+                title: 'Sprache',
+                categoryId: 'C0004'
+            },
+            // > Profil
+            {
+                id: 'C0010',
+                title: 'Podcast',
+                categoryId: 'C0002'
+            },
+            {
+                id: 'C0010',
+                title: 'Offene Kunst-AG',
+                categoryId: 'C0002'
+            },
+            {
+                id: 'C0011',
+                title: 'Schülerzeitung',
+                categoryId: 'C0002'
+            },
+            {
+                id: 'C0012',
+                title: 'Oskar-Reime-Chor',
+                categoryId: 'C0002'
+            },
+            {
+                id: 'C0013',
+                title: 'Schüler-Radio',
+                categoryId: 'C0002'
+            },
         ],
         articles: [
             {

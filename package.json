@@ -34,33 +34,34 @@
     "react": "^16.8.6",
     "react-beautiful-dnd": "^11.0.3",
     "react-dom": "^16.8.6",
-    "react-redux": "^7.0.3",
+    "react-redux": "^7.1.0-alpha.5",
     "react-router-dom": "^5.0.0",
     "react-scripts": "^3.0.1",
     "redux-devtools-extension": "^2.13.8",
-    "slate": "^0.47.2",
-    "slate-react": "^0.22.2"
+    "slate": "^0.47.3",
+    "slate-react": "^0.22.3",
+    "use-react-router": "^1.0.6"
   },
   "devDependencies": {
     "@types/immutable": "^3.8.7",
     "@types/jest": "^24.0.13",
-    "@types/lodash": "^4.14.129",
-    "@types/react": "^16.8.14",
+    "@types/lodash": "^4.14.130",
+    "@types/react": "^16.8.18",
     "@types/react-beautiful-dnd": "^11.0.2",
     "@types/react-dom": "^16.8.4",
     "@types/react-redux": "^7.0.9",
     "@types/react-router-dom": "^4.3.3",
     "@types/redux": "^3.6.0",
-    "@types/slate": "^0.44.6",
+    "@types/slate": "^0.44.8",
     "@types/slate-base64-serializer": "^0.2.2",
     "@types/slate-react": "^0.21.2",
-    "@types/user-event": "^1.4.0",
+    "@types/user-event": "^1.4.1",
     "install": "^0.12.2",
     "jest-dom": "^3.2.2",
     "node-sass": "^4.12.0",
     "npm": "^6.9.0",
-    "react-testing-library": "^7.0.0",
+    "react-testing-library": "^7.0.1",
     "typescript": "^3.4.5",
-    "user-event": "^3.0.1"
+    "user-event": "^3.0.2"
   }
 }

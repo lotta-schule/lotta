@@ -52,7 +52,8 @@ export const theme = createMuiTheme({
         },
         MuiAppBar: {
             root: {
-                boxShadow: 'initial'
+                boxShadow: 'initial',
+                overflow: 'auto'
             }
         },
         MuiCard: {

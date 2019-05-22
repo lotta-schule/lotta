@@ -1,8 +1,15 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { Grid, Typography, Avatar, Link } from '@material-ui/core';
+import { Grid, Typography, Avatar, Link, makeStyles } from '@material-ui/core';
 import { UserModel } from '../../../model';
 import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        position: 'sticky',
+        top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2)
+    }
+}));
 
 export interface UserNavigationProps {
     user: UserModel | null;
@@ -11,10 +18,12 @@ export interface UserNavigationProps {
 }
 
 export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ user, onLogin, onLogout }) => {
+    const styles = useStyles();
+
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     return (
         <>
-            <Grid container justify={'space-evenly'}>
+            <Grid container justify={'space-evenly'} className={styles.root}>
                 <Grid item xs style={{ display: 'flex' }}>
                     {user && (
                         <div>
