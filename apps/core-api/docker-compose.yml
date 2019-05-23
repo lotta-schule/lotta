@@ -1,0 +1,35 @@
+version: "3.4"
+
+networks:
+  postgres:
+
+volumes:
+  elixir-mix:
+
+services:
+  app:
+    image: elixir:1.8.1
+    volumes:
+      - .:/usr/src/svc
+      - elixir-mix:/root/.mix
+    working_dir: /usr/src/svc
+    ports:
+      - 4000:4000
+    command: bash -c "iex -S mix phx.server"
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+    environment: 
+      JWT_SECRET_KEY: h31lRCT+dexQ+44q5MEvNOpfZdKlhmdZDe1esJEM1uQyzhdJrbjRbMctVuoS6/Ru
+
+  postgres:
+    image: postgres
+    volumes:
+      - ./_postgres-data:/var/lib/postgresql/data
+    networks:
+      - postgres
+    environment:
+      POSTGRES_USER: api-user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: api
