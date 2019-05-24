@@ -1,12 +1,16 @@
 # Api
 
-To start your Phoenix server:
+API written for Medienportal API Server
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server`
+Phoenix, Elixir & Absinthe
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+To start your server:
+
+```bash
+docker-compose up
+```
+
+Now you can visit [`localhost:4000`](http://localhost:4000/graphiql) for GraphiQL browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 

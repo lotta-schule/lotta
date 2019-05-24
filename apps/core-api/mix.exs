@@ -40,6 +40,7 @@ defmodule Api.MixProject do
       {:absinthe, "~> 1.4.16"},
       {:absinthe_plug, "~> 1.4.7"},
       {:absinthe_ecto, "~> 0.1.3"},
+      {:cors_plug, "~> 2.0.0"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
