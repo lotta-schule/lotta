@@ -30,6 +30,13 @@ defmodule ApiWeb.Schema do
       resolve &Api.UserResolver.register/2
     end
 
+    field :login, type: :authresult do
+      arg :username, :string
+      arg :password, :string
+
+      resolve &Api.UserResolver.login/2
+    end
+
     field :update_user, type: :user do
       arg :id, non_null(:integer)
       arg :user, :update_user_params
