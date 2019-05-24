@@ -2,6 +2,11 @@ defmodule ApiWeb.Schema.Types do
   use Absinthe.Schema.Notation
   use Absinthe.Ecto, repo: Api.Repo
 
+  object :authresult do
+    field :user, :user
+    field :token, :string
+  end
+
   object :user do
     field :id, :id
     field :name, :string

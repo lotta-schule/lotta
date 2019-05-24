@@ -74,6 +74,24 @@ defmodule Api.Accounts do
   end
 
   @doc """
+  Registers a user.
+
+  ## Examples
+
+      iex> register_user(%{field: new_value})
+      {:ok, %User{}}
+
+      iex> register_user(user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def register_user(attrs) do
+    %User{}
+    |> User.registration_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Deletes a User.
 
   ## Examples

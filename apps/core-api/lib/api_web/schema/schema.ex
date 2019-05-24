@@ -17,7 +17,6 @@ defmodule ApiWeb.Schema do
     end
   end
 
-
   input_object :update_user_params do
     field :name, :string
     field :email, :string
@@ -25,6 +24,12 @@ defmodule ApiWeb.Schema do
   end
 
   mutation do
+    field :register, type: :authresult do
+      arg :user, :update_user_params
+
+      resolve &Api.UserResolver.register/2
+    end
+
     field :update_user, type: :user do
       arg :id, non_null(:integer)
       arg :user, :update_user_params

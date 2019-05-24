@@ -12,6 +12,12 @@ defmodule Api.UserResolver do
     end
   end
 
+  def register(%{user: user_params}, _info) do
+    with {:ok, user} <- Accounts.register_user(user_params) do
+      {:ok, %{user: user}}
+    end
+  end
+
   def update(%{id: id, user: user_params}, _info) do
     Accounts.get_user!(id)
     |> Accounts.update_user(user_params)
