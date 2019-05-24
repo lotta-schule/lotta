@@ -10,9 +10,9 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-Api.Accounts.create_user(%{ name: "Alexis Rinaldoni", email: "alexis.rinaldoni@einsa.net" })
-Api.Accounts.create_user(%{ name: "Christopher Bill", email: "billy@einsa.net" })
-Api.Accounts.create_user(%{ name: "Eike Wiewiorra", email: "eike.wiewiorra@einsa.net" })
+Api.Accounts.register_user(%{ name: "Alexis Rinaldoni", email: "alexis.rinaldoni@einsa.net", password: "test123" })
+Api.Accounts.register_user(%{ name: "Christopher Bill", email: "billy@einsa.net", password: "test123" })
+Api.Accounts.register_user(%{ name: "Eike Wiewiorra", email: "eike.wiewiorra@einsa.net", password: "test123" })
 
 Api.Content.create_article(%{ title: "And the oskar goes to ...", preview: "Hallo hallo hallo" })
 Api.Content.create_article(%{ title: "Landesfinale Volleyball WK IV", preview: "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ..." })

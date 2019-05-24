@@ -4,7 +4,25 @@ API written for Medienportal API Server
 
 Phoenix, Elixir & Absinthe
 
-To start your server:
+
+
+## Setup
+
+Before the first start, you'll have to install the dependencies:
+
+```bash
+docker-compose run app mix do deps.get, compile
+```
+
+Then, migrate the database and add the seeds:
+Just run
+
+```bash
+docker-compose run app mix ecto.setup
+```
+
+## Start
+
 
 ```bash
 docker-compose up
