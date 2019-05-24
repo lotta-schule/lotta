@@ -1,15 +1,19 @@
 import React, { FunctionComponent, memo } from 'react';
-import { AppBar, Toolbar, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Button, Theme } from '@material-ui/core';
 import { CategoryModel } from '../../../model';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { makeStyles } from '@material-ui/styles';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles<Theme>(theme => ({
     root: {
         position: 'sticky',
-        top: 0
+        top: 0,
+        '& a': {
+            marginLeft: theme.spacing(2),
+            marginRight: theme.spacing(2)
+        }
     }
 }));
 
@@ -39,6 +43,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                         style={{ flexGrow: 1, flexShrink: 0 }}
                         to={'/'}
                         color={'inherit'}
+                        size={'medium'}
                     >
                         Startseite
                     </Button>
@@ -48,7 +53,8 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                             component={CollisionLink}
                             style={{ flexGrow: 1, flexShrink: 0 }}
                             to={`/category/${category.id}`}
-                            color={categoriesHierarchy[0] === category.id ? 'secondary' : 'inherit'}
+                            color={categoriesHierarchy[0] === category.id ? 'default' : 'inherit'}
+                            size={'medium'}
                         >
                             {category.title}
                         </Button>
@@ -56,15 +62,17 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                 </Toolbar>
             </AppBar>
             {subcategories.length > 0 && (
-                <AppBar position={'sticky'}>
-                    <Toolbar>
+                <AppBar position={'sticky'} color={'secondary'}>
+                    <Toolbar variant={'dense'}>
                         {subcategories.map(category => (
                             <Button
                                 key={category.id}
                                 component={CollisionLink}
                                 style={{ flexGrow: 1, flexShrink: 0 }}
                                 to={`/category/${category.id}`}
-                                color={categoriesHierarchy[1] === category.id ? 'secondary' : 'inherit'}
+                                color={categoriesHierarchy[1] === category.id ? 'secondary' : 'secondary'}
+                                variant={'contained'}
+                                size={'small'}
                             >
                                 {category.title}
                             </Button>
