@@ -27,7 +27,7 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                 <Grid item xs style={{ display: 'flex' }}>
                     {user && (
                         <div>
-                            <Avatar alt={'Nutzer Name'} src={user.avatar} />
+                            <Avatar alt={'Nutzer Name'} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
                             <Typography align={'center'}>
                                 <Link component={CollisionLink} to={'/profile'}>
                                     Profil

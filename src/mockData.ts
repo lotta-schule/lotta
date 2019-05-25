@@ -188,32 +188,3 @@ export const mockData: State = {
         uploads: []
     }
 };
-
-type MockedUserModel = UserModel & { password: string };
-
-export const mockUsers: MockedUserModel[] = [
-    {
-        id: 'U001',
-        email: 'alexis@einsa.net',
-        name: 'Alexis Rinaldoni',
-        avatar: 'https://avatars.dicebear.com/v2/avataaars/alexisrinaldoni.svg',
-        group: UserGroup.STUDENT,
-        password: 'mp3'
-    },
-    {
-        id: 'U002',
-        email: 'billy@einsa.net',
-        name: 'Christopher Bill',
-        avatar: 'https://avatars.dicebear.com/v2/avataaars/billy.svg',
-        group: UserGroup.STUDENT,
-        password: 'test'
-    },
-    {
-        id: 'U003',
-        email: 'eike@einsa.net',
-        name: 'Eike Wiewiorra',
-        avatar: 'https://avatars.dicebear.com/v2/avataaars/eikewiewiorra.svg',
-        group: UserGroup.TEACHER,
-        password: 'vodkacola'
-    },
-];
