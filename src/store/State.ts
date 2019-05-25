@@ -6,7 +6,6 @@ export interface ClientState {
 
 export interface UserState {
     user: UserModel | null;
-    token: string | null;
 }
 
 export interface UserFilesState {

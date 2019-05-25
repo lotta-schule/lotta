@@ -1,10 +1,9 @@
 import { State } from "./store/State";
-import { ContentModuleType, UserModel, UserGroup } from "./model";
+import { ContentModuleType } from "./model";
 
 export const mockData: State = {
     user: {
-        user: null,
-        token: null
+        user: null
     },
     client: {
         client: {
