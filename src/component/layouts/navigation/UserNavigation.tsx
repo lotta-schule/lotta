@@ -41,7 +41,9 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                         <ul>
                             {user ?
                                 <li><Link onClick={() => onLogout()}>Abmelden</Link></li> :
-                                <li><Link onClick={() => setLoginModalIsOpen(true)}>Anmelden</Link></li>
+                                <>
+                                    <li><Link onClick={() => setLoginModalIsOpen(true)}>Anmelden</Link></li>
+                                </>
                             }
                             <li>Impressum</li>
                             <li>Datenschutz</li>
