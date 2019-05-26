@@ -70,3 +70,24 @@ export const theme = createMuiTheme({
         }
     }
 });
+
+theme.typography.h4 = {
+    ...theme.typography.h4,
+    [theme.breakpoints.down('sm')]: {
+        fontSize: '1.6rem'
+    }
+};
+theme.typography.h5 = {
+    ...theme.typography.h4,
+    [theme.breakpoints.down('sm')]: {
+        fontSize: '1.4rem'
+    }
+};
+
+(theme.overrides as any).MuiContainer = {
+    root: {
+        [theme.breakpoints.down('md')]: {
+            padding: theme.spacing(0),
+        }
+    }
+}
