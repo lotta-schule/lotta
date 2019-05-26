@@ -19,7 +19,7 @@ config :api, ApiWeb.Endpoint,
 
 config :api, Api.Guardian,
   issuer: "medienportal",
-  secret_key: System.get_env("JWT_SECRET_KEY")
+  secret_key: System.get_env("SECRET_KEY_JWT")
 
 # Configures Elixir's Logger
 config :logger, :console,
