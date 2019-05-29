@@ -28,9 +28,8 @@ defmodule ApiWeb.Context do
 
   defp get_tenant_context(conn) do
     tenant_header = get_req_header(conn, "tenant")
-    with ["id:" <> id] <- tenant_header,
-        ["slug:" <> slug] <- tenant_header do
-      %{tenant_id: id, tenant_slug: slug}
+    with ["slug:" <> slug] <- tenant_header do
+      %{tenant_slug: slug}
     else
       _ -> %{}
     end

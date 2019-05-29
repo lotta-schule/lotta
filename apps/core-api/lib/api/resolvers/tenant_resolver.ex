@@ -6,11 +6,6 @@ defmodule Api.TenantResolver do
     {:ok, Tenants.list_tenants()}
   end
 
-  def current(_args, %{context: %{context: %{tenant_id: id}}}) do
-    IO.puts "tenant_id: #{id}"
-    {:ok, Tenants.get_tenant!(id)}
-  end
-
   def current(_args, %{context: %{context: %{tenant_slug: slug}}}) do
     {:ok, Tenants.get_tenant!(slug)}
   end
