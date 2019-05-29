@@ -32,7 +32,22 @@ defmodule ApiWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
 
-  plug CORSPlug
+  plug CORSPlug,
+    headers: [
+      "Authorization",
+      "tenant",
+      "Content-Type",
+      "Accept",
+      "Origin",
+      "User-Agent",
+      "DNT",
+      "Cache-Control",
+      "X-Mx-ReqToken",
+      "Keep-Alive",
+      "X-Requested-With",
+      "If-Modified-Since",
+      "X-CSRF-Token"
+    ]
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
