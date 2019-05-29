@@ -46,7 +46,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                     }
 
                     const isLoading = isLoginLoading || isRegisterLoading;
-                    const errorMessage = loginError || registerError;
+                    const error = loginError || registerError;
                     return (
                         <Dialog open={isOpen} fullWidth>
                             <form onSubmit={(e) => {
@@ -62,8 +62,8 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                                     <DialogContentText>
                                         Melde dich hier mit deinen Zugangsdaten an.
                                         </DialogContentText>
-                                    {errorMessage && (
-                                        <p style={{ color: 'red' }}>{errorMessage}</p>
+                                    {error && (
+                                        <p style={{ color: 'red' }}>{error.message}</p>
                                     )}
                                     <TextField
                                         autoFocus
