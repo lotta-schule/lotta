@@ -3,6 +3,14 @@ defmodule ApiWeb.Schema do
   import_types ApiWeb.Schema.Types
 
   query do
+    field :tenants, list_of(:tenant) do
+      resolve &Api.TenantResolver.all/2
+    end
+
+    field :tenant, :tenant do
+      resolve &Api.TenantResolver.current/2
+    end
+
     field :articles, list_of(:article) do
       resolve &Api.ArticleResolver.all/2
     end

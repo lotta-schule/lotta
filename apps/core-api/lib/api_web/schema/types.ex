@@ -14,6 +14,12 @@ defmodule ApiWeb.Schema.Types do
     field :articles, list_of(:article), resolve: assoc(:articles)
   end
 
+  object :tenant do
+    field :id, :id
+    field :title, :string
+    field :slug, :string
+  end
+
   object :article do
     field :id, :id
     field :title, :string

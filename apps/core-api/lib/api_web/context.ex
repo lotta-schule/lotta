@@ -12,11 +12,25 @@ defmodule ApiWeb.Context do
     Absinthe.Plug.put_options(conn, context: context)
   end
 
-  def build_context(conn) do
-    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-    {:ok, claim} <- Guardian.decode_and_verify(token),
-    user when not is_nil(user) <- User.find(claim["sub"]) do
-      %{current_user: user}
+  defp build_context(conn) do
+    %{context: Map.merge(
+      get_user_context(conn),
+      get_tenant_context(conn)
+    )}
+  end
+
+  defp get_user_context(conn) do
+    case Guardian.Plug.current_resource(conn) do
+      nil -> %{}
+      user -> %{current_user: user}
+    end
+  end
+
+  defp get_tenant_context(conn) do
+    tenant_header = get_req_header(conn, "tenant")
+    with ["id:" <> id] <- tenant_header,
+        ["slug:" <> slug] <- tenant_header do
+      %{tenant_id: id, tenant_slug: slug}
     else
       _ -> %{}
     end

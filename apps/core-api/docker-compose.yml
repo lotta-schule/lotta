@@ -21,6 +21,7 @@ services:
     networks:
       - postgres
     environment: 
+      MIX_ENV: dev
       SECRET_KEY_JWT: h31lRCT+dexQ+44q5MEvNOpfZdKlhmdZDe1esJEM1uQyzhdJrbjRbMctVuoS6/Ru
 
   postgres:
