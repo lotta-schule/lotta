@@ -15,8 +15,8 @@ defmodule Api.CategoryResolver do
     {:error, "Tenant nicht gefunden"}
   end
 
-  def update(%{id: id, user: user_params}, _info) do
-    Accounts.get_user!(id)
-    |> Accounts.update_user(user_params)
+  def update(%{id: id, category: category_params}, _info) do
+    Tenants.get_category!(id)
+    |> Tenants.update_category(category_params)
   end
 end

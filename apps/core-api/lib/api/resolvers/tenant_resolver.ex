@@ -10,7 +10,6 @@ defmodule Api.TenantResolver do
     {:ok, tenant}
   end
   def current(_args, _info) do
-    IO.inspect _info
     {:ok, nil}
   end
 

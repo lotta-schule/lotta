@@ -25,6 +25,7 @@ defmodule ApiWeb.Schema.Types do
     field :id, :id
     field :title, :string
     field :category_id, :id
+    field :category, :category, resolve: assoc(:category)
   end
 
   object :article do
