@@ -5,6 +5,7 @@ defmodule Api.Tenants.Tenant do
   schema "tenants" do
     field :slug, :string
     field :title, :string
+    has_many :categories, Api.Tenants.Category
 
     timestamps()
   end

@@ -6,10 +6,11 @@ defmodule Api.TenantResolver do
     {:ok, Tenants.list_tenants()}
   end
 
-  def current(_args, %{context: %{context: %{tenant_slug: slug}}}) do
-    {:ok, Tenants.get_tenant_by_slug!(slug)}
+  def current(_args, %{context: %{context: %{tenant: tenant}}}) do
+    {:ok, tenant}
   end
   def current(_args, _info) do
+    IO.inspect _info
     {:ok, nil}
   end
 

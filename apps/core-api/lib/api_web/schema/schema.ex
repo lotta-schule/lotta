@@ -10,6 +10,10 @@ defmodule ApiWeb.Schema do
     field :tenant, :tenant do
       resolve &Api.TenantResolver.current/2
     end
+    
+    field :categories, list_of(:category) do
+      resolve &Api.CategoryResolver.all/2
+    end
 
     field :articles, list_of(:article) do
       resolve &Api.ArticleResolver.all/2

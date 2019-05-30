@@ -18,6 +18,13 @@ defmodule ApiWeb.Schema.Types do
     field :id, :id
     field :title, :string
     field :slug, :string
+    field :categories, list_of(:category), resolve: assoc(:categories)
+  end
+
+  object :category do
+    field :id, :id
+    field :title, :string
+    field :category_id, :id
   end
 
   object :article do

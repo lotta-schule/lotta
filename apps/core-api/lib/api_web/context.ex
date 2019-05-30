@@ -3,7 +3,7 @@ defmodule ApiWeb.Context do
 
   import Plug.Conn
 
-  alias Api.{Guardian, Accounts}
+  alias Api.{Guardian, Accounts, Tenants}
 
   def init(opts), do: opts
 
@@ -29,7 +29,7 @@ defmodule ApiWeb.Context do
   defp get_tenant_context(conn) do
     tenant_header = get_req_header(conn, "tenant")
     with ["slug:" <> slug] <- tenant_header do
-      %{tenant_slug: slug}
+      %{tenant: Tenants.get_tenant_by_slug!(slug)}
     else
       _ -> %{}
     end

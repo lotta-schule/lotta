@@ -10,8 +10,27 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-Api.Repo.insert(%Api.Tenants.Tenant{ slug: "web", title: "Web Beispiel" })
+{:ok, web_tenant} = Api.Repo.insert(%Api.Tenants.Tenant{ slug: "web", title: "Web Beispiel" })
 
+{:ok, profil} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Profil" })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "GTA" })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Projekt" })
+{:ok, faecher} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Fächer" })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Material" })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Galerien" })
+
+# Fächer
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Sport", category_id: faecher.id })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Kunst", category_id: faecher.id })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Sprache", category_id: faecher.id })
+
+# Profil
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Podcast", category_id: profil.id })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Offene Kunst-AG", category_id: profil.id })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Schülerzeitung", category_id: profil.id })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Oskar-Reime-Chor", category_id: profil.id })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Schüler-Radio", category_id: profil.id })
+                
 Api.Accounts.register_user(%{ name: "Alexis Rinaldoni", email: "alexis.rinaldoni@einsa.net", password: "test123" })
 Api.Accounts.register_user(%{ name: "Christopher Bill", email: "billy@einsa.net", password: "test123" })
 Api.Accounts.register_user(%{ name: "Eike Wiewiorra", email: "eike.wiewiorra@einsa.net", password: "test123" })
