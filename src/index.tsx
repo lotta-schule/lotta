@@ -1,6 +1,6 @@
 import './index.scss';
 import { ApolloProvider } from 'react-apollo';
-import { ConnectedApp } from './component/ConnectedApp';
+import { App } from './component/App';
 import { client } from 'api/client';
 import { Provider } from 'react-redux';
 import { theme } from './theme';
@@ -15,7 +15,7 @@ ReactDOM.render(
         <ThemeProvider theme={theme}>
             <ApolloProvider client={client}>
                 <Provider store={store}>
-                    <ConnectedApp />
+                    <App />
                 </Provider >
             </ApolloProvider >
         </ThemeProvider >

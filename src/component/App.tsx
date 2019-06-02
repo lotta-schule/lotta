@@ -13,8 +13,9 @@ import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { memo, useState } from 'react';
 import store from 'store/Store';
+import { CategoryRoute } from './routes/CategoryRoute';
 
-export const ConnectedApp = memo(() => {
+export const App = memo(() => {
   const client = useSelector<State, ClientModel | null>(state => state.client.client);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApolloError | null>(null);
@@ -63,12 +64,7 @@ export const ConnectedApp = memo(() => {
             articles={store.getState().content.articles.filter(article => !article.category)}
           />
         ))} />
-        <Route path={'/category/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
-          <CategoryLayout
-            category={store.getState().client.categories.find(category => category.id === match.params.id)!}
-            articles={store.getState().content.articles.filter(article => !!article.category && article.category.id === match.params.id)}
-          />
-        ))} />
+        <Route path={'/category/:id'} component={CategoryRoute} />
         <Route path={'/page/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
           <PageLayout
             title={match.params.id}
