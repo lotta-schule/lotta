@@ -34,7 +34,7 @@ export interface ConnectedBaseLayoutProps {
 export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = memo(({ children, sidebar }) => {
     const styles = useStyles();
     const client = useSelector<State, ClientModel>(state => state.client.client!);
-    const categories = useSelector<State, CategoryModel[]>(state => state.content.categories);
+    const categories = useSelector<State, CategoryModel[]>(state => state.client.categories);
     return (
         <Container className={styles.root}>
             <header

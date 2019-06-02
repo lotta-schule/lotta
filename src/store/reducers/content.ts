@@ -1,4 +1,3 @@
-import { find } from 'lodash';
 import { ContentState } from '../State';
 import { AddArticleAction, AddCategoryAction, UpdateArticleAction, ContentActionType } from '../actions/content';
 import { mockData } from '../../mockData';
@@ -23,17 +22,6 @@ export const contentReducer = (s: ContentState = initialContentState, action: Co
                         article
                 )
             };
-        case ContentActionType.ADD_CATEGORY:
-            const foundCategory = find(s.articles, { id: action.category.id });
-            return foundCategory
-                ? {
-                    ...s,
-                    categories: s.categories.map(category => (category.id === action.category.id ? Object.assign({}, category, action.category) : category))
-                }
-                : {
-                    ...s,
-                    categories: action.category ? s.categories.concat(action.category) : s.categories
-                };
         default:
             return s;
     }

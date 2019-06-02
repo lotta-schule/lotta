@@ -6,16 +6,15 @@ import { CategoryModel, ClientModel } from '../../model';
 export enum ClientActionType {
     SET_CLIENT = '[ClientAction] set client',
     UPDATE_CLIENT = '[ClientAction] update client',
+    SET_CATEGORIES = '[ClientAction] set categories',
     ADD_CATEGORY = '[ClientAction] add category'
 }
 
 // Actions
-
 export type SetClientAction = Action<ClientActionType.SET_CLIENT> & { client: ClientModel };
-
 export type UpdateClientAction = Action<ClientActionType.UPDATE_CLIENT> & { client: ClientModel };
-
 export type AddCategoryAction = Action<ClientActionType.ADD_CATEGORY> & { category: CategoryModel };
+export type SetCategoriesAction = Action<ClientActionType.SET_CATEGORIES> & { categories: CategoryModel[] };
 
 // Action Creators
 
@@ -32,4 +31,9 @@ export const createUpdateClientAction: ActionCreator<UpdateClientAction> = (clie
 export const createAddCategoryAction: ActionCreator<AddCategoryAction> = (category: CategoryModel) => ({
     category,
     type: ClientActionType.ADD_CATEGORY
+});
+
+export const createSetCategoriesAction: ActionCreator<SetCategoriesAction> = (categories: CategoryModel[]) => ({
+    categories,
+    type: ClientActionType.SET_CATEGORIES
 });

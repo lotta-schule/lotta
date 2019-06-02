@@ -2,6 +2,7 @@ import { ClientModel, UserModel, FileModel, UploadModel, ArticleModel, CategoryM
 
 export interface ClientState {
     client: ClientModel | null;
+    categories: CategoryModel[];
 }
 
 export interface UserState {
@@ -14,7 +15,6 @@ export interface UserFilesState {
 }
 
 export interface ContentState {
-    categories: CategoryModel[];
     articles: ArticleModel[];
 }
 

@@ -44,8 +44,8 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
     const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || '')
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId]
 
-    const mainCategories = (categories || []).filter(category => !Boolean(category.categoryId));
-    let subcategories = (categories || []).filter(category => category.categoryId === categoriesHierarchy[0]);
+    const mainCategories = (categories || []).filter(category => !Boolean(category.category));
+    const subcategories = (categories || []).filter(category => category.category && category.category.id === categoriesHierarchy[0]);
 
 
     return (

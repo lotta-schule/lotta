@@ -2,10 +2,10 @@ import { ApolloError } from 'apollo-boost';
 import { CategoryLayout } from './layouts/CategoryLayout';
 import { CircularProgress } from '@material-ui/core';
 import { client as apolloClient } from '../api/client';
-import { ClientModel } from 'model';
+import { ClientModel, CategoryModel } from 'model';
 import { ConnectedBaseLayout } from './layouts/ConnectedBaseLayout';
 import { ConnectedEditArticleLayout } from './layouts/ConnectedEditArticleLayout';
-import { createSetClientAction } from 'store/actions/client';
+import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { PageLayout } from './layouts/PageLayout';
 import { Route, BrowserRouter, Switch, RouteComponentProps } from 'react-router-dom';
@@ -20,14 +20,16 @@ export const ConnectedApp = memo(() => {
   const [error, setError] = useState<ApolloError | null>(null);
   const dispatch = useDispatch();
   if (!client && !error && !isLoading) {
-    apolloClient.query<{ tenant: ClientModel }>({
+    apolloClient.query<{ tenant: (ClientModel & { categories: CategoryModel[] }) }>({
       query: GetTenantQuery
     }).then(({ loading, errors, data }) => {
       setIsLoading(loading);
       if (errors) {
         setError(errors[0]);
       }
-      dispatch(createSetClientAction(data.tenant || null));
+      const { categories, ...client } = data.tenant;
+      dispatch(createSetClientAction(client));
+      dispatch(createSetCategoriesAction(categories));
     });
   }
 
@@ -63,7 +65,7 @@ export const ConnectedApp = memo(() => {
         ))} />
         <Route path={'/category/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
           <CategoryLayout
-            category={store.getState().content.categories.find(category => category.id === match.params.id)!}
+            category={store.getState().client.categories.find(category => category.id === match.params.id)!}
             articles={store.getState().content.articles.filter(article => !!article.category && article.category.id === match.params.id)}
           />
         ))} />

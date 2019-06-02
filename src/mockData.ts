@@ -6,81 +6,10 @@ export const mockData: State = {
         user: null
     },
     client: {
-        client: {
-            id: 'C001',
-            slug: 'einsa',
-            title: 'Medienportal'
-        }
+        client: null,
+        categories: []
     },
     content: {
-        categories: [
-            {
-                id: 'C0001',
-                title: 'Profil'
-            },
-            {
-                id: 'C0002',
-                title: 'GTA'
-            },
-            {
-                id: 'C0003',
-                title: 'Projekte'
-            },
-            {
-                id: 'C0004',
-                title: 'Fächer'
-            },
-            {
-                id: 'C0005',
-                title: 'Material'
-            },
-            {
-                id: 'C0006',
-                title: 'Galerien'
-            },
-            // Fächer >
-            {
-                id: 'C0007',
-                title: 'Sport',
-                categoryId: 'C0004'
-            },
-            {
-                id: 'C0008',
-                title: 'Kunst',
-                categoryId: 'C0004'
-            },
-            {
-                id: 'C0009',
-                title: 'Sprache',
-                categoryId: 'C0004'
-            },
-            // > Profil
-            {
-                id: 'C0010',
-                title: 'Podcast',
-                categoryId: 'C0002'
-            },
-            {
-                id: 'C0010',
-                title: 'Offene Kunst-AG',
-                categoryId: 'C0002'
-            },
-            {
-                id: 'C0011',
-                title: 'Schülerzeitung',
-                categoryId: 'C0002'
-            },
-            {
-                id: 'C0012',
-                title: 'Oskar-Reime-Chor',
-                categoryId: 'C0002'
-            },
-            {
-                id: 'C0013',
-                title: 'Schüler-Radio',
-                categoryId: 'C0002'
-            },
-        ],
         articles: [
             {
                 id: 'A01',

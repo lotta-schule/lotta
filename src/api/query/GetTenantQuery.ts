@@ -6,6 +6,14 @@ export const GetTenantQuery = gql`
             id
             title
             slug
+            categories {
+                id,
+                title,
+                category {
+                    id
+                    title
+                }
+            }
         }
     }
 `;
