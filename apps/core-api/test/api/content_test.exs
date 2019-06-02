@@ -6,9 +6,9 @@ defmodule Api.ContentTest do
   describe "articles" do
     alias Api.Content.Article
 
-    @valid_attrs %{pageName: "some pageName", preview: "some preview", title: "some title"}
-    @update_attrs %{pageName: "some updated pageName", preview: "some updated preview", title: "some updated title"}
-    @invalid_attrs %{pageName: nil, preview: nil, title: nil}
+    @valid_attrs %{page_name: "some page_name", preview: "some preview", title: "some title"}
+    @update_attrs %{page_name: "some updated page_name", preview: "some updated preview", title: "some updated title"}
+    @invalid_attrs %{page_name: nil, preview: nil, title: nil}
 
     def article_fixture(attrs \\ %{}) do
       {:ok, article} =
@@ -31,7 +31,7 @@ defmodule Api.ContentTest do
 
     test "create_article/1 with valid data creates a article" do
       assert {:ok, %Article{} = article} = Content.create_article(@valid_attrs)
-      assert article.pageName == "some pageName"
+      assert article.page_name == "some page_name"
       assert article.preview == "some preview"
       assert article.title == "some title"
     end
@@ -43,7 +43,7 @@ defmodule Api.ContentTest do
     test "update_article/2 with valid data updates the article" do
       article = article_fixture()
       assert {:ok, %Article{} = article} = Content.update_article(article, @update_attrs)
-      assert article.pageName == "some updated pageName"
+      assert article.page_name == "some updated page_name"
       assert article.preview == "some updated preview"
       assert article.title == "some updated title"
     end

@@ -39,7 +39,7 @@ defmodule Api.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:absinthe, "~> 1.4.16"},
       {:absinthe_plug, "~> 1.4.7"},
-      {:absinthe_ecto, "~> 0.1.3"},
+      {:dataloader, "~> 1.0.0"},
       {:cors_plug, "~> 2.0.0"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},

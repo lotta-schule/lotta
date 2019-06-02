@@ -3,10 +3,14 @@ defmodule Api.Content.Article do
   import Ecto.Changeset
 
   schema "articles" do
-    field :pageName, :string
+    field :page_name, :string
     field :preview, :string
     field :title, :string
-    field :user_id, :id
+    field :preview_image_url, :string
+
+    belongs_to :user, Api.Accounts.User
+    belongs_to :tenant, Api.Tenants.Tenant
+    belongs_to :category, Api.Tenants.Category
 
     timestamps()
   end
@@ -14,7 +18,7 @@ defmodule Api.Content.Article do
   @doc false
   def changeset(article, attrs) do
     article
-    |> cast(attrs, [:title, :preview, :pageName])
-    |> validate_required([:title, :preview, :pageName])
+    |> cast(attrs, [:title, :preview, :page_name])
+    |> validate_required([:title, :preview, :page_name])
   end
 end

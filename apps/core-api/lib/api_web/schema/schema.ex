@@ -56,4 +56,19 @@ defmodule ApiWeb.Schema do
       resolve &Api.UserResolver.update/2
     end
   end
+
+  def context(ctx) do
+    loader =
+      Dataloader.new
+      |> Dataloader.add_source(Api.Content, Api.Content.data())
+      |> Dataloader.add_source(Api.Tenants, Api.Tenants.data())
+      # |> Dataloader.add_source(Api.Tenants.Category, Api.Tenants.data())
+      |> Dataloader.add_source(Api.Accounts, Api.Accounts.data())
+
+    Map.put(ctx, :loader, loader)
+  end
+
+  def plugins do
+    [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
+  end
 end

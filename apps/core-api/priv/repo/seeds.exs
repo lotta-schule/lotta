@@ -9,6 +9,9 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+Api.Accounts.register_user(%{ name: "Alexis Rinaldoni", email: "alexis.rinaldoni@einsa.net", password: "test123" })
+Api.Accounts.register_user(%{ name: "Christopher Bill", email: "billy@einsa.net", password: "test123" })
+Api.Accounts.register_user(%{ name: "Eike Wiewiorra", email: "eike.wiewiorra@einsa.net", password: "test123" })
 
 {:ok, web_tenant} = Api.Repo.insert(%Api.Tenants.Tenant{ slug: "web", title: "Web Beispiel" })
 
@@ -30,12 +33,35 @@ Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Offene 
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Schülerzeitung", category_id: profil.id })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Oskar-Reime-Chor", category_id: profil.id })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Schüler-Radio", category_id: profil.id })
-                
-Api.Accounts.register_user(%{ name: "Alexis Rinaldoni", email: "alexis.rinaldoni@einsa.net", password: "test123" })
-Api.Accounts.register_user(%{ name: "Christopher Bill", email: "billy@einsa.net", password: "test123" })
-Api.Accounts.register_user(%{ name: "Eike Wiewiorra", email: "eike.wiewiorra@einsa.net", password: "test123" })
 
-Api.Content.create_article(%{ title: "And the oskar goes to ...", preview: "Hallo hallo hallo" })
-Api.Content.create_article(%{ title: "Landesfinale Volleyball WK IV", preview: "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ..." })
-Api.Content.create_article(%{ title: "Der Podcast zum WB 2", preview: "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert." })
-Api.Content.create_article(%{ title: "Der Vorausscheid", preview: "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury." })
+# Articles
+Api.Repo.insert(%Api.Content.Article{
+    tenant_id: web_tenant.id,
+    category_id: profil.id,
+    title: "And the oskar goes to ...",
+    preview: "Hallo hallo hallo",
+    preview_image_url: "https://placeimg.com/640/480/animals"
+})
+Api.Repo.insert(%Api.Content.Article{
+    tenant_id: web_tenant.id,
+    category_id: profil.id,
+    title: "Landesfinale Volleyball WK IV",
+    preview: "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
+    preview_image_url: "https://placeimg.com/640/480/architecture"
+})
+Api.Repo.insert(%Api.Content.Article{
+    tenant_id: web_tenant.id,
+    category_id: profil.id,
+    title: "Der Podcast zum WB 2",
+    preview: "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
+    page_name: "KleinKunst 2018",
+    preview_image_url: "https://placeimg.com/640/480/people",
+})
+Api.Repo.insert(%Api.Content.Article{
+    tenant_id: web_tenant.id,
+    category_id: profil.id,
+    title: "Der Vorausscheid",
+    preview: "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
+    page_name: "KleinKunst 2018",
+    preview_image_url: "https://placeimg.com/640/480/tech",
+})

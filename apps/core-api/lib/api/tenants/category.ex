@@ -6,6 +6,7 @@ defmodule Api.Tenants.Category do
     field :title, :string
     field :category_id, :id
 
+    has_one :category, Api.Tenants.Category
     belongs_to :tenant, Api.Tenants.Tenant
 
     timestamps()

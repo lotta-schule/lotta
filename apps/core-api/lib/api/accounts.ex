@@ -8,6 +8,14 @@ defmodule Api.Accounts do
 
   alias Api.Accounts.User
 
+  def data() do
+    Dataloader.Ecto.new(Api.Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
+  end
+
   @doc """
   Returns the list of users.
 

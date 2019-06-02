@@ -5,7 +5,7 @@ defmodule Api.Repo.Migrations.CreateArticles do
     create table(:articles) do
       add :title, :string
       add :preview, :string
-      add :pageName, :string
+      add :page_name, :string
       add :user_id, references(:users, on_delete: :nothing)
 
       timestamps()

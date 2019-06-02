@@ -8,6 +8,14 @@ defmodule Api.Content do
 
   alias Api.Content.Article
 
+  def data() do
+    Dataloader.Ecto.new(Api.Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
+  end
+
   @doc """
   Returns the list of articles.
 
