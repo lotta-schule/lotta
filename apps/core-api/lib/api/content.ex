@@ -25,8 +25,21 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles do
-    Repo.all(Article)
+  def list_articles(tenant_id) do
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id)
+  end
+  
+  @doc """
+  Returns the list of articles belonging to a category_id.
+
+  ## Examples
+
+      iex> list_articles(category_id)
+      [%Article{}, ...]
+
+  """
+  def list_articles(tenant_id, category_id) do
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.category_id == ^category_id)
   end
 
   @doc """

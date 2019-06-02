@@ -16,6 +16,7 @@ defmodule ApiWeb.Schema do
     end
 
     field :articles, list_of(:article) do
+      arg :category_id, :id
       resolve &Api.ArticleResolver.all/2
     end
 

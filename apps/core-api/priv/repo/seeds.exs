@@ -17,7 +17,7 @@ Api.Accounts.register_user(%{ name: "Eike Wiewiorra", email: "eike.wiewiorra@ein
 
 {:ok, profil} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Profil" })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "GTA" })
-Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Projekt" })
+{:ok, projekt} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Projekt" })
 {:ok, faecher} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Fächer" })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Material" })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Galerien" })
@@ -64,4 +64,11 @@ Api.Repo.insert(%Api.Content.Article{
     preview: "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
     page_name: "KleinKunst 2018",
     preview_image_url: "https://placeimg.com/640/480/tech",
+})
+Api.Repo.insert(%Api.Content.Article{
+    tenant_id: web_tenant.id,
+    category_id: projekt.id,
+    title: "„Nipple Jesus“- eine extreme Erfahrung",
+    preview: "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
+    preview_image_url: "https://placeimg.com/640/480/people",
 })

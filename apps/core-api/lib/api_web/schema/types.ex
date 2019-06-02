@@ -1,6 +1,8 @@
 defmodule ApiWeb.Schema.Types do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   use Absinthe.Schema.Notation
+
+  import_types Absinthe.Type.Custom
   
   object :authresult do
     field :user, :user
@@ -31,6 +33,8 @@ defmodule ApiWeb.Schema.Types do
 
   object :article do
     field :id, :id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
     field :title, :string
     field :preview, :string
     field :preview_image_url, :string
