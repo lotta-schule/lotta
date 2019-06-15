@@ -37,8 +37,8 @@ export const mockData: State = {
             },
             {
                 id: 'A02',
-                insertedAt: '2018-04-7T12:15:45',
-                updatedAt: '2018-04-7T12:15:45',
+                insertedAt: '2018-04-07T12:15:45',
+                updatedAt: '2018-04-07T12:15:45',
                 title: 'Landesfinale Volleyball WK IV',
                 preview: 'Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale "Jugend trainiert für Europa" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...',
                 previewImageUrl: 'https://placeimg.com/640/480/architecture',
@@ -61,8 +61,8 @@ export const mockData: State = {
             },
             {
                 id: 'A03',
-                insertedAt: '2019-04-3T7:56:1',
-                updatedAt: '2019-04-3T7:56:1',
+                insertedAt: '2019-04-03T14:18:47',
+                updatedAt: '2019-04-03T14:18:47',
                 title: 'Der Podcast zum WB 2',
                 preview: 'Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.',
                 category: {
@@ -86,8 +86,8 @@ export const mockData: State = {
             },
             {
                 id: 'A04',
-                insertedAt: '2019-05-8T23:18:47',
-                updatedAt: '2019-05-8T23:18:47',
+                insertedAt: '2019-05-08T23:18:47',
+                updatedAt: '2019-05-08T23:18:47',
                 title: 'Der Vorausscheid',
                 preview: 'Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.',
                 category: {
