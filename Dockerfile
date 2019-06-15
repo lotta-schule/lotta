@@ -9,7 +9,7 @@ RUN apk add --update --no-cache \
 ENV CI=true
 
 ENV REACT_APP_APP_BASE_DOMAIN ".4.medienportal.org"
-ENV REACT_APP_API_URL "http://api.4.medienportal.org/api"
+ENV REACT_APP_API_URL "https://api.4.medienportal.org/api"
 ENV REACT_APP_AUTHENTICATION_TOKEN_NAME "PandaToken"
 
 ADD . /src
