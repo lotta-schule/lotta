@@ -15,13 +15,18 @@ defmodule ApiWeb.Schema do
       resolve &Api.CategoryResolver.all/2
     end
 
+    field :article, :article do
+      arg :id, non_null(:id)
+      resolve &Api.ArticleResolver.get/2
+    end
+
     field :articles, list_of(:article) do
       arg :category_id, :id
       resolve &Api.ArticleResolver.all/2
     end
 
     field :page, list_of(:article) do
-      arg :name, :string
+      arg :name, non_null(:string)
       resolve &Api.ArticleResolver.by_page/2
     end
 
@@ -35,15 +40,9 @@ defmodule ApiWeb.Schema do
     end
   end
 
-  input_object :update_user_params do
-    field :name, :string
-    field :email, :string
-    field :password, :string
-  end
-
   mutation do
     field :register, type: :authresult do
-      arg :user, :update_user_params
+      arg :user, non_null(:update_user_params)
 
       resolve &Api.UserResolver.register/2
     end
@@ -56,11 +55,31 @@ defmodule ApiWeb.Schema do
     end
 
     field :update_user, type: :user do
-      arg :id, non_null(:integer)
-      arg :user, :update_user_params
+      arg :id, non_null(:id)
+      arg :user, non_null(:update_user_params)
 
       resolve &Api.UserResolver.update/2
     end
+    
+    field :update_article, type: :article do
+      arg :id, non_null(:id)
+      arg :article, non_null(:update_article_input)
+  
+      resolve &Api.ArticleResolver.update/2
+    end
+  end
+
+  input_object :update_user_params do
+    field :name, :string
+    field :email, :string
+    field :password, :string
+  end
+  
+  input_object :update_article_input do
+    field :title, :string
+    field :preview, :string
+    field :preview_image_url, :string
+    field :page_name, :string
   end
 
   def context(ctx) do

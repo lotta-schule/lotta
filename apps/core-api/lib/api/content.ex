@@ -86,7 +86,7 @@ defmodule Api.Content do
   """
   def create_article(attrs \\ %{}) do
     %Article{}
-    |> Article.changeset(attrs)
+    |> Article.create_changeset(attrs)
     |> Repo.insert()
   end
 
@@ -104,7 +104,7 @@ defmodule Api.Content do
   """
   def update_article(%Article{} = article, attrs) do
     article
-    |> Article.changeset(attrs)
+    |> Article.update_changeset(attrs)
     |> Repo.update()
   end
 
@@ -134,7 +134,7 @@ defmodule Api.Content do
 
   """
   def change_article(%Article{} = article) do
-    Article.changeset(article, %{})
+    Article.update_changeset(article, %{})
   end
 
   alias Api.Content.ContentModule

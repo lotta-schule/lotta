@@ -18,7 +18,14 @@ defmodule Api.Content.Article do
   end
 
   @doc false
-  def changeset(article, attrs) do
+  def create_changeset(article, attrs) do
+    article
+    |> cast(attrs, [:title, :preview, :page_name])
+    |> validate_required([:title, :preview, :page_name])
+  end
+
+  @doc false
+  def update_changeset(article, attrs) do
     article
     |> cast(attrs, [:title, :preview, :page_name])
     |> validate_required([:title, :preview, :page_name])
