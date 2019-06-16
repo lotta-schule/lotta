@@ -3,12 +3,12 @@ import { ContentModuleModel } from './ContentModuleModel';
 
 export interface ArticleModel {
     id: string;
-    createdAt: Date;
-    updatedAt: Date;
+    insertedAt: string;
+    updatedAt: string;
     title: string;
     preview?: string;
-    previewImage?: string;
-    modules: ContentModuleModel[];
+    previewImageUrl?: string;
+    contentModules: ContentModuleModel[];
     category?: CategoryModel;
     pageName?: string;
 }

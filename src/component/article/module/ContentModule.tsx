@@ -14,13 +14,13 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ContentModuleProps {
-    module: ContentModuleModel;
+    contentModule: ContentModuleModel;
     index: number;
     isEditModeEnabled?: boolean;
-    onUpdateModule?(module: ContentModuleModel): void;
+    onUpdateModule?(contentModule: ContentModuleModel): void;
 }
 
-export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, module, index, onUpdateModule }) => {
+export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, contentModule, index, onUpdateModule }) => {
 
     const styles = useStyles();
 
@@ -29,13 +29,13 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
             {isEditModeEnabled && (
                 <div {...(draggableProvided ? draggableProvided.dragHandleProps : undefined)} className={styles.dragbar} />
             )}
-            {module.type === ContentModuleType.Text && <Text module={module} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
+            {contentModule.type === ContentModuleType.TEXT && <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
         </Card>
     );
 
     return isEditModeEnabled ?
         (
-            <Draggable draggableId={module.id} index={index}>
+            <Draggable draggableId={contentModule.id} index={index}>
                 {card}
             </Draggable>
         ) : (

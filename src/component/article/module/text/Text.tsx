@@ -5,19 +5,19 @@ import { Edit } from './Edit';
 import { Show } from './Show';
 
 export interface TextProps {
-    module: ContentModuleModel;
+    contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule?(module: ContentModuleModel): void;
+    onUpdateModule?(contentModule: ContentModuleModel): void;
 }
 
-export const Text: FunctionComponent<TextProps> = memo(({ isEditModeEnabled, module, onUpdateModule }) => (
+export const Text: FunctionComponent<TextProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
     <CardContent>
         <Typography variant={'body1'}>
             {isEditModeEnabled && onUpdateModule ?
                 (
-                    <Edit module={module} onUpdateModule={onUpdateModule} />
+                    <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
                 ) : (
-                    <Show module={module} />
+                    <Show contentModule={contentModule} />
                 )
             }
         </Typography>

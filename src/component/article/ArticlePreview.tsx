@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ArticleModel } from '../../model';
 import { Card, CardMedia, CardContent, Typography, Link, Grid } from '@material-ui/core';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
 
@@ -11,12 +11,12 @@ interface ArticlePreviewProps {
 }
 
 export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ article }) => (
-    <Card key={article.id} style={{padding: '0.5em'}}>
+    <Card key={article.id} style={{ padding: '0.5em' }}>
         <Grid container style={{ display: 'flex' }}>
             <Grid item xs={12} sm={4}>
                 <CardMedia
                     style={{ minHeight: 180, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, backgroundPosition: '0 0' }}
-                    image={article.previewImage}
+                    image={article.previewImageUrl}
                     title={`Vorschaubild zu ${article.title}`}
                 />
             </Grid>
@@ -28,7 +28,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                         </Link>
                     </Typography>
                     <Typography variant={'subtitle1'} color="textSecondary">
-                        {format(article.updatedAt, 'PPP', { locale: de }) + ' '}
+                        {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
                         {article.pageName && <> &bull; {article.pageName} </>}
                         &bull; 18 Views
                         &bull; Autor: Lola

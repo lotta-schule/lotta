@@ -40,7 +40,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
             <TextField
                 label="Datum"
                 type={'date'}
-                value={article.updatedAt.toISOString().slice(0, 10)}
+                value={article.updatedAt}
                 disabled
                 fullWidth
                 InputLabelProps={{

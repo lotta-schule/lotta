@@ -30,29 +30,33 @@ export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditM
             }
 
             if (onUpdateArticle) {
-                const newModulesArray = Array.from(article.modules);
+                const newModulesArray = Array.from(article.contentModules);
                 newModulesArray.splice(source.index, 1);
-                newModulesArray.splice(destination.index, 0, article.modules[source.index]);
+                newModulesArray.splice(destination.index, 0, article.contentModules[source.index]);
                 onUpdateArticle({
                     ...article,
-                    modules: newModulesArray
+                    contentModules: newModulesArray
                 });
             }
         }}>
             <Droppable droppableId={article.id}>
                 {provided => (
                     <section {...provided.droppableProps} ref={provided.innerRef}>
-                        {article.modules.map((contentModule, index) => (
+                        {article.contentModules.map((contentModule, index) => (
                             <ContentModule
                                 key={contentModule.id}
                                 index={index}
-                                module={contentModule}
+                                contentModule={contentModule}
                                 isEditModeEnabled={isEditModeEnabled}
                                 onUpdateModule={updatedModule => {
                                     if (onUpdateArticle) {
                                         onUpdateArticle({
                                             ...article,
-                                            modules: article.modules.map(module => module.id === updatedModule.id ? updatedModule : module)
+                                            contentModules: article.contentModules.map(contentModule =>
+                                                contentModule.id === updatedModule.id ?
+                                                    updatedModule :
+                                                    contentModule
+                                            )
                                         });
                                     }
                                 }}

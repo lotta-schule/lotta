@@ -6,7 +6,7 @@ export enum FileModelType {
 
 export interface FileModel {
     id: string;
-    createdAt: string;
+    insertedAt: string;
     updatedAt: string;
     path: string;
     filename: string;

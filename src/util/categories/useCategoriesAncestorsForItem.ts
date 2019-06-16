@@ -1,19 +1,22 @@
-import { useSelector } from 'react-redux';
-import { State } from 'store/State';
 import { CategoryModel } from 'model';
+import { useCategories } from './useCategories';
+import { find } from 'lodash';
 
 export const useCategoriesAncestorsForItem = (categoryId: string): string[] => {
-    const categories = useSelector<State, CategoryModel[]>(state => state.content.categories);
+    const categories = useCategories();
     let categoriesHierarchy: string[] = [];
-    let lastFoundCategory: CategoryModel | null = null;
+    let lastFoundCategory: CategoryModel | null = null;
     for (let i = 0; i < 5; i++) { // max 5 levels
-        const currentLevelCategoryId = (lastFoundCategory ? lastFoundCategory.categoryId : categoryId) as string | undefined;
+        const currentLevelCategoryId = (lastFoundCategory ?
+            (lastFoundCategory.category && lastFoundCategory.category.id) :
+            categoryId
+        ) as string | undefined;
         if (!currentLevelCategoryId) {
             break;
         }
-        lastFoundCategory = categories.find(category => category.id === currentLevelCategoryId) || null;
-        if (lastFoundCategory && lastFoundCategory.categoryId) {
-            categoriesHierarchy = [lastFoundCategory.categoryId, ...categoriesHierarchy];
+        lastFoundCategory = find(categories, (category: CategoryModel) => category.id === currentLevelCategoryId) || null as CategoryModel | null;
+        if (lastFoundCategory && lastFoundCategory.category) {
+            categoriesHierarchy = [lastFoundCategory.category.id, ...categoriesHierarchy];
         } else {
             break;
         }

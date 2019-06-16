@@ -25,8 +25,7 @@ export const createAddCategoryAction: ActionCreator<AddCategoryAction> = (catego
     type: ContentActionType.ADD_CATEGORY
 });
 
-export const createAddArticleAction: ActionCreator<AddArticleAction> = (pageId: string, article: ArticleModel) => ({
-    pageId,
+export const createAddArticleAction: ActionCreator<AddArticleAction> = (article: ArticleModel) => ({
     article,
     type: ContentActionType.ADD_ARTICLE
 });

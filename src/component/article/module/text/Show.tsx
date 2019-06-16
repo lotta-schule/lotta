@@ -5,10 +5,10 @@ import { renderMark } from './SlateUtils';
 const { deserialize } = require('slate-base64-serializer').default;
 
 interface ShowProps {
-    module: ContentModuleModel;
+    contentModule: ContentModuleModel;
 }
 
-export const Show: FunctionComponent<ShowProps> = memo(({ module: contentModule }) => {
+export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
 
     return (
         <Editor
