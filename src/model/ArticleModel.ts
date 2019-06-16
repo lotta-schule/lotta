@@ -8,7 +8,7 @@ export interface ArticleModel {
     title: string;
     preview?: string;
     previewImageUrl?: string;
-    modules: ContentModuleModel[];
+    contentModules: ContentModuleModel[];
     category?: CategoryModel;
     pageName?: string;
 }

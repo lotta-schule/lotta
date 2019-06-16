@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const GetArticlesQuery = gql`
-    query GetArticles($categoryId: ID) {
-        articles(categoryId: $categoryId) {
+export const GetPageQuery = gql`
+    query GetPage($name: String!) {
+        page(name: $name) {
             id
             insertedAt
             updatedAt

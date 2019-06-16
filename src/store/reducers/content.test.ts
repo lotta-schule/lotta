@@ -59,7 +59,7 @@ describe('content reducer', () => {
                     updatedAt,
                     modules: [{
                         id: 'CM001',
-                        type: ContentModuleType.Text
+                        type: ContentModuleType.TEXT
                     }],
                     preview: 'Hallo',
                     title: 'Artikel 001'
@@ -74,7 +74,7 @@ describe('content reducer', () => {
                         title: 'Mein Beitrag',
                         modules: [{
                             id: 'CM001',
-                            type: ContentModuleType.Text,
+                            type: ContentModuleType.TEXT,
                             text: 'New Text'
                         }]
                     },
@@ -87,7 +87,7 @@ describe('content reducer', () => {
                 updatedAt,
                 modules: [{
                     id: 'CM001',
-                    type: ContentModuleType.Text,
+                    type: ContentModuleType.TEXT,
                     text: 'New Text'
                 }],
                 preview: 'Hallo',

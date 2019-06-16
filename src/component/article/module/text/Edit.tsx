@@ -8,8 +8,8 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 const { serialize, deserialize } = require('slate-base64-serializer').default;
 
 interface EditProps {
-    module: ContentModuleModel;
-    onUpdateModule(module: ContentModuleModel): void;
+    contentModule: ContentModuleModel;
+    onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export const Edit: FunctionComponent<EditProps> = memo(({ module: contentModule, onUpdateModule }) => {
+export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdateModule }) => {
 
     const [editorState, setEditorState] = useState(contentModule.text ? deserialize(contentModule.text) : Value.create());
     const [isCurrentlyEditing, setCurrentlyEditing] = useState(false);

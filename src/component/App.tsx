@@ -7,13 +7,13 @@ import { ConnectedBaseLayout } from './layouts/ConnectedBaseLayout';
 import { ConnectedEditArticleLayout } from './layouts/ConnectedEditArticleLayout';
 import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
-import { PageLayout } from './layouts/PageLayout';
 import { Route, BrowserRouter, Switch, RouteComponentProps } from 'react-router-dom';
 import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { memo, useState } from 'react';
 import store from 'store/Store';
 import { CategoryRoute } from './routes/CategoryRoute';
+import { PageRoute } from './routes/PageRoute';
 
 export const App = memo(() => {
   const client = useSelector<State, ClientModel | null>(state => state.client.client);
@@ -65,14 +65,7 @@ export const App = memo(() => {
           />
         ))} />
         <Route path={'/category/:id'} component={CategoryRoute} />
-        <Route path={'/page/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => (
-          <PageLayout
-            title={match.params.id}
-            articles={store.getState().content.articles.filter(article => (
-              article.pageName === match.params.id || article.id === match.params.id
-            ))}
-          />
-        ))} />
+        <Route path={'/page/:name'} component={PageRoute} />
         <Route path={'/article/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => <ConnectedEditArticleLayout articleId={match.params.id} />)} />
         <Route component={() => <div>Nicht gefunden</div>} />
       </Switch>

@@ -44,11 +44,11 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         setEditedArticle({
                             ...editedArticle,
-                            modules: [
-                                ...editedArticle.modules,
+                            contentModules: [
+                                ...editedArticle.contentModules,
                                 {
                                     id: new Date().getTime().toString(),
-                                    type: ContentModuleType.Text,
+                                    type: ContentModuleType.TEXT,
                                     text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } }))
                                 }
                             ]
