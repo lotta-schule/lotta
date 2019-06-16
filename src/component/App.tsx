@@ -1,19 +1,19 @@
 import { ApolloError } from 'apollo-boost';
+import { ArticleRoute } from './routes/ArticleRoute';
 import { CategoryLayout } from './layouts/CategoryLayout';
+import { CategoryRoute } from './routes/CategoryRoute';
 import { CircularProgress } from '@material-ui/core';
 import { client as apolloClient } from '../api/client';
 import { ClientModel, CategoryModel } from 'model';
 import { ConnectedBaseLayout } from './layouts/ConnectedBaseLayout';
-import { ConnectedEditArticleLayout } from './layouts/ConnectedEditArticleLayout';
 import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
-import { Route, BrowserRouter, Switch, RouteComponentProps } from 'react-router-dom';
+import { PageRoute } from './routes/PageRoute';
+import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { memo, useState } from 'react';
 import store from 'store/Store';
-import { CategoryRoute } from './routes/CategoryRoute';
-import { PageRoute } from './routes/PageRoute';
 
 export const App = memo(() => {
   const client = useSelector<State, ClientModel | null>(state => state.client.client);
@@ -66,7 +66,7 @@ export const App = memo(() => {
         ))} />
         <Route path={'/category/:id'} component={CategoryRoute} />
         <Route path={'/page/:name'} component={PageRoute} />
-        <Route path={'/article/:id'} component={memo<RouteComponentProps<{ id: string }>>(({ match }) => <ConnectedEditArticleLayout articleId={match.params.id} />)} />
+        <Route path={'/article/:id'} component={ArticleRoute} />
         <Route component={() => <div>Nicht gefunden</div>} />
       </Switch>
     </BrowserRouter>

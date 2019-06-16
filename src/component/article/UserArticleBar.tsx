@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo } from 'react';
-import { UserModel, ArticleModel, UserGroup } from '../../model';
+import { UserModel, ArticleModel } from '../../model';
 import { Card, Button, CardActionArea } from '@material-ui/core';
 import { CollisionLink } from '../general/CollisionLink';
 
@@ -9,7 +9,7 @@ interface UserArticleBarProps {
 }
 
 export const UserArticleBar: FunctionComponent<UserArticleBarProps> = memo(({ user, article }) => (
-    user && user.group > UserGroup.GUEST ? (
+    user/* && user.group > UserGroup.GUEST*/ ? (
         <Card>
             <CardActionArea style={{ justifyContent: 'right' }}>
                 <Button
