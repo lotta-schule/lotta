@@ -23,6 +23,10 @@ services:
     environment: 
       MIX_ENV: dev
       SECRET_KEY_JWT: h31lRCT+dexQ+44q5MEvNOpfZdKlhmdZDe1esJEM1uQyzhdJrbjRbMctVuoS6/Ru
+      POSTGRES_USER: api-user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: api
+      POSTGRES_HOST: postgres
 
   postgres:
     image: postgres

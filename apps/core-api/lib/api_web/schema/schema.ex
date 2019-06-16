@@ -20,6 +20,11 @@ defmodule ApiWeb.Schema do
       resolve &Api.ArticleResolver.all/2
     end
 
+    field :page, list_of(:article) do
+      arg :name, :string
+      resolve &Api.ArticleResolver.by_page/2
+    end
+
     field :users, list_of(:user) do
       resolve &Api.UserResolver.all/2
     end
@@ -63,7 +68,6 @@ defmodule ApiWeb.Schema do
       Dataloader.new
       |> Dataloader.add_source(Api.Content, Api.Content.data())
       |> Dataloader.add_source(Api.Tenants, Api.Tenants.data())
-      # |> Dataloader.add_source(Api.Tenants.Category, Api.Tenants.data())
       |> Dataloader.add_source(Api.Accounts, Api.Accounts.data())
 
     Map.put(ctx, :loader, loader)

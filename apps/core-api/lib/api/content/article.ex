@@ -8,6 +8,8 @@ defmodule Api.Content.Article do
     field :title, :string
     field :preview_image_url, :string
 
+    has_many :content_modules, Api.Content.ContentModule
+
     belongs_to :user, Api.Accounts.User
     belongs_to :tenant, Api.Tenants.Tenant
     belongs_to :category, Api.Tenants.Category

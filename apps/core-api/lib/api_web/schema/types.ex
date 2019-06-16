@@ -11,6 +11,8 @@ defmodule ApiWeb.Schema.Types do
 
   object :user do
     field :id, :id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
     field :name, :string
     field :email, :string
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
@@ -25,6 +27,8 @@ defmodule ApiWeb.Schema.Types do
 
   object :category do
     field :id, :id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
     field :title, :string
     field :category_id, :id
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
@@ -39,7 +43,20 @@ defmodule ApiWeb.Schema.Types do
     field :preview, :string
     field :preview_image_url, :string
     field :page_name, :string
-    field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts.User)
+    field :content_modules, list_of(:content_module), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+    field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  object :content_module do
+    field :id, :id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :type, :content_module_type
+    field :text, :string
+  end
+
+  enum :content_module_type do
+    value :text, as: "text"
   end
 end
