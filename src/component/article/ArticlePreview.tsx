@@ -27,7 +27,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                             {article.title}
                         </Link>
                     </Typography>
-                    <Typography variant={'subtitle1'} color="textSecondary">
+                    <Typography variant={'subtitle1'} style={{textTransform: 'uppercase', fontSize: '0.8rem'}}>
                         {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
                         {article.pageName && <> &bull; {article.pageName} </>}
                         &bull; 18 Views

@@ -12,7 +12,7 @@ interface ArticleProps {
 }
 
 export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditModeEnabled, onUpdateArticle }) => (
-    <article>
+    <article style={{padding: '0.5em'}}>
         <ArticlePreview article={article} />
         {!isEditModeEnabled && (
             <ConnectedUserArticleBar article={article} />
