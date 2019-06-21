@@ -8,7 +8,7 @@ defmodule Api.Content.Article do
     field :title, :string
     field :preview_image_url, :string
 
-    has_many :content_modules, Api.Content.ContentModule
+    has_many :content_modules, Api.Content.ContentModule, on_replace: :delete
 
     belongs_to :user, Api.Accounts.User
     belongs_to :tenant, Api.Tenants.Tenant
@@ -18,16 +18,11 @@ defmodule Api.Content.Article do
   end
 
   @doc false
-  def create_changeset(article, attrs) do
+  def changeset(article, attrs) do
     article
+    |> Api.Repo.preload(:content_modules)
     |> cast(attrs, [:title, :preview, :page_name])
     |> validate_required([:title, :preview, :page_name])
-  end
-
-  @doc false
-  def update_changeset(article, attrs) do
-    article
-    |> cast(attrs, [:title, :preview, :page_name])
-    |> validate_required([:title, :preview, :page_name])
+    |> cast_assoc(:content_modules, required: false)
   end
 end

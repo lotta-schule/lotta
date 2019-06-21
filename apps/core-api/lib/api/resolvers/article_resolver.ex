@@ -1,5 +1,6 @@
 defmodule Api.ArticleResolver do
   alias Api.Content
+  alias Repo
 
   def get(%{id: id}, %{context: %{context: %{tenant: tenant}}}) do
     {:ok, Content.get_article!(id)}
@@ -25,8 +26,9 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def update(%{id: id, article: article_params}, _info) do
+  def update(%{id: id, article: update_article_input}, _info) do
+    IO.inspect(update_article_input)
     Content.get_article!(id)
-    |> Content.update_article(article_params)
+    |> Content.update_article(update_article_input)
   end
 end

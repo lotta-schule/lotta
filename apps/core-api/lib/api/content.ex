@@ -104,7 +104,7 @@ defmodule Api.Content do
   """
   def update_article(%Article{} = article, attrs) do
     article
-    |> Article.update_changeset(attrs)
+    |> Article.changeset(attrs)
     |> Repo.update()
   end
 
@@ -180,9 +180,9 @@ defmodule Api.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_content_module(attrs \\ %{}) do
+  def create_content_module(article_id, attrs \\ %{}) do
     %ContentModule{}
-    |> ContentModule.changeset(attrs)
+    |> ContentModule.changeset(Map.put(attrs, :article_id, article_id ))
     |> Repo.insert()
   end
 

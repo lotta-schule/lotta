@@ -67,6 +67,20 @@ defmodule ApiWeb.Schema do
   
       resolve &Api.ArticleResolver.update/2
     end
+
+  #   field :create_content_module, type: :content_module do
+  #     arg :article_id, non_null(:id)
+  #     arg :content_module, non_null(:content_module_input)
+
+  #     resolve &Api.ContentModuleResolver.create/2
+  #   end
+
+  #   field :update_content_module, type: :content_module do
+  #     arg :id, non_null(:id)
+  #     arg :content_module, non_null(:content_module_input)
+
+  #     resolve &Api.ContentModuleResolver.update/2
+  #   end
   end
 
   input_object :update_user_params do
@@ -80,6 +94,12 @@ defmodule ApiWeb.Schema do
     field :preview, :string
     field :preview_image_url, :string
     field :page_name, :string
+    field :content_modules, list_of(:content_module_input)
+  end
+  
+  input_object :content_module_input do
+    field :type, :content_module_type, default_value: "text"
+    field :text, :string
   end
 
   def context(ctx) do
