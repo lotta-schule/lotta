@@ -24,7 +24,8 @@ export const ArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }
             pageName: article.pageName,
             contentModules: article.contentModules.map(cm => ({
                 type: cm.type,
-                text: cm.text
+                text: cm.text,
+                sortKey: cm.sortKey
             }))
         }
         const updatedArticle = await apolloClient.mutate<ArticleModel, { id: string, article: ArticleModelInput }>({

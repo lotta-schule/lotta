@@ -14,6 +14,7 @@ export const UpdateArticleMutation = gql`
                 id
                 type
                 text
+                sortKey
             }
             category {
                 id

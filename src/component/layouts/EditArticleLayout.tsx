@@ -51,6 +51,7 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                                 ...editedArticle.contentModules,
                                 {
                                     id: new Date().getTime().toString(),
+                                    sortKey: Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10,
                                     type: ContentModuleType.TEXT,
                                     text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } }))
                                 }
