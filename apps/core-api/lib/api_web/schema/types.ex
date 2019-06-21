@@ -54,6 +54,7 @@ defmodule ApiWeb.Schema.Types do
     field :updated_at, :naive_datetime
     field :type, :content_module_type
     field :text, :string
+    field :sort_key, :integer
   end
 
   enum :content_module_type do
