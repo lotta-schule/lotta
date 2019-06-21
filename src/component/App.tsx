@@ -14,6 +14,7 @@ import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { memo, useState } from 'react';
 import store from 'store/Store';
+import { ProfileLayout } from './layouts/ProfileLayout';
 
 export const App = memo(() => {
   const client = useSelector<State, ClientModel | null>(state => state.client.client);
@@ -67,6 +68,7 @@ export const App = memo(() => {
         <Route path={'/category/:id'} component={CategoryRoute} />
         <Route path={'/page/:name'} component={PageRoute} />
         <Route path={'/article/:id'} component={ArticleRoute} />
+        <Route path={'/profile'} component={ProfileLayout} />
         <Route component={() => <div>Nicht gefunden</div>} />
       </Switch>
     </BrowserRouter>
