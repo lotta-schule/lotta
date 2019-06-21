@@ -7,3 +7,5 @@ export interface ContentModuleModel {
     type: ContentModuleType;
     text?: string;
 }
+
+export type ContentModuleInput = Omit<ContentModuleModel, 'id'>;
