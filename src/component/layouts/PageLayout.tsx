@@ -12,7 +12,7 @@ export interface PageLayoutProps {
 export const PageLayout: FunctionComponent<PageLayoutProps> = memo(({ articles, title }) => {
     return (
         <ConnectedBaseLayout>
-            {title && <Typography variant={'h3'} style={{paddingTop: '1em', paddingBottom: '1em', paddingLeft: '0.4em', fontSize: '2.5rem', letterSpacing: '0.2em', color: '#9f9f9f' }}>{title}</Typography>}
+            {title && <Typography variant={'h3'} style={{paddingTop: '1em', paddingBottom: '1em', paddingLeft: '0.4em', fontSize: '2.5rem', letterSpacing: '0.2em', color: '#9f9f9f', backgroundColor: '#fff' }}>{title}</Typography>}
             {articles && articles.map(article => (
                 <Article key={article.id} article={article} />
             ))}
