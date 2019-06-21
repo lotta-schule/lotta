@@ -1,5 +1,5 @@
 import { CategoryModel } from './CategoryModel';
-import { ContentModuleModel } from './ContentModuleModel';
+import { ContentModuleModel, ContentModuleInput } from './ContentModuleModel';
 
 export interface ArticleModel {
     id: string;
@@ -12,3 +12,7 @@ export interface ArticleModel {
     category?: CategoryModel;
     pageName?: string;
 }
+
+export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
+    contentModules: ContentModuleInput[]
+};

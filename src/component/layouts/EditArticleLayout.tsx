@@ -5,6 +5,7 @@ import { Article } from '../article/Article';
 import { EditArticleSidebar } from './editArticle/EditArticleSidebar';
 import { Button } from '@material-ui/core';
 import { Value } from 'slate';
+import useReactRouter from 'use-react-router';
 const { serialize } = require('slate-base64-serializer').default;
 
 // const style: StyleRulesCallback = () => ({
@@ -16,21 +17,24 @@ const { serialize } = require('slate-base64-serializer').default;
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
-    onUpdateArticle?(article: ArticleModel): void;
+    onUpdateArticle?(article: ArticleModel): Promise<void>;
 }
 
 export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
     const [editedArticle, setEditedArticle] = useState(article);
+    const { history } = useReactRouter();
     return (
         <ConnectedBaseLayout
             sidebar={(
                 <EditArticleSidebar
                     article={editedArticle}
                     onUpdate={setEditedArticle}
-                    onSave={() => {
+                    onSave={async () => {
+                        await new Promise(resolve => setTimeout(resolve, 500));
                         if (onUpdateArticle) {
-                            onUpdateArticle(editedArticle);
+                            await onUpdateArticle(editedArticle);
                         }
+                        history.push(`/page/${editedArticle.pageName || editedArticle.id}`);
                     }}
                 />
             )}
@@ -41,13 +45,13 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                     variant="outlined"
                     color={'primary'}
                     onClick={async () => {
-                        await new Promise(resolve => setTimeout(resolve, 1000));
                         setEditedArticle({
                             ...editedArticle,
                             contentModules: [
                                 ...editedArticle.contentModules,
                                 {
                                     id: new Date().getTime().toString(),
+                                    sortKey: Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10,
                                     type: ContentModuleType.TEXT,
                                     text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } }))
                                 }
