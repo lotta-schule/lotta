@@ -61,6 +61,12 @@ defmodule ApiWeb.Schema do
       resolve &Api.UserResolver.update/2
     end
     
+    field :create_article, type: :article do
+      arg :article, non_null(:create_article_input)
+  
+      resolve &Api.ArticleResolver.create/2
+    end
+    
     field :update_article, type: :article do
       arg :id, non_null(:id)
       arg :article, non_null(:update_article_input)
@@ -76,6 +82,15 @@ defmodule ApiWeb.Schema do
     field :password, :string
   end
   
+  input_object :create_article_input do
+    field :title, non_null(:string)
+    field :preview, non_null(:string)
+    field :preview_image_url, :string
+    field :page_name, :string
+    field :category_id, :id
+    field :content_modules, list_of(:content_module_input)
+  end
+
   input_object :update_article_input do
     field :title, :string
     field :preview, :string

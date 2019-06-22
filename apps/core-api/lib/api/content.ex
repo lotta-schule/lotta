@@ -86,7 +86,7 @@ defmodule Api.Content do
   """
   def create_article(attrs \\ %{}) do
     %Article{}
-    |> Article.create_changeset(attrs)
+    |> Article.changeset(attrs)
     |> Repo.insert()
   end
 

@@ -20,9 +20,12 @@ defmodule ApiWeb.Context do
   end
 
   defp get_user_context(conn) do
-    case Guardian.Plug.current_resource(conn) do
-      nil -> %{}
-      user -> %{current_user: user}
+    authorization_header = get_req_header(conn, "authorization")
+    with ["Bearer " <> token] <- authorization_header do
+      {:ok, current_user, _claims} = Guardian.resource_from_token(token)
+      %{ current_user: current_user }
+    else
+      _ -> %{}
     end
   end
 
