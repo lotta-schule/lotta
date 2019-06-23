@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog, FormControlLabel, Checkbox, Select, FormControl, InputLabel, Input, MenuItem, FormHelperText } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog, Select, FormControl, InputLabel, Input, MenuItem, FormHelperText } from '@material-ui/core';
 import { ArticleModel, CreateArticleModelInput } from '../../model';
 import { Mutation } from 'react-apollo';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
@@ -30,7 +30,6 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
         >{(createArticle, { data, error, loading: isLoading }) => {
             if (isOpen && data) {
                 resetForm();
-                debugger;
                 onConfirm(data.article);
             }
 

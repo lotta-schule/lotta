@@ -23,11 +23,11 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
             <Grid item xs>
                 <CardContent>
                     <Typography component={'h4'} variant={'h4'} gutterBottom>
-                        <Link component={CollisionLink} color='inherit' underline='none' to={`/page/${article.pageName || article.id}`}>
+                        <Link component={CollisionLink} color='inherit' underline='none' to={article.pageName ? `/page/${article.pageName}` : `/article/${article.id}`}>
                             {article.title}
                         </Link>
                     </Typography>
-                    <Typography variant={'subtitle1'} style={{textTransform: 'uppercase', fontSize: '0.8rem'}}>
+                    <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem' }}>
                         {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
                         {article.pageName && <> &bull; {article.pageName} </>}
                         &bull; 18 Views

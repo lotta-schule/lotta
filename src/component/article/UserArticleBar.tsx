@@ -16,7 +16,7 @@ export const UserArticleBar: FunctionComponent<UserArticleBarProps> = memo(({ us
                     variant="outlined"
                     color={'primary'}
                     component={CollisionLink}
-                    to={`/article/${article.id}`}
+                    to={`/article/${article.id}/edit`}
                 >
                     Artikel bearbeiten
                 </Button>

@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const UpdateArticleMutation = gql`
     mutation UpdateArticle($id: ID!, $article: UpdateArticleInput) {
-        article: updateArticle(article: $article) {
+        article: updateArticle(id: $id, article: $article) {
             id
             insertedAt
             updatedAt
