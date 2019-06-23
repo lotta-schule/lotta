@@ -84,7 +84,7 @@ defmodule ApiWeb.Schema do
   
   input_object :create_article_input do
     field :title, non_null(:string)
-    field :preview, non_null(:string)
+    field :preview, :string
     field :preview_image_url, :string
     field :page_name, :string
     field :category_id, :id
