@@ -34,7 +34,7 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                         if (onUpdateArticle) {
                             await onUpdateArticle(editedArticle);
                         }
-                        history.push(`/page/${editedArticle.pageName || editedArticle.id}`);
+                        history.push(editedArticle.pageName ? `/page/${editedArticle.pageName}` : `/article/${editedArticle.id}`);
                     }}
                 />
             )}

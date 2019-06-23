@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const UpdateArticleMutation = gql`
-    mutation UpdateArticle($id: ID!, $article: UpdateArticleInput) {
-        article: updateArticle(id: $id, article: $article) {
+export const CreateArticleMutation = gql`
+    mutation CreateArticle($article: CreateArticleInput) {
+        article: createArticle(article: $article) {
             id
             insertedAt
             updatedAt

@@ -1,5 +1,6 @@
 import { ApolloError } from 'apollo-boost';
 import { ArticleRoute } from './routes/ArticleRoute';
+import { EditArticleRoute } from './routes/EditArticleRoute';
 import { CategoryLayout } from './layouts/CategoryLayout';
 import { CategoryRoute } from './routes/CategoryRoute';
 import { CircularProgress } from '@material-ui/core';
@@ -67,6 +68,7 @@ export const App = memo(() => {
         ))} />
         <Route path={'/category/:id'} component={CategoryRoute} />
         <Route path={'/page/:name'} component={PageRoute} />
+        <Route path={'/article/:id/edit'} component={EditArticleRoute} />
         <Route path={'/article/:id'} component={ArticleRoute} />
         <Route path={'/profile'} component={ProfileLayout} />
         <Route component={() => <div>Nicht gefunden</div>} />
