@@ -100,7 +100,7 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
                     });
                     next();
                 }}
-                onChange={({ value }) => setEditorState(value)}
+                onChange={(ev: { value: Value }) => setEditorState(ev.value)}
                 onKeyDown={onKeyDownRef.current}
                 renderMark={renderMark}
             />

@@ -48,7 +48,7 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
             <main style={{ marginTop: '.5em', maxWidth: '100%' }}>
                 <Grid container justify={'flex-start'}>
                     <Grid item xs>
-                        <main style={{ width: '100%', height: '100%' }}>
+                        <main style={{ width: '100%', height: '100%'}}>
                             {children}
                         </main>
                     </Grid>

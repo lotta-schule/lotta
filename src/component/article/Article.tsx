@@ -12,12 +12,12 @@ interface ArticleProps {
 }
 
 export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditModeEnabled, onUpdateArticle }) => (
-    <article>
+    <article style={{ padding: '0.5em', backgroundColor: '#fff' }}>
         <ArticlePreview article={article} />
         {!isEditModeEnabled && (
             <ConnectedUserArticleBar article={article} />
         )}
-        <DragDropContext onDragEnd={({ destination, source, draggableId }) => {
+        <DragDropContext onDragEnd={({ destination, source }) => {
             if (!destination) {
                 return;
             }
@@ -35,14 +35,17 @@ export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditM
                 newModulesArray.splice(destination.index, 0, article.contentModules[source.index]);
                 onUpdateArticle({
                     ...article,
-                    contentModules: newModulesArray
+                    contentModules: newModulesArray.map((cm, i) => ({
+                        ...cm,
+                        sortKey: i * 10
+                    }))
                 });
             }
         }}>
             <Droppable droppableId={article.id}>
                 {provided => (
                     <section {...provided.droppableProps} ref={provided.innerRef}>
-                        {article.contentModules.map((contentModule, index) => (
+                        {article.contentModules.sort((cm1, cm2) => cm1.sortKey - cm2.sortKey).map((contentModule, index) => (
                             <ContentModule
                                 key={contentModule.id}
                                 index={index}
