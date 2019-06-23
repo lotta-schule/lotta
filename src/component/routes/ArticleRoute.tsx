@@ -1,4 +1,4 @@
-import { ArticleModel, ArticleModelInput } from 'model';
+import { ArticleModel, UpdateArticleModelInput } from 'model';
 import { CircularProgress } from '@material-ui/core';
 import { createUpdateArticleAction, createAddArticleAction } from 'store/actions/content';
 import { EditArticleLayout } from 'component/layouts/EditArticleLayout';
@@ -28,7 +28,7 @@ export const ArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }
                 sortKey: cm.sortKey
             }))
         }
-        const updatedArticle = await apolloClient.mutate<ArticleModel, { id: string, article: ArticleModelInput }>({
+        const updatedArticle = await apolloClient.mutate<ArticleModel, { id: string, article: UpdateArticleModelInput }>({
             mutation: UpdateArticleMutation,
             variables: {
                 id: article.id,

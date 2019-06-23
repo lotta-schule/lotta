@@ -1,8 +1,12 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { Grid, Typography, Avatar, Link, makeStyles } from '@material-ui/core';
+import { Grid, Typography, Avatar, Link, makeStyles, Button } from '@material-ui/core';
 import { UserModel } from '../../../model';
 import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
+import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
+import { useDispatch } from 'react-redux';
+import useRouter from 'use-react-router';
+import { createAddArticleAction } from 'store/actions/content';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -21,6 +25,9 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
     const styles = useStyles();
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
+    const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(false);
+    const { history } = useRouter();
+    const dispatch = useDispatch();
     return (
         <>
             <Grid container justify={'space-evenly'} className={styles.root}>
@@ -47,10 +54,25 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                             }
                             <li>Impressum</li>
                             <li>Datenschutz</li>
+                            {user && (
+                                <>
+                                    <li>
+                                        <Button onClick={() => setCreateArticleModalIsOpen(true)}>+ Artikel</Button>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </Typography>
                 </Grid>
             </Grid>
+            <CreateArticleDialog
+                isOpen={createArticleModalIsOpen}
+                onAbort={() => setCreateArticleModalIsOpen(false)}
+                onConfirm={article => {
+                    dispatch(createAddArticleAction(article));
+                    history.push(`/article/${article.id}`);
+                }}
+            />
             <LoginDialog
                 isOpen={loginModalIsOpen}
                 onAbort={() => setLoginModalIsOpen(false)}

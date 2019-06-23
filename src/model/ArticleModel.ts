@@ -13,6 +13,8 @@ export interface ArticleModel {
     pageName?: string;
 }
 
-export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
+export type UpdateArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
     contentModules: ContentModuleInput[]
 };
+
+export type CreateArticleModelInput = UpdateArticleModelInput & { categoryId: string | null };
