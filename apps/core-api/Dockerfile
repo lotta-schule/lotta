@@ -1,5 +1,5 @@
 # Dockerfile for Medienportal API Server
-FROM elixir:1.8.1-alpine as build
+FROM elixir:1.8.2 as build
 
 # build arguments
 ARG APP_ENV=prod
@@ -8,10 +8,9 @@ ENV MIX_ENV prod
 
 WORKDIR /app
 
-RUN apk update && \
-    apk add --no-cache \
-    make \
-    build-base
+RUN apt-get update && \
+    apt-get install -y \
+    make
 
 # Copy all source files
 COPY rel ./rel
@@ -36,12 +35,12 @@ RUN RELEASE_DIR=`ls -d _build/prod/rel/api/releases/*/` && \
     mkdir /export && \
     tar -xf "$RELEASE_DIR/api.tar.gz" -C /export
 
-FROM alpine
+FROM debian
 
-RUN apk update && \
-    apk add --no-cache \
+RUN apt-get update && \
+    apt-get install -y \
     bash \
-    openssl-dev
+    libssl-dev
 
 WORKDIR /app
 
