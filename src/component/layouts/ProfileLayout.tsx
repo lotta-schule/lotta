@@ -8,7 +8,7 @@ import { FileExplorer } from 'component/fileExplorer/FileExplorer';
 export interface ProfileLayoutProps {
 }
 
-export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(({  }) => {
+export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
     return (
         <ConnectedBaseLayout>
             <Card>
