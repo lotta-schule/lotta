@@ -21,8 +21,8 @@ defmodule Api.Content.Article do
   def changeset(article, attrs) do
     article
     |> Api.Repo.preload(:content_modules)
-    |> cast(attrs, [:title, :preview, :page_name, :category_id, :user_id])
-    |> validate_required([:title])
+    |> cast(attrs, [:title, :preview, :page_name, :category_id, :user_id, :tenant_id])
+    |> validate_required([:title, :user_id, :tenant_id])
     |> cast_assoc(:content_modules, required: false)
   end
 end

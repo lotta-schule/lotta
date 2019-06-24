@@ -29,10 +29,11 @@ defmodule Api.ArticleResolver do
   def create(%{article: create_article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     create_article_input
     |> Map.put(:user_id, current_user.id)
+    |> Map.put(:tenant_id, tenant.id)
     |> Content.create_article
   end
 
-  def update(%{id: id, article: update_article_input}, _info) do
+  def update(%{id: id, article: update_article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     Content.get_article!(id)
     |> Content.update_article(update_article_input)
   end
