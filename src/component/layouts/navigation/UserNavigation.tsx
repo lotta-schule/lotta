@@ -75,7 +75,7 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                                     <li>
                                         <Button size="small" variant="outlined" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
                                             <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
-                                                Artikel
+                                                Beitrag
                                         </Button>
                                     </li>
                                 </>
