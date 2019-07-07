@@ -52,7 +52,7 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
                             {children}
                         </main>
                     </Grid>
-                    <Grid item component={'aside'} xs={12} md={2} xl={4}>
+                    <Grid item component={'aside'} xs={12} md={2} xl={3} style={{ margin: '1em'}}>
                         <ConnectedUserNavigation />
                         {sidebar}
                     </Grid>
