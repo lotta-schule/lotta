@@ -7,12 +7,28 @@ import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { useDispatch } from 'react-redux';
 import useRouter from 'use-react-router';
 import { createAddArticleAction } from 'store/actions/content';
+import { Add as AddCircleIcon } from '@material-ui/icons';
+import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
     root: {
         position: 'sticky',
-        top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2)
-    }
+        top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2),
+        backgroundColor: '#fff',
+        padding: '0.5em',
+        borderLeftWidth: 5,
+        borderLeftColor: theme.palette.primary.main,
+        borderLeftStyle: 'solid',
+    },
+    button: {
+        marginTop: theme.spacing(1),
+    },
+    leftIcon: {
+        marginRight: theme.spacing(1),
+    },
+    iconSmall: {
+        fontSize: 20,
+    },
 }));
 
 export interface UserNavigationProps {
@@ -44,7 +60,7 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                     )}
                 </Grid>
                 <Grid item xs>
-                    <Typography variant={'body1'} component={'nav'} align={'right'}>
+                    <Typography variant={'body2'} component={'nav'} align={'right'}>
                         <ul>
                             {user ?
                                 <li><Link onClick={() => onLogout()}>Abmelden</Link></li> :
@@ -57,7 +73,10 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                             {user && (
                                 <>
                                     <li>
-                                        <Button onClick={() => setCreateArticleModalIsOpen(true)}>+ Artikel</Button>
+                                        <Button size="small" variant="outlined" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
+                                            <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                                                Artikel
+                                        </Button>
                                     </li>
                                 </>
                             )}

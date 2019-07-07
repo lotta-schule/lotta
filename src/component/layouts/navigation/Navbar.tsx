@@ -11,6 +11,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     root: {
         position: 'sticky',
         top: 0,
+        zIndex: 1,
         '& a': {
             marginLeft: theme.spacing(2),
             marginRight: theme.spacing(2),

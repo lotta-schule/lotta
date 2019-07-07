@@ -31,6 +31,7 @@
     "@material-ui/icons": "^4.2.1",
     "apollo-boost": "^0.4.3",
     "apollo-client": "^2.6.3",
+    "classnames": "^2.2.6",
     "clsx": "^1.0.4",
     "date-fns": "^2.0.0-alpha.27",
     "graphql": "^14.4.2",
@@ -53,6 +54,7 @@
     "use-react-router": "^1.0.7"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.9",
     "@types/immutable": "^3.8.7",
     "@types/jest": "^24.0.15",
     "@types/js-cookie": "^2.2.2",
