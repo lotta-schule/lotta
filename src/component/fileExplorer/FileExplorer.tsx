@@ -12,9 +12,9 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
 
   const [state, setState] = React.useState({
     columns: [
-      { title: 'Dateiname', field: 'filename' },
-      { title: 'Upload-Status', field: 'uploadstatus', type: 'numeric' },
-      { title: 'Größe (MB)', field: 'size', type: 'numeric' },
+      { title: 'Dateiname', field: 'filename', editable: 'onUpdate' },
+      { title: 'Status', field: 'uploadstatus', type: 'numeric', editable: 'never' },
+      { title: 'Dateigröße', field: 'size', type: 'numeric', editable: 'never' },
       {
         title: 'Dateityp', field: 'filetype', lookup: { jpg: 'JPEG', doc: 'Word-Dokument' },
       },
@@ -47,6 +47,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
         Check: () => <Save />,
         Delete: () => <Delete />,
         Clear: () => <Clear />,
+        ResetSearch: () => <Clear />,
         Edit: () => <Edit />,
         Search: () => <Search />,
         PreviousPage: () => <ChevronLeft />,
