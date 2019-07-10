@@ -45,14 +45,14 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
                 <div />
             </header>
             <Navbar categories={categories} />
-            <main style={{ marginTop: '.5em', maxWidth: '100%' }}>
+            <main style={{ marginTop: '.5em', maxWidth: '100%', paddingBottom: '1em' }}>
                 <Grid container justify={'flex-start'}>
                     <Grid item xs>
                         <main style={{ width: '100%', height: '100%'}}>
                             {children}
                         </main>
                     </Grid>
-                    <Grid item component={'aside'} xs={12} md={2} xl={4}>
+                    <Grid item component={'aside'} xs={12} md={3} xl={3} style={{ marginLeft: '0.5em'}}>
                         <ConnectedUserNavigation />
                         {sidebar}
                     </Grid>

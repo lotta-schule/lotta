@@ -11,7 +11,7 @@ interface UserArticleBarProps {
 export const UserArticleBar: FunctionComponent<UserArticleBarProps> = memo(({ user, article }) => (
     user/* && user.group > UserGroup.GUEST*/ ? (
         <Card>
-            <CardActionArea style={{ justifyContent: 'right' }}>
+            <CardActionArea style={{ justifyContent: 'right', width:'auto' }}>
                 <Button
                     variant="outlined"
                     color={'primary'}
