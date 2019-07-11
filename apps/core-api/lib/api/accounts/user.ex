@@ -10,6 +10,7 @@ defmodule Api.Accounts.User do
     field :password_hash, :string
 
     has_many :articles, Api.Content.Article
+    has_many :files, Api.Accounts.File
 
     timestamps()
   end

@@ -60,4 +60,25 @@ defmodule ApiWeb.Schema.Types do
   enum :content_module_type do
     value :text, as: "text"
   end
+
+  object :file do
+    field :id, :id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :filename, :string
+    field :filesize, :integer
+    field :mime_type, :string
+    field :path, :string
+    field :remote_location, :string
+    field :file_type, :file_type
+    field :user_id, :id
+  end
+
+  enum :file_type do
+    value :image, as: "image"
+    value :audio, as: "audio"
+    value :video, as: "video"
+    value :pdf, as: "pdf"
+    value :misc, as: "misc"
+  end
 end

@@ -27,6 +27,7 @@ defmodule ApiWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
+    length: 512 * 1024 * 1024, # 512 MB
     json_decoder: Phoenix.json_library()
 
   plug Plug.MethodOverride

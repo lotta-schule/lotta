@@ -1,6 +1,7 @@
 defmodule ApiWeb.Schema do
   use Absinthe.Schema
   import_types ApiWeb.Schema.Types
+  import_types Absinthe.Plug.Types
 
   query do
     field :tenants, list_of(:tenant) do
@@ -72,6 +73,13 @@ defmodule ApiWeb.Schema do
       arg :article, non_null(:update_article_input)
   
       resolve &Api.ArticleResolver.update/2
+    end
+
+    field :upload_file, type: :file do
+      arg :path, :string, default_value: "/"
+      arg :file, non_null(:upload)
+
+      resolve &Api.FileResolver.upload/2
     end
 
   end

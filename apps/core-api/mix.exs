@@ -48,7 +48,12 @@ defmodule Api.MixProject do
       {:comeonin, "~> 5.1.2"},
       {:bcrypt_elixir, "~> 2.0.3"},
       {:guardian, "~> 1.2.1"},
-      {:distillery, "~> 2.0.0"}
+      {:distillery, "~> 2.0.0"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:hackney, "~> 1.12"},
+      {:sweet_xml, "~> 0.6"},
+      {:uuid, "~> 1.1"},
     ]
   end
 
