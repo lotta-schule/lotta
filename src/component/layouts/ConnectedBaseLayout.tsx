@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
     },
     header: {
         minWidth: '100%',
-        height: '100px',
+        height: 100,
         backgroundSize: 'cover',
         textAlign: 'right',
     },
@@ -35,7 +35,7 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
                 <Grid container style={{ display: 'flex', height: '100%' }}>
                     <Grid xs={12} sm={3}>
                         <CardMedia
-                        style={{ maxHeight: 80, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, marginTop: '10px' }}
+                        style={{ maxHeight: 80, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, marginTop: 10 }}
                         image="https://placeimg.com/300/80/any"
                         />
                     </Grid>

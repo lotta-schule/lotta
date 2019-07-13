@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ArticleModel, UserModel } from '../../model';
-import { Card, CardMedia, CardContent, Typography, Link, Grid, Fab } from '@material-ui/core';
+import { Card, CardMedia, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
 import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
@@ -8,6 +8,16 @@ import { Edit } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
 
+const useStyle = makeStyles((theme: Theme) => ({
+    articlePreviewImage: {
+        minHeight: 180,
+        width: '100%',
+        height: '100%',
+        flexShrink: 0,
+        flexGrow: 0,
+        backgroundPosition: '0 0'
+    }
+}));
 
 interface ArticlePreviewProps {
     article: ArticleModel;
@@ -17,12 +27,14 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
 
     const user = useSelector<State, UserModel | null>(s => s.user.user);
 
+    const styles = useStyle();
+
     return (
-        <Card key={article.id} style={{ padding: '0.5em', borderRadius: '0' }}>
+        <Card style={{ padding: '0.5em', borderRadius: '0' }}>
             <Grid container style={{ display: 'flex' }}>
                 <Grid item xs={12} sm={4}>
                     <CardMedia
-                        style={{ minHeight: 180, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, backgroundPosition: '0 0' }}
+                        className={styles.articlePreviewImage}
                         image={article.previewImageUrl}
                         title={`Vorschaubild zu ${article.title}`}
                     />
@@ -30,7 +42,12 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                 <Grid item xs>
                     <CardContent>
                         <Typography component={'h4'} variant={'h4'} gutterBottom>
-                            <Link component={CollisionLink} color='inherit' underline='none' to={article.pageName ? `/page/${article.pageName}` : `/article/${article.id}`}>
+                            <Link
+                                component={CollisionLink}
+                                color='inherit'
+                                underline='none'
+                                to={article.pageName ? `/page/${article.pageName}` : `/article/${article.id}`}
+                            >
                                 {article.title}
                             </Link>
                             {user/* && user.group > UserGroup.GUEST*/ && (
