@@ -7,7 +7,9 @@ export enum UserFilesActionType {
     SET_FILES = '[UserFilesAction] set Files',
     ADD_FILE = '[UserFilesAction] add File',
     DELETE_FILE = '[UserFilesAction] delete File',
-    SET_UPLOADS = '[UserFilesAction] set Uploads'
+    ADD_UPLOAD = '[UserFilesAction] add Upload',
+    UPDATE_UPLOAD = '[UserFilesAction] update Upload',
+    DELETE_UPLOAD = '[UserFilesAction] delete Upload',
 }
 
 
@@ -19,7 +21,9 @@ export type SetFilesAction = Action<UserFilesActionType.SET_FILES> & { files: Fi
 
 export type DeleteFileAction = Action<UserFilesActionType.DELETE_FILE> & { id: string };
 
-export type SetUploadsAction = Action<UserFilesActionType.SET_UPLOADS> & { uploads: UploadModel[] };
+export type AddUploadAction = Action<UserFilesActionType.ADD_UPLOAD> & { upload: UploadModel };
+export type UpdateUploadAction = Action<UserFilesActionType.UPDATE_UPLOAD> & { upload: UploadModel };
+export type DeleteUploadAction = Action<UserFilesActionType.DELETE_UPLOAD> & { id: string };
 
 // Action Creators
 
@@ -38,7 +42,17 @@ export const createDeleteFileAction: ActionCreator<DeleteFileAction> = (id: stri
     type: UserFilesActionType.DELETE_FILE
 });
 
-export const createSetUploadsAction: ActionCreator<SetUploadsAction> = (upload: UploadModel[]) => ({
-    uploads: upload,
-    type: UserFilesActionType.SET_UPLOADS
+export const createAddUploadAction: ActionCreator<AddUploadAction> = (upload: UploadModel) => ({
+    upload,
+    type: UserFilesActionType.ADD_UPLOAD
+});
+
+export const createUpdateUploadAction: ActionCreator<UpdateUploadAction> = (upload: UploadModel) => ({
+    upload,
+    type: UserFilesActionType.UPDATE_UPLOAD
+});
+
+export const createDeleteUploadAction: ActionCreator<DeleteUploadAction> = (id: string) => ({
+    id,
+    type: UserFilesActionType.DELETE_UPLOAD
 });
