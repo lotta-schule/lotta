@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, { FunctionComponent, memo, useCallback, useState, useContext } from 'react';
 import MaterialTable from 'material-table';
 import {
   Edit, Save, Delete, Search, SkipPrevious, Clear,
@@ -6,14 +6,14 @@ import {
 } from '@material-ui/icons';
 import { useDropzone } from 'react-dropzone';
 import { client } from 'api/client';
-import { UploadFileMutation } from 'api/mutation/UploadFile';
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
-import { AxiosRequestConfig } from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { State } from 'store/State';
-import { FileModel, UploadModel } from 'model';
+import { FileModel } from 'model';
 import { GetUserFilesQuery } from 'api/query/GetUserFiles';
-import { createSetFilesAction, createAddFileAction, createUpdateUploadAction, createAddUploadAction, createDeleteUploadAction } from 'store/actions/userFiles';
+import { createSetFilesAction } from 'store/actions/userFiles';
+import { ActiveUploadsModal } from './ActiveUploadsModal';
+import { UploadQueueContext } from 'context/UploadQueueContext';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
   createStyles({
@@ -40,44 +40,21 @@ export interface FileExplorerProps {
 export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
 
   const files = useSelector<State, FileModel[] | null>(s => s.userFiles.files);
-  const uploads = useSelector<State, UploadModel[] | null>(s => s.userFiles.uploads);
+  const uploadLength = useSelector<State, number>(s => (s.userFiles.uploads || []).length);
   const dispatch = useDispatch();
 
+  const uploadQueue = useContext(UploadQueueContext);
+
   const setFilesCallback = useCallback(files => dispatch(createSetFilesAction(files)), [dispatch]);
+
+  const [isActiveUploadsDialogOpen, setIsActiveUploadsDialogOpen] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       console.log('upload file: ', acceptedFiles[0]);
-      const uploadModel = {
-        id: `${new Date().getTime()}${Math.random() * 100}`,
-        filename: acceptedFiles[0].name,
-        path: '/',
-        uploadProgress: 0
-      };
-      dispatch(createAddUploadAction(uploadModel));
-      const { data: { file } } = await client.mutate<{ file: FileModel }>({
-        mutation: UploadFileMutation,
-        variables: {
-          path: '/',
-          file: acceptedFiles[0]
-        },
-        context: {
-          fetchOptions: {
-            onUploadProgress: (progressEvent: ProgressEvent) => {
-              dispatch(createUpdateUploadAction({
-                ...uploadModel,
-                progress: progressEvent.loaded / progressEvent.total
-              }));
-            }
-          } as AxiosRequestConfig
-        }
-      });
-      dispatch(createAddFileAction(file));
-      setTimeout(() => {
-        dispatch(createDeleteUploadAction(uploadModel.id));
-      }, 3000);
+      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, '/'));
     }
-  }, [dispatch]);
+  }, [uploadQueue]);
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles, open } = useDropzone({ onDrop, noClick: true });
 
@@ -98,6 +75,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
           {isDragActive && <span>Loslassen, um {draggedFiles.length} Dateien hochzuladen</span>}
         </div>
       )}
+      <ActiveUploadsModal open={isActiveUploadsDialogOpen} onClose={() => setIsActiveUploadsDialogOpen(false)} />
       <MaterialTable
         columns={[
           { title: 'Dateiname', field: 'filename', editable: 'onUpdate' },
@@ -121,9 +99,9 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
           {
             icon: () => <CloudUploadOutlined />,
             tooltip: 'Uploads',
-            hidden: !Boolean(uploads && uploads.length > 0),
+            hidden: uploadLength < 1,
             isFreeAction: true,
-            onClick: () => { }
+            onClick: () => setIsActiveUploadsDialogOpen(true)
           },
           {
             icon: () => <AddBox />,
