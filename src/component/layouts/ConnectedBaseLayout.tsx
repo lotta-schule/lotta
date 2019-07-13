@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo } from 'react';
-import { Grid, makeStyles, Container } from '@material-ui/core';
+import { Grid, makeStyles, Container, CardMedia } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { ConnectedUserNavigation } from './navigation/ConnectedUserNavigation';
 import { CategoryModel, ClientModel } from '../../model';
@@ -14,16 +14,10 @@ const useStyles = makeStyles(() => ({
     },
     header: {
         minWidth: '100%',
-        height: 200,
+        height: 100,
         backgroundSize: 'cover',
-        '& > h5': {
-            textAlign: 'right',
-            background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%,rgba(255,255,255,0) 100%)',
-            padding: '0.7em',
-            color: '#fff',
-            fontWeight: 'bold',
-        }
-    }
+        textAlign: 'right',
+    },
 }));
 
 
@@ -37,12 +31,18 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
     const categories = useSelector<State, CategoryModel[]>(state => state.client.categories);
     return (
         <Container className={styles.root}>
-            <header
-                className={styles.header}
-                style={{ backgroundImage: 'url(https://placeimg.com/1000/200/any)' }}
-            >
-                <Typography variant="h5" gutterBottom>{client.title}</Typography>
-                <div />
+            <header className={styles.header}>
+                <Grid container style={{ display: 'flex', height: '100%' }}>
+                    <Grid xs={12} sm={3}>
+                        <CardMedia
+                        style={{ maxHeight: 80, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, marginTop: 10 }}
+                        image="https://placeimg.com/300/80/any"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={9}>
+                        <Typography variant="h5" gutterBottom style={{padding: '0.9em', marginBottom: '0'}}>{client.title}</Typography>
+                    </Grid>
+                </Grid>
             </header>
             <Navbar categories={categories} />
             <main style={{ marginTop: '.5em', maxWidth: '100%', paddingBottom: '1em' }}>

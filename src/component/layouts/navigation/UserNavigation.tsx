@@ -7,7 +7,7 @@ import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { useDispatch } from 'react-redux';
 import useRouter from 'use-react-router';
 import { createAddArticleAction } from 'store/actions/content';
-import { Add as AddCircleIcon } from '@material-ui/icons';
+import { Add as AddCircleIcon, Person } from '@material-ui/icons';
 import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
@@ -47,19 +47,17 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
     return (
         <>
             <Grid container justify={'space-evenly'} className={styles.root}>
-                <Grid item xs style={{ display: 'flex' }}>
+                <Grid item xs={4} style={{ display: 'flex' }}>
                     {user && (
                         <div>
                             <Avatar alt={'Nutzer Name'} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
                             <Typography align={'center'}>
-                                <Link component={CollisionLink} to={'/profile'}>
-                                    Profil
-                                </Link>
+                                Nickname
                             </Typography>
                         </div>
                     )}
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={8}>
                     <Typography variant={'body2'} component={'nav'} align={'right'}>
                         <ul>
                             {user ?
@@ -77,6 +75,12 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                                             <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                                                 Beitrag
                                         </Button>
+                                    </li>
+                                    <li>
+                                            <Button size="small" variant="outlined" color="secondary" className={styles.button} component={CollisionLink} to={'/profile'}>
+                                                <Person className={classNames(styles.leftIcon, styles.iconSmall)} />
+                                                Mein Profil
+                                            </Button>
                                     </li>
                                 </>
                             )}
