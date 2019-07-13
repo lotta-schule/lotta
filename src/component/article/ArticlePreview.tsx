@@ -11,7 +11,7 @@ interface ArticlePreviewProps {
 }
 
 export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ article }) => (
-    <Card key={article.id} style={{ padding: '0.5em' }}>
+    <Card key={article.id} style={{ padding: '0.5em', borderRadius: '0' }}>
         <Grid container style={{ display: 'flex' }}>
             <Grid item xs={12} sm={4}>
                 <CardMedia
