@@ -1,6 +1,5 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ArticleModel } from '../../model';
-import { ConnectedUserArticleBar } from './ConnectedUserArticleBar';
 import { ArticlePreview } from './ArticlePreview';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
@@ -14,9 +13,6 @@ interface ArticleProps {
 export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditModeEnabled, onUpdateArticle }) => (
     <article style={{ padding: '0.5em', backgroundColor: '#fff' }}>
         <ArticlePreview article={article} />
-        {!isEditModeEnabled && (
-            <ConnectedUserArticleBar article={article} />
-        )}
         <DragDropContext onDragEnd={({ destination, source }) => {
             if (!destination) {
                 return;
