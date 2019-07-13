@@ -24,12 +24,17 @@ const useStyles = makeStyles<Theme>(theme => ({
         backgroundColor: theme.palette.primary.main,
     },
     secondaryAppBar: {
-        backgroundColor: theme.palette.secondary.main
+        backgroundColor: '#fff',
+        maxHeight: '40px',
     },
     navButton: {
         '&:hover': {
-            backgroundColor: '#ffffff21'
+            backgroundColor: '#b9b9b945'
         }
+    },
+    navButtonSecond: {
+        flexGrow: 1,
+        flexShrink: 0,
     }
 }));
 
@@ -58,19 +63,20 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                         component={CollisionLink}
                         style={{ flexGrow: 1, flexShrink: 0 }}
                         to={'/'}
-                        color={'inherit'}
+                        variant="text" 
                         size={'medium'}
                         className={styles.navButton}
+                        color='inherit'
                     >
                         Startseite
                     </Button>
                     {mainCategories.map(category => (
                         <Button
+                            variant="text" 
                             key={category.id}
                             component={CollisionLink}
-                            style={{ flexGrow: 1, flexShrink: 0 }}
+                            style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
                             to={`/category/${category.id}`}
-                            color={'inherit'}
                             size={'medium'}
                             className={clsx(styles.navButton, { selected: categoriesHierarchy[0] === category.id })}
                         >
@@ -80,16 +86,16 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                 </Toolbar>
             </AppBar>
             {subcategories.length > 0 && (
-                <AppBar position={'sticky'} color={'secondary'} className={styles.secondaryAppBar}>
-                    <Toolbar variant={'dense'}>
+                <AppBar position={'sticky'} className={styles.secondaryAppBar}>
+                    <Toolbar style={{minHeight: '0', height: '40px'}}>
                         {subcategories.map(category => (
                             <Button
+                                variant="text" 
                                 key={category.id}
                                 component={CollisionLink}
-                                style={{ flexGrow: 1, flexShrink: 0, color: 'white' }}
                                 to={`/category/${category.id}`}
                                 size={'small'}
-                                className={clsx(styles.navButton, { selected: categoriesHierarchy[1] === category.id })}
+                                className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy[1] === category.id })}
                             >
                                 {category.title}
                             </Button>
