@@ -1,19 +1,20 @@
 import React, { FunctionComponent, memo, useCallback, useState, useContext } from 'react';
-import MaterialTable from 'material-table';
-import {
-  Edit, Save, Delete, Search, SkipPrevious, Clear,
-  ChevronLeft, ChevronRight, SkipNext, AddBox, CloudUploadOutlined
-} from '@material-ui/icons';
 import { useDropzone } from 'react-dropzone';
 import { client } from 'api/client';
-import { makeStyles, Theme, createStyles } from '@material-ui/core';
+import {
+  makeStyles, Theme, createStyles, Paper
+} from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { State } from 'store/State';
-import { FileModel } from 'model';
+import { FileModel, FileModelType, UploadModel } from 'model';
 import { GetUserFilesQuery } from 'api/query/GetUserFiles';
 import { createSetFilesAction } from 'store/actions/userFiles';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
 import { UploadQueueContext } from 'context/UploadQueueContext';
+import { uniq } from 'lodash';
+import { FileToolbar } from './FileToolbar';
+import { CreateNewFolderDialog } from './CreateNewFolderDialog';
+import { FileTable } from './FileTable';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
   createStyles({
@@ -40,7 +41,10 @@ export interface FileExplorerProps {
 export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
 
   const files = useSelector<State, FileModel[] | null>(s => s.userFiles.files);
-  const uploadLength = useSelector<State, number>(s => (s.userFiles.uploads || []).length);
+  const [selectedPath, setSelectedPath] = useState('/');
+
+  const uploads = useSelector<State, UploadModel[]>(s => (s.userFiles.uploads || []));
+
   const dispatch = useDispatch();
 
   const uploadQueue = useContext(UploadQueueContext);
@@ -48,14 +52,13 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
   const setFilesCallback = useCallback(files => dispatch(createSetFilesAction(files)), [dispatch]);
 
   const [isActiveUploadsDialogOpen, setIsActiveUploadsDialogOpen] = useState(false);
+  const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      console.log('upload file: ', acceptedFiles[0]);
-      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, '/'));
+      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, selectedPath));
     }
-  }, [uploadQueue]);
-
+  }, [selectedPath, uploadQueue]);
   const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles, open } = useDropzone({ onDrop, noClick: true });
 
   const styles = useStyles();
@@ -64,10 +67,37 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
     client.query<{ files: FileModel[] }>({
       query: GetUserFilesQuery
     }).then(({ data: { files } }) => setFilesCallback(files));
+
+    return (<span>Dateien werden geladen ...</span>);
   }
 
+  const directories = uniq((files || [])
+    .map(file => {
+      const relativePath = file.path.replace(new RegExp(`^${selectedPath}`), '');
+      if (relativePath.length < 1) {
+        return null;
+      } else {
+        return relativePath.split('/')[0];
+      }
+    })
+    .filter(Boolean) as string[])
+    .map(d => ({
+      id: d,
+      fileType: FileModelType.Directory,
+      filename: d,
+      filesize: 0,
+      insertedAt: new Date().toString(),
+      updatedAt: new Date().toString(),
+      mimeType: 'application/medienportal-keep-dir',
+      path: d,
+      remoteLocation: ''
+    }));
+
+  const currentFiles = (files || [])
+    .filter(f => f.filename !== '.panda-keep' && f.path === selectedPath);
+
   return (
-    <div style={{ position: 'relative' }} {...getRootProps()}>
+    <Paper style={{ position: 'relative' }} {...getRootProps()}>
       <input {...getInputProps()} />
       {(isDragActive || isDragAccept) && (
         <div className={styles.overlayDropzoneActive}>
@@ -76,73 +106,21 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
         </div>
       )}
       <ActiveUploadsModal open={isActiveUploadsDialogOpen} onClose={() => setIsActiveUploadsDialogOpen(false)} />
-      <MaterialTable
-        columns={[
-          { title: 'Dateiname', field: 'filename', editable: 'onUpdate' },
-          // { title: 'Status', field: 'uploadstatus', type: 'numeric', editable: 'never' },
-          { title: 'Dateigröße', field: 'size', type: 'numeric', editable: 'never' },
-          {
-            title: 'Dateityp',
-            field: 'filetype',
-            lookup: { jpg: 'JPEG', doc: 'Word-Dokument' },
-            editable: 'never'
-          },
-        ]}
-        data={(files || []).map(file => ({
-          filename: file.filename,
-          size: file.filesize,
-          filetype: file.fileType
-        }))}
-        style={{ boxShadow: 'none' }}
-        title={''}
-        actions={[
-          {
-            icon: () => <CloudUploadOutlined />,
-            tooltip: 'Uploads',
-            hidden: uploadLength < 1,
-            isFreeAction: true,
-            onClick: () => setIsActiveUploadsDialogOpen(true)
-          },
-          {
-            icon: () => <AddBox />,
-            tooltip: 'Datei hochladen',
-            isFreeAction: true,
-            onClick: () => open()
-          },
-        ]}
-        icons={{
-          Check: () => <Save />,
-          Delete: () => <Delete />,
-          Clear: () => <Clear />,
-          ResetSearch: () => <Clear />,
-          Edit: () => <Edit />,
-          Search: () => <Search />,
-          PreviousPage: () => <ChevronLeft />,
-          FirstPage: () => <SkipPrevious />,
-          NextPage: () => <ChevronRight />,
-          LastPage: () => <SkipNext />
-        }}
-        editable={{
-          onRowUpdate: (newData, oldData) =>
-            new Promise(resolve => {
-              setTimeout(() => {
-                resolve();
-                // const data = [...state.data];
-                // data[data.indexOf(oldData)] = newData;
-                // setState({ ...state, data });
-              }, 600);
-            }),
-          onRowDelete: oldData =>
-            new Promise(resolve => {
-              setTimeout(() => {
-                resolve();
-                // const data = [...state.data];
-                // data.splice(data.indexOf(oldData), 1);
-                // setState({ ...state, data });
-              }, 600);
-            }),
-        }}
+      <CreateNewFolderDialog open={isCreateNewFolderDialogOpen} onClose={() => setIsCreateNewFolderDialogOpen(false)} />
+
+      <FileToolbar
+        path={selectedPath}
+        uploads={uploads}
+        onChangePath={setSelectedPath}
+        onClickUploadButton={() => open()}
+        onClickOpenActiveUploadsDialog={() => setIsActiveUploadsDialogOpen(true)}
+        onClickOpenCreateNewFolderDialog={() => setIsCreateNewFolderDialogOpen(true)}
       />
-    </div>
+
+      <FileTable
+        files={directories.concat(currentFiles)}
+        onSelectSubPath={subPath => setSelectedPath([selectedPath, subPath].join('/').replace(/^\/\//, '/'))}
+      />
+    </Paper>
   );
 });

@@ -24,10 +24,7 @@ const customFetch = (url: string, options: any) => {
         data: body,
     };
 
-    console.log('send axios request with config: ', config);
-
     return axios(config).then(axiosResponse => {
-        // debugger;
         return new Response(JSON.stringify(axiosResponse.data), {
             headers: new Headers(axiosResponse.headers),
             status: axiosResponse.status,

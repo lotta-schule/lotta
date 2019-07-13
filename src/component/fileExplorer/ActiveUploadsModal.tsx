@@ -12,6 +12,11 @@ export interface ActiveUploadsModalProps {
 export const ActiveUploadsModal: FunctionComponent<ActiveUploadsModalProps> = memo(({ open, onClose }) => {
     const uploads: UploadModel[] = (useSelector<State, UploadModel[] | null>(s => s.userFiles.uploads) || []);
 
+    if (uploads.length < 1) {
+        onClose({}, 'backdropClick');
+        return null;
+    }
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{uploads.length} Dateien werden hochgeladen</DialogTitle>

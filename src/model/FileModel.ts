@@ -2,7 +2,8 @@ export enum FileModelType {
     Image = 'Image',
     Video = 'Video',
     Audio = 'Audio',
-    Misc = 'Misc'
+    Misc = 'Misc',
+    Directory = 'Directory',
 }
 
 export interface FileModel {
