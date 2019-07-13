@@ -1,7 +1,9 @@
 export enum FileModelType {
     Image = 'Image',
     Video = 'Video',
-    Misc = 'Misc'
+    Audio = 'Audio',
+    Misc = 'Misc',
+    Directory = 'Directory',
 }
 
 export interface FileModel {
@@ -13,5 +15,5 @@ export interface FileModel {
     filesize: number;
     remoteLocation: string;
     mimeType: string;
-    type: FileModelType;
+    fileType: FileModelType;
 }

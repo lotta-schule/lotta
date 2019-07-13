@@ -5,13 +5,11 @@ import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
-    header: {
-        minHeight: 180, 
-        width: '100%', 
-        height: '100%', 
-        flexShrink: 0, 
-        flexGrow: 0, 
-        backgroundPosition: '0 0',
+    subheaderContainer: {
+        height: '120px',
+        padding: '0.5em',
+        marginBottom: '0.5em',
+        backgroundColor: '#fff',
     },
     subheader: {
         maxHeight: 120, 
@@ -41,8 +39,8 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ar
 
     return (
         <ConnectedBaseLayout>
-            <Grid className={styles.header}>
-                <Grid className={styles.subheader}>
+            <Grid className={styles.subheaderContainer}>
+                <Grid item className={styles.subheader}>
                         <Typography className={styles.bannerheading}>Überschrift</Typography>
                 </Grid>
             </Grid>

@@ -2,7 +2,7 @@ import useReactRouter from 'use-react-router';
 
 export const useCurrentCategoryId = (): string | null => {
     const { location, match } = useReactRouter();
-    console.log(location.pathname);
+
     if (location.pathname.match(/^\/category/)) {
         return (match.params as any).id;
     }

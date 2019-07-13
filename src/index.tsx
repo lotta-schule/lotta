@@ -5,17 +5,27 @@ import { client } from 'api/client';
 import { Provider } from 'react-redux';
 import { theme } from './theme';
 import { ThemeProvider } from '@material-ui/styles';
+import { UploadQueueService } from 'api/UploadQueueService';
+import { createSetUploadsAction, createAddFileAction } from 'store/actions/userFiles';
+import { UploadQueueContext } from 'context/UploadQueueContext';
 import * as serviceWorker from './serviceWorker';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import store from './store/Store';
+
+const uploadQueue = new UploadQueueService(
+    uploads => store.dispatch(createSetUploadsAction(uploads)),
+    file => store.dispatch(createAddFileAction(file))
+);
 
 ReactDOM.render(
     (
         <ThemeProvider theme={theme}>
             <ApolloProvider client={client}>
                 <Provider store={store}>
-                    <App />
+                    <UploadQueueContext.Provider value={uploadQueue}>
+                        <App />
+                    </UploadQueueContext.Provider>
                 </Provider >
             </ApolloProvider >
         </ThemeProvider >
