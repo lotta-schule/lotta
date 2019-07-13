@@ -10,10 +10,11 @@ defmodule Api.Repo.Migrations.CreateFiles do
       add :mime_type, :string
       add :file_type, :string
       add :user_id, references(:users, on_delete: :nothing)
+      add :tenant_id, references(:users, on_delete: :nothing)
 
       timestamps()
     end
 
-    create index(:files, [:user_id])
+    create index(:files, [:user_id, :tenant_id])
   end
 end

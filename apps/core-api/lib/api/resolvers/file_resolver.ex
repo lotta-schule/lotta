@@ -4,6 +4,10 @@ defmodule Api.FileResolver do
   alias Repo
   alias UUID
 
+  def all(%{}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+    {:ok, Accounts.list_files(tenant.id, current_user.id)}
+  end
+
   def upload(%{path: path, file: file}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     %{filename: filename,content_type: content_type,path: localfilepath} = file
     %{size: filesize} = File.stat! localfilepath

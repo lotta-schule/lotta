@@ -39,6 +39,10 @@ defmodule ApiWeb.Schema do
       arg :id, non_null(:id)
       resolve &Api.UserResolver.find/2
     end
+
+    field :files, list_of(:file) do
+      resolve &Api.FileResolver.all/2
+    end
   end
 
   mutation do

@@ -19,7 +19,7 @@ defmodule Api.Accounts.File do
   @doc false
   def changeset(file, attrs) do
     file
-    |> cast(attrs, [:path, :filename, :filesize, :remote_location, :mime_type, :file_type])
-    |> validate_required([:path, :filename, :filesize, :remote_location, :mime_type, :file_type])
+    |> cast(attrs, [:path, :filename, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id])
+    |> validate_required([:path, :filename, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id])
   end
 end

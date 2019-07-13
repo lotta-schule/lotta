@@ -137,8 +137,8 @@ defmodule Api.Accounts do
       [%File{}, ...]
 
   """
-  def list_files do
-    Repo.all(File)
+  def list_files(tenant_id, user_id) do
+    Repo.all(Ecto.Query.from f in File, where: f.tenant_id == ^tenant_id and f.user_id == ^user_id)
   end
 
   @doc """
