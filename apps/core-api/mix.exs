@@ -53,6 +53,7 @@ defmodule Api.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.12"},
       {:sweet_xml, "~> 0.6"},
+      {:poison, "~> 4.0"},
       {:uuid, "~> 1.1"},
     ]
   end
