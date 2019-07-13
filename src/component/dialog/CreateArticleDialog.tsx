@@ -47,10 +47,10 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                             }
                         });
                     }}>
-                        <DialogTitle>Beim Medienportal anmelden</DialogTitle>
+                        <DialogTitle>Artikel Erstellen</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Melde dich hier mit deinen Zugangsdaten an.
+                                Gib zunächst Kategorie und Titel an.
                                 </DialogContentText>
                             {error && (
                                 <p style={{ color: 'red' }}>{error.message}</p>
@@ -80,7 +80,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                                     name="category-id"
                                 >
                                     <MenuItem value="">
-                                        <em>Keine Kategory</em>
+                                        <em>Keine Kategorie</em>
                                     </MenuItem>
                                     {categories.map(category => (
                                         <MenuItem key={category.id} value={category.id}>
@@ -88,7 +88,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                                         </MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText>Label + placeholder</FormHelperText>
+                                <FormHelperText>Label + Platzhalter</FormHelperText>
                             </FormControl>
                         </DialogContent>
                         <DialogActions>
