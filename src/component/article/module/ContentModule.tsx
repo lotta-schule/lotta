@@ -3,14 +3,14 @@ import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { Card, makeStyles, Theme, createStyles } from '@material-ui/core';
-import { SwapVert } from '@material-ui/icons';
+import { DragHandle } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         dragbar: {
             height: '2em',
             backgroundColor: '#efefef',
-            borderRadius: '1em',
+            borderRadius: 4,
         }
     }),
 );
@@ -30,7 +30,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
         <Card component={'section'} innerRef={draggableProvided && draggableProvided.innerRef} {...(draggableProvided ? draggableProvided.draggableProps : undefined)}>
             {isEditModeEnabled && (
                 <div {...(draggableProvided ? draggableProvided.dragHandleProps : undefined)} className={styles.dragbar}>
-                    <SwapVert style={{marginTop: '0.15em', marginLeft: '50%'}}/>
+                    <DragHandle style={{marginTop: '0.15em', marginLeft: '0.5em', color: '#888'}}/>
                 </div>
             )}
             {contentModule.type === ContentModuleType.TEXT && <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
