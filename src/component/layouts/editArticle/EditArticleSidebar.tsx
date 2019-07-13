@@ -1,6 +1,20 @@
 import React, { memo, FunctionComponent } from 'react';
-import { Card, CardContent, CardMedia, Divider, TextField, Button } from '@material-ui/core';
+import { Card, CardContent, CardMedia, Divider, TextField, Button, Typography, makeStyles } from '@material-ui/core';
 import { ArticleModel } from '../../../model';
+import clsx from 'clsx';
+import { Save as SaveIcon, Edit } from '@material-ui/icons';
+
+const useStyles = makeStyles(theme => ({
+    button: {
+        margin: theme.spacing(1),
+    },
+    leftIcon: {
+        marginRight: theme.spacing(1),
+    },
+    iconSmall: {
+        fontSize: 20,
+    },
+}));
 
 interface EditArticleSidebarProps {
     article: ArticleModel;
@@ -8,8 +22,10 @@ interface EditArticleSidebarProps {
     onSave(): void;
 }
 
-export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => (
-    <Card>
+export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => {
+        const styles = useStyles();
+        return (
+    <Card style={{marginTop: '0.5em'}}>
         <CardContent>
             <TextField
                 label="Titel des Beitrags"
@@ -70,11 +86,16 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
             />
         </CardContent>
         <Divider />
-        <CardMedia
-            style={{ width: 150 }}
-            image={'https://via.placeholder.com/150x150'}
-            title={`Vorschaubild zu ${article.title}`}
-        />
+        <CardContent>
+            <img src={'https://placeimg.com/300/150/any'} style={{ width: '100%', height: 'auto' }} title={`Vorschaubild zu ${article.title}`} />
+            <Button
+            variant='outlined'
+            color='secondary'
+            >
+                <Edit className={clsx(styles.leftIcon, styles.iconSmall)} />
+                Vorschaubild ändern
+            </Button>
+        </CardContent>
         <Divider />
         <CardContent>
             <TextField
@@ -97,9 +118,15 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
         </CardContent>
         <Divider />
         <CardContent>
-            <Button fullWidth onClick={onSave}>speichern</Button>
-            <Button fullWidth>speichern</Button>
-            <Button fullWidth>speichern</Button>
+            <Button 
+            onClick={onSave}
+            variant='outlined'
+            color='secondary'
+            >
+                <SaveIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
+                speichern
+            </Button>
         </CardContent>
     </Card>
-));
+)}
+);
