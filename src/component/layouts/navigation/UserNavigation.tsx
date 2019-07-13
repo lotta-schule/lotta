@@ -12,7 +12,6 @@ import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        position: 'sticky',
         top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2),
         backgroundColor: '#fff',
         padding: '0.5em',
