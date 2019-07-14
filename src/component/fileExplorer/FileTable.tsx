@@ -59,7 +59,10 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, onSel
                                     // directory
                                     <TableRow hover key={file.id} onClick={() => onSelectSubPath(file.filename)}>
                                         <TableCell></TableCell>
-                                        <TableCell><FolderOutlined />{file.filename}</TableCell>
+                                        <TableCell>
+                                            <FolderOutlined style={{ top: 5, position: 'relative', right: 10 }} />
+                                            {file.filename}
+                                        </TableCell>
                                         <TableCell></TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>

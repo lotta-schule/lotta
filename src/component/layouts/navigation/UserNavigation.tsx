@@ -4,11 +4,13 @@ import { UserModel } from '../../../model';
 import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useRouter from 'use-react-router';
 import { createAddArticleAction } from 'store/actions/content';
 import { Add as AddCircleIcon, Person } from '@material-ui/icons';
 import classNames from 'classnames';
+import { State } from 'store/State';
+import { createLoginAction, createLogoutAction } from 'store/actions/user';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -31,19 +33,19 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export interface UserNavigationProps {
-    user: UserModel | null;
-    onLogin(user: UserModel, token: string): void;
-    onLogout(): void;
-}
-
-export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ user, onLogin, onLogout }) => {
+export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const styles = useStyles();
+
+    const user = useSelector<State, UserModel | null>(s => s.user.user);
+    const dispatch = useDispatch();
+    const onLogin = (user: UserModel, token: string) => dispatch(createLoginAction(user, token));
+    const onLogout = () => dispatch(createLogoutAction());
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(false);
+
     const { history } = useRouter();
-    const dispatch = useDispatch();
+
     return (
         <>
             <Grid container justify={'space-evenly'} className={styles.root}>
@@ -52,7 +54,7 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                         <div>
                             <Avatar alt={'Nutzer Name'} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
                             <Typography align={'center'}>
-                                Nickname
+                                {user.nickname || user.name}
                             </Typography>
                         </div>
                     )}
@@ -73,13 +75,13 @@ export const UserNavigation: FunctionComponent<UserNavigationProps> = memo(({ us
                                     <li>
                                         <Button size="small" variant="outlined" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
                                             <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
-                                                Beitrag
+                                            Beitrag
                                         </Button>
                                     </li>
                                     <li>
-                                            <Button size="small" variant="outlined" color="secondary" className={styles.button} component={CollisionLink} to={'/profile'}>
-                                                <Person className={classNames(styles.leftIcon, styles.iconSmall)} />
-                                                Mein Profil
+                                        <Button size="small" variant="outlined" color="secondary" className={styles.button} component={CollisionLink} to={'/profile'}>
+                                            <Person className={classNames(styles.leftIcon, styles.iconSmall)} />
+                                            Mein Profil
                                             </Button>
                                     </li>
                                 </>

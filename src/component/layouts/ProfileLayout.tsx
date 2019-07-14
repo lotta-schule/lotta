@@ -16,7 +16,7 @@ export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
     const user = useSelector<State, UserModel | null>(s => s.user.user);
     const [email, setEmail] = useState(user && user.email);
     const [name, setName] = useState(user && user.name);
-    const [displayName, setDisplayName] = useState(user && user.name);
+    const [nickname, setNickname] = useState(user && user.nickname);
     const { history } = useRouter();
     if (!user) {
         history.replace('/');
@@ -51,8 +51,8 @@ export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
                                 margin="dense"
                                 id="nickname"
                                 label="Dein Spitzname"
-                                value={displayName}
-                                onChange={e => setDisplayName(e.target.value)}
+                                value={nickname}
+                                onChange={e => setNickname(e.target.value)}
                                 placeholder="El Professore"
                                 type="nickname"
                                 fullWidth

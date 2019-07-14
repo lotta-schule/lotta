@@ -1,11 +1,11 @@
 import React, { FunctionComponent, memo } from 'react';
 import { Grid, makeStyles, Container, CardMedia } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
-import { ConnectedUserNavigation } from './navigation/ConnectedUserNavigation';
 import { CategoryModel, ClientModel } from '../../model';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
+import { UserNavigation } from './navigation/UserNavigation';
 
 
 const useStyles = makeStyles(() => ({
@@ -35,12 +35,12 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
                 <Grid container style={{ display: 'flex', height: '100%' }}>
                     <Grid xs={12} sm={3}>
                         <CardMedia
-                        style={{ maxHeight: 80, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, marginTop: 10 }}
-                        image="https://placeimg.com/300/80/any"
+                            style={{ maxHeight: 80, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, marginTop: 10 }}
+                            image="https://placeimg.com/300/80/any"
                         />
                     </Grid>
                     <Grid item xs={12} sm={9}>
-                        <Typography variant="h5" gutterBottom style={{padding: '0.9em', marginBottom: '0'}}>{client.title}</Typography>
+                        <Typography variant="h5" gutterBottom style={{ padding: '0.9em', marginBottom: '0' }}>{client.title}</Typography>
                     </Grid>
                 </Grid>
             </header>
@@ -48,12 +48,12 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
             <main style={{ marginTop: '.5em', maxWidth: '100%', paddingBottom: '1em' }}>
                 <Grid container justify={'flex-start'}>
                     <Grid item xs>
-                        <main style={{ width: '100%', height: '100%'}}>
+                        <main style={{ width: '100%', height: '100%' }}>
                             {children}
                         </main>
                     </Grid>
-                    <Grid item component={'aside'} xs={12} md={3} xl={3} style={{ marginLeft: '0.5em'}}>
-                        <ConnectedUserNavigation />
+                    <Grid item component={'aside'} xs={12} md={3} xl={3} style={{ marginLeft: '0.5em' }}>
+                        <UserNavigation />
                         {sidebar}
                     </Grid>
                 </Grid>
