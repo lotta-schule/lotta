@@ -1,13 +1,11 @@
-import { ArticleModel, ContentModuleType } from '../../model';
 import React, { FunctionComponent, memo, useState } from 'react';
+import { ArticleModel } from '../../model';
 import { Article } from '../article/Article';
 import { EditArticleSidebar } from './editArticle/EditArticleSidebar';
-import { Button } from '@material-ui/core';
-import { Value } from 'slate';
-import useReactRouter from 'use-react-router';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
-const { serialize } = require('slate-base64-serializer').default;
+import useReactRouter from 'use-react-router';
+import { AddModuleBar } from 'component/article/AddModuleBar';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
@@ -17,32 +15,21 @@ export interface ArticleLayoutProps {
 export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
     const [editedArticle, setEditedArticle] = useState(article);
     const { history } = useReactRouter();
+
     return (
         <>
             <BaseLayoutMainContent>
                 <Article article={editedArticle} isEditModeEnabled onUpdateArticle={setEditedArticle} />
-                <div>
-                    <Button
-                        variant="outlined"
-                        color={'primary'}
-                        onClick={async () => {
-                            setEditedArticle({
-                                ...editedArticle,
-                                contentModules: [
-                                    ...editedArticle.contentModules,
-                                    {
-                                        id: new Date().getTime().toString(),
-                                        sortKey: Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10,
-                                        type: ContentModuleType.TEXT,
-                                        text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } }))
-                                    }
-                                ]
-                            });
-                        }}
-                    >
-                        + TEXT
-                </Button>
-                </div>
+                <AddModuleBar onAddModule={async contentModule => setEditedArticle({
+                    ...editedArticle,
+                    contentModules: [
+                        ...editedArticle.contentModules,
+                        {
+                            ...contentModule,
+                            sortKey: Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10,
+                        }
+                    ]
+                })} />
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <EditArticleSidebar
