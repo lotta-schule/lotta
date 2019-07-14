@@ -47,8 +47,8 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
     const styles = useStyles();
 
     const currentCategoryId = useCurrentCategoryId();
-    const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || '')
-    const categoriesHierarchy = [...categoriesAncestors, currentCategoryId]
+    const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || '');
+    const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 
     const mainCategories = (categories || []).filter(category => !Boolean(category.category));
     const subcategories = (categories || []).filter(category => category.category && category.category.id === categoriesHierarchy[0]);
@@ -63,7 +63,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                         component={CollisionLink}
                         style={{ flexGrow: 1, flexShrink: 0 }}
                         to={'/'}
-                        variant="text" 
+                        variant="text"
                         size={'medium'}
                         className={styles.navButton}
                         color='inherit'
@@ -72,13 +72,13 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                     </Button>
                     {mainCategories.map(category => (
                         <Button
-                            variant="text" 
+                            variant="text"
                             key={category.id}
                             component={CollisionLink}
                             style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
                             to={`/category/${category.id}`}
                             size={'medium'}
-                            className={clsx(styles.navButton, { selected: categoriesHierarchy[0] === category.id })}
+                            className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                         >
                             {category.title}
                         </Button>
@@ -87,15 +87,15 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
             </AppBar>
             {subcategories.length > 0 && (
                 <AppBar position={'sticky'} className={styles.secondaryAppBar}>
-                    <Toolbar style={{minHeight: '0', height: '40px'}}>
+                    <Toolbar style={{ minHeight: '0', height: '40px' }}>
                         {subcategories.map(category => (
                             <Button
-                                variant="text" 
+                                variant="text"
                                 key={category.id}
                                 component={CollisionLink}
                                 to={`/category/${category.id}`}
                                 size={'small'}
-                                className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy[1] === category.id })}
+                                className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                             >
                                 {category.title}
                             </Button>
