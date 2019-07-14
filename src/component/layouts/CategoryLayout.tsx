@@ -1,5 +1,4 @@
 import { CategoryModel, ArticleModel } from '../../model';
-import { BaseLayout } from './BaseLayout';
 import React, { FunctionComponent, memo } from 'react';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';

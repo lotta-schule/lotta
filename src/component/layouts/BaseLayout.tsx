@@ -1,12 +1,10 @@
-import React, { FunctionComponent, memo, Children } from 'react';
+import React, { FunctionComponent, memo } from 'react';
 import { Grid, makeStyles, Container, CardMedia } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { CategoryModel, ClientModel } from '../../model';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
-import { BaseLayoutMainContent } from './BaseLayoutMainContent';
-import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 
 
 const useStyles = makeStyles(() => ({
@@ -35,7 +33,7 @@ export const BaseLayout: FunctionComponent = memo(({ children }) => {
         <Container className={styles.root}>
             <header className={styles.header}>
                 <Grid container style={{ display: 'flex', height: '100%' }}>
-                    <Grid xs={12} sm={3}>
+                    <Grid item xs={12} sm={3}>
                         <CardMedia
                             style={{ maxHeight: 80, width: '100%', height: '100%', flexShrink: 0, flexGrow: 0, marginTop: 10 }}
                             image="https://placeimg.com/300/80/any"
