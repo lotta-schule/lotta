@@ -6,7 +6,7 @@ import { CategoryRoute } from './routes/CategoryRoute';
 import { CircularProgress } from '@material-ui/core';
 import { client as apolloClient } from '../api/client';
 import { ClientModel, CategoryModel } from 'model';
-import { ConnectedBaseLayout } from './layouts/ConnectedBaseLayout';
+import { BaseLayout } from './layouts/BaseLayout';
 import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { PageRoute } from './routes/PageRoute';
@@ -58,21 +58,22 @@ export const App = memo(() => {
 
   return (
     <BrowserRouter>
-      <Switch>
-        <Route exact path={'/'} component={() => (<ConnectedBaseLayout>Nicht gefunden</ConnectedBaseLayout>)} />
-        <Route exact path={'/'} component={memo(() => (
-          <CategoryLayout
-            category={null!}
-            articles={store.getState().content.articles.filter(article => !article.category)}
-          />
-        ))} />
-        <Route path={'/category/:id'} component={CategoryRoute} />
-        <Route path={'/page/:name'} component={PageRoute} />
-        <Route path={'/article/:id/edit'} component={EditArticleRoute} />
-        <Route path={'/article/:id'} component={ArticleRoute} />
-        <Route path={'/profile'} component={ProfileLayout} />
-        <Route component={() => <div>Nicht gefunden</div>} />
-      </Switch>
+      <BaseLayout>
+        <Switch>
+          <Route exact path={'/'} component={memo(() => (
+            <CategoryLayout
+              category={null!}
+              articles={store.getState().content.articles.filter(article => !article.category)}
+            />
+          ))} />
+          <Route path={'/category/:id'} component={CategoryRoute} />
+          <Route path={'/page/:name'} component={PageRoute} />
+          <Route path={'/article/:id/edit'} component={EditArticleRoute} />
+          <Route path={'/article/:id'} component={ArticleRoute} />
+          <Route path={'/profile'} component={ProfileLayout} />
+          <Route component={() => <div>Nicht gefunden</div>} />
+        </Switch>
+      </BaseLayout>
     </BrowserRouter>
   );
 });

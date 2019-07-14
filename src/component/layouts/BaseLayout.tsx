@@ -1,11 +1,12 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { FunctionComponent, memo, Children } from 'react';
 import { Grid, makeStyles, Container, CardMedia } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { CategoryModel, ClientModel } from '../../model';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
-import { UserNavigation } from './navigation/UserNavigation';
+import { BaseLayoutMainContent } from './BaseLayoutMainContent';
+import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 
 
 const useStyles = makeStyles(() => ({
@@ -18,14 +19,15 @@ const useStyles = makeStyles(() => ({
         backgroundSize: 'cover',
         textAlign: 'right',
     },
+    main: {
+        marginTop: '.5em',
+        maxWidth: '100%',
+        paddingBottom: '1em'
+    }
 }));
 
 
-export interface ConnectedBaseLayoutProps {
-    sidebar?: JSX.Element;
-}
-
-export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = memo(({ children, sidebar }) => {
+export const BaseLayout: FunctionComponent = memo(({ children }) => {
     const styles = useStyles();
     const client = useSelector<State, ClientModel>(state => state.client.client!);
     const categories = useSelector<State, CategoryModel[]>(state => state.client.categories);
@@ -45,17 +47,9 @@ export const ConnectedBaseLayout: FunctionComponent<ConnectedBaseLayoutProps> = 
                 </Grid>
             </header>
             <Navbar categories={categories} />
-            <main style={{ marginTop: '.5em', maxWidth: '100%', paddingBottom: '1em' }}>
+            <main className={styles.main}>
                 <Grid container justify={'flex-start'}>
-                    <Grid item xs>
-                        <main style={{ width: '100%', height: '100%' }}>
-                            {children}
-                        </main>
-                    </Grid>
-                    <Grid item component={'aside'} xs={12} md={3} xl={3} style={{ marginLeft: '0.5em' }}>
-                        <UserNavigation />
-                        {sidebar}
-                    </Grid>
+                    {children}
                 </Grid>
             </main>
         </Container>
