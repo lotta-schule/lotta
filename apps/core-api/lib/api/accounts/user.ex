@@ -6,6 +6,7 @@ defmodule Api.Accounts.User do
   schema "users" do
     field :email, :string
     field :name, :string
+    field :nickname, :string
     field :password, :string, virtual: true
     field :password_hash, :string
 
@@ -24,14 +25,14 @@ defmodule Api.Accounts.User do
 
   def update_changeset(%User{} = user, params \\ %{}) do
     user
-    |> cast(params, [:name, :email], [:password])
+    |> cast(params, [:name, :nickanme, :email], [:password])
     |> validate_required([:name, :email])
     |> put_pass_hash()
   end
 
   def registration_changeset(%User{} = user, params \\ %{}) do
     user
-    |> cast(params, [:name, :email, :password])
+    |> cast(params, [:name, :nickname, :email, :password])
     |> validate_required([:name, :email, :password])
     |> put_pass_hash()
   end

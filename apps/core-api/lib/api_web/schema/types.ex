@@ -14,6 +14,7 @@ defmodule ApiWeb.Schema.Types do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :name, :string
+    field :nickname, :string
     field :email, :string
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
   end

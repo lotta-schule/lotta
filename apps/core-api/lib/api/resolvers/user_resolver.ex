@@ -15,14 +15,14 @@ defmodule Api.UserResolver do
 
   def register(%{user: user_params}, _info) do
     with {:ok, user} <- Accounts.register_user(user_params),
-        {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{email: user.email,name: user.name}) do
+        {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{email: user.email, nickname: user.nickname, name: user.name}) do
       {:ok, %{user: user, token: jwt}}
     end
   end
   
   def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-        {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{email: user.email,name: user.name}) do
+        {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{email: user.email, nickname: user.nickname, name: user.name}) do
       {:ok, %{user: user, token: jwt}}
     end
   end
