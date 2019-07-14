@@ -7,8 +7,21 @@ import { CollisionLink } from '../general/CollisionLink';
 import { Edit } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
+import classNames from 'classnames';
 
 const useStyle = makeStyles((theme: Theme) => ({
+    root: {
+        padding: '0.5em',
+        borderRadius: 0,
+        '&:hover .edit-button': {
+            opacity: 1
+        }
+    },
+    editButton: {
+        float: 'right',
+        opacity: 0,
+        transition: 'opacity ease-in 250ms'
+    },
     articlePreviewImage: {
         minHeight: 180,
         width: '100%',
@@ -30,7 +43,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
     const styles = useStyle();
 
     return (
-        <Card style={{ padding: '0.5em', borderRadius: '0' }}>
+        <Card className={styles.root}>
             <Grid container style={{ display: 'flex' }}>
                 <Grid item xs={12} sm={4}>
                     <CardMedia
@@ -51,11 +64,11 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                                 {article.title}
                             </Link>
                             {user/* && user.group > UserGroup.GUEST*/ && (
-                                <Fab 
-                                    color="secondary" 
-                                    aria-label="Edit" 
-                                    size="small" 
-                                    style={{float: 'right'}}
+                                <Fab
+                                    color="secondary"
+                                    aria-label="Edit"
+                                    size="small"
+                                    className={classNames(styles.editButton, 'edit-button')}
                                     component={CollisionLink}
                                     to={`/article/${article.id}/edit`}
                                 >
