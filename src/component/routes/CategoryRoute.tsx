@@ -4,11 +4,11 @@ import { CategoryLayout } from 'component/layouts/CategoryLayout';
 import { useCategory } from 'util/categories/useCategory';
 import { Query } from 'react-apollo';
 import { ArticleModel } from 'model';
-import { CircularProgress } from '@material-ui/core';
 import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
 import { useSelector, useDispatch } from 'react-redux';
 import { State } from 'store/State';
 import { createAddArticleAction } from 'store/actions/content';
+import { EmptyLoadingLayout } from 'component/layouts/EmptyLoadingLayout';
 
 export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
     const categoryId = match.params.id;
@@ -31,7 +31,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
             <Query<{ articles: ArticleModel[] }, { categoryId: string }> query={GetArticlesQuery} variables={{ categoryId }}>
                 {({ data, loading: isLoading, error }) => {
                     if (!data || isLoading) {
-                        return <div><CircularProgress /></div>;
+                        return <EmptyLoadingLayout />;
                     }
                     if (error) {
                         return <div><span style={{ color: 'red' }}>{error.message}</span></div>;

@@ -1,8 +1,9 @@
 import { CategoryModel, ArticleModel } from '../../model';
-import { ConnectedBaseLayout } from './ConnectedBaseLayout';
 import React, { FunctionComponent, memo } from 'react';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
+import { BaseLayoutMainContent } from './BaseLayoutMainContent';
+import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
@@ -12,11 +13,11 @@ const useStyles = makeStyles(() => ({
         backgroundColor: '#fff',
     },
     subheader: {
-        maxHeight: 120, 
-        width: '100%', 
-        height: '100%', 
-        flexShrink: 0, 
-        flexGrow: 0, 
+        maxHeight: 120,
+        width: '100%',
+        height: '100%',
+        flexShrink: 0,
+        flexGrow: 0,
         backgroundImage: 'url(https://placeimg.com/900/120/any)'
     },
     bannerheading: {
@@ -34,19 +35,26 @@ export interface CategoryLayoutProps {
     articles?: ArticleModel[];
 }
 
-export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ articles }) => {
+export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ category, articles }) => {
     const styles = useStyles();
 
     return (
-        <ConnectedBaseLayout>
-            <Grid className={styles.subheaderContainer}>
-                <Grid item className={styles.subheader}>
-                        <Typography className={styles.bannerheading}>Überschrift</Typography>
-                </Grid>
-            </Grid>
-            {articles && articles.map(article => (
-                <ArticlePreview key={article.id} article={article} />
-            ))}
-        </ConnectedBaseLayout>
+        <>
+            <BaseLayoutMainContent>
+                {category && (
+                    <Grid className={styles.subheaderContainer}>
+                        <Grid item className={styles.subheader}>
+                            <Typography className={styles.bannerheading}>
+                                {category.title}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                )}
+                {articles && articles.map(article => (
+                    <ArticlePreview key={article.id} article={article} />
+                ))}
+            </BaseLayoutMainContent>
+            <BaseLayoutSidebar />
+        </>
     );
 });

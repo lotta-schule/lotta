@@ -7,6 +7,7 @@ export const RegisterMutation = gql`
             user {
                 id
                 email
+                nickname
                 name
             }
         }

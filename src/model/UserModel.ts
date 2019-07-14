@@ -9,6 +9,7 @@ export enum UserGroup {
 export interface UserModel {
     id: string;
     name: string;
+    nickname: string;
     email: string;
     avatar: string;
     group: UserGroup;

@@ -2,7 +2,7 @@ import { UserActionType, LoginAction, LogoutAction } from '../actions/user';
 import { UserState } from '../State';
 import jwtDecode from 'jwt-decode';
 import { get, set, remove } from 'js-cookie';
-import { UserModel } from 'model';
+import { UserModel, UserGroup } from 'model';
 
 export type UserActions = LoginAction | LogoutAction;
 
@@ -15,8 +15,10 @@ export const initialUserState: UserState = {
                 return {
                     id: decoded.sub,
                     name: decoded.name,
+                    nickname: decoded.nickname,
                     email: decoded.email,
-
+                    avatar: '',
+                    group: UserGroup.STUDENT
                 } as UserModel;
             }
         }
