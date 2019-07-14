@@ -9,9 +9,9 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-{:ok, alexis} = Api.Accounts.register_user(%{ name: "Alexis Rinaldoni", email: "alexis.rinaldoni@einsa.net", password: "test123" })
-Api.Accounts.register_user(%{ name: "Christopher Bill", email: "billy@einsa.net", password: "test123" })
-Api.Accounts.register_user(%{ name: "Eike Wiewiorra", email: "eike.wiewiorra@einsa.net", password: "test123" })
+{:ok, alexis} = Api.Accounts.register_user(%{ name: "Alexis Rinaldoni", nickname: "Der Meister", email: "alexis.rinaldoni@einsa.net", password: "test123" })
+Api.Accounts.register_user(%{ name: "Christopher Bill", nickname: "Billy", email: "billy@einsa.net", password: "test123" })
+Api.Accounts.register_user(%{ name: "Eike Wiewiorra", nickname: "Chef", email: "eike.wiewiorra@einsa.net", password: "test123" })
 
 {:ok, web_tenant} = Api.Repo.insert(%Api.Tenants.Tenant{ slug: "web", title: "Web Beispiel" })
 
