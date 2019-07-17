@@ -11,8 +11,8 @@ interface EditProps {
 export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdateModule }) => {
     return (
         <SelectFileOverlay
-            label={'Bild auswechseln'}
-            fileFilter={f => f.fileType === FileModelType.Image}
+            label={'Video auswechseln'}
+            fileFilter={f => f.fileType === FileModelType.Video}
             onSelectFile={file => onUpdateModule({ ...contentModule, files: [file] })}
         >
             <Show contentModule={contentModule} />

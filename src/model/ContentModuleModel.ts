@@ -4,6 +4,7 @@ export enum ContentModuleType {
     TITLE = 'TITLE',
     TEXT = 'TEXT',
     IMAGE = 'IMAGE',
+    VIDEO = 'VIDEO',
 }
 
 export interface ContentModuleModel {

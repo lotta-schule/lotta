@@ -1,15 +1,16 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { FileModel, FileModelType } from '../../model';
+import { FileModel } from '../../model';
 import { EditOverlay } from './EditOverlay';
 import { Dialog, DialogTitle } from '@material-ui/core';
 import { FileExplorer } from 'component/fileExplorer/FileExplorer';
 
 interface SelectFileOverlayProps {
     label: string;
+    fileFilter?(file: FileModel): boolean;
     onSelectFile(file: FileModel): void;
 }
 
-export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo(({ children, label, onSelectFile }) => {
+export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo(({ children, label, fileFilter, onSelectFile }) => {
     const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(false);
     return (
         <>
@@ -21,7 +22,7 @@ export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo
                 <FileExplorer
                     disableEditColumn
                     style={{ padding: '0 .5em' }}
-                    fileFilter={f => f.fileType === FileModelType.Image}
+                    fileFilter={fileFilter}
                     onSelectFile={file => {
                         setIsSelectFileDialogOpen(false);
                         onSelectFile(file);
