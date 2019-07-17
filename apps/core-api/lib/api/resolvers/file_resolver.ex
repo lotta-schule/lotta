@@ -1,6 +1,7 @@
 defmodule Api.FileResolver do
   alias Api.Accounts
   alias Api.UploadService
+  alias Api.MediaConversionPublisherWorker
   alias Repo
   alias UUID
 
@@ -13,8 +14,8 @@ defmodule Api.FileResolver do
     %{size: filesize} = File.stat! localfilepath
     oid = current_user.id + DateTime.to_unix(DateTime.utc_now) + :rand.uniform(9999)
     uuid = UUID.uuid5(:dns, "#{oid}.ugc.medienportal.org")
-    %{url: remote_location} = UploadService.upload_to_space(%{localfilepath: localfilepath, file_name: uuid})
-    %{}
+    %{url: remote_location} = UploadService.upload_to_space(%{localfilepath: localfilepath, content_type: content_type, file_name: uuid})
+    {:ok, file} = %{}
     |> Map.put(:user_id, current_user.id)
     |> Map.put(:tenant_id, tenant.id)
     |> Map.put(:path, path)
@@ -24,6 +25,8 @@ defmodule Api.FileResolver do
     |> Map.put(:file_type, filetype_from(content_type))
     |> Map.put(:mime_type, content_type)
     |> Accounts.create_file
+    MediaConversionPublisherWorker.send_conversion_request(file)
+    {:ok, file}
   end
 
   defp filetype_from(content_type) do

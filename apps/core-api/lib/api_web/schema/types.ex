@@ -73,6 +73,16 @@ defmodule ApiWeb.Schema.Types do
     field :remote_location, :string
     field :file_type, :file_type
     field :user_id, :id
+    field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+  end
+
+  object :file_conversion do
+    field :id, :id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :format, :string
+    field :mime_type, :string
+    field :remote_location, :string
   end
 
   enum :file_type do

@@ -20,7 +20,7 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:lager, :logger, :runtime_tools, :amqp]
     ]
   end
 
@@ -55,6 +55,7 @@ defmodule Api.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:poison, "~> 4.0"},
       {:uuid, "~> 1.1"},
+      {:amqp, "~> 1.2"}
     ]
   end
 

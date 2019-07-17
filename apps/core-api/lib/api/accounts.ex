@@ -221,4 +221,100 @@ defmodule Api.Accounts do
   def change_file(%File{} = file) do
     File.changeset(file, %{})
   end
+
+  alias Api.Accounts.FileConversion
+
+  @doc """
+  Returns the list of file_conversions.
+
+  ## Examples
+
+      iex> list_file_conversions()
+      [%FileConversion{}, ...]
+
+  """
+  def list_file_conversions do
+    Repo.all(FileConversion)
+  end
+
+  @doc """
+  Gets a single file_conversion.
+
+  Raises `Ecto.NoResultsError` if the File conversion does not exist.
+
+  ## Examples
+
+      iex> get_file_conversion!(123)
+      %FileConversion{}
+
+      iex> get_file_conversion!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_file_conversion!(id), do: Repo.get!(FileConversion, id)
+
+  @doc """
+  Creates a file_conversion.
+
+  ## Examples
+
+      iex> create_file_conversion(%{field: value})
+      {:ok, %FileConversion{}}
+
+      iex> create_file_conversion(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_file_conversion(attrs \\ %{}) do
+    %FileConversion{}
+    |> FileConversion.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a file_conversion.
+
+  ## Examples
+
+      iex> update_file_conversion(file_conversion, %{field: new_value})
+      {:ok, %FileConversion{}}
+
+      iex> update_file_conversion(file_conversion, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_file_conversion(%FileConversion{} = file_conversion, attrs) do
+    file_conversion
+    |> FileConversion.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a FileConversion.
+
+  ## Examples
+
+      iex> delete_file_conversion(file_conversion)
+      {:ok, %FileConversion{}}
+
+      iex> delete_file_conversion(file_conversion)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_file_conversion(%FileConversion{} = file_conversion) do
+    Repo.delete(file_conversion)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking file_conversion changes.
+
+  ## Examples
+
+      iex> change_file_conversion(file_conversion)
+      %Ecto.Changeset{source: %FileConversion{}}
+
+  """
+  def change_file_conversion(%FileConversion{} = file_conversion) do
+    FileConversion.changeset(file_conversion, %{})
+  end
 end

@@ -2,6 +2,8 @@ version: "3.4"
 
 networks:
   postgres:
+  rabbitmq:
+    driver: bridge
 
 volumes:
   elixir-mix:
@@ -17,9 +19,11 @@ services:
       - 4000:4000
     command: bash -c "iex -S mix phx.server"
     depends_on:
+      - rabbitmq
       - postgres
     networks:
       - postgres
+      - rabbitmq
     env_file: .env
 
   postgres:
@@ -28,7 +32,16 @@ services:
       - ./_postgres-data:/var/lib/postgresql/data
     networks:
       - postgres
+      - rabbitmq
     environment:
       POSTGRES_USER: api-user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: api
+
+  rabbitmq:
+    image: rabbitmq:3.7-management
+    hostname: rabbitmq
+    networks:
+      - rabbitmq
+    expose:
+      - "15672"

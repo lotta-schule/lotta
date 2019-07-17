@@ -7,6 +7,7 @@ defmodule Api.TenantResolver do
   end
 
   def current(_args, %{context: %{context: %{tenant: tenant}}}) do
+    IO.inspect("should publish to queue service")
     {:ok, tenant}
   end
   def current(_args, _info) do

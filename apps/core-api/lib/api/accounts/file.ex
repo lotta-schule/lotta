@@ -10,6 +10,7 @@ defmodule Api.Accounts.File do
     field :path, :string
     field :remote_location, :string
 
+    has_many :file_conversions, Api.Accounts.FileConversion
     belongs_to :user, Api.Accounts.User
     belongs_to :tenant, Api.Tenant.Tenant
 
