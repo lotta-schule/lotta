@@ -1,5 +1,6 @@
 export enum ContentModuleType {
-    TEXT = 'TEXT'
+    TITLE = 'TITLE',
+    TEXT = 'TEXT',
 }
 
 export interface ContentModuleModel {

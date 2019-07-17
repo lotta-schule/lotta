@@ -35,7 +35,18 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                 alignItems="center"
             >
                 <Grid item xs={1}>
-                    <AddModuleButton label={'Titel'} icon={<TextFormat />} />
+                    <AddModuleButton
+                        label={'Titel'}
+                        icon={<TextFormat />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: new Date().getTime(),
+                                type: ContentModuleType.TITLE,
+                                text: 'Titel'
+                            });
+                        }}
+                    />
                 </Grid>
                 <Grid item xs={1}>
                     <AddModuleButton
