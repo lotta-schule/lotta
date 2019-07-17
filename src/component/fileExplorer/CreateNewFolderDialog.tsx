@@ -60,7 +60,8 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                                 updatedAt: new Date().toString(),
                                 mimeType: 'application/medienportal-keep-dir',
                                 path: [basePath, path].filter(Boolean).join('/'),
-                                remoteLocation: ''
+                                remoteLocation: '',
+                                fileConversions: [],
                             };
                             dispatch(createAddFileAction(tmpFile));
                         } catch (e) {

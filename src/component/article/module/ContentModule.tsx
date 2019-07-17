@@ -2,6 +2,7 @@ import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
+import { Image } from './image/Image';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { Card, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { DragHandle } from '@material-ui/icons';
@@ -36,6 +37,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
             )}
             {contentModule.type === ContentModuleType.TITLE && <Title contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
             {contentModule.type === ContentModuleType.TEXT && <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
+            {contentModule.type === ContentModuleType.IMAGE && <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
         </Card>
     );
 

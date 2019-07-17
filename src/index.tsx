@@ -2,6 +2,7 @@ import './index.scss';
 import { ApolloProvider } from 'react-apollo';
 import { App } from './component/App';
 import { client } from 'api/client';
+import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { Provider } from 'react-redux';
 import { theme } from './theme';
 import { ThemeProvider } from '@material-ui/styles';
@@ -21,13 +22,15 @@ const uploadQueue = new UploadQueueService(
 ReactDOM.render(
     (
         <ThemeProvider theme={theme}>
-            <ApolloProvider client={client}>
-                <Provider store={store}>
-                    <UploadQueueContext.Provider value={uploadQueue}>
-                        <App />
-                    </UploadQueueContext.Provider>
-                </Provider >
-            </ApolloProvider >
+            <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
+                <ApolloProvider client={client}>
+                    <Provider store={store}>
+                        <UploadQueueContext.Provider value={uploadQueue}>
+                            <App />
+                        </UploadQueueContext.Provider>
+                    </Provider >
+                </ApolloProvider >
+            </CloudimageProvider>
         </ThemeProvider >
     ),
     document.getElementById('root')

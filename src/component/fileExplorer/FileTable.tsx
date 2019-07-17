@@ -30,10 +30,12 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
 
 export interface FileTableProps {
     files: FileModel[];
+    disableEditColumn?: boolean;
     onSelectSubPath(path: string): void;
+    onSelectFile?(file: FileModel): void;
 }
 
-export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, onSelectSubPath }) => {
+export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disableEditColumn, onSelectSubPath, onSelectFile }) => {
 
     const [currentPage, setCurrentPage] = useState(0);
 
@@ -44,7 +46,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, onSel
             <Table size={'small'}>
                 <TableHead>
                     <TableRow>
-                        <TableCell>{/*actions*/}</TableCell>
+                        {!disableEditColumn && (<TableCell>{/*actions*/}</TableCell>)}
                         <TableCell>Dateiname</TableCell>
                         <TableCell>Dateigröße</TableCell>
                         <TableCell>Dateityp</TableCell>
@@ -58,7 +60,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, onSel
                                 file.fileType === FileModelType.Directory ? (
                                     // directory
                                     <TableRow hover key={file.id} onClick={() => onSelectSubPath(file.filename)}>
-                                        <TableCell></TableCell>
+                                        {!disableEditColumn && (<TableCell></TableCell>)}
                                         <TableCell>
                                             <FolderOutlined style={{ top: 5, position: 'relative', right: 10 }} />
                                             {file.filename}
@@ -67,19 +69,21 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, onSel
                                         <TableCell></TableCell>
                                     </TableRow>
                                 ) : (
-                                        <TableRow hover key={file.id} >
-                                            <TableCell>
-                                                <Tooltip title="Dateiname bearbeiten">
-                                                    <IconButton className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
-                                                        <Edit />
-                                                    </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Datei löschen">
-                                                    <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
-                                                        <Delete />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </TableCell>
+                                        <TableRow hover key={file.id} onClick={() => onSelectFile && onSelectFile(file)}>
+                                            {!disableEditColumn && (
+                                                <TableCell>
+                                                    <Tooltip title="Dateiname bearbeiten">
+                                                        <IconButton className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
+                                                            <Edit />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="Datei löschen">
+                                                        <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
+                                                            <Delete />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            )}
                                             <TableCell component="th" scope="row" padding="none">
                                                 {file.filename}
                                             </TableCell>

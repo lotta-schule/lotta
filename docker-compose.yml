@@ -13,3 +13,4 @@ services:
       - REACT_APP_APP_BASE_DOMAIN=.medienportal.lvh.me
       - REACT_APP_API_URL=http://api.medienportal.lvh.me:4000/api
       - REACT_APP_AUTHENTICATION_TOKEN_NAME=PandaToken
+      - REACT_APP_CLOUDIMG_TOKEN=afdptjdxen

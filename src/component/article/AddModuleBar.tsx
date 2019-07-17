@@ -43,7 +43,8 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: `temp-${new Date().getTime().toString()}`,
                                 sortKey: new Date().getTime(),
                                 type: ContentModuleType.TITLE,
-                                text: 'Titel'
+                                text: 'Titel',
+                                files: [],
                             });
                         }}
                     />
@@ -57,7 +58,8 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: `temp-${new Date().getTime().toString()}`,
                                 sortKey: new Date().getTime(),
                                 type: ContentModuleType.TEXT,
-                                text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } }))
+                                text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } })),
+                                files: [],
                             });
                         }}
                     />
@@ -66,7 +68,19 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                     <AddModuleButton label={'Liste'} icon={<FormatListBulleted />} />
                 </Grid>
                 <Grid item xs={1}>
-                    <AddModuleButton label={'Bild'} icon={<AddPhotoAlternate />} />
+                    <AddModuleButton
+                        label={'Bild'}
+                        icon={<AddPhotoAlternate />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: new Date().getTime(),
+                                type: ContentModuleType.IMAGE,
+                                text: undefined,
+                                files: [],
+                            });
+                        }}
+                    />
                 </Grid>
                 <Grid item xs={1}>
                     <AddModuleButton label={'Video'} icon={<MovieCreation />} />
