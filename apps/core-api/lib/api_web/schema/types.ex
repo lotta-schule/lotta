@@ -63,6 +63,7 @@ defmodule ApiWeb.Schema.Types do
     value :title, as: "title"
     value :text, as: "text"
     value :image, as: "image"
+    value :video, as: "video"
   end
 
   object :file do

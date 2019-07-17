@@ -40,6 +40,8 @@ defmodule Api.FileResolver do
       "audio/wav" -> "audio"
       "video/mp4" -> "video"
       "video/webm" -> "video"
+      "video/mov" -> "video"
+      "video/quicktime" -> "video"
       "application/pdf" -> "pdf"
       "x-application/pdf" -> "pdf"
       _ -> "misc"
