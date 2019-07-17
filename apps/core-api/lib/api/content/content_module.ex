@@ -1,12 +1,19 @@
 defmodule Api.Content.ContentModule do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Api.Repo
 
   schema "content_modules" do
     field :text, :string
     field :type, :string
+    field :sort_key, :integer
 
     belongs_to :article, Api.Content.Article
+    many_to_many(
+      :files,
+      Api.Accounts.File,
+      join_through: "content_module_file"
+    )
 
     timestamps()
   end
@@ -14,7 +21,19 @@ defmodule Api.Content.ContentModule do
   @doc false
   def changeset(content_module, attrs) do
     content_module
-    |> cast(attrs, [:type, :text])
-    |> validate_required([:type, :text])
+    |> Api.Repo.preload(:files)
+    |> cast(attrs, [:type, :text, :sort_key])
+    |> validate_required([:type, :sort_key])
+    |> put_assoc_files(attrs)
+  end
+
+  defp put_assoc_files(content_module, %{ files: files }) do
+    files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, String.to_integer(file.id)) end)
+    content_module
+    |> put_assoc(:files, files)
+  end
+  defp put_assoc_files(content_module, _attrs) do
+    content_module
+    |> put_assoc(:files, [])
   end
 end

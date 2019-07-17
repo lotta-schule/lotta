@@ -114,6 +114,7 @@ defmodule ApiWeb.Schema do
   input_object :content_module_input do
     field :type, :content_module_type, default_value: "text"
     field :text, :string
+    field :files, list_of(:file)
     field :sort_key, :integer
   end
 

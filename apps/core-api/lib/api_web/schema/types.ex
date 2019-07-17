@@ -55,11 +55,14 @@ defmodule ApiWeb.Schema.Types do
     field :updated_at, :naive_datetime
     field :type, :content_module_type
     field :text, :string
+    field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :sort_key, :integer
   end
 
   enum :content_module_type do
+    value :title, as: "title"
     value :text, as: "text"
+    value :image, as: "image"
   end
 
   object :file do

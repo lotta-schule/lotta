@@ -13,6 +13,12 @@ defmodule Api.Accounts.File do
     has_many :file_conversions, Api.Accounts.FileConversion
     belongs_to :user, Api.Accounts.User
     belongs_to :tenant, Api.Tenant.Tenant
+    many_to_many(
+      :content_modules,
+      Api.Content.ContentModule,
+      join_through: "content_module_file",
+      on_replace: :delete
+    )
 
     timestamps()
   end
