@@ -37,6 +37,8 @@ defmodule Api.FileResolver do
       "image/bmp" -> "image"
       "image/gif" -> "image"
       "audio/mp3" -> "audio"
+      "audio/mpeg" -> "audio"
+      "audio/mpg" -> "audio"
       "audio/wav" -> "audio"
       "video/mp4" -> "video"
       "video/webm" -> "video"
