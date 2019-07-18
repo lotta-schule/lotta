@@ -98,7 +98,19 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                     />
                 </Grid>
                 <Grid item xs={1}>
-                    <AddModuleButton label={'Audio'} icon={<Audiotrack />} />
+                    <AddModuleButton
+                        label={'Audio'}
+                        icon={<Audiotrack />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: new Date().getTime(),
+                                type: ContentModuleType.AUDIO,
+                                text: undefined,
+                                files: [],
+                            });
+                        }}
+                    />
                 </Grid>
                 <Grid item xs={1}>
                     <AddModuleButton label={'PDF'} icon={<PictureAsPdf />} />

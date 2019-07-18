@@ -35,4 +35,73 @@ declare module 'video-react' {
         toggleFullscreen(): void;
         subscribeToStateChange(listener: EventListener): void;
     };
+
+    export interface BigPlayButtonProps {
+        position: string;
+    }
+
+    export const BigPlayButton: ComponentType<BigPlayButtonProps>;
+
+    export interface ShortcutProps {
+        clickable?: boolean;
+        dblclickable?: boolean;
+        shortcuts?: any[];
+    }
+
+    export const Shortcut: ComponentType<Shortcut>;
+
+    export interface PosterImageProps {
+        poster: string;
+    }
+
+    export const PosterImage: ComponentType<PosterImageProps>;
+
+    export interface LoadingSpinnerProps { }
+
+    export const LoadingSpinner: ComponentType<LoadingSpinnerProps>;
+
+    export interface ControlBarProps {
+        autoHide?: boolean;
+        autoHideTime?: boolean;
+        disableDefaultControls?: boolean;
+        disableCompletely?: boolean;
+    }
+
+    export const ControlBar: ComponentType<ControlBarProps>;
+
+
+    export interface PlayToggleProps {
+        poster: string;
+    }
+
+    export const PlayToggle: ComponentType<PlayToggleProps>;
+
+
+    export interface ReplayControlProps {
+        seconds: 5 | 10 | 30;
+    }
+
+    export const ReplayControl: ComponentType<ReplayControlProps>;
+
+    export interface ForwardControlProps {
+        seconds: 5 | 10 | 30;
+    }
+
+    export const ForwardControl: ComponentType<ForwardControlProps>;
+
+    export interface VolumeMenuButtonProps {
+        vertical?: boolean;
+    }
+
+    export const VolumeMenuButton: ComponentType<VolumeMenuButtonProps>;
+
+    export interface PlaybackRateMenuButtonProps {
+        rates?: number[];
+    }
+
+    export const PlaybackRateMenuButton: ComponentType<PlaybackRateMenuButtonProps>;
+
+    export interface ClosedCaptionButtonProps { }
+
+    export const ClosedCaptionButton: ComponentType<ClosedCaptionButtonProps>;
 };
