@@ -100,7 +100,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ disabl
     } as FileModel));
 
   const currentFiles = (files || [])
-    .filter(f => f.filename !== '.panda-keep' && f.path === selectedPath && (fileFilter ? fileFilter(f) : true));
+    .filter(f => f.filename !== '.lotta-keep' && f.path === selectedPath && (fileFilter ? fileFilter(f) : true));
 
   return (
     <Paper style={{ position: 'relative', ...style }} className={className} {...getRootProps()}>
