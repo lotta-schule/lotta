@@ -8,11 +8,10 @@ defmodule Api.MediaConversionConsumerWorker do
     GenServer.start_link(__MODULE__, [], name: :media_conversion_consumer)
   end
 
-  @host        "amqp://guest:guest@rabbitmq"
   @queue       "media-conversion-results"
 
   def init(_opts) do
-    {:ok, conn} = Connection.open(@host)
+    {:ok, conn} = Connection.open(System.get_env("RABBITMQ_URL"))
     {:ok, chan} = Channel.open(conn)
     setup_queue(chan)
 
@@ -43,14 +42,14 @@ defmodule Api.MediaConversionConsumerWorker do
     end
 
     def handle_info(:connect, conn) do
-        case Connection.open(@host) do
+        case Connection.open(System.get_env("RABBITMQ_URL")) do
         {:ok, conn} ->
             # Get notifications when the connection goes down
             Process.monitor(conn.pid)
             {:noreply, conn}
 
         {:error, _} ->
-            Logger.error("Failed to connect #{@host}. Reconnecting later...")
+            Logger.error("Failed to connect #{System.get_env("RABBITMQ_URL")}. Reconnecting later...")
             # Retry later
             Process.send_after(self(), :connect, @reconnect_interval)
             {:noreply, nil}

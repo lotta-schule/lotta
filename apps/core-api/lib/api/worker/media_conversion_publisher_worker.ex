@@ -10,7 +10,7 @@ defmodule Api.MediaConversionPublisherWorker do
   @queue       "media-conversion-tasks"
 
   def init(_opts) do
-    {:ok, conn} = Connection.open("amqp://guest:guest@rabbitmq")
+    {:ok, conn} = Connection.open(System.get_env("RABBITMQ_URL"))
     {:ok, chan} = Channel.open(conn)
     setup_queue(chan)
 
