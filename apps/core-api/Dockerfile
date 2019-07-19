@@ -1,4 +1,4 @@
-# Dockerfile for Medienportal API Server
+# Dockerfile for Lotta API Server
 FROM elixir:1.8.2 as build
 
 # build arguments

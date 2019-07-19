@@ -18,7 +18,7 @@ config :api, ApiWeb.Endpoint,
   pubsub: [name: Api.PubSub, adapter: Phoenix.PubSub.PG2]
 
 config :api, Api.Guardian,
-  issuer: "medienportal",
+  issuer: "lotta",
   secret_key: System.get_env("SECRET_KEY_JWT")
 
 # Configures Elixir's Logger

@@ -1,6 +1,6 @@
 # Api
 
-API written for Medienportal API Server
+API written for Lotta API Server
 
 Phoenix, Elixir & Absinthe
 

@@ -13,7 +13,7 @@ defmodule Api.FileResolver do
     %{filename: filename,content_type: content_type,path: localfilepath} = file
     %{size: filesize} = File.stat! localfilepath
     oid = current_user.id + DateTime.to_unix(DateTime.utc_now) + :rand.uniform(9999)
-    uuid = UUID.uuid5(:dns, "#{oid}.ugc.medienportal.org")
+    uuid = UUID.uuid5(:dns, "#{oid}.ugc.lotta.schule")
     %{url: remote_location} = UploadService.upload_to_space(%{localfilepath: localfilepath, content_type: content_type, file_name: uuid})
     {:ok, file} = %{}
     |> Map.put(:user_id, current_user.id)

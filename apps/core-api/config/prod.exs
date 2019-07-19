@@ -11,7 +11,7 @@ use Mix.Config
 # before starting your production server.
 
 config :api, ApiWeb.Endpoint,
-  url: [host: "api.medienportal.com", port: 80]
+  url: [host: "api.lotta.schule", port: 80]
 
 # Do not print debug messages in production
 config :logger, level: :info

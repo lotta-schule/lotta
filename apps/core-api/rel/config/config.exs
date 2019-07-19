@@ -8,5 +8,5 @@ config :api_web, ApiWeb.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE")
 
 config :api, Api.Guardian,
-  issuer: "medienportal",
+  issuer: "lotta",
   secret_key: System.get_env("SECRET_KEY_JWT")
