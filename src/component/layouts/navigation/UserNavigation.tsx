@@ -48,47 +48,44 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     return (
         <>
             <Grid container justify={'space-evenly'} className={styles.root}>
-                <Grid item xs={4} style={{ display: 'flex' }}>
+                <Grid item xs={6} style={{ display: 'flex' }}>
                     {user && (
                         <div>
                             <Avatar alt={'Nutzer Name'} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
-                            <Typography align={'center'}>
+                            <Typography variant={'body2'} align={'center'}>
                                 {user.nickname || user.name}
                             </Typography>
                         </div>
                     )}
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={6} style={{marginTop: 'auto', marginBottom: 'auto'}}>
                     <Typography variant={'body2'} component={'nav'} align={'right'}>
                         <ul>
                             {user ?
                                 <li><Link onClick={() => onLogout()}>Abmelden</Link></li> :
                                 <>
-                                    <li><Link onClick={() => setLoginModalIsOpen(true)}>Anmelden</Link></li>
+                                <li><Link onClick={() => setLoginModalIsOpen(true)}>Anmelden</Link></li>
                                 </>
                             }
-                            <li>Impressum</li>
-                            <li>Datenschutz</li>
                             {user && (
                                 <>
-                                    <li>
-                                        <Button size="small" variant="outlined" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
-                                            <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
-                                            Beitrag
-                                        </Button>
-                                    </li>
-                                    <li>
-                                        <Button size="small" variant="outlined" color="secondary" className={styles.button} component={CollisionLink} to={'/profile'}>
-                                            <Person className={classNames(styles.leftIcon, styles.iconSmall)} />
-                                            Mein Profil
-                                            </Button>
-                                    </li>
+                                <li><Link component={CollisionLink} to={'/profile'}>Mein Profil</Link></li>
                                 </>
                             )}
+                            <li>Impressum</li>
+                            <li>Datenschutz</li>
                         </ul>
                     </Typography>
                 </Grid>
             </Grid>
+            {user && (
+                <>
+                <Button fullWidth size="small" variant="contained" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
+                    <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                    Neuer Beitrag
+                </Button>
+                </>
+            )}
             <CreateArticleDialog
                 isOpen={createArticleModalIsOpen}
                 onAbort={() => setCreateArticleModalIsOpen(false)}

@@ -25,7 +25,7 @@ interface EditArticleSidebarProps {
 export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => {
     const styles = useStyles();
     return (
-        <Card style={{ marginTop: '0.5em' }}>
+        <Card style={{ marginTop: '0.5em', borderRadius: '0'}}>
             <CardContent>
                 <TextField
                     label="Titel des Beitrags"
@@ -91,6 +91,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 <Button
                     variant='outlined'
                     color='secondary'
+                    fullWidth
                 >
                     <Edit className={clsx(styles.leftIcon, styles.iconSmall)} />
                     Vorschaubild ändern
