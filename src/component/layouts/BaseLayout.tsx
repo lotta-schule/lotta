@@ -8,9 +8,7 @@ import { State } from 'store/State';
 
 
 const useStyles = makeStyles(() => ({
-    root: {
-        backgroundColor: '#efefef'
-    },
+
     header: {
         minWidth: '100%',
         height: 100,
@@ -30,7 +28,7 @@ export const BaseLayout: FunctionComponent = memo(({ children }) => {
     const client = useSelector<State, ClientModel>(state => state.client.client!);
     const categories = useSelector<State, CategoryModel[]>(state => state.client.categories);
     return (
-        <Container className={styles.root}>
+        <Container>
             <header className={styles.header}>
                 <Grid container style={{ display: 'flex', height: '100%' }}>
                     <Grid item xs={12} sm={3}>

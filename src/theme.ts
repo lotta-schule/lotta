@@ -4,9 +4,9 @@ import { red, blue, deepOrange } from '@material-ui/core/colors';
 export const theme = createMuiTheme({
     palette: {
         primary: {
-            main: blue[800],
-            light: blue[300],
-            dark: blue[900],
+            main: '#334b82',
+            light: '#536daa',
+            dark: '#22345e',
             contrastText: 'white',
 
         },
