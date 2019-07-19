@@ -1,5 +1,5 @@
 import React, { memo, FunctionComponent } from 'react';
-import { Card, CardContent, Divider, TextField, Button, makeStyles } from '@material-ui/core';
+import { Card, CardContent, Divider, TextField, Button, makeStyles, Typography } from '@material-ui/core';
 import { ArticleModel } from '../../../model';
 import clsx from 'clsx';
 import { Save as SaveIcon, Edit } from '@material-ui/icons';
@@ -27,18 +27,23 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
     return (
         <Card style={{ marginTop: '0.5em', borderRadius: '0'}}>
             <CardContent>
+                <Typography variant="h6" align="center">
+                    Beitrags-Einstellungen
+                </Typography>
+            </CardContent>
+            <CardContent>
                 <TextField
                     label="Titel des Beitrags"
                     placeholder="Placeholder"
                     value={article.title}
                     onChange={e => onUpdate({ ...article, title: e.target.value })}
                     fullWidth
+                    variant="outlined"
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
             </CardContent>
-            <Divider />
             <CardContent>
                 <TextField
                     label="Vorschautext"
@@ -46,12 +51,13 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     value={article.preview}
                     onChange={e => onUpdate({ ...article, preview: e.target.value })}
                     fullWidth
+                    variant="outlined"
+                    multiline
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
             </CardContent>
-            <Divider />
             <CardContent>
                 <TextField
                     label="Datum"
@@ -59,16 +65,17 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     value={article.updatedAt}
                     disabled
                     fullWidth
+                    variant="outlined"
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
             </CardContent>
-            <Divider />
             <CardContent>
                 <TextField
                     label="Kategorie"
                     fullWidth
+                    variant="outlined"
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -80,12 +87,12 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     value={article.pageName}
                     onChange={e => onUpdate({ ...article, pageName: e.target.value || undefined })}
                     fullWidth
+                    variant="outlined"
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
             </CardContent>
-            <Divider />
             <CardContent>
                 <img src={'https://placeimg.com/300/150/any'} style={{ width: '100%', height: 'auto' }} alt={`Vorschaubild zu ${article.title}`} />
                 <Button
@@ -97,27 +104,28 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     Vorschaubild ändern
             </Button>
             </CardContent>
-            <Divider />
             <CardContent>
                 <TextField
                     label="Autoren"
                     fullWidth
+                    variant="outlined"
+                    multiline
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
             </CardContent>
-            <Divider />
             <CardContent>
                 <TextField
                     label="Sichtbarkeit"
                     fullWidth
+                    select
+                    variant="outlined"
                     InputLabelProps={{
                         shrink: true,
                     }}
                 />
             </CardContent>
-            <Divider />
             <CardContent>
                 <Button
                     onClick={onSave}
