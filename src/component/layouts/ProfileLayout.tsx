@@ -89,6 +89,12 @@ export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
                         <FileExplorer />
                     </CardContent>
                 </Card>
+                <Card>
+                    <CardContent>
+                        <Typography variant={'h4'}>Geteilte Medien</Typography>
+                        <FileExplorer />
+                    </CardContent>
+                </Card>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar />
         </>
