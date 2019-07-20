@@ -3,6 +3,7 @@ import { Card, CardContent, Divider, TextField, Button, makeStyles, Typography }
 import { ArticleModel } from '../../../model';
 import clsx from 'clsx';
 import { Save as SaveIcon, Edit } from '@material-ui/icons';
+import { CategorySelect } from './CategorySelect';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -25,7 +26,7 @@ interface EditArticleSidebarProps {
 export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => {
     const styles = useStyles();
     return (
-        <Card style={{ marginTop: '0.5em', borderRadius: '0'}}>
+        <Card style={{ marginTop: '0.5em', borderRadius: '0' }}>
             <CardContent>
                 <Typography variant="h6" align="center">
                     Beitrags-Einstellungen
@@ -72,13 +73,9 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
             </CardContent>
             <CardContent>
-                <TextField
-                    label="Kategorie"
-                    fullWidth
-                    variant="outlined"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
+                <CategorySelect
+                    selectedCategoryId={article.category && article.category.id}
+                    onSelectCategory={category => { }}
                 />
             </CardContent>
             <CardContent>
