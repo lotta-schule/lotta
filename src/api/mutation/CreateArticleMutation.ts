@@ -1,15 +1,20 @@
 import gql from 'graphql-tag';
 
 export const CreateArticleMutation = gql`
-    mutation CreateArticle($article: CreateArticleInput) {
+    mutation CreateArticle($article: ArticleInput) {
         article: createArticle(article: $article) {
             id
             insertedAt
             updatedAt
             title
             preview
-            previewImageUrl
             pageName
+            previewImageFile {
+                id
+                remoteLocation
+                mimeType
+                fileType
+            }
             contentModules {
                 id
                 type

@@ -1,6 +1,7 @@
 import { CategoryModel } from './CategoryModel';
 import { ContentModuleModel, ContentModuleInput } from './ContentModuleModel';
 import { UserModel } from './UserModel';
+import { FileModel } from './FileModel';
 
 export interface ArticleModel {
     id: string;
@@ -8,7 +9,7 @@ export interface ArticleModel {
     updatedAt: string;
     title: string;
     preview?: string;
-    previewImageUrl?: string;
+    previewImageFile?: FileModel;
     contentModules: ContentModuleModel[];
     category?: CategoryModel;
     user?: UserModel;

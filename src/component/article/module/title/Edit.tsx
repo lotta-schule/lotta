@@ -16,6 +16,7 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
             variant={'h2'}
             gutterBottom
             defaultValue={contentModule.text}
+            style={{ width: '100%', outline: 'none', border: 0 }}
             onChange={(e: FormEvent<HTMLInputElement>) => {
                 onUpdateModule({
                     ...contentModule,

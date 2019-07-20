@@ -3,6 +3,10 @@ import { Card, CardContent, Divider, TextField, Button, makeStyles, Typography }
 import { ArticleModel } from '../../../model';
 import clsx from 'clsx';
 import { Save as SaveIcon, Edit } from '@material-ui/icons';
+import { CategorySelect } from './CategorySelect';
+import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
+import Img from 'react-cloudimage-responsive';
+import { VisibilitySelect } from './VisibilitySelect';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -25,7 +29,7 @@ interface EditArticleSidebarProps {
 export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => {
     const styles = useStyles();
     return (
-        <Card style={{ marginTop: '0.5em', borderRadius: '0'}}>
+        <Card style={{ marginTop: '0.5em', borderRadius: '0' }}>
             <CardContent>
                 <Typography variant="h6" align="center">
                     Beitrags-Einstellungen
@@ -72,13 +76,9 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
             </CardContent>
             <CardContent>
-                <TextField
-                    label="Kategorie"
-                    fullWidth
-                    variant="outlined"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
+                <CategorySelect
+                    selectedCategoryId={article.category && article.category.id}
+                    onSelectCategory={category => onUpdate({ ...article, category })}
                 />
             </CardContent>
             <CardContent>
@@ -94,15 +94,13 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
             </CardContent>
             <CardContent>
-                <img src={'https://placeimg.com/300/150/any'} style={{ width: '100%', height: 'auto' }} alt={`Vorschaubild zu ${article.title}`} />
-                <Button
-                    variant='outlined'
-                    color='secondary'
-                    fullWidth
-                >
-                    <Edit className={clsx(styles.leftIcon, styles.iconSmall)} />
-                    Vorschaubild ändern
-            </Button>
+                <SelectFileOverlay label={'Vorschaubild ändern'} onSelectFile={previewImageFile => onUpdate({ ...article, previewImageFile })}>
+                    {article.previewImageFile ? (
+                        <Img operation={'crop'} size={'300x200'} src={article.previewImageFile.remoteLocation} />
+                    ) : (
+                            <img src={'https://placeimg.com/300/200/any'} style={{ width: '100%', height: 'auto' }} alt={`Vorschaubild zu ${article.title}`} />
+                        )}
+                </SelectFileOverlay>
             </CardContent>
             <CardContent>
                 <TextField
@@ -116,14 +114,9 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
             </CardContent>
             <CardContent>
-                <TextField
-                    label="Sichtbarkeit"
-                    fullWidth
-                    select
-                    variant="outlined"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
+                <VisibilitySelect
+                    selectedVisibility={undefined}
+                    onSelectVisibility={() => { }}
                 />
             </CardContent>
             <CardContent>
@@ -136,7 +129,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     speichern
             </Button>
             </CardContent>
-        </Card>
+        </Card >
     )
 }
 );
