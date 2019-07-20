@@ -13,14 +13,20 @@ const useStyle = makeStyles((theme: Theme) => ({
     root: {
         padding: '0.5em',
         borderRadius: 0,
-        '&:hover .edit-button': {
-            opacity: 1
+        '&:hover': {
+            '& .edit-button': {
+                border: 0,
+                display: 'flex',
+                color: '#fff',
+                backgroundColor: theme.palette.secondary.main,
+            },
         }
     },
     editButton: {
         float: 'right',
-        opacity: 0,
-        transition: 'opacity ease-in 250ms'
+        color: '#ccc',
+        background: 'transparent',
+        transition: 'opacity ease-in 250ms',
     },
     articlePreviewImage: {
         minHeight: 180,
@@ -65,7 +71,6 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                             </Link>
                             {user/* && user.group > UserGroup.GUEST*/ && (
                                 <Fab
-                                    color="secondary"
                                     aria-label="Edit"
                                     size="small"
                                     className={classNames(styles.editButton, 'edit-button')}
@@ -73,7 +78,8 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                                     to={`/article/${article.id}/edit`}
                                 >
                                     <Edit />
-                                </Fab>)}
+                                </Fab>
+                            )}
                         </Typography>
                         <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem' }}>
                             {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}

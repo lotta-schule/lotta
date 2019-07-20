@@ -7,15 +7,14 @@ import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { Card, makeStyles, Theme, createStyles } from '@material-ui/core';
-import { DragHandle } from '@material-ui/icons';
+import { DragHandle, Delete, Settings } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         dragbar: {
             height: '2em',
             backgroundColor: '#efefef',
-            borderRadius: 4,
-        }
+        },
     }),
 );
 
@@ -35,6 +34,8 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
             {isEditModeEnabled && (
                 <div {...(draggableProvided ? draggableProvided.dragHandleProps : undefined)} className={styles.dragbar}>
                     <DragHandle style={{ marginTop: '0.15em', marginLeft: '0.5em', color: '#888' }} />
+                    <Settings style={{ marginTop: '0.15em', marginLeft: '0.5em', color: '#888', cursor: 'pointer' }}/>
+                    <Delete style={{ marginTop: '0.15em', marginRight: '0.5em', color: '#888', float: 'right', cursor: 'pointer' }}/>
                 </div>
             )}
             {contentModule.type === ContentModuleType.TITLE && <Title contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
