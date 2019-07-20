@@ -20,7 +20,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
         const updateArticleInput = {
             title: article.title,
             preview: article.preview,
-            previewImageUrl: article.previewImageUrl,
+            previewImageFile: article.previewImageFile,
             pageName: article.pageName,
             contentModules: article.contentModules.map(cm => ({
                 type: cm.type,

@@ -1,6 +1,6 @@
 declare module 'react-cloudimage-responsive' {
 
-    import { ComponentType } from 'react';
+    import { ComponentType, ImgHTMLAttributes } from 'react';
 
     export interface CloudimageProviderConfig {
         token?: string;
@@ -12,8 +12,10 @@ declare module 'react-cloudimage-responsive' {
         presets?: object;
     }
 
-    export interface ImgProps {
+    export interface ImgProps extends ImgHTMLAttributes<HTMLImageElement> {
         src?: string;
+        alt?: string;
+        className?: string;
         operation?: 'width' | 'height' | 'crop' | 'fit' | 'cover';
         size?: string;
         filters?: string;
