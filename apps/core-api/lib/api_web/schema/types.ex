@@ -42,7 +42,7 @@ defmodule ApiWeb.Schema.Types do
     field :updated_at, :naive_datetime
     field :title, :string
     field :preview, :string
-    field :preview_image_url, :string
+    field :preview_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :page_name, :string
     field :content_modules, list_of(:content_module), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
