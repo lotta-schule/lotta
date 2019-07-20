@@ -1,7 +1,7 @@
+import React, { FunctionComponent, memo } from 'react';
 import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
 import { Typography } from '@material-ui/core';
-import React, { FunctionComponent, memo } from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 

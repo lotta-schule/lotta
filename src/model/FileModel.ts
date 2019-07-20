@@ -1,9 +1,9 @@
 export enum FileModelType {
-    Image = 'Image',
-    Video = 'Video',
-    Audio = 'Audio',
-    Misc = 'Misc',
-    Directory = 'Directory',
+    Image = 'IMAGE',
+    Video = 'VIDEO',
+    Audio = 'AUDIO',
+    Misc = 'MISC',
+    Directory = 'DIRECTORY',
 }
 
 export interface FileModel {
@@ -16,4 +16,12 @@ export interface FileModel {
     remoteLocation: string;
     mimeType: string;
     fileType: FileModelType;
+    fileConversions: FileConversion[];
+}
+
+export interface FileConversion {
+    fileType: FileModelType;
+    format: string;
+    mimeType: string;
+    remoteLocation: string;
 }

@@ -1,6 +1,10 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
+import { Title } from './title/Title';
+import { Image } from './image/Image';
+import { Video } from './video/Video';
+import { Audio } from './audio/Audio';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { Card, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { DragHandle } from '@material-ui/icons';
@@ -30,10 +34,14 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
         <Card component={'section'} innerRef={draggableProvided && draggableProvided.innerRef} {...(draggableProvided ? draggableProvided.draggableProps : undefined)}>
             {isEditModeEnabled && (
                 <div {...(draggableProvided ? draggableProvided.dragHandleProps : undefined)} className={styles.dragbar}>
-                    <DragHandle style={{marginTop: '0.15em', marginLeft: '0.5em', color: '#888'}}/>
+                    <DragHandle style={{ marginTop: '0.15em', marginLeft: '0.5em', color: '#888' }} />
                 </div>
             )}
+            {contentModule.type === ContentModuleType.TITLE && <Title contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
             {contentModule.type === ContentModuleType.TEXT && <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
+            {contentModule.type === ContentModuleType.IMAGE && <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
+            {contentModule.type === ContentModuleType.VIDEO && <Video contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
+            {contentModule.type === ContentModuleType.AUDIO && <Audio contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
         </Card>
     );
 

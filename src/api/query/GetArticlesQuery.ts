@@ -14,6 +14,19 @@ export const GetArticlesQuery = gql`
                 id
                 type
                 text
+                sortKey
+                files {
+                    id
+                    remoteLocation
+                    mimeType
+                    fileType
+                    fileConversions {
+                        id
+                        format
+                        mimeType
+                        remoteLocation
+                    }
+                }
             }
             category {
                 id

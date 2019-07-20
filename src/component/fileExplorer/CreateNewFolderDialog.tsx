@@ -54,13 +54,14 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                             const tmpFile: FileModel = {
                                 id: uuid(),
                                 fileType: FileModelType.Misc,
-                                filename: '.panda-keep',
+                                filename: '.lotta-keep',
                                 filesize: 0,
                                 insertedAt: new Date().toString(),
                                 updatedAt: new Date().toString(),
                                 mimeType: 'application/medienportal-keep-dir',
                                 path: [basePath, path].filter(Boolean).join('/'),
-                                remoteLocation: ''
+                                remoteLocation: '',
+                                fileConversions: [],
                             };
                             dispatch(createAddFileAction(tmpFile));
                         } catch (e) {

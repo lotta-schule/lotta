@@ -36,9 +36,14 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
 );
 
 export interface FileExplorerProps {
+  disableEditColumn?: boolean;
+  style?: React.CSSProperties;
+  className?: string;
+  fileFilter?(file: FileModel): boolean;
+  onSelectFile?(file: FileModel): void;
 }
 
-export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
+export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ disableEditColumn, style, className, fileFilter, onSelectFile }) => {
 
   const files = useSelector<State, FileModel[] | null>(s => s.userFiles.files);
   const [selectedPath, setSelectedPath] = useState('/');
@@ -90,14 +95,15 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
       updatedAt: new Date().toString(),
       mimeType: 'application/medienportal-keep-dir',
       path: d,
-      remoteLocation: ''
-    }));
+      remoteLocation: '',
+      fileConversions: []
+    } as FileModel));
 
   const currentFiles = (files || [])
-    .filter(f => f.filename !== '.panda-keep' && f.path === selectedPath);
+    .filter(f => f.filename !== '.lotta-keep' && f.path === selectedPath && (fileFilter ? fileFilter(f) : true));
 
   return (
-    <Paper style={{ position: 'relative' }} {...getRootProps()}>
+    <Paper style={{ position: 'relative', ...style }} className={className} {...getRootProps()}>
       <input {...getInputProps()} />
       {(isDragActive || isDragAccept) && (
         <div className={styles.overlayDropzoneActive}>
@@ -119,7 +125,9 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(() => {
 
       <FileTable
         files={directories.concat(currentFiles)}
+        disableEditColumn={disableEditColumn}
         onSelectSubPath={subPath => setSelectedPath([selectedPath, subPath].join('/').replace(/^\/\//, '/'))}
+        onSelectFile={onSelectFile}
       />
     </Paper>
   );

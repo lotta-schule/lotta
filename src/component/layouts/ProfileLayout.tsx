@@ -30,13 +30,13 @@ export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
                     <CardContent>
                         <Typography variant={'h4'}>Meine Daten</Typography>
                         <Grid container>
-                            <Grid md={4} style={{ marginTop: '1em' }}>
+                            <Grid item md={4} style={{ marginTop: '1em' }}>
                                 <Avatar alt={'Nutzer Name'} src={`https://avatars.dicebear.com/v2/avataaars/${email}.svg`} style={{ float: 'left' }} />
                                 <Fab color="secondary" aria-label="Edit" size="small">
                                     <Edit />
                                 </Fab>
                             </Grid>
-                            <Grid md={8}>
+                            <Grid item md={8}>
                                 <TextField
                                     autoFocus
                                     margin="dense"
