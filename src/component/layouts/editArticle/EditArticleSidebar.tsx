@@ -6,6 +6,7 @@ import { Save as SaveIcon, Edit } from '@material-ui/icons';
 import { CategorySelect } from './CategorySelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import Img from 'react-cloudimage-responsive';
+import { VisibilitySelect } from './VisibilitySelect';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -113,14 +114,9 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
             </CardContent>
             <CardContent>
-                <TextField
-                    label="Sichtbarkeit"
-                    fullWidth
-                    select
-                    variant="outlined"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
+                <VisibilitySelect
+                    selectedVisibility={undefined}
+                    onSelectVisibility={() => { }}
                 />
             </CardContent>
             <CardContent>

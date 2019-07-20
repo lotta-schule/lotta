@@ -2,7 +2,7 @@ import { ArticleModel, UpdateArticleModelInput } from 'model';
 import { CircularProgress } from '@material-ui/core';
 import { createUpdateArticleAction, createAddArticleAction } from 'store/actions/content';
 import { EditArticleLayout } from 'component/layouts/EditArticleLayout';
-import { find } from 'lodash';
+import { find, omit } from 'lodash';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router-dom';
@@ -17,23 +17,26 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
     const article = useSelector<State, ArticleModel | undefined>(state => find(state.content.articles, { id }));
     const dispatch = useDispatch();
     const onUpdateArticle = async (article: ArticleModel) => {
-        const updateArticleInput = {
-            title: article.title,
-            preview: article.preview,
-            previewImageFile: article.previewImageFile,
-            pageName: article.pageName,
-            contentModules: article.contentModules.map(cm => ({
-                type: cm.type,
-                text: cm.text,
-                sortKey: cm.sortKey,
-                files: cm.files,
-            }))
-        }
+        // const updateArticleInput = {
+        //     title: article.title,
+        //     preview: article.preview,
+        //     previewImageFile: article.previewImageFile,
+        //     pageName: article.pageName,
+        //     contentModules: article.contentModules.map(cm => ({
+        //         type: cm.type,
+        //         text: cm.text,
+        //         sortKey: cm.sortKey,
+        //         files: cm.files,
+        //     }))
+        // }
         const { data: { article: updatedArticle } } = await apolloClient.mutate<ArticleModel, { id: string, article: UpdateArticleModelInput }>({
             mutation: UpdateArticleMutation,
             variables: {
                 id: article.id,
-                article: updateArticleInput
+                article: {
+                    ...omit(article, ['id', 'insertedAt', 'updatedAt', 'user']),
+                    contentModules: article.contentModules.map(cm => omit(cm, ['id']))
+                } as UpdateArticleModelInput
             }
         });
         dispatch(createUpdateArticleAction(updatedArticle));
