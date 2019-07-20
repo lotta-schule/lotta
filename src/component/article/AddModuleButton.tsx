@@ -11,6 +11,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         borderColor: theme.palette.secondary.main,
         borderRadius: 4,
         border: '1px solid',
+        '&:hover': {
+            backgroundColor: theme.palette.secondary.light,
+        }
     },
     buttonLabel: {
         display: 'flex',

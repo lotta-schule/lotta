@@ -7,7 +7,7 @@ import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import useRouter from 'use-react-router';
 import { createAddArticleAction } from 'store/actions/content';
-import { Add as AddCircleIcon, Person } from '@material-ui/icons';
+import { Add as AddCircleIcon } from '@material-ui/icons';
 import classNames from 'classnames';
 import { State } from 'store/State';
 import { createLoginAction, createLogoutAction } from 'store/actions/user';

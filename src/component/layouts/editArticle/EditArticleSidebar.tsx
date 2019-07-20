@@ -1,5 +1,5 @@
 import React, { memo, FunctionComponent } from 'react';
-import { Card, CardContent, Divider, TextField, Button, makeStyles, Typography } from '@material-ui/core';
+import { Card, CardContent, TextField, Button, makeStyles, Typography } from '@material-ui/core';
 import { ArticleModel } from '../../../model';
 import clsx from 'clsx';
 import { Save as SaveIcon, Edit } from '@material-ui/icons';
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     },
     iconSmall: {
         fontSize: 20,
-    },
+    }
 }));
 
 interface EditArticleSidebarProps {

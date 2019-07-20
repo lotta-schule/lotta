@@ -98,13 +98,15 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                                     onAbort();
                                 }}
                                 color="secondary"
+                                variant="outlined"
                             >
                                 Abbrechen
                                 </Button>
                             <Button
                                 type={'submit'}
                                 disabled={isLoading}
-                                color="primary">
+                                color="secondary"
+                                variant="contained">
                                 Artikel erstellen
                             </Button>
                         </DialogActions>

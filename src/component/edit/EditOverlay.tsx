@@ -3,7 +3,7 @@ import { makeStyles, Theme, Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
-        border: `1px solid ${theme.palette.primary.main}`,
+        border: `2px solid ${theme.palette.secondary.main}`,
         position: 'relative',
         '&:hover > div': {
             display: 'flex'
@@ -32,7 +32,7 @@ export const EditOverlay: FunctionComponent<EditOverlayProps> = memo(({ children
     return (
         <div className={styles.root}>
             <div className={styles.overlay}>
-                <Button variant={'contained'} color={'primary'} onClick={onClick}>{label}</Button>
+                <Button variant={'contained'} color={'secondary'} onClick={onClick}>{label}</Button>
             </div>
             {children}
         </div>

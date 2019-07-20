@@ -128,13 +128,15 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                                             onAbort();
                                         }}
                                         color="secondary"
+                                        variant="outlined"
                                     >
                                         Abbrechen
                                         </Button>
                                     <Button
                                         type={'submit'}
                                         disabled={isLoading}
-                                        color="primary">
+                                        variant="contained"
+                                        color="secondary">
                                         {isNewUser ? 'Registrieren' : 'Anmelden'}
                                     </Button>
                                 </DialogActions>
