@@ -6,7 +6,7 @@ import { Image } from './image/Image';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
-import { Card, makeStyles, Theme, createStyles } from '@material-ui/core';
+import { Card, makeStyles, Theme, createStyles, IconButton } from '@material-ui/core';
 import { DragHandle, Delete, Settings } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -14,7 +14,17 @@ const useStyles = makeStyles((theme: Theme) =>
         dragbar: {
             height: '2em',
             backgroundColor: '#efefef',
+            display: 'flex',
+            justifyContent: 'space-between',
+            '& > span': {
+                display: 'flex'
+            }
         },
+        dragbarButton: {
+            padding: '0 5px',
+            height: 32,
+            width: 32
+        }
     }),
 );
 
@@ -33,9 +43,17 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
         <Card component={'section'} innerRef={draggableProvided && draggableProvided.innerRef} {...(draggableProvided ? draggableProvided.draggableProps : undefined)}>
             {isEditModeEnabled && (
                 <div {...(draggableProvided ? draggableProvided.dragHandleProps : undefined)} className={styles.dragbar}>
-                    <DragHandle style={{ marginTop: '0.15em', marginLeft: '0.5em', color: '#888' }} />
-                    <Settings style={{ marginTop: '0.15em', marginLeft: '0.5em', color: '#888', cursor: 'pointer' }}/>
-                    <Delete style={{ marginTop: '0.15em', marginRight: '0.5em', color: '#888', float: 'right', cursor: 'pointer' }}/>
+                    <span>
+                        <DragHandle style={{ marginTop: '0.15em', marginLeft: '0.5em', color: '#888' }} />
+                        <IconButton classes={{ root: styles.dragbarButton }} aria-label="Settings">
+                            <Settings style={{ color: '#888' }}/>
+                        </IconButton>
+                    </span>
+                    <span>
+                        <IconButton classes={{ root: styles.dragbarButton }} aria-label="Delete" style={{ float: 'right' }}>
+                            <Delete style={{ color: '#888' }}/>
+                        </IconButton>
+                    </span>
                 </div>
             )}
             {contentModule.type === ContentModuleType.TITLE && <Title contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />}
