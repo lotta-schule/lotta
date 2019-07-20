@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, MouseEventHandler } from "react";
 import { makeStyles } from "@material-ui/styles";
-import { Theme, Typography } from "@material-ui/core";
+import { Theme, Typography, Button } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -11,6 +11,10 @@ const useStyles = makeStyles((theme: Theme) => ({
         borderColor: theme.palette.secondary.main,
         borderRadius: 4,
         border: '1px solid',
+    },
+    buttonLabel: {
+        display: 'flex',
+        flexDirection: 'column'
     }
 }));
 
@@ -25,9 +29,9 @@ export const AddModuleButton: FunctionComponent<AddModuleButtonProps> = memo(({ 
     const styles = useStyles();
 
     return (
-        <button className={styles.root} onClick={onClick}>
+        <Button classes={{ root: styles.root, label: styles.buttonLabel }} onClick={onClick}>
             {icon}
             <Typography>{label}</Typography>
-        </button>
+        </Button>
     );
 });

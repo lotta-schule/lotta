@@ -49,6 +49,7 @@
     "react": "^16.8.6",
     "react-apollo": "^2.5.8",
     "react-beautiful-dnd": "^11.0.4",
+    "react-cloudimage-responsive": "^1.4.0",
     "react-dom": "^16.8.6",
     "react-dropzone": "^10.1.5",
     "react-redux": "^7.1.0-alpha.5",
@@ -58,7 +59,8 @@
     "slate": "^0.47.4",
     "slate-react": "^0.22.4",
     "use-react-router": "^1.0.7",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "video-react": "^0.14.0"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.9",

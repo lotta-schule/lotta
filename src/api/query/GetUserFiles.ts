@@ -12,6 +12,14 @@ export const GetUserFilesQuery = gql`
             remoteLocation
             mimeType
             fileType
+            fileConversions {
+                id
+                insertedAt
+                updatedAt
+                format
+                mimeType
+                remoteLocation
+            }
         }
     }
 `;

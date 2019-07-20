@@ -35,7 +35,19 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                 alignItems="center"
             >
                 <Grid item xs={1}>
-                    <AddModuleButton label={'Titel'} icon={<TextFormat />} />
+                    <AddModuleButton
+                        label={'Titel'}
+                        icon={<TextFormat />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: new Date().getTime(),
+                                type: ContentModuleType.TITLE,
+                                text: 'Titel',
+                                files: [],
+                            });
+                        }}
+                    />
                 </Grid>
                 <Grid item xs={1}>
                     <AddModuleButton
@@ -46,7 +58,8 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: `temp-${new Date().getTime().toString()}`,
                                 sortKey: new Date().getTime(),
                                 type: ContentModuleType.TEXT,
-                                text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } }))
+                                text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } })),
+                                files: [],
                             });
                         }}
                     />
@@ -55,13 +68,49 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                     <AddModuleButton label={'Liste'} icon={<FormatListBulleted />} />
                 </Grid>
                 <Grid item xs={1}>
-                    <AddModuleButton label={'Bild'} icon={<AddPhotoAlternate />} />
+                    <AddModuleButton
+                        label={'Bild'}
+                        icon={<AddPhotoAlternate />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: new Date().getTime(),
+                                type: ContentModuleType.IMAGE,
+                                text: undefined,
+                                files: [],
+                            });
+                        }}
+                    />
                 </Grid>
                 <Grid item xs={1}>
-                    <AddModuleButton label={'Video'} icon={<MovieCreation />} />
+                    <AddModuleButton
+                        label={'Video'}
+                        icon={<MovieCreation />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: new Date().getTime(),
+                                type: ContentModuleType.VIDEO,
+                                text: undefined,
+                                files: [],
+                            });
+                        }}
+                    />
                 </Grid>
                 <Grid item xs={1}>
-                    <AddModuleButton label={'Audio'} icon={<Audiotrack />} />
+                    <AddModuleButton
+                        label={'Audio'}
+                        icon={<Audiotrack />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: new Date().getTime(),
+                                type: ContentModuleType.AUDIO,
+                                text: undefined,
+                                files: [],
+                            });
+                        }}
+                    />
                 </Grid>
                 <Grid item xs={1}>
                     <AddModuleButton label={'PDF'} icon={<PictureAsPdf />} />
