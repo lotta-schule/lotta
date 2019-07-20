@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ArticleModel, UserModel } from '../../model';
-import { Card, CardMedia, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
+import { Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
 import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
@@ -8,6 +8,7 @@ import { Edit } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
 import classNames from 'classnames';
+import Img from 'react-cloudimage-responsive';
 
 const useStyle = makeStyles((theme: Theme) => ({
     root: {
@@ -29,7 +30,6 @@ const useStyle = makeStyles((theme: Theme) => ({
         transition: 'opacity ease-in 250ms',
     },
     articlePreviewImage: {
-        minHeight: 180,
         width: '100%',
         height: '100%',
         flexShrink: 0,
@@ -51,13 +51,17 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
     return (
         <Card className={styles.root}>
             <Grid container style={{ display: 'flex' }}>
-                <Grid item xs={12} sm={4}>
-                    <CardMedia
-                        className={styles.articlePreviewImage}
-                        image={article.previewImageUrl}
-                        title={`Vorschaubild zu ${article.title}`}
-                    />
-                </Grid>
+                {article.previewImageFile && (
+                    <Grid item xs={12} sm={4}>
+                        <Img
+                            operation={'crop'}
+                            size={'300x200'}
+                            src={article.previewImageFile.remoteLocation}
+                            className={styles.articlePreviewImage}
+                            alt={`Vorschaubild zu ${article.title}`}
+                        />
+                    </Grid>
+                )}
                 <Grid item xs>
                     <CardContent>
                         <Typography component={'h4'} variant={'h4'} gutterBottom>

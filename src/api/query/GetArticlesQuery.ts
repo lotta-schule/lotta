@@ -8,8 +8,13 @@ export const GetArticlesQuery = gql`
             updatedAt
             title
             preview
-            previewImageUrl
             pageName
+            previewImageFile {
+                id
+                remoteLocation
+                mimeType
+                fileType
+            }
             contentModules {
                 id
                 type
