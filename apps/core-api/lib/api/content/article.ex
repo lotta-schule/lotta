@@ -29,18 +29,18 @@ defmodule Api.Content.Article do
     |> cast_assoc(:content_modules, required: false)
   end
 
-  defp put_assoc_category(content_module, %{ category: category }) do
+  defp put_assoc_category(content_module, %{ category: %{ id: category_id } }) do
     content_module
-    |> put_assoc(:category, Api.Repo.get(Api.Tenants.Category, String.to_integer(category.id)))
+    |> put_assoc(:category, Api.Repo.get(Api.Tenants.Category, String.to_integer(category_id)))
   end
   defp put_assoc_category(content_module, _args) do
     content_module
     |> put_assoc(:category, nil)
   end
 
-  defp put_assoc_preview_image_file(content_module, %{ preview_image_file: preview_image_file }) do
+  defp put_assoc_preview_image_file(content_module, %{ preview_image_file: %{ id: preview_image_file_id } }) do
     content_module
-    |> put_assoc(:preview_image_file, Api.Repo.get(Api.Accounts.File, String.to_integer(preview_image_file.id)))
+    |> put_assoc(:preview_image_file, Api.Repo.get(Api.Accounts.File, String.to_integer(preview_image_file_id)))
   end
   defp put_assoc_preview_image_file(content_module, _args) do
     content_module

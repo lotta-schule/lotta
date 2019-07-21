@@ -11,7 +11,11 @@ defmodule Api.MediaConversionConsumerWorker do
   @queue       "media-conversion-results"
 
   def init(_opts) do
-    {:ok, conn} = Connection.open(System.get_env("RABBITMQ_URL"))
+    {:ok, conn} = Connection.open(
+        username: System.get_env("RABBITMQ_USERNAME"),
+        password: System.get_env("RABBITMQ_PASSWORD"),
+        host: System.get_env("RABBITMQ_HOST")
+    )
     {:ok, chan} = Channel.open(conn)
     setup_queue(chan)
 
