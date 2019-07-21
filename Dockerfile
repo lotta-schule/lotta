@@ -33,6 +33,8 @@ WORKDIR $DIR
 # Copy files from build stage
 COPY --from=build /src/build /usr/share/nginx/html
 
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # HEALTHCHECK --interval=5s \
 #     --timeout=5s \
 #     --retries=6 \
