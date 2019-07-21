@@ -41,7 +41,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         onClick={() => {
                             onAddModule({
                                 id: `temp-${new Date().getTime().toString()}`,
-                                sortKey: new Date().getTime(),
+                                sortKey: null!,
                                 type: ContentModuleType.TITLE,
                                 text: 'Titel',
                                 files: [],
@@ -56,7 +56,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         onClick={() => {
                             onAddModule({
                                 id: `temp-${new Date().getTime().toString()}`,
-                                sortKey: new Date().getTime(),
+                                sortKey: null!,
                                 type: ContentModuleType.TEXT,
                                 text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } })),
                                 files: [],
@@ -74,7 +74,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         onClick={() => {
                             onAddModule({
                                 id: `temp-${new Date().getTime().toString()}`,
-                                sortKey: new Date().getTime(),
+                                sortKey: null!,
                                 type: ContentModuleType.IMAGE,
                                 text: undefined,
                                 files: [],
@@ -89,7 +89,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         onClick={() => {
                             onAddModule({
                                 id: `temp-${new Date().getTime().toString()}`,
-                                sortKey: new Date().getTime(),
+                                sortKey: null!,
                                 type: ContentModuleType.VIDEO,
                                 text: undefined,
                                 files: [],
@@ -104,7 +104,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         onClick={() => {
                             onAddModule({
                                 id: `temp-${new Date().getTime().toString()}`,
-                                sortKey: new Date().getTime(),
+                                sortKey: null!,
                                 type: ContentModuleType.AUDIO,
                                 text: undefined,
                                 files: [],

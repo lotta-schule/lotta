@@ -54,7 +54,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                 {article.previewImageFile && (
                     <Grid item xs={12} sm={4}>
                         <Img
-                            operation={'crop'}
+                            operation={'width'}
                             size={'300x200'}
                             src={article.previewImageFile.remoteLocation}
                             className={styles.articlePreviewImage}

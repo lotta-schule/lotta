@@ -2,6 +2,7 @@ import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { Player, ControlBar } from 'video-react';
 import { find } from 'lodash';
+import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 
 interface ShowProps {
     contentModule: ContentModuleModel;
@@ -22,6 +23,6 @@ export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
             <ControlBar autoHide={true} />
         </Player>
     ) : (
-            <img style={{ width: '100%' }} src={posterFile ? posterFile.remoteLocation : 'https://placeimg.com/1024/480/people'} alt={'Platzhalterbild'} />
+            <PlaceholderImage width={'100%'} height={350} />
         ));
 });

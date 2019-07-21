@@ -26,7 +26,9 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                         ...editedArticle.contentModules,
                         {
                             ...contentModule,
-                            sortKey: Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10,
+                            sortKey: editedArticle.contentModules.length ?
+                                Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10 :
+                                0,
                         }
                     ]
                 })} />

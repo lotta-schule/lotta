@@ -2,7 +2,7 @@ import React, { memo, FunctionComponent } from 'react';
 import { Card, CardContent, TextField, Button, makeStyles, Typography } from '@material-ui/core';
 import { ArticleModel } from '../../../model';
 import clsx from 'clsx';
-import { Save as SaveIcon, Edit } from '@material-ui/icons';
+import { Save as SaveIcon } from '@material-ui/icons';
 import { CategorySelect } from './CategorySelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import Img from 'react-cloudimage-responsive';
@@ -96,7 +96,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
             <CardContent>
                 <SelectFileOverlay label={'Vorschaubild ändern'} onSelectFile={previewImageFile => onUpdate({ ...article, previewImageFile })}>
                     {article.previewImageFile ? (
-                        <Img operation={'crop'} size={'300x200'} src={article.previewImageFile.remoteLocation} />
+                        <Img operation={'width'} size={'300x200'} src={article.previewImageFile.remoteLocation} />
                     ) : (
                             <img src={'https://placeimg.com/300/200/any'} style={{ width: '100%', height: 'auto' }} alt={`Vorschaubild zu ${article.title}`} />
                         )}

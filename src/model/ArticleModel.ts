@@ -16,8 +16,7 @@ export interface ArticleModel {
     pageName?: string;
 }
 
-export type UpdateArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
-    contentModules: ContentModuleInput[]
+export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
+    contentModules: ContentModuleInput[];
+    category: Partial<CategoryModel>;
 };
-
-export type CreateArticleModelInput = UpdateArticleModelInput & { categoryId: string | null };
