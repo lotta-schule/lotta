@@ -11,6 +11,7 @@ ENV CI=true
 ENV REACT_APP_APP_BASE_DOMAIN ".lotta.schule"
 ENV REACT_APP_API_URL "https://api.lotta.schule/api"
 ENV REACT_APP_AUTHENTICATION_TOKEN_NAME "LottaToken"
+ENV REACT_APP_CLOUDIMG_TOKEN "afdptjdxen"
 
 ADD . /src
 WORKDIR /src
