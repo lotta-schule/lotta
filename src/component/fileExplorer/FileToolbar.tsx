@@ -50,7 +50,7 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
             }
             const lastPathComp = prevPathComps[prevPathComps.length - 1];
             return prevPathComps.concat([{
-                path: lastPathComp.path + '/' + currentPathComp,
+                path: lastPathComp.path === '/' ? `/${currentPathComp}` : `${lastPathComp.path}/${currentPathComp}`,
                 name: currentPathComp
             }]);
         }),
