@@ -76,25 +76,25 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ disabl
     return (<span>Dateien werden geladen ...</span>);
   }
 
-  const directories = uniq((files || [])
-    .map(file => {
-      const relativePath = file.path.replace(new RegExp(`^${selectedPath}`), '');
-      if (relativePath.length < 1) {
-        return null;
-      } else {
-        return relativePath.split('/')[0];
-      }
-    })
-    .filter(Boolean) as string[])
-    .map(d => ({
-      id: d,
+  const dirFiles = uniq(
+    (files || [])
+      .map(f => f.path)
+      .filter(path => new RegExp(`^${selectedPath}`).test(path))
+      .map(path => path.replace(new RegExp(`^${selectedPath}`), ''))
+
+      .map(path => path.replace(/^\//, ''))
+      .filter(Boolean)
+      .map(path => path.split('/')[0])
+  )
+    .map(path => ({
+      id: path,
       fileType: FileModelType.Directory,
-      filename: d,
+      filename: path,
       filesize: 0,
       insertedAt: new Date().toString(),
       updatedAt: new Date().toString(),
       mimeType: 'application/medienportal-keep-dir',
-      path: d,
+      path: path,
       remoteLocation: '',
       fileConversions: []
     } as FileModel));
@@ -112,7 +112,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ disabl
         </div>
       )}
       <ActiveUploadsModal open={isActiveUploadsDialogOpen} onClose={() => setIsActiveUploadsDialogOpen(false)} />
-      <CreateNewFolderDialog open={isCreateNewFolderDialogOpen} onClose={() => setIsCreateNewFolderDialogOpen(false)} />
+      <CreateNewFolderDialog basePath={selectedPath} open={isCreateNewFolderDialogOpen} onClose={() => setIsCreateNewFolderDialogOpen(false)} />
 
       <FileToolbar
         path={selectedPath}
@@ -124,7 +124,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ disabl
       />
 
       <FileTable
-        files={directories.concat(currentFiles)}
+        files={[...dirFiles, ...currentFiles]}
         disableEditColumn={disableEditColumn}
         onSelectSubPath={subPath => setSelectedPath([selectedPath, subPath].join('/').replace(/^\/\//, '/'))}
         onSelectFile={onSelectFile}
