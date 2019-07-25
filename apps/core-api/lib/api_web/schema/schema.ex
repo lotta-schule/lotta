@@ -95,6 +95,7 @@ defmodule ApiWeb.Schema do
   end
   
   input_object :article_input do
+    field :inserted_at, :naive_datetime
     field :title, non_null(:string)
     field :category, :category
     field :preview, :string
