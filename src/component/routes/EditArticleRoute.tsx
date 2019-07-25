@@ -10,7 +10,6 @@ import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
 import { client as apolloClient } from '../../api/client';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
-import { format } from 'date-fns';
 import React, { memo } from 'react';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
