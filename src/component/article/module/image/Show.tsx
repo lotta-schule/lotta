@@ -1,17 +1,25 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
-import Img from 'react-cloudimage-responsive';
-import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { ImageImage } from './ImageImage';
+import { Typography } from '@material-ui/core';
 
 interface ShowProps {
     contentModule: ContentModuleModel;
 }
 
 export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
-    const imageSource = contentModule.files && contentModule.files.length ? contentModule.files[0].remoteLocation : null;
-    return (imageSource ? (
-        <Img src={imageSource} />
-    ) : (
-            <PlaceholderImage width={'100%'} height={350} />
-        ));
+    let captions: string[];
+    try {
+        captions = JSON.parse(contentModule.text || '[]');
+    } catch (e) {
+        captions = [];
+    }
+    return (
+        <figure>
+            <ImageImage contentModule={contentModule} />
+            <figcaption>
+                <Typography variant={'subtitle2'}>{captions[0]}</Typography>
+            </figcaption>
+        </figure>
+    );
 });
