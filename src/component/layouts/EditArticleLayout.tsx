@@ -38,7 +38,6 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                     article={editedArticle}
                     onUpdate={setEditedArticle}
                     onSave={async () => {
-                        await new Promise(resolve => setTimeout(resolve, 500));
                         if (onUpdateArticle) {
                             await onUpdateArticle(editedArticle);
                         }

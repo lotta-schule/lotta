@@ -6,7 +6,7 @@ const palette = {
         main: '#334b82',
         light: '#536daa',
         dark: '#22345e',
-        contrastText: 'white',
+        contrastText: '#ffffff',
 
     },
     secondary: {
@@ -94,26 +94,33 @@ export const theme = createMuiTheme({
             root: {
                 position: 'relative',
                 '&:hover $notchedOutline': {
-                  borderColor: palette.secondary.main,
+                    borderColor: palette.secondary.main,
                 },
                 // Reset on touch devices, it doesn't add specificity
                 '@media (hover: none)': {
-                  '&:hover $notchedOutline': {
-                    borderColor: 'rgba(0, 0, 0, 0.23)',
-                  },
+                    '&:hover $notchedOutline': {
+                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                    },
                 },
                 '&$focused $notchedOutline': {
-                  borderColor: palette.secondary.main,
-                  borderWidth: 2,
+                    borderColor: palette.secondary.main,
+                    borderWidth: 2,
                 },
                 '&$error $notchedOutline': {
-                  borderColor: palette.error.main,
+                    borderColor: palette.error.main,
                 },
                 '&$disabled $notchedOutline': {
-                  borderColor: palette.action.disabled,
+                    borderColor: palette.action.disabled,
                 },
-              },
-        }
+            },
+        },
+        ...{
+            MuiPickersCalendarHeader: {
+                switchHeader: {
+                    color: '#fff'
+                },
+            }
+        } as any
     }
 });
 

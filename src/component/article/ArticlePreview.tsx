@@ -86,7 +86,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                             )}
                         </Typography>
                         <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem' }}>
-                            {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
+                            {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
                             {article.pageName && <> | {article.pageName}&nbsp;</>}
                             | 18 Views&nbsp;
                             {article.user && <>| Autor: {article.user.nickname}&nbsp;</>}

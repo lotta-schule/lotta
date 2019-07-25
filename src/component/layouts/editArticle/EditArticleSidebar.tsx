@@ -7,6 +7,8 @@ import { CategorySelect } from './CategorySelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import Img from 'react-cloudimage-responsive';
 import { VisibilitySelect } from './VisibilitySelect';
+import { DateTimePicker } from '@material-ui/pickers';
+import { parseISO } from 'date-fns';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -63,16 +65,14 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
             </CardContent>
             <CardContent>
-                <TextField
+                <DateTimePicker
                     label="Datum"
-                    type={'date'}
-                    value={article.updatedAt}
-                    disabled
-                    fullWidth
-                    variant="outlined"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
+                    inputVariant="outlined"
+                    ampm={false}
+                    disableFuture={true}
+                    animateYearScrolling={true}
+                    value={parseISO(article.insertedAt)}
+                    onChange={date => date && onUpdate({ ...article, insertedAt: date.toISOString() })}
                 />
             </CardContent>
             <CardContent>
