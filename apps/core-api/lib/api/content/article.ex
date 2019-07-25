@@ -22,7 +22,7 @@ defmodule Api.Content.Article do
   def changeset(article, attrs) do
     article
     |> Api.Repo.preload([:category, :preview_image_file, :content_modules])
-    |> cast(attrs, [:title, :preview, :page_name, :category_id, :user_id, :tenant_id])
+    |> cast(attrs, [:title, :inserted_at, :preview, :page_name, :category_id, :user_id, :tenant_id])
     |> validate_required([:title, :user_id, :tenant_id])
     |> put_assoc_category(attrs)
     |> put_assoc_preview_image_file(attrs)
