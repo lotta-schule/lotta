@@ -10,6 +10,7 @@ import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
 import { client as apolloClient } from '../../api/client';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
+import { format } from 'date-fns';
 import React, { memo } from 'react';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
@@ -17,18 +18,6 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
     const article = useSelector<State, ArticleModel | undefined>(state => find(state.content.articles, { id }));
     const dispatch = useDispatch();
     const onUpdateArticle = async (article: ArticleModel) => {
-        // const updateArticleInput = {
-        //     title: article.title,
-        //     preview: article.preview,
-        //     previewImageFile: article.previewImageFile,
-        //     pageName: article.pageName,
-        //     contentModules: article.contentModules.map(cm => ({
-        //         type: cm.type,
-        //         text: cm.text,
-        //         sortKey: cm.sortKey,
-        //         files: cm.files,
-        //     }))
-        // }
         const { data: { article: updatedArticle } } = await apolloClient.mutate<ArticleModel, { id: string, article: ArticleModelInput }>({
             mutation: UpdateArticleMutation,
             variables: {

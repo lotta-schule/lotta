@@ -9,10 +9,13 @@ import { ThemeProvider } from '@material-ui/styles';
 import { UploadQueueService } from 'api/UploadQueueService';
 import { createSetUploadsAction, createAddFileAction } from 'store/actions/userFiles';
 import { UploadQueueContext } from 'context/UploadQueueContext';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import * as serviceWorker from './serviceWorker';
 import React from 'react';
+import DateFnsUtils from '@date-io/date-fns';
 import ReactDOM from 'react-dom';
 import store from './store/Store';
+import { de } from 'date-fns/locale';
 
 const uploadQueue = new UploadQueueService(
     uploads => store.dispatch(createSetUploadsAction(uploads)),
@@ -22,15 +25,17 @@ const uploadQueue = new UploadQueueService(
 ReactDOM.render(
     (
         <ThemeProvider theme={theme}>
-            <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
-                <ApolloProvider client={client}>
-                    <Provider store={store}>
-                        <UploadQueueContext.Provider value={uploadQueue}>
-                            <App />
-                        </UploadQueueContext.Provider>
-                    </Provider >
-                </ApolloProvider >
-            </CloudimageProvider>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
+                <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
+                    <ApolloProvider client={client}>
+                        <Provider store={store}>
+                            <UploadQueueContext.Provider value={uploadQueue}>
+                                <App />
+                            </UploadQueueContext.Provider>
+                        </Provider >
+                    </ApolloProvider >
+                </CloudimageProvider>
+            </MuiPickersUtilsProvider>
         </ThemeProvider >
     ),
     document.getElementById('root')
