@@ -22,7 +22,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
             variables: {
                 id: article.id,
                 article: {
-                    ...omit(article, ['id', 'insertedAt', 'updatedAt', 'user']),
+                    ...omit(article, ['id', 'updatedAt', 'user']),
                     contentModules: article.contentModules.map(cm => omit(cm, ['id']))
                 } as ArticleModelInput
             }
