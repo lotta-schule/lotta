@@ -20,18 +20,21 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
         <>
             <BaseLayoutMainContent>
                 <Article article={editedArticle} isEditModeEnabled onUpdateArticle={setEditedArticle} />
-                <AddModuleBar onAddModule={async contentModule => setEditedArticle({
-                    ...editedArticle,
-                    contentModules: [
-                        ...editedArticle.contentModules,
-                        {
-                            ...contentModule,
-                            sortKey: editedArticle.contentModules.length ?
-                                Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10 :
-                                0,
-                        }
-                    ]
-                })} />
+                <AddModuleBar onAddModule={async contentModule => {
+                    setEditedArticle({
+                        ...editedArticle,
+                        contentModules: [
+                            ...editedArticle.contentModules,
+                            {
+                                ...contentModule,
+                                configuration: {},
+                                sortKey: editedArticle.contentModules.length ?
+                                    Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10 :
+                                    0,
+                            }
+                        ]
+                    });
+                }} />
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <EditArticleSidebar
@@ -39,7 +42,13 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                     onUpdate={setEditedArticle}
                     onSave={async () => {
                         if (onUpdateArticle) {
-                            await onUpdateArticle(editedArticle);
+                            await onUpdateArticle({
+                                ...editedArticle,
+                                contentModules: editedArticle.contentModules.map(cm => ({
+                                    ...cm,
+                                    configuration: JSON.stringify(cm.configuration || {})
+                                }))
+                            });
                         }
                         history.push(editedArticle.pageName ? `/page/${editedArticle.pageName}` : `/article/${editedArticle.id}`);
                     }}

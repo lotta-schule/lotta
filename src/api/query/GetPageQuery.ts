@@ -20,6 +20,7 @@ export const GetPageQuery = gql`
                 type
                 text
                 sortKey
+                configuration
                 files {
                     id
                     remoteLocation
