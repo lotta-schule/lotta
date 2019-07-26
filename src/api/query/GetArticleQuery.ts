@@ -20,6 +20,7 @@ export const GetArticleQuery = gql`
                 type
                 text
                 sortKey
+                configuration
                 files {
                     id
                     remoteLocation

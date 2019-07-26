@@ -8,12 +8,13 @@ export enum ContentModuleType {
     AUDIO = 'AUDIO',
 }
 
-export interface ContentModuleModel {
+export interface ContentModuleModel<T = any> {
     id: string;
     type: ContentModuleType;
     sortKey: number;
     text?: string;
     files: FileModel[];
+    configuration?: T;
 }
 
 export type ContentModuleInput = Omit<ContentModuleModel, 'id'>;
