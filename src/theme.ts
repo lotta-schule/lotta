@@ -117,7 +117,7 @@ export const theme = createMuiTheme({
         ...{
             MuiPickersCalendarHeader: {
                 switchHeader: {
-                    color: '#fff'
+                    color: '#333'
                 },
             }
         } as any
