@@ -2,6 +2,7 @@ defmodule ApiWeb.Schema.Types do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   use Absinthe.Schema.Notation
 
+  import_types ApiWeb.Schema.Types.JSON
   import_types Absinthe.Type.Custom
   
   object :authresult do
@@ -57,6 +58,7 @@ defmodule ApiWeb.Schema.Types do
     field :text, :string
     field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :sort_key, :integer
+    field :configuration, :json
   end
 
   enum :content_module_type do

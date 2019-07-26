@@ -109,6 +109,7 @@ defmodule ApiWeb.Schema do
     field :text, :string
     field :files, list_of(:file)
     field :sort_key, :integer
+    field :configuration, :json
   end
 
   def context(ctx) do
