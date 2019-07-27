@@ -1,51 +1,63 @@
-# Dockerfile for Lotta API Server
-FROM elixir:1.8.2 as build
+# The version of Alpine to use for the final image
+# This should match the version of Alpine that the `elixir:1.7.2-alpine` image uses
+ARG ALPINE_VERSION=3.9
 
-# build arguments
-ARG APP_ENV=prod
+FROM elixir:1.8-alpine AS builder
 
-ENV MIX_ENV prod
+# The following are build arguments used to change variable parts of the image.
+# The name of your application/release (required)
+ARG APP_NAME=api
 
-WORKDIR /app
+# The environment to build with
+ARG MIX_ENV=prod
 
-RUN apt-get update && \
-    apt-get install -y \
-    make
+ENV APP_NAME=${APP_NAME} \
+    MIX_ENV=${MIX_ENV}
 
-# Copy all source files
-COPY rel ./rel
-COPY config ./config
-COPY lib ./lib
-COPY priv ./priv
-COPY mix.exs .
-COPY mix.lock .
+# By convention, /opt is typically used for applications
+WORKDIR /opt/app
 
-# Install hex (Elixir package manager)
-RUN mix local.hex --force
+# This step installs all the build tools we'll need
+RUN apk update && \
+    apk upgrade --no-cache && \
+    apk add --no-cache \
+    git \
+    build-base && \
+    mix local.rebar --force && \
+    mix local.hex --force
 
-# Install rebar (Erlang build tool)
-RUN mix local.rebar --force
+# This copies our app source code into the build container
+COPY . .
 
-# install dependencies and build release
-RUN mix deps.get && \
-    mix release --env=${APP_ENV}
+RUN mix do deps.get, deps.compile, compile
 
-# unpack and copy release to /export
-RUN RELEASE_DIR=`ls -d _build/prod/rel/api/releases/*/` && \
-    mkdir /export && \
-    tar -xf "$RELEASE_DIR/api.tar.gz" -C /export
+RUN mix release --env=prod
 
-FROM debian
+RUN RELEASE_DIR=`ls -d1 _build/prod/rel/api/releases/*/ | head -1` && \
+    mkdir -p /opt/built && \
+    cp ${RELEASE_DIR}/${APP_NAME}.tar.gz /opt/built && \
+    cd /opt/built && \
+    tar -xzf ${APP_NAME}.tar.gz && \
+    rm ${APP_NAME}.tar.gz
 
-RUN apt-get update && \
-    apt-get install -y \
+# From this line onwards, we're in a new image, which will be the image used in production
+FROM alpine:${ALPINE_VERSION}
+
+# The name of your application/release (required)
+ARG APP_NAME=api
+
+RUN apk update && \
+    apk add --no-cache \
     bash \
-    libssl-dev
+    openssl-dev \
+    erlang-crypto \
+    libssl1.1
 
-WORKDIR /app
+ENV REPLACE_OS_VARS=true \
+    APP_NAME=${APP_NAME}
 
-COPY --from=build /export .
+WORKDIR /opt/app
 
-ENTRYPOINT ["/app/bin/api"]
+COPY --from=builder /opt/built .
 
-CMD ["foreground"]
+CMD trap 'exit' INT; /opt/app/bin/${APP_NAME} foreground
