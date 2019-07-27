@@ -33,7 +33,7 @@ interface ContentModuleProps {
     contentModule: ContentModuleModel;
     index: number;
     isEditModeEnabled?: boolean;
-    onUpdateModule?(contentModule: ContentModuleModel): void;
+    onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
 export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, contentModule, index, onUpdateModule }) => {
@@ -47,7 +47,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
             setShowConfigModeContentModuleId(id);
         }
     }, [showConfigModeContentModuleId]);
-    const configurableContentModuleTypes = [ContentModuleType.TITLE];
+    const configurableContentModuleTypes = [ContentModuleType.TITLE, ContentModuleType.IMAGE];
 
     const card = (draggableProvided?: DraggableProvided) => (
         <Card component={'section'} innerRef={draggableProvided && draggableProvided.innerRef} {...(draggableProvided ? draggableProvided.draggableProps : undefined)}>
@@ -75,7 +75,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
                 <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
             )}
             {contentModule.type === ContentModuleType.IMAGE && (
-                <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} showConfig={showConfigModeContentModuleId === contentModule.id} />
             )}
             {contentModule.type === ContentModuleType.VIDEO && (
                 <Video contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />

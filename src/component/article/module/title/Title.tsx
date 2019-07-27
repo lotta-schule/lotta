@@ -9,7 +9,7 @@ export interface TitleProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
     showConfig?: boolean;
-    onUpdateModule?(contentModule: ContentModuleModel): void;
+    onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
 export const Title: FunctionComponent<TitleProps> = memo(({ isEditModeEnabled, contentModule, showConfig, onUpdateModule }) => (

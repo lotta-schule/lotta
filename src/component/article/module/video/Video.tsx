@@ -7,7 +7,7 @@ import { Show } from './Show';
 export interface VideoProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule?(contentModule: ContentModuleModel): void;
+    onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
 export const Video: FunctionComponent<VideoProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
