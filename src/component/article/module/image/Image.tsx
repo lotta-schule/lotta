@@ -5,6 +5,7 @@ import { Config, ImageStyle } from './Config';
 import { get } from 'lodash';
 import { Single } from './wrapper/Single';
 import { Galery } from './wrapper/Galery';
+import { Carousel } from './wrapper/Carousel';
 
 export interface ImageProps {
     contentModule: ContentModuleModel;
@@ -25,6 +26,9 @@ export const Image: FunctionComponent<ImageProps> = memo(({ isEditModeEnabled, c
             )}
             {!showConfig && imageStyle === ImageStyle.GALERY && (
                 <Galery isEditModeEnabled={!!isEditModeEnabled} contentModule={contentModule} onUpdateModule={onUpdateModule} />
+            )}
+            {!showConfig && imageStyle === ImageStyle.CAROUSEL && (
+                <Carousel isEditModeEnabled={!!isEditModeEnabled} contentModule={contentModule} onUpdateModule={onUpdateModule} />
             )}
         </CardContent>
     );
