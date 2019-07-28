@@ -1,11 +1,12 @@
 // margin: 0 0 .5em;
 
-import React, { FunctionComponent, memo } from 'react';
+import React, { FunctionComponent, memo, useCallback } from 'react';
 import { Grid, makeStyles, IconButton, Avatar } from '@material-ui/core';
 import { UserModel } from '../../../model';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Menu } from '@material-ui/icons';
 import { State } from 'store/State';
+import { createOpenDrawerAction } from 'store/actions/layout';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -27,13 +28,11 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export interface UserNavigationMobileProps {
-    onToggleMenu(): void;
-}
-
-export const UserNavigationMobile: FunctionComponent<UserNavigationMobileProps> = memo(({ onToggleMenu }) => {
+export const UserNavigationMobile: FunctionComponent = memo(() => {
     const styles = useStyles();
     const user = useSelector<State, UserModel | null>(s => s.user.user);
+    const dispatch = useDispatch();
+    const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
 
     return (
         <Grid container alignItems={'center'} className={styles.root}>
@@ -46,7 +45,7 @@ export const UserNavigationMobile: FunctionComponent<UserNavigationMobileProps> 
                 )}
             </Grid>
             <Grid item xs className={styles.buttonGridItem}>
-                <IconButton size={'small'} onClick={() => onToggleMenu()}>
+                <IconButton size={'small'} onClick={() => openDrawer()}>
                     <Menu />
                 </IconButton>
             </Grid>

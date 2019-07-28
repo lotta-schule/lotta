@@ -7,7 +7,6 @@ import {
 } from 'react-testing-library';
 import userEvent from 'user-event';
 import { LoginDialog } from './LoginDialog';
-import { mockUsers } from '../../mockData';
 
 afterEach(cleanup);
 

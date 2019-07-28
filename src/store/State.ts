@@ -18,9 +18,14 @@ export interface ContentState {
     articles: ArticleModel[];
 }
 
+export interface LayoutState {
+    isDrawerOpen: boolean;
+}
+
 export interface State {
     client: ClientState;
     content: ContentState;
     user: UserState;
     userFiles: UserFilesState;
+    layout: LayoutState;
 }

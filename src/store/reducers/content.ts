@@ -1,10 +1,11 @@
 import { ContentState } from '../State';
 import { AddArticleAction, AddCategoryAction, UpdateArticleAction, ContentActionType } from '../actions/content';
-import { mockData } from '../../mockData';
 
 export type ContentActions = AddArticleAction | UpdateArticleAction | AddCategoryAction;
 
-export const initialContentState: ContentState = mockData.content;
+export const initialContentState: ContentState = {
+    articles: []
+};
 
 export const contentReducer = (s: ContentState = initialContentState, action: ContentActions): ContentState => {
     switch (action.type) {

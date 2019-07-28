@@ -6,11 +6,13 @@ import {
     SetUploadsAction,
     DeleteFileAction
 } from '../actions/userFiles';
-import { mockData } from '../../mockData';
 
 export type UserFilesActions = SetFilesAction | AddFileAction | SetUploadsAction | DeleteFileAction;
 
-export const initialUserFilesState: UserFilesState = mockData.userFiles;
+export const initialUserFilesState: UserFilesState = {
+    files: [],
+    uploads: []
+};
 
 export const userFilesReducer = (s: UserFilesState = initialUserFilesState, action: UserFilesActions): UserFilesState => {
     switch (action.type) {
