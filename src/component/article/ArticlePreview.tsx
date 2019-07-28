@@ -31,7 +31,7 @@ const useStyle = makeStyles((theme: Theme) => ({
     },
     articlePreviewImage: {
         width: '100%',
-        height: '100%',
+        height: 'auto',
         flexShrink: 0,
         flexGrow: 0,
         backgroundPosition: '0 0'

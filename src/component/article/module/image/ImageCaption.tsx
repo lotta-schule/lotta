@@ -4,8 +4,11 @@ import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => ({
     figcaption: {
-        border: `1px solid ${theme.palette.secondary.main}`,
-        width: '100%'
+        borderBottom: `1px solid ${theme.palette.secondary.main}`,
+        borderTop: 'none',
+        borderLeft: 'none',
+        borderRight: 'none',
+        width: '100%',
     }
 }));
 
@@ -19,9 +22,10 @@ export const ImageCaption: FunctionComponent<ImageCaptionProps> = memo(({ isEdit
     const styles = useStyles();
 
     return (
-        <figcaption>
+        <figcaption style={{textAlign: 'center'}}>
             <Typography
                 variant={'subtitle2'}
+                placeholder={isEditModeEnabled ? 'Bildbeschreibung' : undefined}
                 component={isEditModeEnabled ? 'input' : 'span'}
                 contentEditable={isEditModeEnabled}
                 defaultValue={value}
