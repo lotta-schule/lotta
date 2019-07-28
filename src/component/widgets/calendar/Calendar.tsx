@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo } from 'react';
-import { Typography, Paper, List, ListItem, ListItemText, makeStyles, Divider, } from '@material-ui/core';
+import { Typography, Paper, List, ListItem, ListItemText, makeStyles, Divider } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
     widget: {
@@ -9,7 +9,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export const SCalendar: FunctionComponent = memo(() => {
+export const Calendar: FunctionComponent = memo(() => {
     const styles = useStyles();
 
     return (
@@ -17,7 +17,7 @@ export const SCalendar: FunctionComponent = memo(() => {
             <Typography variant={'h6'}>
                 Kalender
             </Typography>
-            <Typography variant={'body1'} style={{margin: '0.5em 0'}}>
+            <Typography variant={'body1'} style={{ margin: '0.5em 0' }}>
                 Schule
             </Typography>
             <List dense>

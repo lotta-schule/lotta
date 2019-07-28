@@ -4,8 +4,8 @@ import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { VPlan } from 'component/widgets/vplan/VPlan';
-import { SCalendar } from 'component/widgets/calendar/SCalendar';
+import { VPlan } from 'component/widgets/vPlan/VPlan';
+import { Calendar } from 'component/widgets/calendar/Calendar';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
@@ -58,7 +58,7 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <VPlan />
-                <SCalendar />
+                <Calendar />
             </BaseLayoutSidebar>
         </>
     );

@@ -17,7 +17,7 @@ export const VPlan: FunctionComponent = memo(() => {
             <Typography variant={'h6'}>
                 Vertretungsplan
             </Typography>
-            <Typography variant={'body1'} style={{margin: '0.5em 0'}}>
+            <Typography variant={'body1'} style={{ margin: '0.5em 0' }}>
                 Klasse 10/1
             </Typography>
             <List dense>
@@ -51,7 +51,7 @@ export const VPlan: FunctionComponent = memo(() => {
                 </ListItem>
             </List>
             <Divider />
-            <Typography variant={'body1'} style={{margin: '0.5em 0'}}>
+            <Typography variant={'body1'} style={{ margin: '0.5em 0' }}>
                 zusätzliche Infos:
             </Typography>
             <Typography variant={'body2'}>
