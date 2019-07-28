@@ -16,6 +16,7 @@ export interface UserFilesState {
 
 export interface ContentState {
     articles: ArticleModel[];
+    didFetchQueryKeys: string[];
 }
 
 export interface LayoutState {

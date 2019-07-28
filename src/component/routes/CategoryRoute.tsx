@@ -7,19 +7,21 @@ import { ArticleModel } from 'model';
 import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
 import { useSelector, useDispatch } from 'react-redux';
 import { State } from 'store/State';
-import { createAddArticleAction } from 'store/actions/content';
+import { createAddArticlesAction, createAddFetchQueryKeyAction } from 'store/actions/content';
 import { EmptyLoadingLayout } from 'component/layouts/EmptyLoadingLayout';
 
 export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
     const categoryId = match.params.id;
     const category = useCategory(categoryId);
     const dispatch = useDispatch();
-    const articles = useSelector<State, ArticleModel[]>(s => s.content.articles.filter(a => a.category && a.category.id === categoryId));
-    if (!category) {
-        // TODO: redirect to some 404 page
-        return null;
-    }
-    if (articles && articles.length > 0) {
+    const fetchQueryKey = `category_${categoryId}_articles`;
+    const articles = useSelector<State, ArticleModel[]>(s =>
+        categoryId ? s.content.articles.filter(a => a.category && a.category.id === categoryId) : s.content.articles
+    );
+    const didFetchCategoryArticles = useSelector<State, boolean>(s => s.content.didFetchQueryKeys.indexOf(fetchQueryKey) > -1);
+
+
+    if (didFetchCategoryArticles) {
         return (
             <CategoryLayout
                 category={category}
@@ -37,14 +39,9 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
                         return <div><span style={{ color: 'red' }}>{error.message}</span></div>;
                     }
                     if (data) {
-                        const articles = data.articles;
-                        articles.map(article => dispatch(createAddArticleAction(article)));
-                        return (
-                            <CategoryLayout
-                                category={category}
-                                articles={articles}
-                            />
-                        );
+                        dispatch(createAddFetchQueryKeyAction(fetchQueryKey));
+                        dispatch(createAddArticlesAction(data.articles));
+                        return null;
                     }
                 }}
             </Query>

@@ -5,6 +5,8 @@ import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { theme } from 'theme';
+import { VPlan } from 'component/widgets/vPlan/VPlan';
+import { Calendar } from 'component/widgets/calendar/Calendar';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
@@ -35,7 +37,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface CategoryLayoutProps {
-    category: CategoryModel;
+    category: CategoryModel | null; // null for homepage
     articles?: ArticleModel[];
 }
 
@@ -58,7 +60,10 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
                     <ArticlePreview key={article.id} article={article} />
                 ))}
             </BaseLayoutMainContent>
-            <BaseLayoutSidebar />
+            <BaseLayoutSidebar>
+                <VPlan />
+                <Calendar />
+            </BaseLayoutSidebar>
         </>
     );
 });

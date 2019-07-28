@@ -1,21 +1,20 @@
+import React, { memo, useState } from 'react';
+import { AdminLayout } from './layouts/AdminLayout';
 import { ApolloError } from 'apollo-boost';
 import { ArticleRoute } from './routes/ArticleRoute';
-import { EditArticleRoute } from './routes/EditArticleRoute';
-import { CategoryLayout } from './layouts/CategoryLayout';
+import { BaseLayout } from './layouts/BaseLayout';
 import { CategoryRoute } from './routes/CategoryRoute';
 import { CircularProgress } from '@material-ui/core';
 import { client as apolloClient } from '../api/client';
 import { ClientModel, CategoryModel } from 'model';
-import { BaseLayout } from './layouts/BaseLayout';
 import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
+import { EditArticleRoute } from './routes/EditArticleRoute';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { PageRoute } from './routes/PageRoute';
+import { ProfileLayout } from './layouts/ProfileLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { memo, useState } from 'react';
-import store from 'store/Store';
-import { ProfileLayout } from './layouts/ProfileLayout';
 
 export const App = memo(() => {
   const client = useSelector<State, ClientModel | null>(state => state.client.client);
@@ -60,17 +59,13 @@ export const App = memo(() => {
     <BrowserRouter>
       <BaseLayout>
         <Switch>
-          <Route exact path={'/'} component={memo(() => (
-            <CategoryLayout
-              category={null!}
-              articles={store.getState().content.articles.filter(article => !article.category)}
-            />
-          ))} />
+          <Route exact path={'/'} component={CategoryRoute} />
           <Route path={'/category/:id'} component={CategoryRoute} />
           <Route path={'/page/:name'} component={PageRoute} />
           <Route path={'/article/:id/edit'} component={EditArticleRoute} />
           <Route path={'/article/:id'} component={ArticleRoute} />
           <Route path={'/profile'} component={ProfileLayout} />
+          <Route path={'/admin'} component={AdminLayout} />
           <Route component={() => <div>Nicht gefunden</div>} />
         </Switch>
       </BaseLayout>
