@@ -5,10 +5,10 @@ import { CategoryModel, ClientModel } from '../../model';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
+import { useIsMobile } from 'util/useIsMobile';
 
 
 const useStyles = makeStyles(() => ({
-
     header: {
         minWidth: '100%',
         height: 100,
@@ -25,6 +25,7 @@ const useStyles = makeStyles(() => ({
 
 export const BaseLayout: FunctionComponent = memo(({ children }) => {
     const styles = useStyles();
+    const isMobile = useIsMobile();
     const client = useSelector<State, ClientModel>(state => state.client.client!);
     const categories = useSelector<State, CategoryModel[]>(state => state.client.categories);
     return (
@@ -44,7 +45,7 @@ export const BaseLayout: FunctionComponent = memo(({ children }) => {
             </header>
             <Navbar categories={categories} />
             <main className={styles.main}>
-                <Grid container justify={'flex-start'}>
+                <Grid container justify={'flex-start'} direction={isMobile ? 'column-reverse' : 'row'}>
                     {children}
                 </Grid>
             </main>

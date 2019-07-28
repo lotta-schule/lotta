@@ -90,6 +90,11 @@ export const theme = createMuiTheme({
                 height: 90,
             }
         },
+        MuiDrawer: {
+            paper: {
+                width: '80vw'
+            }
+        },
         MuiOutlinedInput: {
             root: {
                 position: 'relative',
