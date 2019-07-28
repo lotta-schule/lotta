@@ -1,8 +1,9 @@
-import React, { FunctionComponent, memo } from 'react';
-import { ContentModuleModel } from 'model';
+import React, { FunctionComponent, memo, useState } from 'react';
+import { ContentModuleModel, FileModel } from 'model';
 import { ImageImage } from '../ImageImage';
 import { Grid } from '@material-ui/core';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { ImageOverlay } from '../imageOverlay/ImageOverlay';
 
 export interface GaleryProps {
     contentModule: ContentModuleModel;
@@ -11,6 +12,7 @@ export interface GaleryProps {
 }
 
 export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+    const [selectedFile, setSelectedFile] = useState<FileModel | null>(null);
     let imageCaptions: (string | null)[];
     try {
         imageCaptions = JSON.parse(contentModule.text!);
@@ -34,11 +36,15 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
                                 ...contentModule,
                                 text: JSON.stringify(imageCaptions.map((f, i) => i === index ? newFile : f))
                             })}
+                            onSelect={() => setSelectedFile(file)}
                         />
                     </Grid>
                 ))}
             </Grid>
             {isEditModeEnabled && <SelectFileButton label={'Bild hinzufügen'} onSelectFile={f => onUpdateModule({ ...contentModule, files: contentModule.files.concat(f) })} />}
+            {!isEditModeEnabled && (
+                <ImageOverlay selectedFile={selectedFile} onClose={() => setSelectedFile(null)} />
+            )}
         </>
     );
 });

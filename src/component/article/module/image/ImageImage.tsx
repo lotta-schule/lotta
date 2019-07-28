@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { FunctionComponent, memo, MouseEvent } from 'react';
 import { FileModelType, FileModel } from '../../../../model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { ImageContent } from './ImageContent';
@@ -10,9 +10,10 @@ interface ImageImageProps {
     caption: string;
     onUpdateFile(file: FileModel): void;
     onUpdateCaption(caption: string): void;
+    onSelect?(e: MouseEvent<HTMLImageElement>): void;
 }
 
-export const ImageImage: FunctionComponent<ImageImageProps> = memo(({ isEditModeEnabled, file, caption, onUpdateFile, onUpdateCaption }) => {
+export const ImageImage: FunctionComponent<ImageImageProps> = memo(({ isEditModeEnabled, file, caption, onUpdateFile, onUpdateCaption, onSelect }) => {
     return (
         <figure>
             {isEditModeEnabled ?
@@ -23,7 +24,7 @@ export const ImageImage: FunctionComponent<ImageImageProps> = memo(({ isEditMode
                 >
                     <ImageContent file={file} />
                 </SelectFileOverlay> :
-                <ImageContent file={file} />}
+                <ImageContent file={file} onClick={onSelect} />}
             <ImageCaption isEditModeEnabled={isEditModeEnabled} value={caption} onUpdate={onUpdateCaption} />
         </figure>
     );
