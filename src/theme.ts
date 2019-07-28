@@ -11,7 +11,7 @@ const palette = {
     },
     secondary: {
         main: deepOrange[500],
-        light: deepOrange[50],
+        light: '#fff2ed',
     },
     action: {
         active: 'rgba(0, 0, 0, 0.54)',
