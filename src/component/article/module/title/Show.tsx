@@ -8,7 +8,7 @@ interface ShowProps {
 }
 
 export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
-    const variant = `h${get(contentModule.configuration, 'level', 2)}` as 'h1' | 'h2' | 'h2' | 'h4' | 'h5' | 'h6';
+    const variant = `h${get(contentModule.configuration, 'level', 4)}` as 'h4' | 'h5' | 'h6';
 
     return (
         <Typography component={variant} variant={variant} gutterBottom>{contentModule.text}</Typography>
