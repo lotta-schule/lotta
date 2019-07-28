@@ -23,7 +23,7 @@ export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onU
     return (
         <form>
             <FormControl className={styles.formControl}>
-                <InputLabel htmlFor="heading-level">Überschriftenebene (1-6)</InputLabel>
+                <InputLabel htmlFor="heading-level">Überschrifgrößen (1-3)</InputLabel>
                 <Select
                     fullWidth
                     value={headingLevel}
@@ -39,12 +39,9 @@ export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onU
                         id: 'heading-level',
                     }}
                 >
-                    <MenuItem value={1}>H1</MenuItem>
-                    <MenuItem value={2}>H2</MenuItem>
-                    <MenuItem value={3}>H3</MenuItem>
-                    <MenuItem value={4}>H4</MenuItem>
-                    <MenuItem value={5}>H5</MenuItem>
-                    <MenuItem value={6}>H6</MenuItem>
+                    <MenuItem value={4}>Überschrift groß</MenuItem>
+                    <MenuItem value={5}>Überschrift mittel</MenuItem>
+                    <MenuItem value={6}>Überschrift klein</MenuItem>
                 </Select>
             </FormControl>
         </form>
