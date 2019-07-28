@@ -77,6 +77,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                             {user && (
                                 <>
                                     <li><Link component={CollisionLink} to={'/profile'}>Mein Profil</Link></li>
+                                    <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                                 </>
                             )}
                             <li>Impressum</li>
