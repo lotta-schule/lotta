@@ -126,13 +126,13 @@ export const theme = createMuiTheme({
 
 theme.typography.h4 = {
     ...theme.typography.h4,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
         fontSize: '1.6rem'
     }
 };
 theme.typography.h5 = {
-    ...theme.typography.h4,
-    [theme.breakpoints.down('sm')]: {
+    ...theme.typography.h5,
+    [theme.breakpoints.down('md')]: {
         fontSize: '1.4rem'
     }
 };
