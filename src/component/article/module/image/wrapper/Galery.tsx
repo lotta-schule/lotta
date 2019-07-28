@@ -1,9 +1,19 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import { ContentModuleModel, FileModel } from 'model';
 import { ImageImage } from '../ImageImage';
-import { Grid } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { ImageOverlay } from '../imageOverlay/ImageOverlay';
+
+const useStyles = makeStyles(() => ({
+    img: {
+        '& img': {
+            maxWidth: '100%',
+            maxHeight: '100%',
+            objectFit: 'contain'
+        }
+    }
+}));
 
 export interface GaleryProps {
     contentModule: ContentModuleModel;
@@ -12,6 +22,7 @@ export interface GaleryProps {
 }
 
 export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+    const styles = useStyles();
     const [selectedFile, setSelectedFile] = useState<FileModel | null>(null);
     let imageCaptions: (string | null)[] = [];
     try {
@@ -26,7 +37,7 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
         <>
             <Grid container>
                 {contentModule.files.map((file, index) => (
-                    <Grid item xs={6} lg={4} xl={3}>
+                    <Grid item xs={6} lg={4}>
                         <ImageImage
                             isEditModeEnabled={isEditModeEnabled}
                             file={file}
@@ -40,6 +51,12 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
                                 text: JSON.stringify(imageCaptions.map((f, i) => i === index ? newFile : f))
                             })}
                             onSelect={() => setSelectedFile(file)}
+                            size={'350x200'}
+                            width={350}
+                            height={200}
+                            operation={'fit'}
+                            ratio={1.75}
+                            className={styles.img}
                         />
                     </Grid>
                 ))}

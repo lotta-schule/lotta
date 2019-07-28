@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-interface ImageContentProps extends ImgProps {
+export interface ImageContentProps extends ImgProps {
     file?: FileModel | null;
 }
 
