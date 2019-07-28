@@ -3,6 +3,7 @@ import { FileModel } from 'model';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Button } from '@material-ui/core';
 import { useWindowSize } from 'util/useWindowSize';
+import { useLockBodyScroll } from 'util/useLockBodyScroll';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -39,6 +40,7 @@ export interface ImageOverlayProps {
 }
 
 export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ selectedFile, onClose }) => {
+    useLockBodyScroll();
     const styles = useStyles();
     const { innerHeight, innerWidth } = useWindowSize();
     const [width, height] = [Math.floor(innerWidth * .8), Math.floor(innerHeight * .8)];
