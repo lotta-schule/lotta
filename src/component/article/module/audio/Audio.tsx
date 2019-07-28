@@ -7,7 +7,7 @@ import { Show } from './Show';
 export interface AudioProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule?(contentModule: ContentModuleModel): void;
+    onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
 export const Audio: FunctionComponent<AudioProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (

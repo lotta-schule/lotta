@@ -21,6 +21,18 @@ export const UpdateArticleMutation = gql`
                 text
                 sortKey
                 configuration
+                files {
+                    id
+                    remoteLocation
+                    mimeType
+                    fileType
+                    fileConversions {
+                        id
+                        format
+                        mimeType
+                        remoteLocation
+                    }
+                }
             }
             category {
                 id

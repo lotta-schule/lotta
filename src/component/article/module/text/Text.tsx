@@ -7,7 +7,7 @@ import { Show } from './Show';
 export interface TextProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule?(contentModule: ContentModuleModel): void;
+    onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
 export const Text: FunctionComponent<TextProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
