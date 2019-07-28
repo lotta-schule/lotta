@@ -11,7 +11,7 @@ const palette = {
     },
     secondary: {
         main: deepOrange[500],
-        light: deepOrange[50],
+        light: '#fff2ed',
     },
     action: {
         active: 'rgba(0, 0, 0, 0.54)',
@@ -131,13 +131,13 @@ export const theme = createMuiTheme({
 
 theme.typography.h4 = {
     ...theme.typography.h4,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
         fontSize: '1.6rem'
     }
 };
 theme.typography.h5 = {
-    ...theme.typography.h4,
-    [theme.breakpoints.down('sm')]: {
+    ...theme.typography.h5,
+    [theme.breakpoints.down('md')]: {
         fontSize: '1.4rem'
     }
 };

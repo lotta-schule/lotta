@@ -35,6 +35,10 @@ const useStyles = makeStyles<Theme>(theme => ({
     navButtonSecond: {
         flexGrow: 1,
         flexShrink: 0,
+        '&.selected': {
+            borderRadius: 0,
+            borderBottom: '1px solid grey',
+        }
     }
 }));
 
