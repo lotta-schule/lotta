@@ -46,7 +46,7 @@ export const UserNavigationMobile: FunctionComponent = memo(() => {
                 {user && (
                     <>
                         <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
-                        <Typography variant={'body1'}> {user.nickname || user.name} </Typography>
+                        <Typography variant={'body1'}>{user.nickname || user.name}</Typography>
                     </>
                 )}
             </Grid>
