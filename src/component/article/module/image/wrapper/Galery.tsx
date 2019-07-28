@@ -13,11 +13,14 @@ export interface GaleryProps {
 
 export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
     const [selectedFile, setSelectedFile] = useState<FileModel | null>(null);
-    let imageCaptions: (string | null)[];
+    let imageCaptions: (string | null)[] = [];
     try {
-        imageCaptions = JSON.parse(contentModule.text!);
+        if (!contentModule.text) {
+            throw new Error('No Text');
+        }
+        imageCaptions = JSON.parse(contentModule.text);
     } catch {
-        imageCaptions = [contentModule.text || null];
+        imageCaptions = contentModule.text ? [contentModule.text] : [];
     }
     return (
         <>

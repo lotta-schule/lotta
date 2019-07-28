@@ -1,6 +1,6 @@
-import React, { FunctionComponent, memo, CSSProperties, MouseEvent } from 'react';
+import React, { FunctionComponent, memo } from 'react';
 import { FileModel } from '../../../../model';
-import Img from 'react-cloudimage-responsive';
+import Img, { ImgProps } from 'react-cloudimage-responsive';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { makeStyles, Theme } from '@material-ui/core';
 import classNames from 'classnames';
@@ -11,11 +11,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-interface ImageContentProps {
+interface ImageContentProps extends ImgProps {
     file?: FileModel | null;
-    style?: CSSProperties;
-    className?: string;
-    onClick?(e: MouseEvent<HTMLImageElement>): void;
 }
 
 export const ImageContent: FunctionComponent<ImageContentProps> = memo(({ file, ...otherProps }) => {

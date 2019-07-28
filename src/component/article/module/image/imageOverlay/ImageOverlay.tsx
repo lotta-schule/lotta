@@ -2,7 +2,7 @@ import React, { FunctionComponent, memo, MouseEvent } from 'react';
 import { FileModel } from 'model';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Button } from '@material-ui/core';
-import { ImageContent } from '../ImageContent';
+import { useWindowSize } from 'util/useWindowSize';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme: Theme) => ({
         justifyContent: 'center',
         zIndex: 100000,
         backgroundColor: '#333e',
+    },
+    image: {
+        width: '80vw',
+        height: '80vh',
     },
     closeButton: {
         position: 'absolute',
@@ -36,12 +40,19 @@ export interface ImageOverlayProps {
 
 export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ selectedFile, onClose }) => {
     const styles = useStyles();
-    return selectedFile && (
+    const { innerHeight, innerWidth } = useWindowSize();
+    const [width, height] = [Math.floor(innerWidth * .8), Math.floor(innerHeight * .8)];
+
+    if (!selectedFile) {
+        return null;
+    }
+    const imgUrl = `https://afdptjdxen.cloudimg.io/bound/${width}x${height}/foil1/${selectedFile.remoteLocation}`;
+    return (
         <div className={styles.root}>
             <Button variant="outlined" size="large" color="secondary" className={styles.closeButton} onClick={onClose}>
                 Schließen
             </Button>
-            <ImageContent style={{ width: '80vw', marginLeft: '10vw' }} file={selectedFile} />
+            <img src={imgUrl} alt={''} />
         </div>
     );
 });
