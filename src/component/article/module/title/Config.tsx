@@ -13,9 +13,10 @@ const useStyles = makeStyles(() => ({
 interface ConfigProps {
     contentModule: ContentModuleModel;
     onUpdateModule(contentModule: ContentModuleModel): void;
+    onRequestClose(): void;
 }
 
-export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule }) => {
+export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule, onRequestClose }) => {
 
     const headingLevel: number = get(contentModule.configuration, 'level', 2);
     const styles = useStyles();
@@ -27,13 +28,16 @@ export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onU
                 <Select
                     fullWidth
                     value={headingLevel}
-                    onChange={event => onUpdateModule({
-                        ...contentModule,
-                        configuration: {
-                            ...contentModule.configuration,
-                            level: event.target.value
-                        }
-                    })}
+                    onChange={event => {
+                        onUpdateModule({
+                            ...contentModule,
+                            configuration: {
+                                ...contentModule.configuration,
+                                level: event.target.value
+                            }
+                        });
+                        onRequestClose();
+                    }}
                     inputProps={{
                         name: 'heading-level',
                         id: 'heading-level',
