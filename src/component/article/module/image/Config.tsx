@@ -19,9 +19,10 @@ export enum ImageStyle {
 interface ConfigProps {
     contentModule: ContentModuleModel;
     onUpdateModule(contentModule: ContentModuleModel): void;
+    onRequestClose(): void;
 }
 
-export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule }) => {
+export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule, onRequestClose }) => {
 
     const imageStyle: ImageStyle = get(contentModule.configuration, 'imageStyle', ImageStyle.SINGLE);
     const styles = useStyles();
@@ -33,13 +34,16 @@ export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onU
                 <Select
                     fullWidth
                     value={imageStyle}
-                    onChange={event => onUpdateModule({
-                        ...contentModule,
-                        configuration: {
-                            ...contentModule.configuration,
-                            imageStyle: event.target.value
-                        }
-                    })}
+                    onChange={event => {
+                        onUpdateModule({
+                            ...contentModule,
+                            configuration: {
+                                ...contentModule.configuration,
+                                imageStyle: event.target.value
+                            }
+                        });
+                        onRequestClose();
+                    }}
                     inputProps={{
                         name: 'image-style',
                         id: 'image-style',
