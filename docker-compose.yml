@@ -9,8 +9,4 @@ services:
     ports:
       - 3000:3000
     command: bash -c "npm install && npm run start"
-    environment:
-      - REACT_APP_APP_BASE_DOMAIN=.medienportal.lvh.me
-      - REACT_APP_API_URL=http://api.medienportal.lvh.me:4000/api
-      - REACT_APP_AUTHENTICATION_TOKEN_NAME=LottaToken
-      - REACT_APP_CLOUDIMG_TOKEN=afdptjdxen
+    env_file: .env
