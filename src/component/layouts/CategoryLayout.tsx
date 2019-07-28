@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface CategoryLayoutProps {
-    category: CategoryModel;
+    category: CategoryModel | null; // null for homepage
     articles?: ArticleModel[];
 }
 
