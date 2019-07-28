@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         [theme.breakpoints.down('md')]: {
             marginLeft: 0,
-            marginTop: '0.5em',
         },
         [theme.breakpoints.up('md')]: {
             marginLeft: '0.5em',

@@ -4,6 +4,7 @@ import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import { theme } from 'theme';
 import { VPlan } from 'component/widgets/vPlan/VPlan';
 import { Calendar } from 'component/widgets/calendar/Calendar';
 
@@ -13,6 +14,9 @@ const useStyles = makeStyles(() => ({
         padding: '0.5em',
         marginBottom: '0.5em',
         backgroundColor: '#fff',
+        [theme.breakpoints.down('xs')]: {
+            display: 'none',
+        },
     },
     subheader: {
         maxHeight: 120,
@@ -20,7 +24,7 @@ const useStyles = makeStyles(() => ({
         height: '100%',
         flexShrink: 0,
         flexGrow: 0,
-        backgroundImage: 'url(https://placeimg.com/900/120/any)'
+        backgroundImage: 'url(https://placeimg.com/900/120/any)',
     },
     bannerheading: {
         textTransform: 'uppercase',
