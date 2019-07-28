@@ -7,6 +7,7 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { theme } from 'theme';
 import { VPlan } from 'component/widgets/vPlan/VPlan';
 import { Calendar } from 'component/widgets/calendar/Calendar';
+import { parseISO } from 'date-fns';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
@@ -56,7 +57,7 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
                         </Grid>
                     </Grid>
                 )}
-                {articles && articles.map(article => (
+                {articles && articles.sort((a1, a2) => parseISO(a2.insertedAt).getTime() - parseISO(a1.insertedAt).getTime()).map(article => (
                     <ArticlePreview key={article.id} article={article} />
                 ))}
             </BaseLayoutMainContent>
