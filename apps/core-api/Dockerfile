@@ -4,15 +4,10 @@ ARG ALPINE_VERSION=3.9
 
 FROM elixir:1.8-alpine AS builder
 
-# The following are build arguments used to change variable parts of the image.
-# The name of your application/release (required)
-ARG APP_NAME=api
-
 # The environment to build with
 ARG MIX_ENV=prod
 
-ENV APP_NAME=${APP_NAME} \
-    MIX_ENV=${MIX_ENV}
+ENV MIX_ENV=${MIX_ENV}
 
 # By convention, /opt is typically used for applications
 WORKDIR /opt/app
@@ -35,16 +30,13 @@ RUN mix release --env=prod
 
 RUN RELEASE_DIR=`ls -d1 _build/prod/rel/api/releases/*/ | head -1` && \
     mkdir -p /opt/built && \
-    cp ${RELEASE_DIR}/${APP_NAME}.tar.gz /opt/built && \
+    cp ${RELEASE_DIR}/api.tar.gz /opt/built && \
     cd /opt/built && \
-    tar -xzf ${APP_NAME}.tar.gz && \
-    rm ${APP_NAME}.tar.gz
+    tar -xzf api.tar.gz && \
+    rm api.tar.gz
 
 # From this line onwards, we're in a new image, which will be the image used in production
 FROM alpine:${ALPINE_VERSION}
-
-# The name of your application/release (required)
-ARG APP_NAME=api
 
 RUN apk update && \
     apk add --no-cache \
@@ -53,11 +45,12 @@ RUN apk update && \
     erlang-crypto \
     libssl1.1
 
-ENV REPLACE_OS_VARS=true \
-    APP_NAME=${APP_NAME}
+ENV REPLACE_OS_VARS=true
 
 WORKDIR /opt/app
 
 COPY --from=builder /opt/built .
 
-CMD trap 'exit' INT; /opt/app/bin/${APP_NAME} foreground
+ENTRYPOINT ["/opt/app/bin/api"]
+
+CMD ["foreground"]
