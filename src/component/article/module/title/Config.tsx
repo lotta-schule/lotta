@@ -18,7 +18,7 @@ interface ConfigProps {
 
 export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule, onRequestClose }) => {
 
-    const headingLevel: number = get(contentModule.configuration, 'level', 2);
+    const headingLevel: number = get(contentModule.configuration, 'level', 4);
     const styles = useStyles();
 
     return (
