@@ -7,6 +7,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Menu } from '@material-ui/icons';
 import { State } from 'store/State';
 import { createOpenDrawerAction } from 'store/actions/layout';
+import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
+import { useCategories } from 'util/categories/useCategories';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -14,7 +16,6 @@ const useStyles = makeStyles(theme => ({
         padding: `0 ${theme.spacing(2)}px`,
         marginBottom: '.5em',
         position: 'sticky',
-        top: '6em',
         boxShadow: '0px 2px 2px #00000061',
         [theme.breakpoints.up('sm')]: {
             top: '6.5em',
@@ -39,9 +40,12 @@ export const UserNavigationMobile: FunctionComponent = memo(() => {
     const user = useSelector<State, UserModel | null>(s => s.user.user);
     const dispatch = useDispatch();
     const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
+    const categories = useCategories();
+    const currentCategoryId = useCurrentCategoryId();
+    const subcategories = (categories || []).filter(category => category.category && category.category.id === currentCategoryId);
 
     return (
-        <Grid container alignItems={'center'} className={styles.root}>
+        <Grid container alignItems={'center'} className={styles.root} style={{ top: subcategories.length ? '6em' : '3.5em' }}>
             <Grid item xs={10} className={styles.userGridItem}>
                 {user && (
                     <>
