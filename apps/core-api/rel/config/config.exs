@@ -19,6 +19,14 @@ config :ex_aws, :s3,
   region: System.get_env("UGC_S3_COMPAT_REGION"),
   scheme: "https://"
 
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN"),
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!(),
+  environment_name: Mix.env(),
+  included_environments: ~w(production staging),
+  environment_name: System.get_env("RELEASE_LEVEL") || "development"
+
 config :lager,
   error_logger_redirect: false,
   handlers: [level: :critical]
