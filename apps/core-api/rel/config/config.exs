@@ -25,7 +25,7 @@ config :sentry,
   root_source_code_path: File.cwd!(),
   environment_name: Mix.env(),
   included_environments: ~w(production staging),
-  environment_name: System.get_env("RELEASE_LEVEL") || "development"
+  environment_name: System.get_env("RELEASE_LEVEL")
 
 config :lager,
   error_logger_redirect: false,
