@@ -55,7 +55,8 @@ defmodule Api.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:poison, "~> 4.0"},
       {:uuid, "~> 1.1"},
-      {:amqp, "~> 1.2"}
+      {:amqp, "~> 1.2"},
+      {:sentry, "~> 7.1"}
     ]
   end
 
