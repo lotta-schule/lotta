@@ -1,4 +1,5 @@
 import './index.scss';
+import * as Sentry from '@sentry/browser';
 import { ApolloProvider } from 'react-apollo';
 import { App } from './component/App';
 import { client } from 'api/client';
@@ -16,6 +17,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import ReactDOM from 'react-dom';
 import store from './store/Store';
 import { de } from 'date-fns/locale';
+
+Sentry.init({ dsn: process.env.REACT_APP_SENTRY_URL });
 
 const uploadQueue = new UploadQueueService(
     uploads => store.dispatch(createSetUploadsAction(uploads)),
