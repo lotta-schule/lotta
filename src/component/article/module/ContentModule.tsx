@@ -54,9 +54,10 @@ interface ContentModuleProps {
     index: number;
     isEditModeEnabled?: boolean;
     onUpdateModule(contentModule: ContentModuleModel): void;
+    onRemoveContentModule(): void;
 }
 
-export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, contentModule, index, onUpdateModule }) => {
+export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
 
     const styles = useStyles();
     const [showConfigModeContentModuleId, setShowConfigModeContentModuleId] = useState<string | null>(null);
@@ -91,7 +92,13 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
                         )}
                     </span>
                     <span>
-                        <IconButton color={'primary'} classes={{ root: styles.dragbarButton }} aria-label="Delete" style={{ float: 'right' }}>
+                        <IconButton
+                            color={'primary'}
+                            classes={{ root: styles.dragbarButton }}
+                            aria-label="Delete"
+                            style={{ float: 'right' }}
+                            onClick={() => onRemoveContentModule()}
+                        >
                             <Delete className={classNames(styles.buttonIcon)} />
                         </IconButton>
                     </span>

@@ -59,6 +59,10 @@ export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditM
                                         });
                                     }
                                 }}
+                                onRemoveContentModule={() => onUpdateArticle && onUpdateArticle({
+                                    ...article,
+                                    contentModules: article.contentModules.filter(currentModule => contentModule.id !== currentModule.id)
+                                })}
                             />
                         ))}
                         {provided.placeholder}
