@@ -49,6 +49,7 @@
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "material-table": "^1.40.1",
+    "matomo-ts": "^1.0.1",
     "react": "^16.8.6",
     "react-apollo": "^2.5.8",
     "react-beautiful-dnd": "^11.0.5",

@@ -17,8 +17,18 @@ import DateFnsUtils from '@date-io/date-fns';
 import ReactDOM from 'react-dom';
 import store from './store/Store';
 import { de } from 'date-fns/locale';
+import Matomo from 'matomo-ts';
 
-Sentry.init({ dsn: process.env.REACT_APP_SENTRY_URL });
+Matomo.default().init(
+    process.env.REACT_APP_MATOMO_URL,
+    process.env.REACT_APP_MATOMO_SITEID,
+    { cookieDomain: `*.${process.env.REACT_APP_APP_BASE_DOMAIN}` }
+);
+
+try {
+    Sentry.init({ dsn: process.env.REACT_APP_SENTRY_URL });
+} catch { }
+
 
 const uploadQueue = new UploadQueueService(
     uploads => store.dispatch(createSetUploadsAction(uploads)),
