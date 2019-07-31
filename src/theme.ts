@@ -1,5 +1,6 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deepOrange } from '@material-ui/core/colors';
+import { RoundedCorner } from '@material-ui/icons';
 
 const palette = {
     primary: {
@@ -93,6 +94,11 @@ export const theme = createMuiTheme({
         MuiDrawer: {
             paper: {
                 width: '80vw'
+            }
+        },
+        MuiPaper: {
+            rounded: {
+            borderRadius: 0,
             }
         },
         MuiOutlinedInput: {
