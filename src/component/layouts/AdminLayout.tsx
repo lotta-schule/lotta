@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { FunctionComponent, memo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { UserModel } from 'model';
 import { State } from 'store/State';
@@ -8,9 +8,11 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import SearchIcon from '@material-ui/icons/Search';
 import {
     Tabs, Tab, Paper, Typography, Theme, makeStyles, Table, TableHead, TableRow, TableCell, TableBody,
-    Avatar, FormControl, InputLabel, Select, MenuItem, Checkbox, IconButton, InputBase
+    Avatar, FormControl, InputLabel, Select, MenuItem, Checkbox, IconButton, InputBase, Fab
 } from '@material-ui/core';
 import classNames from 'classnames';
+import { AddUserToGroupDialog } from './userManagement/AddUserToGroupDialog';
+import { Edit, Add } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
@@ -48,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export const AdminLayout: FunctionComponent = memo(() => {
+    const [isAddUserToGroupDialogOpen, setIsAddUserToGroupDialogOpen] = useState(false);
     const user = useSelector<State, UserModel | null>(s => s.user.user);
     const { history } = useRouter();
     const styles = useStyles();
@@ -67,6 +70,11 @@ export const AdminLayout: FunctionComponent = memo(() => {
                             <SearchIcon />
                         </IconButton>
                         <InputBase placeholder="Suche nach Nutzern" className={styles.input} />
+                        <a href="/" onClick={(e) => { e.preventDefault(); setIsAddUserToGroupDialogOpen(true); }}>
+                            <IconButton aria-label="Suche">
+                                <Add />
+                            </IconButton>
+                        </a>
                     </div>
                     <Typography variant="h6">
                         Gruppe: Schüler
@@ -85,6 +93,132 @@ export const AdminLayout: FunctionComponent = memo(() => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
                             <TableRow>
                                 <TableCell>
                                     <FormControl>
@@ -193,6 +327,11 @@ export const AdminLayout: FunctionComponent = memo(() => {
                         </TableBody>
                     </Table>
                 </Paper>
+                <AddUserToGroupDialog
+                    onAbort={() => setIsAddUserToGroupDialogOpen(false)}
+                    onConfirm={() => setIsAddUserToGroupDialogOpen(false)}
+                    isOpen={isAddUserToGroupDialogOpen}
+                />
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <Paper className={styles.adminNav}>
