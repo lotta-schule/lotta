@@ -1,9 +1,11 @@
-import React, { FunctionComponent, memo, useState, useRef, MutableRefObject, MouseEvent } from 'react';
+import React, { FunctionComponent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { Editor, EventHook } from 'slate-react';
 import { Value } from 'slate';
-import { renderMark } from './SlateUtils';
-import { Toolbar, Button, Grow } from '@material-ui/core';
+import { renderBlock, renderMark, plugins } from './SlateUtils';
+import { Toolbar, Collapse } from '@material-ui/core';
+import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
+import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered } from '@material-ui/icons';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 const { serialize, deserialize } = require('slate-base64-serializer').default;
 
@@ -25,18 +27,41 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdateModule }) => {
 
-    const [editorState, setEditorState] = useState(contentModule.text ? deserialize(contentModule.text) : Value.create());
+    const [editorState, setEditorState] = useState<Value>(contentModule.text ? deserialize(contentModule.text) : Value.create());
     const [isCurrentlyEditing, setCurrentlyEditing] = useState(false);
 
     const styles = useStyles();
 
     const editorRef = useRef<Editor>() as MutableRefObject<Editor>;
 
-    const clickMarkButtonRef = useRef((mark: string) => (e: MouseEvent<HTMLButtonElement>) => {
+    const onClickMark = useCallback((e: MouseEvent<HTMLElement>, type: string) => {
         e.preventDefault();
-        editorRef.current.toggleMark(mark);
+        editorRef.current.toggleMark(type);
         editorRef.current.focus();
-    });
+    }, [editorRef]);
+
+    const onClickBlock = useCallback((e: MouseEvent<HTMLElement>, type: string) => {
+        e.preventDefault();
+        const { value } = editorRef.current;
+        const { document } = editorState;
+
+        // Handle the extra wrapping required for list buttons.
+        const isList = value.blocks.some(node => Boolean(node && node.type === 'list-item'));
+        const isExactType = value.blocks.some(block => {
+            return !!document.getClosest(block!.key, parent => Boolean(parent && (parent as any).type === block));
+        });
+
+        if (!isList) {
+            (editorRef.current as any).wrapList({ type });
+        } else if (isExactType) {
+            (editorRef.current as any)
+                .unwrapList()
+                .wrapList({ type });
+        } else {
+            (editorRef.current as any).unwrapList();
+        }
+        editorRef.current.focus();
+    }, [editorRef, editorState]);
 
     const onKeyDownRef = useRef<EventHook>((event, editor, next) => {
         if (!(event as KeyboardEvent).metaKey) {
@@ -68,24 +93,48 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
         }
     });
 
+    const activeMarks = editorState.activeMarks.flatMap(mark => mark ? [mark.type] : []);
+
     return (
         <>
-            <Grow in={isCurrentlyEditing}>
+            <Collapse in={isCurrentlyEditing}>
                 <Toolbar className={styles.toolbar}>
-                    <Button variant={'outlined'} size={'small'} className={styles.button} onClick={clickMarkButtonRef.current('bold')}>
-                        <strong>F</strong>
-                    </Button>
-                    <Button variant={'outlined'} size={'small'} className={styles.button} onClick={clickMarkButtonRef.current('italic')}>
-                        <span style={{ fontStyle: 'italic' }}>I</span>
-                    </Button>
-                    <Button variant={'outlined'} size={'small'} className={styles.button} onClick={clickMarkButtonRef.current('underline')}>
-                        <span style={{ textDecoration: 'underline' }}>U</span>
-                    </Button>
+                    <ToggleButtonGroup size={'small'} value={activeMarks.toArray()}>
+                        <ToggleButton value={'bold'} onClick={e => onClickMark(e, 'bold')}>
+                            <FormatBold />
+                        </ToggleButton>
+                        <ToggleButton value={'italic'} onClick={e => onClickMark(e, 'italic')}>
+                            <FormatItalic />
+                        </ToggleButton>
+                        <ToggleButton value={'underline'} onClick={e => onClickMark(e, 'underline')}>
+                            <FormatUnderlined />
+                        </ToggleButton>
+                        {/* <ToggleButton disabled value="color">
+                            <FormatColorFillIcon />
+                            <ArrowDropDownIcon />
+                        </ToggleButton> */}
+                    </ToggleButtonGroup>
+                    &nbsp;
+                    <ToggleButtonGroup size={'small'} value={null}>
+                        <ToggleButton
+                            selected={editorRef.current && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'unordered-list'))))}
+                            onClick={e => onClickBlock(e, 'unordered-list')}
+                        >
+                            <FormatListBulleted />
+                        </ToggleButton>
+                        <ToggleButton
+                            selected={editorRef.current && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'ordered-list'))))}
+                            onClick={e => onClickBlock(e, 'ordered-list')}
+                        >
+                            <FormatListNumbered />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
                 </Toolbar>
-            </Grow>
+            </Collapse>
             <Editor
                 ref={editorRef}
                 value={editorState}
+                // plugins={plugins}
                 onFocus={(ev, editor, next) => {
                     setTimeout(() => setCurrentlyEditing(true));
                     next();
@@ -103,6 +152,8 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
                 onChange={(ev: { value: Value }) => setEditorState(ev.value)}
                 onKeyDown={onKeyDownRef.current}
                 renderMark={renderMark}
+                renderBlock={renderBlock}
+                plugins={plugins}
             />
         </>
     );
