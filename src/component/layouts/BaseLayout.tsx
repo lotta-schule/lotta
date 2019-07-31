@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
 import { useIsMobile } from 'util/useIsMobile';
+import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
 
 
 const useStyles = makeStyles(() => ({
@@ -24,6 +25,7 @@ const useStyles = makeStyles(() => ({
 
 
 export const BaseLayout: FunctionComponent = memo(({ children }) => {
+    usePiwikAnalytics();
     const styles = useStyles();
     const isMobile = useIsMobile();
     const client = useSelector<State, ClientModel>(state => state.client.client!);

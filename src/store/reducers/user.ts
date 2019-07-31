@@ -3,6 +3,7 @@ import { UserState } from '../State';
 import jwtDecode from 'jwt-decode';
 import { get, set, remove } from 'js-cookie';
 import { UserModel, UserGroup } from 'model';
+import Matomo from 'matomo-ts';
 
 export type UserActions = LoginAction | LogoutAction;
 
@@ -32,6 +33,7 @@ export const userReducer = (s: UserState = initialUserState, action: UserActions
             set(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME, action.token, {
                 domain: process.env.REACT_APP_APP_BASE_DOMAIN
             });
+            Matomo.default().setUserId(action.user.id);
             return {
                 user: action.user
             };
@@ -39,7 +41,8 @@ export const userReducer = (s: UserState = initialUserState, action: UserActions
         case UserActionType.LOGOUT:
             remove(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME, {
                 domain: process.env.REACT_APP_APP_BASE_DOMAIN
-            })
+            });
+            Matomo.default().resetUserId();
             return {
                 user: null
             };
