@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { State } from 'store/State';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
+import { theme } from 'theme';
 
 const useStyle = makeStyles((theme: Theme) => ({
     root: {
@@ -35,8 +36,17 @@ const useStyle = makeStyles((theme: Theme) => ({
         flexShrink: 0,
         flexGrow: 0,
         backgroundPosition: '0 0'
+    },
+    previewtext: {
+        overflow: 'hidden',
+        webkitLineClamp: 3,
+        lineClamp: 3,
+        WebkitBoxOrient: 'vertical',
+        boxOrient: 'vertical',
+        display: '-webkit-box',
     }
-}));
+}
+));
 
 interface ArticlePreviewProps {
     article: ArticleModel;
@@ -54,7 +64,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                 {article.previewImageFile && (
                     <Grid item xs={12} sm={4}>
                         <Img
-                            operation={'width'}
+                            operation={'cover'}
                             size={'300x200'}
                             src={article.previewImageFile.remoteLocation}
                             className={styles.articlePreviewImage}
@@ -64,7 +74,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                 )}
                 <Grid item xs>
                     <CardContent>
-                        <Typography component={'h4'} variant={'h4'} gutterBottom>
+                        <Typography component={'h5'} variant={'h5'} gutterBottom>
                             <Link
                                 component={CollisionLink}
                                 color='inherit'
@@ -85,14 +95,14 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                                 </Fab>
                             )}
                         </Typography>
-                        <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem' }}>
+                        <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem', marginBottom: theme.spacing(1) }}>
                             {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
                             {article.pageName && <> | {article.pageName}&nbsp;</>}
                             | 18 Views&nbsp;
                             {article.user && <>| Autor: {article.user.nickname}&nbsp;</>}
                             | Bewertung&nbsp;
                         </Typography>
-                        <Typography variant={'subtitle1'} color="textSecondary">
+                        <Typography variant={'subtitle1'} color="textSecondary" className={styles.previewtext}>
                             {article.preview}
                         </Typography>
                     </CardContent>
