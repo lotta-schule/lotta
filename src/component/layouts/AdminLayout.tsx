@@ -12,7 +12,8 @@ import {
 } from '@material-ui/core';
 import classNames from 'classnames';
 import { AddUserToGroupDialog } from './userManagement/AddUserToGroupDialog';
-import { Edit, Add } from '@material-ui/icons';
+import { Add, ExpandMore, ExpandLess } from '@material-ui/icons';
+import { theme } from 'theme';
 
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
@@ -78,7 +79,15 @@ export const AdminLayout: FunctionComponent = memo(() => {
                     </div>
                     <Typography variant="h6">
                         Gruppe: Schüler
-                            </Typography>
+                        <Fab variant="extended" size="small" style={{ marginLeft: theme.spacing(2), paddingRight: theme.spacing(2) }}>
+                            <ExpandMore />
+                            ausklappen
+                        </Fab>
+                        <Fab variant="extended" size="small" style={{ marginLeft: theme.spacing(2), paddingRight: theme.spacing(2) }}>
+                            <ExpandLess />
+                            einklappen
+                        </Fab>
+                    </Typography>
                     <Table size={'small'}>
                         <TableHead>
                             <TableRow>
