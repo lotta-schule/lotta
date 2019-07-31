@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: 400,
         backgroundColor: '#efefef',
         borderRadius: 4,
-      },
+    },
     input: {
         marginLeft: 8,
         flex: 1,
@@ -58,141 +58,141 @@ export const AdminLayout: FunctionComponent = memo(() => {
     return (
         <>
             <BaseLayoutMainContent>
-                        <Paper className={styles.container}>
-                            <Typography variant="h4" className={styles.headlines}>
-                                Nutzerverwaltung
+                <Paper className={styles.container}>
+                    <Typography variant="h4" className={styles.headlines}>
+                        Nutzerverwaltung
                             </Typography>
-                            <div className={classNames(styles.root, styles.headlines)}>
-                                <IconButton aria-label="Suche">
-                                    <SearchIcon />
-                                </IconButton>
-                                <InputBase placeholder="Suche nach Nutzern" className={styles.input}/>
-                            </div>
-                            <Typography variant="h6">
-                                Gruppe: Schüler
+                    <div className={classNames(styles.root, styles.headlines)}>
+                        <IconButton aria-label="Suche">
+                            <SearchIcon />
+                        </IconButton>
+                        <InputBase placeholder="Suche nach Nutzern" className={styles.input} />
+                    </div>
+                    <Typography variant="h6">
+                        Gruppe: Schüler
                             </Typography>
-                            <Table size={'small'}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>
-                                            <FormControl>
-                                                <Checkbox  value="1" />
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell></TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Rechte</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>
-                                            <FormControl>
-                                                <Checkbox  value="1" />
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
-                                        </TableCell>
-                                        <TableCell>Ernie Sesam</TableCell>
-                                        <TableCell>
-                                        <FormControl className={styles.formControl}>
-                                            <InputLabel htmlFor="heading-level">Rechte</InputLabel>
-                                            <Select fullWidth>
-                                                <MenuItem value={1}>Schüler</MenuItem>
-                                                <MenuItem value={2}>Öffentlich</MenuItem>
-                                                <MenuItem value={3}>...</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                             </Table>
-                        </Paper>
-                        <Paper className={styles.container}>
-                            <Typography variant="h6">
-                                Gruppe: Lehrer
+                    <Table size={'small'}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Rechte</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/ernie.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </Paper>
+                <Paper className={styles.container}>
+                    <Typography variant="h6">
+                        Gruppe: Lehrer
                             </Typography>
-                            <Table size={'small'}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>
-                                            <FormControl>
-                                                <Checkbox  value="1" />
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell></TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Rechte</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>
-                                            <FormControl>
-                                                <Checkbox  value="1" />
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/bert.svg`} />
-                                        </TableCell>
-                                        <TableCell>Ernie Sesam</TableCell>
-                                        <TableCell>
-                                        <FormControl className={styles.formControl}>
-                                            <InputLabel htmlFor="heading-level">Rechte</InputLabel>
-                                            <Select fullWidth>
-                                                <MenuItem value={1}>Schüler</MenuItem>
-                                                <MenuItem value={2}>Öffentlich</MenuItem>
-                                                <MenuItem value={3}>...</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                             </Table>
-                        </Paper>
-                        <Paper className={styles.container}>
-                            <Typography variant="h6">
-                                Gruppe: Administratoren
+                    <Table size={'small'}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Rechte</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/bert.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </Paper>
+                <Paper className={styles.container}>
+                    <Typography variant="h6">
+                        Gruppe: Administratoren
                             </Typography>
-                            <Table size={'small'}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>
-                                            <FormControl>
-                                                <Checkbox  value="1" />
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell></TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Rechte</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>
-                                            <FormControl>
-                                                <Checkbox  value="1" />
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/admin.svg`} />
-                                        </TableCell>
-                                        <TableCell>Ernie Sesam</TableCell>
-                                        <TableCell>
-                                        <FormControl className={styles.formControl}>
-                                            <InputLabel htmlFor="heading-level">Rechte</InputLabel>
-                                            <Select fullWidth>
-                                                <MenuItem value={1}>Schüler</MenuItem>
-                                                <MenuItem value={2}>Öffentlich</MenuItem>
-                                                <MenuItem value={3}>...</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                             </Table>
-                        </Paper>
+                    <Table size={'small'}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Rechte</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>
+                                    <FormControl>
+                                        <Checkbox value="1" />
+                                    </FormControl>
+                                </TableCell>
+                                <TableCell>
+                                    <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/admin.svg`} />
+                                </TableCell>
+                                <TableCell>Ernie Sesam</TableCell>
+                                <TableCell>
+                                    <FormControl className={styles.formControl}>
+                                        <InputLabel htmlFor="heading-level">Rechte</InputLabel>
+                                        <Select fullWidth>
+                                            <MenuItem value={1}>Schüler</MenuItem>
+                                            <MenuItem value={2}>Öffentlich</MenuItem>
+                                            <MenuItem value={3}>...</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </Paper>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <Paper className={styles.adminNav}>
