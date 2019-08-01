@@ -1,11 +1,9 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import {
-    DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField,
-    Dialog, Select, FormControl, InputLabel, Input, MenuItem, FormHelperText, Avatar, Typography, Grid,
+    DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Dialog,
+    Select, FormControl, Input, MenuItem, FormHelperText, Avatar, Typography, Grid,
 } from '@material-ui/core';
-import { useCategories } from 'util/categories/useCategories';
 import { UserModel } from 'model';
-import { bool } from 'prop-types';
 import { theme } from 'theme';
 
 export interface AddUserToGroupDialogProps {
@@ -19,9 +17,8 @@ export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> 
     onConfirm,
     onAbort
 }) => {
-    const categories = useCategories();
-    const [title, setTitle] = useState('');
-    const [categoryId, setCategoryId] = useState<string | null>(null);
+    const [, setTitle] = useState('');
+    const [, setCategoryId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const resetForm = () => {

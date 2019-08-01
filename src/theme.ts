@@ -1,6 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deepOrange } from '@material-ui/core/colors';
-import { RoundedCorner } from '@material-ui/icons';
 
 const palette = {
     primary: {
