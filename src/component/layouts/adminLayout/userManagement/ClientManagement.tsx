@@ -13,7 +13,7 @@ export const ClientManagement: FunctionComponent = memo(() => {
     const styles = useStyles();
 
     return (
-        <div>
+        <div className={styles.root}>
             "Mein Lotta" bearbeiten
         </div>
     );

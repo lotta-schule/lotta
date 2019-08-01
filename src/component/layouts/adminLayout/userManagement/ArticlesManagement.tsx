@@ -14,7 +14,7 @@ export const ArticlesManagement: FunctionComponent = memo(() => {
     const styles = useStyles();
 
     return (
-        <div>
+        <div className={styles.root}>
             Meine Artikel
         </div>
     );

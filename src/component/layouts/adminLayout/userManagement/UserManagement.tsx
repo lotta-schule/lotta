@@ -66,7 +66,7 @@ export const UserManagement: FunctionComponent = memo(() => {
                 </div>
                 <Typography variant="h6">
                     Gruppe: Schüler
-                        <Fab variant="extended" size="small" className={styles.expandButton}>
+                    <Fab variant="extended" size="small" className={styles.expandButton}>
                         <ExpandMore />
                         ausklappen
                     </Fab>
@@ -242,7 +242,7 @@ export const UserManagement: FunctionComponent = memo(() => {
             <Paper className={styles.container}>
                 <Typography variant="h6">
                     Gruppe: Lehrer
-                            </Typography>
+                </Typography>
                 <Table size={'small'}>
                     <TableHead>
                         <TableRow>
@@ -284,7 +284,7 @@ export const UserManagement: FunctionComponent = memo(() => {
             <Paper className={styles.container}>
                 <Typography variant="h6">
                     Gruppe: Administratoren
-                            </Typography>
+                </Typography>
                 <Table size={'small'}>
                     <TableHead>
                         <TableRow>
