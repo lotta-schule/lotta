@@ -6,11 +6,12 @@ import {
     SetUploadsAction,
     DeleteFileAction
 } from '../actions/userFiles';
+import { uniqBy } from 'lodash';
 
 export type UserFilesActions = SetFilesAction | AddFileAction | SetUploadsAction | DeleteFileAction;
 
 export const initialUserFilesState: UserFilesState = {
-    files: [],
+    files: null,
     uploads: []
 };
 

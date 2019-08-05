@@ -27,7 +27,6 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
         <div className={styles.root}>
             <Typography style={{ marginBottom: '1em' }}>Füge ein Modul zum Beitrag hinzu, indem du drauf klickst.</Typography>
             <Grid
-                sm={12}
                 container
                 direction="row"
                 justify="space-between"
