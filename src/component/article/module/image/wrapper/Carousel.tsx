@@ -12,7 +12,10 @@ export interface CarouselProps {
 export const Carousel: FunctionComponent<CarouselProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
     let imageCaptions: (string | null)[];
     try {
-        imageCaptions = JSON.parse(contentModule.text!);
+        if (!contentModule.text) {
+            throw new Error('No Text');
+        }
+        imageCaptions = JSON.parse(contentModule.text);
     } catch {
         imageCaptions = [contentModule.text || null];
     }
