@@ -37,7 +37,7 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
         <>
             <Grid container>
                 {contentModule.files.map((file, index) => (
-                    <Grid item xs={6} lg={4}>
+                    <Grid item xs={6} lg={4} key={file.id}>
                         <ImageImage
                             isEditModeEnabled={isEditModeEnabled}
                             file={file}

@@ -56,6 +56,18 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                     {
                         files
                             .slice(currentPage * 10, currentPage * 10 + 10)
+                            .sort((file1, file2) => {
+                                if (file1.fileType !== file2.fileType) {
+                                    if (file1.fileType === FileModelType.Directory) {
+                                        return -1;
+                                    } else {
+                                        if (file2.fileType === FileModelType.Directory) {
+                                            return 1;
+                                        }
+                                    }
+                                }
+                                return file1.filename.localeCompare(file2.filename);
+                            })
                             .map((file: FileModel) => (
                                 file.fileType === FileModelType.Directory ? (
                                     // directory

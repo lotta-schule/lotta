@@ -10,7 +10,7 @@ import {
 export type UserFilesActions = SetFilesAction | AddFileAction | SetUploadsAction | DeleteFileAction;
 
 export const initialUserFilesState: UserFilesState = {
-    files: [],
+    files: null,
     uploads: []
 };
 
