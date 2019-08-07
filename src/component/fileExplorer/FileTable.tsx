@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { FunctionComponent, memo, useCallback } from 'react';
 import {
     Edit, Delete, FolderOutlined
 } from '@material-ui/icons';
@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import { FileModel, FileModelType } from 'model';
 import { FileSize } from 'util/FileSize';
+import { find } from 'lodash';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
     root: {
@@ -51,9 +52,11 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
         height: 24,
         width: 24,
         padding: 0
+    },
+    tooltip: {
+        backgroundColor: 'transparent'
     }
 }));
-
 
 export interface FileTableProps {
     files: FileModel[];
@@ -65,6 +68,41 @@ export interface FileTableProps {
 export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disableEditColumn, onSelectSubPath, onSelectFile }) => {
 
     const styles = useStyles();
+
+    const getFilenameCell = useCallback((file: FileModel) => {
+        let previewImageUrl: string | null = null;
+        if (file.fileType === FileModelType.Image) {
+            previewImageUrl = file.remoteLocation;
+        } else {
+            const imageConversionFile = file.fileConversions &&
+                file.fileConversions.length > 0 &&
+                find(file.fileConversions, fc => /^storyboard/.test(fc.format));
+            if (imageConversionFile) {
+                previewImageUrl = imageConversionFile.remoteLocation;
+            }
+        }
+
+        const tableCell = (
+            <TableCell scope="row" padding="none">
+                {file.filename}
+            </TableCell>
+        );
+
+        if (previewImageUrl) {
+            return (
+                <Tooltip className={styles.tooltip} title={(
+                    <img
+                        src={`https://afdptjdxen.cloudimg.io/bound/200x200/foil1/${previewImageUrl}`}
+                        alt={file.filename}
+                    />
+                )}>
+                    {tableCell}
+                </Tooltip>
+            );
+        } else {
+            return tableCell;
+        }
+    }, [styles.tooltip]);
 
     return (
         <div>
@@ -107,7 +145,12 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                                         <TableCell></TableCell>
                                     </TableRow>
                                 ) : (
-                                        <TableRow hover key={file.id} onClick={() => onSelectFile && onSelectFile(file)}>
+                                        <TableRow
+                                            key={file.id}
+                                            hover
+                                            style={{ cursor: onSelectFile ? 'pointer' : 'inherit' }}
+                                            onClick={() => onSelectFile && onSelectFile(file)}
+                                        >
                                             <TableCell>
                                                 {!disableEditColumn && (
                                                     <>
@@ -124,9 +167,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                                                     </>
                                                 )}
                                             </TableCell>
-                                            <TableCell scope="row" padding="none">
-                                                {file.filename}
-                                            </TableCell>
+                                            {getFilenameCell(file)}
                                             <TableCell align="right">{new FileSize(file.filesize).humanize()}</TableCell>
                                             <TableCell align="right">{file.fileType}</TableCell>
                                         </TableRow>
