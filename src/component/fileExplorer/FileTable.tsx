@@ -1,52 +1,126 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { FunctionComponent, memo, useCallback } from 'react';
 import {
     Edit, Delete, FolderOutlined
 } from '@material-ui/icons';
 import {
-    IconButton, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, TablePagination, makeStyles, Theme, createStyles
+    IconButton, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, makeStyles, Theme, Checkbox
 } from '@material-ui/core';
 import { FileModel, FileModelType } from 'model';
 import { FileSize } from 'util/FileSize';
+import { find, includes } from 'lodash';
 
-const useStyles = makeStyles<Theme>((theme: Theme) =>
-    createStyles({
-        overlayDropzoneActive: {
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
+const useStyles = makeStyles<Theme>((theme: Theme) => ({
+    root: {
+        display: 'flex',
+        flexDirection: 'column',
+        '& thead': {
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#ccca',
-            zIndex: 10000,
-            border: '1px solid #333',
-            borderRadius: 10,
+            width: '100%',
+        },
+        '& tbody': {
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            overflowY: 'scroll',
+            height: 600
+        },
+        '& tr': {
+            display: 'flex',
+            width: '100%',
+            boxSizing: 'border-box',
+            '& > td, & > th': {
+                '&:nth-child(1)': {
+                    width: '10%'
+                },
+                '&:nth-child(2)': {
+                    width: '50%'
+                },
+                '&:nth-child(3)': {
+                    width: '20%'
+                },
+                '&:nth-child(4)': {
+                    width: '20%'
+                },
+            },
+            '& > td': {
+                display: 'flex',
+                boxSizing: 'border-box',
+                flexDirection: 'row',
+                alignItems: 'center',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                flexGrow: 0,
+                flexShrink: 0,
+                padding: 6
+            }
         }
-    }),
-);
-
+    },
+    actionButton: {
+        height: 24,
+        width: 24,
+        padding: 0
+    },
+    tooltip: {
+        backgroundColor: 'transparent'
+    }
+}));
 
 export interface FileTableProps {
     files: FileModel[];
-    disableEditColumn?: boolean;
+    selectedFiles: FileModel[];
     onSelectSubPath(path: string): void;
     onSelectFile?(file: FileModel): void;
+    onSelectFiles?(files: FileModel[]): void;
 }
 
-export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disableEditColumn, onSelectSubPath, onSelectFile }) => {
-
-    const [currentPage, setCurrentPage] = useState(0);
+export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selectedFiles, onSelectSubPath, onSelectFile, onSelectFiles }) => {
 
     const styles = useStyles();
 
+    const getFilenameCell = useCallback((file: FileModel) => {
+        let previewImageUrl: string | null = null;
+        if (file.fileType === FileModelType.Image) {
+            previewImageUrl = file.remoteLocation;
+        } else {
+            const imageConversionFile = file.fileConversions &&
+                file.fileConversions.length > 0 &&
+                find(file.fileConversions, fc => /^storyboard/.test(fc.format));
+            if (imageConversionFile) {
+                previewImageUrl = imageConversionFile.remoteLocation;
+            }
+        }
+
+        const tableCell = (
+            <TableCell scope="row" padding="none">
+                {file.filename}
+            </TableCell>
+        );
+
+        if (previewImageUrl) {
+            return (
+                <Tooltip className={styles.tooltip} title={(
+                    <img
+                        src={`https://afdptjdxen.cloudimg.io/bound/200x200/foil1/${previewImageUrl}`}
+                        alt={file.filename}
+                    />
+                )}>
+                    {tableCell}
+                </Tooltip>
+            );
+        } else {
+            return tableCell;
+        }
+    }, [styles.tooltip]);
+
     return (
         <div>
-            <Table size={'small'}>
+            <Table size={'small'} className={styles.root}>
                 <TableHead>
                     <TableRow>
-                        {!disableEditColumn && (<TableCell>{/*actions*/}</TableCell>)}
+                        <TableCell>
+                            {/*actions*/}
+                        </TableCell>
                         <TableCell>Dateiname</TableCell>
                         <TableCell>Dateigröße</TableCell>
                         <TableCell>Dateityp</TableCell>
@@ -55,7 +129,6 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                 <TableBody>
                     {
                         files
-                            .slice(currentPage * 10, currentPage * 10 + 10)
                             .sort((file1, file2) => {
                                 if (file1.fileType !== file2.fileType) {
                                     if (file1.fileType === FileModelType.Directory) {
@@ -72,33 +145,50 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                                 file.fileType === FileModelType.Directory ? (
                                     // directory
                                     <TableRow hover key={file.id} onClick={() => onSelectSubPath(file.filename)}>
-                                        {!disableEditColumn && (<TableCell></TableCell>)}
+                                        {<TableCell></TableCell>}
                                         <TableCell>
-                                            <FolderOutlined style={{ top: 5, position: 'relative', right: 10 }} />
+                                            <FolderOutlined style={{ position: 'relative', right: 10 }} />
                                             {file.filename}
                                         </TableCell>
                                         <TableCell></TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
                                 ) : (
-                                        <TableRow hover key={file.id} onClick={() => onSelectFile && onSelectFile(file)}>
-                                            {!disableEditColumn && (
-                                                <TableCell>
-                                                    <Tooltip title="Dateiname bearbeiten">
-                                                        <IconButton className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
-                                                            <Edit />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                    <Tooltip title="Datei löschen">
-                                                        <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
-                                                            <Delete />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </TableCell>
-                                            )}
-                                            <TableCell component="th" scope="row" padding="none">
-                                                {file.filename}
+                                        <TableRow
+                                            key={file.id}
+                                            hover
+                                            style={{ cursor: onSelectFile ? 'pointer' : 'inherit' }}
+                                            onClick={() => onSelectFile && onSelectFile(file)}
+                                        >
+                                            <TableCell>
+                                                {!onSelectFiles && !onSelectFile && (
+                                                    <>
+                                                        <Tooltip title="Dateiname bearbeiten">
+                                                            <IconButton className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
+                                                                <Edit />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Tooltip title="Datei löschen">
+                                                            <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
+                                                                <Delete />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </>
+                                                )}
+                                                {onSelectFiles && (
+                                                    <Checkbox
+                                                        checked={includes<FileModel>(selectedFiles, file)}
+                                                        onChange={(_, checked) => {
+                                                            if (checked && !includes(selectedFiles, file)) {
+                                                                onSelectFiles(selectedFiles.concat(file));
+                                                            } else if (!checked) {
+                                                                onSelectFiles(selectedFiles.filter(f => f.id !== file.id));
+                                                            }
+                                                        }}
+                                                    />
+                                                )}
                                             </TableCell>
+                                            {getFilenameCell(file)}
                                             <TableCell align="right">{new FileSize(file.filesize).humanize()}</TableCell>
                                             <TableCell align="right">{file.fileType}</TableCell>
                                         </TableRow>
@@ -106,20 +196,6 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                             ))}
                 </TableBody>
             </Table>
-
-            <TablePagination
-                component="div"
-                count={(files || []).length}
-                rowsPerPage={10}
-                page={currentPage}
-                backIconButtonProps={{
-                    'aria-label': 'Vorherige Seite',
-                }}
-                nextIconButtonProps={{
-                    'aria-label': 'Nächste Seite',
-                }}
-                onChangePage={(e, page) => setCurrentPage(page)}
-            />
         </div>
     );
 });
