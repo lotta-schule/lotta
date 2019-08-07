@@ -1,12 +1,13 @@
 import React, { FunctionComponent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback } from 'react';
-import { ContentModuleModel } from '../../../../model';
+import { ContentModuleModel, FileModel } from '../../../../model';
 import { Editor, EventHook } from 'slate-react';
-import { Value } from 'slate';
+import { Value, Command, CommandFunc } from 'slate';
 import { renderBlock, renderMark, plugins } from './SlateUtils';
 import { Toolbar, Collapse } from '@material-ui/core';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
-import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered } from '@material-ui/icons';
+import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered, Image } from '@material-ui/icons';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
 const { serialize, deserialize } = require('slate-base64-serializer').default;
 
 interface EditProps {
@@ -62,6 +63,26 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
         }
         editorRef.current.focus();
     }, [editorRef, editorState]);
+
+    const insertImage: CommandFunc = useCallback((editor, src, target) => {
+        if (target) {
+            editor.select(target)
+        }
+
+        editor.insertBlock({
+            type: 'image',
+            data: { src },
+        });
+
+        return editor;
+    }, []);
+
+
+    const onClickImage = useCallback((file: FileModel) => {
+        editorRef.current.focus();
+        const src = file.remoteLocation;
+        editorRef.current.command(insertImage, src);
+    }, [editorRef, insertImage]);
 
     const onKeyDownRef = useRef<EventHook>((event, editor, next) => {
         if (!(event as KeyboardEvent).metaKey) {
@@ -128,6 +149,10 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
                         >
                             <FormatListNumbered />
                         </ToggleButton>
+                    </ToggleButtonGroup>
+                    &nbsp;
+                    <ToggleButtonGroup size={'small'} value={null}>
+                        <SelectFileButton buttonComponent={ToggleButton} buttonComponentProps={{ size: 'small' }} onSelectFile={onClickImage} label={<Image />} />
                     </ToggleButtonGroup>
                 </Toolbar>
             </Collapse>
