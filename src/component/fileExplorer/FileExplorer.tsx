@@ -15,6 +15,7 @@ import { uniq } from 'lodash';
 import { FileToolbar } from './FileToolbar';
 import { CreateNewFolderDialog } from './CreateNewFolderDialog';
 import { FileTable } from './FileTable';
+import { useLocalStorage } from 'util/useLocalStorage';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
   createStyles({
@@ -46,7 +47,7 @@ export interface FileExplorerProps {
 export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ disableEditColumn, style, className, fileFilter, onSelectFile }) => {
 
   const files = useSelector<State, FileModel[] | null>(s => s.userFiles.files);
-  const [selectedPath, setSelectedPath] = useState('/');
+  const [selectedPath, setSelectedPath] = useLocalStorage('lastSelectedFileExplorerPath', '/');
 
   const uploads = useSelector<State, UploadModel[]>(s => (s.userFiles.uploads || []));
 
