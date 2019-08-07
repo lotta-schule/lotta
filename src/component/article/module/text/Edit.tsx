@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
 import { Editor, EventHook } from 'slate-react';
-import { Value, Command, CommandFunc } from 'slate';
+import { Value, CommandFunc } from 'slate';
 import { renderBlock, renderMark, plugins } from './SlateUtils';
 import { Toolbar, Collapse } from '@material-ui/core';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
