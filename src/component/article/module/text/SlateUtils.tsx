@@ -49,6 +49,18 @@ export const renderBlock = (props: RenderBlockProps, editor: Editor, next: () =>
             return (
                 <li {...props.attributes} style={{ paddingLeft: '.5em' }}>{props.children}</li>
             );
+        case 'image': {
+            const src = props.node.data.get('src');
+            const imageUrl = `https://afdptjdxen.cloudimg.io/width/400/foil1/${src}`;
+            return (
+                <img
+                    {...props.attributes}
+                    src={imageUrl}
+                    style={{ float: 'right', maxWidth: '30%' }}
+                    alt={src}
+                />
+            );
+        }
         default:
             return next();
     }
