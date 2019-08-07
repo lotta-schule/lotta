@@ -44,7 +44,13 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
             '& > td': {
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'center'
+                alignItems: 'center',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                flexGrow: 0,
+                flexShrink: 0,
+                padding: '6px 0'
             }
         }
     },
