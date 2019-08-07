@@ -20,7 +20,6 @@ export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo
             <Dialog open={isSelectFileDialogOpen} onClose={() => setIsSelectFileDialogOpen(false)} fullWidth>
                 <DialogTitle>Datei auswählen</DialogTitle>
                 <FileExplorer
-                    disableEditColumn
                     style={{ padding: '0 .5em' }}
                     fileFilter={fileFilter}
                     onSelectFile={file => {

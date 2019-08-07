@@ -61,7 +61,7 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
                     </Grid>
                 ))}
             </Grid>
-            {isEditModeEnabled && <SelectFileButton label={'Bild hinzufügen'} onSelectFile={f => onUpdateModule({ ...contentModule, files: contentModule.files.concat(f) })} />}
+            {isEditModeEnabled && <SelectFileButton label={'Bild hinzufügen'} onSelectFiles={f => onUpdateModule({ ...contentModule, files: contentModule.files.concat(f) })} />}
             {!isEditModeEnabled && selectedFile !== null && (
                 <ImageOverlay selectedFile={selectedFile} onClose={() => setSelectedFile(null)} />
             )}

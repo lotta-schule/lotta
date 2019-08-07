@@ -3,11 +3,11 @@ import {
     Edit, Delete, FolderOutlined
 } from '@material-ui/icons';
 import {
-    IconButton, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, makeStyles, Theme
+    IconButton, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, makeStyles, Theme, Checkbox
 } from '@material-ui/core';
 import { FileModel, FileModelType } from 'model';
 import { FileSize } from 'util/FileSize';
-import { find } from 'lodash';
+import { find, includes } from 'lodash';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
     root: {
@@ -27,6 +27,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
         '& tr': {
             display: 'flex',
             width: '100%',
+            boxSizing: 'border-box',
             '& > td, & > th': {
                 '&:nth-child(1)': {
                     width: '10%'
@@ -43,6 +44,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
             },
             '& > td': {
                 display: 'flex',
+                boxSizing: 'border-box',
                 flexDirection: 'row',
                 alignItems: 'center',
                 overflow: 'hidden',
@@ -50,7 +52,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
                 whiteSpace: 'nowrap',
                 flexGrow: 0,
                 flexShrink: 0,
-                padding: '6px 0'
+                padding: 6
             }
         }
     },
@@ -66,12 +68,13 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 
 export interface FileTableProps {
     files: FileModel[];
-    disableEditColumn?: boolean;
+    selectedFiles: FileModel[];
     onSelectSubPath(path: string): void;
     onSelectFile?(file: FileModel): void;
+    onSelectFiles?(files: FileModel[]): void;
 }
 
-export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disableEditColumn, onSelectSubPath, onSelectFile }) => {
+export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selectedFiles, onSelectSubPath, onSelectFile, onSelectFiles }) => {
 
     const styles = useStyles();
 
@@ -142,7 +145,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                                 file.fileType === FileModelType.Directory ? (
                                     // directory
                                     <TableRow hover key={file.id} onClick={() => onSelectSubPath(file.filename)}>
-                                        {!disableEditColumn && (<TableCell></TableCell>)}
+                                        {<TableCell></TableCell>}
                                         <TableCell>
                                             <FolderOutlined style={{ position: 'relative', right: 10 }} />
                                             {file.filename}
@@ -158,7 +161,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                                             onClick={() => onSelectFile && onSelectFile(file)}
                                         >
                                             <TableCell>
-                                                {!disableEditColumn && (
+                                                {!onSelectFiles && !onSelectFile && (
                                                     <>
                                                         <Tooltip title="Dateiname bearbeiten">
                                                             <IconButton className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
@@ -171,6 +174,18 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, disab
                                                             </IconButton>
                                                         </Tooltip>
                                                     </>
+                                                )}
+                                                {onSelectFiles && (
+                                                    <Checkbox
+                                                        checked={includes<FileModel>(selectedFiles, file)}
+                                                        onChange={(_, checked) => {
+                                                            if (checked && !includes(selectedFiles, file)) {
+                                                                onSelectFiles(selectedFiles.concat(file));
+                                                            } else if (!checked) {
+                                                                onSelectFiles(selectedFiles.filter(f => f.id !== file.id));
+                                                            }
+                                                        }}
+                                                    />
                                                 )}
                                             </TableCell>
                                             {getFilenameCell(file)}
