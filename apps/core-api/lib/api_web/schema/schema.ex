@@ -26,9 +26,9 @@ defmodule ApiWeb.Schema do
       resolve &Api.ArticleResolver.all/2
     end
 
-    field :page, list_of(:article) do
-      arg :name, non_null(:string)
-      resolve &Api.ArticleResolver.by_page/2
+    field :topic, list_of(:article) do
+      arg :topic, non_null(:string)
+      resolve &Api.ArticleResolver.by_topic/2
     end
 
     field :users, list_of(:user) do
@@ -100,7 +100,7 @@ defmodule ApiWeb.Schema do
     field :category, :category
     field :preview, :string
     field :preview_image_file, :file
-    field :page_name, :string
+    field :topic, :string
     field :content_modules, list_of(:content_module_input)
   end
   

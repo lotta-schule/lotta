@@ -44,16 +44,16 @@ defmodule Api.Content do
 
     
   @doc """
-  Returns the list of articles belonging to a page.
+  Returns the list of articles belonging to a topic.
 
   ## Examples
 
-      iex> list_articles(page_name)
+      iex> list_articles(topic)
       [%Article{}, ...]
 
   """
-  def list_articles_by_page(tenant_id, page_name) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.page_name == ^page_name)
+  def list_articles_by_topic(tenant_id, topic) do
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.topic == ^topic)
   end
 
   @doc """

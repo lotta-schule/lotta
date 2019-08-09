@@ -5,16 +5,16 @@ defmodule ApiWeb.ArticleControllerTest do
   alias Api.Content.Article
 
   @create_attrs %{
-    page_name: "some page_name",
+    topic: "some topic",
     preview: "some preview",
     title: "some title"
   }
   @update_attrs %{
-    page_name: "some updated page_name",
+    topic: "some updated topic",
     preview: "some updated preview",
     title: "some updated title"
   }
-  @invalid_attrs %{page_name: nil, preview: nil, title: nil}
+  @invalid_attrs %{topic: nil, preview: nil, title: nil}
 
   def fixture(:article) do
     {:ok, article} = Content.create_article(@create_attrs)
@@ -41,7 +41,7 @@ defmodule ApiWeb.ArticleControllerTest do
 
       assert %{
                "id" => id,
-               "page_name" => "some page_name",
+               "topic" => "some topic",
                "preview" => "some preview",
                "title" => "some title"
              } = json_response(conn, 200)["data"]
@@ -64,7 +64,7 @@ defmodule ApiWeb.ArticleControllerTest do
 
       assert %{
                "id" => id,
-               "page_name" => "some updated page_name",
+               "topic" => "some updated topic",
                "preview" => "some updated preview",
                "title" => "some updated title"
              } = json_response(conn, 200)["data"]
