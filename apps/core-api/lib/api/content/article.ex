@@ -3,7 +3,7 @@ defmodule Api.Content.Article do
   import Ecto.Changeset
 
   schema "articles" do
-    field :page_name, :string
+    field :topic, :string
     field :preview, :string
     field :title, :string
 
@@ -22,7 +22,7 @@ defmodule Api.Content.Article do
   def changeset(article, attrs) do
     article
     |> Api.Repo.preload([:category, :preview_image_file, :content_modules])
-    |> cast(attrs, [:title, :inserted_at, :preview, :page_name, :category_id, :user_id, :tenant_id])
+    |> cast(attrs, [:title, :inserted_at, :preview, :topic, :category_id, :user_id, :tenant_id])
     |> validate_required([:title, :user_id, :tenant_id])
     |> put_assoc_category(attrs)
     |> put_assoc_preview_image_file(attrs)

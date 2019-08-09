@@ -19,10 +19,10 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def by_page(%{name: name}, %{context: %{context: %{tenant: tenant}}}) do
-    {:ok, Content.list_articles_by_page(tenant.id, name)}
+  def by_topic(%{topic: topic}, %{context: %{context: %{tenant: tenant}}}) do
+    {:ok, Content.list_articles_by_topic(tenant.id, topic)}
   end
-  def by_page(_args, _info) do
+  def by_topic(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
 
