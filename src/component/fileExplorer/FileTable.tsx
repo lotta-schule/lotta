@@ -27,6 +27,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
         '& tr': {
             display: 'flex',
             width: '100%',
+            flexShrink: 0,
             boxSizing: 'border-box',
             '& > td, & > th': {
                 '&:nth-child(1)': {
