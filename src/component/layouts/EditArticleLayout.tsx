@@ -50,7 +50,7 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                                 }))
                             });
                         }
-                        history.push(editedArticle.pageName ? `/page/${editedArticle.pageName}` : `/article/${editedArticle.id}`);
+                        history.push(`/article/${editedArticle.id}`);
                     }}
                 />
             </BaseLayoutSidebar>

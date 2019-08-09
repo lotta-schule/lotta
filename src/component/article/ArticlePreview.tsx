@@ -79,7 +79,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                                 component={CollisionLink}
                                 color='inherit'
                                 underline='none'
-                                to={article.pageName ? `/page/${article.pageName}` : `/article/${article.id}`}
+                                to={`/article/${article.id}`}
                             >
                                 {article.title}
                             </Link>
@@ -97,7 +97,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                         </Typography>
                         <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem', marginBottom: theme.spacing(1) }}>
                             {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
-                            {article.pageName && <> | {article.pageName}&nbsp;</>}
+                            {article.topic && <> | {article.topic}&nbsp;</>}
                             | 18 Views&nbsp;
                             {article.user && <>| Autor: {article.user.nickname}&nbsp;</>}
                             | Bewertung&nbsp;

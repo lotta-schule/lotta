@@ -13,7 +13,7 @@ export interface ArticleModel {
     contentModules: ContentModuleModel[];
     category?: CategoryModel;
     user?: UserModel;
-    pageName?: string;
+    topic?: string;
 }
 
 export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
