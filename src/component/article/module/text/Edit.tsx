@@ -2,10 +2,10 @@ import React, { FunctionComponent, memo, useState, useRef, MutableRefObject, Mou
 import { ContentModuleModel, FileModel } from '../../../../model';
 import { Editor, EventHook } from 'slate-react';
 import { Value, CommandFunc } from 'slate';
-import { renderBlock, renderMark, plugins } from './SlateUtils';
+import { renderBlock, renderMark, plugins, renderInline } from './SlateUtils';
 import { Toolbar, Collapse } from '@material-ui/core';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
-import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered, Image } from '@material-ui/icons';
+import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered, Image, Link } from '@material-ui/icons';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 const { serialize, deserialize } = require('slate-base64-serializer').default;
@@ -77,12 +77,49 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
         return editor;
     }, []);
 
+    const wrapLink = useCallback<CommandFunc>((editor, href: string) => {
+        editor.wrapInline({
+            type: 'link',
+            data: { href },
+        });
+        editor.moveToEnd();
+        return editor;
+    }, []);
 
     const onClickImage = useCallback((file: FileModel) => {
         editorRef.current.focus();
         const src = file.remoteLocation;
         editorRef.current.command(insertImage, src);
     }, [editorRef, insertImage]);
+
+    const onClickLink = useCallback((e: MouseEvent) => {
+        e.preventDefault();
+        if (!editorRef.current) {
+            return;
+        }
+
+        if (editorRef.current.value.inlines.some(inline => Boolean(inline && inline.type === 'link'))) {
+            editorRef.current.command((editor) => editor.unwrapInline('link'));
+        } else if (editorRef.current.value.selection.isExpanded) {
+            const href = window.prompt('Ziel-URL des Links eingeben:', 'https://lotta.schule');
+            if (!href) {
+                return;
+            }
+            editorRef.current.command(wrapLink, href)
+        } else {
+            const href = window.prompt('Ziel-URL des Links eingeben:', 'https://lotta.schule');
+            if (!href) {
+                return;
+            }
+            const text = window.prompt('Beschreibung des Links:') || href;
+            editorRef
+                .current
+                .insertText(text)
+                .moveFocusBackward(text.length)
+                .command(wrapLink, href)
+        }
+        editorRef.current.focus();
+    }, [editorRef, wrapLink]);
 
     const onKeyDownRef = useRef<EventHook>((event, editor, next) => {
         if (!(event as KeyboardEvent).metaKey) {
@@ -138,6 +175,15 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
                     &nbsp;
                     <ToggleButtonGroup size={'small'} value={null}>
                         <ToggleButton
+                            selected={editorRef.current && editorRef.current.value.inlines.some(inline => Boolean(inline && inline.type === 'link'))}
+                            onClick={e => onClickLink(e)}
+                        >
+                            <Link />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                    &nbsp;
+                    <ToggleButtonGroup size={'small'} value={null}>
+                        <ToggleButton
                             selected={editorRef.current && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'unordered-list'))))}
                             onClick={e => onClickBlock(e, 'unordered-list')}
                         >
@@ -177,6 +223,7 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
                 onChange={(ev: { value: Value }) => setEditorState(ev.value)}
                 onKeyDown={onKeyDownRef.current}
                 renderMark={renderMark}
+                renderInline={renderInline}
                 renderBlock={renderBlock}
                 plugins={plugins}
             />
