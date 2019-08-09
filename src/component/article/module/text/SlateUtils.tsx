@@ -1,5 +1,5 @@
 import React from 'react';
-import { RenderMarkProps, Plugins, RenderBlockProps } from "slate-react";
+import { RenderMarkProps, Plugins, RenderBlockProps, RenderInlineProps } from "slate-react";
 import { Editor } from 'slate';
 import Lists from '@convertkit/slate-lists';
 
@@ -29,6 +29,18 @@ export const renderMark = (props: RenderMarkProps, editor: Editor, next: () => a
         case 'underline':
             return (
                 <span {...props.attributes} style={{ textDecoration: 'underline' }}>{props.children}</span>
+            );
+        default:
+            return next();
+    }
+}
+
+export const renderInline = (props: RenderInlineProps, editor: Editor, next: () => any): any => {
+    switch (props.node.type) {
+        case 'link':
+            const href = props.node.data.get('href');
+            return (
+                <a {...props.attributes} href={href} title={href} target={'_blank'}>{props.children}</a>
             );
         default:
             return next();
