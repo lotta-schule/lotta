@@ -8,7 +8,7 @@ export const GetArticlesQuery = gql`
             updatedAt
             title
             preview
-            pageName
+            topic
             previewImageFile {
                 id
                 remoteLocation

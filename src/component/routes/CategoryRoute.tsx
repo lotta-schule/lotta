@@ -43,6 +43,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
                         dispatch(createAddArticlesAction(data.articles));
                         return null;
                     }
+                    return null;
                 }}
             </Query>
         );

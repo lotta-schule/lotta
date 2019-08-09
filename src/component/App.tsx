@@ -10,7 +10,6 @@ import { ClientModel, CategoryModel } from 'model';
 import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
 import { EditArticleRoute } from './routes/EditArticleRoute';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
-import { PageRoute } from './routes/PageRoute';
 import { ProfileLayout } from './layouts/ProfileLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { State } from 'store/State';
@@ -61,7 +60,6 @@ export const App = memo(() => {
         <Switch>
           <Route exact path={'/'} component={CategoryRoute} />
           <Route path={'/category/:id'} component={CategoryRoute} />
-          <Route path={'/page/:name'} component={PageRoute} />
           <Route path={'/article/:id/edit'} component={EditArticleRoute} />
           <Route path={'/article/:id'} component={ArticleRoute} />
           <Route path={'/profile'} component={ProfileLayout} />

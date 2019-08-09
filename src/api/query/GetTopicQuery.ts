@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const CreateArticleMutation = gql`
-    mutation CreateArticle($article: ArticleInput) {
-        article: createArticle(article: $article) {
+export const GetTopicQuery = gql`
+    query GetPage($topic: String!) {
+        articles: topic(topic: $topic) {
             id
             insertedAt
             updatedAt
@@ -14,12 +14,6 @@ export const CreateArticleMutation = gql`
                 remoteLocation
                 mimeType
                 fileType
-            }
-            contentModules {
-                id
-                type
-                text
-                sortKey
             }
             category {
                 id

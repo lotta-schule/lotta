@@ -53,6 +53,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
                         />
                     );
                 }
+                return null;
             }}
         </Query>
     );

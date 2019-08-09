@@ -3,7 +3,7 @@ import { CircularProgress } from '@material-ui/core';
 import { createAddArticleAction } from 'store/actions/content';
 import { find } from 'lodash';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
-import { PageLayout } from 'component/layouts/PageLayout';
+import { ArticleLayout } from 'component/layouts/ArticleLayout';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router-dom';
 import { State } from 'store/State';
@@ -16,9 +16,9 @@ export const ArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }
     const dispatch = useDispatch();
     if (article) {
         return (
-            <PageLayout
+            <ArticleLayout
                 title={''}
-                articles={[article]}
+                article={article}
             />
         );
     }
@@ -34,12 +34,13 @@ export const ArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }
                 if (data) {
                     dispatch(createAddArticleAction(data.article))
                     return (
-                        <PageLayout
+                        <ArticleLayout
                             title={''}
-                            articles={[data.article]}
+                            article={data.article}
                         />
                     );
                 }
+                return null;
             }}
         </Query>
     );

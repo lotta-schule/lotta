@@ -84,8 +84,8 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
             <CardContent>
                 <TextField
                     label="Seite"
-                    value={article.pageName}
-                    onChange={e => onUpdate({ ...article, pageName: e.target.value || undefined })}
+                    value={article.topic}
+                    onChange={e => onUpdate({ ...article, topic: e.target.value || undefined })}
                     fullWidth
                     variant="outlined"
                     InputLabelProps={{
