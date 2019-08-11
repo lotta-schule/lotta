@@ -11,7 +11,8 @@ import { ImageContent } from 'component/article/module/image/ImageContent';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        width: '100%'
+        width: '100%',
+        fontFamily: 'Muli',
     },
     header: {
         display: 'flex',
