@@ -22,7 +22,7 @@ export const ImageCaption: FunctionComponent<ImageCaptionProps> = memo(({ isEdit
     const styles = useStyles();
 
     return (
-        <figcaption style={{textAlign: 'center'}}>
+        <figcaption>
             <Typography
                 variant={'subtitle2'}
                 placeholder={isEditModeEnabled ? 'Bildbeschreibung' : undefined}
