@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
         borderLeftWidth: 5,
         borderLeftColor: theme.palette.primary.main,
         borderLeftStyle: 'solid',
+        height: 138,
     },
     button: {
         marginTop: theme.spacing(1),
