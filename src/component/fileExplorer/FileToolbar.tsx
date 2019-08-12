@@ -54,14 +54,14 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                 name: currentPathComp
             }]);
         }),
-        [{ path: '/', name: '/' }]
+        [{ path: '/', name: 'Medien /' }]
     );
 
     return (
         <>
             <Toolbar>
                 <div className={styles.title}>
-                    <Typography variant="h6">
+                    <Typography variant="button">
                         {pathLinks.map((pathLink, i) => (
                             <Fragment key={pathLink.path}>
                                 &nbsp;
@@ -93,12 +93,12 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                     )}
                     <Tooltip title="Ordner erstellen">
                         <IconButton aria-label="Ordner erstellen" onClick={() => onClickOpenCreateNewFolderDialog()}>
-                            <CreateNewFolderOutlined />
+                            <CreateNewFolderOutlined color={'secondary'} />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Dateien hochladen">
                         <IconButton aria-label="Dateien hochladen" onClick={() => onClickUploadButton()}>
-                            <CloudUploadOutlined />
+                            <CloudUploadOutlined color={'secondary'} />
                         </IconButton>
                     </Tooltip>
                 </div>
