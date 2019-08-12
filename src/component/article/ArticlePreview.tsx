@@ -1,15 +1,14 @@
 import React, { FunctionComponent, memo } from 'react';
-import { ArticleModel, UserModel } from '../../model';
+import { ArticleModel } from '../../model';
 import { Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
 import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
 import { Edit } from '@material-ui/icons';
-import { useSelector } from 'react-redux';
-import { State } from 'store/State';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
 import { theme } from 'theme';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 
 const useStyle = makeStyles((theme: Theme) => ({
     root: {
@@ -54,7 +53,7 @@ interface ArticlePreviewProps {
 
 export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ article }) => {
 
-    const user = useSelector<State, UserModel | null>(s => s.user.user);
+    const currentUser = useCurrentUser();
 
     const styles = useStyle();
 
@@ -83,7 +82,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                             >
                                 {article.title}
                             </Link>
-                            {user/* && user.group > UserGroup.GUEST*/ && (
+                            {currentUser/* && user.group > UserGroup.GUEST*/ && (
                                 <Fab
                                     aria-label="Edit"
                                     size="small"

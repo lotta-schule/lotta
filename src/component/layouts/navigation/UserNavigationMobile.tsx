@@ -1,14 +1,15 @@
 // margin: 0 0 .5em;
 
 import React, { FunctionComponent, memo, useCallback } from 'react';
-import { Grid, makeStyles, IconButton, Avatar, Typography } from '@material-ui/core';
-import { UserModel } from '../../../model';
-import { useSelector, useDispatch } from 'react-redux';
+import { Grid, makeStyles, IconButton, Typography } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 import { Menu } from '@material-ui/icons';
-import { State } from 'store/State';
 import { createOpenDrawerAction } from 'store/actions/layout';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
+import { User } from 'util/model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { CurrentUserAvatar } from 'component/user/UserAvatar';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -37,8 +38,11 @@ const useStyles = makeStyles(theme => ({
 
 export const UserNavigationMobile: FunctionComponent = memo(() => {
     const styles = useStyles();
-    const user = useSelector<State, UserModel | null>(s => s.user.user);
+
+    const currentUser = useCurrentUser();
+
     const dispatch = useDispatch();
+
     const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
     const categories = useCategories();
     const currentCategoryId = useCurrentCategoryId();
@@ -47,10 +51,10 @@ export const UserNavigationMobile: FunctionComponent = memo(() => {
     return (
         <Grid container alignItems={'center'} className={styles.root} style={{ top: subcategories.length ? '6em' : '3.5em' }}>
             <Grid item xs={10} className={styles.userGridItem}>
-                {user && (
+                {currentUser && (
                     <>
-                        <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
-                        <Typography variant={'body1'}>{user.nickname || user.name}</Typography>
+                        <CurrentUserAvatar className={styles.avatar} />
+                        <Typography variant={'body1'}>{User.getNickname(currentUser)}</Typography>
                     </>
                 )}
             </Grid>
