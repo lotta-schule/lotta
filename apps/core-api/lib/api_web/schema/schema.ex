@@ -32,12 +32,17 @@ defmodule ApiWeb.Schema do
     end
 
     field :users, list_of(:user) do
-      resolve &Api.UserResolver.all/2
+      resolve &Api.UserResolver.all_with_groups/2
+    end
+
+    field :search_users, list_of(:user) do
+      arg :searchtext, non_null(:string)
+      resolve &Api.UserResolver.find/2
     end
 
     field :user, type: :user do
-      arg :id, non_null(:id)
-      resolve &Api.UserResolver.find/2
+      arg :id, :id
+      resolve &Api.UserResolver.get/2
     end
 
     field :files, list_of(:file) do
@@ -64,6 +69,12 @@ defmodule ApiWeb.Schema do
       arg :user, non_null(:update_user_params)
 
       resolve &Api.UserResolver.update/2
+    end
+
+    field :assign_user_to_group, type: :user do
+      arg :id, non_null(:id)
+      arg :group_id, non_null(:id)
+      resolve &Api.UserResolver.assign_user/2
     end
     
     field :create_article, type: :article do

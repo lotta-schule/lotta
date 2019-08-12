@@ -9,11 +9,40 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-{:ok, alexis} = Api.Accounts.register_user(%{ name: "Alexis Rinaldoni", nickname: "Der Meister", email: "alexis.rinaldoni@einsa.net", password: "test123" })
-Api.Accounts.register_user(%{ name: "Christopher Bill", nickname: "Billy", email: "billy@einsa.net", password: "test123" })
-Api.Accounts.register_user(%{ name: "Eike Wiewiorra", nickname: "Chef", email: "eike.wiewiorra@einsa.net", password: "test123" })
-
 {:ok, web_tenant} = Api.Repo.insert(%Api.Tenants.Tenant{ slug: "web", title: "Web Beispiel" })
+
+{:ok, admin_group} = Api.Repo.insert(%Api.Accounts.UserGroup{ tenant_id: web_tenant.id, name: "Administration", is_admin_group: true, priority: 1000 })
+{:ok, verwaltung_group} = Api.Repo.insert(%Api.Accounts.UserGroup{ tenant_id: web_tenant.id, name: "Verwaltung", priority: 800})
+{:ok, lehrer_group} = Api.Repo.insert(%Api.Accounts.UserGroup{ tenant_id: web_tenant.id, name: "Lehrer", priority: 600})
+{:ok, schueler_group} = Api.Repo.insert(%Api.Accounts.UserGroup{ tenant_id: web_tenant.id, name: "Schüler", priority: 400})
+
+{:ok, alexis} = Api.Accounts.register_user(%{
+    name: "Alexis Rinaldoni",
+    nickname: "Der Meister",
+    email: "alexis.rinaldoni@einsa.net",
+    password: "test123",
+    tenant_id: web_tenant.id
+})
+{:ok, billy} = Api.Accounts.register_user(%{
+    name: "Christopher Bill",
+    nickname: "Billy",
+    email: "billy@einsa.net",
+    password: "test123",
+    tenant_id: web_tenant.id
+})
+{:ok, eike} = Api.Accounts.register_user(%{
+    name: "Eike Wiewiorra",
+    nickname: "Chef",
+    email: "eike.wiewiorra@einsa.net",
+    password: "test123",
+    tenant_id: web_tenant.id
+})
+Api.Accounts.register_user(%{ name: "Max Mustermann", nickname: "MaXi", email: "maxi@einsa.net", password: "test123", tenant_id: web_tenant.id })
+Api.Accounts.register_user(%{ name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@einsa.net", password: "test123", tenant_id: web_tenant.id })
+
+Api.Accounts.assign_user_to_group(alexis, admin_group)
+Api.Accounts.assign_user_to_group(billy, schueler_group)
+Api.Accounts.assign_user_to_group(eike, lehrer_group)
 
 {:ok, profil} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Profil" })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "GTA" })
