@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo } from 'react';
-import { AppBar, Toolbar, Button, Theme } from '@material-ui/core';
+import { AppBar, Toolbar, Button, Theme, Grid } from '@material-ui/core';
 import { CategoryModel } from '../../../model';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
@@ -60,35 +60,37 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
 
     return (
         <nav className={styles.root}>
-            <AppBar position={'sticky'} className={styles.appBar}>
-                <Toolbar>
-                    <Button
-                        key={'home'}
-                        component={CollisionLink}
-                        style={{ flexGrow: 1, flexShrink: 0 }}
-                        to={'/'}
-                        variant="text"
-                        size={'medium'}
-                        className={styles.navButton}
-                        color='inherit'
-                    >
-                        Startseite
-                    </Button>
-                    {mainCategories.map(category => (
+            <Grid item xs={10} sm={11} md={12}>
+                <AppBar position={'sticky'} className={styles.appBar}>
+                    <Toolbar>
                         <Button
-                            variant="text"
-                            key={category.id}
+                            key={'home'}
                             component={CollisionLink}
-                            style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
-                            to={`/category/${category.id}`}
+                            style={{ flexGrow: 1, flexShrink: 0 }}
+                            to={'/'}
+                            variant="text"
                             size={'medium'}
-                            className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                            className={styles.navButton}
+                            color='inherit'
                         >
-                            {category.title}
+                            Startseite
                         </Button>
-                    ))}
-                </Toolbar>
-            </AppBar>
+                        {mainCategories.map(category => (
+                            <Button
+                                variant="text"
+                                key={category.id}
+                                component={CollisionLink}
+                                style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
+                                to={`/category/${category.id}`}
+                                size={'medium'}
+                                className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                            >
+                                {category.title}
+                            </Button>
+                        ))}
+                    </Toolbar>
+                </AppBar>
+            </Grid>
             {subcategories.length > 0 && (
                 <AppBar position={'sticky'} className={styles.secondaryAppBar}>
                     <Toolbar style={{ minHeight: '0', height: '40px' }}>

@@ -9,29 +9,22 @@ import { State } from 'store/State';
 import { createOpenDrawerAction } from 'store/actions/layout';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
+import { theme } from 'theme';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        backgroundColor: '#fff',
-        padding: `0 ${theme.spacing(2)}px`,
-        marginBottom: '.5em',
-        position: 'sticky',
-        boxShadow: '0px 2px 2px #00000061',
-        [theme.breakpoints.up('sm')]: {
-            top: '6.5em',
-        },
-    },
-    userGridItem: {
+        position: 'absolute',
+        height: 64,
+        zIndex: 1,
+        top: 100,
+        right: 0,
+        backgroundColor: theme.palette.primary.main,
         display: 'flex',
-        alignItems: 'center'
-    },
-    buttonGridItem: {
-        textAlign: 'right'
-    },
-    avatar: {
-        height: '1.5em',
-        width: '1.5em',
-        margin: '.25em .5em .25em 0',
+        alignItems: 'center',
+        boxShadow: '-3px 0px 7px #00000063',
+        [theme.breakpoints.down('xs')]: {
+            height: 56,
+        },
     },
 }));
 
@@ -45,20 +38,10 @@ export const UserNavigationMobile: FunctionComponent = memo(() => {
     const subcategories = (categories || []).filter(category => category.category && category.category.id === currentCategoryId);
 
     return (
-        <Grid container alignItems={'center'} className={styles.root} style={{ top: subcategories.length ? '6em' : '3.5em' }}>
-            <Grid item xs={10} className={styles.userGridItem}>
-                {user && (
-                    <>
-                        <Avatar className={styles.avatar} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
-                        <Typography variant={'body1'}>{user.nickname || user.name}</Typography>
-                    </>
-                )}
-            </Grid>
-            <Grid item xs className={styles.buttonGridItem}>
-                <IconButton size={'small'} onClick={() => openDrawer()}>
-                    <Menu />
-                </IconButton>
-            </Grid>
+        <Grid container alignItems={'center'} className={styles.root} item sm={1} xs={2}>
+            <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }} >
+                <Menu style={{ color: '#fff', }} />
+            </IconButton>
         </Grid>
     );
 });
