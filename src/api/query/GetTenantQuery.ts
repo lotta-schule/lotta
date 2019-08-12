@@ -14,6 +14,12 @@ export const GetTenantQuery = gql`
                     title
                 }
             }
+            groups {
+                id
+                name
+                priority
+                isAdminGroup
+            }
         }
     }
 `;

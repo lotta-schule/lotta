@@ -6,7 +6,7 @@ import { Save as SaveIcon } from '@material-ui/icons';
 import { CategorySelect } from './CategorySelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import Img from 'react-cloudimage-responsive';
-import { VisibilitySelect } from './VisibilitySelect';
+import { GroupSelect } from './GroupSelect';
 import { DateTimePicker } from '@material-ui/pickers';
 import { parseISO } from 'date-fns';
 
@@ -114,9 +114,9 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
             </CardContent>
             <CardContent>
-                <VisibilitySelect
-                    selectedVisibility={undefined}
-                    onSelectVisibility={() => { }}
+                <GroupSelect
+                    selectedGroupId={undefined}
+                    onSelectGroupId={() => { }}
                 />
             </CardContent>
             <CardContent>

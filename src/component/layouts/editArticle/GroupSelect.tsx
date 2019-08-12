@@ -1,13 +1,14 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@material-ui/core';
+import { useUserGroups } from 'util/client/useUserGroups';
 
-export interface VisibilitySelectProps {
-    selectedVisibility?: string;
-    onSelectVisibility(visibility?: null): void;
+export interface GroupSelectProps {
+    selectedGroupId?: string;
+    onSelectGroupId(groupId?: string): void;
 }
 
-export const VisibilitySelect: FunctionComponent<VisibilitySelectProps> = memo(({ selectedVisibility, onSelectVisibility }) => {
-
+export const GroupSelect = memo<GroupSelectProps>(({ selectedGroupId, onSelectGroupId }) => {
+    const groups = useUserGroups();
     const inputLabel = React.useRef<HTMLLabelElement>(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
     React.useEffect(() => {
@@ -22,10 +23,13 @@ export const VisibilitySelect: FunctionComponent<VisibilitySelectProps> = memo((
             <Select
                 fullWidth
                 variant="outlined"
-                value={selectedVisibility}
-                onChange={e => onSelectVisibility(null)}
+                value={selectedGroupId}
+                onChange={e => onSelectGroupId(undefined)}
                 input={<OutlinedInput labelWidth={labelWidth} name="visibility" id="outlined-visibility-select" />}
             >
+                {groups.map(group => (
+                    <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
+                ))}
                 <MenuItem key={'undefined'} value={undefined}>Für alle sichtbar</MenuItem>
             </Select>
         </FormControl>

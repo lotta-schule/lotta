@@ -43,6 +43,7 @@
     "classnames": "^2.2.6",
     "clsx": "^1.0.4",
     "date-fns": "^2.0.0-alpha.27",
+    "downshift": "^3.2.12",
     "fetch-progress": "^1.2.0",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",

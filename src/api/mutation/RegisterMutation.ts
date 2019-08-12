@@ -6,9 +6,20 @@ export const RegisterMutation = gql`
             token,
             user {
                 id
-                email
+                first_name
+                last_name
                 nickname
-                name
+                email
+                class
+                groups {
+                    id
+                    name
+                    priority
+                    isAdminGroup
+                    tenant {
+                        id
+                    }
+                }
             }
         }
     }
