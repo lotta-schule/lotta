@@ -1,6 +1,6 @@
 import React, { memo, FunctionComponent } from 'react';
 import { Card, CardContent, TextField, Button, makeStyles, Typography } from '@material-ui/core';
-import { ArticleModel, UserModel } from '../../../model';
+import { ArticleModel } from '../../../model';
 import classNames from 'classnames';
 import { Save as SaveIcon } from '@material-ui/icons';
 import { CategorySelect } from './CategorySelect';
