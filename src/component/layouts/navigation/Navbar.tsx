@@ -15,9 +15,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         '& a': {
             marginLeft: theme.spacing(2),
             marginRight: theme.spacing(2),
-            '&.selected': {
-                backgroundColor: '#ffffff21'
-            }
+
         }
     },
     appBar: {
@@ -29,15 +27,17 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
     navButton: {
         '&:hover': {
-            backgroundColor: '#b9b9b945'
+            backgroundColor: '#ffffff21'
+        },
+        '&.selected': {
+            backgroundColor: '#ffffff21'
         }
     },
     navButtonSecond: {
         flexGrow: 1,
         flexShrink: 0,
         '&.selected': {
-            borderRadius: 0,
-            borderBottom: '1px solid grey',
+            backgroundColor: '#b9b9b954'
         }
     }
 }));

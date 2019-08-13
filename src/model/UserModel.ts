@@ -1,17 +1,12 @@
-export enum UserGroup {
-    GUEST = 0,
-    STUDENT = 10,
-    TEACHER = 20,
-    DIRECTION = 30,
-    ADMIN = 40
-}
+import { UserGroupModel } from "./UserGroupModel";
 
 export interface UserModel {
     id: string;
     name: string;
     nickname: string;
     email: string;
-    avatar: string;
-    group: UserGroup;
+    groups: UserGroupModel[];
+    avatar?: string;
+    class?: string;
     phone?: string;
 }

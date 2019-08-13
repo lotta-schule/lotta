@@ -1,25 +1,25 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { Card, CardContent, Typography, TextField, Button, Avatar, Fab, } from '@material-ui/core';
-import { Grid } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
-import { FileExplorer } from 'component/fileExplorer/FileExplorer';
-import { useSelector } from 'react-redux';
-import { UserModel } from 'model';
-import { State } from 'store/State';
-import useRouter from 'use-react-router';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import { Card, CardContent, Typography, TextField, Button, Fab, } from '@material-ui/core';
+import { CurrentUserAvatar } from 'component/user/UserAvatar';
+import { Edit } from '@material-ui/icons';
+import { FileExplorer } from 'component/fileExplorer/FileExplorer';
+import { Grid } from '@material-ui/core';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { User } from 'util/model';
+import useRouter from 'use-react-router';
 
 export interface ProfileLayoutProps {
 }
 
 export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
-    const user = useSelector<State, UserModel | null>(s => s.user.user);
-    const [email, setEmail] = useState(user && user.email);
-    const [name, setName] = useState(user && user.name);
-    const [nickname, setNickname] = useState(user && user.nickname);
+    const currentUser = useCurrentUser();
+    const [email, setEmail] = useState(currentUser && currentUser.email);
+    const [name, setName] = useState(currentUser && User.getNickname(currentUser));
+    const [nickname, setNickname] = useState(currentUser && currentUser.nickname);
     const { history } = useRouter();
-    if (!user) {
+    if (!currentUser) {
         history.replace('/');
         return <div></div>;
     }
@@ -31,7 +31,7 @@ export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
                         <Typography variant={'h4'}>Meine Daten</Typography>
                         <Grid container>
                             <Grid item md={4} style={{ marginTop: '1em' }}>
-                                <Avatar alt={'Nutzer Name'} src={`https://avatars.dicebear.com/v2/avataaars/${email}.svg`} style={{ float: 'left' }} />
+                                <CurrentUserAvatar style={{ float: 'left' }} />
                                 <Fab color="secondary" aria-label="Edit" size="small">
                                     <Edit />
                                 </Fab>

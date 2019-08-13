@@ -1,128 +1,135 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { FunctionComponent, memo, useState, useEffect, useCallback, FormEvent } from 'react';
 import {
     DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Dialog,
-    Select, FormControl, Input, MenuItem, FormHelperText, Avatar, Typography, Grid,
+    Select, FormControl, Input, MenuItem, FormHelperText, Typography, Grid, CircularProgress,
 } from '@material-ui/core';
 import { UserModel } from 'model';
 import { theme } from 'theme';
+import { UserAvatar } from 'component/user/UserAvatar';
+import { useUserGroups } from 'util/client/useUserGroups';
+import { GetUserQuery } from 'api/query/GetUserQuery';
+import { useLazyQuery, useMutation } from '@apollo/react-hooks';
+import { find } from 'lodash';
+import { AssignUserToGroupMutation } from 'api/mutation/AssignUserToGroupMutation';
 
 export interface AddUserToGroupDialogProps {
-    isOpen: boolean;
+    user: UserModel;
     onConfirm(user: UserModel): void;
     onAbort(): void;
 }
 
-export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> = memo(({
-    isOpen,
-    onConfirm,
-    onAbort
-}) => {
-    const [, setTitle] = useState('');
-    const [, setCategoryId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const resetForm = () => {
-        setTitle('');
-        setCategoryId(null);
-    }
-    return (
-        <Dialog open={isOpen} fullWidth>
-            <form onSubmit={async (e) => {
-                e.preventDefault();
-                setErrorMessage(null);
-                setIsLoading(true);
-                try {
-                    // const { data } = await client.mutate<{ article: ArticleModel }, { article: ArticleModelInput }>({
-                    //     mutation: CreateArticleMutation,
-                    //     fetchPolicy: 'no-cache',
-                    //     variables: {
-                    //         article: {
-                    //             title,
-                    //             category: {
-                    //                 id: categoryId || undefined
-                    //             },
-                    //             contentModules: []
-                    //         }
-                    //     }
-                    // });
-                    resetForm();
-                } catch (e) {
-                    console.error(e);
-                    setErrorMessage(e.message);
-                } finally {
-                    setIsLoading(false);
+export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> = memo(({ user, onConfirm, onAbort }) => {
+    const userGroups = useUserGroups();
+    const [selectedGroupId, setSelectedGroupId] = useState<string | null | undefined>(undefined);
+    const [loadUser, { data, loading, error }] = useLazyQuery<{ user: UserModel }, { id: string }>(GetUserQuery, { fetchPolicy: 'no-cache' });
+    const [assignUser, { data: assignUserData, loading: assignUserLoading, error: assignUserError }] = useMutation<{ user: UserModel }, { id: string, groupId: string }>(AssignUserToGroupMutation);
+
+    const onSubmitForm = useCallback((e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (user && selectedGroupId) {
+            assignUser({ variables: { id: user.id, groupId: selectedGroupId }, fetchPolicy: 'no-cache' });
+        }
+    }, [assignUser, selectedGroupId, user]);
+
+    useEffect(() => {
+        if (user) {
+            if (data && data.user) {
+                const group = data.user.groups.find(g => Boolean(find(userGroups, { id: g.id }))) || null;
+                if (group && !selectedGroupId) {
+                    setSelectedGroupId(group.id);
                 }
-            }}>
-                <DialogTitle>Nutzer eine Gruppe zuweisen</DialogTitle>
+            } else {
+                loadUser({ variables: { id: user && user.id } });
+            }
+        } else if (selectedGroupId) {
+            setSelectedGroupId(null);
+        }
+    }, [loadUser, selectedGroupId, user, data, userGroups]);
+
+    if (assignUserData && assignUserData.user) {
+        onConfirm(assignUserData.user);
+        return null;
+    }
+
+    return (
+        <Dialog open={true} fullWidth>
+            <form onSubmit={onSubmitForm}>
+                <DialogTitle>{user.name} eine Gruppe zuweisen</DialogTitle>
                 <DialogContent>
                     <DialogContentText variant="body2">
                         Weise dem Nutzer eine Gruppe mit den dazugehörigen Rechten zu.
                     </DialogContentText>
-                    {errorMessage && (
-                        <p style={{ color: 'red' }}>{errorMessage}</p>
+                    {(error || assignUserError) && (
+                        <p style={{ color: 'red' }}>{error || assignUserError}</p>
                     )}
                     <Grid container justify={'space-evenly'}>
                         <Grid item xs={3}>
-                            <Avatar src={`https://avatars.dicebear.com/v2/avataaars/admin.svg`} />
+                            <UserAvatar user={user} />
                         </Grid>
                         <Grid item xs={9}>
                             <Typography variant="h6">
-                                Ernie Sesam
+                                {user.name}
                             </Typography>
                             <Typography variant="body2">
-                                Nickname: Bibbedibabbedibu
+                                {user.nickname}
                             </Typography>
+                            {user.class && (
+                                <Typography variant="body2">
+                                    Klasse: {user.class}
+                                </Typography>
+                            )}
                             <Typography variant="body2">
-                                Klasse: 7/4
-                            </Typography>
-                            <Typography variant="body2">
-                                E-Mail-Aresse: ernie@aol.com
+                                E-Mail-Aresse: {user.email}
                             </Typography>
                         </Grid>
                     </Grid>
-                    <FormControl fullWidth style={{ marginTop: theme.spacing(2) }}>
-                        <Select
-                            value={1}
-                            onChange={({ target }) => setCategoryId((target.value as string) || null)}
-                            input={<Input name="category-id" id="category-id-placeholder" />}
-                            fullWidth
-                            name="category-id"
-                            placeholder="Keine Gruppe"
-                        >
-                            <MenuItem value="1">
-                                <em>Keine Gruppe</em>
-                            </MenuItem>
-                            <MenuItem >
-                                Schüler
+                    {loading && (
+                        <CircularProgress />
+                    )}
+                    {!loading && (
+                        <FormControl fullWidth style={{ marginTop: theme.spacing(2) }}>
+                            <Select
+                                value={selectedGroupId || undefined}
+                                onChange={({ target }) => {
+                                    setSelectedGroupId(target.value as string);
+                                }}
+                                input={<Input name="group-id" id="group-id-placeholder" />}
+                                fullWidth
+                                name="group-id"
+                                placeholder="Keine Gruppe"
+                            >
+                                {userGroups.map(group => (
+                                    <MenuItem key={group.id} value={group.id}>
+                                        {group.name}
+                                    </MenuItem>
+                                ))}
+                                <MenuItem value={undefined}>
+                                    <em>Keine Gruppe</em>
                                 </MenuItem>
-                            <MenuItem >
-                                Lehrer
-                                </MenuItem>
-                            <MenuItem >
-                                Administrator
-                                </MenuItem>
-                        </Select>
-                        <FormHelperText>Gruppe auswählen</FormHelperText>
-                    </FormControl>
+                            </Select>
+                            <FormHelperText>Gruppe auswählen</FormHelperText>
+                        </FormControl>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button
                         onClick={() => {
-                            resetForm();
                             onAbort();
                         }}
                         color="secondary"
                         variant="outlined"
                     >
                         Abbrechen
-                        </Button>
+                    </Button>
                     <Button
                         type={'submit'}
-                        disabled={isLoading}
-                        color="secondary"
-                        variant="contained">
+                        disabled={assignUserLoading}
+                        color={'secondary'}
+                        variant={'contained'}
+                        onClick={() => { }}
+                    >
                         Gruppe zuweisen
-                    </Button>
+                </Button>
                 </DialogActions>
             </form>
         </Dialog>

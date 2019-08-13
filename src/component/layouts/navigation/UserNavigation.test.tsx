@@ -15,7 +15,7 @@ const user: UserModel = {
     id: 'U001',
     email: 'user001@medienportal.org',
     name: 'User 001',
-    group: UserGroup.STUDENT,
+    groups: [],
     avatar: 'https://avatars.dicebear.com/v2/avataaars/user001.svg'
 };
 
