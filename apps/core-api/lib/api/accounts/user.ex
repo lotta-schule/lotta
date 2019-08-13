@@ -4,6 +4,7 @@ defmodule Api.Accounts.User do
   import Ecto.Query
   alias Api.Repo
   alias Api.Accounts.{User,UserGroup}
+  alias Api.Content.Article
   alias Api.Tenants.Tenant
 
   schema "users" do
@@ -15,12 +16,17 @@ defmodule Api.Accounts.User do
     field :password_hash, :string
 
     belongs_to :tenant, Api.Tenants.Tenant
-    has_many :articles, Api.Content.Article
     has_many :files, Api.Accounts.File
     many_to_many :groups,
       UserGroup,
       join_through: "user_user_group",
       on_replace: :delete
+    many_to_many(
+      :articles,
+      Article,
+      join_through: "article_users",
+      on_replace: :delete
+    )
 
     timestamps()
   end

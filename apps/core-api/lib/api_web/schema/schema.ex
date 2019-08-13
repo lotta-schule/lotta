@@ -113,6 +113,7 @@ defmodule ApiWeb.Schema do
     field :preview_image_file, :file
     field :topic, :string
     field :content_modules, list_of(:content_module_input)
+    field :users, list_of(:user)
   end
   
   input_object :content_module_input do
