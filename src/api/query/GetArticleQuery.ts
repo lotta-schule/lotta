@@ -38,7 +38,7 @@ export const GetArticleQuery = gql`
                 id
                 title
             }
-            user {
+            users {
                 id
                 nickname
             }

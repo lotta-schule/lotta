@@ -41,7 +41,8 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                                 category: {
                                     id: categoryId || undefined
                                 },
-                                contentModules: []
+                                contentModules: [],
+                                users: []
                             }
                         }
                     });

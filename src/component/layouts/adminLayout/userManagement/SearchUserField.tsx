@@ -1,27 +1,25 @@
 import React, { memo, useState, useEffect, useCallback, MouseEvent } from 'react';
+import { InputBase, Theme, Paper, MenuItem, ListItemAvatar, ListItemText, CircularProgress } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
+import { useDebounce } from 'util/useDebounce';
+import { useLazyQuery } from '@apollo/react-hooks';
+import { User } from 'util/model';
+import { UserAvatar } from 'component/user/UserAvatar';
 import { UserModel } from 'model';
 import classNames from 'classnames';
-import { makeStyles } from '@material-ui/styles';
-import { IconButton, InputBase, Theme, Paper, MenuItem, ListItemAvatar, ListItemText, CircularProgress } from '@material-ui/core';
-import { Search } from '@material-ui/icons';
-import { useLazyQuery } from '@apollo/react-hooks';
-import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
 import Downshift from 'downshift';
-import { User } from 'util/model';
-import { useDebounce } from 'util/useDebounce';
-import { UserAvatar } from 'component/user/UserAvatar';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: theme.spacing(1),
         display: 'flex',
         alignItems: 'center',
-        width: 400,
-        backgroundColor: '#efefef',
         borderRadius: 4,
     },
     input: {
         marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: '100%'
     },
     avatar: {
@@ -36,11 +34,14 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         left: 0,
         right: 0,
+        backgroundColor: '#fff',
+        borderBottom: `1px solid ${theme.palette.divider}`
     }
 }));
 
 export interface SearchUserFieldProps {
     className?: string;
+    style?: React.CSSProperties;
     onSelectUser(user: UserModel): void;
 }
 
@@ -64,10 +65,6 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
 
     return (
         <div className={classNames(styles.root, className)}>
-            <IconButton aria-label="Suche">
-                <Search />
-            </IconButton>
-
             <Downshift id="downshift-simple">
                 {({
                     getInputProps,

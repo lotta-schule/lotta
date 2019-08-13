@@ -1,7 +1,7 @@
 import React, { memo, FunctionComponent } from 'react';
 import { Card, CardContent, TextField, Button, makeStyles, Typography } from '@material-ui/core';
-import { ArticleModel } from '../../../model';
-import clsx from 'clsx';
+import { ArticleModel, UserModel } from '../../../model';
+import classNames from 'classnames';
 import { Save as SaveIcon } from '@material-ui/icons';
 import { CategorySelect } from './CategorySelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
@@ -9,6 +9,8 @@ import Img from 'react-cloudimage-responsive';
 import { GroupSelect } from './GroupSelect';
 import { DateTimePicker } from '@material-ui/pickers';
 import { parseISO } from 'date-fns';
+import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
+import { uniqBy } from 'lodash';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -19,6 +21,9 @@ const useStyles = makeStyles(theme => ({
     },
     iconSmall: {
         fontSize: 20,
+    },
+    searchUserField: {
+        border: `1px solid ${theme.palette.divider}`
     }
 }));
 
@@ -103,15 +108,15 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 </SelectFileOverlay>
             </CardContent>
             <CardContent>
-                <TextField
-                    label="Autoren"
-                    fullWidth
-                    variant="outlined"
-                    multiline
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
+                <SearchUserField
+                    className={styles.searchUserField}
+                    onSelectUser={user => onUpdate({ ...article, users: uniqBy(article.users.concat([user]), 'id') })}
                 />
+                <ul>
+                    {article.users.map(user => (
+                        <li>{user.nickname}</li>
+                    ))}
+                </ul>
             </CardContent>
             <CardContent>
                 <GroupSelect
@@ -125,7 +130,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     variant='outlined'
                     color='secondary'
                 >
-                    <SaveIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
+                    <SaveIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                     speichern
             </Button>
             </CardContent>

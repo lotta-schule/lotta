@@ -11,12 +11,12 @@ export interface ArticleModel {
     preview?: string;
     previewImageFile?: FileModel;
     contentModules: ContentModuleModel[];
+    users: UserModel[];
     category?: CategoryModel;
-    user?: UserModel;
     topic?: string;
 }
 
-export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
+export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
     contentModules: ContentModuleInput[];
     category: Partial<CategoryModel>;
 };

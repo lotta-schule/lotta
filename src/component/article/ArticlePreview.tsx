@@ -98,7 +98,7 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                             {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
                             {article.topic && <> | {article.topic}&nbsp;</>}
                             | 18 Views&nbsp;
-                            {article.user && <>| Autor: {article.user.nickname}&nbsp;</>}
+                            {article.users && <>| Autoren: {article.users.map(a => a.nickname).join(', ')}&nbsp;</>}
                             | Bewertung&nbsp;
                         </Typography>
                         <Typography variant={'subtitle1'} color="textSecondary" className={styles.previewtext}>

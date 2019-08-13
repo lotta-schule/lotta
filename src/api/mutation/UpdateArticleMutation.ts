@@ -38,6 +38,10 @@ export const UpdateArticleMutation = gql`
                 id
                 title
             }
+            users {
+                id
+                nickname
+            }
         }
     }
 `;
