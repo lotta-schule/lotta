@@ -4,13 +4,12 @@ import { useQuery } from 'react-apollo';
 import { GetTopicQuery } from 'api/query/GetTopicQuery';
 import { ArticlePreview } from './ArticlePreview';
 import { Typography, makeStyles } from '@material-ui/core';
-import { theme } from 'theme';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        marginTop: theme.spacing(1), 
-        marginBottom: theme.spacing(1), 
-        textTransform: 'uppercase', 
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        textTransform: 'uppercase',
         letterSpacing: 4,
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.text.secondary,

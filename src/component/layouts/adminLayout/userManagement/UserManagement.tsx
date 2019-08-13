@@ -15,6 +15,7 @@ import { useUserGroups } from 'util/client/useUserGroups';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SearchUserField } from './SearchUserField';
 import { UserAvatar } from 'component/user/UserAvatar';
+import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -30,6 +31,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     headlines: {
         marginBottom: theme.spacing(2),
+    },
+    searchUserField: {
+        width: 400,
+        backgroundColor: '#efefef'
     },
     formControl: {
         width: '100%',
@@ -81,7 +86,7 @@ export const UserManagement = memo(() => {
                     <Typography variant="h4" className={styles.headlines}>
                         Nutzerverwaltung
                     </Typography>
-                    <SearchUserField className={styles.headlines} onSelectUser={setSelectedUser} />
+                    <SearchUserField className={classNames(styles.searchUserField, styles.headlines)} onSelectUser={setSelectedUser} />
                     {groups.map(group => (
                         <ExpansionPanel
                             key={group.id}
