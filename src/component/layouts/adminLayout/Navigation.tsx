@@ -22,7 +22,6 @@ export const Navigation: FunctionComponent = memo(() => {
                 <Tab label="Mein Lotta" onClick={() => history.push('/admin')} />
                 <Tab label="Nutzerverwaltung" onClick={() => history.push('/admin/users')} />
                 <Tab label="Kategorienverwaltung" onClick={() => history.push('/admin/categories')} />
-                <Tab label="Beitrags-Übersicht" onClick={() => history.push('/admin/articles')} />
             </Tabs>
         </Paper>
     );

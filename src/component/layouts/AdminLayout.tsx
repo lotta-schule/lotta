@@ -6,7 +6,6 @@ import { Switch, Route } from 'react-router-dom';
 import { Navigation } from './adminLayout/Navigation';
 import { UserManagement } from './adminLayout/userManagement/UserManagement';
 import { CategoriesManagement } from './adminLayout/userManagement/CategoryManagement';
-import { ArticlesManagement } from './adminLayout/userManagement/ArticlesManagement';
 import { ClientManagement } from './adminLayout/userManagement/ClientManagement';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
@@ -23,7 +22,6 @@ export const AdminLayout: FunctionComponent = memo(() => {
                 <Switch>
                     <Route exact path='/admin' component={ClientManagement} />
                     <Route path='/admin/users' component={UserManagement} />
-                    <Route path='/admin/articles' component={ArticlesManagement} />
                     <Route path='/admin/categories' component={CategoriesManagement} />
                 </Switch>
             </BaseLayoutMainContent>
