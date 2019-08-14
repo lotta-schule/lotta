@@ -25,30 +25,16 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
 
     return (
         <div className={styles.root}>
-            <Typography style={{ marginBottom: '1em' }}>Füge ein Modul zum Beitrag hinzu, indem du drauf klickst.</Typography>
+            <Typography style={{ marginBottom: '1em' }}>Füge ein Modul zum Beitrag hinzu, indem du darauf klickst.</Typography>
             <Grid
                 container
                 direction="row"
-                justify="space-between"
+                justify="center"
                 color={'primary'}
                 alignItems="center"
+                spacing={3}
             >
-                <Grid item xs={1}>
-                    <AddModuleButton
-                        label={'Titel'}
-                        icon={<TextFormat />}
-                        onClick={() => {
-                            onAddModule({
-                                id: `temp-${new Date().getTime().toString()}`,
-                                sortKey: null!,
-                                type: ContentModuleType.TITLE,
-                                text: 'Titel',
-                                files: [],
-                            });
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={2}>
                     <AddModuleButton
                         label={'Text'}
                         icon={<FormatAlignLeft />}
@@ -63,10 +49,22 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={1}>
-                    <AddModuleButton label={'Liste'} icon={<FormatListBulleted />} />
+                <Grid item xs={2}>
+                    <AddModuleButton
+                        label={'Titel'}
+                        icon={<TextFormat />}
+                        onClick={() => {
+                            onAddModule({
+                                id: `temp-${new Date().getTime().toString()}`,
+                                sortKey: null!,
+                                type: ContentModuleType.TITLE,
+                                text: 'Titel',
+                                files: [],
+                            });
+                        }}
+                    />
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={2}>
                     <AddModuleButton
                         label={'Bild'}
                         icon={<AddPhotoAlternate />}
@@ -81,7 +79,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={2}>
                     <AddModuleButton
                         label={'Video'}
                         icon={<MovieCreation />}
@@ -96,7 +94,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={2}>
                     <AddModuleButton
                         label={'Audio'}
                         icon={<Audiotrack />}
@@ -110,12 +108,6 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                             });
                         }}
                     />
-                </Grid>
-                <Grid item xs={1}>
-                    <AddModuleButton label={'PDF'} icon={<PictureAsPdf />} />
-                </Grid>
-                <Grid item xs={1}>
-                    <AddModuleButton label={'Link'} icon={<Link />} />
                 </Grid>
             </Grid>
         </div>
