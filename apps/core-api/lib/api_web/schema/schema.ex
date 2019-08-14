@@ -89,6 +89,13 @@ defmodule ApiWeb.Schema do
   
       resolve &Api.ArticleResolver.update/2
     end
+    
+    field :update_category, type: :category do
+      arg :id, non_null(:id)
+      arg :category, non_null(:category_input)
+  
+      resolve &Api.CategoryResolver.update/2
+    end
 
     field :upload_file, type: :file do
       arg :path, :string, default_value: "/"
@@ -114,6 +121,13 @@ defmodule ApiWeb.Schema do
     field :topic, :string
     field :content_modules, list_of(:content_module_input)
     field :users, list_of(:user)
+  end
+  
+  input_object :category_input do
+    field :title, non_null(:string)
+    field :banner_image_file, :file
+    field :redirect, :string
+    field :group, :user_group
   end
   
   input_object :content_module_input do

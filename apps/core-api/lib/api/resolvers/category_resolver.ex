@@ -1,5 +1,6 @@
 defmodule Api.CategoryResolver do
   alias Api.Tenants.Category
+  alias Api.Accounts.User
 
   def all(_args, %{context: %{context: %{tenant: tenant}}}) do
     {:ok, Api.Tenants.list_categories_by_tenant(tenant.id)}
@@ -15,8 +16,14 @@ defmodule Api.CategoryResolver do
     {:error, "Tenant nicht gefunden"}
   end
 
-  def update(%{id: id, category: category_params}, _info) do
-    Tenants.get_category!(id)
-    |> Tenants.update_category(category_params)
+  def update(%{id: id, category: category_params}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+    if User.is_admin?(current_user, tenant) do
+      case Api.Tenants.get_category!(id) do
+        nil -> {:error, "Kategorie mit der id #{id} nicht gefunden."}
+        category -> Api.Tenants.update_category(category, category_params)
+      end
+    else
+      {:error, "Nur Administrator dürfen Kategorien bearbeiten"}
+    end
   end
 end

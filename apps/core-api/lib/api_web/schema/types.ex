@@ -45,8 +45,12 @@ defmodule ApiWeb.Schema.Types do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :title, :string
+    field :redirect, :string
+    field :sort_key, :integer
     field :category_id, :id
+    field :banner_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
   end
 
