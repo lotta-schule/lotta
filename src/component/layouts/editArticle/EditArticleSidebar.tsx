@@ -121,6 +121,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
             <CardContent>
                 <GroupSelect
                     selectedGroupId={undefined}
+                    variant={'outlined'}
                     onSelectGroupId={() => { }}
                 />
             </CardContent>
