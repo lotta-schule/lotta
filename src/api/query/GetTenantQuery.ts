@@ -7,8 +7,19 @@ export const GetTenantQuery = gql`
             title
             slug
             categories {
-                id,
-                title,
+                id
+                title
+                sortKey
+                redirect
+                bannerImageFile {
+                    id
+                    remoteLocation
+                }
+                group {
+                    id
+                    priority
+                    name
+                }
                 category {
                     id
                     title

@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
         height: '120px',
         padding: '0.5em',
         marginBottom: '0.5em',
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
         [theme.breakpoints.down('xs')]: {
             display: 'none',
         },
@@ -24,8 +24,7 @@ const useStyles = makeStyles(() => ({
         width: '100%',
         height: '100%',
         flexShrink: 0,
-        flexGrow: 0,
-        backgroundImage: 'url(https://placeimg.com/900/120/any)',
+        flexGrow: 0
     },
     bannerheading: {
         textTransform: 'uppercase',
@@ -50,7 +49,15 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
             <BaseLayoutMainContent>
                 {category && (
                     <Grid className={styles.subheaderContainer}>
-                        <Grid item className={styles.subheader}>
+                        <Grid
+                            item
+                            className={styles.subheader}
+                            style={{
+                                background: category.bannerImageFile ?
+                                    `url(https://afdptjdxen.cloudimg.io/cover/900x150/foil1/${category.bannerImageFile.remoteLocation})` :
+                                    'transparent'
+                            }}
+                        >
                             <Typography className={styles.bannerheading}>
                                 {category.title}
                             </Typography>

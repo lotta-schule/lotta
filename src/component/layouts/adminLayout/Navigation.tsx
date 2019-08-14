@@ -9,12 +9,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const Navigation: FunctionComponent = memo(() => {
-    const { history } = useRouter();
+    const { history, location } = useRouter();
     const styles = useStyles();
     return (
         <Paper className={styles.root}>
             <Tabs
-                value={0}
+                value={location.pathname}
+                onChange={(_, value) => { history.push(value); }}
                 orientation="vertical"
                 variant="scrollable"
                 aria-label="Admin Einstellungen"
