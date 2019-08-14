@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useState, useCallback } from 'react';
-import { Grid, Typography, Link, makeStyles, Button, Badge, withStyles } from '@material-ui/core';
+import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
 import { UserModel } from '../../../model';
 import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
@@ -34,15 +34,11 @@ const useStyles = makeStyles(theme => ({
     iconSmall: {
         fontSize: 20,
     },
-}));
-
-const StyledBadge = withStyles(theme => ({
     badge: {
-      top: '45%',
-      right: 80,
-    },
-  }))(Badge);
-  
+        top: '45%',
+        right: 80,
+    }
+}));
 
 export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const styles = useStyles();
@@ -89,10 +85,10 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                             {currentUser && (
                                 <>
                                     <li><Link component={CollisionLink} to={'/profile'}>
-                                            <StyledBadge badgeContent={4} color="secondary">
-                                             Mein Profil
-                                            </StyledBadge>
-                                        </Link></li>
+                                        <Badge className={styles.badge} badgeContent={4} color="secondary">
+                                            Mein Profil
+                                        </Badge>
+                                    </Link></li>
                                     <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                                 </>
                             )}
