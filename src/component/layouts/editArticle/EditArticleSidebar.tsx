@@ -11,6 +11,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 import { parseISO } from 'date-fns';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
 import { uniqBy } from 'lodash';
+import { theme } from 'theme';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -130,10 +131,19 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     onClick={onSave}
                     variant='outlined'
                     color='secondary'
+                    size="small"
+                    style={{ marginRight: theme.spacing(1) }}
                 >
                     <SaveIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                     speichern
             </Button>
+                <Button
+                    color="secondary"
+                    variant="outlined"
+                    size="small"
+                >
+                    Abbrechen
+             </Button>
             </CardContent>
         </Card >
     )
