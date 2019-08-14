@@ -23,7 +23,6 @@ export const AdminLayout: FunctionComponent = memo(() => {
                 <Switch>
                     <Route exact path='/admin' component={ClientManagement} />
                     <Route path='/admin/users' component={UserManagement} />
-                    <Route path='/admin/articles' component={ArticlesManagement} />
                     <Route path='/admin/categories' component={CategoriesManagement} />
                 </Switch>
             </BaseLayoutMainContent>

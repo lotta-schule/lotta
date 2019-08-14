@@ -1,19 +1,32 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { Card, CardContent, Typography, TextField, Button, Fab, } from '@material-ui/core';
+import { Card, CardContent, Typography, TextField, Button, Fab, Table, TableRow, TableHead, TableCell, TableBody, CardMedia, Tooltip, IconButton, makeStyles, Theme, } from '@material-ui/core';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
-import { Edit } from '@material-ui/icons';
+import { Edit, Delete } from '@material-ui/icons';
 import { FileExplorer } from 'component/fileExplorer/FileExplorer';
+import { ArticlesManagement } from 'component/layouts/ArticlesManagement'
 import { Grid } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
 import useRouter from 'use-react-router';
 
+const useStyles = makeStyles((theme: Theme) => ({
+    headlines: {
+        marginBottom: theme.spacing(2),
+    },
+    actionButton: {
+        height: 24,
+        width: 24,
+        padding: 0
+    },
+}));
+
 export interface ProfileLayoutProps {
 }
 
 export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
+    const styles = useStyles();
     const currentUser = useCurrentUser();
     const [email, setEmail] = useState(currentUser && currentUser.email);
     const [name, setName] = useState(currentUser && User.getNickname(currentUser));
@@ -87,6 +100,12 @@ export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
                     <CardContent>
                         <Typography variant={'h4'}>Meine Medien</Typography>
                         <FileExplorer />
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent>
+                        <Typography variant={'h4'}>Meine Beiträge</Typography>
+                        <ArticlesManagement />
                     </CardContent>
                 </Card>
                 <Card>

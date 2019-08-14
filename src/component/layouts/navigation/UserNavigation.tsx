@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useState, useCallback } from 'react';
-import { Grid, Typography, Link, makeStyles, Button } from '@material-ui/core';
+import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
 import { UserModel } from '../../../model';
 import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
@@ -7,7 +7,7 @@ import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { useDispatch } from 'react-redux';
 import useRouter from 'use-react-router';
 import { createAddArticleAction } from 'store/actions/content';
-import { Add as AddCircleIcon } from '@material-ui/icons';
+import { Add as AddCircleIcon, } from '@material-ui/icons';
 import classNames from 'classnames';
 import { createLoginAction, createLogoutAction } from 'store/actions/user';
 import { createCloseDrawerAction } from 'store/actions/layout';
@@ -34,6 +34,10 @@ const useStyles = makeStyles(theme => ({
     iconSmall: {
         fontSize: 20,
     },
+    badge: {
+        top: '45%',
+        right: 80,
+    }
 }));
 
 export const UserNavigation: FunctionComponent<{}> = memo(() => {
@@ -80,7 +84,11 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                             }
                             {currentUser && (
                                 <>
-                                    <li><Link component={CollisionLink} to={'/profile'}>Mein Profil</Link></li>
+                                    <li><Link component={CollisionLink} to={'/profile'}>
+                                        <Badge className={styles.badge} badgeContent={4} color="secondary">
+                                            Mein Profil
+                                        </Badge>
+                                    </Link></li>
                                     <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                                 </>
                             )}
