@@ -14,6 +14,7 @@ import { User } from 'util/model';
 import { UserModel } from '../../../model';
 import classNames from 'classnames';
 import useRouter from 'use-react-router';
+import { RegisterDialog } from 'component/dialog/RegisterDialog';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -56,6 +57,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     }, [dispatch]);
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
+    const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
     const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(false);
 
     const { history } = useRouter();
@@ -80,6 +82,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                                 <li><Link onClick={() => onLogout()}>Abmelden</Link></li> :
                                 <>
                                     <li><Link onClick={() => setLoginModalIsOpen(true)}>Anmelden</Link></li>
+                                    <li><Link onClick={() => setRegisterModalIsOpen(true)}>Registrieren</Link></li>
                                 </>
                             }
                             {currentUser && (
@@ -119,6 +122,14 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                 onAbort={() => setLoginModalIsOpen(false)}
                 onLogin={(user, token) => {
                     setLoginModalIsOpen(false);
+                    onLogin(user, token);
+                }}
+            />
+            <RegisterDialog
+                isOpen={registerModalIsOpen}
+                onAbort={() => setRegisterModalIsOpen(false)}
+                onLogin={(user, token) => {
+                    setRegisterModalIsOpen(false);
                     onLogin(user, token);
                 }}
             />
