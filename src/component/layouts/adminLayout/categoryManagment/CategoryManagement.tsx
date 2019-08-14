@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { FunctionComponent, memo, useState, useCallback } from 'react';
 import {
     Paper, Typography, makeStyles, Theme, Button, Grid
 } from '@material-ui/core';
@@ -8,6 +8,10 @@ import { theme } from 'theme';
 import { CategoryModel } from 'model';
 import { CategoryNavigation } from './CategoryNavigation';
 import { CategoryEditor } from './CategoryEditor';
+import { useDispatch } from 'react-redux';
+import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
+import { useApolloClient } from 'react-apollo';
+import { createUpdateCategoryAction } from 'store/actions/client';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -44,6 +48,28 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
 
     const [selectedCategory, setSelectedCategory] = useState<CategoryModel | null>(null);
 
+    const dispatch = useDispatch();
+    const apolloClient = useApolloClient();
+    const mutateCategory = useCallback(async (updatedCategory: Partial<CategoryModel>): Promise<void> => {
+        const result = await apolloClient.mutate<{ category: CategoryModel }, { id: string; category: Partial<CategoryModel>; }>({
+            mutation: UpdateCategoryMutation,
+            variables: {
+                id: updatedCategory.id!,
+                category: {
+                    title: updatedCategory.title!,
+                    sortKey: updatedCategory.sortKey!,
+                    bannerImageFile: updatedCategory.bannerImageFile!,
+                    group: updatedCategory.group!,
+                    redirect: updatedCategory.redirect!
+                }
+            },
+            fetchPolicy: 'no-cache'
+        });
+        if (result.data.category) {
+            dispatch(createUpdateCategoryAction({ ...selectedCategory, ...result.data.category }));
+        }
+    }, [apolloClient, dispatch, selectedCategory]);
+
     return (
         <Paper className={styles.container}>
             <Typography variant="h4" className={styles.headlines}>
@@ -62,11 +88,11 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
 
             <Grid container>
                 <Grid item sm={5} style={{ paddingRight: theme.spacing(4) }} >
-                    <CategoryNavigation selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+                    <CategoryNavigation selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} mutateCategory={mutateCategory} />
                 </Grid>
                 <Grid item sm={7}>
                     {selectedCategory && (
-                        <CategoryEditor selectedCategory={selectedCategory} />
+                        <CategoryEditor selectedCategory={selectedCategory} mutateCategory={mutateCategory} />
                     )}
                 </Grid>
             </Grid>

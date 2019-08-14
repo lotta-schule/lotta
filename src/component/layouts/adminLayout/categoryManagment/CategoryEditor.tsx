@@ -10,10 +10,6 @@ import Img from 'react-cloudimage-responsive';
 import { useUserGroups } from 'util/client/useUserGroups';
 import { find } from 'lodash';
 import { useCategories } from 'util/categories/useCategories';
-import { useApolloClient } from 'react-apollo';
-import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
-import { createUpdateCategoryAction } from 'store/actions/client';
-import { useDispatch } from 'react-redux';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -27,15 +23,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface CategoryEditorProps {
     selectedCategory: CategoryModel | null;
+    mutateCategory(updatedCategory: Partial<CategoryModel>): Promise<void>;
 }
 
 
-export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) => {
+export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, mutateCategory }) => {
 
     const styles = useStyles();
 
-    const apolloClient = useApolloClient();
-    const dispatch = useDispatch();
     const groups = useUserGroups();
     const categories = useCategories();
 
@@ -48,26 +43,18 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
         }
         setIsLoading(true);
         try {
-            const result = await apolloClient.mutate<{ category: CategoryModel }, { id: string; category: Partial<CategoryModel>; }>({
-                mutation: UpdateCategoryMutation,
-                variables: {
-                    id: selectedCategory.id,
-                    category: {
-                        title: category.title,
-                        bannerImageFile: category.bannerImageFile,
-                        group: category.group,
-                        redirect: category.redirect
-                    }
-                },
-                fetchPolicy: 'no-cache'
+            await mutateCategory({
+                id: selectedCategory.id,
+                sortKey: selectedCategory.sortKey,
+                title: category.title,
+                bannerImageFile: category.bannerImageFile,
+                group: category.group,
+                redirect: category.redirect
             });
-            if (result.data.category) {
-                dispatch(createUpdateCategoryAction({ ...selectedCategory, ...result.data.category }));
-            }
         } finally {
             setIsLoading(false);
         }
-    }, [apolloClient, category, dispatch, selectedCategory]);
+    }, [category, mutateCategory, selectedCategory]);
 
     useEffect(() => {
         if (selectedCategory === null && category !== null) {
