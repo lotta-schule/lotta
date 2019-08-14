@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useState, useCallback } from 'react';
-import { Grid, Typography, Link, makeStyles, Button } from '@material-ui/core';
+import { Grid, Typography, Link, makeStyles, Button, Badge, withStyles } from '@material-ui/core';
 import { UserModel } from '../../../model';
 import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
@@ -7,7 +7,7 @@ import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { useDispatch } from 'react-redux';
 import useRouter from 'use-react-router';
 import { createAddArticleAction } from 'store/actions/content';
-import { Add as AddCircleIcon } from '@material-ui/icons';
+import { Add as AddCircleIcon, } from '@material-ui/icons';
 import classNames from 'classnames';
 import { createLoginAction, createLogoutAction } from 'store/actions/user';
 import { createCloseDrawerAction } from 'store/actions/layout';
@@ -35,6 +35,14 @@ const useStyles = makeStyles(theme => ({
         fontSize: 20,
     },
 }));
+
+const StyledBadge = withStyles(theme => ({
+    badge: {
+      top: '45%',
+      right: 80,
+    },
+  }))(Badge);
+  
 
 export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const styles = useStyles();
@@ -80,7 +88,11 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                             }
                             {currentUser && (
                                 <>
-                                    <li><Link component={CollisionLink} to={'/profile'}>Mein Profil</Link></li>
+                                    <li><Link component={CollisionLink} to={'/profile'}>
+                                            <StyledBadge badgeContent={4} color="secondary">
+                                             Mein Profil
+                                            </StyledBadge>
+                                        </Link></li>
                                     <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                                 </>
                             )}
