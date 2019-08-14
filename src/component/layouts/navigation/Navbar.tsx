@@ -1,11 +1,15 @@
-import React, { FunctionComponent, memo } from 'react';
-import { AppBar, Toolbar, Button, Theme, Grid } from '@material-ui/core';
+import React, { FunctionComponent, memo, useCallback } from 'react';
+import { AppBar, Toolbar, Button, Theme, Grid, IconButton } from '@material-ui/core';
 import { CategoryModel } from '../../../model';
 import { CollisionLink } from 'component/general/CollisionLink';
-import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
+import { createOpenDrawerAction } from 'store/actions/layout';
 import { makeStyles } from '@material-ui/styles';
+import { Menu } from '@material-ui/icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
+import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
+import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import { height } from '@material-ui/system';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -21,12 +25,17 @@ const useStyles = makeStyles<Theme>(theme => ({
     appBar: {
         backgroundColor: theme.palette.primary.main,
     },
+    padding: {
+        [theme.breakpoints.down('sm')]: {
+            paddingRight: '3em'
+        },
+    },
     secondaryAppBar: {
         backgroundColor: '#fff',
         maxHeight: '40px',
     },
     navButton: {
-        '&:hover': {
+        '&:h^': {
             backgroundColor: '#ffffff21'
         },
         '&.selected': {
@@ -39,6 +48,29 @@ const useStyles = makeStyles<Theme>(theme => ({
         '&.selected': {
             backgroundColor: '#b9b9b954'
         }
+    },
+    mobileBurgerMenuButton: {
+        position: 'absolute',
+        right: 0,
+        backgroundColor: theme.palette.primary.main,
+        alignItems: 'center',
+        boxShadow: '-3px 0px 7px #00000063',
+        display: 'none',
+        height: '100%',
+        zIndex: 10000,
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex',
+            width: '3em'
+        },
+    },
+    placeholder: {
+        display: 'none',
+        [theme.breakpoints.down('sm')]: {
+            minWidth: 1,
+            padding: 0,
+            height: '100%',
+            display: 'flex',
+        },
     }
 }));
 
@@ -52,44 +84,57 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
 
     const currentCategoryId = useCurrentCategoryId();
     const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || '');
+
+    const dispatch = useDispatch();
+
+    const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
+
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 
     const mainCategories = (categories || []).filter(category => !Boolean(category.category));
     const subcategories = (categories || []).filter(category => category.category && category.category.id === categoriesHierarchy[0]);
 
-
     return (
         <nav className={styles.root}>
-            <Grid item xs={10} sm={11} md={12}>
-                <AppBar position={'sticky'} className={styles.appBar}>
-                    <Toolbar>
-                        <Button
-                            key={'home'}
-                            component={CollisionLink}
-                            style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
-                            to={'/'}
-                            variant="text"
-                            size={'medium'}
-                            className={styles.navButton}
-                            color='inherit'
-                        >
-                            Startseite
-                        </Button>
-                        {mainCategories.map(category => (
+            <Grid container style={{ position: 'relative' }}>
+                <Grid item xs className={styles.padding}>
+                    <AppBar position={'sticky'} className={styles.appBar}>
+                        <Toolbar>
                             <Button
-                                variant="text"
-                                key={category.id}
+                                key={'home'}
                                 component={CollisionLink}
                                 style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
-                                to={category.redirect ? category.redirect : `/category/${category.id}`}
+                                to={'/'}
+                                variant="text"
                                 size={'medium'}
-                                className={classNames(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                className={styles.navButton}
+                                color='inherit'
                             >
-                                {category.title}
+                                Startseite
                             </Button>
-                        ))}
-                    </Toolbar>
-                </AppBar>
+                            {mainCategories.map(category => (
+                                <Button
+                                    variant="text"
+                                    key={category.id}
+                                    component={CollisionLink}
+                                    style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
+                                    to={category.redirect ? category.redirect : `/category/${category.id}`}
+                                    size={'medium'}
+                                    className={classNames(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                >
+                                    {category.title}
+                                </Button>
+                            ))}
+                            <Button className={styles.placeholder}>
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                </Grid>
+                <Grid item xs={2} sm={1} alignItems={'center'} className={styles.mobileBurgerMenuButton}>
+                    <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
+                        <Menu style={{ color: '#fff' }} />
+                    </IconButton>
+                </Grid>
             </Grid>
             {subcategories.length > 0 && (
                 <AppBar position={'sticky'} className={styles.secondaryAppBar}>
