@@ -145,10 +145,10 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                             .map((file: FileModel) => (
                                 file.fileType === FileModelType.Directory ? (
                                     // directory
-                                    <TableRow hover key={file.id} onClick={() => onSelectSubPath(file.filename)}>
+                                    <TableRow hover key={file.id} onClick={() => onSelectSubPath(file.filename)} style={{ cursor: 'pointer', }}>
                                         {<TableCell></TableCell>}
                                         <TableCell>
-                                            <FolderOutlined style={{ position: 'relative', right: 10 }} />
+                                            <FolderOutlined style={{ position: 'relative', marginRight: 10 }} />
                                             {file.filename}
                                         </TableCell>
                                         <TableCell></TableCell>
@@ -158,20 +158,20 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                         <TableRow
                                             key={file.id}
                                             hover
-                                            style={{ cursor: onSelectFile ? 'pointer' : 'inherit' }}
+                                            style={{ cursor: onSelectFile ? 'pointer' : 'default' }}
                                             onClick={() => onSelectFile && onSelectFile(file)}
                                         >
                                             <TableCell>
                                                 {!onSelectFiles && !onSelectFile && (
                                                     <>
                                                         <Tooltip title="Dateiname bearbeiten">
-                                                            <IconButton className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
+                                                            <IconButton disabled className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
                                                                 <Edit />
                                                             </IconButton>
                                                         </Tooltip>
                                                         <Tooltip title="Datei löschen">
                                                             <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
-                                                                <Delete />
+                                                                <Delete color="secondary"/>
                                                             </IconButton>
                                                         </Tooltip>
                                                     </>

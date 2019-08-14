@@ -6,7 +6,6 @@ import { Switch, Route } from 'react-router-dom';
 import { Navigation } from './adminLayout/Navigation';
 import { UserManagement } from './adminLayout/userManagement/UserManagement';
 import { CategoriesManagement } from './adminLayout/categoryManagment/CategoryManagement';
-import { ArticlesManagement } from './adminLayout/userManagement/ArticlesManagement';
 import { ClientManagement } from './adminLayout/userManagement/ClientManagement';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 

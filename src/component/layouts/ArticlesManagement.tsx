@@ -1,7 +1,7 @@
 
 import React, { FunctionComponent, memo } from 'react';
 import {
-    makeStyles, Theme, Paper, Typography, Table, TableHead, TableRow, TableCell, TableBody, CardMedia, Tooltip, IconButton
+    makeStyles, Theme, Table, TableHead, TableRow, TableCell, TableBody, CardMedia, Tooltip, IconButton
 } from '@material-ui/core';
 import { Edit, Delete } from '@material-ui/icons';
 
@@ -39,32 +39,32 @@ export const ArticlesManagement: FunctionComponent = memo(() => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                    <TableRow>
-                        <TableCell>
-                            <Tooltip title="Beitrag bearbeiten">
-                                <IconButton className={styles.actionButton} aria-label="Beitrag bearbeiten" onClick={() => { }}>
-                                    <Edit />
-                                </IconButton>
-                            </Tooltip>
-                        </TableCell>
-                        <TableCell>
+                <TableRow>
+                    <TableCell>
+                        <Tooltip title="Beitrag bearbeiten">
+                            <IconButton className={styles.actionButton} aria-label="Beitrag bearbeiten" onClick={() => { }}>
+                                <Edit />
+                            </IconButton>
+                        </Tooltip>
+                    </TableCell>
+                    <TableCell>
                         <Tooltip title="Beitrag löschen">
                             <IconButton className={styles.actionButton} aria-label="Beitrag löschen" onClick={() => { }}>
                                 <Delete />
                             </IconButton>
                         </Tooltip>
-                        </TableCell>
-                        <TableCell>23.07.2019</TableCell>
-                        <TableCell>
-                            <CardMedia
+                    </TableCell>
+                    <TableCell>23.07.2019</TableCell>
+                    <TableCell>
+                        <CardMedia
                             style={{ height: 50, width: 75, }}
                             image="https://placeimg.com/75/50/any"
-                            />
-                        </TableCell>
-                        <TableCell><b>Oglaf – eine besondere Berichterstattung</b></TableCell>
-                        <TableCell>Oskarverleihung</TableCell>
-                        <TableCell>Sichtbar</TableCell>
-                    </TableRow>
+                        />
+                    </TableCell>
+                    <TableCell><b>Oglaf – eine besondere Berichterstattung</b></TableCell>
+                    <TableCell>Oskarverleihung</TableCell>
+                    <TableCell>Sichtbar</TableCell>
+                </TableRow>
             </TableBody>
         </Table>
     );

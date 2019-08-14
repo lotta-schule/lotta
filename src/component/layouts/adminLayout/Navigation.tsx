@@ -20,9 +20,9 @@ export const Navigation: FunctionComponent = memo(() => {
                 variant="scrollable"
                 aria-label="Admin Einstellungen"
             >
-                <Tab label="Mein Lotta" onClick={() => history.push('/admin')} />
-                <Tab label="Nutzerverwaltung" onClick={() => history.push('/admin/users')} />
-                <Tab label="Kategorienverwaltung" onClick={() => history.push('/admin/categories')} />
+                <Tab label="Mein Lotta" value={'/admin'} />
+                <Tab label="Nutzerverwaltung" value={'/admin/users'} />
+                <Tab label="Kategorienverwaltung" value={'/admin/categories'} />
             </Tabs>
         </Paper>
     );

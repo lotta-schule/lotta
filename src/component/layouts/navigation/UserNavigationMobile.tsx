@@ -13,26 +13,18 @@ import { CurrentUserAvatar } from 'component/user/UserAvatar';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        backgroundColor: '#fff',
-        padding: `0 ${theme.spacing(2)}px`,
-        marginBottom: '.5em',
-        position: 'sticky',
-        boxShadow: '0px 2px 2px #00000061',
-        [theme.breakpoints.up('sm')]: {
-            top: '6.5em',
-        },
-    },
-    userGridItem: {
+        position: 'absolute',
+        height: 64,
+        zIndex: 1,
+        top: 100,
+        right: 0,
+        backgroundColor: theme.palette.primary.main,
         display: 'flex',
-        alignItems: 'center'
-    },
-    buttonGridItem: {
-        textAlign: 'right'
-    },
-    avatar: {
-        height: '1.5em',
-        width: '1.5em',
-        margin: '.25em .5em .25em 0',
+        alignItems: 'center',
+        boxShadow: '-3px 0px 7px #00000063',
+        [theme.breakpoints.down('xs')]: {
+            height: 56,
+        },
     },
 }));
 
@@ -50,15 +42,15 @@ export const UserNavigationMobile: FunctionComponent = memo(() => {
 
     return (
         <Grid container alignItems={'center'} className={styles.root} style={{ top: subcategories.length ? '6em' : '3.5em' }}>
-            <Grid item xs={10} className={styles.userGridItem}>
+            <Grid item xs={10}>
                 {currentUser && (
                     <>
-                        <CurrentUserAvatar className={styles.avatar} />
+                        <CurrentUserAvatar />
                         <Typography variant={'body1'}>{User.getNickname(currentUser)}</Typography>
                     </>
                 )}
             </Grid>
-            <Grid item xs className={styles.buttonGridItem}>
+            <Grid item xs>
                 <IconButton size={'small'} onClick={() => openDrawer()}>
                     <Menu />
                 </IconButton>
