@@ -1,19 +1,19 @@
 import React, { FunctionComponent, memo, useState, useCallback } from 'react';
-import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
-import { UserModel } from '../../../model';
-import { CollisionLink } from '../../general/CollisionLink';
-import { LoginDialog } from '../../dialog/LoginDialog';
-import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
-import { useDispatch } from 'react-redux';
-import useRouter from 'use-react-router';
-import { createAddArticleAction } from 'store/actions/content';
 import { Add as AddCircleIcon, } from '@material-ui/icons';
-import classNames from 'classnames';
-import { createLoginAction, createLogoutAction } from 'store/actions/user';
+import { CollisionLink } from '../../general/CollisionLink';
+import { createAddArticleAction } from 'store/actions/content';
+import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { createCloseDrawerAction } from 'store/actions/layout';
-import { User } from 'util/model';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { createLoginAction, createLogoutAction } from 'store/actions/user';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
+import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
+import { LoginDialog } from '../../dialog/LoginDialog';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useDispatch } from 'react-redux';
+import { User } from 'util/model';
+import { UserModel } from '../../../model';
+import classNames from 'classnames';
+import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -85,7 +85,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                             {currentUser && (
                                 <>
                                     <li><Link component={CollisionLink} to={'/profile'}>
-                                        <Badge className={styles.badge} badgeContent={4} color="secondary">
+                                        <Badge classes={{ badge: styles.badge }} badgeContent={4} color="secondary">
                                             Mein Profil
                                         </Badge>
                                     </Link></li>

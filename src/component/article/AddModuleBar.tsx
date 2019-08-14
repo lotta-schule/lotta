@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Theme, Typography, Grid } from "@material-ui/core";
-import { TextFormat, FormatListBulleted, FormatAlignLeft, AddPhotoAlternate, Audiotrack, MovieCreation, PictureAsPdf, Link } from '@material-ui/icons';
+import { TextFormat, FormatAlignLeft, AddPhotoAlternate, Audiotrack, MovieCreation } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType } from "model";
 import { AddModuleButton } from "./AddModuleButton";
 import { Value } from 'slate';

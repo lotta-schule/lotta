@@ -5,7 +5,7 @@ import { CollisionLink } from 'component/general/CollisionLink';
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { makeStyles } from '@material-ui/styles';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
-import clsx from 'clsx';
+import classNames from 'classnames';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -66,13 +66,9 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                         <Button
                             key={'home'}
                             component={CollisionLink}
-                            style={{ flexGrow: 1, flexShrink: 0 }}
+                            style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
                             to={'/'}
                             variant="text"
-                            key={category.id}
-                            component={CollisionLink}
-                            style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
-                            to={category.redirect ? category.redirect : `/category/${category.id}`}
                             size={'medium'}
                             className={styles.navButton}
                             color='inherit'
@@ -85,9 +81,9 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                                 key={category.id}
                                 component={CollisionLink}
                                 style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
-                                to={`/category/${category.id}`}
+                                to={category.redirect ? category.redirect : `/category/${category.id}`}
                                 size={'medium'}
-                                className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                className={classNames(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                             >
                                 {category.title}
                             </Button>
@@ -105,7 +101,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                                 component={CollisionLink}
                                 to={category.redirect ? category.redirect : `/category/${category.id}`}
                                 size={'small'}
-                                className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                className={classNames(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                             >
                                 {category.title}
                             </Button>

@@ -42,15 +42,15 @@ export const UserNavigationMobile: FunctionComponent = memo(() => {
 
     return (
         <Grid container alignItems={'center'} className={styles.root} style={{ top: subcategories.length ? '6em' : '3.5em' }}>
-            <Grid item xs={10} className={styles.userGridItem}>
+            <Grid item xs={10}>
                 {currentUser && (
                     <>
-                        <CurrentUserAvatar className={styles.avatar} />
+                        <CurrentUserAvatar />
                         <Typography variant={'body1'}>{User.getNickname(currentUser)}</Typography>
                     </>
                 )}
             </Grid>
-            <Grid item xs className={styles.buttonGridItem}>
+            <Grid item xs>
                 <IconButton size={'small'} onClick={() => openDrawer()}>
                     <Menu />
                 </IconButton>
