@@ -1,8 +1,8 @@
+import { get, set, remove } from 'js-cookie';
 import { UserActionType, LoginAction, LogoutAction } from '../actions/user';
+import { UserModel } from 'model';
 import { UserState } from '../State';
 import jwtDecode from 'jwt-decode';
-import { get, set, remove } from 'js-cookie';
-import { UserModel, UserGroup } from 'model';
 import Matomo from 'matomo-ts';
 
 export type UserActions = LoginAction | LogoutAction;
@@ -18,8 +18,9 @@ export const initialUserState: UserState = {
                     name: decoded.name,
                     nickname: decoded.nickname,
                     email: decoded.email,
+                    class: decoded.class,
                     avatar: '',
-                    group: UserGroup.STUDENT
+                    groups: decoded.groups
                 } as UserModel;
             }
         }

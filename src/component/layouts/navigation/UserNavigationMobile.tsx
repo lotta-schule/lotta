@@ -1,15 +1,15 @@
 // margin: 0 0 .5em;
 
 import React, { FunctionComponent, memo, useCallback } from 'react';
-import { Grid, makeStyles, IconButton, Avatar, Typography } from '@material-ui/core';
-import { UserModel } from '../../../model';
-import { useSelector, useDispatch } from 'react-redux';
+import { Grid, makeStyles, IconButton, Typography } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 import { Menu } from '@material-ui/icons';
-import { State } from 'store/State';
 import { createOpenDrawerAction } from 'store/actions/layout';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
-import { theme } from 'theme';
+import { User } from 'util/model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { CurrentUserAvatar } from 'component/user/UserAvatar';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -30,18 +30,31 @@ const useStyles = makeStyles(theme => ({
 
 export const UserNavigationMobile: FunctionComponent = memo(() => {
     const styles = useStyles();
-    const user = useSelector<State, UserModel | null>(s => s.user.user);
+
+    const currentUser = useCurrentUser();
+
     const dispatch = useDispatch();
+
     const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
     const categories = useCategories();
     const currentCategoryId = useCurrentCategoryId();
     const subcategories = (categories || []).filter(category => category.category && category.category.id === currentCategoryId);
 
     return (
-        <Grid container alignItems={'center'} className={styles.root} item sm={1} xs={2}>
-            <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }} >
-                <Menu style={{ color: '#fff', }} />
-            </IconButton>
+        <Grid container alignItems={'center'} className={styles.root} style={{ top: subcategories.length ? '6em' : '3.5em' }}>
+            <Grid item xs={10} className={styles.userGridItem}>
+                {currentUser && (
+                    <>
+                        <CurrentUserAvatar className={styles.avatar} />
+                        <Typography variant={'body1'}>{User.getNickname(currentUser)}</Typography>
+                    </>
+                )}
+            </Grid>
+            <Grid item xs className={styles.buttonGridItem}>
+                <IconButton size={'small'} onClick={() => openDrawer()}>
+                    <Menu />
+                </IconButton>
+            </Grid>
         </Grid>
     );
 });

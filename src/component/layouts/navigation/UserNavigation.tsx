@@ -1,17 +1,19 @@
 import React, { FunctionComponent, memo, useState, useCallback } from 'react';
-import { Grid, Typography, Avatar, Link, makeStyles, Button } from '@material-ui/core';
+import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
 import { UserModel } from '../../../model';
 import { CollisionLink } from '../../general/CollisionLink';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import useRouter from 'use-react-router';
 import { createAddArticleAction } from 'store/actions/content';
-import { Add as AddCircleIcon } from '@material-ui/icons';
+import { Add as AddCircleIcon, } from '@material-ui/icons';
 import classNames from 'classnames';
-import { State } from 'store/State';
 import { createLoginAction, createLogoutAction } from 'store/actions/user';
 import { createCloseDrawerAction } from 'store/actions/layout';
+import { User } from 'util/model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { CurrentUserAvatar } from 'component/user/UserAvatar';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -32,12 +34,17 @@ const useStyles = makeStyles(theme => ({
     iconSmall: {
         fontSize: 20,
     },
+    badge: {
+        top: '45%',
+        right: 80,
+    }
 }));
 
 export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const styles = useStyles();
 
-    const user = useSelector<State, UserModel | null>(s => s.user.user);
+    const currentUser = useCurrentUser();
+
     const dispatch = useDispatch();
     const onLogin = useCallback((user: UserModel, token: string) => {
         dispatch(createLoginAction(user, token))
@@ -57,11 +64,11 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
         <>
             <Grid container justify={'space-evenly'} className={styles.root}>
                 <Grid item xs={6} style={{ display: 'flex' }}>
-                    {user && (
+                    {currentUser && (
                         <div>
-                            <Avatar alt={'Nutzer Name'} src={`https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`} />
+                            <CurrentUserAvatar />
                             <Typography variant={'body2'} align={'center'}>
-                                {user.nickname || user.name}
+                                {User.getNickname(currentUser)}
                             </Typography>
                         </div>
                     )}
@@ -69,15 +76,19 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                 <Grid item xs={6} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                     <Typography variant={'body2'} component={'nav'} align={'right'}>
                         <ul>
-                            {user ?
+                            {currentUser ?
                                 <li><Link onClick={() => onLogout()}>Abmelden</Link></li> :
                                 <>
                                     <li><Link onClick={() => setLoginModalIsOpen(true)}>Anmelden</Link></li>
                                 </>
                             }
-                            {user && (
+                            {currentUser && (
                                 <>
-                                    <li><Link component={CollisionLink} to={'/profile'}>Mein Profil</Link></li>
+                                    <li><Link component={CollisionLink} to={'/profile'}>
+                                        <Badge className={styles.badge} badgeContent={4} color="secondary">
+                                            Mein Profil
+                                        </Badge>
+                                    </Link></li>
                                     <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                                 </>
                             )}
@@ -87,7 +98,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                     </Typography>
                 </Grid>
             </Grid>
-            {user && (
+            {currentUser && (
                 <>
                     <Button size="small" variant="contained" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
                         <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
