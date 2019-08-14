@@ -125,6 +125,7 @@ defmodule ApiWeb.Schema do
   
   input_object :category_input do
     field :title, non_null(:string)
+    field :sort_key, :integer
     field :banner_image_file, :file
     field :redirect, :string
     field :group, :user_group
