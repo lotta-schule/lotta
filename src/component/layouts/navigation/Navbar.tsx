@@ -80,7 +80,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                             key={category.id}
                             component={CollisionLink}
                             style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
-                            to={`/category/${category.id}`}
+                            to={category.redirect ? category.redirect : `/category/${category.id}`}
                             size={'medium'}
                             className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                         >
@@ -97,7 +97,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                                 variant="text"
                                 key={category.id}
                                 component={CollisionLink}
-                                to={`/category/${category.id}`}
+                                to={category.redirect ? category.redirect : `/category/${category.id}`}
                                 size={'small'}
                                 className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                             >

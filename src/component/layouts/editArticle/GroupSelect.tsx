@@ -4,10 +4,12 @@ import { useUserGroups } from 'util/client/useUserGroups';
 
 export interface GroupSelectProps {
     selectedGroupId?: string;
+    className?: string;
+    variant?: 'filled' | 'outlined' | 'standard';
     onSelectGroupId(groupId?: string): void;
 }
 
-export const GroupSelect = memo<GroupSelectProps>(({ selectedGroupId, onSelectGroupId }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ selectedGroupId, onSelectGroupId, variant, className }) => {
     const groups = useUserGroups();
     const inputLabel = React.useRef<HTMLLabelElement>(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
@@ -16,15 +18,15 @@ export const GroupSelect = memo<GroupSelectProps>(({ selectedGroupId, onSelectGr
     }, []);
 
     return (
-        <FormControl variant="outlined" fullWidth>
+        <FormControl variant={variant} fullWidth className={className}>
             <InputLabel ref={inputLabel} htmlFor="outlined-visibility-select">
                 Sichtbarkeit:
             </InputLabel>
             <Select
                 fullWidth
-                variant="outlined"
+                variant={variant}
                 value={selectedGroupId}
-                onChange={e => onSelectGroupId(undefined)}
+                onChange={({ target: { value } }) => onSelectGroupId(value as string | undefined)}
                 input={<OutlinedInput labelWidth={labelWidth} name="visibility" id="outlined-visibility-select" />}
             >
                 {groups.map(group => (
