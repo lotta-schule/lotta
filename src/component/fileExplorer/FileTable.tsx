@@ -22,7 +22,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
             flexDirection: 'column',
             width: '100%',
             overflowY: 'scroll',
-            height: 600
+            maxHeight: 600
         },
         '& tr': {
             display: 'flex',
