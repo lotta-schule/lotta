@@ -14,6 +14,10 @@ import { uniqBy } from 'lodash';
 import { theme } from 'theme';
 
 const useStyles = makeStyles(theme => ({
+    root: {
+        marginTop: '0.5em',
+        borderRadius: '0'
+    },
     button: {
         margin: theme.spacing(1),
     },
@@ -37,7 +41,7 @@ interface EditArticleSidebarProps {
 export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => {
     const styles = useStyles();
     return (
-        <Card style={{ marginTop: '0.5em', borderRadius: '0' }}>
+        <Card className={styles.root}>
             <CardContent>
                 <Typography variant="h6" align="center">
                     Beitrags-Einstellungen
@@ -143,7 +147,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     size="small"
                 >
                     Abbrechen
-             </Button>
+                </Button>
             </CardContent>
         </Card >
     )
