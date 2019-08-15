@@ -26,7 +26,7 @@ defmodule Api.Content do
 
   """
   def list_articles(tenant_id) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id)
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and !is_nil(a.category_id))
   end
   
   @doc """
@@ -83,7 +83,7 @@ defmodule Api.Content do
     tenant_id = tenant.id
     user_id = user.id
     Repo.all(Ecto.Query.from a in Article,
-      where: a.tenant_id == ^tenant_id
+      where: a.tenant_id == ^tenant_id,
       join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id
     )
   end
