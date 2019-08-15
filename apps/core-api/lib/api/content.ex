@@ -26,7 +26,7 @@ defmodule Api.Content do
 
   """
   def list_articles(tenant_id) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id)
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and !is_nil(a.category_id))
   end
   
   @doc """
@@ -54,6 +54,38 @@ defmodule Api.Content do
   """
   def list_articles_by_topic(tenant_id, topic) do
     Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.topic == ^topic)
+  end
+  
+  @doc """
+  Returns the list of unpublished articles belonging to a tenant.
+
+  ## Examples
+
+      iex> list_unpublished_articles(topic)
+      [%Article{}, ...]
+
+  """
+  def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
+    tenant_id = tenant.id
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.ready_to_publish == true and is_nil(a.category_id))
+  end
+  
+  @doc """
+  Returns the list of articles for a user (given a tenant's scope).
+
+  ## Examples
+
+      iex> list_user_articles(topic)
+      [%Article{}, ...]
+
+  """
+  def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
+    tenant_id = tenant.id
+    user_id = user.id
+    Repo.all(Ecto.Query.from a in Article,
+      where: a.tenant_id == ^tenant_id,
+      join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id
+    )
   end
 
   @doc """

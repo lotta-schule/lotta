@@ -1,5 +1,6 @@
 defmodule Api.ArticleResolver do
   alias Api.Content
+  alias Api.Accounts.User
   alias Repo
 
   def get(%{id: id}, %{context: %{context: %{tenant: tenant}}}) do
@@ -16,6 +17,24 @@ defmodule Api.ArticleResolver do
     {:ok, Content.list_articles(tenant.id)}
   end
   def all(_args, _info) do
+    {:error, "Tenant nicht gefunden."}
+  end
+  
+  def all_unpublished(%{category_id: category_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+    if User.is_admin?(current_user, tenant) do
+      {:ok, Content.list_unpublished_articles(tenant)}
+    else
+      {:error, "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen"}
+    end
+  end
+  def all_unpublished(_args, _info) do
+    {:error, "Tenant nicht gefunden."}
+  end
+  
+  def own(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+      {:ok, Content.list_user_articles(tenant, current_user)}
+  end
+  def own(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
 
