@@ -9,6 +9,7 @@ export const UpdateArticleMutation = gql`
             title
             preview
             topic
+            readyToPublish
             previewImageFile {
                 id
                 remoteLocation

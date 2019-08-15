@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { FunctionComponent, memo, useState, useEffect } from 'react';
 import { ArticleModel } from '../../model';
 import { Article } from '../article/Article';
 import { EditArticleSidebar } from './editArticle/EditArticleSidebar';
@@ -6,6 +6,7 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import useReactRouter from 'use-react-router';
 import { AddModuleBar } from 'component/article/AddModuleBar';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
@@ -13,8 +14,16 @@ export interface ArticleLayoutProps {
 }
 
 export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
-    const [editedArticle, setEditedArticle] = useState(article);
     const { history } = useReactRouter();
+    const currentUser = useCurrentUser();
+
+    const [editedArticle, setEditedArticle] = useState(article);
+
+    useEffect(() => {
+        if (!currentUser) {
+            history.push(`/article/${article.id}`);
+        }
+    }, [article.id, currentUser, history]);
 
     return (
         <>

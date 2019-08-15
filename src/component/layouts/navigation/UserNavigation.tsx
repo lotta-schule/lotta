@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState, useCallback } from 'react';
+import React, { FunctionComponent, memo, useState, useCallback, useEffect } from 'react';
 import { Add as AddCircleIcon, } from '@material-ui/icons';
 import { CollisionLink } from '../../general/CollisionLink';
 import { createAddArticleAction } from 'store/actions/content';
@@ -11,9 +11,11 @@ import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useDispatch } from 'react-redux';
 import { User } from 'util/model';
-import { UserModel } from '../../../model';
+import { UserModel, ArticleModel } from '../../../model';
 import classNames from 'classnames';
 import useRouter from 'use-react-router';
+import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
+import { useLazyQuery } from '@apollo/react-hooks';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -44,6 +46,9 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const styles = useStyles();
 
     const currentUser = useCurrentUser();
+    const { history } = useRouter();
+    const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
+
 
     const dispatch = useDispatch();
     const onLogin = useCallback((user: UserModel, token: string) => {
@@ -58,7 +63,14 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(false);
 
-    const { history } = useRouter();
+    useEffect(() => {
+        if (currentUser) {
+            loadOwnArticles();
+        }
+    }, [currentUser, loadOwnArticles]);
+
+    const ownArticles = ownArticlesData ? (ownArticlesData.articles || []) : [];
+    const profileBadgeNumber = [...ownArticles].filter(article => !article.readyToPublish || !article.category).length;
 
     return (
         <>
@@ -83,14 +95,16 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                                 </>
                             }
                             {currentUser && (
-                                <>
-                                    <li><Link component={CollisionLink} to={'/profile'}>
-                                        <Badge classes={{ badge: styles.badge }} badgeContent={4} color="secondary">
+                                <li><Link component={CollisionLink} to={'/profile'}>
+                                    {profileBadgeNumber && (
+                                        <Badge classes={{ badge: styles.badge }} badgeContent={profileBadgeNumber} color="secondary">
                                             Mein Profil
-                                        </Badge>
-                                    </Link></li>
-                                    <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
-                                </>
+                                            </Badge>
+                                    )}
+                                </Link></li>
+                            )}
+                            {User.isAdmin(currentUser) && (
+                                <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                             )}
                             <li>Impressum</li>
                             <li>Datenschutz</li>
