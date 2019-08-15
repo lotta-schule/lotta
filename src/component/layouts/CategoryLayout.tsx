@@ -12,9 +12,9 @@ import { parseISO } from 'date-fns';
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
         height: '120px',
-        padding: '0.5em',
+        border: '0.5em solid #fff',
         marginBottom: '0.5em',
-        // backgroundColor: '#fff',
+        backgroundColor: '#fff',
         [theme.breakpoints.down('xs')]: {
             display: 'none',
         },
@@ -30,9 +30,9 @@ const useStyles = makeStyles(() => ({
         textTransform: 'uppercase',
         letterSpacing: '5px',
         fontSize: '1.5em',
-        textShadow: '1px 1px 15px #000',
+        textShadow: '1px 1px 15px #fff',
         padding: '0.6em',
-        color: '#fff'
+        color: theme.palette.primary.main,
     }
 }));
 
