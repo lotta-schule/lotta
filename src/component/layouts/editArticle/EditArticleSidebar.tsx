@@ -12,6 +12,8 @@ import { parseISO } from 'date-fns';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
 import { uniqBy } from 'lodash';
 import { theme } from 'theme';
+import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -40,6 +42,7 @@ interface EditArticleSidebarProps {
 
 export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => {
     const styles = useStyles();
+    const { history } = useRouter();
     return (
         <Card className={styles.root}>
             <CardContent>
@@ -107,9 +110,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 <SelectFileOverlay label={'Vorschaubild ändern'} onSelectFile={previewImageFile => onUpdate({ ...article, previewImageFile })}>
                     {article.previewImageFile ? (
                         <Img operation={'width'} size={'300x200'} src={article.previewImageFile.remoteLocation} />
-                    ) : (
-                            <img src={'https://placeimg.com/300/200/any'} style={{ width: '100%', height: 'auto' }} alt={`Vorschaubild zu ${article.title}`} />
-                        )}
+                    ) : <PlaceholderImage width={'100%'} height={150} />}
                 </SelectFileOverlay>
             </CardContent>
             <CardContent>
@@ -133,18 +134,19 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
             <CardContent>
                 <Button
                     onClick={onSave}
-                    variant='outlined'
-                    color='secondary'
-                    size="small"
+                    variant={'outlined'}
+                    color={'secondary'}
+                    size={'small'}
                     style={{ marginRight: theme.spacing(1) }}
                 >
                     <SaveIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                     speichern
-            </Button>
+                </Button>
                 <Button
-                    color="secondary"
-                    variant="outlined"
-                    size="small"
+                    color={'secondary'}
+                    variant={'outlined'}
+                    size={'small'}
+                    onClick={() => history.goBack()}
                 >
                     Abbrechen
                 </Button>
