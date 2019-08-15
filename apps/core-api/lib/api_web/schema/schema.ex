@@ -26,6 +26,14 @@ defmodule ApiWeb.Schema do
       resolve &Api.ArticleResolver.all/2
     end
 
+    field :unpublished_articles, list_of(:article) do
+      resolve &Api.ArticleResolver.all_unpublished/2
+    end
+    
+    field :own_articles, list_of(:article) do
+      resolve &Api.ArticleResolver.own/2
+    end
+
     field :topic, list_of(:article) do
       arg :topic, non_null(:string)
       resolve &Api.ArticleResolver.by_topic/2
@@ -117,6 +125,7 @@ defmodule ApiWeb.Schema do
     field :title, non_null(:string)
     field :category, :category
     field :preview, :string
+    field :ready_to_publish, :boolean
     field :preview_image_file, :file
     field :topic, :string
     field :content_modules, list_of(:content_module_input)
