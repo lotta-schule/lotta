@@ -9,6 +9,7 @@ export const GetTopicQuery = gql`
             title
             preview
             topic
+            readyToPublish
             previewImageFile {
                 id
                 remoteLocation

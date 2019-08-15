@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
 import { theme } from 'theme';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { User } from 'util/model';
 
 const useStyle = makeStyles((theme: Theme) => ({
     root: {
@@ -49,9 +50,11 @@ const useStyle = makeStyles((theme: Theme) => ({
 
 interface ArticlePreviewProps {
     article: ArticleModel;
+    disableLink?: boolean;
+    disableEdit?: boolean;
 }
 
-export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ article }) => {
+export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ article, disableLink, disableEdit }) => {
 
     const currentUser = useCurrentUser();
 
@@ -74,15 +77,18 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                 <Grid item xs>
                     <CardContent>
                         <Typography component={'h5'} variant={'h5'} gutterBottom>
-                            <Link
-                                component={CollisionLink}
-                                color='inherit'
-                                underline='none'
-                                to={`/article/${article.id}`}
-                            >
-                                {article.title}
-                            </Link>
-                            {currentUser/* && user.group > UserGroup.GUEST*/ && (
+                            {disableLink && (article.title)}
+                            {!disableLink && (
+                                <Link
+                                    component={CollisionLink}
+                                    color='inherit'
+                                    underline='none'
+                                    to={`/article/${article.id}`}
+                                >
+                                    {article.title}
+                                </Link>
+                            )}
+                            {!disableEdit && User.canEditArticle(currentUser, article) && (
                                 <Fab
                                     aria-label="Edit"
                                     size="small"
@@ -97,9 +103,9 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                         <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem', marginBottom: theme.spacing(1) }}>
                             {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
                             {article.topic && <> | {article.topic}&nbsp;</>}
-                            | 18 Views&nbsp;
+                            {/* | 18 Views&nbsp; */}
                             {article.users && <>| Autoren: {article.users.map(a => a.nickname).join(', ')}&nbsp;</>}
-                            | Bewertung&nbsp;
+                            {/* | Bewertung&nbsp; */}
                         </Typography>
                         <Typography variant={'subtitle1'} color="textSecondary" className={styles.previewtext}>
                             {article.preview}

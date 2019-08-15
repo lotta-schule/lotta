@@ -9,11 +9,12 @@ export interface ArticleModel {
     updatedAt: string;
     title: string;
     preview?: string;
+    readyToPublish: boolean;
+    topic?: string;
     previewImageFile?: FileModel;
     contentModules: ContentModuleModel[];
     users: UserModel[];
     category?: CategoryModel;
-    topic?: string;
 }
 
 export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {

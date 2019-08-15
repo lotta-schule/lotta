@@ -30,7 +30,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ article, title }) => {
     return (
         <>
             <BaseLayoutMainContent>
-                {title && <Typography variant={'h3'} className={styles.siteTitle} >{title}</Typography>}
+                {title && <Typography variant={'h3'} className={styles.siteTitle}>{title}</Typography>}
                 <Article article={article} />
                 {article.topic && (
                     <RelatedArticlesList article={article} />

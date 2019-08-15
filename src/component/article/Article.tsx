@@ -12,7 +12,7 @@ interface ArticleProps {
 
 export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditModeEnabled, onUpdateArticle }) => (
     <article style={{ padding: '0.5em', backgroundColor: '#fff' }}>
-        <ArticlePreview article={article} />
+        <ArticlePreview article={article} disableLink={isEditModeEnabled} disableEdit={isEditModeEnabled} />
         <DragDropContext onDragEnd={({ destination, source }) => {
             if (!destination) {
                 return;

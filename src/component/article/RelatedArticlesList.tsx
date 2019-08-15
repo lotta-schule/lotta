@@ -30,11 +30,8 @@ export const RelatedArticlesList = memo<RelatedArticlesListProps>(({ article }) 
     return (
         <>
             <Typography variant={'h6'} className={styles.root}>Weitere Beiträge zum Thema <strong>{article.topic!}</strong></Typography>
-            {data.articles.filter(a => a.id !== article.id).map(a => (
-                <ArticlePreview
-                    key={a.id}
-                    article={a}
-                />
+            {data.articles.filter(a => a.id !== article.id).map(relatedArticle => (
+                <ArticlePreview key={relatedArticle.id} article={relatedArticle} />
             ))}
         </>
     );

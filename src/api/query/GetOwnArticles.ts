@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const CreateArticleMutation = gql`
-    mutation CreateArticle($article: ArticleInput) {
-        article: createArticle(article: $article) {
+export const GetOwnArticlesQuery = gql`
+    query GetOwnArticles {
+        articles: ownArticles {
             id
             insertedAt
             updatedAt
@@ -21,6 +21,19 @@ export const CreateArticleMutation = gql`
                 type
                 text
                 sortKey
+                configuration
+                files {
+                    id
+                    remoteLocation
+                    mimeType
+                    fileType
+                    fileConversions {
+                        id
+                        format
+                        mimeType
+                        remoteLocation
+                    }
+                }
             }
             category {
                 id

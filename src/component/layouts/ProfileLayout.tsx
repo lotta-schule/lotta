@@ -1,25 +1,37 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { FunctionComponent, memo, useState, useEffect } from 'react';
+import { ArticleModel } from 'model';
+import { ArticlesManagement } from 'component/profile/ArticlesManagement';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { Card, CardContent, Typography, TextField, Button, Fab } from '@material-ui/core';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Edit } from '@material-ui/icons';
 import { FileExplorer } from 'component/fileExplorer/FileExplorer';
-import { ArticlesManagement } from 'component/layouts/ArticlesManagement'
+import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { Grid } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { User } from 'util/model';
 import useRouter from 'use-react-router';
+import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 
-export interface ProfileLayoutProps {
-}
-
-export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
+export const ProfileLayout: FunctionComponent = memo(() => {
     const currentUser = useCurrentUser();
+    const { history } = useRouter();
+
     const [email, setEmail] = useState(currentUser && currentUser.email);
     const [name, setName] = useState(currentUser && User.getNickname(currentUser));
     const [nickname, setNickname] = useState(currentUser && currentUser.nickname);
-    const { history } = useRouter();
+
+    const { data: ownArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
+    const [loadUnpublishedArticles, { data: unpublishedArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery);
+
+    useEffect(() => {
+        if (User.isAdmin(currentUser)) {
+            loadUnpublishedArticles();
+        }
+    }, [currentUser, loadUnpublishedArticles]);
+
     if (!currentUser) {
         history.replace('/');
         return <div></div>;
@@ -93,13 +105,17 @@ export const ProfileLayout: FunctionComponent<ProfileLayoutProps> = memo(() => {
                 <Card>
                     <CardContent>
                         <Typography variant={'h4'}>Meine Beiträge</Typography>
-                        <ArticlesManagement />
+                        {ownArticlesData && ownArticlesData.articles && (
+                            <ArticlesManagement articles={ownArticlesData.articles} />
+                        )}
                     </CardContent>
                 </Card>
                 <Card>
                     <CardContent>
-                        <Typography variant={'h4'}>Geteilte Medien</Typography>
-                        <FileExplorer />
+                        <Typography variant={'h4'}>Freizugebene Beiträge Beiträge</Typography>
+                        {unpublishedArticlesData && unpublishedArticlesData.articles && (
+                            <ArticlesManagement articles={unpublishedArticlesData.articles} />
+                        )}
                     </CardContent>
                 </Card>
             </BaseLayoutMainContent>

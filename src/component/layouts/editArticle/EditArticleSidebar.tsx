@@ -1,5 +1,5 @@
 import React, { memo, FunctionComponent } from 'react';
-import { Card, CardContent, TextField, Button, makeStyles, Typography } from '@material-ui/core';
+import { Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel, Switch } from '@material-ui/core';
 import { ArticleModel } from '../../../model';
 import classNames from 'classnames';
 import { Save as SaveIcon } from '@material-ui/icons';
@@ -130,6 +130,21 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     variant={'outlined'}
                     onSelectGroupId={() => { }}
                 />
+            </CardContent>
+            <CardContent>
+                <FormControl component={'fieldset'}>
+                    <FormLabel component={'legend'}>
+                        Gib den Artikel zur Kontrolle frei, um ihn als 'fertig' zu markieren.
+                        Ein Verantwortlicher kann ihn dann sichtbar schalten.
+                    </FormLabel>
+                    <FormControlLabel
+                        value={1}
+                        control={<Switch color={'secondary'} />}
+                        onChange={(_, checked) => onUpdate({ ...article, readyToPublish: checked })}
+                        label={article.readyToPublish ? 'Beitrag wird zur Kontrolle freigegeben' : 'Zur Kontrolle freigeben'}
+                        labelPlacement={'end'}
+                    />
+                </FormControl>
             </CardContent>
             <CardContent>
                 <Button
