@@ -9,7 +9,6 @@ import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAnce
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { height } from '@material-ui/system';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
