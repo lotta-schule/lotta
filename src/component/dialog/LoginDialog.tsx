@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog, FormControlLabel, Checkbox } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog } from '@material-ui/core';
 import { UserModel } from '../../model';
 import { Mutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
@@ -18,12 +18,8 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
 }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isNewUser, setIsNewUser] = useState(false);
-    const [passwordRepetition, setPasswordRepetition] = useState('');
-    const [name, setName] = useState('');
     const resetForm = () => {
         setPassword('');
-        setPasswordRepetition('');
         setEmail('');
     }
     return (
@@ -51,13 +47,9 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                         <Dialog open={isOpen} fullWidth>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
-                                if (isNewUser) {
-                                    register({ variables: { email, name, password } });
-                                } else {
-                                    login({ variables: { username: email, password } });
-                                }
+                                login({ variables: { username: email, password } });
                             }}>
-                                <DialogTitle>Beim Medienportal anmelden</DialogTitle>
+                                <DialogTitle>Auf der Website anmelden</DialogTitle>
                                 <DialogContent>
                                     <DialogContentText>
                                         Melde dich hier mit deinen Zugangsdaten an.
@@ -88,38 +80,6 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                                         type="password"
                                         fullWidth
                                     />
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox checked={isNewUser} onChange={(e, checked) => setIsNewUser(checked)} value={'register'} />
-                                        }
-                                        label="Ich möchte ein neues Benutzerkonto anlegen"
-                                    />
-                                    {isNewUser && (
-                                        <>
-                                            <TextField
-                                                margin="dense"
-                                                id="password_repetition"
-                                                value={passwordRepetition}
-                                                onChange={e => setPasswordRepetition(e.target.value)}
-                                                disabled={isLoading}
-                                                label="Passwort wiederholen:"
-                                                placeholder={'Passwort'}
-                                                type="password"
-                                                fullWidth
-                                            />
-                                            <TextField
-                                                margin="dense"
-                                                id="name"
-                                                value={name}
-                                                onChange={e => setName(e.target.value)}
-                                                disabled={isLoading}
-                                                label="Name:"
-                                                placeholder={'Benutzername'}
-                                                type="text"
-                                                fullWidth
-                                            />
-                                        </>
-                                    )}
                                 </DialogContent>
                                 <DialogActions>
                                     <Button
@@ -137,7 +97,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                                         disabled={isLoading}
                                         variant="contained"
                                         color="secondary">
-                                        {isNewUser ? 'Registrieren' : 'Anmelden'}
+                                        Anmelden
                                     </Button>
                                 </DialogActions>
                             </form>
