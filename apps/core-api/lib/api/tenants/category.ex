@@ -8,9 +8,10 @@ defmodule Api.Tenants.Category do
     field :title, :string
     field :sort_key, :integer
     field :redirect, :string
+    field :hide_articles_from_homepage, :boolean
 
-    belongs_to :banner_image_file, File
-    belongs_to :group, UserGroup
+    belongs_to :banner_image_file, File, on_replace: :nilify
+    belongs_to :group, UserGroup, on_replace: :nilify
     belongs_to :category, Api.Tenants.Category
     belongs_to :tenant, Tenant
 
@@ -21,7 +22,7 @@ defmodule Api.Tenants.Category do
   def changeset(category, attrs) do
     category
     |> Api.Repo.preload([:banner_image_file, :group])
-    |> cast(attrs, [:title, :redirect, :sort_key])
+    |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :sort_key])
     |> validate_required([:title])
     |> put_assoc_banner_image_file(attrs)
     |> put_assoc_group(attrs)

@@ -138,6 +138,7 @@ defmodule ApiWeb.Schema do
     field :sort_key, :integer
     field :banner_image_file, :file
     field :redirect, :string
+    field :hide_articles_from_homepage, :boolean
     field :group, :user_group
   end
   
