@@ -20,7 +20,7 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
   
-  def all_unpublished(%{category_id: category_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def all_unpublished(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     if User.is_admin?(current_user, tenant) do
       {:ok, Content.list_unpublished_articles(tenant)}
     else
