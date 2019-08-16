@@ -82,7 +82,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
     const styles = useStyles();
 
     const currentCategoryId = useCurrentCategoryId();
-    const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || '');
+    const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || 0);
 
     const dispatch = useDispatch();
 

@@ -3,9 +3,10 @@ import { useCategories } from 'util/categories/useCategories';
 import { CategoryModel } from 'model';
 import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@material-ui/core';
 import { find } from 'lodash';
+import { ID } from 'model/ID';
 
 export interface CategorySelectProps {
-    selectedCategoryId?: string;
+    selectedCategoryId?: ID;
     onSelectCategory(category?: CategoryModel): void;
 }
 

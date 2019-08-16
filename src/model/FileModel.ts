@@ -1,3 +1,5 @@
+import { ID } from './ID';
+
 export enum FileModelType {
     Image = 'IMAGE',
     Video = 'VIDEO',
@@ -7,7 +9,7 @@ export enum FileModelType {
 }
 
 export interface FileModel {
-    id: string;
+    id: ID;
     insertedAt: string;
     updatedAt: string;
     path: string;

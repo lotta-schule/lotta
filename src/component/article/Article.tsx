@@ -38,7 +38,7 @@ export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditM
                 });
             }
         }}>
-            <Droppable droppableId={article.id}>
+            <Droppable droppableId={String(article.id)}>
                 {provided => (
                     <section {...provided.droppableProps} ref={provided.innerRef}>
                         {article.contentModules.sort((cm1, cm2) => cm1.sortKey - cm2.sortKey).map((contentModule, index) => (

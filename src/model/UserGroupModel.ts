@@ -1,7 +1,8 @@
-import { ClientModel } from "./ClientModel";
+import { ClientModel } from './ClientModel';
+import { ID } from './ID';
 
 export interface UserGroupModel {
-    id: string;
+    id: ID;
     createdAt: string;
     updatedAt: string;
     name: string;

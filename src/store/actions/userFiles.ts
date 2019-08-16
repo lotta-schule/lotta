@@ -1,5 +1,6 @@
 import { ActionCreator, Action } from 'redux';
 import { FileModel, UploadModel } from '../../model';
+import { ID } from 'model/ID';
 
 // Action Types
 
@@ -17,7 +18,7 @@ export type AddFileAction = Action<UserFilesActionType.ADD_FILE> & { file: FileM
 
 export type SetFilesAction = Action<UserFilesActionType.SET_FILES> & { files: FileModel[] };
 
-export type DeleteFileAction = Action<UserFilesActionType.DELETE_FILE> & { id: string };
+export type DeleteFileAction = Action<UserFilesActionType.DELETE_FILE> & { id: ID };
 
 export type SetUploadsAction = Action<UserFilesActionType.SET_UPLOADS> & { uploads: UploadModel[] };
 
@@ -33,7 +34,7 @@ export const createSetFilesAction: ActionCreator<SetFilesAction> = (files: FileM
     type: UserFilesActionType.SET_FILES
 });
 
-export const createDeleteFileAction: ActionCreator<DeleteFileAction> = (id: string) => ({
+export const createDeleteFileAction: ActionCreator<DeleteFileAction> = (id: ID) => ({
     id,
     type: UserFilesActionType.DELETE_FILE
 });

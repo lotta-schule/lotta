@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { useApolloClient } from 'react-apollo';
 import { createUpdateCategoryAction } from 'store/actions/client';
+import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -51,7 +52,7 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
     const dispatch = useDispatch();
     const apolloClient = useApolloClient();
     const mutateCategory = useCallback(async (updatedCategory: Partial<CategoryModel>): Promise<void> => {
-        const result = await apolloClient.mutate<{ category: CategoryModel }, { id: string; category: Partial<CategoryModel>; }>({
+        const result = await apolloClient.mutate<{ category: CategoryModel }, { id: ID; category: Partial<CategoryModel>; }>({
             mutation: UpdateCategoryMutation,
             variables: {
                 id: updatedCategory.id!,

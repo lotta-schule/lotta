@@ -1,4 +1,3 @@
-import uuid from 'uuid/v1';
 import { client } from './client';
 import { UploadModel, FileModel } from '../model';
 import { UploadFileMutation } from './mutation/UploadFile';
@@ -8,7 +7,7 @@ export class UploadService implements UploadModel {
 
     public uploadProgress: number;
 
-    public id = uuid();
+    public id = new Date().getTime() + Math.random() * 1000;
 
     protected file: File;
 

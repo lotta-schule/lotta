@@ -9,9 +9,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { State } from 'store/State';
 import { createAddArticlesAction, createAddFetchQueryKeyAction } from 'store/actions/content';
 import { EmptyLoadingLayout } from 'component/layouts/EmptyLoadingLayout';
+import { ID } from 'model/ID';
 
 export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const categoryId = match.params.id;
+    const categoryId = Number(match.params.id);
     const category = useCategory(categoryId);
     const dispatch = useDispatch();
     const fetchQueryKey = `category_${categoryId}_articles`;
@@ -30,7 +31,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
         );
     } else {
         return (
-            <Query<{ articles: ArticleModel[] }, { categoryId: string }> query={GetArticlesQuery} variables={{ categoryId }}>
+            <Query<{ articles: ArticleModel[] }, { categoryId: ID }> query={GetArticlesQuery} variables={{ categoryId }}>
                 {({ data, loading: isLoading, error }) => {
                     if (!data || isLoading) {
                         return <EmptyLoadingLayout />;

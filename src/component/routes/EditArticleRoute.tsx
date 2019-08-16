@@ -11,13 +11,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { client as apolloClient } from '../../api/client';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import React, { memo } from 'react';
+import { ID } from 'model/ID';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const id = match.params.id;
+    const id = Number(match.params.id);
     const article = useSelector<State, ArticleModel | undefined>(state => find(state.content.articles, { id }));
     const dispatch = useDispatch();
     const onUpdateArticle = async (article: ArticleModel) => {
-        const { data: { article: updatedArticle } } = await apolloClient.mutate<ArticleModel, { id: string, article: ArticleModelInput }>({
+        const { data: { article: updatedArticle } } = await apolloClient.mutate<ArticleModel, { id: ID, article: ArticleModelInput }>({
             mutation: UpdateArticleMutation,
             variables: {
                 id: article.id,
@@ -37,7 +38,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
         );
     }
     return (
-        <Query<{ article: ArticleModel }, { id: string }> query={GetArticleQuery} variables={{ id }}>
+        <Query<{ article: ArticleModel }, { id: ID }> query={GetArticleQuery} variables={{ id }}>
             {({ data, loading: isLoading, error }) => {
                 if (!data || isLoading) {
                     return <div><CircularProgress /></div>;

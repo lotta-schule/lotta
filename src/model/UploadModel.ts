@@ -1,5 +1,7 @@
+import { ID } from './ID';
+
 export interface UploadModel {
-    id: string;
+    id: ID;
     path: string;
     filename: string;
     uploadProgress: number;

@@ -1,4 +1,5 @@
-import { FileModel } from "./FileModel";
+import { FileModel } from './FileModel';
+import { ID } from './ID';
 
 export enum ContentModuleType {
     TITLE = 'TITLE',
@@ -9,7 +10,7 @@ export enum ContentModuleType {
 }
 
 export interface ContentModuleModel<T = any> {
-    id: string;
+    id: ID;
     type: ContentModuleType;
     sortKey: number;
     text?: string;

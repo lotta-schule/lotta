@@ -3,7 +3,6 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, Butto
 import { FileModel, FileModelType } from 'model';
 import { useDispatch } from 'react-redux';
 import { createAddFileAction } from 'store/actions/userFiles';
-import uuid from 'uuid/v1';
 
 export interface CreateNewFolderDialogProps {
     basePath?: string;
@@ -52,7 +51,7 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                         setErrorMessage(null);
                         try {
                             const tmpFile: FileModel = {
-                                id: uuid(),
+                                id: new Date().getTime() + Math.random() * 1000,
                                 fileType: FileModelType.Misc,
                                 filename: '.lotta-keep',
                                 filesize: 0,
