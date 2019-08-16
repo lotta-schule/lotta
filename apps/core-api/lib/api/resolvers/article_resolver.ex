@@ -47,7 +47,7 @@ defmodule Api.ArticleResolver do
 
   def create(%{article: article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     article_input
-    |> Map.put(:user_id, current_user.id)
+    |> Map.put(:users, [Map.put(current_user, :id, Integer.to_string(current_user.id))])
     |> Map.put(:tenant_id, tenant.id)
     |> Content.create_article
   end

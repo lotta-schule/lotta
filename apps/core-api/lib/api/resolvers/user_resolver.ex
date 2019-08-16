@@ -43,15 +43,22 @@ defmodule Api.UserResolver do
     end
   end
 
-  def register(%{user: user_params}, %{context: %{context: %{tenant: tenant}}}) do
+  def register(%{user: user_params, group_key: group_key}, %{context: %{context: %{tenant: tenant}}}) do
     with {:ok, user} <- Accounts.register_user(user_params |> Map.put(:tenant_id, tenant.id)),
-        {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{
-          email: user.email,
-          nickname: user.nickname,
-          name: user.name,
-          class: user.class
-        }) do
-      {:ok, %{user: user, token: jwt}}
+      {:ok, user} <- (case group_key do
+        # TODO: Remove as fast as possible. Is just very shitty workaround
+        "LEb0815Hp!1969" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Lehrer"))
+        "Seb034hP2?019" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Schüler"))
+        _ -> {:ok, user}
+      end),
+      {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{
+        email: user.email,
+        nickname: user.nickname,
+        name: user.name,
+        class: user.class,
+        # groups: user.groups
+      }) do
+        {:ok, %{user: user, token: jwt}}
     end
   end
   
@@ -61,7 +68,8 @@ defmodule Api.UserResolver do
           email: user.email,
           nickname: user.nickname,
           name: user.name,
-          class: user.class
+          class: user.class,
+          # groups: user.groups
         }) do
       {:ok, %{user: user, token: jwt}}
     end

@@ -26,7 +26,7 @@ defmodule Api.Content do
 
   """
   def list_articles(tenant_id) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and !is_nil(a.category_id))
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id))
   end
   
   @doc """
