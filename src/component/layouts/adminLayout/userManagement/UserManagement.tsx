@@ -16,6 +16,7 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SearchUserField } from './SearchUserField';
 import { UserAvatar } from 'component/user/UserAvatar';
 import classNames from 'classnames';
+import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -56,7 +57,7 @@ export const UserManagement = memo(() => {
     const currentUser = useCurrentUser();
 
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
-    const [expandedGroupId, setExpandedGroupId] = useState<string | null>(null);
+    const [expandedGroupId, setExpandedGroupId] = useState<ID | null>(null);
     const { data, loading, refetch } = useQuery<{ users: UserModel[] }>(GetUsersQuery);
 
     const styles = useStyles();

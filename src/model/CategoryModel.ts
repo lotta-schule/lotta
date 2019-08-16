@@ -1,8 +1,9 @@
 import { FileModel } from './FileModel';
 import { UserGroupModel } from './UserGroupModel';
+import { ID } from './ID';
 
 export interface CategoryModel {
-    id: string;
+    id: ID;
     title: string;
     sortKey: number;
     redirect?: string;

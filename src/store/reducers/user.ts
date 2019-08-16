@@ -34,7 +34,7 @@ export const userReducer = (s: UserState = initialUserState, action: UserActions
             set(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME, action.token, {
                 domain: process.env.REACT_APP_APP_BASE_DOMAIN
             });
-            Matomo.default().setUserId(action.user.id);
+            Matomo.default().setUserId(String(action.user.id));
             return {
                 user: action.user
             };

@@ -1,7 +1,8 @@
-import { UserGroupModel } from "./UserGroupModel";
+import { UserGroupModel } from './UserGroupModel';
+import { ID } from './ID';
 
 export interface UserModel {
-    id: string;
+    id: ID;
     name: string;
     nickname: string;
     email: string;

@@ -12,6 +12,7 @@ import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@ma
 import { DragHandle, Delete, Settings } from '@material-ui/icons';
 import { includes } from 'lodash';
 import classNames from 'classnames';
+import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -60,8 +61,8 @@ interface ContentModuleProps {
 export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
 
     const styles = useStyles();
-    const [showConfigModeContentModuleId, setShowConfigModeContentModuleId] = useState<string | null>(null);
-    const toggleConfigMode = useCallback((id: string) => {
+    const [showConfigModeContentModuleId, setShowConfigModeContentModuleId] = useState<ID | null>(null);
+    const toggleConfigMode = useCallback((id: ID) => {
         if (showConfigModeContentModuleId === id) {
             setShowConfigModeContentModuleId(null);
         } else {
@@ -150,7 +151,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
 
     return isEditModeEnabled ?
         (
-            <Draggable draggableId={contentModule.id} index={index}>
+            <Draggable draggableId={String(contentModule.id)} index={index}>
                 {card}
             </Draggable>
         ) : (

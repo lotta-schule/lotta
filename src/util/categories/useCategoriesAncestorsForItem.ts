@@ -1,16 +1,17 @@
 import { CategoryModel } from 'model';
 import { useCategories } from './useCategories';
 import { find } from 'lodash';
+import { ID } from 'model/ID';
 
-export const useCategoriesAncestorsForItem = (categoryId: string): string[] => {
+export const useCategoriesAncestorsForItem = (categoryId: ID): ID[] => {
     const categories = useCategories();
-    let categoriesHierarchy: string[] = [];
+    let categoriesHierarchy: ID[] = [];
     let lastFoundCategory: CategoryModel | null = null;
     for (let i = 0; i < 5; i++) { // max 5 levels
         const currentLevelCategoryId = (lastFoundCategory ?
             (lastFoundCategory.category && lastFoundCategory.category.id) :
             categoryId
-        ) as string | undefined;
+        ) as ID | undefined;
         if (!currentLevelCategoryId) {
             break;
         }

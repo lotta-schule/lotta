@@ -2,9 +2,10 @@ import { CategoryModel } from './CategoryModel';
 import { ContentModuleModel, ContentModuleInput } from './ContentModuleModel';
 import { UserModel } from './UserModel';
 import { FileModel } from './FileModel';
+import { ID } from './ID';
 
 export interface ArticleModel {
-    id: string;
+    id: ID;
     insertedAt: string;
     updatedAt: string;
     title: string;

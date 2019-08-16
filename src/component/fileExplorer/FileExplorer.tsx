@@ -96,7 +96,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ style,
       .map(path => path.split('/')[0])
   )
     .map(path => ({
-      id: path,
+      id: (new Date().getTime() + Math.random() * 1000 + Math.random() * 1000),
       fileType: FileModelType.Directory,
       filename: path,
       filesize: 0,

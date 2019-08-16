@@ -28,10 +28,10 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
             <Typography style={{ marginBottom: '1em' }}>Füge ein Modul zum Beitrag hinzu, indem du darauf klickst.</Typography>
             <Grid
                 container
-                direction="row"
-                justify="center"
+                direction={'row'}
+                justify={'center'}
                 color={'primary'}
-                alignItems="center"
+                alignItems={'center'}
                 spacing={3}
             >
                 <Grid item xs={2}>
@@ -40,7 +40,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<FormatAlignLeft />}
                         onClick={() => {
                             onAddModule({
-                                id: `temp-${new Date().getTime().toString()}`,
+                                id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.TEXT,
                                 text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } })),
@@ -55,7 +55,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<TextFormat />}
                         onClick={() => {
                             onAddModule({
-                                id: `temp-${new Date().getTime().toString()}`,
+                                id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.TITLE,
                                 text: 'Titel',
@@ -70,7 +70,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<AddPhotoAlternate />}
                         onClick={() => {
                             onAddModule({
-                                id: `temp-${new Date().getTime().toString()}`,
+                                id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.IMAGE,
                                 text: undefined,
@@ -85,7 +85,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<MovieCreation />}
                         onClick={() => {
                             onAddModule({
-                                id: `temp-${new Date().getTime().toString()}`,
+                                id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.VIDEO,
                                 text: undefined,
@@ -100,7 +100,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<Audiotrack />}
                         onClick={() => {
                             onAddModule({
-                                id: `temp-${new Date().getTime().toString()}`,
+                                id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.AUDIO,
                                 text: undefined,
@@ -112,4 +112,5 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
             </Grid>
         </div>
     );
+
 });

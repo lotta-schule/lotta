@@ -6,6 +6,7 @@ import { useCategories } from 'util/categories/useCategories';
 import { MoreVert } from '@material-ui/icons';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { findIndex } from 'lodash';
+import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) => {
     return ({
@@ -33,7 +34,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
 
     const categories = useCategories();
 
-    const [expandedMainCategoryId, setExpandedMainCategoryId] = useState<string | null>(null);
+    const [expandedMainCategoryId, setExpandedMainCategoryId] = useState<ID | null>(null);
 
     const mainCategories = useMemo(() => categories.filter(category => !Boolean(category.category)), [categories]);
 
@@ -56,8 +57,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                         return;
                     }
 
-                    const initialCategoriesArray = destination.droppableId === 'root' ? mainCategories : getSubcategoriesForCategory({ id: destination.droppableId });
-                    const sourceIndex = findIndex(initialCategoriesArray, { id: draggableId })
+                    const initialCategoriesArray = destination.droppableId === 'root' ? mainCategories : getSubcategoriesForCategory({ id: Number(destination.droppableId) });
+                    const sourceIndex = findIndex(initialCategoriesArray, { id: Number(draggableId) })
                     const newCategoriesArray = [...initialCategoriesArray];
                     newCategoriesArray.splice(sourceIndex, 1);
                     newCategoriesArray.splice(destination.index, 0, initialCategoriesArray[sourceIndex]);
@@ -81,7 +82,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                     {({ droppableProps, innerRef, placeholder }) => (
                         <div {...droppableProps} ref={innerRef} style={{ paddingBottom: '5em' }}>
                             {mainCategories.map((category, index) => (
-                                <Draggable key={category.id} draggableId={category.id} index={index}>
+                                <Draggable key={category.id} draggableId={String(category.id)} index={index}>
                                     {({ innerRef, dragHandleProps, draggableProps }) => (
                                         <ExpansionPanel
                                             expanded={Boolean(expandedMainCategoryId && expandedMainCategoryId === category.id)}
@@ -109,12 +110,12 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                                 </Typography>
                                             </ExpansionPanelSummary>
                                             <ExpansionPanelDetails>
-                                                <Droppable droppableId={category.id}>
+                                                <Droppable droppableId={String(category.id)}>
                                                     {({ droppableProps, innerRef, placeholder }) => (
                                                         <List component="nav" innerRef={innerRef} {...droppableProps}>
                                                             {
                                                                 getSubcategoriesForCategory(category).map(subcategory => (
-                                                                    <Draggable key={subcategory.id} draggableId={subcategory.id} index={index}>
+                                                                    <Draggable key={subcategory.id} draggableId={String(subcategory.id)} index={index}>
                                                                         {({ innerRef, dragHandleProps, draggableProps }) => (
                                                                             <ListItem
                                                                                 className={'expansionSummary'}

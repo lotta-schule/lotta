@@ -11,6 +11,7 @@ import { GetUserQuery } from 'api/query/GetUserQuery';
 import { useLazyQuery, useMutation } from '@apollo/react-hooks';
 import { find } from 'lodash';
 import { AssignUserToGroupMutation } from 'api/mutation/AssignUserToGroupMutation';
+import { ID } from 'model/ID';
 
 export interface AddUserToGroupDialogProps {
     user: UserModel;
@@ -20,9 +21,9 @@ export interface AddUserToGroupDialogProps {
 
 export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> = memo(({ user, onConfirm, onAbort }) => {
     const userGroups = useUserGroups();
-    const [selectedGroupId, setSelectedGroupId] = useState<string | null | undefined>(undefined);
-    const [loadUser, { data, loading, error }] = useLazyQuery<{ user: UserModel }, { id: string }>(GetUserQuery, { fetchPolicy: 'no-cache' });
-    const [assignUser, { data: assignUserData, loading: assignUserLoading, error: assignUserError }] = useMutation<{ user: UserModel }, { id: string, groupId: string }>(AssignUserToGroupMutation);
+    const [selectedGroupId, setSelectedGroupId] = useState<ID | null | undefined>(undefined);
+    const [loadUser, { data, loading, error }] = useLazyQuery<{ user: UserModel }, { id: ID }>(GetUserQuery, { fetchPolicy: 'no-cache' });
+    const [assignUser, { data: assignUserData, loading: assignUserLoading, error: assignUserError }] = useMutation<{ user: UserModel }, { id: ID, groupId: ID }>(AssignUserToGroupMutation);
 
     const onSubmitForm = useCallback((e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -91,7 +92,7 @@ export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> 
                             <Select
                                 value={selectedGroupId || undefined}
                                 onChange={({ target }) => {
-                                    setSelectedGroupId(target.value as string);
+                                    setSelectedGroupId(target.value as ID);
                                 }}
                                 input={<Input name="group-id" id="group-id-placeholder" />}
                                 fullWidth
