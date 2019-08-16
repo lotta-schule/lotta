@@ -29,7 +29,7 @@ defmodule Api.Content.ContentModule do
   end
 
   defp put_assoc_files(content_module, %{ files: files }) do
-    files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, String.to_integer(file.id)) end)
+    files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, file.id) end)
     content_module
     |> put_assoc(:files, files)
   end
