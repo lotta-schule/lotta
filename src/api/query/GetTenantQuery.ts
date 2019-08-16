@@ -10,7 +10,7 @@ export const GetTenantQuery = gql`
                 id
                 title
                 sortKey
-                redirect
+                hideArticlesFromHomepage
                 bannerImageFile {
                     id
                     remoteLocation
@@ -23,6 +23,7 @@ export const GetTenantQuery = gql`
                 category {
                     id
                     title
+                    hideArticlesFromHomepage
                 }
             }
             groups {
