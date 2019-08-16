@@ -7,6 +7,7 @@ export interface CategoryModel {
     title: string;
     sortKey: number;
     redirect?: string;
+    hideArticlesFromHomepage?: boolean;
     group?: UserGroupModel;
     bannerImageFile?: FileModel;
     category?: CategoryModel;

@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
 import {
-    Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button
+    Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
 } from '@material-ui/core';
 import { CategoryModel } from 'model';
 import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
@@ -10,6 +10,9 @@ import Img from 'react-cloudimage-responsive';
 import { useUserGroups } from 'util/client/useUserGroups';
 import { find } from 'lodash';
 import { useCategories } from 'util/categories/useCategories';
+import { useMutation } from 'react-apollo';
+import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
+import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -23,11 +26,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface CategoryEditorProps {
     selectedCategory: CategoryModel | null;
-    mutateCategory(updatedCategory: Partial<CategoryModel>): Promise<void>;
 }
 
 
-export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, mutateCategory }) => {
+export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) => {
 
     const styles = useStyles();
 
@@ -35,25 +37,26 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, mut
     const categories = useCategories();
 
     const [category, setCategory] = useState<CategoryModel | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+
+    const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation);
 
     const updateCategory = useCallback(async () => {
         if (!selectedCategory || !category) {
             return null;
         }
-        setIsLoading(true);
-        try {
-            await mutateCategory({
+        mutateCategory({
+            variables: {
                 id: selectedCategory.id,
-                sortKey: selectedCategory.sortKey,
-                title: category.title,
-                bannerImageFile: category.bannerImageFile,
-                group: category.group,
-                redirect: category.redirect
-            });
-        } finally {
-            setIsLoading(false);
-        }
+                category: {
+                    sortKey: selectedCategory.sortKey,
+                    title: category.title,
+                    bannerImageFile: category.bannerImageFile,
+                    group: category.group,
+                    redirect: category.redirect,
+                    hideArticlesFromHomepage: category.hideArticlesFromHomepage || false
+                }
+            }
+        });
     }, [category, mutateCategory, selectedCategory]);
 
     useEffect(() => {
@@ -75,6 +78,9 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, mut
             <Typography variant="h5">
                 {selectedCategory ? selectedCategory.title : category && category.title}
             </Typography>
+            {error && (
+                <div style={{ color: 'red' }}>{error.message}</div>
+            )}
             <TextField
                 className={styles.input}
                 fullWidth
@@ -100,6 +106,19 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, mut
                     <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
                 ) : (<PlaceholderImage width={'100%'} height={75} />)}
             </SelectFileOverlay>
+
+            <FormControl className={styles.input}>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={category.hideArticlesFromHomepage}
+                            onChange={(_, checked) => setCategory({ ...category, hideArticlesFromHomepage: checked })}
+                            value={'hideArticlesFromHomepage'}
+                        />
+                    }
+                    label={'Beiträge dieser Kategorie auf der Startseite verstecken'}
+                />
+            </FormControl>
 
             <FormControl className={styles.input}>
                 <InputLabel htmlFor={'category-redirect'}>Zu einer anderen Kategorie weiterleiten ...</InputLabel>

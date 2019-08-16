@@ -1,12 +1,11 @@
 import gql from 'graphql-tag';
 
-export const UpdateCategoryMutation = gql`
-    mutation UpdateCategory($id: ID!, $category: CategoryInput) {
-        category: updateCategory(id: $id, category: $category) {
+export const GetCategoriesQuery = gql`
+    query categories {
+        categories {
             id
             title
             sortKey
-            redirect
             hideArticlesFromHomepage
             bannerImageFile {
                 id
@@ -20,6 +19,7 @@ export const UpdateCategoryMutation = gql`
             category {
                 id
                 title
+                hideArticlesFromHomepage
             }
         }
     }

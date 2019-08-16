@@ -38,6 +38,7 @@ export const GetOwnArticlesQuery = gql`
             category {
                 id
                 title
+                hideArticlesFromHomepage
             }
             users {
                 id

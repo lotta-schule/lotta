@@ -7,6 +7,8 @@ import { MoreVert } from '@material-ui/icons';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { findIndex } from 'lodash';
 import { ID } from 'model/ID';
+import { useMutation } from 'react-apollo';
+import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 
 const useStyles = makeStyles((theme: Theme) => {
     return ({
@@ -26,10 +28,9 @@ const useStyles = makeStyles((theme: Theme) => {
 export interface CategoryNavigationProps {
     selectedCategory: CategoryModel | null;
     onSelectCategory(categoryModel: CategoryModel): void;
-    mutateCategory(updatedCategory: Partial<CategoryModel>): Promise<void>;
 }
 
-export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCategory, onSelectCategory, mutateCategory }) => {
+export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCategory, onSelectCategory }) => {
     const styles = useStyles();
 
     const categories = useCategories();
@@ -42,13 +43,15 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
         return categories.filter(c => c.category && c.category.id === category.id);
     }, [categories]);
 
+    const [mutateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation);
+
     return (
         <>
             <Typography variant="h5" className={styles.heading}>
                 Kategorienübersicht
             </Typography>
             <DragDropContext
-                onDragEnd={({ destination, source, reason, draggableId }) => {
+                onDragEnd={({ destination, source, draggableId }) => {
                     if (!destination) {
                         return;
                     }
@@ -62,20 +65,23 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                     const newCategoriesArray = [...initialCategoriesArray];
                     newCategoriesArray.splice(sourceIndex, 1);
                     newCategoriesArray.splice(destination.index, 0, initialCategoriesArray[sourceIndex]);
-                    console.log(newCategoriesArray);
-                    Promise.all(newCategoriesArray.map((category, index) => {
-                        if (!category) {
-                            return Promise.resolve();
+                    newCategoriesArray.forEach((category, index) => {
+                        if (category) {
+                            mutateCategory({
+                                variables: {
+                                    id: category.id,
+                                    category: {
+                                        sortKey: index * 10 + 10,
+                                        title: category.title,
+                                        bannerImageFile: category.bannerImageFile,
+                                        group: category.group,
+                                        redirect: category.redirect,
+                                        hideArticlesFromHomepage: category.hideArticlesFromHomepage
+                                    }
+                                }
+                            });
                         }
-                        return mutateCategory({
-                            id: category.id,
-                            sortKey: index * 10 + 10,
-                            title: category.title,
-                            bannerImageFile: category.bannerImageFile,
-                            group: category.group,
-                            redirect: category.redirect
-                        });
-                    }));
+                    });
                 }}
             >
                 <Droppable droppableId={'root'}>
