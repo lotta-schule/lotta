@@ -7,6 +7,7 @@ defmodule Api.Content.Article do
     field :preview, :string
     field :topic, :string
     field :ready_to_publish, :boolean
+    field :is_pinned_to_top, :boolean
     
     belongs_to :tenant, Api.Tenants.Tenant
     belongs_to :category, Api.Tenants.Category, on_replace: :nilify

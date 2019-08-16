@@ -56,4 +56,12 @@ defmodule Api.ArticleResolver do
     Content.get_article!(id)
     |> Content.update_article(article_input)
   end
+
+  def toggle_pin(%{id: article_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+    if User.is_admin?(current_user, tenant) do
+      Content.toggle_article_pin(article_id)
+    else
+      {:error, "Nur Administratoren dürfen Beiträge anpinnen."}
+    end
+  end
 end
