@@ -67,7 +67,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 <TextField
                     label="Vorschautext"
                     placeholder="Füge hier einen kurzen Vorschautext ein"
-                    value={article.preview}
+                    value={article.preview || ''}
                     onChange={e => onUpdate({ ...article, preview: e.target.value })}
                     fullWidth
                     variant="outlined"
@@ -120,7 +120,7 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                 />
                 <ul>
                     {article.users.map(user => (
-                        <li>{user.nickname}</li>
+                        <li key={user.nickname}>{user.nickname}</li>
                     ))}
                 </ul>
             </CardContent>

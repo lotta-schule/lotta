@@ -16,7 +16,7 @@ import classNames from 'classnames';
 import useRouter from 'use-react-router';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery, useApolloClient } from '@apollo/react-hooks';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -49,7 +49,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const currentUser = useCurrentUser();
     const { history } = useRouter();
     const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
-
+    const apolloClient = useApolloClient();
 
     const dispatch = useDispatch();
     const onLogin = useCallback((user: UserModel, token: string) => {
@@ -59,7 +59,8 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const onLogout = useCallback(() => {
         dispatch(createLogoutAction());
         dispatch(createCloseDrawerAction());
-    }, [dispatch]);
+        apolloClient.clearStore();
+    }, [apolloClient, dispatch]);
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
@@ -99,11 +100,11 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                             }
                             {currentUser && (
                                 <li><Link component={CollisionLink} to={'/profile'}>
-                                    {profileBadgeNumber && (
+                                    {profileBadgeNumber && profileBadgeNumber > 0 ? (
                                         <Badge classes={{ badge: styles.badge }} badgeContent={profileBadgeNumber} color="secondary">
                                             Mein Profil
-                                            </Badge>
-                                    )}
+                                        </Badge>
+                                    ) : <span>Mein Profil</span>}
                                 </Link></li>
                             )}
                             {User.isAdmin(currentUser) && (
@@ -128,7 +129,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                 onAbort={() => setCreateArticleModalIsOpen(false)}
                 onConfirm={article => {
                     dispatch(createAddArticleAction(article));
-                    history.push(`/article/${article.id}`);
+                    history.push(`/article/${article.id}/edit`);
                 }}
             />
             <LoginDialog
@@ -145,6 +146,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                 onLogin={(user, token) => {
                     setRegisterModalIsOpen(false);
                     onLogin(user, token);
+                    history.push('/profile');
                 }}
             />
         </>
