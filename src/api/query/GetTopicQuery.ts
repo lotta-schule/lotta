@@ -10,6 +10,7 @@ export const GetTopicQuery = gql`
             preview
             topic
             readyToPublish
+            isPinnedToTop
             previewImageFile {
                 id
                 remoteLocation

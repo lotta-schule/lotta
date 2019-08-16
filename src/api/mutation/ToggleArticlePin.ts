@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const GetUnpublishedArticlesQuery = gql`
-    query GetUnpublishedArticles {
-        articles: unpublishedArticles {
+export const ToggleArticlePinMutation = gql`
+    mutation ToggleArticlePin($id: ID!) {
+        article: toggleArticlePin(id: $id) {
             id
             insertedAt
             updatedAt
