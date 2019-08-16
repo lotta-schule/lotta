@@ -10,6 +10,7 @@ export const CreateArticleMutation = gql`
             preview
             topic
             readyToPublish
+            isPinnedToTop
             previewImageFile {
                 id
                 remoteLocation

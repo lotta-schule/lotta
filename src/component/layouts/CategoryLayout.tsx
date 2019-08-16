@@ -64,9 +64,19 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
                         </Grid>
                     </Grid>
                 )}
-                {articles && articles.sort((a1, a2) => parseISO(a2.insertedAt).getTime() - parseISO(a1.insertedAt).getTime()).map(article => (
-                    <ArticlePreview key={article.id} article={article} />
-                ))}
+                {articles && (
+                    articles
+                        .sort((a1, a2) => {
+                            if (a1.isPinnedToTop !== a2.isPinnedToTop) {
+                                if (a1.isPinnedToTop) { return -1; }
+                                if (a2.isPinnedToTop) { return 1; }
+                            }
+                            return parseISO(a2.insertedAt).getTime() - parseISO(a1.insertedAt).getTime();
+                        })
+                        .map(article => (
+                            <ArticlePreview key={article.id} article={article} />
+                        ))
+                )}
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <VPlan />

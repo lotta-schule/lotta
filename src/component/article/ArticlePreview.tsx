@@ -1,15 +1,18 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ArticleModel } from '../../model';
 import { Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
 import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
-import { Edit } from '@material-ui/icons';
+import { Edit, Place } from '@material-ui/icons';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
 import { theme } from 'theme';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
+import { useMutation } from 'react-apollo';
+import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
+import { ID } from 'model/ID';
 
 const useStyle = makeStyles((theme: Theme) => ({
     root: {
@@ -29,6 +32,14 @@ const useStyle = makeStyles((theme: Theme) => ({
         color: '#ccc',
         background: 'transparent',
         transition: 'opacity ease-in 250ms',
+    },
+    pinButton: {
+        float: 'right',
+        color: '#fff',
+        marginRight: '1em',
+        '&.active': {
+            color: '#333'
+        }
     },
     articlePreviewImage: {
         width: '100%',
@@ -52,13 +63,18 @@ interface ArticlePreviewProps {
     article: ArticleModel;
     disableLink?: boolean;
     disableEdit?: boolean;
+    disablePin?: boolean;
 }
 
-export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ article, disableLink, disableEdit }) => {
+export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin }) => {
 
     const currentUser = useCurrentUser();
 
     const styles = useStyle();
+
+    const [toggleArticlePin] = useMutation<{ article: ArticleModel }, { id: ID }>(ToggleArticlePinMutation, {
+        variables: { id: article.id }
+    });
 
     return (
         <Card className={styles.root}>
@@ -97,6 +113,16 @@ export const ArticlePreview: FunctionComponent<ArticlePreviewProps> = memo(({ ar
                                     to={`/article/${article.id}/edit`}
                                 >
                                     <Edit />
+                                </Fab>
+                            )}
+                            {!disablePin && User.isAdmin(currentUser) && (
+                                <Fab
+                                    aria-label="Pin"
+                                    size="small"
+                                    className={classNames(styles.pinButton, { active: article.isPinnedToTop })}
+                                    onClick={() => toggleArticlePin()}
+                                >
+                                    <Place />
                                 </Fab>
                             )}
                         </Typography>

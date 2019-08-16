@@ -11,6 +11,7 @@ export interface ArticleModel {
     title: string;
     preview?: string;
     readyToPublish: boolean;
+    isPinnedToTop: boolean;
     topic?: string;
     previewImageFile?: FileModel;
     contentModules: ContentModuleModel[];

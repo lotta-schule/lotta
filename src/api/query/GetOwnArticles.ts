@@ -10,6 +10,7 @@ export const GetOwnArticlesQuery = gql`
             preview
             topic
             readyToPublish
+            isPinnedToTop
             previewImageFile {
                 id
                 remoteLocation
