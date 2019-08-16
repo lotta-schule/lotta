@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const GetUnpublishedArticlesQuery = gql`
     query GetUnpublishedArticles {
-        articles: ownArticles {
+        articles: unpublishedArticles {
             id
             insertedAt
             updatedAt
