@@ -29,7 +29,7 @@ defmodule Api.Tenants.Category do
 
   defp put_assoc_banner_image_file(article, %{ banner_image_file: %{ id: banner_image_file_id } }) do
     article
-    |> put_assoc(:banner_image_file, Api.Repo.get(Api.Accounts.File, String.to_integer(banner_image_file_id)))
+    |> put_assoc(:banner_image_file, Api.Repo.get(Api.Accounts.File, banner_image_file_id))
   end
   defp put_assoc_banner_image_file(article, _args) do
     article
@@ -38,7 +38,7 @@ defmodule Api.Tenants.Category do
   
   defp put_assoc_group(article, %{ group: %{ id: group_id } }) do
     article
-    |> put_assoc(:group, Api.Repo.get(Api.Accounts.UserGroup, String.to_integer(group_id)))
+    |> put_assoc(:group, Api.Repo.get(Api.Accounts.UserGroup, group_id))
   end
   defp put_assoc_group(article, _args) do
     article

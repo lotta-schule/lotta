@@ -36,14 +36,14 @@ defmodule Api.Content.Article do
   end
 
   defp put_assoc_users(article, %{ users: users }) do
-    users = Enum.map(users, fn user -> Api.Repo.get!(Api.Accounts.User, String.to_integer(user.id)) end)
+    users = Enum.map(users, fn user -> Api.Repo.get!(Api.Accounts.User, user.id) end)
     article
     |> put_assoc(:users, users)
   end
 
   defp put_assoc_category(article, %{ category: %{ id: category_id } }) do
     article
-    |> put_assoc(:category, Api.Repo.get(Api.Tenants.Category, String.to_integer(category_id)))
+    |> put_assoc(:category, Api.Repo.get(Api.Tenants.Category, category_id))
   end
   defp put_assoc_category(article, _args) do
     article
@@ -52,7 +52,7 @@ defmodule Api.Content.Article do
 
   defp put_assoc_preview_image_file(article, %{ preview_image_file: %{ id: preview_image_file_id } }) do
     article
-    |> put_assoc(:preview_image_file, Api.Repo.get(Api.Accounts.File, String.to_integer(preview_image_file_id)))
+    |> put_assoc(:preview_image_file, Api.Repo.get(Api.Accounts.File, preview_image_file_id))
   end
   defp put_assoc_preview_image_file(article, _args) do
     article
