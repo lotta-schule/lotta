@@ -61,6 +61,7 @@ defmodule ApiWeb.Schema do
   mutation do
     field :register, type: :authresult do
       arg :user, non_null(:update_user_params)
+      arg :group_key, :string
 
       resolve &Api.UserResolver.register/2
     end

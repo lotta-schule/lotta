@@ -20,7 +20,7 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
   
-  def all_unpublished(%{category_id: category_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def all_unpublished(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     if User.is_admin?(current_user, tenant) do
       {:ok, Content.list_unpublished_articles(tenant)}
     else
@@ -47,7 +47,7 @@ defmodule Api.ArticleResolver do
 
   def create(%{article: article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     article_input
-    |> Map.put(:user_id, current_user.id)
+    |> Map.put(:users, [Map.put(current_user, :id, Integer.to_string(current_user.id))])
     |> Map.put(:tenant_id, tenant.id)
     |> Content.create_article
   end
