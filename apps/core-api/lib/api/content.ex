@@ -264,4 +264,11 @@ defmodule Api.Content do
   def change_content_module(%ContentModule{} = content_module) do
     ContentModule.changeset(content_module, %{})
   end
+
+  def toggle_article_pin(article_id) do
+    article = Repo.get(Article, article_id)
+    article
+    |> Ecto.Changeset.cast(%{ is_pinned_to_top: !article.is_pinned_to_top }, [:is_pinned_to_top])
+    |> Repo.update()
+  end
 end

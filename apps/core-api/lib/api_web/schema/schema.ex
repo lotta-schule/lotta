@@ -98,6 +98,12 @@ defmodule ApiWeb.Schema do
   
       resolve &Api.ArticleResolver.update/2
     end
+
+    field :toggle_article_pin, type: :article do
+      arg :id, non_null(:id)
+
+      resolve &Api.ArticleResolver.toggle_pin/2
+    end
     
     field :update_category, type: :category do
       arg :id, non_null(:id)
