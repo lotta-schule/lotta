@@ -3,6 +3,7 @@ import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, T
 import { ArticleModel, ArticleModelInput } from '../../model';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
 import { client } from 'api/client';
+import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 
 export interface CreateArticleDialogProps {
     isOpen: boolean;
@@ -37,6 +38,17 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                             }
                         }
                     });
+                    const ownArticles = await client.readQuery<{ articles: ArticleModel[] }>({
+                        query: GetOwnArticlesQuery
+                    });
+                    if (data && ownArticles && ownArticles.articles !== undefined) {
+                        await client.writeQuery<{ articles: ArticleModel[] }>({
+                            query: GetOwnArticlesQuery,
+                            data: {
+                                articles: ownArticles.articles.concat([data.article])
+                            }
+                        });
+                    }
                     resetForm();
                     onConfirm(data.article);
                 } catch (e) {
@@ -49,7 +61,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                 <DialogTitle>Artikel Erstellen</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Gib zunächst Kategorie und Titel an.
+                        Wähle zunächst einen Titel für deinen Beitrag
                     </DialogContentText>
                     {errorMessage && (
                         <p style={{ color: 'red' }}>{errorMessage}</p>

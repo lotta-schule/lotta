@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog, Divider, Typography, Grid } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog, Typography, Grid } from '@material-ui/core';
 import { UserModel } from '../../model';
 import { Mutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
@@ -17,10 +17,13 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     onLogin,
     onAbort
 }) => {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordRepetition, setPasswordRepetition] = useState('');
-    const [name, setName] = useState('');
+    const [groupKey, setGroupKey] = useState('');
+    const [formError, setFormError] = useState<string | null>(null);
     const resetForm = () => {
         setPassword('');
         setPasswordRepetition('');
@@ -36,7 +39,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                 onLogin(loginData.login.user, loginData.login.token);
             }
             return (
-                <Mutation<{ register: { user: UserModel, token: string } }, { email: string, name: string, password: string }>
+                <Mutation<{ register: { user: UserModel, token: string } }, { email: string, name: string, password: string, groupKey?: string }>
                     mutation={RegisterMutation}
                     fetchPolicy={'no-cache'}
                 >{(register, { data: registerData, error: registerError, loading: isRegisterLoading }) => {
@@ -51,13 +54,21 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         <Dialog open={isOpen} fullWidth>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
-                                register({ variables: { email, name, password } });
+                                setFormError(null);
+                                if (password !== passwordRepetition) {
+                                    setFormError('Password und wiederholtes Passwort stimmen nicht überein');
+                                } else {
+                                    register({ variables: { email, name: `${firstName} ${lastName}`, password, groupKey } });
+                                }
                             }}>
                                 <DialogTitle>Auf der Website registrieren.</DialogTitle>
                                 <DialogContent>
                                     <DialogContentText>
                                         Gib hier deine Daten <b>korrekt</b> an, um dich als Nutzer zu registrieren.
                                     </DialogContentText>
+                                    {formError && (
+                                        <p style={{ color: 'red' }}>{formError}</p>
+                                    )}
                                     {error && (
                                         <p style={{ color: 'red' }}>{error.message}</p>
                                     )}
@@ -72,6 +83,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                         placeholder="beispiel@medienportal.org"
                                         type="email"
                                         fullWidth
+                                        required
                                     />
                                     <TextField
                                         margin="dense"
@@ -82,6 +94,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                         label="Dein Passwort:"
                                         placeholder={'Passwort'}
                                         type="password"
+                                        required
                                         fullWidth
                                     />
                                     <TextField
@@ -94,33 +107,36 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                         placeholder={'Passwort'}
                                         type="password"
                                         fullWidth
+                                        required
                                         style={{ marginBottom: theme.spacing(3) }}
                                     />
                                     <Grid container style={{ display: 'flex' }}>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
                                                 margin="dense"
-                                                id="name"
-                                                value={name}
-                                                onChange={e => setName(e.target.value)}
+                                                id="first_name"
+                                                value={firstName}
+                                                onChange={e => setFirstName(e.target.value)}
                                                 disabled={isLoading}
                                                 label="Vorname"
                                                 placeholder={'Maxi'}
                                                 type="text"
                                                 fullWidth
+                                                required
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <TextField
                                                 margin="dense"
-                                                id="name"
-                                                value={name}
-                                                onChange={e => setName(e.target.value)}
+                                                id="last_name"
+                                                value={lastName}
+                                                onChange={e => setLastName(e.target.value)}
                                                 disabled={isLoading}
                                                 label="Nachname"
                                                 placeholder={'Muster'}
                                                 type="text"
                                                 fullWidth
+                                                required
                                             />
                                         </Grid>
                                     </Grid>
@@ -136,6 +152,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                         disabled={isLoading}
                                         label="Anmeldeschlüssel:"
                                         placeholder={'acb123?!*'}
+                                        onChange={e => setGroupKey(e.target.value)}
                                         type="text"
                                         fullWidth
                                         variant="outlined"

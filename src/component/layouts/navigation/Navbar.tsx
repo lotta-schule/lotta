@@ -124,12 +124,11 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                                     {category.title}
                                 </Button>
                             ))}
-                            <Button className={styles.placeholder}>
-                            </Button>
+                            <Button className={styles.placeholder}>{''}</Button>
                         </Toolbar>
                     </AppBar>
                 </Grid>
-                <Grid item xs={2} sm={1} alignItems={'center'} className={styles.mobileBurgerMenuButton}>
+                <Grid item xs={2} sm={1} className={styles.mobileBurgerMenuButton}>
                     <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
                         <Menu style={{ color: '#fff' }} />
                     </IconButton>
