@@ -3,6 +3,7 @@ defmodule ApiWeb.Schema.Types do
   use Absinthe.Schema.Notation
 
   import_types ApiWeb.Schema.Types.JSON
+  import_types ApiWeb.Schema.Types.LottaId
   import_types Absinthe.Type.Custom
   
   object :authresult do
@@ -11,7 +12,7 @@ defmodule ApiWeb.Schema.Types do
   end
 
   object :user do
-    field :id, :id
+    field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :name, :string
@@ -23,7 +24,7 @@ defmodule ApiWeb.Schema.Types do
   end
 
   object :user_group do
-    field :id, :id
+    field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :name, :string
@@ -33,7 +34,7 @@ defmodule ApiWeb.Schema.Types do
   end
 
   object :tenant do
-    field :id, :id
+    field :id, :lotta_id
     field :title, :string
     field :slug, :string
     field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
@@ -41,7 +42,7 @@ defmodule ApiWeb.Schema.Types do
   end
 
   object :category do
-    field :id, :id
+    field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :title, :string
@@ -55,7 +56,7 @@ defmodule ApiWeb.Schema.Types do
   end
 
   object :article do
-    field :id, :id
+    field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :title, :string
@@ -70,7 +71,7 @@ defmodule ApiWeb.Schema.Types do
   end
 
   object :content_module do
-    field :id, :id
+    field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :type, :content_module_type
@@ -90,7 +91,7 @@ defmodule ApiWeb.Schema.Types do
   end
 
   object :file do
-    field :id, :id
+    field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :filename, :string
@@ -99,12 +100,12 @@ defmodule ApiWeb.Schema.Types do
     field :path, :string
     field :remote_location, :string
     field :file_type, :file_type
-    field :user_id, :id
+    field :user_id, :lotta_id
     field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end
 
   object :file_conversion do
-    field :id, :id
+    field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :format, :string

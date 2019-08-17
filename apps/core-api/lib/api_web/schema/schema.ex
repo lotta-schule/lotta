@@ -17,12 +17,12 @@ defmodule ApiWeb.Schema do
     end
 
     field :article, :article do
-      arg :id, non_null(:id)
+      arg :id, non_null(:lotta_id)
       resolve &Api.ArticleResolver.get/2
     end
 
     field :articles, list_of(:article) do
-      arg :category_id, :id
+      arg :category_id, :lotta_id
       resolve &Api.ArticleResolver.all/2
     end
 
@@ -49,7 +49,7 @@ defmodule ApiWeb.Schema do
     end
 
     field :user, type: :user do
-      arg :id, :id
+      arg :id, :lotta_id
       resolve &Api.UserResolver.get/2
     end
 
@@ -74,15 +74,15 @@ defmodule ApiWeb.Schema do
     end
 
     field :update_user, type: :user do
-      arg :id, non_null(:id)
+      arg :id, non_null(:lotta_id)
       arg :user, non_null(:update_user_params)
 
       resolve &Api.UserResolver.update/2
     end
 
     field :assign_user_to_group, type: :user do
-      arg :id, non_null(:id)
-      arg :group_id, non_null(:id)
+      arg :id, non_null(:lotta_id)
+      arg :group_id, non_null(:lotta_id)
       resolve &Api.UserResolver.assign_user/2
     end
     
@@ -93,20 +93,20 @@ defmodule ApiWeb.Schema do
     end
     
     field :update_article, type: :article do
-      arg :id, non_null(:id)
+      arg :id, non_null(:lotta_id)
       arg :article, non_null(:article_input)
   
       resolve &Api.ArticleResolver.update/2
     end
 
     field :toggle_article_pin, type: :article do
-      arg :id, non_null(:id)
+      arg :id, non_null(:lotta_id)
 
       resolve &Api.ArticleResolver.toggle_pin/2
     end
     
     field :update_category, type: :category do
-      arg :id, non_null(:id)
+      arg :id, non_null(:lotta_id)
       arg :category, non_null(:category_input)
   
       resolve &Api.CategoryResolver.update/2
