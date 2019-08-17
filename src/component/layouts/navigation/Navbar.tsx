@@ -106,7 +106,7 @@ export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
                                 to={'/'}
                                 variant="text"
                                 size={'medium'}
-                                className={styles.navButton}
+                                className={classNames(styles.navButton, { selected: currentCategoryId === null })}
                                 color='inherit'
                             >
                                 Startseite
