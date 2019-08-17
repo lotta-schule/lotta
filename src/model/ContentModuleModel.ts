@@ -7,6 +7,7 @@ export enum ContentModuleType {
     IMAGE = 'IMAGE',
     VIDEO = 'VIDEO',
     AUDIO = 'AUDIO',
+    DOWNLOAD = 'DOWNLOAD',
 }
 
 export interface ContentModuleModel<T = any> {

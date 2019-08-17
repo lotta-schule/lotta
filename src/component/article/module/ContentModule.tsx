@@ -7,6 +7,7 @@ import { Image } from './image/Image';
 import { Config as ImageConfig } from './image/Config';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
+import { Download } from './download/Download';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@material-ui/core';
 import { DragHandle, Delete, Settings } from '@material-ui/icons';
@@ -145,6 +146,9 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
             )}
             {contentModule.type === ContentModuleType.AUDIO && (
                 <Audio contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+            )}
+            {contentModule.type === ContentModuleType.DOWNLOAD && (
+                <Download contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
             )}
         </Card>
     );
