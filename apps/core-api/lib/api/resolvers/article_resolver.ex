@@ -14,7 +14,7 @@ defmodule Api.ArticleResolver do
     {:ok, Content.list_articles(tenant.id, category_id)}
   end
   def all(_args, %{context: %{context: %{tenant: tenant}}}) do
-    {:ok, Content.list_articles(tenant.id)}
+    {:ok, Content.list_articles(tenant.id, nil)}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden."}
