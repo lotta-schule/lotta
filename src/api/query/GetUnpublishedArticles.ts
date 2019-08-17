@@ -16,6 +16,8 @@ export const GetUnpublishedArticlesQuery = gql`
                 remoteLocation
                 mimeType
                 fileType
+                filename
+                filesize
             }
             contentModules {
                 id
@@ -28,6 +30,8 @@ export const GetUnpublishedArticlesQuery = gql`
                     remoteLocation
                     mimeType
                     fileType
+                    filename
+                    filesize
                     fileConversions {
                         id
                         format

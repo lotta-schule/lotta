@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Theme, Typography, Grid } from "@material-ui/core";
-import { TextFormat, FormatAlignLeft, AddPhotoAlternate, Audiotrack, MovieCreation } from '@material-ui/icons';
+import { TextFormat, FormatAlignLeft, AddPhotoAlternate, Audiotrack, MovieCreation, FileCopyOutlined } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType } from "model";
 import { AddModuleButton } from "./AddModuleButton";
 import { Value } from 'slate';
@@ -104,6 +104,21 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 sortKey: null!,
                                 type: ContentModuleType.AUDIO,
                                 text: undefined,
+                                files: [],
+                            });
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={2}>
+                    <AddModuleButton
+                        label={'Dateien'}
+                        icon={<FileCopyOutlined />}
+                        onClick={() => {
+                            onAddModule({
+                                id: new Date().getTime() + Math.random() * 1000,
+                                sortKey: null!,
+                                type: ContentModuleType.DOWNLOAD,
+                                text: '[]',
                                 files: [],
                             });
                         }}

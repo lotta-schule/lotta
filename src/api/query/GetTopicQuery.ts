@@ -16,6 +16,8 @@ export const GetTopicQuery = gql`
                 remoteLocation
                 mimeType
                 fileType
+                filename
+                filesize
             }
             category {
                 id

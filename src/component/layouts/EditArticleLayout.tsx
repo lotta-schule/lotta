@@ -7,6 +7,7 @@ import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import useReactRouter from 'use-react-router';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { omit } from 'lodash';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
@@ -52,7 +53,7 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                     onSave={async () => {
                         if (onUpdateArticle) {
                             await onUpdateArticle({
-                                ...editedArticle,
+                                ...omit(editedArticle, ['isPinnedToTop']) as ArticleModel,
                                 contentModules: editedArticle.contentModules.map(cm => ({
                                     ...cm,
                                     configuration: JSON.stringify(cm.configuration || {})

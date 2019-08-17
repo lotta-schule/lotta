@@ -16,6 +16,8 @@ export const UpdateArticleMutation = gql`
                 remoteLocation
                 mimeType
                 fileType
+                filename
+                filesize
             }
             contentModules {
                 id

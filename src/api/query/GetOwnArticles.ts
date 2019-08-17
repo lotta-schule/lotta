@@ -28,6 +28,8 @@ export const GetOwnArticlesQuery = gql`
                     remoteLocation
                     mimeType
                     fileType
+                    filename
+                    filesize
                     fileConversions {
                         id
                         format
