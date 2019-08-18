@@ -2,14 +2,17 @@ defmodule Api.CategoryResolver do
   alias Api.Tenants.Category
   alias Api.Accounts.User
 
+  def all(_args, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+    {:ok, Api.Tenants.list_categories_by_tenant(tenant.id, current_user)}
+  end
   def all(_args, %{context: %{context: %{tenant: tenant}}}) do
-    {:ok, Api.Tenants.list_categories_by_tenant(tenant.id)}
+    {:ok, Api.Tenants.list_categories_by_tenant(tenant.id, nil)}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden"}
   end
 
-  def find(%{id: id}, %{context: %{context: %{tenant: tenant}}}) do
+  def find(%{id: id}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
     {:ok, Api.Tenants.Category.find_by([id: id, tenant_id: tenant.id])}
   end
   def find(_args, _info) do
