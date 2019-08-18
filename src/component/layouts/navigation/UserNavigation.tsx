@@ -9,14 +9,13 @@ import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useDispatch } from 'react-redux';
 import { User } from 'util/model';
-import { ArticleModel, UserModel } from '../../../model';
+import { ArticleModel } from '../../../model';
 import classNames from 'classnames';
 import useRouter from 'use-react-router';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
-import { useLazyQuery, useQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 import { useOnLogout } from 'util/user/useOnLogout';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -40,6 +39,7 @@ const useStyles = makeStyles(theme => ({
     badge: {
         top: '45%',
         right: 80,
+        zIndex: 0,
     }
 }));
 

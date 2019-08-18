@@ -1,4 +1,4 @@
-import React, { memo, FunctionComponent, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { ArticleModel } from '../../../model';
 import { Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel, Switch } from '@material-ui/core';
 import { CategorySelect } from './CategorySelect';

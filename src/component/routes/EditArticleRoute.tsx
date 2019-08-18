@@ -1,14 +1,10 @@
 import { ArticleModel, ArticleModelInput } from 'model';
 import { CircularProgress } from '@material-ui/core';
-import { createUpdateArticleAction, createAddArticleAction } from 'store/actions/content';
 import { EditArticleLayout } from 'component/layouts/EditArticleLayout';
-import { find, omit } from 'lodash';
+import { omit } from 'lodash';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
-import { Query, useQuery, useMutation } from 'react-apollo';
+import { useQuery, useMutation } from 'react-apollo';
 import { RouteComponentProps } from 'react-router-dom';
-import { State } from 'store/State';
-import { useSelector, useDispatch } from 'react-redux';
-import { client as apolloClient } from '../../api/client';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import React, { memo } from 'react';
 import { ID } from 'model/ID';
