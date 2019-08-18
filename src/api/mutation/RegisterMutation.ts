@@ -12,6 +12,9 @@ export const RegisterMutation = gql`
                 nickname
                 email
                 class
+                avatarImageFile {
+                    remoteLocation
+                }
                 groups {
                     id
                     name

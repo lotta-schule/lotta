@@ -1,5 +1,6 @@
 import { UserGroupModel } from './UserGroupModel';
 import { ID } from './ID';
+import { FileModel } from 'model';
 
 export interface UserModel {
     id: ID;
@@ -7,7 +8,7 @@ export interface UserModel {
     nickname: string;
     email: string;
     groups: UserGroupModel[];
-    avatar?: string;
+    avatarImageFile?: FileModel;
     class?: string;
     phone?: string;
 }

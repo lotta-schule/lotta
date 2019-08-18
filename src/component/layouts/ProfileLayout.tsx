@@ -1,19 +1,20 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
-import { ArticleModel } from 'model';
+import { ArticleModel, FileModelType, UserModel } from 'model';
 import { ArticlesManagement } from 'component/profile/ArticlesManagement';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { Card, CardContent, Typography, TextField, Button, Fab } from '@material-ui/core';
-import { CurrentUserAvatar } from 'component/user/UserAvatar';
+import { Card, CardContent, Typography, TextField, Button, Fab, Avatar } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { FileExplorer } from 'component/fileExplorer/FileExplorer';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
+import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { Grid } from '@material-ui/core';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks';
 import { User } from 'util/model';
 import useRouter from 'use-react-router';
-import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 
 export const ProfileLayout: FunctionComponent = memo(() => {
     const [currentUser] = useCurrentUser();
@@ -22,9 +23,11 @@ export const ProfileLayout: FunctionComponent = memo(() => {
     const [email, setEmail] = useState(currentUser && currentUser.email);
     const [name, setName] = useState(currentUser && User.getNickname(currentUser));
     const [nickname, setNickname] = useState(currentUser && currentUser.nickname);
+    const [avatarImageFile, setAvatarImageFile] = useState(currentUser && currentUser.avatarImageFile);
 
     const { data: ownArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
     const [loadUnpublishedArticles, { data: unpublishedArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery);
+    const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation);
 
     useEffect(() => {
         if (!currentUser) {
@@ -43,12 +46,19 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                 <Card>
                     <CardContent>
                         <Typography variant={'h4'}>Meine Daten</Typography>
+                        {error && (
+                            <div style={{ color: 'red' }}>{error.message}</div>
+                        )}
                         <Grid container>
                             <Grid item md={4} style={{ marginTop: '1em' }}>
-                                <CurrentUserAvatar style={{ float: 'left' }} />
-                                <Fab color="secondary" aria-label="Edit" size="small">
-                                    <Edit />
-                                </Fab>
+                                <Avatar src={avatarImageFile ? avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(currentUser)} alt={User.getNickname(currentUser)} />
+                                <SelectFileButton
+                                    buttonComponent={Fab}
+                                    buttonComponentProps={{ color: 'secondary', size: 'small', disabled: isLoading }}
+                                    label={<Edit />}
+                                    fileFilter={f => f.fileType === FileModelType.Image}
+                                    onSelectFile={setAvatarImageFile}
+                                />
                             </Grid>
                             <Grid item md={8}>
                                 <TextField
@@ -60,6 +70,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     value={name}
                                     onChange={e => setName(e.target.value)}
                                     type="name"
+                                    disabled={isLoading}
                                     fullWidth
                                 />
                                 <TextField
@@ -71,6 +82,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     onChange={e => setNickname(e.target.value)}
                                     placeholder="El Professore"
                                     type="nickname"
+                                    disabled={isLoading}
                                     fullWidth
                                 />
                                 <TextField
@@ -82,14 +94,25 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     onChange={e => setEmail(e.target.value)}
                                     placeholder="beispiel@medienportal.org"
                                     type="email"
+                                    disabled={isLoading}
                                     fullWidth
                                 />
                                 <Button
                                     type={'submit'}
-                                    disabled={false}
                                     color="secondary"
                                     variant="contained"
                                     style={{ float: 'right' }}
+                                    disabled={isLoading}
+                                    onClick={() => updateProfile({
+                                        variables: {
+                                            user: {
+                                                name,
+                                                nickname,
+                                                email,
+                                                avatarImageFile
+                                            }
+                                        }
+                                    })}
                                 >
                                     Speichern
                                 </Button>
