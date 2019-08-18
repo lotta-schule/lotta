@@ -1,7 +1,7 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { Grid, makeStyles, Container, CardMedia } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
-import { CategoryModel, ClientModel } from '../../model';
+import { ClientModel } from '../../model';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
@@ -24,12 +24,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 
-export const BaseLayout: FunctionComponent = memo(({ children }) => {
+export const BaseLayout = memo(({ children }) => {
     usePiwikAnalytics();
     const styles = useStyles();
     const isMobile = useIsMobile();
     const client = useSelector<State, ClientModel>(state => state.client.client!);
-    const categories = useSelector<State, CategoryModel[]>(state => state.client.categories);
     return (
         <Container>
             <header className={styles.header}>
@@ -45,7 +44,7 @@ export const BaseLayout: FunctionComponent = memo(({ children }) => {
                     </Grid>
                 </Grid>
             </header>
-            <Navbar categories={categories} />
+            <Navbar />
             <main className={styles.main}>
                 <Grid container justify={'flex-start'} direction={isMobile ? 'column-reverse' : 'row'}>
                     {children}

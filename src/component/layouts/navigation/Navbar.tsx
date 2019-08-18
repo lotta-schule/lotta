@@ -1,6 +1,5 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { AppBar, Toolbar, Button, Theme, Grid, IconButton } from '@material-ui/core';
-import { CategoryModel } from '../../../model';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { createOpenDrawerAction } from 'store/actions/layout';
 import { makeStyles } from '@material-ui/styles';
@@ -9,6 +8,7 @@ import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAnce
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import { useCategories } from 'util/categories/useCategories';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -73,13 +73,11 @@ const useStyles = makeStyles<Theme>(theme => ({
     }
 }));
 
-export interface NavbarProps {
-    categories?: CategoryModel[];
-}
-
-export const Navbar: FunctionComponent<NavbarProps> = memo(({ categories }) => {
+export const Navbar = memo(() => {
 
     const styles = useStyles();
+
+    const categories = useCategories();
 
     const currentCategoryId = useCurrentCategoryId();
     const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || 0);

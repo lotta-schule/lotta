@@ -6,26 +6,6 @@ export const GetTenantQuery = gql`
             id
             title
             slug
-            categories {
-                id
-                title
-                sortKey
-                hideArticlesFromHomepage
-                bannerImageFile {
-                    id
-                    remoteLocation
-                }
-                group {
-                    id
-                    priority
-                    name
-                }
-                category {
-                    id
-                    title
-                    hideArticlesFromHomepage
-                }
-            }
             groups {
                 id
                 name
