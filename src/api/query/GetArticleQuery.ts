@@ -46,6 +46,7 @@ export const GetArticleQuery = gql`
             users {
                 id
                 nickname
+                name
             }
         }
     }

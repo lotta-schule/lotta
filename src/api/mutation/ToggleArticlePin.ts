@@ -47,6 +47,7 @@ export const ToggleArticlePinMutation = gql`
             users {
                 id
                 nickname
+                name
             }
         }
     }

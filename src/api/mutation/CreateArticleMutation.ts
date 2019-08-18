@@ -32,6 +32,7 @@ export const CreateArticleMutation = gql`
             users {
                 id
                 nickname
+                name
             }
         }
     }

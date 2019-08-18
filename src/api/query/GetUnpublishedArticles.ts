@@ -47,6 +47,7 @@ export const GetUnpublishedArticlesQuery = gql`
             users {
                 id
                 nickname
+                name
             }
         }
     }

@@ -130,7 +130,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                             {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
                             {article.topic && <> | {article.topic}&nbsp;</>}
                             {/* | 18 Views&nbsp; */}
-                            {article.users && <>| Autoren: {article.users.map(a => a.nickname).join(', ')}&nbsp;</>}
+                            {article.users && <> | Autoren: {article.users.map(user => User.getNickname(user)).join(', ')}&nbsp;</>}
                             {/* | Bewertung&nbsp; */}
                         </Typography>
                         <Typography variant={'subtitle1'} color="textSecondary" className={styles.previewtext}>

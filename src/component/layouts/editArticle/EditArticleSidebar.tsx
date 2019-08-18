@@ -127,7 +127,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 />
                 <ul>
                     {article.users.map(user => (
-                        <li key={user.nickname}>{user.nickname}</li>
+                        <li key={user.id}>{User.getNickname(user)}</li>
                     ))}
                 </ul>
             </CardContent>
