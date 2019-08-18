@@ -31,12 +31,10 @@ defmodule Api.Content.Article do
     |> Api.Repo.preload([:tenant, :category, :group, :users, :preview_image_file, :content_modules])
     |> cast(attrs, [:title, :inserted_at])
     |> validate_required([:title])
-    |> put_assoc_users(attrs)
   end
 
   @doc false
   def changeset(article, attrs) do
-    IO.inspect(attrs)
     article
     |> Api.Repo.preload([:tenant, :category, :group, :users, :preview_image_file, :content_modules])
     |> cast(attrs, [:title, :inserted_at, :ready_to_publish, :preview, :topic])
