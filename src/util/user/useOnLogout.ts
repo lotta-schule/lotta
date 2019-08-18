@@ -23,5 +23,6 @@ export const useOnLogout = () => {
         Matomo.default().resetUserId();
         apolloClient.clearStore();
         dispatch(createCloseDrawerAction());
+        window.location.reload();
     }
 };

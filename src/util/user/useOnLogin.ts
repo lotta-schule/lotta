@@ -22,5 +22,6 @@ export const useOnLogin = () => {
                 currentUser: user
             }
         });
+        window.location.reload();
     };
 };

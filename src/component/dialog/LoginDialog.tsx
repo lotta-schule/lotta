@@ -4,6 +4,7 @@ import { UserModel } from '../../model';
 import { useMutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
+import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 
 export interface LoginDialogProps {
     isOpen: boolean;
@@ -17,7 +18,8 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
     const onLogin = useOnLogin();
 
     const [login, { loading: isLoading, error, data }] = useMutation<{ login: { user: UserModel, token: string } }, { username: string, password: string }>(LoginMutation, {
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
+        refetchQueries: [`categories`]
     });
 
     const [email, setEmail] = useState('');
