@@ -17,7 +17,8 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
     const onLogin = useOnLogin();
 
     const [login, { loading: isLoading, error, data }] = useMutation<{ login: { user: UserModel, token: string } }, { username: string, password: string }>(LoginMutation, {
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
+        refetchQueries: [`categories`]
     });
 
     const [email, setEmail] = useState('');
