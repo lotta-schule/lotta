@@ -19,6 +19,7 @@ defmodule ApiWeb.Schema.Types do
     field :class, :string
     field :nickname, :string
     field :email, :string
+    field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
     field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end

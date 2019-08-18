@@ -64,7 +64,7 @@ defmodule ApiWeb.Schema do
 
   mutation do
     field :register, type: :authresult do
-      arg :user, non_null(:update_user_params)
+      arg :user, non_null(:register_user_params)
       arg :group_key, :string
 
       resolve &Api.UserResolver.register/2
@@ -77,11 +77,10 @@ defmodule ApiWeb.Schema do
       resolve &Api.UserResolver.login/2
     end
 
-    field :update_user, type: :user do
-      arg :id, non_null(:lotta_id)
+    field :update_profile, type: :user do
       arg :user, non_null(:update_user_params)
 
-      resolve &Api.UserResolver.update/2
+      resolve &Api.UserResolver.update_profile/2
     end
 
     field :assign_user_to_group, type: :user do
@@ -125,10 +124,17 @@ defmodule ApiWeb.Schema do
 
   end
 
-  input_object :update_user_params do
+  input_object :register_user_params do
     field :name, :string
     field :email, :string
     field :password, :string
+  end
+  
+  input_object :update_user_params do
+    field :name, :string
+    field :email, :string
+    field :nickname, :string
+    field :avatar_image_file, :file
   end
   
   input_object :article_input do

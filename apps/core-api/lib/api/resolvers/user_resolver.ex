@@ -83,8 +83,8 @@ defmodule Api.UserResolver do
     end
   end
 
-  def update(%{id: id, user: user_params}, _info) do
-    Accounts.get_user!(id)
+  def update_profile(%{user: user_params}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+    current_user
     |> Accounts.update_user(user_params)
   end
 end
