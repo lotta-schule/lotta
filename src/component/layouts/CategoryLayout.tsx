@@ -67,7 +67,7 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
                 {articles && (
                     articles
                         .sort((a1, a2) => {
-                            if (a1.isPinnedToTop !== a2.isPinnedToTop) {
+                            if (category && a1.isPinnedToTop !== a2.isPinnedToTop) {
                                 if (a1.isPinnedToTop) { return -1; }
                                 if (a2.isPinnedToTop) { return 1; }
                             }
