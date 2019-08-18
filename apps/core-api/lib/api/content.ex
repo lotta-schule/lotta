@@ -8,6 +8,8 @@ defmodule Api.Content do
   alias Api.Repo
 
   alias Api.Content.Article
+  alias Api.Tenants.Tenant
+  alias Api.Accounts.{User,UserGroup}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -26,8 +28,18 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(tenant_id, nil) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id))
+  def list_articles(tenant_id, nil, user) do
+    # Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id))
+    if is_nil(user) do
+      Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id) and is_nil(a.group_id))
+    else
+      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
+      Ecto.Query.from(a in Article,
+        where: a.tenant_id == ^tenant_id and not is_nil(a.category_id),
+        join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
+        distinct: true)
+      |> Repo.all
+    end
   end
   
   @doc """
@@ -39,8 +51,17 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(tenant_id, category_id) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.category_id == ^category_id)
+  def list_articles(tenant_id, category_id, user) do
+    if is_nil(user) do
+      Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.category_id == ^category_id and is_nil(a.group_id))
+    else
+      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
+      Ecto.Query.from(a in Article,
+        where: a.tenant_id == ^tenant_id and a.category_id == ^category_id,
+        join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
+        distinct: true)
+      |> Repo.all
+    end
   end
 
     
