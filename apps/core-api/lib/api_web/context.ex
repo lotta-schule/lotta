@@ -37,7 +37,7 @@ defmodule ApiWeb.Context do
     with ["slug:" <> slug] <- tenant_header do
       %{tenant: Tenants.get_tenant_by_slug!(slug)}
     else
-      _ -> %{}
+      _ -> Tenants.get_tenant_by_slug!("ehrenberg") # TODO: remove this aweful hard-coded string. Add Domain support
     end
   end
 end
