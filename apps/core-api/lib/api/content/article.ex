@@ -9,7 +9,8 @@ defmodule Api.Content.Article do
     field :ready_to_publish, :boolean
     field :is_pinned_to_top, :boolean
     
-    belongs_to :tenant, Api.Tenants.Tenant
+    belongs_to :tenant, Api.Tenants.Tenant, on_replace: :nilify
+    belongs_to :group, Api.Accounts.UserGroup, on_replace: :nilify
     belongs_to :category, Api.Tenants.Category, on_replace: :nilify
     belongs_to :preview_image_file, Api.Accounts.File, on_replace: :nilify
     
@@ -25,16 +26,28 @@ defmodule Api.Content.Article do
   end
 
   @doc false
-  def changeset(article, attrs) do
+  def create_changeset(article, attrs) do
     article
-    |> Api.Repo.preload([:category, :users, :preview_image_file, :content_modules])
-    |> cast(attrs, [:title, :inserted_at, :ready_to_publish, :preview, :topic, :category_id, :tenant_id])
-    |> validate_required([:title, :tenant_id])
+    |> Api.Repo.preload([:tenant, :category, :group, :users, :preview_image_file, :content_modules])
+    |> cast(attrs, [:title, :inserted_at])
+    |> validate_required([:title])
+    |> put_assoc_users(attrs)
+  end
+
+  @doc false
+  def changeset(article, attrs) do
+    IO.inspect(attrs)
+    article
+    |> Api.Repo.preload([:tenant, :category, :group, :users, :preview_image_file, :content_modules])
+    |> cast(attrs, [:title, :inserted_at, :ready_to_publish, :preview, :topic])
+    |> validate_required([:title])
     |> put_assoc_users(attrs)
     |> put_assoc_category(attrs)
     |> put_assoc_preview_image_file(attrs)
+    |> put_assoc_group(attrs)
     |> cast_assoc(:content_modules, required: false)
   end
+
 
   defp put_assoc_users(article, %{ users: users }) do
     users = Enum.map(users, fn user -> Api.Repo.get!(Api.Accounts.User, user.id) end)
@@ -58,5 +71,14 @@ defmodule Api.Content.Article do
   defp put_assoc_preview_image_file(article, _args) do
     article
     |> put_assoc(:preview_image_file, nil)
+  end
+  
+  defp put_assoc_group(article, %{ group: %{ id: group_id } }) do
+    article
+    |> put_assoc(:group, Api.Repo.get(Api.Accounts.UserGroup, group_id))
+  end
+  defp put_assoc_group(article, _args) do
+    article
+    |> put_assoc(:group, nil)
   end
 end
