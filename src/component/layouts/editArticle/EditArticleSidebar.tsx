@@ -1,18 +1,20 @@
-import React, { memo, FunctionComponent } from 'react';
-import { Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel, Switch } from '@material-ui/core';
+import React, { memo, FunctionComponent, useState } from 'react';
 import { ArticleModel } from '../../../model';
-import classNames from 'classnames';
-import { Save as SaveIcon } from '@material-ui/icons';
+import { Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel, Switch } from '@material-ui/core';
 import { CategorySelect } from './CategorySelect';
-import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
-import Img from 'react-cloudimage-responsive';
-import { GroupSelect } from './GroupSelect';
 import { DateTimePicker } from '@material-ui/pickers';
+import { GroupSelect } from './GroupSelect';
 import { parseISO } from 'date-fns';
-import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
-import { uniqBy } from 'lodash';
-import { theme } from 'theme';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { Save as SaveIcon } from '@material-ui/icons';
+import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
+import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
+import { theme } from 'theme';
+import { uniqBy } from 'lodash';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { User } from 'util/model';
+import classNames from 'classnames';
+import Img from 'react-cloudimage-responsive';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
@@ -37,12 +39,15 @@ const useStyles = makeStyles(theme => ({
 interface EditArticleSidebarProps {
     article: ArticleModel;
     onUpdate(article: ArticleModel): void;
-    onSave(): void;
+    onSave(additionalProps?: Partial<ArticleModel>): void;
 }
 
-export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = memo(({ article, onUpdate, onSave }) => {
+export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUpdate, onSave }) => {
     const styles = useStyles();
+    const [currentUser] = useCurrentUser();
     const { history } = useRouter();
+
+    const [isReadyToPublish, setIsReadyToPublish] = useState(false);
     return (
         <Card className={styles.root}>
             <CardContent>
@@ -88,15 +93,17 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     onChange={date => date && onUpdate({ ...article, insertedAt: date.toISOString() })}
                 />
             </CardContent>
-            <CardContent>
-                <CategorySelect
-                    selectedCategoryId={article.category && article.category.id}
-                    onSelectCategory={category => onUpdate({ ...article, category })}
-                />
-            </CardContent>
+            {User.isAdmin(currentUser) && (
+                <CardContent>
+                    <CategorySelect
+                        selectedCategoryId={article.category && article.category.id}
+                        onSelectCategory={category => onUpdate({ ...article, category })}
+                    />
+                </CardContent>
+            )}
             <CardContent>
                 <TextField
-                    label="Seite"
+                    label="Thema"
                     value={article.topic}
                     onChange={e => onUpdate({ ...article, topic: e.target.value || undefined })}
                     fullWidth
@@ -131,24 +138,26 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     onSelectGroupId={() => { }}
                 />
             </CardContent>
-            <CardContent>
-                <FormControl component={'fieldset'}>
-                    <FormLabel component={'legend'}>
-                        Gib den Artikel zur Kontrolle frei, um ihn als 'fertig' zu markieren.
-                        Ein Verantwortlicher kann ihn dann sichtbar schalten.
+            {!article.readyToPublish && (
+                <CardContent>
+                    <FormControl component={'fieldset'}>
+                        <FormLabel component={'legend'}>
+                            Gib den Artikel zur Kontrolle frei, um ihn als 'fertig' zu markieren.
+                            Ein Verantwortlicher kann ihn dann sichtbar schalten.
                     </FormLabel>
-                    <FormControlLabel
-                        value={1}
-                        control={<Switch color={'secondary'} />}
-                        onChange={(_, checked) => onUpdate({ ...article, readyToPublish: checked })}
-                        label={article.readyToPublish ? 'Beitrag wird zur Kontrolle freigegeben' : 'Zur Kontrolle freigeben'}
-                        labelPlacement={'end'}
-                    />
-                </FormControl>
-            </CardContent>
+                        <FormControlLabel
+                            value={1}
+                            control={<Switch color={'secondary'} />}
+                            onChange={(_, checked) => setIsReadyToPublish(checked)}
+                            label={isReadyToPublish ? 'Beitrag wird zur Kontrolle freigegeben' : 'Zur Kontrolle freigeben'}
+                            labelPlacement={'end'}
+                        />
+                    </FormControl>
+                </CardContent>
+            )}
             <CardContent>
                 <Button
-                    onClick={onSave}
+                    onClick={() => onSave({ readyToPublish: isReadyToPublish })}
                     variant={'outlined'}
                     color={'secondary'}
                     size={'small'}
@@ -166,7 +175,6 @@ export const EditArticleSidebar: FunctionComponent<EditArticleSidebarProps> = me
                     Abbrechen
                 </Button>
             </CardContent>
-        </Card >
+        </Card>
     )
-}
-);
+});

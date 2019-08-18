@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
-    onUpdateArticle?(article: ArticleModel): Promise<void>;
+    onUpdateArticle?(article: ArticleModel): void;
 }
 
 export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
@@ -50,10 +50,11 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                 <EditArticleSidebar
                     article={editedArticle}
                     onUpdate={setEditedArticle}
-                    onSave={async () => {
+                    onSave={async (additionalProps: Partial<ArticleModel> = {}) => {
                         if (onUpdateArticle) {
-                            await onUpdateArticle({
+                            onUpdateArticle({
                                 ...omit(editedArticle, ['isPinnedToTop']) as ArticleModel,
+                                ...additionalProps,
                                 contentModules: editedArticle.contentModules.map(cm => ({
                                     ...cm,
                                     configuration: JSON.stringify(cm.configuration || {})
