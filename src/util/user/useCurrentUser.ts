@@ -1,7 +1,7 @@
-import { useSelector } from 'react-redux';
-import { State } from 'store/State';
 import { UserModel } from 'model';
+import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
+import { useQuery } from '@apollo/react-hooks';
 
-export const useCurrentUser = (): UserModel | null => {
-    return useSelector<State, UserModel | null>(s => s.user.user);
+export const useCurrentUser = () => {
+    return useQuery<{ currentUser: UserModel | null }>(GetCurrentUserQuery);
 }

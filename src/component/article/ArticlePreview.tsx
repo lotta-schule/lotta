@@ -68,7 +68,8 @@ interface ArticlePreviewProps {
 
 export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin }) => {
 
-    const currentUser = useCurrentUser();
+    const { data: currentUserData } = useCurrentUser();
+
 
     const styles = useStyle();
 

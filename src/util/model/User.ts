@@ -19,5 +19,5 @@ export const User = {
 
     canEditArticle(user: UserModel | null | undefined, article: ArticleModel) {
         return User.isAdmin(user) || this.isAuthor(user, article);
-    }
+    },
 };
