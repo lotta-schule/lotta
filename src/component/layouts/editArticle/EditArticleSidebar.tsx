@@ -133,9 +133,9 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
             </CardContent>
             <CardContent>
                 <GroupSelect
-                    selectedGroupId={undefined}
+                    selectedGroup={article.group || null}
                     variant={'outlined'}
-                    onSelectGroupId={() => { }}
+                    onSelectGroup={group => onUpdate({ ...article, group: group || undefined })}
                 />
             </CardContent>
             {!article.readyToPublish && (

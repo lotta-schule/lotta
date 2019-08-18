@@ -8,13 +8,19 @@ import { RouteComponentProps } from 'react-router-dom';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import React, { memo } from 'react';
 import { ID } from 'model/ID';
+import useRouter from 'use-react-router';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
     const id = Number(match.params.id);
 
+    const { history } = useRouter();
     const { data, error, loading: isLoading } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id } });
     const [saveArticle] = useMutation<{ article: ArticleModel }, { id: ID, article: ArticleModelInput }>(UpdateArticleMutation, {
-
+        onCompleted: ({ article }) => {
+            if (article) {
+                history.push(`/article/${article.id}`);
+            }
+        }
     });
 
     if (!data || isLoading) {

@@ -44,6 +44,11 @@ export const UpdateArticleMutation = gql`
                 id
                 title
             }
+            group {
+                id
+                priority
+                name
+            }
             users {
                 id
                 nickname

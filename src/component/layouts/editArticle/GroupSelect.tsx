@@ -1,16 +1,16 @@
 import React, { memo } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@material-ui/core';
 import { useUserGroups } from 'util/client/useUserGroups';
-import { ID } from 'model/ID';
+import { UserGroupModel } from 'model/UserGroupModel';
 
 export interface GroupSelectProps {
-    selectedGroupId?: ID;
+    selectedGroup: UserGroupModel | null;
     className?: string;
     variant?: 'filled' | 'outlined' | 'standard';
-    onSelectGroupId(groupId?: ID): void;
+    onSelectGroup(group: UserGroupModel | null): void;
 }
 
-export const GroupSelect = memo<GroupSelectProps>(({ selectedGroupId, onSelectGroupId, variant, className }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ selectedGroup, onSelectGroup, variant, className }) => {
     const groups = useUserGroups();
     const inputLabel = React.useRef<HTMLLabelElement>(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
@@ -26,8 +26,10 @@ export const GroupSelect = memo<GroupSelectProps>(({ selectedGroupId, onSelectGr
             <Select
                 fullWidth
                 variant={variant}
-                value={selectedGroupId}
-                onChange={({ target: { value } }) => onSelectGroupId(value as ID | undefined)}
+                value={selectedGroup && selectedGroup.id}
+                onChange={({ target: { value } }) => {
+                    onSelectGroup(groups.find(group => group.id === value) || null);
+                }}
                 input={<OutlinedInput labelWidth={labelWidth} name="visibility" id="outlined-visibility-select" />}
             >
                 {groups.map(group => (

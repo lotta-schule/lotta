@@ -43,6 +43,11 @@ export const GetArticleQuery = gql`
                 title
                 hideArticlesFromHomepage
             }
+            group {
+                id
+                priority
+                name
+            }
             users {
                 id
                 nickname
