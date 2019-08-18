@@ -32,7 +32,6 @@ defmodule Api.Accounts.User do
   end
 
   def is_admin?(%User{} = user, %Tenant{} = tenant) do
-    IO.inspect(tenant)
     tenant_id = tenant.id
     user
     |> Repo.preload(:groups)

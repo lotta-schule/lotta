@@ -134,11 +134,12 @@ defmodule ApiWeb.Schema do
   input_object :article_input do
     field :inserted_at, :naive_datetime
     field :title, non_null(:string)
-    field :category, :category
     field :preview, :string
     field :ready_to_publish, :boolean
-    field :preview_image_file, :file
     field :topic, :string
+    field :preview_image_file, :file
+    field :group, :user_group
+    field :category, :category
     field :content_modules, list_of(:content_module_input)
     field :users, list_of(:user)
   end

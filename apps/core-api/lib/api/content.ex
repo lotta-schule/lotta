@@ -119,7 +119,7 @@ defmodule Api.Content do
   """
   def create_article(attrs \\ %{}, tenant, user) do
     %Article{}
-    |> Article.changeset(attrs)
+    |> Article.create_changeset(attrs)
     |> put_assoc(:tenant, tenant)
     |> put_assoc(:users, [user])
     |> Repo.insert()

@@ -61,10 +61,11 @@ defmodule ApiWeb.Schema.Types do
     field :updated_at, :naive_datetime
     field :title, :string
     field :preview, :string
-    field :preview_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :topic, :string
     field :ready_to_publish, :boolean
     field :is_pinned_to_top, :boolean
+    field :preview_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :content_modules, list_of(:content_module), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
     field :users, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
