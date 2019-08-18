@@ -25,7 +25,7 @@ defmodule ApiWeb.Context do
       {:ok, current_user, _claims} = Guardian.resource_from_token(token)
       %{
         current_user: Repo.get(Accounts.User, current_user.id)
-          |> Repo.preload(:groups)
+          |> Repo.preload([:groups, :avatar_image_file])
       }
     else
       _ -> %{}

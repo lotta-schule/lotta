@@ -16,6 +16,7 @@ defmodule Api.Accounts.User do
     field :password_hash, :string
 
     belongs_to :tenant, Api.Tenants.Tenant
+    belongs_to :avatar_image_file, Api.Accounts.File
     has_many :files, Api.Accounts.File
     many_to_many :groups,
       UserGroup,
@@ -52,6 +53,7 @@ defmodule Api.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:name, :class, :email])
+    |> unique_constraint(:email)
     |> validate_required([:name, :email])
   end
 
@@ -66,15 +68,18 @@ defmodule Api.Accounts.User do
 
   def update_changeset(%User{} = user, params \\ %{}) do
     user
-    |> cast(params, [:name, :class, :nickanme, :email], [:password])
+    |> cast(params, [:name, :class, :nickname, :email], [:password])
     |> validate_required([:name, :email])
+    |> unique_constraint(:email)
     |> put_pass_hash()
+    |> put_assoc_avatar_image_file(params)
   end
 
   def registration_changeset(%User{} = user, params \\ %{}) do
     user
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id])
     |> validate_required([:name, :email, :password, :tenant_id])
+    |> unique_constraint(:email)
     |> put_pass_hash()
   end
 
@@ -83,5 +88,14 @@ defmodule Api.Accounts.User do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} -> put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(password))
       _ -> changeset
     end
+  end
+
+  defp put_assoc_avatar_image_file(article, %{ avatar_image_file: %{ id: avatar_image_file_id } }) do
+    article
+    |> put_assoc(:avatar_image_file, Api.Repo.get(Api.Accounts.File, avatar_image_file_id))
+  end
+  defp put_assoc_avatar_image_file(article, _args) do
+    article
+    |> put_assoc(:avatar_image_file, nil)
   end
 end
