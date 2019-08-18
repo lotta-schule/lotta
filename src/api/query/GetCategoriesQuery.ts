@@ -7,6 +7,7 @@ export const GetCategoriesQuery = gql`
             title
             sortKey
             hideArticlesFromHomepage
+            redirect
             bannerImageFile {
                 id
                 remoteLocation
