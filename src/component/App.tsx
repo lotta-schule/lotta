@@ -14,11 +14,13 @@ import { ProfileLayout } from './layouts/ProfileLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export const App = memo(() => {
   const client = useSelector<State, ClientModel | null>(state => state.client.client);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApolloError | null>(null);
+  const [, { called: calledCurrentUser }] = useCurrentUser();
   const dispatch = useDispatch();
   if (!client && !error && !isLoading) {
     apolloClient.query<{ tenant: (ClientModel & { categories: CategoryModel[] }) }>({
@@ -39,7 +41,7 @@ export const App = memo(() => {
       <div><span style={{ color: 'red' }}>{error.message}</span></div>
     );
   }
-  if (isLoading) {
+  if (isLoading || !calledCurrentUser) {
     return (
       <div>
         <CircularProgress />
