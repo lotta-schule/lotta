@@ -10,7 +10,7 @@ import { ClientManagement } from './adminLayout/userManagement/ClientManagement'
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export const AdminLayout: FunctionComponent = memo(() => {
-    const currentUser = useCurrentUser();
+    const [currentUser] = useCurrentUser();
     const { history } = useRouter();
     if (!currentUser) {
         history.replace('/');

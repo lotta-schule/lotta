@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const UserManagement = memo(() => {
     const tenant = useTenant();
     const groups = useUserGroups();
-    const currentUser = useCurrentUser();
+    const [currentUser] = useCurrentUser();
 
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
     const [expandedGroupId, setExpandedGroupId] = useState<ID | null>(null);

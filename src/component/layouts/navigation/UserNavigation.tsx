@@ -51,7 +51,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     // if (data && data.currentUser) {
     //     currentUser = data.currentUser;
     // }
-    const currentUser = useCurrentUser();
+    const [currentUser, { refetch }] = useCurrentUser();
     const { history } = useRouter();
     const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
 
@@ -117,25 +117,29 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                     <Button size="small" variant="contained" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
                         <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                         Neuer Beitrag
-                </Button>
+                    </Button>
+                    <CreateArticleDialog
+                        isOpen={createArticleModalIsOpen}
+                        onAbort={() => setCreateArticleModalIsOpen(false)}
+                        onConfirm={article => {
+                            dispatch(createAddArticleAction(article));
+                            history.push(`/article/${article.id}/edit`);
+                        }}
+                    />
                 </>
             )}
-            <CreateArticleDialog
-                isOpen={createArticleModalIsOpen}
-                onAbort={() => setCreateArticleModalIsOpen(false)}
-                onConfirm={article => {
-                    dispatch(createAddArticleAction(article));
-                    history.push(`/article/${article.id}/edit`);
-                }}
-            />
-            <LoginDialog
-                isOpen={loginModalIsOpen}
-                onRequestClose={() => setLoginModalIsOpen(false)}
-            />
-            <RegisterDialog
-                isOpen={registerModalIsOpen}
-                onRequestClose={() => setRegisterModalIsOpen(false)}
-            />
+            {!currentUser && (
+                <>
+                    <LoginDialog
+                        isOpen={loginModalIsOpen}
+                        onRequestClose={() => { setLoginModalIsOpen(false); refetch(); }}
+                    />
+                    <RegisterDialog
+                        isOpen={registerModalIsOpen}
+                        onRequestClose={() => { setRegisterModalIsOpen(false); refetch(); }}
+                    />
+                </>
+            )}
         </>
     );
 });
