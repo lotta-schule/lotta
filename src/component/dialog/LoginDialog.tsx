@@ -4,7 +4,6 @@ import { UserModel } from '../../model';
 import { useMutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
-import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 
 export interface LoginDialogProps {
     isOpen: boolean;
