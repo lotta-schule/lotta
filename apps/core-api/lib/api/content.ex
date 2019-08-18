@@ -4,6 +4,7 @@ defmodule Api.Content do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Changeset
   alias Api.Repo
 
   alias Api.Content.Article
@@ -116,9 +117,11 @@ defmodule Api.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_article(attrs \\ %{}) do
+  def create_article(attrs \\ %{}, tenant, user) do
     %Article{}
     |> Article.changeset(attrs)
+    |> put_assoc(:tenant, tenant)
+    |> put_assoc(:users, [user])
     |> Repo.insert()
   end
 
