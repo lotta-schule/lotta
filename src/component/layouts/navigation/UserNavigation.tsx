@@ -1,22 +1,22 @@
-import React, { FunctionComponent, memo, useState, useCallback, useEffect } from 'react';
+import React, { FunctionComponent, memo, useState, useEffect } from 'react';
 import { Add as AddCircleIcon, } from '@material-ui/icons';
 import { CollisionLink } from '../../general/CollisionLink';
 import { createAddArticleAction } from 'store/actions/content';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
-import { createCloseDrawerAction } from 'store/actions/layout';
-import { createLoginAction, createLogoutAction } from 'store/actions/user';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useDispatch } from 'react-redux';
 import { User } from 'util/model';
-import { UserModel, ArticleModel } from '../../../model';
+import { ArticleModel, UserModel } from '../../../model';
 import classNames from 'classnames';
 import useRouter from 'use-react-router';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
-import { useLazyQuery, useApolloClient } from '@apollo/react-hooks';
+import { useLazyQuery, useQuery } from '@apollo/react-hooks';
+import { useOnLogout } from 'util/user/useOnLogout';
+import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -46,21 +46,17 @@ const useStyles = makeStyles(theme => ({
 export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const styles = useStyles();
 
-    const currentUser = useCurrentUser();
+    // const { data } = useQuery<{ currentUser: UserModel | null }>(GetCurrentUserQuery);
+    // let currentUser: UserModel | null = null;
+    // if (data && data.currentUser) {
+    //     currentUser = data.currentUser;
+    // }
+    const [currentUser, { refetch }] = useCurrentUser();
     const { history } = useRouter();
     const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
-    const apolloClient = useApolloClient();
 
     const dispatch = useDispatch();
-    const onLogin = useCallback((user: UserModel, token: string) => {
-        dispatch(createLoginAction(user, token))
-        dispatch(createCloseDrawerAction());
-    }, [dispatch]);
-    const onLogout = useCallback(() => {
-        dispatch(createLogoutAction());
-        dispatch(createCloseDrawerAction());
-        apolloClient.clearStore();
-    }, [apolloClient, dispatch]);
+    const onLogout = useOnLogout();
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
@@ -121,34 +117,29 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                     <Button size="small" variant="contained" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
                         <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                         Neuer Beitrag
-                </Button>
+                    </Button>
+                    <CreateArticleDialog
+                        isOpen={createArticleModalIsOpen}
+                        onAbort={() => setCreateArticleModalIsOpen(false)}
+                        onConfirm={article => {
+                            dispatch(createAddArticleAction(article));
+                            history.push(`/article/${article.id}/edit`);
+                        }}
+                    />
                 </>
             )}
-            <CreateArticleDialog
-                isOpen={createArticleModalIsOpen}
-                onAbort={() => setCreateArticleModalIsOpen(false)}
-                onConfirm={article => {
-                    dispatch(createAddArticleAction(article));
-                    history.push(`/article/${article.id}/edit`);
-                }}
-            />
-            <LoginDialog
-                isOpen={loginModalIsOpen}
-                onAbort={() => setLoginModalIsOpen(false)}
-                onLogin={(user, token) => {
-                    setLoginModalIsOpen(false);
-                    onLogin(user, token);
-                }}
-            />
-            <RegisterDialog
-                isOpen={registerModalIsOpen}
-                onAbort={() => setRegisterModalIsOpen(false)}
-                onLogin={(user, token) => {
-                    setRegisterModalIsOpen(false);
-                    onLogin(user, token);
-                    history.push('/profile');
-                }}
-            />
+            {!currentUser && (
+                <>
+                    <LoginDialog
+                        isOpen={loginModalIsOpen}
+                        onRequestClose={() => { setLoginModalIsOpen(false); refetch(); }}
+                    />
+                    <RegisterDialog
+                        isOpen={registerModalIsOpen}
+                        onRequestClose={() => { setRegisterModalIsOpen(false); refetch(); }}
+                    />
+                </>
+            )}
         </>
     );
 });

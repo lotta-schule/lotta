@@ -16,7 +16,7 @@ import useRouter from 'use-react-router';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 
 export const ProfileLayout: FunctionComponent = memo(() => {
-    const currentUser = useCurrentUser();
+    const [currentUser] = useCurrentUser();
     const { history } = useRouter();
 
     const [email, setEmail] = useState(currentUser && currentUser.email);
@@ -27,14 +27,15 @@ export const ProfileLayout: FunctionComponent = memo(() => {
     const [loadUnpublishedArticles, { data: unpublishedArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery);
 
     useEffect(() => {
-        if (User.isAdmin(currentUser)) {
+        if (!currentUser) {
+            history.replace('/');
+        } else if (User.isAdmin(currentUser)) {
             loadUnpublishedArticles();
         }
-    }, [currentUser, loadUnpublishedArticles]);
+    }, [currentUser, history, loadUnpublishedArticles]);
 
     if (!currentUser) {
-        history.replace('/');
-        return <div></div>;
+        return (<div></div>);
     }
     return (
         <>

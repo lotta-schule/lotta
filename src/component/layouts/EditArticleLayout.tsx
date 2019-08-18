@@ -16,7 +16,7 @@ export interface ArticleLayoutProps {
 
 export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
     const { history } = useReactRouter();
-    const currentUser = useCurrentUser();
+    const [currentUser] = useCurrentUser();
 
     const [editedArticle, setEditedArticle] = useState(article);
 
