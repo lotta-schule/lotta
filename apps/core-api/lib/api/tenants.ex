@@ -7,6 +7,7 @@ defmodule Api.Tenants do
   alias Api.Repo
 
   alias Api.Tenants.Tenant
+  alias Api.Accounts.UserGroup
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -137,8 +138,20 @@ defmodule Api.Tenants do
       [%Category{}, ...]
 
   """
-  def list_categories_by_tenant(tenant_id) do
-    Repo.all(Ecto.Query.from c in Category, where: c.tenant_id == ^tenant_id)
+  def list_categories_by_tenant(tenant_id, user) do
+    if is_nil(user) do
+      Repo.all(Ecto.Query.from c in Category, where: c.tenant_id == ^tenant_id and is_nil(c.group_id))
+    else
+      max_priority = user.groups
+      |> Enum.filter(fn g -> g.tenant_id == tenant_id end)
+      |> Enum.map(fn g -> g.priority end)
+      |> Enum.max(fn -> 0 end)
+      Ecto.Query.from(c in Category,
+        where: c.tenant_id == ^tenant_id,
+        join: ug in UserGroup, where: (not is_nil(c.group_id) and ug.priority <= ^max_priority and ug.id == c.group_id) or is_nil(c.group_id),
+        distinct: true)
+      |> Repo.all
+    end
   end
 
   @doc """
