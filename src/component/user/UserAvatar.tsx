@@ -3,6 +3,7 @@ import { UserModel } from 'model';
 import { Avatar } from '@material-ui/core';
 import { AvatarProps } from '@material-ui/core/Avatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { User } from 'util/model';
 
 export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
     user: UserModel;
@@ -11,7 +12,7 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
 
 export const UserAvatar = memo<UserAvatarProps>(({ user, ...otherProps }) => {
     const src = useMemo(() => {
-        return `https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`;
+        return User.getAvatarUrl(user);
     }, [user]);
     return (
         <Avatar src={src} alt={user.name} {...otherProps} />

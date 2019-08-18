@@ -9,6 +9,14 @@ export const User = {
         return user.nickname || User.getName(user);
     },
 
+    getAvatarUrl(user: UserModel) {
+        return user.avatarImageFile ? user.avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(user);
+    },
+
+    getDefaultAvatarUrl(user: UserModel) {
+        return `https://avatars.dicebear.com/v2/avataaars/${user.email}.svg`;
+    },
+
     isAdmin(user?: UserModel | null) {
         return user && user.groups && user.groups.some(g => g.isAdminGroup);
     },

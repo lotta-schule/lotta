@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const GetCurrentUserQuery = gql`
-    query GetCurrentUser {
-        currentUser {
+export const UpdateProfileMutation = gql`
+    mutation UpdateProfile($user: UpdateUserParams!) {
+        user: updateProfile(user: $user) {
             id
             insertedAt
             updatedAt
@@ -16,6 +16,7 @@ export const GetCurrentUserQuery = gql`
             groups {
                 id
                 name
+                priority
                 isAdminGroup
                 tenant {
                     id
