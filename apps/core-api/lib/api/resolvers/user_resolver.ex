@@ -19,6 +19,13 @@ defmodule Api.UserResolver do
       {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
     end
   end
+  
+  def get_current(_args, %{context: %{context: %{current_user: current_user}}}) do
+    {:ok, current_user}
+  end
+  def get_current(_args, _info) do
+    {:ok, nil}
+  end
 
   def assign_user(%{id: id, group_id: group_id}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
     if User.is_admin?(current_user, tenant) do

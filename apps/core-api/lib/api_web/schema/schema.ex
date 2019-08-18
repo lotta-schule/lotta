@@ -39,6 +39,10 @@ defmodule ApiWeb.Schema do
       resolve &Api.ArticleResolver.by_topic/2
     end
 
+    field :current_user, :user do
+      resolve &Api.UserResolver.get_current/2
+    end
+
     field :users, list_of(:user) do
       resolve &Api.UserResolver.all_with_groups/2
     end
