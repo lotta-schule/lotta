@@ -30,6 +30,8 @@ export const UpdateArticleMutation = gql`
                     remoteLocation
                     mimeType
                     fileType
+                    filename
+                    filesize
                     fileConversions {
                         id
                         format
