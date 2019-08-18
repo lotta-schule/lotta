@@ -41,6 +41,13 @@ defmodule Api.Accounts.User do
     |> Kernel.not
   end
 
+  def get_max_priority_for_tenant(%User{} = user, %Tenant{} = tenant) do
+    user.groups
+      |> Enum.filter(fn g -> g.tenant_id == tenant.id end)
+      |> Enum.map(fn g -> g.priority end)
+      |> Enum.max(fn -> 0 end)
+  end
+
   @doc false
   def changeset(user, attrs) do
     user

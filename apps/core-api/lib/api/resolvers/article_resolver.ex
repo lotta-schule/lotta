@@ -10,11 +10,17 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def all(%{category_id: category_id}, %{context: %{context: %{tenant: tenant}}}) do
-    {:ok, Content.list_articles(tenant.id, category_id)}
+  def all(%{category_id: category_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, category_id, current_user)}
   end
-  def all(_args, %{context: %{context: %{tenant: tenant}}}) do
-    {:ok, Content.list_articles(tenant.id, nil)}
+  def all(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, nil, current_user)}
+  end
+  def all(%{category_id: category_id}, %{context: %{context: %{ tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, category_id, nil)}
+  end
+  def all(_args, %{context: %{context: %{ tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, nil, nil)}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden."}
