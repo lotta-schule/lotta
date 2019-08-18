@@ -7,8 +7,6 @@ import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import Img from 'react-cloudimage-responsive';
-import { useUserGroups } from 'util/client/useUserGroups';
-import { find } from 'lodash';
 import { useCategories } from 'util/categories/useCategories';
 import { useMutation } from 'react-apollo';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
@@ -33,7 +31,6 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
 
     const styles = useStyles();
 
-    const groups = useUserGroups();
     const categories = useCategories();
 
     const [category, setCategory] = useState<CategoryModel | null>(null);
@@ -91,10 +88,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
 
             <GroupSelect
                 className={styles.input}
-                selectedGroupId={category.group && category.group.id}
-                onSelectGroupId={id => {
-                    return setCategory({ ...category, group: find(groups, { id }) });
-                }}
+                selectedGroup={category.group || null}
+                onSelectGroup={group => setCategory({ ...category, group: group || undefined })}
             />
 
             <Typography className={styles.input}>

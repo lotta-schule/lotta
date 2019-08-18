@@ -19,6 +19,11 @@ export const GetTopicQuery = gql`
                 filename
                 filesize
             }
+            group {
+                id
+                priority
+                name
+            }
             category {
                 id
                 title

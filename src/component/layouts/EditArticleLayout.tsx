@@ -61,7 +61,6 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
                                 }))
                             });
                         }
-                        history.push(`/article/${editedArticle.id}`);
                     }}
                 />
             </BaseLayoutSidebar>

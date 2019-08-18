@@ -1,4 +1,4 @@
-import React, { memo, FunctionComponent, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { ArticleModel } from '../../../model';
 import { Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel, Switch } from '@material-ui/core';
 import { CategorySelect } from './CategorySelect';
@@ -127,15 +127,15 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 />
                 <ul>
                     {article.users.map(user => (
-                        <li key={user.nickname}>{user.nickname}</li>
+                        <li key={user.id}>{User.getNickname(user)}</li>
                     ))}
                 </ul>
             </CardContent>
             <CardContent>
                 <GroupSelect
-                    selectedGroupId={undefined}
+                    selectedGroup={article.group || null}
                     variant={'outlined'}
-                    onSelectGroupId={() => { }}
+                    onSelectGroup={group => onUpdate({ ...article, group: group || undefined })}
                 />
             </CardContent>
             {!article.readyToPublish && (

@@ -4,7 +4,6 @@ import { UserModel } from '../../model';
 import { useMutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 
 export interface LoginDialogProps {
     isOpen: boolean;
