@@ -48,7 +48,7 @@ const useStyle = makeStyles((theme: Theme) => ({
         flexGrow: 0,
         backgroundPosition: '0 0'
     },
-    previewtext: {
+    previewTextLimitedHeight: {
         overflow: 'hidden',
         webkitLineClamp: 3,
         lineClamp: 3,
@@ -64,9 +64,10 @@ interface ArticlePreviewProps {
     disableLink?: boolean;
     disableEdit?: boolean;
     disablePin?: boolean;
+    limitedHeight?: boolean;
 }
 
-export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin }) => {
+export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin, limitedHeight }) => {
 
     const [currentUser] = useCurrentUser();
 
@@ -133,7 +134,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                             {article.users && <> | Autoren: {article.users.map(user => User.getNickname(user)).join(', ')}&nbsp;</>}
                             {/* | Bewertung&nbsp; */}
                         </Typography>
-                        <Typography variant={'subtitle1'} color="textSecondary" className={styles.previewtext}>
+                        <Typography variant={'subtitle1'} color="textSecondary" className={classNames({ [styles.previewTextLimitedHeight]: limitedHeight })}>
                             {article.preview}
                         </Typography>
                     </CardContent>
