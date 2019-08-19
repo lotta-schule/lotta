@@ -18,7 +18,6 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     const onLogin = useOnLogin();
 
     const [register, { loading: isLoading, error }] = useMutation<{ register: { user: UserModel, token: string } }, { email: string, name: string, password: string, groupKey?: string }>(RegisterMutation, {
-        fetchPolicy: 'no-cache',
         update: (_, { data }) => {
             if (data) {
                 onLogin(data.register.user, data.register.token);
