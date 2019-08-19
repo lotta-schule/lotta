@@ -35,9 +35,14 @@ defmodule ApiWeb.Context do
   defp get_tenant_context(conn) do
     tenant_header = get_req_header(conn, "tenant")
     with ["slug:" <> slug] <- tenant_header do
-      %{tenant: Tenants.get_tenant_by_slug!(slug)}
+      tenant = Tenants.get_tenant_by_slug(slug)
+      if is_nil(tenant) do
+        %{tenant: Tenants.get_tenant_by_slug!("ehrenberg")}
+      else
+        %{tenant: tenant}
+      end
     else
-      _ -> Tenants.get_tenant_by_slug!("ehrenberg") # TODO: remove this aweful hard-coded string. Add Domain support
+      _ -> %{}
     end
   end
 end

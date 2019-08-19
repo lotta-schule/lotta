@@ -60,6 +60,22 @@ defmodule Api.Tenants do
       ** (Ecto.NoResultsError)
 
   """
+  def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, [slug: slug])
+
+  @doc """
+  Gets a single tenant by slug.
+
+  Raises `Ecto.NoResultsError` if the Tenant does not exist.
+
+  ## Examples
+
+      iex> get_tenant_by_slug!(123)
+      %Tenant{}
+
+      iex> get_tenant_by_slug!(456)
+      ** (Ecto.NoResultsError)
+
+  """
   def get_tenant_by_slug!(slug), do: Repo.get_by!(Tenant, [slug: slug])
 
   @doc """
