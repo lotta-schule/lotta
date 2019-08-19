@@ -16,7 +16,7 @@ defmodule Api.Accounts.User do
     field :password_hash, :string
 
     belongs_to :tenant, Api.Tenants.Tenant
-    belongs_to :avatar_image_file, Api.Accounts.File
+    belongs_to :avatar_image_file, Api.Accounts.File, on_replace: :nilify
     has_many :files, Api.Accounts.File
     many_to_many :groups,
       UserGroup,
