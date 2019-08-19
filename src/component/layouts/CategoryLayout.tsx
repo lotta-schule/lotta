@@ -1,5 +1,5 @@
 import { CategoryModel, ArticleModel } from '../../model';
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
@@ -41,7 +41,7 @@ export interface CategoryLayoutProps {
     articles?: ArticleModel[];
 }
 
-export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ category, articles }) => {
+export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles }) => {
     const styles = useStyles();
 
     return (
@@ -74,7 +74,7 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
                             return parseISO(a2.insertedAt).getTime() - parseISO(a1.insertedAt).getTime();
                         })
                         .map(article => (
-                            <ArticlePreview key={article.id} article={article} />
+                            <ArticlePreview key={article.id} article={article} limitedHeight />
                         ))
                 )}
             </BaseLayoutMainContent>
