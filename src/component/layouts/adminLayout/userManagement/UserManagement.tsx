@@ -117,7 +117,7 @@ export const UserManagement = memo(() => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {groupedUsers[group.id] && groupedUsers[group.id].map(user => (
+                                        {groupedUsers[group.id] && groupedUsers[group.id].sort((u1, u2) => u1.name.localeCompare(u2.name)).map(user => (
                                             <TableRow key={user.id}>
                                                 <TableCell>
                                                     <UserAvatar className={styles.avatar} user={user} />
