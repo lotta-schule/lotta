@@ -5,8 +5,8 @@ import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { theme } from 'theme';
-import { VPlan } from 'component/widgets/vPlan/VPlan';
-import { Calendar } from 'component/widgets/calendar/Calendar';
+// import { VPlan } from 'component/widgets/vPlan/VPlan';
+// import { Calendar } from 'component/widgets/calendar/Calendar';
 import { parseISO } from 'date-fns';
 
 const useStyles = makeStyles(() => ({

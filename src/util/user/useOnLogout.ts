@@ -5,6 +5,7 @@ import { UserModel } from 'model';
 import Matomo from 'matomo-ts';
 import { useDispatch } from 'react-redux';
 import { createCloseDrawerAction } from 'store/actions/layout';
+import { CookieParams } from 'util/path/CookieParams';
 
 export const useOnLogout = () => {
     const apolloClient = useApolloClient();
@@ -17,9 +18,7 @@ export const useOnLogout = () => {
                 currentUser: null
             }
         });
-        remove(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME, {
-            domain: process.env.REACT_APP_APP_BASE_DOMAIN
-        });
+        remove(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME, CookieParams.getCookieParams());
         Matomo.default().resetUserId();
         apolloClient.clearStore();
         dispatch(createCloseDrawerAction());

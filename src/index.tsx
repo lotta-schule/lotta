@@ -22,7 +22,9 @@ import Matomo from 'matomo-ts';
 Matomo.default().init(
     process.env.REACT_APP_MATOMO_URL,
     process.env.REACT_APP_MATOMO_SITEID,
-    { cookieDomain: `*.${process.env.REACT_APP_APP_BASE_DOMAIN}` }
+    window.location.href.includes(process.env.REACT_APP_APP_BASE_DOMAIN) ?
+        { cookieDomain: `*.${process.env.REACT_APP_APP_BASE_DOMAIN}` } :
+        {}
 );
 
 try {
