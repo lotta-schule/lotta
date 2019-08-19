@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { ArticleModel } from '../../model';
 import { Article } from '../article/Article';
 import { EditArticleSidebar } from './editArticle/EditArticleSidebar';
@@ -14,7 +14,7 @@ export interface ArticleLayoutProps {
     onUpdateArticle?(article: ArticleModel): void;
 }
 
-export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article, onUpdateArticle }) => {
+export const EditArticleLayout = memo<ArticleLayoutProps>(({ article, onUpdateArticle }) => {
     const { history } = useReactRouter();
     const [currentUser] = useCurrentUser();
 
@@ -29,7 +29,7 @@ export const EditArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ 
     return (
         <>
             <BaseLayoutMainContent>
-                <Article article={editedArticle} isEditModeEnabled onUpdateArticle={setEditedArticle} />
+                <Article article={editedArticle} isEditModeEnabled onUpdateArticle={article => { console.log('setEditArticle: ', article); setEditedArticle(article); }} />
                 <AddModuleBar onAddModule={async contentModule => {
                     setEditedArticle({
                         ...editedArticle,
