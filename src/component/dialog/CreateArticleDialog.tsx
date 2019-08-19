@@ -58,7 +58,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                     setIsLoading(false);
                 }
             }}>
-                <DialogTitle>Artikel Erstellen</DialogTitle>
+                <DialogTitle>Beitrag erstellen</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Wähle zunächst einen Titel für deinen Beitrag
