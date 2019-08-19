@@ -46,10 +46,16 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
                                 ...contentModule,
                                 files: contentModule.files.map((f, i) => i === index ? newFile : f)
                             })}
-                            onUpdateCaption={newFile => onUpdateModule({
-                                ...contentModule,
-                                text: JSON.stringify(imageCaptions.map((f, i) => i === index ? newFile : f))
-                            })}
+                            onUpdateCaption={newCaption => {
+                                onUpdateModule({
+                                    ...contentModule,
+                                    text: JSON.stringify(
+                                        imageCaptions.concat(
+                                            Array.from(new Array(contentModule.files.length - imageCaptions.length)).map(() => '')
+                                        ).map((f, i) => i === index ? newCaption : f)
+                                    )
+                                });
+                            }}
                             onSelect={() => setSelectedFile(file)}
                             size={'350x200'}
                             width={350}
