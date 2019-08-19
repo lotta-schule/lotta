@@ -79,8 +79,6 @@ export const CategoryLayout: FunctionComponent<CategoryLayoutProps> = memo(({ ca
                 )}
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
-                <VPlan />
-                <Calendar />
             </BaseLayoutSidebar>
         </>
     );
