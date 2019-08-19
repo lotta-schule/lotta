@@ -15,6 +15,7 @@ import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { State } from 'store/State';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Helmet } from 'react-helmet';
 
 export const App = memo(() => {
   const client = useSelector<State, ClientModel | null>(state => state.client.client);
@@ -58,6 +59,11 @@ export const App = memo(() => {
 
   return (
     <BrowserRouter>
+      <Helmet>
+        <title>{client.title}</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+      </Helmet>
       <BaseLayout>
         <Switch>
           <Route exact path={'/'} component={CategoryRoute} />
