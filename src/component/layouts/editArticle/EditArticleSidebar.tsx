@@ -47,7 +47,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
     const [currentUser] = useCurrentUser();
     const { history } = useRouter();
 
-    const [isReadyToPublish, setIsReadyToPublish] = useState(false);
+    const [isReadyToPublish, setIsReadyToPublish] = useState(article.readyToPublish || false);
     return (
         <Card className={styles.root}>
             <CardContent>
