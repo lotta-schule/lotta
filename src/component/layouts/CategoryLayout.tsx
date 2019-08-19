@@ -71,7 +71,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                                 if (a1.isPinnedToTop) { return -1; }
                                 if (a2.isPinnedToTop) { return 1; }
                             }
-                            return parseISO(a2.insertedAt).getTime() - parseISO(a1.insertedAt).getTime();
+                            return parseISO(a2.updatedAt).getTime() - parseISO(a1.updatedAt).getTime();
                         })
                         .map(article => (
                             <ArticlePreview key={article.id} article={article} limitedHeight />
