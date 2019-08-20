@@ -73,7 +73,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ style,
       acceptedFiles.forEach(file => uploadQueue.uploadFile(file, selectedPath));
     }
   }, [selectedPath, uploadQueue]);
-  const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles, open } = useDropzone({ onDrop, noClick: true });
+  const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles, open } = useDropzone({ onDrop });
 
   const styles = useStyles();
 
@@ -128,7 +128,9 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ style,
         path={selectedPath}
         uploads={uploads}
         onChangePath={setSelectedPath}
-        onClickUploadButton={() => open()}
+        onClickUploadButton={() => {
+          open();
+        }}
         onClickOpenActiveUploadsDialog={() => setIsActiveUploadsDialogOpen(true)}
         onClickOpenCreateNewFolderDialog={() => setIsCreateNewFolderDialogOpen(true)}
       />
