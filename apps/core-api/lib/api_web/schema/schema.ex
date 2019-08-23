@@ -60,6 +60,11 @@ defmodule ApiWeb.Schema do
     field :files, list_of(:file) do
       resolve &Api.FileResolver.all/2
     end
+
+    field :calendar, list_of(:calendar_event) do
+      arg :url, :string
+      resolve &Api.CalendarResolver.get/2
+    end
   end
 
   mutation do

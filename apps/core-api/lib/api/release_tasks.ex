@@ -2,6 +2,7 @@ defmodule Api.ReleaseTasks do
   @start_apps [
     :crypto,
     :ssl,
+    :inets,
     :postgrex,
     :ecto,
     :ecto_sql

@@ -20,7 +20,7 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:lager, :logger, :runtime_tools, :amqp]
+      extra_applications: [:lager, :logger, :runtime_tools, :amqp, :ssl]
     ]
   end
 
@@ -56,7 +56,8 @@ defmodule Api.MixProject do
       {:poison, "~> 4.0"},
       {:uuid, "~> 1.1"},
       {:amqp, "~> 1.2"},
-      {:sentry, "~> 7.1"}
+      {:sentry, "~> 7.1"},
+      {:ex_ical, "~> 0.2.0"}
     ]
   end
 
