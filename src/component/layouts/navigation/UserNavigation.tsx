@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
         borderLeftColor: theme.palette.primary.main,
         borderLeftStyle: 'solid',
         height: 138,
+        flexShrink: 0
     },
     button: {
         marginTop: theme.spacing(1),
