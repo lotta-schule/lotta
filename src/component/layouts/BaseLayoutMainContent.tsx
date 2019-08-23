@@ -7,7 +7,7 @@ export interface BaseLayoutMainContentProps {
 }
 
 export const BaseLayoutMainContent: FunctionComponent<BaseLayoutMainContentProps> = memo(({ children, style }) => (
-    <Grid item xs>
+    <Grid item xs={12} md={9} xl={9}>
         <div style={{ ...style, width: '100%', height: '100%' }}>
             {children}
         </div>

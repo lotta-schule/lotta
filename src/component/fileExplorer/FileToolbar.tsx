@@ -16,6 +16,12 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
         },
         title: {
             flex: '0 0 auto',
+        },
+        uploadButton: {
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            opacity: 0
         }
     }),
 );
@@ -24,7 +30,7 @@ export interface FileToolbarProps {
     path: string;
     uploads: UploadModel[];
     onChangePath(path: string): void;
-    onClickUploadButton(): void;
+    onSelectFilesToUpload(files: File[]): void;
     onClickOpenActiveUploadsDialog(): void;
     onClickOpenCreateNewFolderDialog(): void;
 }
@@ -33,7 +39,7 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
     path,
     onChangePath,
     uploads,
-    onClickUploadButton,
+    onSelectFilesToUpload,
     onClickOpenActiveUploadsDialog,
     onClickOpenCreateNewFolderDialog
 }) => {
@@ -97,7 +103,17 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Dateien hochladen">
-                        <IconButton aria-label="Dateien hochladen" onClick={() => onClickUploadButton()}>
+                        <IconButton aria-label="Dateien hochladen">
+                            <input
+                                multiple
+                                type={'file'}
+                                className={styles.uploadButton}
+                                onChange={e => {
+                                    if (e.target.files) {
+                                        onSelectFilesToUpload(Array.from(e.target.files))
+                                    }
+                                }}
+                            />
                             <CloudUploadOutlined color={'secondary'} />
                         </IconButton>
                     </Tooltip>

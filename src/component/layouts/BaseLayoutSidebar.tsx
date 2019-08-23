@@ -9,10 +9,10 @@ import { State } from 'store/State';
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
         [theme.breakpoints.down('md')]: {
-            marginLeft: 0,
+            paddingLeft: 0,
         },
         [theme.breakpoints.up('md')]: {
-            marginLeft: '0.5em',
+            paddingLeft: '0.5em',
         },
     },
 }));
@@ -33,7 +33,7 @@ export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
         );
     } else {
         return (
-            <Grid className={styles.root} item component={'aside'} xs={12} md={3} xl={3} >
+            <Grid className={styles.root} item component={'aside'} xs={12} md={3} xl={3}>
                 <UserNavigation />
                 {children}
             </Grid>

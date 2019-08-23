@@ -145,7 +145,15 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                             .map((file: FileModel) => (
                                 file.fileType === FileModelType.Directory ? (
                                     // directory
-                                    <TableRow hover key={file.id} onClick={() => onSelectSubPath(file.filename)} style={{ cursor: 'pointer', }}>
+                                    <TableRow
+                                        key={file.id}
+                                        hover
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            onSelectSubPath(file.filename);
+                                        }}
+                                        style={{ cursor: 'pointer', }}
+                                    >
                                         {<TableCell></TableCell>}
                                         <TableCell>
                                             <FolderOutlined style={{ position: 'relative', marginRight: 10 }} />
@@ -171,7 +179,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                                         </Tooltip>
                                                         <Tooltip title="Datei löschen">
                                                             <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
-                                                                <Delete color="secondary"/>
+                                                                <Delete color="secondary" />
                                                             </IconButton>
                                                         </Tooltip>
                                                     </>
@@ -179,7 +187,8 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                                 {onSelectFiles && (
                                                     <Checkbox
                                                         checked={includes<FileModel>(selectedFiles, file)}
-                                                        onChange={(_, checked) => {
+                                                        onChange={(e, checked) => {
+                                                            e.preventDefault();
                                                             if (checked && !includes(selectedFiles, file)) {
                                                                 onSelectFiles(selectedFiles.concat(file));
                                                             } else if (!checked) {
