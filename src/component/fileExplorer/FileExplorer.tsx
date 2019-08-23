@@ -73,7 +73,7 @@ export const FileExplorer: FunctionComponent<FileExplorerProps> = memo(({ style,
       acceptedFiles.forEach(file => uploadQueue.uploadFile(file, selectedPath));
     }
   }, [selectedPath, uploadQueue]);
-  const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles, open } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles } = useDropzone({
     onDrop,
     multiple: true,
     preventDropOnDocument: true,

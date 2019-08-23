@@ -1,9 +1,10 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import { ContentModuleModel, FileModel } from 'model';
 import { ImageImage } from '../ImageImage';
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid, makeStyles, IconButton } from '@material-ui/core';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { ImageOverlay } from '../imageOverlay/ImageOverlay';
+import { Delete } from '@material-ui/icons';
 
 const useStyles = makeStyles(() => ({
     img: {
@@ -12,6 +13,12 @@ const useStyles = makeStyles(() => ({
             maxHeight: '100%',
             objectFit: 'contain'
         }
+    },
+    deleteButton: {
+        position: 'absolute',
+        right: '1.5em',
+        top: '.5em',
+        zIndex: 1000
     }
 }));
 
@@ -37,7 +44,24 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
         <>
             <Grid container>
                 {contentModule.files.map((file, index) => (
-                    <Grid item xs={6} lg={4} key={file.id}>
+                    <Grid item xs={6} lg={4} key={file.id} style={{ position: 'relative' }}>
+                        {isEditModeEnabled && (
+                            <IconButton
+                                color={'secondary'}
+                                className={styles.deleteButton}
+                                onClick={() => {
+                                    const captions = Array.from(new Array(contentModule.files.length - imageCaptions.length)).map(() => '');
+                                    captions.splice(index, 1);
+                                    onUpdateModule({
+                                        ...contentModule,
+                                        files: contentModule.files.filter(f => f.id !== file.id),
+                                        text: JSON.stringify(captions)
+                                    })
+                                }}
+                            >
+                                <Delete />
+                            </IconButton>
+                        )}
                         <ImageImage
                             isEditModeEnabled={isEditModeEnabled}
                             file={file}
