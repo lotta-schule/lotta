@@ -20,7 +20,7 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:lager, :logger, :runtime_tools, :amqp, :ssl]
+      extra_applications: [:lager, :logger, :runtime_tools, :amqp, :ssl, :inets]
     ]
   end
 

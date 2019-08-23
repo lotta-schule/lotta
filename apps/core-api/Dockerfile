@@ -17,8 +17,10 @@ RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache \
     git \
-    build-base && \
-    mix local.rebar --force && \
+    build-base \
+    erlang-inets
+
+RUN mix local.rebar --force && \
     mix local.hex --force
 
 # This copies our app source code into the build container
