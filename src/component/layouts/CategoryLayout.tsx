@@ -6,7 +6,7 @@ import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { theme } from 'theme';
 // import { VPlan } from 'component/widgets/vPlan/VPlan';
-// import { Calendar } from 'component/widgets/calendar/Calendar';
+import { Calendar } from 'component/widgets/calendar/Calendar';
 import { parseISO } from 'date-fns';
 
 const useStyles = makeStyles(() => ({
@@ -79,6 +79,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 )}
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
+                <Calendar />
             </BaseLayoutSidebar>
         </>
     );
