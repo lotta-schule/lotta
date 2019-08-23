@@ -115,6 +115,14 @@ defmodule ApiWeb.Schema.Types do
     field :remote_location, :string
   end
 
+  object :calendar_event do
+    field :uid, :string
+    field :description, :string
+    field :summary, :string
+    field :start, :naive_datetime
+    field :end, :naive_datetime
+  end
+
   enum :file_type do
     value :image, as: "image"
     value :audio, as: "audio"
