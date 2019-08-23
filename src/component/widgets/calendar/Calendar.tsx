@@ -47,7 +47,7 @@ export const Calendar = memo(() => {
                             {/* <ListItemText>
                             16:00-18:00
                         </ListItemText> */}
-                            <ListItemText style={{ paddingLeft: '.5em', textAlign: 'right' }}>
+                            <ListItemText style={{ paddingLeft: '.5em', textAlign: 'right', hyphens: 'auto', wordBreak: 'break-word' }}>
                                 <Tooltip title={event.description}>
                                     <span>{event.summary}</span>
                                 </Tooltip>
