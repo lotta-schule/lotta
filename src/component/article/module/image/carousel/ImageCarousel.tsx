@@ -7,7 +7,6 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { FileModel } from 'model';
-import { ImageContent } from 'component/article/module/image/ImageContent';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -83,20 +82,20 @@ export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, ca
                 )}
             />
             <SwipeableViews
-                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                 index={activeStep}
                 onChangeIndex={handleStepChange}
+                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                 enableMouseEvents
             >
                 {files.map((file, index) => (
-                    <div key={file.id}>
+                    <div key={file.id} style={{ textAlign: 'center' }}>
                         {captions[activeStep] && (
                             <Typography variant={'subtitle1'} className={styles.subtitle}>
                                 {captions[activeStep]}
                             </Typography>
                         )}
                         {Math.abs(activeStep - index) <= 2 ? (
-                            <ImageContent file={file} />
+                            <img src={`https://afdptjdxen.cloudimg.io/bound/600x500/foil1/${file.remoteLocation}`} alt={''} />
                         ) : null}
                     </div>
                 ))}
