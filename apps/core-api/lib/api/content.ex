@@ -124,7 +124,9 @@ defmodule Api.Content do
       ** (Ecto.NoResultsError)
 
   """
-  def get_article!(id), do: Repo.get!(Article, id)
+  def get_article!(id) do
+    Repo.get!(Article, id)
+  end
 
   @doc """
   Creates a article.
@@ -190,7 +192,7 @@ defmodule Api.Content do
 
   """
   def change_article(%Article{} = article) do
-    Article.update_changeset(article, %{})
+    Article.changeset(article, %{})
   end
 
   alias Api.Content.ContentModule
