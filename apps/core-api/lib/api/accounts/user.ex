@@ -42,6 +42,26 @@ defmodule Api.Accounts.User do
     |> Kernel.not
   end
 
+  def is_author?(%User{} = user, %Article{} = article) do
+    article
+    |> Repo.preload(:users)
+    |> Map.get(:users)
+    |> Enum.find(fn u -> u.id == user.id end)
+    |> is_nil
+    |> Kernel.not
+  end
+
+  def has_group_for_article?(%User{} = user, %Article{} = article) do
+    article = Repo.preload(article, [:group, :tenant])
+    IO.inspect("in has_group_for_article")
+    IO.inspect(article)
+    if is_nil(article.group) do
+      true
+    else
+      article.group.priority <= get_max_priority_for_tenant(user, article.tenant)
+    end
+  end
+
   def get_max_priority_for_tenant(%User{} = user, %Tenant{} = tenant) do
     user.groups
       |> Enum.filter(fn g -> g.tenant_id == tenant.id end)
