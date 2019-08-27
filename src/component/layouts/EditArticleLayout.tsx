@@ -29,7 +29,7 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article, onUpdateAr
     return (
         <>
             <BaseLayoutMainContent>
-                <Article article={editedArticle} isEditModeEnabled onUpdateArticle={article => { console.log('setEditArticle: ', article); setEditedArticle(article); }} />
+                <Article article={editedArticle} isEditModeEnabled onUpdateArticle={article => { setEditedArticle(article); }} />
                 <AddModuleBar onAddModule={async contentModule => {
                     setEditedArticle({
                         ...editedArticle,
