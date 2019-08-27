@@ -27,6 +27,15 @@ const useStyles = makeStyles(theme => ({
         overflow: 'hidden',
         width: '100%',
     },
+    imgContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        '& img': {
+            maxWidth: '100%',
+            maxHeight: '100%'
+        }
+    },
     subtitle: {
         position: 'absolute',
         width: 'auto',
@@ -88,14 +97,14 @@ export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, ca
                 enableMouseEvents
             >
                 {files.map((file, index) => (
-                    <div key={file.id} style={{ textAlign: 'center' }}>
+                    <div key={file.id} className={styles.imgContainer}>
                         {captions[activeStep] && (
                             <Typography variant={'subtitle1'} className={styles.subtitle}>
                                 {captions[activeStep]}
                             </Typography>
                         )}
                         {Math.abs(activeStep - index) <= 2 ? (
-                            <img src={`https://afdptjdxen.cloudimg.io/bound/600x500/foil1/${file.remoteLocation}`} alt={''} />
+                            <img src={`https://afdptjdxen.cloudimg.io/fit/600x500/foil1/${file.remoteLocation}`} alt={captions[activeStep] || file.remoteLocation} />
                         ) : null}
                     </div>
                 ))}
