@@ -70,8 +70,13 @@ defmodule Api.ArticleResolver do
   end
 
   def update(%{id: id, article: article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    Content.get_article!(id)
-    |> Content.update_article(article_input)
+    article = Content.get_article!(id)
+    if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
+      article
+      |> Content.update_article(article_input)
+    else
+      {:error, "Nur Administratoren oder Autoren dürfen Artikel bearbeiten."}
+    end
   end
 
   def toggle_pin(%{id: article_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do

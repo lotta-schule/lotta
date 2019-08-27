@@ -144,6 +144,7 @@ defmodule ApiWeb.Schema do
   
   input_object :article_input do
     field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
     field :title, non_null(:string)
     field :preview, :string
     field :ready_to_publish, :boolean

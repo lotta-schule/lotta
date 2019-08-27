@@ -44,11 +44,10 @@ defmodule Api.UserResolver do
   end
   
   def find(%{searchtext: searchtext}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
-    Accounts.search_user(searchtext, tenant)
-    # case User.is_admin?(current_user, tenant) do
-    #   true -> Accounts.search_user(searchtext, tenant)
-    #   _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
-    # end
+    case User.is_admin?(current_user, tenant) do
+      true -> Accounts.search_user(searchtext, tenant)
+      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
+    end
   end
 
   def register(%{user: user_params, group_key: group_key}, %{context: %{context: %{tenant: tenant}}}) do

@@ -37,7 +37,7 @@ defmodule Api.Content.Article do
   def changeset(article, attrs) do
     article
     |> Api.Repo.preload([:tenant, :category, :group, :users, :preview_image_file, :content_modules])
-    |> cast(attrs, [:title, :inserted_at, :ready_to_publish, :preview, :topic])
+    |> cast(attrs, [:title, :inserted_at, :updated_at, :ready_to_publish, :preview, :topic])
     |> validate_required([:title])
     |> put_assoc_users(attrs)
     |> put_assoc_category(attrs)
