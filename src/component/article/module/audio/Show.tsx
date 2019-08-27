@@ -1,16 +1,25 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
+import { AudioAudio } from './AudioAudio';
+import { Typography } from '@material-ui/core';
 
 interface ShowProps {
     contentModule: ContentModuleModel;
 }
 
 export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
-    const audioFiles = contentModule.files && contentModule.files.length > 0 && contentModule.files[0].fileConversions &&
-        contentModule.files[0].fileConversions.filter(f => /^audio/.test(f.mimeType));
+    let captions: string[];
+    try {
+        captions = JSON.parse(contentModule.text || '[]');
+    } catch (e) {
+        captions = [];
+    }
     return (
-        <audio controls style={{ height: '2em', display: 'block', width: '100%' }}>
-            {(audioFiles || []).map(af => <source src={af.remoteLocation} type={af.mimeType} />)}
-        </audio>
+        <figure>
+            <AudioAudio contentModule={contentModule} />
+            <figcaption>
+                <Typography variant={'subtitle2'}>{captions[0]}</Typography>
+            </figcaption>
+        </figure>
     );
 });
