@@ -27,7 +27,9 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
         return <div><CircularProgress /></div>;
     }
     if (error) {
-        return <div><span style={{ color: 'red' }}>{error.message}</span></div>;
+        return (
+            <div><span style={{ color: 'red' }}>{error.message}</span></div>
+        );
     }
     if (data) {
         return (
@@ -38,7 +40,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
                         variables: {
                             id: article.id,
                             article: {
-                                ...omit(article, ['id', 'updatedAt']),
+                                ...omit(article, ['id']),
                                 contentModules: article.contentModules.map(cm => omit(cm, ['id']))
                             } as ArticleModelInput
                         },

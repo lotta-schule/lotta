@@ -1,15 +1,17 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, MouseEvent } from 'react';
 import { ArticleModel } from '../../../model';
-import { Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel, Switch } from '@material-ui/core';
+import {
+    Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel,
+    Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem
+} from '@material-ui/core';
 import { CategorySelect } from './CategorySelect';
 import { DateTimePicker } from '@material-ui/pickers';
 import { GroupSelect } from './GroupSelect';
 import { parseISO } from 'date-fns';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
-import { Save as SaveIcon } from '@material-ui/icons';
+import { Save as SaveIcon, ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
-import { theme } from 'theme';
 import { uniqBy } from 'lodash';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
@@ -23,7 +25,7 @@ const useStyles = makeStyles(theme => ({
         borderRadius: '0'
     },
     button: {
-        margin: theme.spacing(1),
+        marginBottom: theme.spacing(1),
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -33,6 +35,9 @@ const useStyles = makeStyles(theme => ({
     },
     searchUserField: {
         border: `1px solid ${theme.palette.divider}`
+    },
+    popper: {
+        zIndex: 1
     }
 }));
 
@@ -48,6 +53,17 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
     const { history } = useRouter();
 
     const [isReadyToPublish, setIsReadyToPublish] = useState(article.readyToPublish || false);
+    const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = React.useState(false);
+    const saveOptionsMenuAnchorRef = React.useRef<HTMLDivElement | null>(null);
+
+    const handleCloseSaveOptionsMenu = (event: MouseEvent<Document>): void => {
+        if (saveOptionsMenuAnchorRef.current && saveOptionsMenuAnchorRef.current.contains(event.target as Node)) {
+            return;
+        }
+
+        setSaveOptionMenuIsOpen(false);
+    }
+
     return (
         <Card className={styles.root}>
             <CardContent>
@@ -121,10 +137,12 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 </SelectFileOverlay>
             </CardContent>
             <CardContent>
-                <SearchUserField
-                    className={styles.searchUserField}
-                    onSelectUser={user => onUpdate({ ...article, users: uniqBy(article.users.concat([user]), 'id') })}
-                />
+                {User.isAdmin(currentUser) && (
+                    <SearchUserField
+                        className={styles.searchUserField}
+                        onSelectUser={user => onUpdate({ ...article, users: uniqBy(article.users.concat([user]), 'id') })}
+                    />
+                )}
                 <ul>
                     {article.users.map(user => (
                         <li key={user.id}>{User.getNickname(user)}</li>
@@ -156,21 +174,63 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 </CardContent>
             )}
             <CardContent>
-                <Button
-                    onClick={() => onSave({ readyToPublish: isReadyToPublish })}
-                    variant={'outlined'}
-                    color={'secondary'}
+                <ButtonGroup
+                    variant="outlined"
+                    color="secondary"
                     size={'small'}
-                    style={{ marginRight: theme.spacing(1) }}
+                    aria-label="split button"
+                    ref={saveOptionsMenuAnchorRef}
+                    className={styles.button}
+                    fullWidth
                 >
-                    <SaveIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
-                    speichern
-                </Button>
+                    <Button
+                        onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: undefined })}
+                        fullWidth
+                    >
+                        <SaveIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                        speichern
+                    </Button>
+                    <Button
+                        color={'secondary'}
+                        size={'small'}
+                        aria-owns={saveOptionMenuIsOpen ? 'menu-list-grow' : undefined}
+                        aria-haspopup="true"
+                        style={{ width: 'auto' }}
+                        onClick={() => setSaveOptionMenuIsOpen(!saveOptionMenuIsOpen)}
+                    >
+                        <ArrowDropDownIcon />
+                    </Button>
+                </ButtonGroup>
+                <Popper open={saveOptionMenuIsOpen} anchorEl={saveOptionsMenuAnchorRef.current} transition disablePortal className={styles.popper}>
+                    {({ TransitionProps, placement }) => (
+                        <Grow
+                            {...TransitionProps}
+                            style={{
+                                transformOrigin: placement === 'bottom' ? 'top right' : 'bottom right',
+                            }}
+                        >
+                            <Paper id="menu-list-grow">
+                                <ClickAwayListener onClickAway={handleCloseSaveOptionsMenu}>
+                                    <MenuList>
+                                        <MenuItem onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: parseISO(article.updatedAt).toISOString() })}>
+                                            Ohne Aktualisierszeit zu ändern
+                                        </MenuItem>
+                                        <MenuItem onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: article.insertedAt })}>
+                                            Aktualisierszeit auf Erstellszeit setzen
+                                        </MenuItem>
+                                    </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                    )}
+                </Popper>
+
                 <Button
                     color={'secondary'}
                     variant={'outlined'}
                     size={'small'}
                     onClick={() => history.goBack()}
+                    fullWidth
                 >
                     Abbrechen
                 </Button>
