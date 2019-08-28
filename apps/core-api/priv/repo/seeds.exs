@@ -50,6 +50,7 @@ Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "GTA" })
 {:ok, faecher} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Fächer" })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Material" })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Galerien" })
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Impressum", is_sidenav: true })
 
 # Fächer
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Sport", category_id: faecher.id })
