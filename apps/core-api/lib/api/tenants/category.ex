@@ -7,6 +7,7 @@ defmodule Api.Tenants.Category do
   schema "categories" do
     field :title, :string
     field :sort_key, :integer
+    field :is_sidenav, :boolean
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
 

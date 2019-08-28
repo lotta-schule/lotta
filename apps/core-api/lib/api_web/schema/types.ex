@@ -47,6 +47,7 @@ defmodule ApiWeb.Schema.Types do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :title, :string
+    field :is_sidenav, :boolean
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
     field :sort_key, :integer
