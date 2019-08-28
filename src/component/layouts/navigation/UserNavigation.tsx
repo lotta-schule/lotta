@@ -111,7 +111,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                                 <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                             )}
                             {categories.map(category => (
-                                <li><Link component={CollisionLink} to={`/category/${category.id}`}>{category.title}</Link></li>
+                                <li key={category.id}><Link component={CollisionLink} to={`/category/${category.id}`}>{category.title}</Link></li>
                             ))}
                             <li><Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link></li>
                         </ul>
