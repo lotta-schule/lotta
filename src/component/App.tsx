@@ -10,6 +10,7 @@ import { ClientModel, CategoryModel } from 'model';
 import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
 import { EditArticleRoute } from './routes/EditArticleRoute';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
+import { PrivacyLayout } from './layouts/PrivacyLayout';
 import { ProfileLayout } from './layouts/ProfileLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { State } from 'store/State';
@@ -72,6 +73,7 @@ export const App = memo(() => {
           <Route path={'/article/:id'} component={ArticleRoute} />
           <Route path={'/profile'} component={ProfileLayout} />
           <Route path={'/admin'} component={AdminLayout} />
+          <Route path={'/privacy'} component={PrivacyLayout} />
           <Route component={() => <div>Nicht gefunden</div>} />
         </Switch>
       </BaseLayout>
