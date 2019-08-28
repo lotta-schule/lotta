@@ -8,6 +8,8 @@ import { theme } from 'theme';
 // import { VPlan } from 'component/widgets/vPlan/VPlan';
 import { Calendar } from 'component/widgets/calendar/Calendar';
 import { parseISO } from 'date-fns';
+import { ArticleLayout } from './ArticleLayout';
+import { ArticleRoute } from 'component/routes/ArticleRoute';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
@@ -44,6 +46,12 @@ export interface CategoryLayoutProps {
 export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles }) => {
     const styles = useStyles();
 
+    if (articles && articles.length === 1 && articles[0].id) {
+        return (
+            <ArticleLayout articleId={articles[0].id} />
+        );
+    }
+
     return (
         <>
             <BaseLayoutMainContent>
@@ -64,7 +72,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                         </Grid>
                     </Grid>
                 )}
-                {articles && (
+                {articles && articles.length > 1 && (
                     articles
                         .sort((a1, a2) => {
                             if (category && a1.isPinnedToTop !== a2.isPinnedToTop) {
