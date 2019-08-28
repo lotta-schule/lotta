@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { FileModel, FileModelType } from 'model';
 import { FileSize } from 'util/FileSize';
-import { find, includes } from 'lodash';
+import { find, includes, some, every, uniqBy } from 'lodash';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
     root: {
@@ -120,7 +120,20 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                 <TableHead>
                     <TableRow>
                         <TableCell>
-                            {/*actions*/}
+                            {onSelectFiles && (
+                                <Checkbox
+                                    indeterminate={!every(files.filter(f => f.fileType !== FileModelType.Directory), f => selectedFiles.includes(f)) && some(selectedFiles, selectedFile => files.includes(selectedFile))}
+                                    checked={every(files.filter(f => f.fileType !== FileModelType.Directory), f => selectedFiles.includes(f))}
+                                    onChange={(e, checked) => {
+                                        e.preventDefault();
+                                        if (checked) {
+                                            onSelectFiles(uniqBy(selectedFiles.concat(files.filter(f => f.fileType !== FileModelType.Directory)), 'id'))
+                                        } else {
+                                            onSelectFiles(selectedFiles.filter(selectedFile => !files.includes(selectedFile)));
+                                        }
+                                    }}
+                                />
+                            )}
                         </TableCell>
                         <TableCell>Dateiname</TableCell>
                         <TableCell>Dateigröße</TableCell>
@@ -154,7 +167,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                         }}
                                         style={{ cursor: 'pointer', }}
                                     >
-                                        {<TableCell></TableCell>}
+                                        <TableCell></TableCell>
                                         <TableCell>
                                             <FolderOutlined style={{ position: 'relative', marginRight: 10 }} />
                                             {file.filename}
