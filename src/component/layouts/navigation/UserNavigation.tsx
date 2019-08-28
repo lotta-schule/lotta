@@ -16,6 +16,7 @@ import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { useOnLogout } from 'util/user/useOnLogout';
+import { useCategories } from 'util/categories/useCategories';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -72,6 +73,8 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const ownArticles = ownArticlesData ? (ownArticlesData.articles || []) : [];
     const profileBadgeNumber = [...ownArticles].filter(article => !article.readyToPublish || !article.category).length;
 
+    const categories = useCategories().filter(category => category.isSidenav);
+
     return (
         <>
             <Grid container justify={'space-evenly'} className={styles.root}>
@@ -107,7 +110,9 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                             {User.isAdmin(currentUser) && (
                                 <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
                             )}
-                            <li>Impressum</li>
+                            {categories.map(category => (
+                                <li><Link component={CollisionLink} to={`/category/${category.id}`}>{category.title}</Link></li>
+                            ))}
                             <li>Datenschutz</li>
                         </ul>
                     </Typography>

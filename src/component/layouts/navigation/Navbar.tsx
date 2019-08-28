@@ -88,7 +88,7 @@ export const Navbar = memo(() => {
 
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 
-    const mainCategories = (categories || []).filter(category => !Boolean(category.category));
+    const mainCategories = (categories || []).filter(category => !Boolean(category.category) && !category.isSidenav);
     const subcategories = (categories || []).filter(category => category.category && category.category.id === categoriesHierarchy[0]);
 
     return (

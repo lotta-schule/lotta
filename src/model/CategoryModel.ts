@@ -6,6 +6,7 @@ export interface CategoryModel {
     id: ID;
     title: string;
     sortKey: number;
+    isSidenav?: boolean;
     redirect?: string;
     hideArticlesFromHomepage?: boolean;
     group?: UserGroupModel;

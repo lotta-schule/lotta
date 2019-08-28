@@ -37,7 +37,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
 
     const [expandedMainCategoryId, setExpandedMainCategoryId] = useState<ID | null>(null);
 
-    const mainCategories = useMemo(() => categories.filter(category => !Boolean(category.category)), [categories]);
+    const mainCategories = useMemo(() => categories.filter(category => !Boolean(category.category) && !category.isSidenav), [categories]);
+    const sidenavCategories = categories.filter(c => c.isSidenav);
 
     const getSubcategoriesForCategory = useCallback((category: Partial<CategoryModel>) => {
         return categories.filter(c => c.category && c.category.id === category.id);
@@ -155,6 +156,19 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                     )}
                 </Droppable>
             </DragDropContext>
+
+            <Typography variant="h6" className={styles.heading}>
+                Seitenleistenkategorien
+            </Typography>
+            {sidenavCategories.map(category => (
+                <ExpansionPanel expanded={false} key={category.id}>
+                    <ExpansionPanelSummary className={styles.expansionSummary} onClick={() => onSelectCategory(category)}>
+                        <Typography variant="body1">
+                            <b>{category.title}</b>
+                        </Typography>
+                    </ExpansionPanelSummary>
+                </ExpansionPanel>
+            ))}
         </>
     );
 });
