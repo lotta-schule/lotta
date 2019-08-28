@@ -6,6 +6,7 @@ export const GetCategoriesQuery = gql`
             id
             title
             sortKey
+            isSidenav
             hideArticlesFromHomepage
             redirect
             bannerImageFile {
