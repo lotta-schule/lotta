@@ -9,7 +9,6 @@ import { theme } from 'theme';
 import { Calendar } from 'component/widgets/calendar/Calendar';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
-import { ArticleRoute } from 'component/routes/ArticleRoute';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
