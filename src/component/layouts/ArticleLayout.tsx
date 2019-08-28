@@ -1,12 +1,15 @@
 import React, { memo } from 'react';
 import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
-import { Typography, makeStyles, Theme } from '@material-ui/core';
+import { CircularProgress, Typography, makeStyles, Theme } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { RelatedArticlesList } from 'component/article/RelatedArticlesList';
 import { Helmet } from 'react-helmet';
 import { useTenant } from 'util/client/useTenant';
+import { useQuery } from 'react-apollo';
+import { GetArticleQuery } from 'api/query/GetArticleQuery';
+import { ID } from 'model/ID';
 
 const useStyle = makeStyles((theme: Theme) => ({
     siteTitle: {
@@ -23,34 +26,50 @@ const useStyle = makeStyles((theme: Theme) => ({
 
 export interface ArticleLayoutProps {
     title?: string;
-    article: ArticleModel;
+    articleId: ID;
 }
 
-export const ArticleLayout = memo<ArticleLayoutProps>(({ article, title }) => {
+export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => {
     const styles = useStyle();
     const client = useTenant();
 
-    return (
-        <>
-            <BaseLayoutMainContent>
-                <Helmet>
-                    <title>{article.title} &nbsp; {client.title}</title>
-                    <meta name={'description'} content={article.preview} />
-                    <meta property={'og:type'} content={'article'} />
-                    <meta property={'og:description'} content={article.preview} />
-                    <meta property={'twitter:card'} content={article.preview} />
-                    {article.previewImageFile && (
-                        <meta property={'og:image'} content={`https://afdptjdxen.cloudimg.io/cover/1800x945/foil1/${article.previewImageFile.remoteLocation}`} />
+    const { data, loading: isLoading, error } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id: articleId } });
+
+    if (isLoading) {
+        return <div><CircularProgress /></div>;
+    }
+    if (error) {
+        return (<div><span style={{ color: 'red' }}>{error.message}</span></div>);
+    }
+
+    if (data && data.article) {
+        const { article } = data;
+        return (
+            <>
+                <BaseLayoutMainContent>
+                    <Helmet>
+                        <title>{article.title} &nbsp; {client.title}</title>
+                        <meta name={'description'} content={article.preview} />
+                        <meta property={'og:type'} content={'article'} />
+                        <meta property={'og:description'} content={article.preview} />
+                        <meta property={'twitter:card'} content={article.preview} />
+                        {article.previewImageFile && (
+                            <meta property={'og:image'} content={`https://afdptjdxen.cloudimg.io/cover/1800x945/foil1/${article.previewImageFile.remoteLocation}`} />
+                        )}
+                        <meta property={'og:site_name'} content={client.title} />
+                    </Helmet>
+                    {title && <Typography variant={'h3'} className={styles.siteTitle}>{title}</Typography>}
+                    <Article article={article} />
+                    {article.topic && (
+                        <RelatedArticlesList article={article} />
                     )}
-                    <meta property={'og:site_name'} content={client.title} />
-                </Helmet>
-                {title && <Typography variant={'h3'} className={styles.siteTitle}>{title}</Typography>}
-                <Article article={article} />
-                {article.topic && (
-                    <RelatedArticlesList article={article} />
-                )}
-            </BaseLayoutMainContent>
-            <BaseLayoutSidebar />
-        </>
+                </BaseLayoutMainContent>
+                <BaseLayoutSidebar />
+            </>
+        );
+    }
+
+    return (
+        <span style={{ color: 'red' }}>Keine Daten</span>
     );
 });
