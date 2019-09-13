@@ -28,7 +28,7 @@ defmodule ApiWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    length: 1 * 1024 * 1024 * 1024, # 512 MB
+    length: 1.5 * 1024 * 1024 * 1024, # 1.5 GB
     json_decoder: Poison
 
   plug Plug.MethodOverride
