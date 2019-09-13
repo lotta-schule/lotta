@@ -1,8 +1,9 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, Button, DialogActions } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, TextField, Button, DialogActions } from '@material-ui/core';
 import { FileModel, FileModelType } from 'model';
 import { useDispatch } from 'react-redux';
 import { createAddFileAction } from 'store/actions/userFiles';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
 export interface CreateNewFolderDialogProps {
     basePath?: string;
@@ -19,7 +20,7 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
     const dispatch = useDispatch();
 
     return (
-        <Dialog open={open} onClose={onClose} aria-labelledby="create-new-folder-dialog-title">
+        <ResponsiveFullScreenDialog open={open} onClose={onClose} aria-labelledby="create-new-folder-dialog-title">
             <DialogTitle id="create-new-folder-dialog-title">Neuen Ordner erstellen</DialogTitle>
             <DialogContent>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
@@ -74,6 +75,6 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                     Ordner anlegen
                 </Button>
             </DialogActions>
-        </Dialog>
+        </ResponsiveFullScreenDialog>
     );
 });

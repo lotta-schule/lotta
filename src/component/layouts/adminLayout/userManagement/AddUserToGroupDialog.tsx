@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, useState, useEffect, useCallback, FormEvent } from 'react';
 import {
-    DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Dialog,
-    Select, FormControl, Input, MenuItem, FormHelperText, Typography, Grid, CircularProgress,
+    DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Select,
+    FormControl, Input, MenuItem, FormHelperText, Typography, Grid, CircularProgress,
 } from '@material-ui/core';
 import { UserModel } from 'model';
 import { theme } from 'theme';
@@ -12,6 +12,7 @@ import { useLazyQuery, useMutation } from '@apollo/react-hooks';
 import { find } from 'lodash';
 import { AssignUserToGroupMutation } from 'api/mutation/AssignUserToGroupMutation';
 import { ID } from 'model/ID';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
 export interface AddUserToGroupDialogProps {
     user: UserModel;
@@ -53,7 +54,7 @@ export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> 
     }
 
     return (
-        <Dialog open={true} fullWidth>
+        <ResponsiveFullScreenDialog open={true} fullWidth>
             <form onSubmit={onSubmitForm}>
                 <DialogTitle>{user.name} eine Gruppe zuweisen</DialogTitle>
                 <DialogContent>
@@ -133,6 +134,6 @@ export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> 
                 </Button>
                 </DialogActions>
             </form>
-        </Dialog>
+        </ResponsiveFullScreenDialog>
     );
 });
