@@ -1,9 +1,10 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField } from '@material-ui/core';
 import { UserModel } from '../../model';
 import { useMutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 export interface LoginDialogProps {
     isOpen: boolean;
@@ -37,7 +38,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
     }, [data, onLogin, onRequestClose]);
 
     return (
-        <Dialog open={isOpen} fullWidth>
+        <ResponsiveFullScreenDialog open={isOpen} fullWidth>
             <form onSubmit={(e) => {
                 e.preventDefault();
                 login({ variables: { username: email, password } });
@@ -94,6 +95,6 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                     </Button>
                 </DialogActions>
             </form>
-        </Dialog>
+        </ResponsiveFullScreenDialog>
     )
 });
