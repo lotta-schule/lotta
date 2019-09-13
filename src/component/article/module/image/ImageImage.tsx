@@ -15,7 +15,7 @@ interface ImageImageProps extends Omit<ImageContentProps, 'onClick'> {
 
 export const ImageImage: FunctionComponent<ImageImageProps> = memo(({ isEditModeEnabled, file, caption, onUpdateFile, onUpdateCaption, onSelect, ...otherProps }) => {
     return (
-        <figure style={{ marginLeft: 0, marginRight: 0, }}>
+        <figure>
             {isEditModeEnabled ?
                 <SelectFileOverlay
                     label={'Bild auswechseln'}

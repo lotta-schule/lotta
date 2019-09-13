@@ -1,10 +1,9 @@
 import React, { FunctionComponent, memo, MouseEvent } from 'react';
 import { FileModel } from 'model';
 import { makeStyles } from '@material-ui/styles';
-import { Theme, Button, Fab, IconButton } from '@material-ui/core';
+import { Theme, Button } from '@material-ui/core';
 import { useWindowSize } from 'util/useWindowSize';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
-import { Close, ChevronLeft, ChevronRight } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -17,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 100000,
-        backgroundColor: '#fff',
+        backgroundColor: '#333e',
     },
     image: {
         width: '80vw',
@@ -26,18 +25,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     closeButton: {
         position: 'absolute',
         top: '.25em',
-        right: '3%',
+        right: '.25em',
+        backgroundColor: '#111',
+        borderRadius: 0,
         '&:hover': {
-            backgroundColor: theme.palette.secondary.light,
+            backgroundColor: '#333',
         }
-    },
-    leftButton: {
-        position: 'absolute',
-        left: '3%',
-    },
-    rightButton: {
-        position: 'absolute',
-        right: '3%',
     }
 }));
 
@@ -58,16 +51,10 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ select
     const imgUrl = `https://afdptjdxen.cloudimg.io/bound/${width}x${height}/foil1/${selectedFile.remoteLocation}`;
     return (
         <div className={styles.root}>
-            <IconButton size="medium" color="secondary" className={styles.closeButton} onClick={onClose}>
-                <Close />
-            </IconButton>
-            <IconButton size="small" color="secondary" className={styles.leftButton}>
-                <ChevronLeft />
-            </IconButton>
-            <IconButton size="small" color="secondary" className={styles.rightButton}>
-                <ChevronRight />
-            </IconButton>
-            <img src={imgUrl} alt={''} style={{ width: '75%' }} />
+            <Button variant="outlined" size="large" color="secondary" className={styles.closeButton} onClick={onClose}>
+                Schließen
+            </Button>
+            <img src={imgUrl} alt={''} />
         </div>
     );
 });
