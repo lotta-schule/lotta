@@ -11,10 +11,16 @@ const useStyles = makeStyles(() => ({
         borderRadius: 0,
         marginTop: '0.5em',
         padding: '0.5em',
+        borderLeft: '5px solid #699B4F',
     },
     list: {
         maxHeight: 300,
         overflow: 'auto'
+    },
+    tableline: {
+        '&:hover': {
+            backgroundColor: '#f0f0f0',
+        }
     }
 }));
 
@@ -40,7 +46,7 @@ export const Calendar = memo(() => {
             <List dense className={styles.list}>
                 {data.calendar.map(event => (
                     <React.Fragment key={event.uid}>
-                        <ListItem>
+                        <ListItem className={styles.tableline}>
                             <ListItemText style={{ width: '9em' }}>
                                 {format(parseISO(event.start), 'P', { locale: de })}
                             </ListItemText>
@@ -62,11 +68,8 @@ export const Calendar = memo(() => {
 
     return (
         <Paper className={styles.widget}>
-            <Typography variant={'h6'}>
-                Kalender
-            </Typography>
-            <Typography variant={'body1'} style={{ margin: '0.5em 0' }}>
-                Schule
+            <Typography variant={'body1'} style={{ margin: '0.5em 0', letterSpacing: 2, }}>
+                Terminkalender
             </Typography>
             {content}
         </Paper>
