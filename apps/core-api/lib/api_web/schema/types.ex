@@ -57,6 +57,21 @@ defmodule ApiWeb.Schema.Types do
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
   end
 
+  object :widget do
+    field :id, :lotta_id
+    field :title, :string
+    field :type, :widget_type
+    field :configuration, :json
+    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  enum :widget_type do
+    value :calendar, as: "calendar"
+    value :vplan, as: "vplan"
+    value :tagcloud, as: "tagcloud"
+  end
+
   object :article do
     field :id, :lotta_id
     field :inserted_at, :naive_datetime

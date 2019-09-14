@@ -64,6 +64,9 @@ Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Schüle
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Oskar-Reime-Chor", category_id: profil.id })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Schüler-Radio", category_id: profil.id })
 
+# Kalender-Widget
+Api.Repo.insert(%Api.Tenants.Widget{ tenant_id: web_tenant.id, title: "Kalender", type: "calendar" })
+
 # Articles
 {:ok, oskar_goes_to} = Api.Repo.insert(%Api.Content.Article{
     tenant_id: web_tenant.id,

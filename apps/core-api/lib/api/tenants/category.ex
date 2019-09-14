@@ -2,7 +2,7 @@ defmodule Api.Tenants.Category do
   use Ecto.Schema
   import Ecto.Changeset
   alias Api.Accounts.{File,UserGroup}
-  alias Api.Tenants.{Tenant}
+  alias Api.Tenants.{Category,Tenant}
 
   schema "categories" do
     field :title, :string
@@ -13,7 +13,7 @@ defmodule Api.Tenants.Category do
 
     belongs_to :banner_image_file, File, on_replace: :nilify
     belongs_to :group, UserGroup, on_replace: :nilify
-    belongs_to :category, Api.Tenants.Category
+    belongs_to :category, Category
     belongs_to :tenant, Tenant
 
     timestamps()
