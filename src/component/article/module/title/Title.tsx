@@ -11,7 +11,7 @@ export interface TitleProps {
 }
 
 export const Title: FunctionComponent<TitleProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent>
+    <CardContent style={{ paddingTop: 30, paddingBottom: 0, }}>
         <Typography variant={'body1'}>
             {isEditModeEnabled && onUpdateModule && (
                 <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
