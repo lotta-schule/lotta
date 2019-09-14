@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
 import {
-    Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
+    Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel, Divider
 } from '@material-ui/core';
 import { CategoryModel } from 'model';
 import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
@@ -11,6 +11,7 @@ import { useCategories } from 'util/categories/useCategories';
 import { useMutation } from 'react-apollo';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { ID } from 'model/ID';
+import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -50,7 +51,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                     bannerImageFile: category.bannerImageFile,
                     group: category.group,
                     redirect: category.redirect,
-                    hideArticlesFromHomepage: category.hideArticlesFromHomepage || false
+                    hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
+                    widgets: category.widgets ? category.widgets.map(w => ({ ...w, configuration: JSON.stringify(w.configuration) })) : []
                 }
             }
         });
@@ -136,6 +138,13 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                 </Select>
             </FormControl>
 
+            <p>&nbsp;</p>
+            <Divider />
+            <p>&nbsp;</p>
+            <CategoryWidgetSelector
+                selectedWidgets={category.widgets || []}
+                setSelectedWidgets={widgets => setCategory({ ...category, widgets })}
+            />
             <p>&nbsp;</p>
             <Button
                 style={{ float: 'right' }}

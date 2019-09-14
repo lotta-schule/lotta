@@ -23,6 +23,16 @@ export const GetCategoriesQuery = gql`
                 title
                 hideArticlesFromHomepage
             }
+            widgets {
+                id
+                title
+                configuration
+                group {
+                    id
+                    priority
+                    name
+                }
+            }
         }
     }
 `;

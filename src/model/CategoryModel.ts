@@ -1,5 +1,6 @@
 import { FileModel } from './FileModel';
 import { UserGroupModel } from './UserGroupModel';
+import { WidgetModel } from './WidgetModel';
 import { ID } from './ID';
 
 export interface CategoryModel {
@@ -12,4 +13,5 @@ export interface CategoryModel {
     group?: UserGroupModel;
     bannerImageFile?: FileModel;
     category?: CategoryModel;
+    widgets?: WidgetModel[];
 }
