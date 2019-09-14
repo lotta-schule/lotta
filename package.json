@@ -52,6 +52,7 @@
     "js-cookie": "^2.2.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
+    "material-ui-popup-state": "^1.4.1",
     "matomo-ts": "^1.0.1",
     "react": "^16.9.0",
     "react-apollo": "^3.0.1",

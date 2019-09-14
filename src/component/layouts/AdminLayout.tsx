@@ -7,6 +7,7 @@ import { Navigation } from './adminLayout/Navigation';
 import { UserManagement } from './adminLayout/userManagement/UserManagement';
 import { CategoriesManagement } from './adminLayout/categoryManagment/CategoryManagement';
 import { ClientManagement } from './adminLayout/userManagement/ClientManagement';
+import { WidgetManagement } from './adminLayout/widgetManagement/WidgetManagement';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export const AdminLayout: FunctionComponent = memo(() => {
@@ -23,6 +24,7 @@ export const AdminLayout: FunctionComponent = memo(() => {
                     <Route exact path='/admin' component={ClientManagement} />
                     <Route path='/admin/users' component={UserManagement} />
                     <Route path='/admin/categories' component={CategoriesManagement} />
+                    <Route path='/admin/widgets' component={WidgetManagement} />
                 </Switch>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
