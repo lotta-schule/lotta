@@ -2,7 +2,7 @@ defmodule Api.Tenants.Category do
   use Ecto.Schema
   import Ecto.Changeset
   alias Api.Accounts.{File,UserGroup}
-  alias Api.Tenants.{Category,Tenant}
+  alias Api.Tenants.{Category,Tenant,Widget}
 
   schema "categories" do
     field :title, :string
@@ -15,6 +15,10 @@ defmodule Api.Tenants.Category do
     belongs_to :group, UserGroup, on_replace: :nilify
     belongs_to :category, Category
     belongs_to :tenant, Tenant
+    many_to_many :widgets,
+      Widget,
+      join_through: "categories_widgets",
+      on_replace: :delete
 
     timestamps()
   end
@@ -22,11 +26,12 @@ defmodule Api.Tenants.Category do
   @doc false
   def changeset(category, attrs) do
     category
-    |> Api.Repo.preload([:banner_image_file, :group])
+    |> Api.Repo.preload([:banner_image_file, :group, :widgets])
     |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :sort_key])
     |> validate_required([:title])
     |> put_assoc_banner_image_file(attrs)
     |> put_assoc_group(attrs)
+    |> put_assoc_widgets(attrs)
   end
 
   defp put_assoc_banner_image_file(article, %{ banner_image_file: %{ id: banner_image_file_id } }) do
@@ -45,6 +50,19 @@ defmodule Api.Tenants.Category do
   defp put_assoc_group(article, _args) do
     article
     |> put_assoc(:group, nil)
+  end
+
+  defp put_assoc_widgets(category, %{ widgets: widgets }) do
+    IO.inspect("got some widgets to put")
+    IO.inspect("widgets are: ")
+    IO.inspect(widgets)
+    widgets = Enum.map(widgets, fn widget -> Api.Repo.get!(Api.Tenants.Widget, widget.id) end)
+    category
+    |> put_assoc(:widgets, widgets)
+  end
+  defp put_assoc_widgets(category, _args) do
+    category
+    |> put_assoc(:widgets, nil)
   end
 
 end

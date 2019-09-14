@@ -55,6 +55,7 @@ defmodule ApiWeb.Schema.Types do
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+    field :widgets, list_of(:widget), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
 
   object :widget do

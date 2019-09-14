@@ -2,7 +2,7 @@ defmodule Api.Tenants.Widget do
   use Ecto.Schema
   import Ecto.Changeset
   alias Api.Accounts.UserGroup
-  alias Api.Tenants.{Tenant,Widget}
+  alias Api.Tenants.{Category,Tenant,Widget}
 
   schema "widgets" do
     field :configuration, :map
@@ -11,6 +11,10 @@ defmodule Api.Tenants.Widget do
 
     belongs_to :group, UserGroup, on_replace: :nilify
     belongs_to :tenant, Tenant
+    many_to_many :categories,
+      Category,
+      join_through: "categories_widgets",
+      on_replace: :delete
 
     timestamps()
   end

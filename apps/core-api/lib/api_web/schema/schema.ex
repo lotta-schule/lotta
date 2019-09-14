@@ -181,6 +181,7 @@ defmodule ApiWeb.Schema do
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
     field :group, :user_group
+    field :widgets, list_of(:widget), default_value: []
   end
   
   input_object :widget_input do

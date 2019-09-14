@@ -22,12 +22,10 @@ defmodule Api.Accounts.User do
       UserGroup,
       join_through: "user_user_group",
       on_replace: :delete
-    many_to_many(
-      :articles,
+    many_to_many :articles,
       Article,
       join_through: "article_users",
       on_replace: :delete
-    )
 
     timestamps()
   end
