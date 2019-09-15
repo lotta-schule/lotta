@@ -44,6 +44,7 @@ Api.Accounts.assign_user_to_group(alexis, admin_group)
 Api.Accounts.assign_user_to_group(billy, schueler_group)
 Api.Accounts.assign_user_to_group(eike, lehrer_group)
 
+Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Start", is_homepage: true })
 {:ok, profil} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Profil" })
 Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "GTA" })
 {:ok, projekt} = Api.Repo.insert(%Api.Tenants.Category{ tenant_id: web_tenant.id, title: "Projekt" })

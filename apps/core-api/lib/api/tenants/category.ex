@@ -8,6 +8,7 @@ defmodule Api.Tenants.Category do
     field :title, :string
     field :sort_key, :integer
     field :is_sidenav, :boolean
+    field :is_homepage, :boolean
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
 
@@ -53,9 +54,6 @@ defmodule Api.Tenants.Category do
   end
 
   defp put_assoc_widgets(category, %{ widgets: widgets }) do
-    IO.inspect("got some widgets to put")
-    IO.inspect("widgets are: ")
-    IO.inspect(widgets)
     widgets = Enum.map(widgets, fn widget -> Api.Repo.get!(Api.Tenants.Widget, widget.id) end)
     category
     |> put_assoc(:widgets, widgets)
