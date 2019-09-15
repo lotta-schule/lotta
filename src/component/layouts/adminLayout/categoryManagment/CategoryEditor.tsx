@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
 import {
-    Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel, Divider
+    Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
 } from '@material-ui/core';
 import { CategoryModel } from 'model';
 import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
