@@ -24,6 +24,7 @@ export const UpdateCategoryMutation = gql`
             widgets {
                 id
                 title
+                type
                 configuration
                 group {
                     id

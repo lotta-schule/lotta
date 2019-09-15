@@ -26,6 +26,7 @@ export const GetCategoriesQuery = gql`
             widgets {
                 id
                 title
+                type
                 configuration
                 group {
                     id
