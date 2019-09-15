@@ -202,7 +202,7 @@ defmodule ApiWeb.Schema do
     loader =
       Dataloader.new
       |> Dataloader.add_source(Api.Content, Api.Content.data())
-      |> Dataloader.add_source(Api.Tenants, Api.Tenants.data())
+      |> Dataloader.add_source(Api.Tenants, Api.Tenants.data(ctx))
       |> Dataloader.add_source(Api.Accounts, Api.Accounts.data())
 
     Map.put(ctx, :loader, loader)

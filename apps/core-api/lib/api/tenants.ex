@@ -7,12 +7,25 @@ defmodule Api.Tenants do
   alias Api.Repo
 
   alias Api.Tenants.{Category,Tenant,Widget}
-  alias Api.Accounts.UserGroup
+  alias Api.Accounts.{User,UserGroup}
 
-  def data() do
-    Dataloader.Ecto.new(Api.Repo, query: &query/2)
+  def data(ctx) do
+    Dataloader.Ecto.new Api.Repo,
+      query: &query/2,
+      default_params: ctx.context
   end
-
+  def query(Widget, params) do
+    tenant_id = params.tenant.id
+    if Map.has_key?(params, :current_user) do
+      max_priority = params.current_user |> User.get_max_priority_for_tenant(params.tenant)
+      Ecto.Query.from(w in Widget,
+        where: w.tenant_id == ^tenant_id,
+        join: ug in UserGroup, where: (not is_nil(w.group_id) and ug.priority <= ^max_priority and ug.id == w.group_id) or is_nil(w.group_id),
+        distinct: w.id)
+    else
+      Ecto.Query.from w in Widget, where: w.tenant_id == ^tenant_id and is_nil(w.group_id)
+    end
+  end
   def query(queryable, _params) do
     queryable
   end
@@ -154,14 +167,12 @@ defmodule Api.Tenants do
       [%Category{}, ...]
 
   """
-  def list_categories_by_tenant(tenant_id, user) do
+  def list_categories_by_tenant(tenant, user) do
+    tenant_id = tenant.id
     if is_nil(user) do
       Repo.all(Ecto.Query.from c in Category, where: c.tenant_id == ^tenant_id and is_nil(c.group_id))
     else
-      max_priority = user.groups
-      |> Enum.filter(fn g -> g.tenant_id == tenant_id end)
-      |> Enum.map(fn g -> g.priority end)
-      |> Enum.max(fn -> 0 end)
+      max_priority = user |> User.get_max_priority_for_tenant(tenant)
       Ecto.Query.from(c in Category,
         where: c.tenant_id == ^tenant_id,
         join: ug in UserGroup, where: (not is_nil(c.group_id) and ug.priority <= ^max_priority and ug.id == c.group_id) or is_nil(c.group_id),
@@ -262,14 +273,12 @@ defmodule Api.Tenants do
       [%Category{}, ...]
 
   """
-  def list_widgets_by_tenant(tenant_id, user) do
+  def list_widgets_by_tenant(tenant, user) do
+    tenant_id = tenant.id
     if is_nil(user) do
       Repo.all(Ecto.Query.from w in Widget, where: w.tenant_id == ^tenant_id and is_nil(w.group_id))
     else
-      max_priority = user.groups
-      |> Enum.filter(fn g -> g.tenant_id == tenant_id end)
-      |> Enum.map(fn g -> g.priority end)
-      |> Enum.max(fn -> 0 end)
+      max_priority = user |> User.get_max_priority_for_tenant(tenant)
       Ecto.Query.from(w in Widget,
         where: w.tenant_id == ^tenant_id,
         join: ug in UserGroup, where: (not is_nil(w.group_id) and ug.priority <= ^max_priority and ug.id == w.group_id) or is_nil(w.group_id),
