@@ -8,6 +8,7 @@ export interface CategoryModel {
     title: string;
     sortKey: number;
     isSidenav?: boolean;
+    isHomepage?: boolean;
     redirect?: string;
     hideArticlesFromHomepage?: boolean;
     group?: UserGroupModel;

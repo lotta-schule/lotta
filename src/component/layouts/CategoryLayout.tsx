@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface CategoryLayoutProps {
-    category: CategoryModel | null; // null for homepage
+    category: CategoryModel;
     articles?: ArticleModel[];
 }
 
@@ -53,7 +53,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
     return (
         <>
             <BaseLayoutMainContent>
-                {category && (
+                {!category.isHomepage && (
                     <Grid className={styles.subheaderContainer}>
                         <Grid
                             item

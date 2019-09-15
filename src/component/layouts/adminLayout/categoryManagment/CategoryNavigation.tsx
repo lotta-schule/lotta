@@ -37,7 +37,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
 
     const [expandedMainCategoryId, setExpandedMainCategoryId] = useState<ID | null>(null);
 
-    const mainCategories = useMemo(() => categories.filter(category => !Boolean(category.category) && !category.isSidenav), [categories]);
+    const homepageCategory = (categories || []).find(category => category.isHomepage);
+    const mainCategories = useMemo(() => categories.filter(category => !Boolean(category.category) && !category.isSidenav && !category.isHomepage), [categories]);
     const sidenavCategories = categories.filter(c => c.isSidenav);
 
     const getSubcategoriesForCategory = useCallback((category: Partial<CategoryModel>) => {
@@ -51,6 +52,18 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
             <Typography variant="h5" className={styles.heading}>
                 Kategorienübersicht
             </Typography>
+
+            {homepageCategory && (
+                <ExpansionPanel expanded={false} key={homepageCategory.id}>
+                    <ExpansionPanelSummary className={styles.expansionSummary} onClick={() => onSelectCategory(homepageCategory)}>
+                        <Typography variant="body1">
+                            <b>{homepageCategory.title}</b>
+                        </Typography>
+                    </ExpansionPanelSummary>
+                </ExpansionPanel>
+            )}
+            <p>&nbsp;</p>
+
             <DragDropContext
                 onDragEnd={({ destination, source, draggableId }) => {
                     if (!destination) {
