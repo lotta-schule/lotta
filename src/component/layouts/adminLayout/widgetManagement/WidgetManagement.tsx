@@ -51,11 +51,11 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                 title,
                 type
             },
-            update: (cache, { data: { widget } }) => {
+            update: (cache, { data }) => {
                 const { widgets } = cache.readQuery<{ widgets: WidgetModel[] }>({ query: GetWidgetsQuery }) || { widgets: [] };
                 cache.writeQuery({
                     query: GetWidgetsQuery,
-                    data: { widgets: widgets.concat([widget]) }
+                    data: { widgets: widgets.concat([data!.widget]) }
                 });
             }
         })

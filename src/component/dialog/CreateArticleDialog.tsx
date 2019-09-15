@@ -51,7 +51,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                         });
                     }
                     resetForm();
-                    onConfirm(data.article);
+                    onConfirm(data!.article);
                 } catch (e) {
                     console.error(e);
                     setErrorMessage(e.message);
