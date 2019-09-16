@@ -5,6 +5,7 @@ import { useIsMobile } from 'util/useIsMobile';
 import { useSelector, useDispatch } from 'react-redux';
 import { createCloseDrawerAction } from 'store/actions/layout';
 import { State } from 'store/State';
+import { WidgetsList } from './WidgetsList';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -27,14 +28,12 @@ export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
     if (isMobile) {
         return (
             <Drawer anchor={'right'} open={isMobileDrawerOpen} onClose={() => closeDrawer()}>
-                <UserNavigation />
                 {children}
             </Drawer>
         );
     } else {
         return (
             <Grid className={styles.root} item component={'aside'} xs={12} md={3} xl={3}>
-                <UserNavigation />
                 {children}
             </Grid>
         );

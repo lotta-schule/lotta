@@ -2,6 +2,7 @@ import { ID } from './ID';
 import { UserGroupModel } from './UserGroupModel';
 
 export enum WidgetModelType {
+    UserNavigation = '{0}',
     Calendar = 'CALENDAR',
     VPlan = 'VPLAN',
     TagCloud = 'TAGCLOUD',

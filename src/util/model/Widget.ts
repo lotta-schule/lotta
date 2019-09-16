@@ -14,5 +14,14 @@ export const Widget = {
             default:
                 return createElement(AccountCircleOutlined);
         }
+    },
+
+    getProfileWidget(): WidgetModel {
+        return {
+            id: 0,
+            title: 'Profil',
+            type: WidgetModelType.UserNavigation,
+            configuration: {}
+        };
     }
 };

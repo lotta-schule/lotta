@@ -1,4 +1,4 @@
-import { CategoryModel, ArticleModel } from '../../model';
+import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
 import React, { memo } from 'react';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
@@ -8,6 +8,7 @@ import { theme } from 'theme';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
 import { Widget } from 'component/widgets/Widget';
+import { WidgetsList } from './WidgetsList';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
@@ -85,9 +86,9 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 )}
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
-                {category && category.widgets && category.widgets.map(widget => (
-                    <Widget key={widget.id} widget={widget} />
-                ))}
+                {category && category.widgets && (
+                    <WidgetsList widgets={category.widgets} />
+                )}
             </BaseLayoutSidebar>
         </>
     );
