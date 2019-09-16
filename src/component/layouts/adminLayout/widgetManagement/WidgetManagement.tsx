@@ -11,6 +11,7 @@ import { useQuery, useMutation } from 'react-apollo';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { CreateWidgetMutation } from 'api/mutation/CreateWidgetMutation';
+import { Widget } from 'util/model';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -97,7 +98,10 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                                     onClickCreateWidget('Kalender', WidgetModelType.Calendar);
                                     popupState.close();
                                 }}
-                            >Kalender-Widget hinzufügen</MenuItem>
+                            >
+                                {Widget.getIconForType(WidgetModelType.Calendar)} &nbsp;
+                                Kalender-Widget hinzufügen
+                            </MenuItem>
                         </Menu>
                     </>
                 )}</PopupState>

@@ -2,6 +2,8 @@ import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, ExpansionPanel, ExpansionPanelSummary } from '@material-ui/core';
 import { WidgetModel } from 'model';
+import { Widget } from 'util/model';
+import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => {
     return ({
@@ -10,6 +12,9 @@ const useStyles = makeStyles((theme: Theme) => {
         },
         expansionSummary: {
             backgroundColor: theme.palette.divider
+        },
+        selected: {
+            fontWeight: 'bolder'
         }
     });
 });
@@ -38,7 +43,10 @@ export const WidgetNavigation = memo<WidgetNavigationProps>(({ widgets, selected
                             onClick={() => onSelectWidget(widget)}
                         >
                             <Typography variant="body1">
-                                <b>{widget.title}</b>
+                                {Widget.getIcon(widget)} &nbsp;
+                                <span className={classNames({ [styles.selected]: selectedWidget && selectedWidget.id === widget.id })}>
+                                    {widget.title}
+                                </span>
                             </Typography>
                         </ExpansionPanelSummary>
                     </ExpansionPanel>
