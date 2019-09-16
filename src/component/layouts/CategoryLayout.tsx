@@ -1,4 +1,4 @@
-import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
+import { CategoryModel, ArticleModel } from '../../model';
 import React, { memo } from 'react';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
@@ -7,7 +7,6 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { theme } from 'theme';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
-import { Widget } from 'component/widgets/Widget';
 import { WidgetsList } from './WidgetsList';
 
 const useStyles = makeStyles(() => ({

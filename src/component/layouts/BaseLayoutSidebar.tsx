@@ -1,11 +1,9 @@
 import React, { FunctionComponent, memo, useCallback } from 'react';
 import { Grid, makeStyles, Theme, Drawer } from '@material-ui/core';
-import { UserNavigation } from './navigation/UserNavigation';
 import { useIsMobile } from 'util/useIsMobile';
 import { useSelector, useDispatch } from 'react-redux';
 import { createCloseDrawerAction } from 'store/actions/layout';
 import { State } from 'store/State';
-import { WidgetsList } from './WidgetsList';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
