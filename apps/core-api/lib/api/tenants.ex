@@ -21,7 +21,8 @@ defmodule Api.Tenants do
       Ecto.Query.from(w in Widget,
         where: w.tenant_id == ^tenant_id,
         join: ug in UserGroup, where: (not is_nil(w.group_id) and ug.priority <= ^max_priority and ug.id == w.group_id) or is_nil(w.group_id),
-        distinct: w.id)
+        distinct: :id
+      )
     else
       Ecto.Query.from w in Widget, where: w.tenant_id == ^tenant_id and is_nil(w.group_id)
     end
