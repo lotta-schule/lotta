@@ -73,7 +73,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 {articles && articles.length > 1 && (
                     articles
                         .sort((a1, a2) => {
-                            if (category && a1.isPinnedToTop !== a2.isPinnedToTop) {
+                            if (!category.isHomepage && a1.isPinnedToTop !== a2.isPinnedToTop) {
                                 if (a1.isPinnedToTop) { return -1; }
                                 if (a2.isPinnedToTop) { return 1; }
                             }
