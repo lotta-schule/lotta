@@ -16,6 +16,10 @@ defmodule ApiWeb.Schema do
       resolve &Api.CategoryResolver.all/2
     end
 
+    field :widgets, list_of(:widget) do
+      resolve &Api.WidgetResolver.all/2
+    end
+
     field :article, :article do
       arg :id, non_null(:lotta_id)
       resolve &Api.ArticleResolver.get/2
@@ -119,6 +123,20 @@ defmodule ApiWeb.Schema do
   
       resolve &Api.CategoryResolver.update/2
     end
+    
+    field :create_widget, type: :widget do
+      arg :title, non_null(:string)
+      arg :type, non_null(:widget_type)
+  
+      resolve &Api.WidgetResolver.create/2
+    end
+
+    field :update_widget, type: :widget do
+      arg :id, non_null(:lotta_id)
+      arg :widget, non_null(:widget_input)
+  
+      resolve &Api.WidgetResolver.update/2
+    end
 
     field :upload_file, type: :file do
       arg :path, :string, default_value: "/"
@@ -163,6 +181,14 @@ defmodule ApiWeb.Schema do
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
     field :group, :user_group
+    field :widgets, list_of(:widget), default_value: []
+  end
+  
+  input_object :widget_input do
+    field :title, non_null(:string)
+    field :group, :user_group
+    field :icon_image_file, :file
+    field :configuration, :json
   end
   
   input_object :content_module_input do
@@ -177,7 +203,7 @@ defmodule ApiWeb.Schema do
     loader =
       Dataloader.new
       |> Dataloader.add_source(Api.Content, Api.Content.data())
-      |> Dataloader.add_source(Api.Tenants, Api.Tenants.data())
+      |> Dataloader.add_source(Api.Tenants, Api.Tenants.data(ctx))
       |> Dataloader.add_source(Api.Accounts, Api.Accounts.data())
 
     Map.put(ctx, :loader, loader)

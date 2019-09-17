@@ -48,6 +48,7 @@ defmodule ApiWeb.Schema.Types do
     field :updated_at, :naive_datetime
     field :title, :string
     field :is_sidenav, :boolean
+    field :is_homepage, :boolean
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
     field :sort_key, :integer
@@ -55,6 +56,23 @@ defmodule ApiWeb.Schema.Types do
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+    field :widgets, list_of(:widget), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  object :widget do
+    field :id, :lotta_id
+    field :title, :string
+    field :type, :widget_type
+    field :configuration, :json
+    field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  enum :widget_type do
+    value :calendar, as: "calendar"
+    value :vplan, as: "vplan"
+    value :tagcloud, as: "tagcloud"
   end
 
   object :article do
