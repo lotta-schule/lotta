@@ -23,6 +23,7 @@ export const Navigation: FunctionComponent = memo(() => {
                 <Tab label="Mein Lotta" value={'/admin'} />
                 <Tab label="Nutzerverwaltung" value={'/admin/users'} />
                 <Tab label="Kategorienverwaltung" value={'/admin/categories'} />
+                <Tab label="Widgetverwaltung" value={'/admin/widgets'} />
             </Tabs>
         </Paper>
     );

@@ -11,6 +11,7 @@ import { useCategories } from 'util/categories/useCategories';
 import { useMutation } from 'react-apollo';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { ID } from 'model/ID';
+import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -50,7 +51,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                     bannerImageFile: category.bannerImageFile,
                     group: category.group,
                     redirect: category.redirect,
-                    hideArticlesFromHomepage: category.hideArticlesFromHomepage || false
+                    hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
+                    widgets: category.widgets ? category.widgets.map(w => ({ ...w, configuration: JSON.stringify(w.configuration) })) : []
                 }
             }
         });
@@ -86,56 +88,69 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                 onChange={e => setCategory({ ...category, title: e.target.value })}
             />
 
-            <GroupSelect
-                className={styles.input}
-                selectedGroup={category.group || null}
-                onSelectGroup={group => setCategory({ ...category, group: group || undefined })}
-            />
+            {!category.isHomepage && (
+                <>
+                    <GroupSelect
+                        className={styles.input}
+                        selectedGroup={category.group || null}
+                        onSelectGroup={group => setCategory({ ...category, group: group || undefined })}
+                    />
+
+                    <Typography className={styles.input}>
+                        <b>Wähle ein Banner für diese Kategorie</b>
+                    </Typography>
+
+                    <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })}>
+                        {category.bannerImageFile ? (
+                            <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
+                        ) : (<PlaceholderImage width={'100%'} height={75} />)}
+                    </SelectFileOverlay>
+
+                    <FormControl className={styles.input}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={category.hideArticlesFromHomepage}
+                                    onChange={(_, checked) => setCategory({ ...category, hideArticlesFromHomepage: checked })}
+                                    value={'hideArticlesFromHomepage'}
+                                />
+                            }
+                            label={'Beiträge dieser Kategorie auf der Startseite verstecken'}
+                        />
+                    </FormControl>
+
+                    <FormControl className={styles.input}>
+                        <InputLabel htmlFor={'category-redirect'}>Zu einer anderen Kategorie weiterleiten ...</InputLabel>
+                        <Select
+                            value={category.redirect}
+                            onChange={({ target }) => setCategory({ ...category, redirect: target.value as string })}
+                            inputProps={{
+                                id: 'category-redirect'
+                            }}
+                            displayEmpty
+                            fullWidth
+                        >
+                            <MenuItem value={undefined}>
+                            </MenuItem>
+                            {categories.map(category => (
+                                <MenuItem key={category.id} value={`/category/${category.id}`}>
+                                    {category.title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <p>&nbsp;</p>
+                </>
+            )}
 
             <Typography className={styles.input}>
-                <b>Wähle ein Banner für diese Kategorie</b>
+                <b>Wähle die marginalen Module für diese Kategorie</b>
             </Typography>
-
-            <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })}>
-                {category.bannerImageFile ? (
-                    <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
-                ) : (<PlaceholderImage width={'100%'} height={75} />)}
-            </SelectFileOverlay>
-
-            <FormControl className={styles.input}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={category.hideArticlesFromHomepage}
-                            onChange={(_, checked) => setCategory({ ...category, hideArticlesFromHomepage: checked })}
-                            value={'hideArticlesFromHomepage'}
-                        />
-                    }
-                    label={'Beiträge dieser Kategorie auf der Startseite verstecken'}
-                />
-            </FormControl>
-
-            <FormControl className={styles.input}>
-                <InputLabel htmlFor={'category-redirect'}>Zu einer anderen Kategorie weiterleiten ...</InputLabel>
-                <Select
-                    value={category.redirect}
-                    onChange={({ target }) => setCategory({ ...category, redirect: target.value as string })}
-                    inputProps={{
-                        id: 'category-redirect'
-                    }}
-                    displayEmpty
-                    fullWidth
-                >
-                    <MenuItem value={undefined}>
-                    </MenuItem>
-                    {categories.map(category => (
-                        <MenuItem key={category.id} value={`/category/${category.id}`}>
-                            {category.title}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
+            <CategoryWidgetSelector
+                selectedWidgets={category.widgets || []}
+                setSelectedWidgets={widgets => setCategory({ ...category, widgets })}
+            />
             <p>&nbsp;</p>
             <Button
                 style={{ float: 'right' }}
