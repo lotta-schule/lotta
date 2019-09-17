@@ -6,12 +6,16 @@ export const GetWidgetsQuery = gql`
             id
             title
             type
+            configuration
+            iconImageFile {
+                    id
+                    remoteLocation
+                }
             group {
                 id
                 priority
                 name
             }
-            configuration
         }
     }
 `;

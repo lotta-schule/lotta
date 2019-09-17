@@ -1,18 +1,28 @@
 import { WidgetModel, WidgetModelType } from "model";
 import { createElement } from "react";
-import { CalendarTodayOutlined, AccountCircleOutlined } from "@material-ui/icons";
 
 export const Widget = {
     getIcon(widget: WidgetModel) {
-        return Widget.getIconForType(widget.type);
+        return widget.iconImageFile ?
+            createElement('img', {
+                src: widget.iconImageFile.remoteLocation,
+                style: { width: '1.5rem', height: '1.5rem' }
+            }) :
+            Widget.getIconForType(widget.type);
     },
 
     getIconForType(type: WidgetModelType) {
         switch (type) {
             case WidgetModelType.Calendar:
-                return createElement(CalendarTodayOutlined);
+                return createElement('img', {
+                    src: '/img/calendar.svg',
+                    style: { width: '1.5rem', height: '1.5rem' }
+                });
             default:
-                return createElement(AccountCircleOutlined);
+                return createElement('img', {
+                    src: '/img/profile.svg',
+                    style: { width: '1.5rem', height: '1.5rem' }
+                });
         }
     },
 

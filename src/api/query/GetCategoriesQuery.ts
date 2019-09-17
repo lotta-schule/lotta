@@ -29,6 +29,10 @@ export const GetCategoriesQuery = gql`
                 title
                 type
                 configuration
+                iconImageFile {
+                    id
+                    remoteLocation
+                }
                 group {
                     id
                     priority

@@ -6,6 +6,9 @@ import { useMutation } from 'react-apollo';
 import { ID } from 'model/ID';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
+import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
+import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -40,6 +43,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
                 widget: {
                     title: widget.title,
                     group: widget.group,
+                    iconImageFile: widget.iconImageFile,
                     configuration: JSON.stringify(widget.configuration)
                 }
             }
@@ -78,6 +82,12 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
                 value={widget.title}
                 onChange={e => setWidget({ ...widget, title: e.target.value })}
             />
+
+            <SelectFileOverlay label={'Icon ändern'} onSelectFile={iconImageFile => setWidget({ ...widget, iconImageFile })}>
+                {widget.iconImageFile ? (
+                    <Img operation={'cover'} size={'100x100'} src={widget.iconImageFile.remoteLocation} />
+                ) : (<PlaceholderImage width={'100%'} height={100} />)}
+            </SelectFileOverlay>
 
             <GroupSelect
                 className={styles.input}
