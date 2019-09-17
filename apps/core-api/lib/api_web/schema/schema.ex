@@ -187,6 +187,7 @@ defmodule ApiWeb.Schema do
   input_object :widget_input do
     field :title, non_null(:string)
     field :group, :user_group
+    field :icon_image_file, :file
     field :configuration, :json
   end
   

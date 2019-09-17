@@ -64,6 +64,7 @@ defmodule ApiWeb.Schema.Types do
     field :title, :string
     field :type, :widget_type
     field :configuration, :json
+    field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
