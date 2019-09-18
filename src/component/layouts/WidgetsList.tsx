@@ -21,6 +21,22 @@ const useStyles = makeStyles(theme => ({
     tabRoot: {
         lineHeight: 1,
         textTransform: 'initial'
+    },
+    tabWrapper: {
+        '& img': {
+            filter: 'grayscale(1)'
+        }
+    },
+    tabSelected: {
+        '& img': {
+            filter: 'none'
+        }
+    },
+    swipeableViewsContainer: {
+        flexGrow: 1,
+        '& > div': {
+            height: '100%'
+        }
     }
 }));
 
@@ -39,11 +55,11 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
             <div className={styles.root}>
                 <Tabs
                     value={currentTabIndex}
-                    onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
                     indicatorColor={'primary'}
                     textColor={'primary'}
                     variant={'fullWidth'}
                     aria-label={'Marginales Modul wählen'}
+                    onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
                 >
                     {shownWidgets.map((widget, i) => (
                         <Tab
@@ -51,7 +67,9 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                             value={i}
                             icon={WidgetUtil.getIcon(widget)}
                             classes={{
-                                root: styles.tabRoot
+                                root: styles.tabRoot,
+                                wrapper: styles.tabWrapper,
+                                selected: styles.tabSelected
                             }}
                         />
                     ))}
@@ -60,7 +78,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                     axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                     index={currentTabIndex}
                     onChangeIndex={newIndex => setCurrentTabIndex(newIndex)}
-                    style={{ flexGrow: 1 }}
+                    className={styles.swipeableViewsContainer}
                 >
                     {shownWidgets.map(widget => (
                         <Widget key={widget.id} widget={widget} />

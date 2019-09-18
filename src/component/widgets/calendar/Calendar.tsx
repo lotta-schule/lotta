@@ -7,9 +7,11 @@ import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { WidgetModel, CalendarWidgetConfig } from 'model';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
     list: {
-        maxHeight: 300,
+        [theme.breakpoints.up('sm')]: {
+            maxHeight: 300,
+        },
         overflow: 'auto'
     },
     tableline: {
