@@ -1,9 +1,9 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { ContentModuleModel, FileModel } from 'model';
+import { ContentModuleModel } from 'model';
 import { ImageImage } from '../ImageImage';
 import { Grid, makeStyles, IconButton } from '@material-ui/core';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
-import { ImageOverlay } from '../imageOverlay/ImageOverlay';
+import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
 import { Delete } from '@material-ui/icons';
 
 const useStyles = makeStyles(() => ({
@@ -30,7 +30,7 @@ export interface GaleryProps {
 
 export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
     const styles = useStyles();
-    const [selectedFile, setSelectedFile] = useState<FileModel | null>(null);
+    const [selectedFileIndex, setSelectedFileIndex] = useState<number | null>(null);
     let imageCaptions: (string | null)[] = [];
     try {
         if (!contentModule.text) {
@@ -80,7 +80,7 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
                                     )
                                 });
                             }}
-                            onSelect={() => setSelectedFile(file)}
+                            onSelect={() => setSelectedFileIndex(index)}
                             size={'350x200'}
                             width={350}
                             height={200}
@@ -92,9 +92,22 @@ export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isE
                 ))}
             </Grid>
             {isEditModeEnabled && <SelectFileButton label={'Bild hinzufügen'} onSelectFiles={f => onUpdateModule({ ...contentModule, files: contentModule.files.concat(f) })} />}
-            {!isEditModeEnabled && selectedFile !== null && (
-                <ImageOverlay selectedFile={selectedFile} onClose={() => setSelectedFile(null)} />
-            )}
+            {!isEditModeEnabled && selectedFileIndex !== null && (() => {
+                const prevNextProps: Partial<ImageOverlayProps> = {};
+                if (selectedFileIndex > 0) {
+                    prevNextProps.onPrevious = () => setSelectedFileIndex(selectedFileIndex - 1);
+                }
+                if (selectedFileIndex < contentModule.files.length - 1) {
+                    prevNextProps.onNext = () => setSelectedFileIndex(selectedFileIndex + 1);
+                }
+                return (
+                    <ImageOverlay
+                        selectedFile={contentModule.files[selectedFileIndex]}
+                        onClose={() => setSelectedFileIndex(null)}
+                        {...prevNextProps}
+                    />
+                );
+            })()}
         </>
     );
 });
