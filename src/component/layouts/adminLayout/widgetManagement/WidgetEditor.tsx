@@ -13,6 +13,7 @@ import Img from 'react-cloudimage-responsive';
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
         marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(3),
         width: '100%'
     },
     switchBase: {
@@ -75,6 +76,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
             {error && (
                 <div style={{ color: 'red' }}>{error.message}</div>
             )}
+
             <TextField
                 className={styles.input}
                 fullWidth
