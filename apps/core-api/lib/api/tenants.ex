@@ -16,14 +16,18 @@ defmodule Api.Tenants do
   end
   def query(Widget, params) do
     tenant_id = params.tenant.id
+    IO.inspect("dataloader query with params:")
+    IO.inspect(params)
     if Map.has_key?(params, :current_user) do
       max_priority = params.current_user |> User.get_max_priority_for_tenant(params.tenant)
+      IO.inspect("query for widgets with tenant #{tenant_id} and groups which priority is max #{max_priority}, or no group set")
       Ecto.Query.from(w in Widget,
         where: w.tenant_id == ^tenant_id,
         join: ug in UserGroup, where: (not is_nil(w.group_id) and ug.priority <= ^max_priority and ug.id == w.group_id) or is_nil(w.group_id),
         distinct: :id
       )
     else
+      IO.inspect("query for widgets without group")
       Ecto.Query.from w in Widget, where: w.tenant_id == ^tenant_id and is_nil(w.group_id)
     end
   end
