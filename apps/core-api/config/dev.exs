@@ -2,9 +2,9 @@ use Mix.Config
 
 # Configure your database
 config :api, Api.Repo,
-  username: "api-user",
-  password: "password",
-  database: "api",
+  username: "lotta",
+  password: "lotta",
+  database: "lotta",
   hostname: "postgres",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

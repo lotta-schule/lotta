@@ -34,9 +34,9 @@ services:
       - postgres
       - rabbitmq
     environment:
-      POSTGRES_USER: api-user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: api
+      POSTGRES_USER: lotta
+      POSTGRES_PASSWORD: lotta
+      POSTGRES_DB: lotta
 
   rabbitmq:
     image: rabbitmq:3.7-management
