@@ -12,8 +12,7 @@ const useStyles = makeStyles(theme => ({
     root: {
         borderRadius: 0,
         marginTop: '0.5em',
-        padding: '0.5em',
-        borderLeft: '5px solid #699B4F',
+        padding: '0.5em'
     },
     heading: {
         marginTop: theme.spacing(1),
