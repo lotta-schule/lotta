@@ -21,6 +21,17 @@ export const UpdateCategoryMutation = gql`
                 id
                 title
             }
+            widgets {
+                id
+                title
+                type
+                configuration
+                group {
+                    id
+                    priority
+                    name
+                }
+            }
         }
     }
 `;

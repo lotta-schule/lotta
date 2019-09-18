@@ -23,9 +23,6 @@ const useStyles = makeStyles(theme => ({
         top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2),
         backgroundColor: '#fff',
         padding: '0.5em 1em 0.5em 0.5em',
-        borderLeftWidth: 5,
-        borderLeftColor: theme.palette.primary.main,
-        borderLeftStyle: 'solid',
         height: 138,
         flexShrink: 0
     },

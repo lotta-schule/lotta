@@ -88,7 +88,8 @@ export const Navbar = memo(() => {
 
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 
-    const mainCategories = (categories || []).filter(category => !Boolean(category.category) && !category.isSidenav);
+    const homepageCategory = (categories || []).find(category => category.isHomepage);
+    const mainCategories = (categories || []).filter(category => !Boolean(category.category) && !category.isSidenav && !category.isHomepage);
     const subcategories = (categories || []).filter(category => category.category && category.category.id === categoriesHierarchy[0]);
 
     return (
@@ -97,18 +98,20 @@ export const Navbar = memo(() => {
                 <Grid item xs className={styles.padding}>
                     <AppBar position={'sticky'} className={styles.appBar}>
                         <Toolbar>
-                            <Button
-                                key={'home'}
-                                component={CollisionLink}
-                                style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
-                                to={'/'}
-                                variant="text"
-                                size={'medium'}
-                                className={classNames(styles.navButton, { selected: currentCategoryId === null })}
-                                color='inherit'
-                            >
-                                Startseite
-                            </Button>
+                            {homepageCategory && (
+                                <Button
+                                    key={'home'}
+                                    component={CollisionLink}
+                                    style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
+                                    to={'/'}
+                                    variant="text"
+                                    size={'medium'}
+                                    className={classNames(styles.navButton, { selected: currentCategoryId === null })}
+                                    color='inherit'
+                                >
+                                    {homepageCategory.title}
+                                </Button>
+                            )}
                             {mainCategories.map(category => (
                                 <Button
                                     variant="text"

@@ -1,48 +1,30 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { AdminLayout } from './layouts/AdminLayout';
-import { ApolloError } from 'apollo-boost';
 import { ArticleRoute } from './routes/ArticleRoute';
 import { BaseLayout } from './layouts/BaseLayout';
 import { CategoryRoute } from './routes/CategoryRoute';
 import { CircularProgress } from '@material-ui/core';
-import { client as apolloClient } from '../api/client';
-import { ClientModel, CategoryModel } from 'model';
-import { createSetClientAction, createSetCategoriesAction } from 'store/actions/client';
+import { ClientModel } from 'model';
 import { EditArticleRoute } from './routes/EditArticleRoute';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { PrivacyLayout } from './layouts/PrivacyLayout';
 import { ProfileLayout } from './layouts/ProfileLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
-import { State } from 'store/State';
-import { useSelector, useDispatch } from 'react-redux';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Helmet } from 'react-helmet';
+import { useQuery } from 'react-apollo';
 
 export const App = memo(() => {
-  const client = useSelector<State, ClientModel | null>(state => state.client.client);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<ApolloError | null>(null);
+  const { data, loading: isLoading, error } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
+
   const [, { called: calledCurrentUser }] = useCurrentUser();
-  const dispatch = useDispatch();
-  if (!client && !error && !isLoading) {
-    apolloClient.query<{ tenant: (ClientModel & { categories: CategoryModel[] }) }>({
-      query: GetTenantQuery
-    }).then(({ loading, errors, data }) => {
-      setIsLoading(loading);
-      if (errors) {
-        setError(errors[0]);
-      }
-      const { categories, ...client } = data.tenant;
-      dispatch(createSetClientAction(client));
-      dispatch(createSetCategoriesAction(categories));
-    });
-  }
 
   if (error) {
     return (
       <div><span style={{ color: 'red' }}>{error.message}</span></div>
     );
   }
+
   if (isLoading || !calledCurrentUser) {
     return (
       <div>
@@ -50,18 +32,21 @@ export const App = memo(() => {
       </div>
     );
   }
-  if (!client) {
+
+  if (!data || !data.tenant) {
     return (
       <div>
-        <span>Adresse ungültig.</span>
+        <span style={{ color: 'red' }}>Adresse ungültig.</span>
       </div>
     );
   }
 
+  const { tenant } = data;
+
   return (
     <BrowserRouter>
       <Helmet>
-        <title>{client.title}</title>
+        <title>{tenant.title}</title>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
       </Helmet>

@@ -1,9 +1,10 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField } from '@material-ui/core';
 import { ArticleModel, ArticleModelInput } from '../../model';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
 import { client } from 'api/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 export interface CreateArticleDialogProps {
     isOpen: boolean;
@@ -23,7 +24,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
         setTitle('');
     }
     return (
-        <Dialog open={isOpen} fullWidth>
+        <ResponsiveFullScreenDialog open={isOpen} fullWidth>
             <form onSubmit={async (e) => {
                 e.preventDefault();
                 setErrorMessage(null);
@@ -50,7 +51,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                         });
                     }
                     resetForm();
-                    onConfirm(data.article);
+                    onConfirm(data!.article);
                 } catch (e) {
                     console.error(e);
                     setErrorMessage(e.message);
@@ -100,6 +101,6 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                     </Button>
                 </DialogActions>
             </form>
-        </Dialog>
+        </ResponsiveFullScreenDialog>
     );
 });

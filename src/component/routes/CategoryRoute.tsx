@@ -26,6 +26,12 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
         );
     }
 
+    if (!category) {
+        return (
+            <div><span style={{ color: 'red' }}>Seite nicht gefunden!</span></div>
+        );
+    }
+
     if (data) {
         const articles = !categoryId ?
             data.articles.filter(a => Boolean(a.category && !a.category.hideArticlesFromHomepage)) :

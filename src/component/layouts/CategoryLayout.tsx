@@ -5,10 +5,9 @@ import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { theme } from 'theme';
-// import { VPlan } from 'component/widgets/vPlan/VPlan';
-import { Calendar } from 'component/widgets/calendar/Calendar';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
+import { WidgetsList } from './WidgetsList';
 
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
@@ -38,7 +37,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export interface CategoryLayoutProps {
-    category: CategoryModel | null; // null for homepage
+    category: CategoryModel;
     articles?: ArticleModel[];
 }
 
@@ -54,7 +53,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
     return (
         <>
             <BaseLayoutMainContent>
-                {category && (
+                {!category.isHomepage && (
                     <Grid className={styles.subheaderContainer}>
                         <Grid
                             item
@@ -74,7 +73,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 {articles && articles.length > 1 && (
                     articles
                         .sort((a1, a2) => {
-                            if (category && a1.isPinnedToTop !== a2.isPinnedToTop) {
+                            if (!category.isHomepage && a1.isPinnedToTop !== a2.isPinnedToTop) {
                                 if (a1.isPinnedToTop) { return -1; }
                                 if (a2.isPinnedToTop) { return 1; }
                             }
@@ -86,7 +85,9 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 )}
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
-                <Calendar />
+                {category && category.widgets && (
+                    <WidgetsList widgets={category.widgets} />
+                )}
             </BaseLayoutSidebar>
         </>
     );

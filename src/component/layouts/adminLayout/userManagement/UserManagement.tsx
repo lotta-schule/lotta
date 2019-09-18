@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginBottom: theme.spacing(2),
     },
     searchUserField: {
-        width: 400,
+        width: 'auto',
+        maxWidth: 400,
         backgroundColor: '#efefef'
     },
     formControl: {

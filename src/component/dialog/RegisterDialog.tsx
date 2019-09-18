@@ -1,10 +1,11 @@
 import React, { memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Dialog, Typography, Grid } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Typography, Grid } from '@material-ui/core';
 import { UserModel } from '../../model';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { theme } from 'theme';
 import { useMutation } from '@apollo/react-hooks';
 import { useOnLogin } from 'util/user/useOnLogin';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 export interface RegisterDialogProps {
     isOpen: boolean;
@@ -41,7 +42,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     }
 
     return (
-        <Dialog open={isOpen} fullWidth>
+        <ResponsiveFullScreenDialog open={isOpen} fullWidth>
             <form onSubmit={(e) => {
                 e.preventDefault();
                 setFormError(null);
@@ -172,6 +173,6 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                     </Button>
                 </DialogActions>
             </form>
-        </Dialog>
+        </ResponsiveFullScreenDialog>
     );
 });

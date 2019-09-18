@@ -1,52 +1,73 @@
-import React, { memo } from 'react';
-import { Typography, Paper, List, ListItem, ListItemText, makeStyles, Divider, CircularProgress, Tooltip } from '@material-ui/core';
+import React, { memo, useEffect, useState } from 'react';
+import { List, ListItem, ListItemText, makeStyles, Divider, CircularProgress, Tooltip } from '@material-ui/core';
 import { GetCalendarQuery } from 'api/query/GetCalendarQuery';
 import { CalendarEventModel } from 'model/CalendarEventModel';
-import { useQuery } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/react-hooks';
 import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { WidgetModel, CalendarWidgetConfig } from 'model';
 
-const useStyles = makeStyles(() => ({
-    widget: {
-        borderRadius: 0,
-        marginTop: '0.5em',
-        padding: '0.5em',
-    },
+const useStyles = makeStyles(theme => ({
     list: {
-        maxHeight: 300,
+        [theme.breakpoints.up('sm')]: {
+            maxHeight: 300,
+        },
         overflow: 'auto'
+    },
+    tableline: {
+        '&:hover': {
+            backgroundColor: '#f0f0f0',
+        }
     }
 }));
 
-const calendarUrl = 'https://calendar.google.com/calendar/ical/baethge%40ehrenberg-gymnasium.de/public/basic.ics';
+export interface CalendarProps {
+    widget: WidgetModel<CalendarWidgetConfig>;
+}
 
-export const Calendar = memo(() => {
+export const Calendar = memo<CalendarProps>(({ widget }) => {
     const styles = useStyles();
 
-    const { data, loading: isLoading, error } = useQuery<{ calendar: CalendarEventModel[] }>(GetCalendarQuery, { variables: { url: calendarUrl } });
+    const [isLoading, setIsLoading] = useState(false);
+    const [events, setEvents] = useState<(CalendarEventModel & { calendar: CalendarWidgetConfig })[]>([])
+    const [error, setError] = useState<Error | null>(null);
 
-    let content: JSX.Element | null = null;
+    const { calendars } = widget.configuration;
+    const apolloClient = useApolloClient();
+
+    useEffect(() => {
+        setIsLoading(true);
+        setError(null);
+        Promise.all(
+            (calendars || [])
+                .map(calendar => {
+                    return apolloClient
+                        .query<{ calendar: CalendarEventModel[] }>({ query: GetCalendarQuery, variables: { url: calendar.url } })
+                        .then(({ data: { calendar: events } }) => events.map(event => ({ ...event, calendar })));
+                })
+        )
+            .then((eventsArr: any[]) => setEvents(eventsArr.flat()))
+            .catch((err: Error) => setError(err))
+            .finally(() => setIsLoading(false));
+    }, [apolloClient, calendars]);
 
     if (isLoading) {
-        content = (
+        return (
             <CircularProgress />
         );
     } else if (error) {
-        content = (
+        return (
             <span style={{ color: 'red' }}>{error.message}</span>
         );
-    } else if (data) {
-        content = (
+    } else if (events) {
+        return (
             <List dense className={styles.list}>
-                {data.calendar.map(event => (
+                {events.map(event => (
                     <React.Fragment key={event.uid}>
-                        <ListItem>
+                        <ListItem className={styles.tableline}>
                             <ListItemText style={{ width: '9em' }}>
                                 {format(parseISO(event.start), 'P', { locale: de })}
                             </ListItemText>
-                            {/* <ListItemText>
-                            16:00-18:00
-                        </ListItemText> */}
                             <ListItemText style={{ paddingLeft: '.5em', textAlign: 'right', hyphens: 'auto', wordBreak: 'break-word' }}>
                                 <Tooltip title={event.description}>
                                     <span>{event.summary}</span>
@@ -59,16 +80,5 @@ export const Calendar = memo(() => {
             </List>
         );
     }
-
-    return (
-        <Paper className={styles.widget}>
-            <Typography variant={'h6'}>
-                Kalender
-            </Typography>
-            <Typography variant={'body1'} style={{ margin: '0.5em 0' }}>
-                Schule
-            </Typography>
-            {content}
-        </Paper>
-    );
+    return null;
 });

@@ -11,6 +11,6 @@ export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
     const variant = `h${get(contentModule.configuration, 'level', 4)}` as 'h4' | 'h5' | 'h6';
 
     return (
-        <Typography component={variant} variant={variant} gutterBottom>{contentModule.text}</Typography>
+        <Typography component={variant} variant={variant}>{contentModule.text}</Typography>
     );
 });

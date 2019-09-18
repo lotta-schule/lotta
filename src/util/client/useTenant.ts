@@ -1,7 +1,8 @@
-import { useSelector } from 'react-redux';
-import { State } from 'store/State';
 import { ClientModel } from 'model';
+import { useQuery } from 'react-apollo';
+import { GetTenantQuery } from 'api/query/GetTenantQuery';
 
 export const useTenant = (): ClientModel => {
-    return useSelector<State, ClientModel>(s => s.client.client!);
+    const { data } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
+    return data!.tenant;
 }
