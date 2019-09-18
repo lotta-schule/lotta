@@ -26,6 +26,7 @@ defmodule Api.Tenants do
         join: ug in UserGroup, where: (not is_nil(w.group_id) and ug.priority <= ^max_priority and ug.id == w.group_id) or is_nil(w.group_id),
         distinct: :id
       )
+      Ecto.Adapters.SQL.to_sql(:all, Repo, query)
       IO.inspect(query)
       query
     else
