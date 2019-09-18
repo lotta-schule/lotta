@@ -34,11 +34,14 @@ const customFetch = (url: string, options: any) => {
     });
 };
 
-const stripTypenames = (obj: any, propToDelete: string): any => {
+const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
     for (const property in obj) {
-        if (typeof obj[property] === 'object' && !(obj[property] instanceof File)) {
+        if (property === 'configuration' && typeof obj[property] === 'object') {
             delete obj.property;
-            const newData = stripTypenames(obj[property], propToDelete);
+            obj[property] = JSON.stringify(obj[property]);
+        } else if (typeof obj[property] === 'object' && !(obj[property] instanceof File)) {
+            delete obj.property;
+            const newData = mutateVariableInputObject(obj[property], propToDelete);
             obj[property] = newData;
         } else {
             if (property === propToDelete) {
@@ -53,7 +56,7 @@ export const client = new ApolloClient({
     link: concat(
         new ApolloLink((operation, forward) => {
             if (operation.variables) {
-                operation.variables = stripTypenames(operation.variables, '__typename');
+                operation.variables = mutateVariableInputObject(operation.variables, '__typename');
                 return forward ? forward(operation) : null;
             }
             return forward ? forward(operation) : null;
