@@ -21,7 +21,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
     const { history } = useRouter();
 
     const [email, setEmail] = useState(currentUser && currentUser.email);
-    const [name, setName] = useState(currentUser && User.getNickname(currentUser));
+    const [name, setName] = useState(currentUser && currentUser.name);
     const [nickname, setNickname] = useState(currentUser && currentUser.nickname);
     const [avatarImageFile, setAvatarImageFile] = useState(currentUser && currentUser.avatarImageFile);
 
