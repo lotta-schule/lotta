@@ -1,9 +1,10 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, { FunctionComponent, memo, useCallback, useEffect } from 'react';
 import { Grid, makeStyles, Theme, Drawer } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
 import { useSelector, useDispatch } from 'react-redux';
 import { createCloseDrawerAction } from 'store/actions/layout';
 import { State } from 'store/State';
+import useRouter from 'use-react-router';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -22,6 +23,12 @@ export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
     const isMobile = useIsMobile();
     const isMobileDrawerOpen = useSelector<State, boolean>(s => s.layout.isDrawerOpen);
     const closeDrawer = useCallback(() => { dispatch(createCloseDrawerAction()); }, [dispatch]);
+
+    const { location: { pathname } } = useRouter();
+
+    useEffect(() => {
+        closeDrawer()
+    }, [closeDrawer, pathname]);
 
     if (isMobile) {
         return (
