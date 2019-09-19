@@ -120,6 +120,14 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                         </Grid>
                     </CardContent>
                 </Card>
+                {unpublishedArticlesData && unpublishedArticlesData.articles && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant={'h4'}>Freizugebene Beiträge</Typography>
+                            <ArticlesManagement articles={unpublishedArticlesData.articles} />
+                        </CardContent>
+                    </Card>
+                )}
                 <Card>
                     <CardContent>
                         <Typography variant={'h4'}>Meine Medien</Typography>
@@ -131,14 +139,6 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                         <Typography variant={'h4'}>Meine Beiträge</Typography>
                         {ownArticlesData && ownArticlesData.articles && (
                             <ArticlesManagement articles={ownArticlesData.articles} />
-                        )}
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent>
-                        <Typography variant={'h4'}>Freizugebene Beiträge Beiträge</Typography>
-                        {unpublishedArticlesData && unpublishedArticlesData.articles && (
-                            <ArticlesManagement articles={unpublishedArticlesData.articles} />
                         )}
                     </CardContent>
                 </Card>
