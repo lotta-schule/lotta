@@ -109,25 +109,27 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 />
             </CardContent>
             {User.isAdmin(currentUser) && (
-                <CardContent>
-                    <CategorySelect
-                        selectedCategoryId={article.category && article.category.id}
-                        onSelectCategory={category => onUpdate({ ...article, category })}
-                    />
-                </CardContent>
+                <>
+                    <CardContent>
+                        <CategorySelect
+                            selectedCategoryId={article.category && article.category.id}
+                            onSelectCategory={category => onUpdate({ ...article, category })}
+                        />
+                    </CardContent>
+                    <CardContent>
+                        <TextField
+                            label="Thema"
+                            value={article.topic || ''}
+                            onChange={e => onUpdate({ ...article, topic: e.target.value || '' })}
+                            fullWidth
+                            variant="outlined"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </CardContent>
+                </>
             )}
-            <CardContent>
-                <TextField
-                    label="Thema"
-                    value={article.topic}
-                    onChange={e => onUpdate({ ...article, topic: e.target.value || undefined })}
-                    fullWidth
-                    variant="outlined"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
-            </CardContent>
             <CardContent>
                 <SelectFileOverlay label={'Vorschaubild ändern'} onSelectFile={previewImageFile => onUpdate({ ...article, previewImageFile })}>
                     {article.previewImageFile ? (

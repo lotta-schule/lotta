@@ -27,10 +27,14 @@ export const RelatedArticlesList = memo<RelatedArticlesListProps>(({ article }) 
     if (!data || !data.articles || !data.articles.length) {
         return null;
     }
+    const relatedArticles = data.articles.filter(a => a.id !== article.id);
+    if (!relatedArticles.length) {
+        return null;
+    }
     return (
         <>
             <Typography variant={'h6'} className={styles.root}>Weitere Beiträge zum Thema <strong>{article.topic!}</strong></Typography>
-            {data.articles.filter(a => a.id !== article.id).map(relatedArticle => (
+            {relatedArticles.map(relatedArticle => (
                 <ArticlePreview key={relatedArticle.id} article={relatedArticle} limitedHeight />
             ))}
         </>
