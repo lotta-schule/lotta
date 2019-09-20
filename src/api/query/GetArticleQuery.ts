@@ -52,6 +52,9 @@ export const GetArticleQuery = gql`
                 id
                 nickname
                 name
+                avatarImageFile {
+                    remoteLocation
+                }
             }
         }
     }
