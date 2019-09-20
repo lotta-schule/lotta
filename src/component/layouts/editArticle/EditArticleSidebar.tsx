@@ -119,8 +119,8 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                     <CardContent>
                         <TextField
                             label="Thema"
-                            value={article.topic}
-                            onChange={e => onUpdate({ ...article, topic: e.target.value || undefined })}
+                            value={article.topic || ''}
+                            onChange={e => onUpdate({ ...article, topic: e.target.value || '' })}
                             fullWidth
                             variant="outlined"
                             InputLabelProps={{
