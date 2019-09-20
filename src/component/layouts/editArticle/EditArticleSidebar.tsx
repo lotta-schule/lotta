@@ -15,6 +15,7 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { uniqBy } from 'lodash';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
+import { UsersList } from './UsersList';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
 import useRouter from 'use-react-router';
@@ -144,11 +145,10 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                         onSelectUser={user => onUpdate({ ...article, users: uniqBy(article.users.concat([user]), 'id') })}
                     />
                 )}
-                <ul>
-                    {article.users.map(user => (
-                        <li key={user.id}>{User.getNickname(user)}</li>
-                    ))}
-                </ul>
+                <UsersList
+                    users={article.users}
+                    onClickRemove={user => onUpdate({ ...article, users: article.users.filter(articleUser => articleUser.id !== user.id) })}
+                />
             </CardContent>
             <CardContent>
                 <GroupSelect
