@@ -10,6 +10,9 @@ export const SearchUsersQuery = gql`
             class
             nickname
             email
+            avatarImageFile {
+                remoteLocation
+            }
         }
     }
 `;

@@ -18,6 +18,9 @@ export const GetUserQuery = gql`
                     id
                 }
             }
+            avatarImageFile {
+                remoteLocation
+            }
         }
     }
 `;

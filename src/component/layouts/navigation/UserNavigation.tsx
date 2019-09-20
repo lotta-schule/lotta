@@ -1,22 +1,20 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
 import { Add as AddCircleIcon, } from '@material-ui/icons';
 import { CollisionLink } from '../../general/CollisionLink';
-import { createAddArticleAction } from 'store/actions/content';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useDispatch } from 'react-redux';
 import { User } from 'util/model';
 import { ArticleModel } from '../../../model';
-import classNames from 'classnames';
-import useRouter from 'use-react-router';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useCategories } from 'util/categories/useCategories';
+import classNames from 'classnames';
+import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -54,7 +52,6 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
     const { history } = useRouter();
     const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
 
-    const dispatch = useDispatch();
     const onLogout = useOnLogout();
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
@@ -125,7 +122,6 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
                         isOpen={createArticleModalIsOpen}
                         onAbort={() => setCreateArticleModalIsOpen(false)}
                         onConfirm={article => {
-                            dispatch(createAddArticleAction(article));
                             history.push(`/article/${article.id}/edit`);
                         }}
                     />

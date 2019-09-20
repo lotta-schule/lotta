@@ -55,8 +55,8 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
             <div className={styles.root}>
                 <Tabs
                     value={currentTabIndex}
-                    indicatorColor={'primary'}
-                    textColor={'primary'}
+                    indicatorColor={'secondary'}
+                    textColor={'secondary'}
                     variant={'fullWidth'}
                     aria-label={'Marginales Modul wählen'}
                     onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
