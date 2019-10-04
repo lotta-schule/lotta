@@ -1,8 +1,9 @@
+import "@types/jest";
 import React from 'react';
 import {
     render,
     cleanup
-} from 'react-testing-library';
+} from '@testing-library/react';
 import { CollisionLink } from './CollisionLink';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
