@@ -1,16 +1,12 @@
 # The version of Alpine to use for the final image
-# This should match the version of Alpine that the `elixir:1.7.2-alpine` image uses
-ARG ALPINE_VERSION=3.9
+ARG ALPINE_VERSION=3.10
 
-FROM elixir:1.8-alpine AS builder
+FROM elixir:1.9.1-alpine AS builder
 
-# The environment to build with
-ARG MIX_ENV=prod
+ENV MIX_ENV=prod
 
-ENV MIX_ENV=${MIX_ENV}
-
-# By convention, /opt is typically used for applications
-WORKDIR /opt/app
+RUN mkdir -p /app
+WORKDIR /app
 
 # This step installs all the build tools we'll need
 RUN apk update && \
@@ -20,39 +16,52 @@ RUN apk update && \
     build-base \
     erlang-inets
 
-RUN mix local.rebar --force && \
-    mix local.hex --force
+# install hex + rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
 
-# This copies our app source code into the build container
-COPY . .
+# set build ENV
+ENV MIX_ENV=prod
 
-RUN mix do deps.get, deps.compile, compile
+# install mix dependencies
+COPY mix.exs mix.lock ./
+COPY config config
+RUN mix deps.get --only prod
+RUN mix deps.compile
 
-RUN mix release --env=prod
+# build project
+COPY priv priv
+COPY lib lib
 
-RUN RELEASE_DIR=`ls -d1 _build/prod/rel/api/releases/*/ | head -1` && \
-    mkdir -p /opt/built && \
-    cp ${RELEASE_DIR}/api.tar.gz /opt/built && \
-    cd /opt/built && \
-    tar -xzf api.tar.gz && \
-    rm api.tar.gz
+# build release
+COPY rel rel
+RUN mix compile
+RUN mix release
 
 # From this line onwards, we're in a new image, which will be the image used in production
 FROM alpine:${ALPINE_VERSION}
 
+EXPOSE 4000
+
+ENV LANG=C.UTF-8
+
 RUN apk update && \
     apk add --no-cache \
     bash \
+    curl \
     openssl-dev \
     erlang-crypto \
     libssl1.1
 
-ENV REPLACE_OS_VARS=true
+RUN mkdir -p /app
+WORKDIR /app
 
-WORKDIR /opt/app
+COPY --from=builder /app/_build/prod/rel/api ./
+RUN chown -R nobody: /app
+USER nobody
 
-COPY --from=builder /opt/built .
+ENV HOME=/app
 
-ENTRYPOINT ["/opt/app/bin/api"]
+ENTRYPOINT ["bin/api"]
 
-CMD ["foreground"]
+CMD ["start"]

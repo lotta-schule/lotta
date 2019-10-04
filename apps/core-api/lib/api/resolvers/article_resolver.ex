@@ -3,7 +3,7 @@ defmodule Api.ArticleResolver do
   alias Api.Accounts.User
   alias Api.Repo
 
-  def get(%{id: id}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+  def get(%{id: id}, %{context: %{context: %{current_user: current_user}}}) do
     article = Content.get_article!(id) |> Repo.preload(:tenant)
     if User.is_author?(current_user, article) do
       {:ok, article}
@@ -14,14 +14,14 @@ defmodule Api.ArticleResolver do
       end
     end
   end
-  def get(%{id: id}, %{context: %{context: %{tenant: tenant}}}) do
+  def get(%{id: id}, _info) do
     article = Content.get_article!(id) |> Repo.preload(:group)
     case is_nil(article.group) do
       true -> {:ok, article}
       _ -> {:error, "Du hast keine Rechte diesen Beitrag anzusehen"}
     end
   end
-  def get(_args, _info), do: {:error, "Tenant nicht gefunden."}
+  def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
 
   def all(%{category_id: category_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     {:ok, Content.list_articles(tenant.id, category_id, current_user)}

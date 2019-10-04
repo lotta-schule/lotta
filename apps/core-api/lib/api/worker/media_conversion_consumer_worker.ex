@@ -9,13 +9,10 @@ defmodule Api.MediaConversionConsumerWorker do
   end
 
   @queue       "media-conversion-results"
+  @reconnect_interval   30
 
   def init(_opts) do
-    {:ok, conn} = Connection.open(
-        username: System.get_env("RABBITMQ_USERNAME"),
-        password: System.get_env("RABBITMQ_PASSWORD"),
-        host: System.get_env("RABBITMQ_HOST")
-    )
+    {:ok, conn} = open_connection()
     {:ok, chan} = Channel.open(conn)
     setup_queue(chan)
 
@@ -24,46 +21,55 @@ defmodule Api.MediaConversionConsumerWorker do
     {:ok, chan}
   end
 
-    # Confirmation sent by the broker after registering this process as a consumer
-    def handle_info({:basic_consume_ok, %{consumer_tag: consumer_tag}}, chan) do
-        {:noreply, chan}
-    end
+  defp open_connection() do
+    config = Application.fetch_env!(:api, :rabbitmq_connection)
+    Connection.open(
+      username: Keyword.get(config, :username),
+      password: Keyword.get(config, :password),
+      host: Keyword.get(config, :host)
+    )
+  end
 
-    # Sent by the broker when the consumer is unexpectedly cancelled (such as after a queue deletion)
-    def handle_info({:basic_cancel, %{consumer_tag: consumer_tag}}, chan) do
-        {:stop, :normal, chan}
-    end
+  # Confirmation sent by the broker after registering this process as a consumer
+  def handle_info({:basic_consume_ok, _content}, chan) do
+    {:noreply, chan}
+  end
 
-    # Confirmation sent by the broker to the consumer process after a Basic.cancel
-    def handle_info({:basic_cancel_ok, %{consumer_tag: consumer_tag}}, chan) do
-        {:noreply, chan}
-    end
+  # Sent by the broker when the consumer is unexpectedly cancelled (such as after a queue deletion)
+  def handle_info({:basic_cancel, _content}, chan) do
+    {:stop, :normal, chan}
+  end
 
-    def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: redelivered}}, chan) do
-        # You might want to run payload consumption in separate Tasks in production
-        consume(chan, tag, redelivered, payload)
-        {:noreply, chan}
-    end
+  # Confirmation sent by the broker to the consumer process after a Basic.cancel
+  def handle_info({:basic_cancel_ok, _content}, chan) do
+    {:noreply, chan}
+  end
 
-    def handle_info(:connect, conn) do
-        case Connection.open(System.get_env("RABBITMQ_URL")) do
-        {:ok, conn} ->
-            # Get notifications when the connection goes down
-            Process.monitor(conn.pid)
-            {:noreply, conn}
+  def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: redelivered}}, chan) do
+    # You might want to run payload consumption in separate Tasks in production
+    consume(chan, tag, redelivered, payload)
+    {:noreply, chan}
+  end
 
-        {:error, _} ->
-            Logger.error("Failed to connect #{System.get_env("RABBITMQ_URL")}. Reconnecting later...")
-            # Retry later
-            Process.send_after(self(), :connect, @reconnect_interval)
-            {:noreply, nil}
-        end
-    end
+  def handle_info(:connect, _conn) do
+    case open_connection() do
+      {:ok, conn} ->
+          # Get notifications when the connection goes down
+          Process.monitor(conn.pid)
+          {:noreply, conn}
 
-    def handle_info({:DOWN, _, :process, _pid, reason}, _) do
-        # Stop GenServer. Will be restarted by Supervisor.
-        {:stop, {:connection_lost, reason}, nil}
+      {:error, _} ->
+          Logger.error("Failed to connect #{System.get_env("RABBITMQ_URL")}. Reconnecting later...")
+          # Retry later
+          Process.send_after(self(), :connect, @reconnect_interval)
+          {:noreply, nil}
     end
+  end
+
+  def handle_info({:DOWN, _, :process, _pid, reason}, _) do
+    # Stop GenServer. Will be restarted by Supervisor.
+    {:stop, {:connection_lost, reason}, nil}
+  end
 
 #    def handle_cast({:publish, message}, channel) do
 #     IO.inspect(channel)
@@ -78,21 +84,21 @@ defmodule Api.MediaConversionConsumerWorker do
     # :ok = Queue.bind(chan, @queue, @exchange)
   end
 
-  defp consume(channel, tag, redelivered, payload) do
+  defp consume(channel, tag, _redelivered, payload) do
     {:ok, decoded} = Poison.decode(payload)
     IO.inspect(decoded)
     file_id = decoded["parentFileId"]
     outputs = decoded["outputs"]
 
     for output <- outputs do
-        conversion = %{
-            :format => output["format"],
-            :remote_location => output["remoteLocation"],
-            :mime_type => output["mimeType"],
-            :file_type => output["fileType"],
-            :file_id => file_id
-        }
-        IO.inspect(Accounts.create_file_conversion(conversion))
+      conversion = %{
+        :format => output["format"],
+        :remote_location => output["remoteLocation"],
+        :mime_type => output["mimeType"],
+        :file_type => output["fileType"],
+        :file_id => file_id
+      }
+      IO.inspect(Accounts.create_file_conversion(conversion))
     end
     Basic.ack channel, tag
 

@@ -10,16 +10,20 @@ defmodule Api.MediaConversionPublisherWorker do
   @queue       "media-conversion-tasks"
 
   def init(_opts) do
-    IO.inspect("connect to: #{System.get_env("RABBITMQ_USERNAME")}, #{System.get_env("RABBITMQ_PASSWORD")}, #{System.get_env("RABBITMQ_HOST")}")
-    {:ok, conn} = Connection.open(
-        username: System.get_env("RABBITMQ_USERNAME"),
-        password: System.get_env("RABBITMQ_PASSWORD"),
-        host: System.get_env("RABBITMQ_HOST")
-    )
+    {:ok, conn} = open_connection()
     {:ok, chan} = Channel.open(conn)
     setup_queue(chan)
 
     {:ok, chan}
+  end
+
+  defp open_connection() do
+    config = Application.fetch_env!(:api, :rabbitmq_connection)
+    Connection.open(
+      username: Keyword.get(config, :username),
+      password: Keyword.get(config, :password),
+      host: Keyword.get(config, :host)
+    )
   end
 
   def send_conversion_request(file) do
