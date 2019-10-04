@@ -2,7 +2,7 @@ defmodule Api.Tenants.Widget do
   use Ecto.Schema
   import Ecto.Changeset
   alias Api.Accounts.{File,UserGroup}
-  alias Api.Tenants.{Category,Tenant,Widget}
+  alias Api.Tenants.{Category,Tenant}
 
   schema "widgets" do
     field :configuration, :map

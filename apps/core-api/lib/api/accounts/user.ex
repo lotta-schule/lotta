@@ -51,8 +51,6 @@ defmodule Api.Accounts.User do
 
   def has_group_for_article?(%User{} = user, %Article{} = article) do
     article = Repo.preload(article, [:group, :tenant])
-    IO.inspect("in has_group_for_article")
-    IO.inspect(article)
     if is_nil(article.group) do
       true
     else

@@ -18,7 +18,8 @@ defmodule Api.Tenants do
     queryable
   end
 
-  def resolve_widgets(category, %{ context: %{ context: params } }) do
+  # TODO: seems weird not to check for category.
+  def resolve_widgets(_category, %{ context: %{ context: params } }) do
     tenant_id = params.tenant.id
     query = if Map.has_key?(params, :current_user) do
       max_priority = params.current_user |> User.get_max_priority_for_tenant(params.tenant)
@@ -234,7 +235,7 @@ defmodule Api.Tenants do
   def update_category(%Category{} = category, attrs) do
     category
     |> Category.changeset(attrs)
-    |> Repo.update()
+    |> Repo.update
   end
 
   @doc """

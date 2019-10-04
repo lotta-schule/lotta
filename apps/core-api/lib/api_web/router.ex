@@ -1,7 +1,6 @@
 defmodule ApiWeb.Router do
   use ApiWeb, :router
-  use Plug.ErrorHandler
-  use Sentry.Plug
+  use Honeybadger.Plug
 
   pipeline :auth do
     plug Guardian.Plug.Pipeline,

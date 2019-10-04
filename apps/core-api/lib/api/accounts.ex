@@ -7,7 +7,6 @@ defmodule Api.Accounts do
   alias Api.Repo
 
   alias Api.Accounts.{User,UserGroup,File}
-  alias Api.Tenant.{Tenant}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)

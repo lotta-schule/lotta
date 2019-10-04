@@ -1,5 +1,4 @@
 defmodule Api.WidgetResolver do
-  alias Api.Tenants.Widget
   alias Api.Accounts.User
 
   def all(_args, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
@@ -9,13 +8,6 @@ defmodule Api.WidgetResolver do
     {:ok, Api.Tenants.list_widgets_by_tenant(tenant, nil)}
   end
   def all(_args, _info) do
-    {:error, "Tenant nicht gefunden"}
-  end
-
-  def find(%{id: id}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
-    {:ok, Api.Tenants.Widget.find_by([id: id, tenant_id: tenant.id])}
-  end
-  def find(_args, _info) do
     {:error, "Tenant nicht gefunden"}
   end
 

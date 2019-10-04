@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Configure your database
 config :api, Api.Repo,
@@ -8,6 +8,11 @@ config :api, Api.Repo,
   hostname: "postgres",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
+
+config :api, :rabbitmq_connection,
+  username: "guest",
+  password: "guest",
+  host: "rabbitmq"
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

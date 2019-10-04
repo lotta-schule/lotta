@@ -1,6 +1,8 @@
 version: "3.4"
 
 networks:
+  api:
+    driver: bridge
   postgres:
   rabbitmq:
     driver: bridge
@@ -10,21 +12,23 @@ volumes:
 
 services:
   app:
-    image: elixir:1.8.1
+    image: elixir:1.9.1
     volumes:
       - .:/usr/src/svc
       - elixir-mix:/root/.mix
     working_dir: /usr/src/svc
     ports:
       - 4000:4000
-    command: bash -c "iex -S mix phx.server"
+    command: mix phx.server
     depends_on:
       - rabbitmq
       - postgres
     networks:
+      - api
       - postgres
       - rabbitmq
-    env_file: .env
+    env_file:
+      - .env
 
   postgres:
     image: postgres
