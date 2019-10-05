@@ -7,14 +7,13 @@ RUN apk add --update --no-cache \
     g++
 
 ENV CI=true
-ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max-old-space-size=1024
 
 ADD . /src
 WORKDIR /src
 RUN npm install
 # RUN npm run test -- --no-watch
-RUN npm run build
+RUN NODE_ENV=production npm run build
 RUN npm prune --production
 
 # Dockerfile continued
