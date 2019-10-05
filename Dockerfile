@@ -7,7 +7,6 @@ RUN apk add --update --no-cache \
     g++
 
 ENV CI=true
-ENV NODE_OPTIONS=--max-old-space-size=4096
 
 ADD . /src
 WORKDIR /src
