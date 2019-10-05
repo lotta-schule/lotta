@@ -1,0 +1,63 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  # set docker host to connect to docker in kubernetes
+  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_DRIVER: overlay2
+  # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
+  DOCKER_TLS_CERTDIR: ""
+
+cache:
+  key: "lotta-web-node-modules"
+  paths:
+    - node_modules/
+
+test:
+  stage: test
+  image: node:12
+  script:
+    - npm install
+    - npm run test -- --coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+
+build docker image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+    - if [ $CI_COMMIT_REF_NAME == "develop" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/web:$CI_COMMIT_SHA --destination lotta/web:staging;
+        elif [ $CI_COMMIT_REF_NAME == "master" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/web:$CI_COMMIT_SHA --destination lotta/web:stable --destination lotta/web:latest;
+        else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/web:$CI_COMMIT_SHA;
+        fi
+
+deploy:staging:
+  stage: deploy
+  environment:
+    name: staging
+  image:
+    name: lotta/do-helm-deploy:latest
+  script:
+    - /user/local/bin/setup.sh
+    - helm repo add lotta https://medienportal.gitlab.io/helm-charts
+    - helm repo update
+    - helm upgrade --install lotta-web-staging lotta/lotta-web
+      --namespace lotta-staging --wait
+      --set image.tag=${CI_COMMIT_SHA}
+      --set replicaCount=1
+      --set ingress.enabled=true
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="5"
+      --set ingress.hosts[0].host=api.staging.lotta.schule
+      --set ingress.hosts[0].paths[0]=/
+      --set ingress.tls[0].hosts[0]=api.staging.lotta.schule
+      --set resources.limits.cpu=50m
+      --set resources.limits.memory=128Mi
+      --set resources.requests.cpu=50m
+      --set resources.requests.memory=128Mi
+    # - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=staging&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"

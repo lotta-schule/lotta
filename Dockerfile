@@ -8,14 +8,6 @@ RUN apk add --update --no-cache \
 
 ENV CI=true
 
-ENV REACT_APP_APP_BASE_DOMAIN ".lotta.schule"
-ENV REACT_APP_API_URL "https://api.lotta.schule/api"
-ENV REACT_APP_AUTHENTICATION_TOKEN_NAME "LottaToken"
-ENV REACT_APP_CLOUDIMG_TOKEN "afdptjdxen"
-ENV REACT_APP_SENTRY_URL "https://8288b744e87844eab5a952bf5ed42fb1@sentry.io/1517545"
-ENV REACT_APP_MATOMO_URL "https://analytics.einsa.net"
-ENV REACT_APP_MATOMO_SITEID "6"
-
 ADD . /src
 WORKDIR /src
 RUN npm install

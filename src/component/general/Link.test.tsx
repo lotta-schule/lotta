@@ -1,4 +1,3 @@
-import "@types/jest";
 import React from 'react';
 import {
     render,
