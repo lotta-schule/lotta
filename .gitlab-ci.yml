@@ -24,12 +24,12 @@ test:
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 build docker image:staging:
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
   stage: build
   environment:
     name: staging
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
   script:
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
     - docker build -t lotta/web:$CI_COMMIT_SHA
