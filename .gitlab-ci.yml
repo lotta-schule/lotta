@@ -23,8 +23,10 @@ test:
     - npm run test -- --coverage
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
-build docker image:
+build docker image:staging:
   stage: build
+  environment:
+    name: staging
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
@@ -32,8 +34,6 @@ build docker image:
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
     - if [ $CI_COMMIT_REF_NAME == "develop" ];
         then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/web:$CI_COMMIT_SHA --destination lotta/web:staging;
-        elif [ $CI_COMMIT_REF_NAME == "master" ];
-        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/web:$CI_COMMIT_SHA --destination lotta/web:stable --destination lotta/web:latest;
         else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/web:$CI_COMMIT_SHA;
         fi
 
