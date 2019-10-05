@@ -52,10 +52,9 @@ deploy:staging:
       --set image.tag=${CI_COMMIT_SHA}
       --set replicaCount=1
       --set ingress.enabled=true
-      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="5"
-      --set ingress.hosts[0].host=api.staging.lotta.schule
+      --set ingress.hosts[0].host="*.staging.lotta.schule"
       --set ingress.hosts[0].paths[0]=/
-      --set ingress.tls[0].hosts[0]=api.staging.lotta.schule
+      --set ingress.tls[0].hosts[0]="*.staging.lotta.schule"
       --set resources.limits.cpu=50m
       --set resources.limits.memory=128Mi
       --set resources.requests.cpu=50m
