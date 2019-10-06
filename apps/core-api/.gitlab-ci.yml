@@ -61,7 +61,7 @@ deploy staging:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api-staging lotta/lotta-api
-      --namespace lotta-staging --wait
+      --namespace lotta-staging --wait --timeout 600
       --set appEnvironment=staging
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
@@ -93,3 +93,47 @@ deploy staging:
   only:
     refs:
       - develop
+
+deploy production:
+  stage: deploy
+  environment:
+    name: production
+  image:
+    name: lotta/do-helm-deploy:latest
+  script:
+    - /user/local/bin/setup.sh
+    - helm repo add lotta https://medienportal.gitlab.io/helm-charts
+    - helm repo update
+    - helm upgrade --install lotta-api lotta/lotta-api
+      --namespace lotta --wait
+      --set appEnvironment=production
+      --set image.tag=$CI_COMMIT_SHA
+      --set replicaCount=2
+      --set jwtSecret=$JWT_SECRET
+      --set baseSecret=$BASE_SECRET
+      --set honeybadger.enabled=true
+      --set honeybadger.apiKey=$HONEYBADGER_API_KEY
+      --set s3Compat.endpoint=$S3COMPAT_ENDPOINT
+      --set s3Compat.accessKeyId=$S3COMPAT_ACCESS_KEY_ID
+      --set s3Compat.secretAccessKey=$S3COMPAT_SECRET_ACCESS_KEY
+      --set s3Compat.bucket=$S3COMPAT_BUCKET
+      --set s3Compat.region=$S3COMPAT_REGION
+      --set s3Compat.cdnBaseUrl=$S3COMPAT_CDN_BASE_URL
+      --set url=api.lotta.schule
+      --set ingress.enabled=true
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="5"
+      --set ingress.hosts[0].host=api.lotta.schule
+      --set ingress.hosts[0].paths[0]=/
+      --set ingress.tls[0].hosts[0]=api.lotta.schule
+      --set postgresql.postgresqlDatabase=$POSTGRES_DB
+      --set postgresql.postgresqlUsername=$POSTGRES_USER
+      --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
+      --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
+      --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
+      --set resources.limits.cpu=300m
+      --set resources.limits.memory=2048Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=1024Mi
+  only:
+    refs:
+      - master
