@@ -1,5 +1,5 @@
 import './index.scss';
-import * as Sentry from '@sentry/browser';
+import Honeybadger from 'honeybadger-js';
 import { ApolloProvider } from 'react-apollo';
 import { App } from './component/App';
 import { client } from 'api/client';
@@ -28,8 +28,14 @@ Matomo.default().init(
 );
 
 try {
-    Sentry.init({ dsn: process.env.REACT_APP_SENTRY_URL });
-} catch { }
+    Honeybadger.configure({
+        apiKey: process.env.REACT_APP_HONEYBADGER_API_KEY,
+        environment: process.env.REACT_APP_APP_ENVIRONMENT,
+        revision: process.env.REACT_APP_APP_REVISION
+    });
+} catch (e) {
+    console.error(e);
+}
 
 
 const uploadQueue = new UploadQueueService(
