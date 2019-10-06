@@ -21,6 +21,7 @@ defmodule ApiWeb.Router do
   end
 
   scope "/_debug" do
+    # health endpoint
     forward "/health", ApiWeb.HealthPlug
   end
 
