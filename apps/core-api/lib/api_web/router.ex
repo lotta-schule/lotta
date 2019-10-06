@@ -20,6 +20,10 @@ defmodule ApiWeb.Router do
       schema: ApiWeb.Schema
   end
 
+  scope "/_debug" do
+    forward "/health", ApiWeb.HealthPlug
+  end
+
   forward "/graphiql", Absinthe.Plug.GraphiQL,
     schema: ApiWeb.Schema
 
