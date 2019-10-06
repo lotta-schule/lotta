@@ -87,9 +87,9 @@ deploy staging:
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
       --set resources.limits.cpu=100m
-      --set resources.limits.memory=256Mi
+      --set resources.limits.memory=768Mi
       --set resources.requests.cpu=100m
-      --set resources.requests.memory=128Mi
+      --set resources.requests.memory=384Mi
   only:
     refs:
       - develop
