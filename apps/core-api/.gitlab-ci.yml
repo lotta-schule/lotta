@@ -67,6 +67,7 @@ deploy staging:
       --set replicaCount=1
       --set jwtSecret=$JWT_SECRET
       --set baseSecret=$BASE_SECRET
+      --set honeybadger.enabled=true
       --set honeybadger.apiKey=$HONEYBADGER_API_KEY
       --set s3Compat.endpoint=$S3COMPAT_ENDPOINT
       --set s3Compat.accessKeyId=$S3COMPAT_ACCESS_KEY_ID
