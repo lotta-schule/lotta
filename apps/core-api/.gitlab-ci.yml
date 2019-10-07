@@ -61,7 +61,7 @@ deploy staging:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api-staging lotta/lotta-api
-      --namespace lotta-staging --wait --timeout 600 --recreacte-pods
+      --namespace lotta-staging --wait --timeout 600 --recreate-pods
       --set appEnvironment=staging
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
