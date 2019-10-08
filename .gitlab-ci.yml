@@ -112,7 +112,7 @@ deploy:production:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-web lotta/lotta-web
-      --namespace lotta --wait --timeout 600
+      --namespace lotta --wait --timeout 900
       --set image.tag=${CI_COMMIT_SHA}
       --set replicaCount=2
       --set ingress.enabled=true
