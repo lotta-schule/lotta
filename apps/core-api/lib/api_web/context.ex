@@ -3,7 +3,7 @@ defmodule ApiWeb.Context do
 
   import Plug.Conn
 
-  alias Api.{Guardian, Accounts, Tenants}
+  alias Api.{Guardian, Accounts, Tenants, Repo}
 
   def init(opts), do: opts
 
@@ -23,7 +23,10 @@ defmodule ApiWeb.Context do
     authorization_header = get_req_header(conn, "authorization")
     with ["Bearer " <> token] <- authorization_header do
       {:ok, current_user, _claims} = Guardian.resource_from_token(token)
-      %{ current_user: current_user }
+      %{
+        current_user: Repo.get(Accounts.User, current_user.id)
+          |> Repo.preload([:groups, :avatar_image_file])
+      }
     else
       _ -> %{}
     end
@@ -32,7 +35,12 @@ defmodule ApiWeb.Context do
   defp get_tenant_context(conn) do
     tenant_header = get_req_header(conn, "tenant")
     with ["slug:" <> slug] <- tenant_header do
-      %{tenant: Tenants.get_tenant_by_slug!(slug)}
+      tenant = Tenants.get_tenant_by_slug(slug)
+      if is_nil(tenant) do
+        %{tenant: Tenants.get_tenant_by_slug!("ehrenberg")}
+      else
+        %{tenant: tenant}
+      end
     else
       _ -> %{}
     end

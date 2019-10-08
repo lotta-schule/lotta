@@ -4,9 +4,12 @@ defmodule Api.Content do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Changeset
   alias Api.Repo
 
   alias Api.Content.Article
+  alias Api.Tenants.Tenant
+  alias Api.Accounts.{User,UserGroup}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -25,8 +28,18 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(tenant_id) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id)
+  def list_articles(tenant_id, nil, user) do
+    # Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id))
+    if is_nil(user) do
+      Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id) and is_nil(a.group_id))
+    else
+      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
+      Ecto.Query.from(a in Article,
+        where: a.tenant_id == ^tenant_id and not is_nil(a.category_id),
+        join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
+        distinct: true)
+      |> Repo.all
+    end
   end
   
   @doc """
@@ -38,22 +51,63 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(tenant_id, category_id) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.category_id == ^category_id)
+  def list_articles(tenant_id, category_id, user) do
+    if is_nil(user) do
+      Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.category_id == ^category_id and is_nil(a.group_id))
+    else
+      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
+      Ecto.Query.from(a in Article,
+        where: a.tenant_id == ^tenant_id and a.category_id == ^category_id,
+        join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
+        distinct: true)
+      |> Repo.all
+    end
   end
 
     
   @doc """
-  Returns the list of articles belonging to a page.
+  Returns the list of articles belonging to a topic.
 
   ## Examples
 
-      iex> list_articles(page_name)
+      iex> list_articles(topic)
       [%Article{}, ...]
 
   """
-  def list_articles_by_page(tenant_id, page_name) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.page_name == ^page_name)
+  def list_articles_by_topic(tenant_id, topic) do
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.topic == ^topic)
+  end
+  
+  @doc """
+  Returns the list of unpublished articles belonging to a tenant.
+
+  ## Examples
+
+      iex> list_unpublished_articles(topic)
+      [%Article{}, ...]
+
+  """
+  def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
+    tenant_id = tenant.id
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.ready_to_publish == true and is_nil(a.category_id))
+  end
+  
+  @doc """
+  Returns the list of articles for a user (given a tenant's scope).
+
+  ## Examples
+
+      iex> list_user_articles(topic)
+      [%Article{}, ...]
+
+  """
+  def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
+    tenant_id = tenant.id
+    user_id = user.id
+    Repo.all(Ecto.Query.from a in Article,
+      where: a.tenant_id == ^tenant_id,
+      join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id
+    )
   end
 
   @doc """
@@ -70,7 +124,9 @@ defmodule Api.Content do
       ** (Ecto.NoResultsError)
 
   """
-  def get_article!(id), do: Repo.get!(Article, id)
+  def get_article!(id) do
+    Repo.get!(Article, id)
+  end
 
   @doc """
   Creates a article.
@@ -84,9 +140,11 @@ defmodule Api.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_article(attrs \\ %{}) do
+  def create_article(attrs \\ %{}, tenant, user) do
     %Article{}
-    |> Article.changeset(attrs)
+    |> Article.create_changeset(attrs)
+    |> put_assoc(:tenant, tenant)
+    |> put_assoc(:users, [user])
     |> Repo.insert()
   end
 
@@ -134,7 +192,7 @@ defmodule Api.Content do
 
   """
   def change_article(%Article{} = article) do
-    Article.update_changeset(article, %{})
+    Article.changeset(article, %{})
   end
 
   alias Api.Content.ContentModule
@@ -231,5 +289,12 @@ defmodule Api.Content do
   """
   def change_content_module(%ContentModule{} = content_module) do
     ContentModule.changeset(content_module, %{})
+  end
+
+  def toggle_article_pin(article_id) do
+    article = Repo.get(Article, article_id)
+    article
+    |> Ecto.Changeset.cast(%{ is_pinned_to_top: !article.is_pinned_to_top }, [:is_pinned_to_top])
+    |> Repo.update()
   end
 end

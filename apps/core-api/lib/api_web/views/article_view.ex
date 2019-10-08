@@ -14,6 +14,6 @@ defmodule ApiWeb.ArticleView do
     %{id: article.id,
       title: article.title,
       preview: article.preview,
-      page_name: article.page_name}
+      topic: article.topic}
   end
 end

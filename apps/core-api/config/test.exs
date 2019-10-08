@@ -1,12 +1,26 @@
-use Mix.Config
+import Config
+
+db_host = case System.get_env("CI") do
+  nil -> "postgres"
+  _ -> "127.0.0.1"
+end
+rabbitmq_host = case System.get_env("CI") do
+  nil -> "rabbitmq"
+  _ -> "127.0.0.1"
+end
 
 # Configure your database
 config :api, Api.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "lotta",
+  password: "lotta",
   database: "api_test",
-  hostname: "localhost",
+  hostname: db_host,
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :api, :rabbitmq_connection,
+  username: "guest",
+  password: "guest",
+  host: rabbitmq_host
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

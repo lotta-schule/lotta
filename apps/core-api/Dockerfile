@@ -1,51 +1,67 @@
-# Dockerfile for Lotta API Server
-FROM elixir:1.8.2 as build
+# The version of Alpine to use for the final image
+ARG ALPINE_VERSION=3.10
 
-# build arguments
-ARG APP_ENV=prod
+FROM elixir:1.9.1-alpine AS builder
 
-ENV MIX_ENV prod
+ENV MIX_ENV=prod
 
+RUN mkdir -p /app
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y \
-    make
+# This step installs all the build tools we'll need
+RUN apk update && \
+    apk upgrade --no-cache && \
+    apk add --no-cache \
+    git \
+    build-base \
+    erlang-inets
 
-# Copy all source files
-COPY rel ./rel
-COPY config ./config
-COPY lib ./lib
-COPY priv ./priv
-COPY mix.exs .
-COPY mix.lock .
+# install hex + rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
 
-# Install hex (Elixir package manager)
-RUN mix local.hex --force
+# set build ENV
+ENV MIX_ENV=prod
 
-# Install rebar (Erlang build tool)
-RUN mix local.rebar --force
+# install mix dependencies
+COPY mix.exs mix.lock ./
+COPY config config
+RUN mix deps.get --only prod
+RUN mix deps.compile
 
-# install dependencies and build release
-RUN mix deps.get && \
-    mix release --env=${APP_ENV}
+# build project
+COPY priv priv
+COPY lib lib
 
-# unpack and copy release to /export
-RUN RELEASE_DIR=`ls -d _build/prod/rel/api/releases/*/` && \
-    mkdir /export && \
-    tar -xf "$RELEASE_DIR/api.tar.gz" -C /export
+# build release
+COPY rel rel
+RUN mix compile
+RUN mix release
 
-FROM debian
+# From this line onwards, we're in a new image, which will be the image used in production
+FROM alpine:${ALPINE_VERSION}
 
-RUN apt-get update && \
-    apt-get install -y \
+EXPOSE 4000
+
+ENV LANG=C.UTF-8
+
+RUN apk update && \
+    apk add --no-cache \
     bash \
-    libssl-dev
+    curl \
+    openssl-dev \
+    erlang-crypto \
+    libssl1.1
 
+RUN mkdir -p /app
 WORKDIR /app
 
-COPY --from=build /export .
+COPY --from=builder /app/_build/prod/rel/api ./
+RUN chown -R nobody: /app
+USER nobody
 
-ENTRYPOINT ["/app/bin/api"]
+ENV HOME=/app
 
-CMD ["foreground"]
+ENTRYPOINT ["bin/api"]
+
+CMD ["start"]

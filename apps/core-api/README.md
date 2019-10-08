@@ -5,37 +5,48 @@ API written for Lotta API Server
 Phoenix, Elixir & Absinthe
 
 
-
 ## Setup
 
-Before the first start, you'll have to install the dependencies:
+Make sure to have docker installed.
+Then, copy the `.env.sample` to `.env`, and replace the values by values for a real s3-compatible store (you can use s3 itself, or digitalocean for example. You could also start a minIO server via docker (TODO: that would be useful to add to standard developer setup))
+
+Then, install dependencies:
 
 ```bash
-docker-compose run app mix do deps.get, compile
+make dependencies
 ```
 
 Then, migrate the database and add the seeds:
 Just run
 
 ```bash
-docker-compose run app mix ecto.setup
+make setup_db
 ```
 
 ## Start
 
 
 ```bash
-docker-compose up
+make start
 ```
 
 Now you can visit [`localhost:4000`](http://localhost:4000/graphiql) for GraphiQL browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Develop
 
-## Learn more
+```bash
+# start the dev server
+make start
 
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+# execute tests
+make tests
+
+# install dependencies
+make dependencies
+
+# Setup Database
+make setup_db
+
+# Migrate Database
+make migrate_db
+```

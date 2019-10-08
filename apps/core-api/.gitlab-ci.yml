@@ -1,0 +1,141 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  # set docker host to connect to docker in kubernetes
+  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_DRIVER: overlay2
+  # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
+  DOCKER_TLS_CERTDIR: ""
+
+cache:
+  key: "lotta-api-deps"
+  paths:
+    - deps/
+
+test:
+  stage: test
+  image: elixir:1.9.1
+  variables:
+    MIX_ENV: test
+    POSTGRES_PASSWORD: lotta
+    POSTGRES_USER: lotta
+    POSTGRES_DB: api_test
+  # gitlab k8s-runner has a problem with service hostname exposition
+  # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
+  services:
+    - postgres:latest
+    - rabbitmq:latest
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get --only test
+  script:
+    - make tests-ci
+  coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
+
+build docker image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+    - if [ $CI_COMMIT_REF_NAME == "develop" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:staging;
+        elif [ $CI_COMMIT_REF_NAME == "master" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:stable --destination lotta/api:latest;
+        else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA;
+        fi
+
+deploy staging:
+  stage: deploy
+  environment:
+    name: staging
+  image:
+    name: lotta/do-helm-deploy:latest
+  script:
+    - /user/local/bin/setup.sh
+    - helm repo add lotta https://medienportal.gitlab.io/helm-charts
+    - helm repo update
+    - helm upgrade --install lotta-api-staging lotta/lotta-api
+      --namespace lotta-staging --wait --timeout 600 --recreate-pods
+      --set appEnvironment=staging
+      --set image.tag=$CI_COMMIT_SHA
+      --set replicaCount=1
+      --set jwtSecret=$JWT_SECRET
+      --set baseSecret=$BASE_SECRET
+      --set honeybadger.enabled=true
+      --set honeybadger.apiKey=$HONEYBADGER_API_KEY
+      --set s3Compat.endpoint=$S3COMPAT_ENDPOINT
+      --set s3Compat.accessKeyId=$S3COMPAT_ACCESS_KEY_ID
+      --set s3Compat.secretAccessKey=$S3COMPAT_SECRET_ACCESS_KEY
+      --set s3Compat.bucket=$S3COMPAT_BUCKET
+      --set s3Compat.region=$S3COMPAT_REGION
+      --set s3Compat.cdnBaseUrl=$S3COMPAT_CDN_BASE_URL
+      --set url=api.staging.lotta.schule
+      --set ingress.enabled=true
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="5"
+      --set ingress.hosts[0].host=api.staging.lotta.schule
+      --set ingress.hosts[0].paths[0]=/
+      --set ingress.tls[0].hosts[0]=api.staging.lotta.schule
+      --set postgresql.postgresqlDatabase=$POSTGRES_DB
+      --set postgresql.postgresqlUsername=$POSTGRES_USER
+      --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
+      --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
+      --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
+      --set resources.limits.cpu=100m
+      --set resources.limits.memory=768Mi
+      --set resources.requests.cpu=100m
+      --set resources.requests.memory=384Mi
+  only:
+    refs:
+      - develop
+
+deploy production:
+  stage: deploy
+  environment:
+    name: production
+  image:
+    name: lotta/do-helm-deploy:latest
+  script:
+    - /user/local/bin/setup.sh
+    - helm repo add lotta https://medienportal.gitlab.io/helm-charts
+    - helm repo update
+    - helm upgrade --install lotta-api lotta/lotta-api
+      --namespace lotta --wait --timeout 600 --recreate-pods
+      --set appEnvironment=production
+      --set image.tag=$CI_COMMIT_SHA
+      --set replicaCount=2
+      --set jwtSecret=$JWT_SECRET
+      --set baseSecret=$BASE_SECRET
+      --set honeybadger.enabled=true
+      --set honeybadger.apiKey=$HONEYBADGER_API_KEY
+      --set s3Compat.endpoint=$S3COMPAT_ENDPOINT
+      --set s3Compat.accessKeyId=$S3COMPAT_ACCESS_KEY_ID
+      --set s3Compat.secretAccessKey=$S3COMPAT_SECRET_ACCESS_KEY
+      --set s3Compat.bucket=$S3COMPAT_BUCKET
+      --set s3Compat.region=$S3COMPAT_REGION
+      --set s3Compat.cdnBaseUrl=$S3COMPAT_CDN_BASE_URL
+      --set url=api.lotta.schule
+      --set ingress.enabled=true
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="5"
+      --set ingress.hosts[0].host=api.lotta.schule
+      --set ingress.hosts[0].paths[0]=/
+      --set ingress.tls[0].hosts[0]=api.lotta.schule
+      --set postgresql.postgresqlDatabase=$POSTGRES_DB
+      --set postgresql.postgresqlUsername=$POSTGRES_USER
+      --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
+      --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
+      --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
+      --set backupJob.enabled=true
+      --set backupJob.s3Compat.bucketName=lotta-backup-data
+      --set resources.limits.cpu=300m
+      --set resources.limits.memory=2048Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=1024Mi
+  only:
+    refs:
+      - master

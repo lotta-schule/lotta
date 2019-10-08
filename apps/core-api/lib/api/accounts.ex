@@ -3,10 +3,10 @@ defmodule Api.Accounts do
   The Accounts context.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
   alias Api.Repo
 
-  alias Api.Accounts.{User,File}
+  alias Api.Accounts.{User,UserGroup,File}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -21,12 +21,14 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> list_users()
+      iex> list_users_with_groups()
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users_with_groups(tenant_id) do
+    Repo.all from u in User,
+      join: g in assoc(u, :groups),
+      where: g.tenant_id == ^tenant_id
   end
 
   @doc """
@@ -43,7 +45,21 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id) do
+    Repo.get!(User, id)
+  end
+
+  def search_user(searchtext, tenant) do
+    tenant_id = tenant.id
+    matching_searchtext = "%#{searchtext}%"
+    if String.length(searchtext) > 3 do
+      query = Ecto.Query.from u in User,
+        where: u.email == ^searchtext or (u.tenant_id == ^tenant_id and (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext)))
+      {:ok, Repo.all(query)}
+    else
+      {:ok, []}
+    end
+  end
 
   @doc """
   Creates a user.
@@ -78,6 +94,24 @@ defmodule Api.Accounts do
   def update_user(%User{} = user, attrs) do
     user
     |> User.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Assigns a group to a user
+
+  ## Examples
+
+      iex> assign_user_to_group(user, %{field: new_value})
+      {:ok, %User{}}
+
+      iex> assign_user_to_group(user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def assign_user_to_group(%User{} = user, %UserGroup{} = group) do
+    user
+    |> User.assign_group_changeset(%{group: group})
     |> Repo.update()
   end
 
@@ -317,4 +351,23 @@ defmodule Api.Accounts do
   def change_file_conversion(%FileConversion{} = file_conversion) do
     FileConversion.changeset(file_conversion, %{})
   end
+
+  @doc """
+  Gets a single user group.
+
+  Raises `Ecto.NoResultsError` if the UserGroup does not exist.
+
+  ## Examples
+
+      iex> get_user_group!(123)
+      %User{}
+
+      iex> get_user_group!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user_group!(id) do
+    Repo.get!(UserGroup, id)
+  end
+
 end

@@ -1,0 +1,7 @@
+version: "3.4"
+
+services:
+  postgres:
+    environment:
+      POSTGRES_DB: lotta_api
+      MIX_ENV: test

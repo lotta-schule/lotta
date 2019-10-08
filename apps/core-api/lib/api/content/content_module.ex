@@ -7,6 +7,7 @@ defmodule Api.Content.ContentModule do
     field :text, :string
     field :type, :string
     field :sort_key, :integer
+    field :configuration, :map
 
     belongs_to :article, Api.Content.Article
     many_to_many(
@@ -22,13 +23,13 @@ defmodule Api.Content.ContentModule do
   def changeset(content_module, attrs) do
     content_module
     |> Api.Repo.preload(:files)
-    |> cast(attrs, [:type, :text, :sort_key])
+    |> cast(attrs, [:type, :text, :sort_key, :configuration])
     |> validate_required([:type, :sort_key])
     |> put_assoc_files(attrs)
   end
 
   defp put_assoc_files(content_module, %{ files: files }) do
-    files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, String.to_integer(file.id)) end)
+    files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, file.id) end)
     content_module
     |> put_assoc(:files, files)
   end

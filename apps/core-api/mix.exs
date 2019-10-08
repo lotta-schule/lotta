@@ -5,12 +5,24 @@ defmodule Api.MixProject do
     [
       app: :api,
       version: "0.1.0",
-      elixir: "~> 1.5",
+      elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: [
+        api: [
+          include_executables_for: [:unix]
+        ]
+      ],
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
     ]
   end
 
@@ -20,7 +32,7 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:lager, :logger, :runtime_tools, :amqp]
+      extra_applications: [:honeybadger, :lager, :logger, :runtime_tools, :amqp, :ssl, :inets]
     ]
   end
 
@@ -48,14 +60,17 @@ defmodule Api.MixProject do
       {:comeonin, "~> 5.1.2"},
       {:bcrypt_elixir, "~> 2.0.3"},
       {:guardian, "~> 1.2.1"},
-      {:distillery, "~> 2.0.0"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.12"},
       {:sweet_xml, "~> 0.6"},
       {:poison, "~> 4.0"},
       {:uuid, "~> 1.1"},
-      {:amqp, "~> 1.2"}
+      {:amqp, "~> 1.2"},
+      {:ex_ical, "~> 0.2.0"},
+      {:honeybadger, "~>0.13.0"},
+      #test
+      {:excoveralls, "~> 0.11", only: :test}
     ]
   end
 

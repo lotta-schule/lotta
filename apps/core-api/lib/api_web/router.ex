@@ -1,5 +1,6 @@
 defmodule ApiWeb.Router do
   use ApiWeb, :router
+  use Honeybadger.Plug
 
   pipeline :auth do
     plug Guardian.Plug.Pipeline,
@@ -17,6 +18,11 @@ defmodule ApiWeb.Router do
 
     forward "/", Absinthe.Plug,
       schema: ApiWeb.Schema
+  end
+
+  scope "/_debug" do
+    # health endpoint
+    forward "/health", ApiWeb.HealthPlug
   end
 
   forward "/graphiql", Absinthe.Plug.GraphiQL,
