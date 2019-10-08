@@ -1,3 +1,5 @@
+import { ID } from './ID';
+
 export enum EditModeType {
     Page,
     Article
@@ -5,5 +7,5 @@ export enum EditModeType {
 
 export interface EditModePayloadModel {
     itemType: EditModeType;
-    itemId: string;
+    itemId: ID;
 }

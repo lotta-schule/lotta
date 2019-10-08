@@ -1,34 +1,12 @@
-import { find } from 'lodash';
-import { ContentModuleModel, ContentModuleType } from '../../model';
 import { ContentState } from '../State';
-import { AddArticleAction, AddPageAction, UpdateContentModuleAction, AddContentModuleAction, ContentActionType } from '../actions/content';
+import { AddArticleAction, AddCategoryAction, UpdateArticleAction, ContentActionType, AddArticlesAction, AddFetchQueryKeyAction } from '../actions/content';
+import { groupBy, find } from 'lodash';
 
-export type ContentActions = AddArticleAction | AddPageAction | AddContentModuleAction | UpdateContentModuleAction;
+export type ContentActions = AddArticleAction | UpdateArticleAction | AddArticlesAction | AddCategoryAction | AddFetchQueryKeyAction;
 
 export const initialContentState: ContentState = {
-    articles: [
-        {
-            id: 'A01',
-            title: 'And the oskar goes to ...',
-            preview: 'Hallo hallo hallo',
-            category: {
-                id: 'C01',
-                title: 'Kategorie'
-            },
-            modules: [
-                {
-                    id: 'M01',
-                    text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-                    type: ContentModuleType.Text
-                },
-                {
-                    id: 'M02',
-                    text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-                    type: ContentModuleType.Text
-                }
-            ]
-        }
-    ]
+    articles: [],
+    didFetchQueryKeys: []
 };
 
 export const contentReducer = (s: ContentState = initialContentState, action: ContentActions): ContentState => {
@@ -36,50 +14,35 @@ export const contentReducer = (s: ContentState = initialContentState, action: Co
         case ContentActionType.ADD_ARTICLE:
             return {
                 ...s,
-                articles: s.articles.map(page => {
-                    return page.id === action.pageId
-                        ? {
-                            ...page,
-                            articles: [...s.articles, action.article]
-                        }
-                        : page;
-                })
+                articles: [...s.articles, action.article]
             };
-        case ContentActionType.ADD_PAGE:
-            const foundPage = find(s.articles, { id: action.page.id });
-            return foundPage
-                ? {
-                    ...s,
-                    articles: s.articles.map(page => (page.id === action.page.id ? action.page : page))
-                }
-                : {
-                    ...s,
-                    articles: action.page ? s.articles.concat(action.page) : s.articles
-                };
-        case ContentActionType.ADD_CONTENT_MODULE:
+        case ContentActionType.ADD_ARTICLES:
+            const { existingArticles, nonExistingArticles } = groupBy(
+                action.articles,
+                art => find(s.articles, existingArticle => existingArticle.id === art.id) ? 'existingArticles' : 'nonExistingArticles'
+            );
             return {
                 ...s,
-                articles: s.articles.map(article => ({
-                    ...article,
-                    modules:
-                        article.id === action.pageId
-                            ? article.modules.concat([action.contentModule])
-                            : article.modules
-                }))
+                articles: [
+                    ...(existingArticles ? s.articles.map(article => {
+                        return find(existingArticles, existingArticle => existingArticle.id === article.id) || article;
+                    }) : s.articles),
+                    ...(nonExistingArticles || [])
+                ]
             };
-        case ContentActionType.UPDATE_CONTENT_MODULE:
-            const updateModuleMapFn = (contentModule: ContentModuleModel): ContentModuleModel => {
-                if (contentModule.id === action.contentModule.id) {
-                    return action.contentModule;
-                }
-                return contentModule;
-            }
+        case ContentActionType.ADD_FETCH_QUERY_KEY:
             return {
                 ...s,
-                articles: s.articles.map(page => ({
-                    ...page,
-                    modules: page.modules.map(updateModuleMapFn)
-                }))
+                didFetchQueryKeys: [...s.didFetchQueryKeys, action.key]
+            };
+        case ContentActionType.UPDATE_ARTICLE:
+            return {
+                ...s,
+                articles: s.articles.map(article =>
+                    article.id === action.article.id ?
+                        Object.assign({}, article, action.article) :
+                        article
+                )
             };
         default:
             return s;

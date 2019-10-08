@@ -1,8 +1,11 @@
-import { CategoryModel } from './CategoryModel';
+import { UserGroupModel } from './UserGroupModel';
+import { ID } from './ID';
 
 export interface ClientModel {
-    id: string;
+    id: ID;
+    createdAt: string;
+    updatedAt: string;
     slug: string;
     title: string;
-    categories: CategoryModel[];
+    groups: UserGroupModel[];
 }

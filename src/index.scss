@@ -1,21 +1,22 @@
-* {
-    box-sizing: border-box;
-}
+@import "~video-react/styles/scss/video-react";
+@import url('https://fonts.googleapis.com/css?family=Muli:300,600');
 
 html, body {
     margin: 0;
-    background-color: #ffffff;
+    background: linear-gradient(30deg, #d9c8b6 0%, #fff5e4 100%);
+    background-attachment: fixed;
 }
 
 body {
     margin: 0 auto;
-    background-color: #efefef;
-    max-width: 1280px;
-    padding: 1em 2em;
 }
 
 ul {
     padding: 0;
     margin: 0;
     list-style: none;
+}
+
+figcaption {
+    text-align: right;
 }

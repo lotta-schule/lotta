@@ -39,6 +39,8 @@ export const userFilesReducer = (s: UserFilesState = initialUserFilesState, acti
                     ...s,
                     uploads: action.uploads
                 };
+            } else {
+                return s;
             }
         default:
             return s;

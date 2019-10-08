@@ -1,46 +1,51 @@
 import { ActionCreator, Action } from 'redux';
-import { PageModel, ArticleModel, ContentModuleModel } from '../../model';
+import { ArticleModel, CategoryModel } from '../../model';
 
 // Action Types
 
 export enum ContentActionType {
+    ADD_CATEGORY = '[ContentAction] add Category',
     ADD_ARTICLE = '[ContentAction] add Article',
-    ADD_PAGE = '[ContentAction] add Page',
-    ADD_CONTENT_MODULE = '[ContentAction] add content module',
-    UPDATE_CONTENT_MODULE = '[ContentAction] update content module'
+    ADD_ARTICLES = '[ContentAction] add Articles',
+    ADD_FETCH_QUERY_KEY = '[ContentAction] add "fetch query"-key',
+    UPDATE_ARTICLE = '[ContentAction] update article'
 }
 
 // Actions
 
-export type AddPageAction = Action<ContentActionType.ADD_PAGE> & { page: PageModel };
+export type AddCategoryAction = Action<ContentActionType.ADD_CATEGORY> & { category: CategoryModel };
 
-export type AddArticleAction = Action<ContentActionType.ADD_ARTICLE> & { pageId: string; article: ArticleModel };
+export type AddArticleAction = Action<ContentActionType.ADD_ARTICLE> & { article: ArticleModel };
 
-export type AddContentModuleAction = Action<ContentActionType.ADD_CONTENT_MODULE> & { pageId: string; contentModule: ContentModuleModel };
+export type AddArticlesAction = Action<ContentActionType.ADD_ARTICLES> & { articles: ArticleModel[] };
 
-export type UpdateContentModuleAction = Action<ContentActionType.UPDATE_CONTENT_MODULE> & { pageId: string; contentModule: ContentModuleModel };
+export type AddFetchQueryKeyAction = Action<ContentActionType.ADD_FETCH_QUERY_KEY> & { key: string };
+
+export type UpdateArticleAction = Action<ContentActionType.UPDATE_ARTICLE> & { article: ArticleModel };
 
 // Action Creators
 
-export const createAddPageAction: ActionCreator<AddPageAction> = (page: PageModel) => ({
-    page,
-    type: ContentActionType.ADD_PAGE
+export const createAddCategoryAction: ActionCreator<AddCategoryAction> = (category: CategoryModel) => ({
+    category,
+    type: ContentActionType.ADD_CATEGORY
 });
 
-export const createAddArticleAction: ActionCreator<AddArticleAction> = (pageId: string, article: ArticleModel) => ({
-    pageId,
+export const createAddArticleAction: ActionCreator<AddArticleAction> = (article: ArticleModel) => ({
     article,
     type: ContentActionType.ADD_ARTICLE
 });
 
-export const createAddContentModuleAction: ActionCreator<AddContentModuleAction> = (pageId: string, contentModule: ContentModuleModel) => ({
-    pageId,
-    contentModule,
-    type: ContentActionType.ADD_CONTENT_MODULE
+export const createAddArticlesAction: ActionCreator<AddArticlesAction> = (articles: ArticleModel[]) => ({
+    articles,
+    type: ContentActionType.ADD_ARTICLES
 });
 
-export const createUpdateContentModuleAction: ActionCreator<UpdateContentModuleAction> = (pageId: string, contentModule: ContentModuleModel) => ({
-    pageId,
-    contentModule,
-    type: ContentActionType.UPDATE_CONTENT_MODULE
+export const createAddFetchQueryKeyAction: ActionCreator<AddFetchQueryKeyAction> = (key: string) => ({
+    key,
+    type: ContentActionType.ADD_FETCH_QUERY_KEY
+});
+
+export const createUpdateArticleAction: ActionCreator<UpdateArticleAction> = (article: ArticleModel) => ({
+    article,
+    type: ContentActionType.UPDATE_ARTICLE
 });

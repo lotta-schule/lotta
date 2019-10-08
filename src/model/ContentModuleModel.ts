@@ -1,9 +1,22 @@
+import { FileModel } from './FileModel';
+import { ID } from './ID';
+
 export enum ContentModuleType {
-    Text = 'Text'
+    TITLE = 'TITLE',
+    TEXT = 'TEXT',
+    IMAGE = 'IMAGE',
+    VIDEO = 'VIDEO',
+    AUDIO = 'AUDIO',
+    DOWNLOAD = 'DOWNLOAD',
 }
 
-export interface ContentModuleModel {
-    id: string;
+export interface ContentModuleModel<T = any> {
+    id: ID;
     type: ContentModuleType;
+    sortKey: number;
     text?: string;
+    files: FileModel[];
+    configuration?: T;
 }
+
+export type ContentModuleInput = Omit<ContentModuleModel, 'id'>;

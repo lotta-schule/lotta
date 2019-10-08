@@ -2,7 +2,7 @@ version: "2"
 
 services:
   staging-deps:
-    image: registry.gitlab.com/medienportal/web
+    image: medienportal/web
     environment:
       - NODE_ENV=production
       - PORT=4000
@@ -25,7 +25,7 @@ services:
     command: npm run test:staging
 
   api:
-    image: registry.gitlab.com/medienportal/web
+    image: medienportal/api
     networks:
       - default
 

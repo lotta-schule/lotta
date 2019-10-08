@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
     "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
+    ],
+    "typeRoots": [
+      "src/@types"
+    ],
+    "types": [
+      "jest"
     ],
     "allowJs": true,
     "skipLibCheck": true,

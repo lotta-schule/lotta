@@ -1,0 +1,141 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  # set docker host to connect to docker in kubernetes
+  # DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_DRIVER: overlay2
+  # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
+  DOCKER_TLS_CERTDIR: ""
+
+cache:
+  key: "lotta-web-node-modules"
+  paths:
+    - node_modules/
+
+test:
+  stage: test
+  image: node:12
+  script:
+    - npm install
+    - npm run test -- --coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+
+build docker image:staging:
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
+  stage: build
+  environment:
+    name: staging
+  script:
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker build -t lotta/web:$CI_COMMIT_SHA
+      --build-arg APP_ENVIRONMENT=staging
+      --build-arg APP_REVISION=$CI_COMMIT_SHA
+      --build-arg APP_BASE_DOMAIN
+      --build-arg API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY
+      --build-arg MATOMO_URL
+      --build-arg MATOMO_SITEID .
+    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:staging
+    - docker push lotta/web
+  only:
+    refs:
+      - develop
+
+deploy:staging:
+  stage: deploy
+  environment:
+    name: staging
+  image:
+    name: lotta/do-helm-deploy:latest
+  script:
+    - /user/local/bin/setup.sh
+    - helm repo add lotta https://medienportal.gitlab.io/helm-charts
+    - helm repo update
+    - helm upgrade --install lotta-web-staging lotta/lotta-web
+      --namespace lotta-staging --wait --timeout 600
+      --set image.tag=${CI_COMMIT_SHA}
+      --set replicaCount=1
+      --set ingress.enabled=true
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="1"
+      --set ingress.hosts[0].host="*.staging.lotta.schule"
+      --set ingress.hosts[0].paths[0]=/
+      --set ingress.tls[0].hosts[0]="*.staging.lotta.schule"
+      --set resources.limits.cpu=50m
+      --set resources.limits.memory=128Mi
+      --set resources.requests.cpu=50m
+      --set resources.requests.memory=128Mi
+    - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=staging&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
+  only:
+    refs:
+      - develop
+
+build docker image:production:
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
+  stage: build
+  environment:
+    name: production
+  script:
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker build -t lotta/web:$CI_COMMIT_SHA
+      --build-arg APP_ENVIRONMENT=production
+      --build-arg APP_REVISION=$CI_COMMIT_SHA
+      --build-arg APP_BASE_DOMAIN
+      --build-arg API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY
+      --build-arg MATOMO_URL
+      --build-arg MATOMO_SITEID .
+    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:production
+    - docker push lotta/web
+  only:
+    refs:
+      - master
+
+deploy:production:
+  stage: deploy
+  environment:
+    name: production
+  image:
+    name: lotta/do-helm-deploy:latest
+  script:
+    - /user/local/bin/setup.sh
+    - helm repo add lotta https://medienportal.gitlab.io/helm-charts
+    - helm repo update
+    - helm upgrade --install lotta-web lotta/lotta-web
+      --namespace lotta --wait --timeout 600
+      --set image.tag=${CI_COMMIT_SHA}
+      --set replicaCount=2
+      --set ingress.enabled=true
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="1"
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/preserve-host"="true"
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/redirect-permanent"="true"
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/redirect-regex"="^https://www.(.*)"
+      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/redirect-replacement"="https://$1"
+      --set-string ingress.annotations."kubernetes\.io/tls-acme"="true"
+      --set ingress.hosts[0].host="*.lotta.schule"
+      --set ingress.hosts[0].paths[0]=/
+      --set ingress.hosts[1].host="www.ehrenberg-gymnasium.de"
+      --set ingress.hosts[1].paths[0]=/
+      --set ingress.hosts[2].host="ehrenberg-gymnasium.de"
+      --set ingress.hosts[2].paths[0]=/
+      --set ingress.tls[0].hosts[0]="*.lotta.schule"
+      --set ingress.tls[1].hosts[0]="www.ehrenberg-gymnasium.de"
+      --set ingress.tls[2].hosts[0]="ehrenberg-gymnasium.de"
+      --set resources.limits.cpu=100m
+      --set resources.limits.memory=256Mi
+      --set resources.requests.cpu=75m
+      --set resources.requests.memory=128Mi
+    - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=production&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
+  only:
+    refs:
+      - master

@@ -1,137 +1,75 @@
-import React, { FunctionComponent, memo } from 'react';
-import { PageLayout } from './PageLayout';
-import { Card, CardContent, Typography, CardMedia, Input, Divider, TextField, Button } from '@material-ui/core';
+import React, { memo } from 'react';
+import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
+import { CircularProgress, Typography, makeStyles, Theme } from '@material-ui/core';
+import { BaseLayoutMainContent } from './BaseLayoutMainContent';
+import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import { RelatedArticlesList } from 'component/article/RelatedArticlesList';
+import { Helmet } from 'react-helmet';
+import { useTenant } from 'util/client/useTenant';
+import { useQuery } from 'react-apollo';
+import { GetArticleQuery } from 'api/query/GetArticleQuery';
+import { ID } from 'model/ID';
 
-// const style: StyleRulesCallback = () => ({
-//     card: {
-//         display: 'flex',
-//         flexDirection: 'row'
-//     }
-// });
+const useStyle = makeStyles((theme: Theme) => ({
+    siteTitle: {
+        paddingTop: '1.5em',
+        paddingBottom: '1em',
+        paddingLeft: '1em',
+        fontSize: '1.5rem',
+        letterSpacing: '0.3em',
+        color: theme.palette.primary.main,
+        backgroundColor: '#fff',
+        textTransform: 'uppercase',
+    }
+}));
 
 export interface ArticleLayoutProps {
-    article: ArticleModel;
+    title?: string;
+    articleId: ID;
 }
 
-export const ArticleLayout: FunctionComponent<ArticleLayoutProps> = memo(({ article }) => {
+export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => {
+    const styles = useStyle();
+    const client = useTenant();
+
+    const { data, loading: isLoading, error } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id: articleId } });
+
+    if (isLoading) {
+        return <div><CircularProgress /></div>;
+    }
+    if (error) {
+        return (<div><span style={{ color: 'red' }}>{error.message}</span></div>);
+    }
+
+    if (data && data.article) {
+        const { article } = data;
+        return (
+            <>
+                <BaseLayoutMainContent>
+                    <Helmet>
+                        <title>{article.title} &nbsp; {client.title}</title>
+                        <meta name={'description'} content={article.preview} />
+                        <meta property={'og:type'} content={'article'} />
+                        <meta property={'og:description'} content={article.preview} />
+                        <meta property={'twitter:card'} content={article.preview} />
+                        {article.previewImageFile && (
+                            <meta property={'og:image'} content={`https://afdptjdxen.cloudimg.io/cover/1800x945/foil1/${article.previewImageFile.remoteLocation}`} />
+                        )}
+                        <meta property={'og:site_name'} content={client.title} />
+                    </Helmet>
+                    {title && <Typography variant={'h3'} className={styles.siteTitle}>{title}</Typography>}
+                    <Article article={article} />
+                    {article.topic && (
+                        <RelatedArticlesList article={article} />
+                    )}
+                </BaseLayoutMainContent>
+                <BaseLayoutSidebar />
+            </>
+        );
+    }
+
     return (
-        <PageLayout sidebar={(
-            <Card>
-                <CardContent>
-                    <TextField
-                        label="Titel des Beitrags"
-                        placeholder="Placeholder"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Vorschautext"
-                        placeholder="Füge hier einen kurzen Vorschautext ein"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Datum"
-                        type={'date'}
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Kategorie"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <CardContent>
-                    <TextField
-                        label="Seite"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardMedia
-                    style={{ width: 150 }}
-                    image={'https://via.placeholder.com/150x150'}
-                    title={`Vorschaubild zu ${article.title}`}
-                />
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Autoren"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <TextField
-                        label="Sichtbarkeit"
-                        fullWidth
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                    />
-                </CardContent>
-                <Divider />
-                <CardContent>
-                    <Button fullWidth>speichern</Button>
-                    <Button fullWidth>speichern</Button>
-                    <Button fullWidth>speichern</Button>
-                </CardContent>
-            </Card>
-        )}>
-            <Card>
-                <div style={{ display: 'flex' }}>
-                    <CardMedia
-                        style={{ width: 150 }}
-                        image={'https://via.placeholder.com/150x150'}
-                        title={`Vorschaubild zu ${article.title}`}
-                    />
-                    <CardContent>
-                        <Typography variant="h4" component="h3">
-                            {article.title}
-                        </Typography>
-                        <Typography variant={'subtitle1'} color="textSecondary">
-                            15.07.2019 &bull; Oskarverleihung &bull; 18 Views &bull; Autor: Lola &bull; Bewertung
-                        </Typography>
-                        <Typography variant={'subheading'} color="textSecondary">
-                            (Füge hier einen kurzen Vorschautext von etwa 30 Wörtern ein)
-                        </Typography>
-                    </CardContent>
-                </div>
-            </Card>
-            {article.modules.map(contentModule => (
-                <Card key={contentModule.id} component={'section'}>
-                    <CardContent>
-                        <Typography variant={'body1'}>
-                            {contentModule.text}
-                        </Typography>
-                    </CardContent>
-                </Card>
-            ))}
-        </PageLayout>
+        <span style={{ color: 'red' }}>Keine Daten</span>
     );
 });
