@@ -10,6 +10,9 @@
     "typeRoots": [
       "src/@types"
     ],
+    "types": [
+      "jest"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
