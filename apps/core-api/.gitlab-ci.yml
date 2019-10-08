@@ -61,7 +61,7 @@ deploy staging:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api-staging lotta/lotta-api
-      --namespace lotta-staging --wait --timeout 600
+      --namespace lotta-staging --wait --timeout 900
       --set appEnvironment=staging
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
@@ -105,7 +105,7 @@ deploy production:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api lotta/lotta-api
-      --namespace lotta --wait --timeout 600
+      --namespace lotta --wait --timeout 900
       --set appEnvironment=production
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=2
