@@ -1,8 +1,6 @@
 defmodule ApiWeb.Router do
   use ApiWeb, :router
-  if Application.get_env(:honeybadger, :api_key) do
-    use Honeybadger.Plug
-  end
+  use Honeybadger.Plug
 
   pipeline :auth do
     plug Guardian.Plug.Pipeline,
