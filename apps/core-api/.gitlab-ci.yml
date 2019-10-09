@@ -60,6 +60,7 @@ deploy staging:
     - helm repo update
     - helm upgrade --install lotta-api-staging lotta/lotta-api
       --namespace lotta-staging --wait --timeout 900
+      --set image.pullPolicy=Always
       --set appEnvironment=staging
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
