@@ -130,8 +130,10 @@ deploy production:
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
-      --set backupJob.enabled=true
-      --set backupJob.s3Compat.bucketName=lotta-backup-data
+      --set postgresql.backupJob.enabled=true
+      --set-string postgresql.backupJob.s3Compat.hostBucket="\%(bucket)s\.fra1\.digitaloceanspaces\.com"
+      --set postgresql.backupJob.s3Compat.bucketName=lotta-backup-data
+      --set postgresql.backupJob.s3Compat.path="/postgres"
       --set resources.limits.cpu=300m
       --set resources.limits.memory=2048Mi
       --set resources.requests.cpu=200m
