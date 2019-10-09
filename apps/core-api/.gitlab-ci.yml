@@ -59,7 +59,7 @@ deploy staging:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api-staging lotta/lotta-api
-      --namespace lotta-staging --wait --timeout 900 --recreate-pods
+      --namespace lotta-staging
       --set image.pullPolicy=Always
       --set appEnvironment=staging
       --set image.tag=$CI_COMMIT_SHA
@@ -85,10 +85,10 @@ deploy staging:
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
-      --set resources.limits.cpu=100m
-      --set resources.limits.memory=768Mi
+      --set resources.limits.cpu=200m
+      --set resources.limits.memory=1024Mi
       --set resources.requests.cpu=100m
-      --set resources.requests.memory=384Mi
+      --set resources.requests.memory=512Mi
   only:
     refs:
       - develop
@@ -104,7 +104,7 @@ deploy production:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api lotta/lotta-api
-      --namespace lotta --wait --timeout 900
+      --namespace lotta
       --set appEnvironment=production
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=2
@@ -133,9 +133,9 @@ deploy production:
       --set-string postgresql.backupJob.s3Compat.hostBucket="\%(bucket)s\.fra1\.digitaloceanspaces\.com"
       --set postgresql.backupJob.s3Compat.bucketName=lotta-backup-data
       --set postgresql.backupJob.s3Compat.path="/postgres"
-      --set resources.limits.cpu=300m
+      --set resources.limits.cpu=500m
       --set resources.limits.memory=2048Mi
-      --set resources.requests.cpu=200m
+      --set resources.requests.cpu=250m
       --set resources.requests.memory=1024Mi
   only:
     refs:
