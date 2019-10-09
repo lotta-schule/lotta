@@ -5,10 +5,10 @@ stages:
 
 variables:
   # set docker host to connect to docker in kubernetes
-  DOCKER_HOST: tcp://localhost:2375/
-  DOCKER_DRIVER: overlay2
+  # DOCKER_HOST: tcp://localhost:2375/
+  # DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
-  DOCKER_TLS_CERTDIR: ""
+  DOCKER_TLS_CERTDIR: "/certs"
 
 cache:
   key: "lotta-api-deps"
@@ -38,17 +38,15 @@ test:
 
 build docker image:
   stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
   script:
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - if [ $CI_COMMIT_REF_NAME == "develop" ];
-        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:staging;
-        elif [ $CI_COMMIT_REF_NAME == "master" ];
-        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:stable --destination lotta/api:latest;
-        else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA;
-        fi
+    - docker build --cache-from lotta/api:latest -t lotta/api:$CI_COMMIT_SHA .
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - if [ $CI_COMMIT_REF_NAME == "develop" ]; then docker tag lotta/api:$CI_COMMIT_SHA lotta/api:staging; fi;
+    - if [ $CI_COMMIT_REF_NAME == "master" ]; then docker tag lotta/api:$CI_COMMIT_SHA lotta/api:latest; fi;
+    - docker push lotta/api
 
 deploy staging:
   stage: deploy
@@ -61,7 +59,8 @@ deploy staging:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api-staging lotta/lotta-api
-      --namespace lotta-staging --wait --timeout 900
+      --namespace lotta-staging
+      --set image.pullPolicy=Always
       --set appEnvironment=staging
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
@@ -86,10 +85,10 @@ deploy staging:
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
-      --set resources.limits.cpu=100m
-      --set resources.limits.memory=768Mi
-      --set resources.requests.cpu=100m
-      --set resources.requests.memory=384Mi
+      --set resources.limits.cpu=300m
+      --set resources.limits.memory=1024Mi
+      --set resources.requests.cpu=250m
+      --set resources.requests.memory=512Mi
   only:
     refs:
       - develop
@@ -105,7 +104,7 @@ deploy production:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api lotta/lotta-api
-      --namespace lotta --wait --timeout 900
+      --namespace lotta
       --set appEnvironment=production
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=2
@@ -134,9 +133,9 @@ deploy production:
       --set-string postgresql.backupJob.s3Compat.hostBucket="\%(bucket)s\.fra1\.digitaloceanspaces\.com"
       --set postgresql.backupJob.s3Compat.bucketName=lotta-backup-data
       --set postgresql.backupJob.s3Compat.path="/postgres"
-      --set resources.limits.cpu=300m
+      --set resources.limits.cpu=500m
       --set resources.limits.memory=2048Mi
-      --set resources.requests.cpu=200m
+      --set resources.requests.cpu=250m
       --set resources.requests.memory=1024Mi
   only:
     refs:
