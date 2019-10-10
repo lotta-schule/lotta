@@ -7,7 +7,6 @@ import { CollisionLink } from '../general/CollisionLink';
 import { Edit, Place } from '@material-ui/icons';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
-import { theme } from 'theme';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
 import { useMutation } from 'react-apollo';
