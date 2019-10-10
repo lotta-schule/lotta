@@ -68,9 +68,9 @@ deploy:staging:
       --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.staging.lotta.schule"
       --set resources.limits.cpu=50m
-      --set resources.limits.memory=128Mi
+      --set resources.limits.memory=32Mi
       --set resources.requests.cpu=50m
-      --set resources.requests.memory=128Mi
+      --set resources.requests.memory=32Mi
     - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=staging&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
   only:
     refs:
@@ -132,9 +132,9 @@ deploy:production:
       --set ingress.tls[1].hosts[0]="www.ehrenberg-gymnasium.de"
       --set ingress.tls[2].hosts[0]="ehrenberg-gymnasium.de"
       --set resources.limits.cpu=100m
-      --set resources.limits.memory=256Mi
+      --set resources.limits.memory=32Mi
       --set resources.requests.cpu=75m
-      --set resources.requests.memory=128Mi
+      --set resources.requests.memory=32Mi
     - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=production&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
   only:
     refs:
