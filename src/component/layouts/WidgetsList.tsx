@@ -52,7 +52,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
 
     if (isMobile) {
         return (
-            <div className={styles.root}>
+            <div className={styles.root} data-testid={'WidgetsList'}>
                 <Tabs
                     value={currentTabIndex}
                     indicatorColor={'secondary'}
@@ -88,7 +88,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
         );
     } else {
         return (
-            <div className={styles.root}>
+            <div className={styles.root} data-testid={'WidgetsList'}>
                 {shownWidgets.map(widget => (
                     <Widget key={widget.id} widget={widget} />
                 ))}

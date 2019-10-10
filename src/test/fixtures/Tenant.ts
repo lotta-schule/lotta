@@ -1,4 +1,22 @@
-import { CategoryModel } from 'model';
+import { CategoryModel, ClientModel, UserGroupModel } from 'model';
+
+export const AdminGroup: UserGroupModel = {
+    id: 1,
+    createdAt: new Date(2015, 0, 1).toISOString(),
+    updatedAt: new Date(2015, 0, 1).toISOString(),
+    name: 'Administrator',
+    isAdminGroup: true,
+    tenant: null!
+}
+
+export const TestTenant: ClientModel = {
+    id: 1,
+    title: 'Test Tenant',
+    slug: 'test',
+    createdAt: new Date(2015, 0, 1).toISOString(),
+    updatedAt: new Date(2015, 0, 1).toISOString(),
+    groups: [AdminGroup]
+};
 
 export const StartseiteCategory: CategoryModel = {
     id: 1,

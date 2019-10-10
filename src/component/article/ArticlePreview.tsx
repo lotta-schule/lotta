@@ -82,7 +82,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
     });
 
     return (
-        <Card className={styles.root}>
+        <Card className={styles.root} data-testid={'ArticlePreview'}>
             <Grid container style={{ display: 'flex' }}>
                 {article.previewImageFile && (
                     <Grid item xs={12} sm={4}>
