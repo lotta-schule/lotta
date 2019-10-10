@@ -64,7 +64,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                                     'transparent'
                             }}
                         >
-                            <Typography className={styles.bannerheading}>
+                            <Typography variant={'h2'} className={styles.bannerheading}>
                                 {category.title}
                             </Typography>
                         </Grid>
@@ -85,9 +85,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 )}
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
-                {category && category.widgets && (
-                    <WidgetsList widgets={category.widgets} />
-                )}
+                <WidgetsList widgets={(category && category.widgets) || []} />
             </BaseLayoutSidebar>
         </>
     );

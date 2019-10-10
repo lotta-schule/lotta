@@ -6,19 +6,23 @@ import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from '@material-ui/styles';
 import { theme } from '../theme';
+import { Provider } from 'react-redux';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { de } from 'date-fns/locale';
 import DateFnsUtils from '@date-io/date-fns';
+import store from '../store/Store';
 
 const AllTheProviders: FunctionComponent<{ children?: any; }> = ({ children }) => {
     return (
         <ThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
-                <MockedProvider mocks={apolloMocks}>
-                    <Router history={createBrowserHistory()}>
-                        {children}
-                    </Router>
-                </MockedProvider>
+                <Provider store={store}>
+                    <MockedProvider mocks={apolloMocks}>
+                        <Router history={createBrowserHistory()}>
+                            {children}
+                        </Router>
+                    </MockedProvider>
+                </Provider>
             </MuiPickersUtilsProvider>
         </ThemeProvider>
     )
