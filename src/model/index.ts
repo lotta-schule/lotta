@@ -8,5 +8,6 @@ export * from './FileModel';
 export * from './LoginPayload';
 export * from './PageModel';
 export * from './UserModel';
+export * from './UserGroupModel';
 export * from './UploadModel';
 export * from './WidgetModel';

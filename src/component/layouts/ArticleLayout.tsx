@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
 import { CircularProgress, Typography, makeStyles, Theme } from '@material-ui/core';
@@ -10,6 +10,7 @@ import { useTenant } from 'util/client/useTenant';
 import { useQuery } from 'react-apollo';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { ID } from 'model/ID';
+import { WidgetsList } from './WidgetsList';
 
 const useStyle = makeStyles((theme: Theme) => ({
     siteTitle: {
@@ -31,22 +32,24 @@ export interface ArticleLayoutProps {
 
 export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => {
     const styles = useStyle();
-    const client = useTenant();
+    const client = useTenant() || {};
 
     const { data, loading: isLoading, error } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id: articleId } });
 
-    if (isLoading) {
-        return <div><CircularProgress /></div>;
-    }
-    if (error) {
-        return (<div><span style={{ color: 'red' }}>{error.message}</span></div>);
-    }
+    const mainContent = useMemo(() => {
+        if (isLoading) {
+            return <div><CircularProgress /></div>;
+        }
+        if (error) {
+            return (<div><span style={{ color: 'red' }}>{error.message}</span></div>);
+        }
 
-    if (data && data.article) {
-        const { article } = data;
-        return (
-            <>
-                <BaseLayoutMainContent>
+        console.log('data: ', data);
+
+        if (data && data.article) {
+            const { article } = data;
+            return (
+                <>
                     <Helmet>
                         <title>{article.title} &nbsp; {client.title}</title>
                         <meta name={'description'} content={article.preview} />
@@ -63,13 +66,23 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
                     {article.topic && (
                         <RelatedArticlesList article={article} />
                     )}
-                </BaseLayoutMainContent>
-                <BaseLayoutSidebar />
-            </>
+                </>
+            );
+        }
+        return (
+            <span style={{ color: 'red' }}>Artikel nicht gefunden.</span>
         );
-    }
+
+    }, [client.title, data, error, isLoading, styles.siteTitle, title]);
 
     return (
-        <span style={{ color: 'red' }}>Keine Daten</span>
+        <>
+            <BaseLayoutMainContent>
+                {mainContent}
+            </BaseLayoutMainContent>
+            <BaseLayoutSidebar>
+                <WidgetsList widgets={[]} />
+            </BaseLayoutSidebar>
+        </>
     );
 });

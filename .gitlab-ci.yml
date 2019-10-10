@@ -23,6 +23,13 @@ test:
     - npm run test -- --coverage
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
+lint:
+  stage: test
+  image: node:12
+  script:
+    - npm install
+    - npm run lint -- --max-warnings=0
+
 build docker image:staging:
   image: docker:19.03.0
   services:
@@ -59,7 +66,7 @@ deploy:staging:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-web-staging lotta/lotta-web
-      --namespace lotta-staging --wait --timeout 600
+      --namespace lotta-staging --wait
       --set image.tag=${CI_COMMIT_SHA}
       --set replicaCount=1
       --set ingress.enabled=true
@@ -68,9 +75,9 @@ deploy:staging:
       --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.staging.lotta.schule"
       --set resources.limits.cpu=50m
-      --set resources.limits.memory=128Mi
+      --set resources.limits.memory=32Mi
       --set resources.requests.cpu=50m
-      --set resources.requests.memory=128Mi
+      --set resources.requests.memory=32Mi
     - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=staging&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
   only:
     refs:
@@ -112,7 +119,7 @@ deploy:production:
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-web lotta/lotta-web
-      --namespace lotta --wait --timeout 900
+      --namespace lotta --wait
       --set image.tag=${CI_COMMIT_SHA}
       --set replicaCount=2
       --set ingress.enabled=true
@@ -132,9 +139,9 @@ deploy:production:
       --set ingress.tls[1].hosts[0]="www.ehrenberg-gymnasium.de"
       --set ingress.tls[2].hosts[0]="ehrenberg-gymnasium.de"
       --set resources.limits.cpu=100m
-      --set resources.limits.memory=256Mi
+      --set resources.limits.memory=32Mi
       --set resources.requests.cpu=75m
-      --set resources.requests.memory=128Mi
+      --set resources.requests.memory=32Mi
     - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=production&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
   only:
     refs:

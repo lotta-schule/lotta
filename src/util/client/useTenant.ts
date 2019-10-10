@@ -4,5 +4,5 @@ import { GetTenantQuery } from 'api/query/GetTenantQuery';
 
 export const useTenant = (): ClientModel => {
     const { data } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
-    return data!.tenant;
+    return (data && data.tenant) as any;
 }

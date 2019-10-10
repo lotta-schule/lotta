@@ -7,7 +7,6 @@ import { CollisionLink } from '../general/CollisionLink';
 import { Edit, Place } from '@material-ui/icons';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
-import { theme } from 'theme';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
 import { useMutation } from 'react-apollo';
@@ -48,6 +47,11 @@ const useStyle = makeStyles((theme: Theme) => ({
         flexGrow: 0,
         backgroundPosition: '0 0'
     },
+    subtitle: {
+        textTransform: 'uppercase',
+        fontSize: '0.8rem',
+        marginBottom: theme.spacing(1)
+    },
     previewTextLimitedHeight: {
         overflow: 'hidden',
         webkitLineClamp: 3,
@@ -78,7 +82,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
     });
 
     return (
-        <Card className={styles.root}>
+        <Card className={styles.root} data-testid={'ArticlePreview'}>
             <Grid container style={{ display: 'flex' }}>
                 {article.previewImageFile && (
                     <Grid item xs={12} sm={4}>
@@ -127,8 +131,8 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                                 </Fab>
                             )}
                         </Typography>
-                        <Typography variant={'subtitle1'} style={{ textTransform: 'uppercase', fontSize: '0.8rem', marginBottom: theme.spacing(1) }}>
-                            {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
+                        <Typography variant={'subtitle1'} className={classNames(styles.subtitle)}>
+                            {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
                             {article.topic && <> | {article.topic}&nbsp;</>}
                             {/* | 18 Views&nbsp; */}
                             {article.users && <> | Autoren: {article.users.map(user => User.getNickname(user)).join(', ')}&nbsp;</>}
