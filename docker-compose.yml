@@ -1,10 +1,14 @@
 version: "3.4"
 
+volumes:
+  webclient_node_modules:
+
 services:
   app:
     image: node:12
     volumes:
       - .:/usr/src/svc
+      - webclient_node_modules:/usr/src/app/node_modules
     working_dir: /usr/src/svc
     ports:
       - 3000:3000
