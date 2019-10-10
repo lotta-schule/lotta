@@ -23,6 +23,13 @@ test:
     - npm run test -- --coverage
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
+lint:
+  stage: test
+  image: node:12
+  script:
+    - npm install
+    - npm run lint -- --max-warnings=0
+
 build docker image:staging:
   image: docker:19.03.0
   services:
