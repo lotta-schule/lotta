@@ -21,7 +21,7 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> list_users_with_groups()
+      iex> list_users_with_groups(1)
       [%User{}, ...]
 
   """
@@ -49,6 +49,14 @@ defmodule Api.Accounts do
     Repo.get!(User, id)
   end
 
+  @doc """
+  Searches users by text. The user is searched by *exact match* of email, or, in the same tenant, by name or nickname
+
+  ## Examples
+
+      iex> search_user("vader", %Tenant{id: 1})
+      [%User{}]
+  """
   def search_user(searchtext, tenant) do
     tenant_id = tenant.id
     matching_searchtext = "%#{searchtext}%"
