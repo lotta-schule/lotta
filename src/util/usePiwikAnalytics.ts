@@ -3,5 +3,7 @@ import Matomo from "matomo-ts";
 
 export const usePiwikAnalytics = () => {
     const { location } = useRouter();
-    Matomo.default().trackPageView(location.pathname);
+    if (window._paq) {
+        Matomo.default().trackPageView(location.pathname);
+    }
 };
