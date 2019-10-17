@@ -45,10 +45,13 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                         .query<{ calendar: CalendarEventModel[] }>({ query: GetCalendarQuery, variables: { url: calendar.url } })
                         .then(({ data: { calendar: events } }) => events.map(event => ({ ...event, calendar })));
                 })
-        )
-            .then((eventsArr: any[]) => setEvents(eventsArr.flat()))
-            .catch((err: Error) => setError(err))
-            .finally(() => setIsLoading(false));
+        ).then((eventsArr: any[]) => {
+            setEvents(eventsArr.flat());
+            setIsLoading(false);
+        }).catch((err: Error) => {
+            setIsLoading(false);
+            setError(err);
+        });
     }, [apolloClient, calendars]);
 
     if (isLoading) {
