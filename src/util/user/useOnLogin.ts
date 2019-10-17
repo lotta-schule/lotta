@@ -13,7 +13,9 @@ export const useOnLogin = () => {
 
     return (user: UserModel, token: string) => {
         set(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME, token, CookieParams.getCookieParams());
-        Matomo.default().setUserId(String(user.id));
+        if (window._paq) {
+            Matomo.default().setUserId(String(user.id));
+        }
         dispatch(createCloseDrawerAction());
         apolloClient.writeQuery({
             query: GetCurrentUserQuery,

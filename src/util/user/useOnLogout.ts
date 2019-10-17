@@ -19,7 +19,9 @@ export const useOnLogout = () => {
             }
         });
         remove(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME, CookieParams.getCookieParams());
-        Matomo.default().resetUserId();
+        if (window._paq) {
+            Matomo.default().resetUserId();
+        }
         apolloClient.clearStore();
         dispatch(createCloseDrawerAction());
         setTimeout(() => {
