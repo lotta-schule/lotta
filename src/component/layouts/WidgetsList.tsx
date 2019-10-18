@@ -1,22 +1,22 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { WidgetModel } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Tabs, Tab } from '@material-ui/core';
-import SwipeableViews from 'react-swipeable-views';
 import { Widget } from 'component/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
+import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
     widgets: WidgetModel[];
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'stretch',
-        height: '100%'
+        height: '100%',
     },
     tabRoot: {
         lineHeight: 1,
@@ -46,7 +46,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
 
     const isMobile = useIsMobile();
 
-    const [currentTabIndex, setCurrentTabIndex] = React.useState(0);
+    const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
     const shownWidgets = [WidgetUtil.getProfileWidget(), ...widgets];
 
