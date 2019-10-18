@@ -18,8 +18,12 @@ export interface WidgetModel<C = any> {
 }
 
 export interface CalendarWidgetConfig {
-    calendars: {
-        url: string;
-        groupId?: ID;
-    }[];
+    calendars: CalendarWidgetCalendarConfig[];
+}
+
+export interface CalendarWidgetCalendarConfig {
+    url: string;
+    color?: string;
+    name?: string;
+    groupId?: ID;
 }
