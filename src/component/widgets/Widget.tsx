@@ -17,12 +17,7 @@ const useStyles = makeStyles(theme => ({
         boxSizing: 'border-box',
         '& > *': {
             boxSizing: 'border-box',
-        },
-        [theme.breakpoints.up('sm')]: {
-            maxHeight: 300,
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(1)
-        },
+        }
     },
     heading: {
         letterSpacing: 2
