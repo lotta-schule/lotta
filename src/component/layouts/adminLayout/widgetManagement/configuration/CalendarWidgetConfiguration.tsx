@@ -9,8 +9,8 @@ export interface CalendarWidgetConfigurationProps {
 
 const useStyles = makeStyles(theme => ({
     input: {
-        marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(3)
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2)
     },
     divider: {
         marginTop: '1em',

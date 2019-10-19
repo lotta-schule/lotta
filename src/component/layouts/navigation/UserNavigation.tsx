@@ -22,10 +22,12 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#fff',
         padding: '0.5em 1em 0.5em 0.5em',
         height: 138,
-        flexShrink: 0
+        flexShrink: 0,
+        marginBottom: theme.spacing(1),
     },
     button: {
         marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
     },
     leftIcon: {
         marginRight: theme.spacing(1),
