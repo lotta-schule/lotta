@@ -21,8 +21,14 @@ const useStyles = makeStyles(theme => ({
             top: 70
         }
     },
-    tabs: {
+    tabsRoot: {
         backgroundColor: theme.palette.primary.main,
+    },
+    tabsScrollButtons: {
+        width: 20,
+        color: theme.palette.primary.contrastText
+    },
+    tabsFlexContainer: {
         justifyContent: 'center'
     },
     tabRoot: {
@@ -39,10 +45,6 @@ const useStyles = makeStyles(theme => ({
         '& img': {
             filter: 'none'
         }
-    },
-    tabsScrollButtons: {
-        width: 20,
-        color: theme.palette.primary.contrastText
     },
     swipeableViewsContainer: {
         flexGrow: 1,
@@ -93,7 +95,6 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
             {shownWidgets && shownWidgets.length > 1 && (
                 <>
                     <Tabs
-                        className={styles.tabs}
                         value={currentTabIndex}
                         indicatorColor={'secondary'}
                         textColor={'secondary'}
@@ -102,6 +103,8 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                         aria-label={'Marginales Modul wählen'}
                         onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
                         classes={{
+                            root: styles.tabsRoot,
+                            flexContainer: styles.tabsFlexContainer,
                             scrollButtons: styles.tabsScrollButtons
                         }}
                     >
