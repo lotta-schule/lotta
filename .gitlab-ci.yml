@@ -201,9 +201,10 @@ deploy:review:
       --set resources.requests.cpu=50m
       --set resources.requests.memory=32Mi
     - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=review&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
-  only:
+  except:
     refs:
       - develop
+      - master
 
 stop_review_app:
   stage: deploy
@@ -219,3 +220,7 @@ stop_review_app:
     - /user/local/bin/setup.sh
     - helm delete --purge lotta-web-$CI_ENVIRONMENT_SLUG
     - kubectl delete ns lotta-$CI_ENVIRONMENT_SLUG
+  except:
+    refs:
+      - develop
+      - master
