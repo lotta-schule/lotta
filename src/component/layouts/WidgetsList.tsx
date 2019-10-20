@@ -26,7 +26,8 @@ const useStyles = makeStyles(theme => ({
     },
     tabRoot: {
         lineHeight: 1,
-        textTransform: 'initial'
+        textTransform: 'initial',
+        minWidth: 100
     },
     tabWrapper: {
         '& img': {
@@ -91,7 +92,8 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                         value={currentTabIndex}
                         indicatorColor={'secondary'}
                         textColor={'secondary'}
-                        variant={isMobile ? 'fullWidth' : 'standard'}
+                        variant={isMobile ? 'fullWidth' : 'scrollable'}
+                        scrollButtons="auto"
                         aria-label={'Marginales Modul wählen'}
                         onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
                     >
