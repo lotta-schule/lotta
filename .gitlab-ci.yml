@@ -210,7 +210,7 @@ stop_review_app:
   image:
     name: lotta/do-helm-deploy:latest
   environment:
-    name: review
+    name: review/$CI_COMMIT_REF_NAME
     action: stop
   variables:
     GIT_STRATEGY: none
