@@ -22,7 +22,8 @@ const useStyles = makeStyles(theme => ({
         }
     },
     tabs: {
-        backgroundColor: theme.palette.primary.main
+        backgroundColor: theme.palette.primary.main,
+        justifyContent: 'center'
     },
     tabRoot: {
         lineHeight: 1,
