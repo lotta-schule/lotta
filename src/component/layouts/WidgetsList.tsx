@@ -21,12 +21,20 @@ const useStyles = makeStyles(theme => ({
             top: 70
         }
     },
-    tabs: {
-        backgroundColor: theme.palette.primary.main
+    tabsRoot: {
+        backgroundColor: theme.palette.primary.main,
+    },
+    tabsScrollButtons: {
+        width: 20,
+        color: theme.palette.primary.contrastText
+    },
+    tabsFlexContainer: {
+        justifyContent: 'center'
     },
     tabRoot: {
         lineHeight: 1,
-        textTransform: 'initial'
+        textTransform: 'initial',
+        minWidth: 60
     },
     tabWrapper: {
         '& img': {
@@ -87,13 +95,18 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
             {shownWidgets && shownWidgets.length > 1 && (
                 <>
                     <Tabs
-                        className={styles.tabs}
                         value={currentTabIndex}
                         indicatorColor={'secondary'}
                         textColor={'secondary'}
-                        variant={isMobile ? 'fullWidth' : 'standard'}
+                        variant={isMobile ? 'fullWidth' : 'scrollable'}
+                        scrollButtons="auto"
                         aria-label={'Marginales Modul wählen'}
                         onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
+                        classes={{
+                            root: styles.tabsRoot,
+                            flexContainer: styles.tabsFlexContainer,
+                            scrollButtons: styles.tabsScrollButtons
+                        }}
                     >
                         {shownWidgets.map((widget, i) => (
                             <Tab
