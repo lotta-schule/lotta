@@ -38,7 +38,7 @@ const palette = {
 export const theme = createMuiTheme({
     palette,
     typography: {
-        fontFamily: 'Muli',
+        fontFamily: 'Muli'
     },
     shadows: [
         'none',
@@ -97,7 +97,7 @@ export const theme = createMuiTheme({
         },
         MuiPaper: {
             rounded: {
-            borderRadius: 0,
+                borderRadius: 0,
             }
         },
         MuiOutlinedInput: {
@@ -129,9 +129,14 @@ export const theme = createMuiTheme({
                 switchHeader: {
                     color: '#333'
                 },
+            },
+            LottaArticlePreview: {
+                title: {
+                    fontFamily: '\'Schoolbell\', cursive'
+                }
             }
         } as any
-    }
+    },
 });
 
 theme.typography.h4 = {

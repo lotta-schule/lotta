@@ -47,6 +47,9 @@ const useStyle = makeStyles((theme: Theme) => ({
         flexGrow: 0,
         backgroundPosition: '0 0'
     },
+    articleTitle: {
+        ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title)
+    },
     subtitle: {
         textTransform: 'uppercase',
         fontSize: '0.8rem',
@@ -97,7 +100,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                 )}
                 <Grid item xs>
                     <CardContent>
-                        <Typography component={'h5'} variant={'h5'} gutterBottom>
+                        <Typography component={'h5'} variant={'h5'} gutterBottom className={styles.articleTitle}>
                             {disableLink && (article.title)}
                             {!disableLink && (
                                 <Link
