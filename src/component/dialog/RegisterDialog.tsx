@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Typography, Grid, makeStyles, } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Typography, Grid, makeStyles, Theme } from '@material-ui/core';
 import { UserModel } from '../../model';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { useMutation } from '@apollo/react-hooks';

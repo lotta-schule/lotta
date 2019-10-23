@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, useState, useEffect, useCallback, FormEvent } from 'react';
 import {
     DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Select,
-    FormControl, Input, MenuItem, FormHelperText, Typography, Grid, CircularProgress,
+    FormControl, Input, MenuItem, FormHelperText, Typography, Grid, CircularProgress, Theme, makeStyles,
 } from '@material-ui/core';
 import { UserModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
@@ -13,6 +13,12 @@ import { AssignUserToGroupMutation } from 'api/mutation/AssignUserToGroupMutatio
 import { ID } from 'model/ID';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
+const useStyles = makeStyles((theme: Theme) => ({
+    margin: {
+        marginBottom: theme.spacing(2),
+    }
+}));
+
 export interface AddUserToGroupDialogProps {
     user: UserModel;
     onConfirm(user: UserModel): void;
@@ -20,6 +26,7 @@ export interface AddUserToGroupDialogProps {
 }
 
 export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> = memo(({ user, onConfirm, onAbort }) => {
+    const styles = useStyles();
     const userGroups = useUserGroups();
     const [selectedGroupId, setSelectedGroupId] = useState<ID | null | undefined>(undefined);
     const [loadUser, { data, loading, error }] = useLazyQuery<{ user: UserModel }, { id: ID }>(GetUserQuery, { fetchPolicy: 'no-cache' });
@@ -88,7 +95,7 @@ export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> 
                         <CircularProgress />
                     )}
                     {!loading && (
-                        <FormControl fullWidth style={{ marginTop: '1em', }}>
+                        <FormControl fullWidth className={styles.margin}>
                             <Select
                                 value={selectedGroupId || undefined}
                                 onChange={({ target }) => {
