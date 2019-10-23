@@ -21,13 +21,13 @@ const useStyles = makeStyles(theme => ({
         top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2),
         backgroundColor: '#fff',
         padding: '0.5em 1em 0.5em 0.5em',
-        height: 138,
+        height: 136,
         flexShrink: 0,
         marginBottom: theme.spacing(1),
     },
     button: {
-        marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
+        backgroundColor: '#fff',
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -116,7 +116,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
             </Grid>
             {currentUser && (
                 <>
-                    <Button size="small" variant="contained" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
+                    <Button size="small" variant="outlined" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
                         <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                         Neuer Beitrag
                     </Button>

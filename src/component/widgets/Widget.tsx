@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     heading: {
-        letterSpacing: 2
+        textAlign: 'center',
     }
 }));
 

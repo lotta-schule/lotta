@@ -1,18 +1,11 @@
 import React, { FunctionComponent, memo } from 'react';
-import { Paper, Tabs, Tab, makeStyles } from '@material-ui/core';
+import { Paper, Tabs, Tab } from '@material-ui/core';
 import useRouter from 'use-react-router';
-
-const useStyles = makeStyles(theme => ({
-    root: {
-        marginTop: theme.spacing(1),
-    }
-}));
 
 export const Navigation: FunctionComponent = memo(() => {
     const { history, location } = useRouter();
-    const styles = useStyles();
     return (
-        <Paper className={styles.root}>
+        <Paper>
             <Tabs
                 value={location.pathname}
                 onChange={(_, value) => { history.push(value); }}
