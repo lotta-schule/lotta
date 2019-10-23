@@ -3,9 +3,9 @@ import { deepOrange } from '@material-ui/core/colors';
 
 const palette = {
     primary: {
-        main: '#334b82',
-        light: '#536daa',
-        dark: '#22345e',
+        main: '#333',
+        light: '#999',
+        dark: '#222',
         contrastText: '#ffffff',
 
     },
