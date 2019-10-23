@@ -22,7 +22,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         }
     },
     appBar: {
-        backgroundColor: theme.palette.primary.main,
+        backgroundColor: 'linear-gradient(0deg, rgb(72, 72, 72) 0%, rgb(51, 51, 51) 100%)',
     },
     padding: {
         [theme.breakpoints.down('sm')]: {
@@ -30,8 +30,9 @@ const useStyles = makeStyles<Theme>(theme => ({
         },
     },
     secondaryAppBar: {
-        backgroundColor: '#fff',
-        maxHeight: '40px',
+        backgroundColor: '#fffffff0',
+        maxHeight: 40,
+        boxShadow: '0px 2px 2px #0000002b',
     },
     navButton: {
         '&:h^': {
