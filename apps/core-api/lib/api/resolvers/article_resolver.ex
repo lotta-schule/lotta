@@ -23,17 +23,17 @@ defmodule Api.ArticleResolver do
   end
   def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
 
-  def all(%{category_id: category_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, category_id, current_user)}
+  def all(%{category_id: category_id} = args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, category_id, current_user, args[:filter])}
   end
-  def all(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, nil, current_user)}
+  def all(args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, nil, current_user, args[:filter])}
   end
-  def all(%{category_id: category_id}, %{context: %{context: %{ tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, category_id, nil)}
+  def all(%{category_id: category_id} = args, %{context: %{context: %{ tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, category_id, nil, args[:filter])}
   end
-  def all(_args, %{context: %{context: %{ tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, nil, nil)}
+  def all(args, %{context: %{context: %{ tenant: tenant }}}) do
+    {:ok, Content.list_articles(tenant.id, nil, nil, args[:filter])}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden."}
