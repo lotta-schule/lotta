@@ -309,6 +309,7 @@ defmodule Api.Content do
 
   defp filter_query(query, filter \\ %{}) do
     query = from q in query, order_by: {:desc, :updated_at}
+    filter
     |> Enum.reduce(query, fn 
       {_, nil}, query ->
         query
