@@ -13,15 +13,16 @@ import { useMutation } from 'react-apollo';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { ID } from 'model/ID';
 
-const useStyle = makeStyles((theme: Theme) => ({
+const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
         padding: '0.5em',
-        borderRadius: 0,
+        borderRadius: 4,
+        boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : '1px 1px 2px #0000003b',
         '&:hover': {
             '& .edit-button': {
                 border: 0,
                 display: 'flex',
-                color: '#fff',
+                color: theme.palette.primary.contrastText,
                 backgroundColor: theme.palette.secondary.main,
             },
         }
@@ -34,7 +35,7 @@ const useStyle = makeStyles((theme: Theme) => ({
     },
     pinButton: {
         float: 'right',
-        color: '#fff',
+        color: theme.palette.primary.contrastText,
         marginRight: '1em',
         '&.active': {
             color: '#333'
@@ -46,6 +47,9 @@ const useStyle = makeStyles((theme: Theme) => ({
         flexShrink: 0,
         flexGrow: 0,
         backgroundPosition: '0 0'
+    },
+    articleTitle: {
+        ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title)
     },
     subtitle: {
         textTransform: 'uppercase',
@@ -69,13 +73,14 @@ interface ArticlePreviewProps {
     disableEdit?: boolean;
     disablePin?: boolean;
     limitedHeight?: boolean;
+    isEmbedded?: boolean;
 }
 
-export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin, limitedHeight }) => {
+export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin, limitedHeight, isEmbedded }) => {
 
     const [currentUser] = useCurrentUser();
 
-    const styles = useStyle();
+    const styles = useStyle({ isEmbedded });
 
     const [toggleArticlePin] = useMutation<{ article: ArticleModel }, { id: ID }>(ToggleArticlePinMutation, {
         variables: { id: article.id }
@@ -97,7 +102,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                 )}
                 <Grid item xs>
                     <CardContent>
-                        <Typography component={'h5'} variant={'h5'} gutterBottom>
+                        <Typography component={'h5'} variant={'h5'} gutterBottom className={styles.articleTitle}>
                             {disableLink && (article.title)}
                             {!disableLink && (
                                 <Link

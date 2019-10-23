@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     tabsRoot: {
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
     },
     tabsScrollButtons: {
         width: 20,
@@ -96,7 +96,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                 <>
                     <Tabs
                         value={currentTabIndex}
-                        indicatorColor={'#fff'}
+                        indicatorColor={theme.palette.primary.contrastText}
                         variant={isMobile ? 'fullWidth' : 'scrollable'}
                         scrollButtons="auto"
                         aria-label={'Marginales Modul wählen'}

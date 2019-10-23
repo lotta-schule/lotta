@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
             left: 0,
             width: '100%',
             zIndex: 1,
-            backgroundColor: '#fff'
+            backgroundColor: theme.palette.primary.contrastText
         }
     }),
 );

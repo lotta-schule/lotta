@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
         color: theme.palette.secondary.main,
         borderColor: theme.palette.secondary.main,
         borderRadius: 4,

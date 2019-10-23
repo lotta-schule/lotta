@@ -3,9 +3,9 @@ import { deepOrange } from '@material-ui/core/colors';
 
 const palette = {
     primary: {
-        main: '#334b82',
-        light: '#536daa',
-        dark: '#22345e',
+        main: '#333',
+        light: '#999',
+        dark: '#222',
         contrastText: '#ffffff',
 
     },
@@ -38,7 +38,7 @@ const palette = {
 export const theme = createMuiTheme({
     palette,
     typography: {
-        fontFamily: 'Muli',
+        fontFamily: 'Muli'
     },
     shadows: [
         'none',
@@ -130,9 +130,14 @@ export const theme = createMuiTheme({
                 switchHeader: {
                     color: '#333'
                 },
+            },
+            LottaArticlePreview: {
+                title: {
+                    fontFamily: '\'Schoolbell\', cursive'
+                }
             }
         } as any
-    }
+    },
 });
 
 theme.typography.h4 = {

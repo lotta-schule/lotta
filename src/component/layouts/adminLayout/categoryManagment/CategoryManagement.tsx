@@ -4,7 +4,6 @@ import {
 } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import classNames from 'classnames';
-import { theme } from 'theme';
 import { CategoryModel } from 'model';
 import { CategoryNavigation } from './CategoryNavigation';
 import { CategoryEditor } from './CategoryEditor';
@@ -29,6 +28,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     button: {
         marginBottom: theme.spacing(1),
+        float: 'right',
+        marginTop: theme.spacing(1),
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -36,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     iconSmall: {
         fontSize: 20,
     },
+    padding: {
+        paddingRight: theme.spacing(4),
+    }
 }));
 
 export const CategoriesManagement: FunctionComponent = memo(() => {
@@ -52,7 +56,6 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
                     variant="contained"
                     color="secondary"
                     className={styles.button}
-                    style={{ float: 'right', marginTop: theme.spacing(1), }}
                 >
                     <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                     Kategorie hinzufügen
@@ -60,7 +63,7 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
             </Typography>
 
             <Grid container>
-                <Grid item sm={5} style={{ paddingRight: theme.spacing(4) }} >
+                <Grid item sm={5} className={styles.padding} >
                     <CategoryNavigation selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
                 </Grid>
                 <Grid item sm={7}>
