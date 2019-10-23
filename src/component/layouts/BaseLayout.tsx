@@ -33,14 +33,14 @@ export const BaseLayout = memo(({ children }) => {
         <Container>
             <header className={styles.header}>
                 <Grid container style={{ display: 'flex', height: '100%' }}>
-                    <Grid item xs={false} sm={3}>
+                    <Grid item xs={false} sm={3} style={{ display: 'flex', }} >
                         <CardMedia
-                            style={{ maxHeight: 80, width: '50%', height: '100%', flexShrink: 0, flexGrow: 0, marginTop: 10 }}
+                            style={{ height: '80%', backgroundSize: 'contain', margin: 'auto auto', width: '100%' }}
                             image='/img/logo_neu.png'
                         />
                     </Grid>
-                    <Grid item xs={12} sm={9}>
-                        <Typography variant="h5" gutterBottom style={{ padding: '0.9em', marginBottom: '0' }}>{data!.tenant.title}</Typography>
+                    <Grid item xs={12} sm={9} style={{ display: 'flex', flexDirection: 'row-reverse', paddingRight: '1em' }}>
+                        <Typography variant="h5" gutterBottom style={{ margin: 'auto 0' }}>{data!.tenant.title}</Typography>
                     </Grid>
                 </Grid>
             </header>

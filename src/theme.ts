@@ -92,7 +92,8 @@ export const theme = createMuiTheme({
         },
         MuiDrawer: {
             paper: {
-                width: '80vw'
+                width: '80vw',
+                paddingLeft: '0.5em',
             }
         },
         MuiPaper: {

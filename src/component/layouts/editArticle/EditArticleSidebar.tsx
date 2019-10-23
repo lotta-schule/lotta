@@ -22,7 +22,7 @@ import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        borderRadius: '0'
+        borderRadius: '0',
     },
     button: {
         marginBottom: theme.spacing(1),
