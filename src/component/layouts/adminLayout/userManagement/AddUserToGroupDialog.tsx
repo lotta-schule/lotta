@@ -4,7 +4,6 @@ import {
     FormControl, Input, MenuItem, FormHelperText, Typography, Grid, CircularProgress,
 } from '@material-ui/core';
 import { UserModel } from 'model';
-import { theme } from 'theme';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { useUserGroups } from 'util/client/useUserGroups';
 import { GetUserQuery } from 'api/query/GetUserQuery';
@@ -89,7 +88,7 @@ export const AddUserToGroupDialog: FunctionComponent<AddUserToGroupDialogProps> 
                         <CircularProgress />
                     )}
                     {!loading && (
-                        <FormControl fullWidth style={{ marginTop: theme.spacing(2) }}>
+                        <FormControl fullWidth style={{ marginTop: '1em', }}>
                             <Select
                                 value={selectedGroupId || undefined}
                                 onChange={({ target }) => {

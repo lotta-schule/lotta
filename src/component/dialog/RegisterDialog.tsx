@@ -1,11 +1,16 @@
 import React, { memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Typography, Grid } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Typography, Grid, makeStyles, } from '@material-ui/core';
 import { UserModel } from '../../model';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
-import { theme } from 'theme';
 import { useMutation } from '@apollo/react-hooks';
 import { useOnLogin } from 'util/user/useOnLogin';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+
+const useStyles = makeStyles((theme: Theme) => ({
+    margin: {
+        marginBottom: theme.spacing(3),
+    }
+}));
 
 export interface RegisterDialogProps {
     isOpen: boolean;
@@ -17,6 +22,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     onRequestClose
 }) => {
     const onLogin = useOnLogin();
+    const styles = useStyles();
 
     const [register, { loading: isLoading, error }] = useMutation<{ register: { user: UserModel, token: string } }, { email: string, name: string, password: string, groupKey?: string }>(RegisterMutation, {
         update: (_, { data }) => {
@@ -99,7 +105,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         type="password"
                         fullWidth
                         required
-                        style={{ marginBottom: theme.spacing(3) }}
+                        className={styles.margin}
                     />
                     <Grid container style={{ display: 'flex' }}>
                         <Grid item xs={12} sm={6}>
@@ -134,7 +140,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                     <Typography variant="caption">
                         Bitte gib hier deinen richtigen, vollständigen Namen an, damit wir sehen ob du wirklich Schüler/Lehrer an deiner Schule bist. Deinen Nickname kannst du jederzeit in deinem Profil einstellen oder ändern.
                     </Typography>
-                    <Typography variant="body1" style={{ marginTop: theme.spacing(3) }}>
+                    <Typography variant="body1" className={styles.margin}>
                         Hast du einen Anmeldeschlüssel?
                     </Typography>
                     <TextField
