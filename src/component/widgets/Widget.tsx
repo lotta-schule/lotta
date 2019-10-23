@@ -10,7 +10,6 @@ export interface WidgetProps {
 
 const useStyles = makeStyles(theme => ({
     root: {
-        borderRadius: 0,
         height: `calc(100% - ${theme.spacing(2)}px)`,
         display: 'flex',
         flexDirection: 'column',
