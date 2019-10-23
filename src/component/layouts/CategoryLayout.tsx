@@ -15,6 +15,8 @@ const useStyles = makeStyles(() => ({
         border: '0.5em solid #fff',
         marginBottom: '0.5em',
         backgroundColor: '#fff',
+        borderRadius: 4,
+        boxShadow: '1px 1px 2px #0000003b',
         [theme.breakpoints.down('xs')]: {
             display: 'none',
         },
