@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
         position: 'absolute',
         width: 'auto',
         zIndex: 1,
-        background: '#fff',
+        background: theme.palette.primary.contrastText,
         right: 0,
         bottom: 0,
         padding: '0 .5em',

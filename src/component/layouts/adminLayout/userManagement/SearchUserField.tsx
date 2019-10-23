@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         left: 0,
         right: 0,
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
         borderBottom: `1px solid ${theme.palette.divider}`
     }
 }));

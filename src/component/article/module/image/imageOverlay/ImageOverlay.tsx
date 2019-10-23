@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 100000,
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
     },
     closeButton: {
         position: 'absolute',

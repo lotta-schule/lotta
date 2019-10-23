@@ -22,7 +22,7 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
             '& .edit-button': {
                 border: 0,
                 display: 'flex',
-                color: '#fff',
+                color: theme.palette.primary.contrastText,
                 backgroundColor: theme.palette.secondary.main,
             },
         }
@@ -35,7 +35,7 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     },
     pinButton: {
         float: 'right',
-        color: '#fff',
+        color: theme.palette.primary.contrastText,
         marginRight: '1em',
         '&.active': {
             color: '#333'

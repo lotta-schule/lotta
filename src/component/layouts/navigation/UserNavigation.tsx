@@ -19,7 +19,7 @@ import useRouter from 'use-react-router';
 const useStyles = makeStyles(theme => ({
     root: {
         top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2),
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
         padding: '0.5em 1em 0.5em 0.5em',
         height: 136,
         flexShrink: 0,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
     button: {
         marginBottom: theme.spacing(1),
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
     },
     leftIcon: {
         marginRight: theme.spacing(1),

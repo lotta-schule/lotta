@@ -3,6 +3,7 @@ import { ArticleModel } from '../../model';
 import { ArticlePreview } from './ArticlePreview';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { theme } from 'theme';
 
 interface ArticleProps {
     article: ArticleModel;
@@ -11,7 +12,7 @@ interface ArticleProps {
 }
 
 export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditModeEnabled, onUpdateArticle }) => (
-    <article style={{ padding: '0.5em', backgroundColor: '#fff' }} data-testid={'Article'}>
+    <article style={{ padding: '0.5em', backgroundColor: theme.palette.primary.contrastText }} data-testid={'Article'}>
         <ArticlePreview
             article={article}
             disableLink={isEditModeEnabled}

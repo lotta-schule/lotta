@@ -9,6 +9,7 @@ import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { useCategories } from 'util/categories/useCategories';
+import { theme } from 'theme';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -103,7 +104,7 @@ export const Navbar = memo(() => {
                                 <Button
                                     key={'home'}
                                     component={CollisionLink}
-                                    style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
+                                    style={{ flexGrow: 1, flexShrink: 0, color: theme.palette.primary.contrastText }}
                                     to={'/'}
                                     variant="text"
                                     size={'medium'}
@@ -118,7 +119,7 @@ export const Navbar = memo(() => {
                                     variant="text"
                                     key={category.id}
                                     component={CollisionLink}
-                                    style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
+                                    style={{ flexGrow: 1, flexShrink: 0, color: theme.palette.primary.contrastText }}
                                     to={category.redirect ? category.redirect : `/category/${category.id}`}
                                     size={'medium'}
                                     className={classNames(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
@@ -132,7 +133,7 @@ export const Navbar = memo(() => {
                 </Grid>
                 <Grid item xs={2} sm={1} className={styles.mobileBurgerMenuButton}>
                     <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
-                        <Menu style={{ color: '#fff' }} />
+                        <Menu style={{ color: theme.palette.primary.contrastText }} />
                     </IconButton>
                 </Grid>
             </Grid>

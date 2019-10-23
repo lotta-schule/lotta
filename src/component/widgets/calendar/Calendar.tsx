@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
         bottom: 0,
         left: 0,
         width: '100%',
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
         '& > span': {
             padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
         }

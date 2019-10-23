@@ -12,9 +12,10 @@ import { WidgetsList } from './WidgetsList';
 const useStyles = makeStyles(() => ({
     subheaderContainer: {
         height: '120px',
-        border: '0.5em solid #fff',
+        border: '0.5em solid',
+        borderColor: theme.palette.primary.contrastText,
         marginBottom: '0.5em',
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
         borderRadius: 4,
         boxShadow: '1px 1px 2px #0000003b',
         [theme.breakpoints.down('xs')]: {
