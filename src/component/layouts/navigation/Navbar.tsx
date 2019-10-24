@@ -32,22 +32,24 @@ const useStyles = makeStyles<Theme>(theme => ({
     secondaryAppBar: {
         backgroundColor: '#fffffff0',
         maxHeight: 40,
+        borderTop: '1px solid #b1b1b1',
         boxShadow: '0px 2px 2px #0000002b',
     },
     navButton: {
         flexGrow: 1,
         flexShrink: 0,
-        color: theme.palette.primary.contrastText,
+        color: theme.palette.primary.dark,
         '&:h^': {
             backgroundColor: '#ffffff21'
         },
         '&.selected': {
-            backgroundColor: '#ffffff21'
+            backgroundColor: '#ffffff51'
         }
     },
     navButtonSecond: {
         flexGrow: 1,
         flexShrink: 0,
+        color: theme.palette.primary.dark,
         '&.selected': {
             backgroundColor: '#b9b9b954'
         }
@@ -57,7 +59,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         right: 0,
         backgroundColor: theme.palette.primary.main,
         alignItems: 'center',
-        boxShadow: '-3px 0px 7px #00000063',
+        boxShadow: '-2px 0px 2px #00000057',
         display: 'none',
         height: '100%',
         zIndex: 10000,
