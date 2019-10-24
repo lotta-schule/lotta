@@ -7,9 +7,8 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
-import { theme } from 'theme';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
     subheaderContainer: {
         height: '120px',
         border: '0.5em solid',
