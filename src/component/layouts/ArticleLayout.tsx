@@ -19,7 +19,7 @@ const useStyle = makeStyles((theme: Theme) => ({
         paddingLeft: '1em',
         fontSize: '1.5rem',
         letterSpacing: '0.3em',
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.dark,
         backgroundColor: theme.palette.primary.contrastText,
         textTransform: 'uppercase',
     }

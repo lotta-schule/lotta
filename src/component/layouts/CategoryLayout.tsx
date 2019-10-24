@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
         fontSize: '1.5em',
         textShadow: '1px 1px 15px #fff',
         padding: '0.6em',
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.dark,
     }
 }));
 
