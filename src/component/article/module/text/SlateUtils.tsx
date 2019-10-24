@@ -2,6 +2,7 @@ import React from 'react';
 import { RenderMarkProps, Plugins, RenderBlockProps, RenderInlineProps } from "slate-react";
 import { Editor } from 'slate';
 import Lists from '@convertkit/slate-lists';
+import { theme } from 'theme';
 
 export const plugins: Plugins = [Lists({
     blocks: {
@@ -40,7 +41,7 @@ export const renderInline = (props: RenderInlineProps, editor: Editor, next: () 
         case 'link':
             const href = props.node.data.get('href');
             return (
-                <a {...props.attributes} href={href} title={href} target={'_blank'}>{props.children}</a>
+                <a style={{ textDecoration: 'none', color: theme.palette.secondary.main }} {...props.attributes} href={href} title={href} target={'_blank'}>{props.children}</a>
             );
         default:
             return next();
