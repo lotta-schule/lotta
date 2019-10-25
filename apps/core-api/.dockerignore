@@ -12,9 +12,9 @@ tmp
 docker
 
 # Mix artifacts
-_build
-deps
-*.ez
+# _build
+# deps
+# *.ez
 
 # don't include our release builds
 releases
