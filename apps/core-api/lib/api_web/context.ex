@@ -22,11 +22,15 @@ defmodule ApiWeb.Context do
   defp get_user_context(conn) do
     authorization_header = get_req_header(conn, "authorization")
     with ["Bearer " <> token] <- authorization_header do
-      {:ok, current_user, _claims} = Guardian.resource_from_token(token)
-      %{
-        current_user: Repo.get(Accounts.User, current_user.id)
-          |> Repo.preload([:groups, :avatar_image_file])
-      }
+      case Guardian.resource_from_token(token) do
+        {:ok, current_user, _claims} ->
+          %{
+            current_user: Repo.get(Accounts.User, current_user.id)
+            |> Repo.preload([:groups, :avatar_image_file])
+          }
+        {:error, _} ->
+          %{}
+      end
     else
       _ -> %{}
     end
