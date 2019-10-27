@@ -8,7 +8,9 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
     root: {
         padding: '0.5em',
-        backgroundColor: theme.palette.primary.contrastText
+        backgroundColor: theme.palette.primary.contrastText,
+        borderRadius: 4,
+        boxShadow: '1px 1px 2px #0000003b',
     }
 }));
 
