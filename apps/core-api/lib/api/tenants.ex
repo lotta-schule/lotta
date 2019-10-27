@@ -18,21 +18,25 @@ defmodule Api.Tenants do
     queryable
   end
 
-  # TODO: seems weird not to check for category.
-  def resolve_widgets(_category, %{ context: %{ context: params } }) do
-    tenant_id = params.tenant.id
-    query = if Map.has_key?(params, :current_user) do
-      max_priority = params.current_user |> User.get_max_priority_for_tenant(params.tenant)
-      Ecto.Query.from(w in Widget,
-        where: w.tenant_id == ^tenant_id,
-        join: ug in UserGroup, where: (not is_nil(w.group_id) and ug.priority <= ^max_priority and ug.id == w.group_id) or is_nil(w.group_id),
-        distinct: :id
-      )
-    else
-      Ecto.Query.from w in Widget, where: w.tenant_id == ^tenant_id and is_nil(w.group_id)
-    end
-
-    {:ok, Repo.all(query)}
+  def resolve_widgets(_args, %{ context: %{ context: params }, source: category }) do
+    category = category
+    |> Repo.preload(:widgets)
+    {:ok, category.widgets
+    |> Enum.map(fn widget ->
+      widget
+      |> Repo.preload(:group)
+    end)
+    |> Enum.filter(fn widget ->
+      case widget.group do
+        nil -> true
+        group ->
+          if Map.has_key?(params, :current_user) do
+            group.priority <= params.current_user |> User.get_max_priority_for_tenant(params.tenant)
+          else
+            false
+          end
+      end
+    end)}
   end
 
   @doc """
