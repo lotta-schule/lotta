@@ -19,13 +19,15 @@ import store from './store/Store';
 import { de } from 'date-fns/locale';
 import Matomo from 'matomo-ts';
 
-Matomo.default().init(
-    process.env.REACT_APP_MATOMO_URL,
-    process.env.REACT_APP_MATOMO_SITEID,
-    window.location.href.includes(process.env.REACT_APP_APP_BASE_DOMAIN) ?
-        { cookieDomain: `*.${process.env.REACT_APP_APP_BASE_DOMAIN}` } :
-        {}
-);
+if (process.env.REACT_APP_MATOMO_URL && process.env.REACT_APP_MATOMO_SITEID) {
+    Matomo.default().init(
+        process.env.REACT_APP_MATOMO_URL,
+        process.env.REACT_APP_MATOMO_SITEID,
+        window.location.href.includes(process.env.REACT_APP_APP_BASE_DOMAIN) ?
+            { cookieDomain: `*.${process.env.REACT_APP_APP_BASE_DOMAIN}` } :
+            {}
+    );
+}
 
 try {
     Honeybadger.configure({

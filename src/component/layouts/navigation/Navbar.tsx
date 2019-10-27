@@ -22,7 +22,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         }
     },
     appBar: {
-        backgroundColor: theme.palette.primary.main,
+        backgroundColor: '#333',
     },
     padding: {
         [theme.breakpoints.down('sm')]: {
@@ -30,22 +30,31 @@ const useStyles = makeStyles<Theme>(theme => ({
         },
     },
     secondaryAppBar: {
-        backgroundColor: '#fff',
-        maxHeight: '40px',
+        backgroundColor: '#fffffff0',
+        maxHeight: 40,
+        borderTop: `1.5px solid ${theme.palette.secondary.main}`,
+        boxShadow: '0px 2px 2px #0000002b',
     },
     navButton: {
-        '&:h^': {
-            backgroundColor: '#ffffff21'
+        flexGrow: 1,
+        flexShrink: 0,
+        color: theme.palette.primary.contrastText,
+        border: '1px solid #333',
+        '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
         },
         '&.selected': {
-            backgroundColor: '#ffffff21'
+            border: `1px solid ${theme.palette.secondary.main}`,
+            color: '#fff'
         }
     },
     navButtonSecond: {
         flexGrow: 1,
         flexShrink: 0,
+        color: theme.palette.primary.dark,
         '&.selected': {
-            backgroundColor: '#b9b9b954'
+            color: theme.palette.secondary.main,
+            fontWeight: '600',
         }
     },
     mobileBurgerMenuButton: {
@@ -53,7 +62,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         right: 0,
         backgroundColor: theme.palette.primary.main,
         alignItems: 'center',
-        boxShadow: '-3px 0px 7px #00000063',
+        boxShadow: '-2px 0px 2px #00000057',
         display: 'none',
         height: '100%',
         zIndex: 10000,
@@ -70,6 +79,9 @@ const useStyles = makeStyles<Theme>(theme => ({
             height: '100%',
             display: 'flex',
         },
+        menu: {
+            color: theme.palette.primary.contrastText,
+        }
     }
 }));
 
@@ -102,7 +114,6 @@ export const Navbar = memo(() => {
                                 <Button
                                     key={'home'}
                                     component={CollisionLink}
-                                    style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
                                     to={'/'}
                                     variant="text"
                                     size={'medium'}
@@ -117,7 +128,6 @@ export const Navbar = memo(() => {
                                     variant="text"
                                     key={category.id}
                                     component={CollisionLink}
-                                    style={{ flexGrow: 1, flexShrink: 0, color: '#fff' }}
                                     to={category.redirect ? category.redirect : `/category/${category.id}`}
                                     size={'medium'}
                                     className={classNames(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
@@ -131,7 +141,7 @@ export const Navbar = memo(() => {
                 </Grid>
                 <Grid item xs={2} sm={1} className={styles.mobileBurgerMenuButton}>
                     <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
-                        <Menu style={{ color: '#fff' }} />
+                        <Menu className={classNames(styles.menu)} />
                     </IconButton>
                 </Grid>
             </Grid>

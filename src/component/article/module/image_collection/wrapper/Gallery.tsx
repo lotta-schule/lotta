@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import { ContentModuleModel } from 'model';
-import { ImageImage } from '../ImageImage';
+import { ImageImage } from '../../image/ImageImage';
 import { Grid, makeStyles, IconButton } from '@material-ui/core';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
@@ -28,7 +28,7 @@ export interface GaleryProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Galery: FunctionComponent<GaleryProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+export const Gallery: FunctionComponent<GaleryProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
     const styles = useStyles();
     const [selectedFileIndex, setSelectedFileIndex] = useState<number | null>(null);
     let imageCaptions: (string | null)[] = [];

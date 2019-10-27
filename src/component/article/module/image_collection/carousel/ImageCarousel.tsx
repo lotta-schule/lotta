@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        position: 'relative',
         '& img': {
             maxWidth: '100%',
             maxHeight: '100%'
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => ({
         position: 'absolute',
         width: 'auto',
         zIndex: 1,
-        background: '#fff',
+        background: theme.palette.primary.contrastText,
         right: 0,
         bottom: 0,
         padding: '0 .5em',
@@ -49,10 +50,10 @@ const useStyles = makeStyles(theme => ({
 
 export interface ImageCarousel {
     files: FileModel[];
-    captions: (string | null)[];
+    filesConfiguration: { [id: number]: { caption: string; sortKey: number } };
 }
 
-export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, captions }) => {
+export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, filesConfiguration }) => {
     const styles = useStyles();
     const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
@@ -69,6 +70,23 @@ export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, ca
     const handleStepChange = useCallback((step) => {
         setActiveStep(step);
     }, []);
+
+    const getConfiguration = (file: FileModel) => {
+        if (filesConfiguration[file.id]) {
+            return {
+                caption: '',
+                sortKey: 0,
+                ...filesConfiguration[file.id]
+            };
+        } else {
+            return {
+                caption: '',
+                sortKey: 0,
+            };
+        }
+    }
+    const sortedFiles = (files || [])
+        .sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey);
 
     return (
         <div className={styles.root}>
@@ -96,15 +114,15 @@ export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, ca
                 axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                 enableMouseEvents
             >
-                {files.map((file, index) => (
+                {sortedFiles.map((file, index) => (
                     <div key={file.id} className={styles.imgContainer}>
-                        {captions[activeStep] && (
+                        {getConfiguration(file).caption && (
                             <Typography variant={'subtitle1'} className={styles.subtitle}>
-                                {captions[activeStep]}
+                                {getConfiguration(file).caption}
                             </Typography>
                         )}
                         {Math.abs(activeStep - index) <= 2 ? (
-                            <img src={`https://afdptjdxen.cloudimg.io/fit/600x500/foil1/${file.remoteLocation}`} alt={captions[activeStep] || file.remoteLocation} />
+                            <img src={`https://afdptjdxen.cloudimg.io/fit/600x500/foil1/${file.remoteLocation}`} alt={getConfiguration(file).caption || file.remoteLocation} />
                         ) : null}
                     </div>
                 ))}

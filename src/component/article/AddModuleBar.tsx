@@ -1,9 +1,9 @@
-import React, { FunctionComponent, memo } from "react";
-import { makeStyles } from "@material-ui/styles";
-import { Theme, Typography, Grid } from "@material-ui/core";
-import { TextFormat, FormatAlignLeft, AddPhotoAlternate, Audiotrack, MovieCreation, FileCopyOutlined } from '@material-ui/icons';
-import { ContentModuleModel, ContentModuleType } from "model";
-import { AddModuleButton } from "./AddModuleButton";
+import React, { FunctionComponent, memo } from 'react';
+import { makeStyles } from '@material-ui/styles';
+import { Theme, Typography, Grid } from '@material-ui/core';
+import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined } from '@material-ui/icons';
+import { ContentModuleModel, ContentModuleType } from 'model';
+import { AddModuleButton } from './AddModuleButton';
 import { Value } from 'slate';
 const { serialize } = require('slate-base64-serializer').default;
 
@@ -11,7 +11,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: '1em',
         margin: '0.5em 0 0 0',
-        backgroundColor: '#fff'
+        backgroundColor: theme.palette.primary.contrastText,
+        '& button': {
+            width: '100%'
+        }
     }
 }));
 
@@ -67,12 +70,27 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                 <Grid item xs={2}>
                     <AddModuleButton
                         label={'Bild'}
-                        icon={<AddPhotoAlternate />}
+                        icon={<Image />}
                         onClick={() => {
                             onAddModule({
                                 id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.IMAGE,
+                                text: undefined,
+                                files: [],
+                            });
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={2}>
+                    <AddModuleButton
+                        label={'Galerie'}
+                        icon={<BurstMode />}
+                        onClick={() => {
+                            onAddModule({
+                                id: new Date().getTime() + Math.random() * 1000,
+                                sortKey: null!,
+                                type: ContentModuleType.IMAGE_COLLECTION,
                                 text: undefined,
                                 files: [],
                             });

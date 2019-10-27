@@ -4,17 +4,19 @@ import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { theme } from 'theme';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
     subheaderContainer: {
         height: '120px',
-        border: '0.5em solid #fff',
+        border: '0.5em solid',
+        borderColor: theme.palette.primary.contrastText,
         marginBottom: '0.5em',
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
+        borderRadius: 4,
+        boxShadow: '1px 1px 2px #0000003b',
         [theme.breakpoints.down('xs')]: {
             display: 'none',
         },
@@ -32,7 +34,7 @@ const useStyles = makeStyles(() => ({
         fontSize: '1.5em',
         textShadow: '1px 1px 15px #fff',
         padding: '0.6em',
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.dark,
     }
 }));
 

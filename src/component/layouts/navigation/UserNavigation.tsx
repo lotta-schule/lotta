@@ -19,13 +19,15 @@ import useRouter from 'use-react-router';
 const useStyles = makeStyles(theme => ({
     root: {
         top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2),
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.primary.contrastText,
         padding: '0.5em 1em 0.5em 0.5em',
-        height: 138,
-        flexShrink: 0
+        height: 136,
+        flexShrink: 0,
+        marginBottom: theme.spacing(1),
     },
     button: {
-        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        backgroundColor: theme.palette.primary.contrastText,
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -114,7 +116,7 @@ export const UserNavigation: FunctionComponent<{}> = memo(() => {
             </Grid>
             {currentUser && (
                 <>
-                    <Button size="small" variant="contained" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
+                    <Button size="small" variant="outlined" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
                         <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
                         Neuer Beitrag
                     </Button>

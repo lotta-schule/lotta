@@ -25,3 +25,8 @@ export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'update
     contentModules: ContentModuleInput[];
     category: Partial<CategoryModel>;
 };
+
+export type ArticleFilter = {
+    first?: number;
+    updated_before?: Date;
+};

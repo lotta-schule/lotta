@@ -1,11 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useLayoutEffect, useState, useRef } from 'react';
 import { WidgetModel } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Tabs, Tab } from '@material-ui/core';
-import SwipeableViews from 'react-swipeable-views';
 import { Widget } from 'component/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
+import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
     widgets: WidgetModel[];
@@ -16,11 +16,25 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'stretch',
-        height: '100%'
+        [theme.breakpoints.up('md')]: {
+            position: 'sticky',
+            top: 112
+        }
+    },
+    tabsRoot: {
+        backgroundColor: theme.palette.primary.contrastText,
+    },
+    tabsScrollButtons: {
+        width: 20,
+        color: theme.palette.primary.contrastText
+    },
+    tabsFlexContainer: {
+        justifyContent: 'center'
     },
     tabRoot: {
         lineHeight: 1,
-        textTransform: 'initial'
+        textTransform: 'initial',
+        minWidth: 60
     },
     tabWrapper: {
         '& img': {
@@ -34,6 +48,8 @@ const useStyles = makeStyles(theme => ({
     },
     swipeableViewsContainer: {
         flexGrow: 1,
+        flexShrink: 1,
+        height: '100%',
         '& > div': {
             height: '100%'
         }
@@ -46,54 +62,70 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
 
     const isMobile = useIsMobile();
 
-    const [currentTabIndex, setCurrentTabIndex] = React.useState(0);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-    const shownWidgets = [WidgetUtil.getProfileWidget(), ...widgets];
+    const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
-    if (isMobile) {
-        return (
-            <div className={styles.root} data-testid={'WidgetsList'}>
-                <Tabs
-                    value={currentTabIndex}
-                    indicatorColor={'secondary'}
-                    textColor={'secondary'}
-                    variant={'fullWidth'}
-                    aria-label={'Marginales Modul wählen'}
-                    onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
-                >
-                    {shownWidgets.map((widget, i) => (
-                        <Tab
-                            title={widget.title}
-                            value={i}
-                            icon={WidgetUtil.getIcon(widget)}
-                            classes={{
-                                root: styles.tabRoot,
-                                wrapper: styles.tabWrapper,
-                                selected: styles.tabSelected
-                            }}
-                        />
-                    ))}
-                </Tabs>
-                <SwipeableViews
-                    axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                    index={currentTabIndex}
-                    onChangeIndex={newIndex => setCurrentTabIndex(newIndex)}
-                    className={styles.swipeableViewsContainer}
-                >
-                    {shownWidgets.map(widget => (
-                        <Widget key={widget.id} widget={widget} />
-                    ))}
-                </SwipeableViews>
-            </div>
-        );
-    } else {
-        return (
-            <div className={styles.root} data-testid={'WidgetsList'}>
-                {shownWidgets.map(widget => (
-                    <Widget key={widget.id} widget={widget} />
-                ))}
-            </div>
-        );
-    }
+    useLayoutEffect(() => {
+        if (wrapperRef.current) {
+            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.offsetTop}px)`;
+        }
+    }, []);
+
+    const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
+
+    const swipeableViews = (
+        <SwipeableViews
+            axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+            index={currentTabIndex}
+            onChangeIndex={newIndex => setCurrentTabIndex(newIndex)}
+            className={styles.swipeableViewsContainer}
+        >
+            {shownWidgets.map(widget => (
+                <Widget key={widget.id} widget={widget} />
+            ))}
+        </SwipeableViews>
+    );
+
+    return (
+        <div className={styles.root} data-testid={'WidgetsList'} ref={wrapperRef}>
+            {!isMobile && (
+                <Widget widget={WidgetUtil.getProfileWidget()} />
+            )}
+            {shownWidgets && shownWidgets.length > 1 && (
+                <>
+                    <Tabs
+                        value={currentTabIndex}
+                        indicatorColor={theme.palette.primary.contrastText}
+                        variant={isMobile ? 'fullWidth' : 'scrollable'}
+                        scrollButtons="auto"
+                        aria-label={'Marginales Modul wählen'}
+                        onChange={(_event, newTabIndex) => setCurrentTabIndex(newTabIndex)}
+                        classes={{
+                            root: styles.tabsRoot,
+                            flexContainer: styles.tabsFlexContainer,
+                            scrollButtons: styles.tabsScrollButtons
+                        }}
+                    >
+                        {shownWidgets.map((widget, i) => (
+                            <Tab
+                                key={widget.id}
+                                title={widget.title}
+                                value={i}
+                                icon={WidgetUtil.getIcon(widget)}
+                                classes={{
+                                    root: styles.tabRoot,
+                                    wrapper: styles.tabWrapper,
+                                    selected: styles.tabSelected
+                                }}
+                            />
+                        ))}
+                    </Tabs>
+                    {swipeableViews}
+                </>
+            )}
+            {shownWidgets && shownWidgets.length === 1 && swipeableViews}
+        </div>
+    );
 
 });

@@ -10,13 +10,16 @@ export interface WidgetProps {
 
 const useStyles = makeStyles(theme => ({
     root: {
-        borderRadius: 0,
-        marginTop: '0.5em',
-        padding: '0.5em'
+        height: `calc(100% - ${theme.spacing(2)}px)`,
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
+        '& > *': {
+            boxSizing: 'border-box',
+        }
     },
     heading: {
-        marginTop: theme.spacing(1),
-        letterSpacing: 2
+        textAlign: 'center',
     }
 }));
 

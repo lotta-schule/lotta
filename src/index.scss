@@ -1,10 +1,15 @@
 @import "~video-react/styles/scss/video-react";
-@import url('https://fonts.googleapis.com/css?family=Muli:300,600');
+@import url('https://fonts.googleapis.com/css?family=Muli:300,600&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Schoolbell&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Domine&display=swap');
 
 html, body {
     margin: 0;
-    background: linear-gradient(30deg, #d9c8b6 0%, #fff5e4 100%);
+    background: linear-gradient(30deg,#f3f3f3,#d2ccc9);
+    background-color: #f3f3f3;
     background-attachment: fixed;
+    background-image: url(/img/hg1.png);
+    background-size: cover;
 }
 
 body {
