@@ -1,5 +1,5 @@
-import React, { FunctionComponent, memo, useState } from 'react';
-import { ContentModuleModel } from 'model';
+import React, { memo, useState } from 'react';
+import { ContentModuleModel, FileModel } from 'model';
 import { ImageImage } from '../../image/ImageImage';
 import { Grid, makeStyles, IconButton } from '@material-ui/core';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
@@ -22,41 +22,46 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export interface GaleryProps {
+export interface GalleryProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled: boolean;
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Gallery: FunctionComponent<GaleryProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
     const styles = useStyles();
     const [selectedFileIndex, setSelectedFileIndex] = useState<number | null>(null);
-    let imageCaptions: (string | null)[] = [];
-    try {
-        if (!contentModule.text) {
-            throw new Error('No Text');
+
+    const getConfiguration = (file: FileModel) => {
+        if (contentModule.configuration && contentModule.configuration.files && contentModule.configuration.files[file.id]) {
+            return {
+                caption: '',
+                sortKey: 0,
+                ...contentModule.configuration.files[file.id]
+            };
+        } else {
+            return {
+                caption: '',
+                sortKey: 0,
+            };
         }
-        imageCaptions = JSON.parse(contentModule.text);
-    } catch {
-        imageCaptions = contentModule.text ? [contentModule.text] : [];
     }
+    const sortedFiles = (contentModule.files || [])
+        .sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey);
     return (
         <>
             <Grid container>
-                {contentModule.files.map((file, index) => (
+                {sortedFiles.map((file, index) => (
                     <Grid item xs={6} lg={4} key={file.id} style={{ position: 'relative' }}>
                         {isEditModeEnabled && (
                             <IconButton
                                 color={'secondary'}
                                 className={styles.deleteButton}
                                 onClick={() => {
-                                    const captions = Array.from(new Array(contentModule.files.length - imageCaptions.length)).map(() => '');
-                                    captions.splice(index, 1);
                                     onUpdateModule({
                                         ...contentModule,
-                                        files: contentModule.files.filter(f => f.id !== file.id),
-                                        text: JSON.stringify(captions)
-                                    })
+                                        files: contentModule.files.filter(f => f.id !== file.id)
+                                    });
                                 }}
                             >
                                 <Delete />
@@ -65,19 +70,33 @@ export const Gallery: FunctionComponent<GaleryProps> = memo(({ contentModule, is
                         <ImageImage
                             isEditModeEnabled={isEditModeEnabled}
                             file={file}
-                            caption={imageCaptions[index] || ''}
+                            caption={getConfiguration(file).caption}
                             onUpdateFile={newFile => onUpdateModule({
                                 ...contentModule,
-                                files: contentModule.files.map((f, i) => i === index ? newFile : f)
+                                files: contentModule.files.map((f, i) => i === index ? newFile : f),
+                                configuration: {
+                                    files: {
+                                        ...contentModule.configuration.files,
+                                        [newFile.id]: {
+                                            caption: getConfiguration(newFile).caption,
+                                            sortKey: index * 10
+                                        },
+                                    }
+                                }
                             })}
                             onUpdateCaption={newCaption => {
                                 onUpdateModule({
                                     ...contentModule,
-                                    text: JSON.stringify(
-                                        imageCaptions.concat(
-                                            Array.from(new Array(contentModule.files.length - imageCaptions.length)).map(() => '')
-                                        ).map((f, i) => i === index ? newCaption : f)
-                                    )
+                                    configuration: {
+                                        ...contentModule.configuration,
+                                        files: {
+                                            ...contentModule.configuration.files,
+                                            [file.id]: {
+                                                ...getConfiguration(file),
+                                                caption: newCaption
+                                            }
+                                        }
+                                    }
                                 });
                             }}
                             onSelect={() => setSelectedFileIndex(index)}
@@ -91,7 +110,33 @@ export const Gallery: FunctionComponent<GaleryProps> = memo(({ contentModule, is
                     </Grid>
                 ))}
             </Grid>
-            {isEditModeEnabled && <SelectFileButton label={'Bild hinzufügen'} onSelectFiles={f => onUpdateModule({ ...contentModule, files: contentModule.files.concat(f) })} />}
+            {isEditModeEnabled && (
+                <SelectFileButton
+                    label={'Bild hinzufügen'}
+                    onSelectFiles={f => {
+                        onUpdateModule({
+                            ...contentModule,
+                            files: contentModule.files.concat(f),
+                            configuration: {
+                                ...contentModule.configuration,
+                                files: {
+                                    ...contentModule.configuration.files,
+                                    ...(f.reduce(
+                                        (prev, file, i) => ({
+                                            ...prev,
+                                            [file.id]: {
+                                                caption: '',
+                                                sortKey: contentModule.files.length * 10 + i * 10
+                                            }
+                                        }),
+                                        {}
+                                    ))
+                                }
+                            }
+                        });
+                    }}
+                />
+            )}
             {!isEditModeEnabled && selectedFileIndex !== null && (() => {
                 const prevNextProps: Partial<ImageOverlayProps> = {};
                 if (selectedFileIndex > 0) {
