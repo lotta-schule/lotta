@@ -22,7 +22,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         }
     },
     appBar: {
-        backgroundColor: 'linear-gradient(0deg, rgb(72, 72, 72) 0%, rgb(51, 51, 51) 100%)',
+        backgroundColor: '#333',
     },
     padding: {
         [theme.breakpoints.down('sm')]: {
@@ -32,18 +32,23 @@ const useStyles = makeStyles<Theme>(theme => ({
     secondaryAppBar: {
         backgroundColor: '#fffffff0',
         maxHeight: 40,
-        borderTop: '1px solid #b1b1b1',
+        borderTop: '1.5px solid',
+        borderColor: theme.palette.secondary.main,
         boxShadow: '0px 2px 2px #0000002b',
     },
     navButton: {
         flexGrow: 1,
         flexShrink: 0,
-        color: theme.palette.primary.dark,
-        '&:h^': {
-            backgroundColor: '#ffffff21'
+        color: theme.palette.primary.contrastText,
+        border: '1px solid',
+        borderColor: '#333',
+        '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
         },
         '&.selected': {
-            backgroundColor: '#ffffff51'
+            border: '1px solid',
+            borderColor: theme.palette.secondary.main,
+            color: '#fff'
         }
     },
     navButtonSecond: {
@@ -51,7 +56,8 @@ const useStyles = makeStyles<Theme>(theme => ({
         flexShrink: 0,
         color: theme.palette.primary.dark,
         '&.selected': {
-            backgroundColor: '#b9b9b954'
+            color: theme.palette.secondary.main,
+            fontWeight: '600',
         }
     },
     mobileBurgerMenuButton: {
