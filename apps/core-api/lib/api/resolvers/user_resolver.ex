@@ -55,6 +55,7 @@ defmodule Api.UserResolver do
       {:ok, user} <- (case group_key do
         # TODO: Remove as fast as possible. Is just very shitty workaround
         "LEb0815Hp!1969" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Lehrer"))
+        "ELa1789Re!1848" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Eltern"))
         "Seb034hP2?019" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Schüler"))
         _ -> {:ok, user}
       end),
