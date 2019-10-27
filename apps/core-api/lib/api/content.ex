@@ -28,16 +28,20 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(tenant_id, nil, user) do
+  def list_articles(tenant_id, nil, user, filter) do
     # Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id))
     if is_nil(user) do
-      Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id) and is_nil(a.group_id))
+      Ecto.Query.from(a in Article,
+        where: a.tenant_id == ^tenant_id and not is_nil(a.category_id) and is_nil(a.group_id))
+      |> filter_query(filter)
+      |> Repo.all
     else
       max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
       Ecto.Query.from(a in Article,
         where: a.tenant_id == ^tenant_id and not is_nil(a.category_id),
         join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
         distinct: true)
+      |> filter_query(filter)
       |> Repo.all
     end
   end
@@ -51,15 +55,19 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(tenant_id, category_id, user) do
+  def list_articles(tenant_id, category_id, user, filter) do
     if is_nil(user) do
-      Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.category_id == ^category_id and is_nil(a.group_id))
+      Ecto.Query.from(a in Article,
+        where: a.tenant_id == ^tenant_id and a.category_id == ^category_id and is_nil(a.group_id))
+      |> filter_query(filter)
+      |> Repo.all
     else
       max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
       Ecto.Query.from(a in Article,
         where: a.tenant_id == ^tenant_id and a.category_id == ^category_id,
         join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
         distinct: true)
+      |> filter_query(filter)
       |> Repo.all
     end
   end
@@ -75,7 +83,8 @@ defmodule Api.Content do
 
   """
   def list_articles_by_topic(tenant_id, topic) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.topic == ^topic)
+    Ecto.Query.from(a in Article, where: a.tenant_id == ^tenant_id and a.topic == ^topic)
+    |> Repo.all
   end
   
   @doc """
@@ -296,5 +305,18 @@ defmodule Api.Content do
     article
     |> Ecto.Changeset.cast(%{ is_pinned_to_top: !article.is_pinned_to_top }, [:is_pinned_to_top])
     |> Repo.update()
+  end
+
+  defp filter_query(query, filter) do
+    query = from q in query, order_by: {:desc, :updated_at}
+    (filter || %{})
+    |> Enum.reduce(query, fn 
+      {_, nil}, query ->
+        query
+      {:first, limit}, query -> 
+        from q in query, limit: ^limit
+      {:updated_before, updated_before}, query ->
+        from q in query, where: q.updated_at < ^updated_before
+      end)
   end
 end

@@ -1,6 +1,0 @@
-.DS_Store
-_build
-_postgres-data
-
-# The directory Mix downloads your dependencies sources to.
-/deps/

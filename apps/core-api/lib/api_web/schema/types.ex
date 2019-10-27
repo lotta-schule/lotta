@@ -106,6 +106,7 @@ defmodule ApiWeb.Schema.Types do
     value :title, as: "title"
     value :text, as: "text"
     value :image, as: "image"
+    value :image_collection, as: "image_collection"
     value :video, as: "video"
     value :audio, as: "audio"
     value :download, as: "download"

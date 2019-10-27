@@ -29,4 +29,7 @@ defmodule Api.WidgetResolver do
       {:error, "Nur Administrator dürfen Widgets bearbeiten"}
     end
   end
+  def update(%{id: id, widget: widget_params}, %{context: context}) do
+    {:error, "Sie sind nicht angemeldet"}
+  end
 end

@@ -27,6 +27,10 @@ config :api, ApiWeb.Endpoint,
   check_origin: false,
   watchers: []
 
+config :api, Api.Guardian,
+  issuer: "lotta",
+  secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

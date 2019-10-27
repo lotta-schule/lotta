@@ -1,6 +1,7 @@
 defmodule Api.Tenants.Category do
   use Ecto.Schema
-  import Ecto.Changeset
+  import Ecto.{Changeset,Query}
+  alias Api.Repo
   alias Api.Accounts.{File,UserGroup}
   alias Api.Tenants.{Category,Tenant,Widget}
 
@@ -54,7 +55,9 @@ defmodule Api.Tenants.Category do
   end
 
   defp put_assoc_widgets(category, %{ widgets: widgets }) do
-    widgets = Enum.map(widgets, fn widget -> Api.Repo.get!(Api.Tenants.Widget, widget.id) end)
+    widgets = Repo.all(from w in Widget,
+      where: w.id in ^(Enum.map(widgets, fn widget -> widget.id end))
+    )
     category
     |> put_assoc(:widgets, widgets)
   end

@@ -84,6 +84,7 @@ defmodule Api.Accounts.User do
 
   def update_changeset(%User{} = user, params \\ %{}) do
     user
+    |> Repo.preload(:avatar_image_file)
     |> cast(params, [:name, :class, :nickname, :email], [:password])
     |> validate_required([:name, :email])
     |> unique_constraint(:email)

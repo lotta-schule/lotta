@@ -1,4 +1,4 @@
-version: "3.4"
+version: "3.7"
 
 networks:
   api:
@@ -12,7 +12,7 @@ volumes:
 
 services:
   app:
-    image: elixir:1.9.1
+    image: elixir:1.9.2
     volumes:
       - .:/usr/src/svc
       - elixir-mix:/root/.mix
@@ -31,9 +31,10 @@ services:
       - .env
 
   postgres:
-    image: postgres
+    image: postgres:11
     volumes:
       - ./_postgres-data:/var/lib/postgresql/data
+    restart: always
     networks:
       - postgres
       - rabbitmq
