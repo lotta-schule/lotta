@@ -4,7 +4,8 @@ import { Text } from './text/Text';
 import { Title } from './title/Title';
 import { Config as TitleConfig } from './title/Config';
 import { Image } from './image/Image';
-import { Config as ImageConfig } from './image/Config';
+import { ImageCollection } from './image_collection/ImageCollection';
+import { Config as ImageCollectionConfig } from './image_collection/Config';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
@@ -70,7 +71,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
             setShowConfigModeContentModuleId(id);
         }
     }, [showConfigModeContentModuleId]);
-    const configurableContentModuleTypes = [ContentModuleType.TITLE, ContentModuleType.IMAGE];
+    const configurableContentModuleTypes = [ContentModuleType.TITLE, ContentModuleType.IMAGE_COLLECTION];
 
     const card = (draggableProvided?: DraggableProvided) => (
         <Card
@@ -126,15 +127,18 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
                 <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
             )}
             {contentModule.type === ContentModuleType.IMAGE && (
+                <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+            )}
+            {contentModule.type === ContentModuleType.IMAGE_COLLECTION && (
                 <>
                     <Collapse in={showConfigModeContentModuleId === contentModule.id} className={styles.configSection}>
-                        <ImageConfig
+                        <ImageCollectionConfig
                             contentModule={contentModule}
                             onUpdateModule={onUpdateModule}
                             onRequestClose={() => setShowConfigModeContentModuleId(null)}
                         />
                     </Collapse>
-                    <Image
+                    <ImageCollection
                         contentModule={contentModule}
                         isEditModeEnabled={isEditModeEnabled}
                         onUpdateModule={onUpdateModule}
