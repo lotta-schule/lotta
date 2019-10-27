@@ -10,21 +10,12 @@ export interface CarouselProps {
 }
 
 export const Carousel: FunctionComponent<CarouselProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
-    let imageCaptions: (string | null)[];
-    try {
-        if (!contentModule.text) {
-            throw new Error('No Text');
-        }
-        imageCaptions = JSON.parse(contentModule.text);
-    } catch {
-        imageCaptions = [contentModule.text || null];
-    }
     if (isEditModeEnabled) {
         return (
             <Galery contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
         );
     }
     return (
-        <ImageCarousel files={contentModule.files} captions={imageCaptions} />
+        <ImageCarousel files={contentModule.files} filesConfiguration={(contentModule.configuration && contentModule.configuration.files) || {}} />
     );
 });

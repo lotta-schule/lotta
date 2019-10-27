@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, FormEvent } from 'react';
+import React, { FunctionComponent, memo, FocusEvent } from 'react';
 import { Typography, makeStyles, Theme } from '@material-ui/core';
 import classNames from 'classnames';
 
@@ -31,7 +31,7 @@ export const ImageCaption: FunctionComponent<ImageCaptionProps> = memo(({ isEdit
                 defaultValue={value}
                 children={isEditModeEnabled ? undefined : value}
                 className={classNames({ [styles.figcaption]: isEditModeEnabled })}
-                onChange={isEditModeEnabled ? (e: FormEvent<HTMLInputElement>) => onUpdate((e.target as HTMLInputElement).value) : undefined}
+                onBlur={isEditModeEnabled ? (e: FocusEvent<HTMLInputElement>) => onUpdate((e.target as HTMLInputElement).value) : undefined}
             />
         </figcaption>
     );
