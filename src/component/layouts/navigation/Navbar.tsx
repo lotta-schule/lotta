@@ -32,22 +32,19 @@ const useStyles = makeStyles<Theme>(theme => ({
     secondaryAppBar: {
         backgroundColor: '#fffffff0',
         maxHeight: 40,
-        borderTop: '1.5px solid',
-        borderColor: theme.palette.secondary.main,
+        borderTop: `1.5px solid ${theme.palette.secondary.main}`,
         boxShadow: '0px 2px 2px #0000002b',
     },
     navButton: {
         flexGrow: 1,
         flexShrink: 0,
         color: theme.palette.primary.contrastText,
-        border: '1px solid',
-        borderColor: '#333',
+        border: '1px solid #333',
         '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.08)',
         },
         '&.selected': {
-            border: '1px solid',
-            borderColor: theme.palette.secondary.main,
+            border: `1px solid ${theme.palette.secondary.main}`,
             color: '#fff'
         }
     },
