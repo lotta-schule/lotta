@@ -69,16 +69,6 @@ defmodule ApiWeb.Schema.ContentsTypes do
     @desc "Return only results updated before than a given date"
     field :updated_before, :naive_datetime
   end
-  
-  input_object :category_input do
-    field :title, non_null(:string)
-    field :sort_key, :integer
-    field :banner_image_file, :file
-    field :redirect, :string
-    field :hide_articles_from_homepage, :boolean
-    field :group, :user_group
-    field :widgets, list_of(:widget), default_value: []
-  end
 
   input_object :content_module_input do
     field :type, :content_module_type, default_value: "text"
