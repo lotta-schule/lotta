@@ -1,8 +1,8 @@
 import React, { FunctionComponent, memo } from 'react';
 import { FileModel } from '../../../../model';
-import Img, { ImgProps } from 'react-cloudimage-responsive';
-import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { makeStyles, Theme } from '@material-ui/core';
+import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import Img, { ImgProps } from 'react-cloudimage-responsive';
 import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => ({

@@ -5,6 +5,7 @@ export enum ContentModuleType {
     TITLE = 'TITLE',
     TEXT = 'TEXT',
     IMAGE = 'IMAGE',
+    IMAGE_COLLECTION = 'IMAGE_COLLECTION',
     VIDEO = 'VIDEO',
     AUDIO = 'AUDIO',
     DOWNLOAD = 'DOWNLOAD',
