@@ -6,6 +6,7 @@ export interface UserGroupModel {
     createdAt: string;
     updatedAt: string;
     name: string;
+    priority: number;
     isAdminGroup: boolean;
     tenant: ClientModel;
 }
