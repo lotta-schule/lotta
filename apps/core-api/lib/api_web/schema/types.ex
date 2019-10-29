@@ -72,6 +72,7 @@ defmodule ApiWeb.Schema.Types do
   enum :widget_type do
     value :calendar, as: "calendar"
     value :vplan, as: "vplan"
+    value :schedule, as: "schedule"
     value :tagcloud, as: "tagcloud"
   end
 

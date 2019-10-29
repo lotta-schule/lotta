@@ -5,12 +5,14 @@ defmodule ApiWeb.Schema do
   import_types __MODULE__.TenantsTypes
   import_types __MODULE__.AccountsTypes
   import_types __MODULE__.ContentsTypes
+  import_types __MODULE__.ScheduleTypes
 
   query do
 
     import_fields :accounts_queries
     import_fields :tenants_queries
     import_fields :contents_queries
+    import_fields :schedule_queries
 
     field :calendar, list_of(:calendar_event) do
       arg :url, :string
