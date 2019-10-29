@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { Calendar } from './calendar/Calendar';
+import { Schedule } from './schedule/Schedule';
 import { UserNavigation } from 'component/layouts/navigation/UserNavigation';
 
 export interface WidgetProps {
@@ -35,6 +36,9 @@ export const Widget = memo<WidgetProps>(({ widget }) => {
             </Typography>
             {widget.type === WidgetModelType.Calendar && (
                 <Calendar widget={widget} />
+            )}
+            {widget.type === WidgetModelType.Schedule && (
+                <Schedule widget={widget} />
             )}
         </Paper>
     )

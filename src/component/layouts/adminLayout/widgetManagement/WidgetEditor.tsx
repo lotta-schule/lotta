@@ -9,6 +9,7 @@ import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import Img from 'react-cloudimage-responsive';
+import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -99,6 +100,10 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
 
             {widget.type === WidgetModelType.Calendar &&
                 <CalendarWidgetConfiguration
+                    configuration={widget.configuration || {}}
+                    setConfiguration={configuration => setWidget({ ...widget, configuration })} />}
+            {widget.type === WidgetModelType.Schedule &&
+                <ScheduleWidgetConfiguration
                     configuration={widget.configuration || {}}
                     setConfiguration={configuration => setWidget({ ...widget, configuration })} />}
 
