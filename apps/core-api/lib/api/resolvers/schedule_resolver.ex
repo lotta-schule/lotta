@@ -3,9 +3,10 @@ defmodule Api.ScheduleResolver do
 
   def get(%{widget_id: widget_id}, %{context: %{context: %{current_user: %{class: class},tenant: tenant}}}) do
     widget = Tenants.get_widget!(widget_id)
+    base_url = Application.fetch_env!(:api, :schedule_provider_url)
     case widget.configuration do
       %{"username" => username, "password" => password, "schoolId" => schoolId, "type" => type} ->
-        url = "http://schedule_provider:3000/schedule.json?class=#{class}&source=#{type}&schoolId=#{schoolId}&username=#{username}&password=#{password}"
+        url = "#{base_url}/schedule.json?class=#{class}&source=#{type}&schoolId=#{schoolId}&username=#{username}&password=#{password}"
         IO.inspect(url)
         case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
           {:ok, 200, _headers, clientRef} ->

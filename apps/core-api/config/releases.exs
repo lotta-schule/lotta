@@ -21,6 +21,8 @@ ugc_s3_compat_secret_access_key = System.fetch_env!("UGC_S3_COMPAT_SECRET_ACCESS
 ugc_s3_compat_bucket = System.fetch_env!("UGC_S3_COMPAT_BUCKET")
 ugc_s3_compat_region = System.fetch_env!("UGC_S3_COMPAT_REGION")
 ugc_s3_compat_cdn_base_url = System.fetch_env!("UGC_S3_COMPAT_CDN_BASE_URL")
+# Schedule Provider
+schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 # Sentry Error Logging
 sentry_dsn = System.fetch_env("SENTRY_DSN")
 sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || "prod"
@@ -37,6 +39,8 @@ config :api, :rabbitmq_connection,
   username: rabbitmq_username,
   password: rabbitmq_password,
   host: rabbitmq_host
+
+config :api, :schedule_provider_url, schedule_provider_url
 
 config :api, ApiWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],

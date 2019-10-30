@@ -14,6 +14,8 @@ config :api, :rabbitmq_connection,
   password: "guest",
   host: "rabbitmq"
 
+config :api, :schedule_provider_url, "http://schedule_provider:3000"
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
