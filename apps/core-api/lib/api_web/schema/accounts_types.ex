@@ -69,6 +69,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
   input_object :update_user_params do
     field :name, :string
     field :email, :string
+    field :class, :string
     field :nickname, :string
     field :avatar_image_file, :file
   end
