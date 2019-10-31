@@ -32,16 +32,18 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                 <div key={file.id} className={styles.downloadItemWrapper}>
                     <div className={styles.downloadWrapperHeader}>
                         <div>
-                            <Typography className={styles.heading}>{file.filename}</Typography>
+                            {getConfiguration(file).description && (
+                                <Typography className={styles.downloadDescription}>
+                                    {getConfiguration(file).description}
+                                </Typography>
+                            )}
                             <Typography className={styles.secondaryHeading}>{new FileSize(file.filesize).humanize()}</Typography>
                         </div>
                         <Button color={'secondary'} component={'a'} href={file.remoteLocation} download={file.filename} target={'_blank'}>download</Button>
                     </div>
-                    {getConfiguration(file).description && (
-                        <Typography className={styles.downloadDescription}>
-                            {getConfiguration(file).description}
-                        </Typography>
-                    )}
+                    <Typography className={styles.filename}>
+                        {file.filename}
+                    </Typography>
                 </div>
             ))}
         </CardContent>

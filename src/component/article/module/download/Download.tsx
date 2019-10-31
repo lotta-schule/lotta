@@ -19,7 +19,7 @@ export const useStyles = makeStyles(theme => ({
         alignItems: 'flex-start',
         justifyContent: 'space-between'
     },
-    heading: {
+    downloadDescription: {
         fontSize: theme.typography.pxToRem(15),
         flexBasis: '66%',
     },
@@ -35,8 +35,8 @@ export const useStyles = makeStyles(theme => ({
         color: 'inherit',
         font: 'inherit'
     },
-    downloadDescription: {
-        fontSize: '.9em'
+    filename: {
+        fontSize: theme.typography.pxToRem(13)
     }
 }));
 export const Download = memo<DownloadProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => (

@@ -86,7 +86,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                                                 <DragHandle />
                                             </span>
                                             <div>
-                                                <Typography className={styles.heading}>{file.filename}</Typography>
+                                                <Typography className={styles.downloadDescription}>{file.filename}</Typography>
                                                 <Typography className={styles.secondaryHeading}>{new FileSize(file.filesize).humanize()}</Typography>
                                             </div>
                                             <IconButton onClick={() => onUpdateModule({ ...contentModule, files: contentModule.files.filter(f => f.id !== file.id) })}>
