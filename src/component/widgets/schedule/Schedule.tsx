@@ -11,10 +11,18 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        height: `calc(100% - ${theme.spacing(2)}px)`,
+        overflow: 'auto',
+        height: '100%',
+        '& td': {
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2)
+        }
     },
     date: {
-        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`
     },
     updated: {
         color: '#dd3333',
