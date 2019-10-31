@@ -1,10 +1,16 @@
-import React, { memo } from 'react';
-import { makeStyles, CircularProgress, Table, TableBody, TableRow, TableCell, Typography } from '@material-ui/core';
+import React, { memo, useState, useEffect } from 'react';
+import { uniq } from 'lodash';
+import {
+    makeStyles, CircularProgress, Table, TableBody, TableRow, TableCell, Typography, Link
+} from '@material-ui/core';
 import { GetScheduleQuery } from 'api/query/GetScheduleQuery';
 import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
 import { useQuery } from '@apollo/react-hooks';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { SelectCoursesDialog } from './SelectCoursesDialog';
 import clsx from 'clsx';
+
+export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -22,7 +28,10 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+        padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
+        '& a': {
+            color: theme.palette.secondary.main
+        }
     },
     updated: {
         color: '#dd3333',
@@ -37,7 +46,20 @@ export interface ScheduleProps {
 export const Schedule = memo<ScheduleProps>(({ widget }) => {
     const styles = useStyles();
     const [currentUser] = useCurrentUser();
+    const [isSelectCoursesDialogOpen, setIsSelectCoursesDialogOpen] = useState(false);
+    const [selectedCourses, setSelectedCourses] = useState<string[] | null>(null);
     const { data, loading: isLoading, error } = useQuery<{ schedule: ScheduleResult }>(GetScheduleQuery, { variables: { widgetId: widget.id }, skip: !currentUser || !currentUser.class });
+
+    useEffect(() => {
+        if (isSelectCoursesDialogOpen === false) {
+            try {
+                const persistedCourseList = localStorage.getItem(LOCALSTORAGE_KEY);
+                if (persistedCourseList) {
+                    setSelectedCourses(JSON.parse(persistedCourseList));
+                }
+            } catch { }
+        }
+    }, [isSelectCoursesDialogOpen]);
 
     if (!currentUser) {
         return (
@@ -67,38 +89,56 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                 {data.schedule && (
                     <>
                         <Typography variant={'caption'} className={styles.date}>
-                            {data.schedule.head.date}
+                            <span>{data.schedule.head.date}</span>
+                            {['11', '12'].indexOf(currentUser.class) > -1 && (
+                                <Link color={'secondary'} href={'#'} onClick={() => setIsSelectCoursesDialogOpen(true)}>Kurse</Link>
+                            )}
                         </Typography>
                         {data.schedule.body && (
-                            <Table size={'small'}>
-                                <TableBody>
-                                    {data.schedule.body.schedule.sort((l1, l2) => l1.lessonIndex - l2.lessonIndex).map(line => (
-                                        <>
-                                            <TableRow key={line.id}>
-                                                <TableCell>{line.lessonIndex}</TableCell>
-                                                <TableCell className={clsx({ [styles.updated]: line.lessonNameHasChanged })}>
-                                                    {line.lessonName}
-                                                </TableCell>
-                                                <TableCell className={clsx({ [styles.updated]: line.teacherHasChanged })}>
-                                                    {line.teacher === '&nbsp;' ? '-' : line.teacher}
-                                                </TableCell>
-                                                <TableCell className={clsx({ [styles.updated]: line.roomHasChanged })}>
-                                                    {line.room}
-                                                </TableCell>
-                                            </TableRow>
-                                            {line.comment && (
-                                                <TableRow key={`${line.id}-comment`}>
-                                                    <TableCell colSpan={4} align={'right'}>
-                                                        <Typography variant={'subtitle2'}>
-                                                            {line.comment}
-                                                        </Typography>
-                                                    </TableCell>
-                                                </TableRow>
-                                            )}
-                                        </>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <>
+                                <Table size={'small'}>
+                                    <TableBody>
+                                        {data.schedule.body.schedule
+                                            .sort((l1, l2) => l1.lessonIndex - l2.lessonIndex)
+                                            .filter(line => {
+                                                if (selectedCourses !== null && ['11', '12'].indexOf(currentUser.class!) > -1) {
+                                                    return selectedCourses.indexOf(line.lessonName) > -1;
+                                                }
+                                                return true;
+                                            })
+                                            .map(line => (
+                                                <>
+                                                    <TableRow key={line.id}>
+                                                        <TableCell>{line.lessonIndex}</TableCell>
+                                                        <TableCell className={clsx({ [styles.updated]: line.lessonNameHasChanged })}>
+                                                            {line.lessonName}
+                                                        </TableCell>
+                                                        <TableCell className={clsx({ [styles.updated]: line.teacherHasChanged })}>
+                                                            {line.teacher === '&nbsp;' ? '-' : line.teacher}
+                                                        </TableCell>
+                                                        <TableCell className={clsx({ [styles.updated]: line.roomHasChanged })}>
+                                                            {line.room}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                    {line.comment && (
+                                                        <TableRow key={`${line.id}-comment`}>
+                                                            <TableCell colSpan={4} align={'right'}>
+                                                                <Typography variant={'subtitle2'}>
+                                                                    {line.comment}
+                                                                </Typography>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                                </>
+                                            ))}
+                                    </TableBody>
+                                </Table>
+                                <SelectCoursesDialog
+                                    isOpen={isSelectCoursesDialogOpen}
+                                    possibleCourses={uniq(data.schedule.body.schedule.map(schedule => schedule.lessonName))}
+                                    onClose={() => setIsSelectCoursesDialogOpen(false)}
+                                />
+                            </>
                         )}
                         {data.schedule.footer.comments && (
                             <Typography variant={'subtitle2'}>
@@ -106,9 +146,8 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                             </Typography>
                         )}
                     </>
-                )
-                }
-            </div >
+                )}
+            </div>
         );
     }
     return null;
