@@ -92,7 +92,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
     } else if (events) {
         return (
             <div className={styles.root}>
-                {calendars.length > 1 && (
+                {calendars && calendars.length > 1 && (
                     <figcaption className={styles.figcaption}>
                         {calendars.map((calendar, i) => (
                             <Typography variant={'body2'} component={'span'} key={i}>
