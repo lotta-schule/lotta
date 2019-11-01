@@ -7,7 +7,6 @@ defmodule Api.ScheduleResolver do
     case widget.configuration do
       %{"username" => username, "password" => password, "schoolId" => schoolId, "type" => type} ->
         url = "#{base_url}/schedule.json?class=#{class}&source=#{type}&schoolId=#{schoolId}&username=#{username}&password=#{password}"
-        IO.inspect(url)
         case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
           {:ok, 200, _headers, clientRef} ->
             :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}])
