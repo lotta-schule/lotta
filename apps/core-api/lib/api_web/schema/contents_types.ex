@@ -40,6 +40,12 @@ defmodule ApiWeb.Schema.ContentsTypes do
   
       resolve &Api.ArticleResolver.update/2
     end
+    
+    field :delete_article, type: :article do
+      arg :id, non_null(:lotta_id)
+  
+      resolve &Api.ArticleResolver.delete/2
+    end
 
     field :toggle_article_pin, type: :article do
       arg :id, non_null(:lotta_id)
