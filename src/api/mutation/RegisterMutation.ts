@@ -8,6 +8,7 @@ export const RegisterMutation = gql`
                 id
                 insertedAt
                 updatedAt
+                lastSeen
                 name
                 nickname
                 email
