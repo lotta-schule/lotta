@@ -15,6 +15,7 @@ defmodule ApiWeb.Schema.Types do
     field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
+    field :last_seen, :naive_datetime
     field :name, :string
     field :class, :string
     field :nickname, :string

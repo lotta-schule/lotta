@@ -24,10 +24,16 @@ defmodule ApiWeb.Context do
     with ["Bearer " <> token] <- authorization_header do
       case Guardian.resource_from_token(token) do
         {:ok, current_user, _claims} ->
-          %{
+          user = %{
             current_user: Repo.get(Accounts.User, current_user.id)
             |> Repo.preload([:groups, :avatar_image_file])
           }
+          Task.start_link(fn ->
+            current_user
+            |> Repo.preload(:tenant)
+            |> Accounts.see_user()
+          end)
+          user
         {:error, _} ->
           %{}
       end

@@ -12,6 +12,7 @@ defmodule Api.Accounts.User do
     field :name, :string
     field :nickname, :string
     field :class, :string
+    field :last_seen, :naive_datetime
     field :password, :string, virtual: true
     field :password_hash, :string
 

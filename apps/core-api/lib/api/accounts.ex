@@ -378,4 +378,19 @@ defmodule Api.Accounts do
     Repo.get!(UserGroup, id)
   end
 
+  @doc """
+  Sets the 'last seen' property on a user
+
+  ## Examples
+
+      iex> see_user(user)
+      %User{}
+
+  """
+  def see_user(%User{} = user) do
+    user
+    |> Ecto.Changeset.change(%{ last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second) })
+    |> Api.Repo.update!()
+  end
+
 end
