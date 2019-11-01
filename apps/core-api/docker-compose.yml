@@ -27,6 +27,8 @@ services:
       - api
       - postgres
       - rabbitmq
+    environment:
+      MIX_ENV: dev
     env_file:
       - .env
 
