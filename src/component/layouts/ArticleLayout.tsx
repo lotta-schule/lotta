@@ -70,7 +70,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
             );
         }
         return (
-            <span style={{ color: 'red' }}>Artikel nicht gefunden.</span>
+            <span style={{ color: 'red' }}>Beitrag nicht gefunden.</span>
         );
 
     }, [client.title, data, error, isLoading, styles.siteTitle, title]);

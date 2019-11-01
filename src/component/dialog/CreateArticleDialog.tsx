@@ -74,8 +74,8 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                         disabled={isLoading}
-                        label="Titel des Artikels:"
-                        placeholder="Mein neuer Artikel"
+                        label="Titel des Beitrags:"
+                        placeholder="Mein neuer Beitrag"
                         type="text"
                         fullWidth
                     />
