@@ -8,6 +8,7 @@ export const LoginMutation = gql`
                 id
                 insertedAt
                 updatedAt
+                lastSeen
                 name
                 nickname
                 email
