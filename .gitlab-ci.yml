@@ -187,7 +187,7 @@ deploy:review:
     - /user/local/bin/setup.sh
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
-    - kubectl create ns lotta-$CI_ENVIRONMENT_SLUG
+    - kubectl create ns lotta-$CI_ENVIRONMENT_SLUG || true
     - helm upgrade --install lotta-web-$CI_ENVIRONMENT_SLUG lotta/lotta-web
       --namespace lotta-$CI_ENVIRONMENT_SLUG --wait
       --set image.tag=${CI_COMMIT_SHA}
