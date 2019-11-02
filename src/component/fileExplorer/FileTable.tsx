@@ -1,13 +1,15 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, { MouseEvent, memo, useCallback } from 'react';
+import { findIndex, range } from 'lodash';
 import {
     Edit, Delete, FolderOutlined
 } from '@material-ui/icons';
 import {
     IconButton, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, makeStyles, Theme, Checkbox
 } from '@material-ui/core';
-import { FileModel, FileModelType } from 'model';
+import { FileModel, FileModelType, ID } from 'model';
 import { FileSize } from 'util/FileSize';
 import { find, includes, some, every, uniqBy } from 'lodash';
+import clsx from 'clsx';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
     root: {
@@ -22,14 +24,21 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
             flexDirection: 'column',
             width: '100%',
             overflowY: 'scroll',
-            height: 600
+            height: 600,
+            '& tr': {
+                cursor: 'pointer'
+            }
         },
         '& tr': {
             display: 'flex',
             width: '100%',
             flexShrink: 0,
             boxSizing: 'border-box',
+            '&.selected, &.selected:hover': {
+                backgroundColor: theme.palette.primary.main
+            },
             '& > td, & > th': {
+                userSelect: 'none',
                 '&:nth-child(1)': {
                     width: '10%'
                 },
@@ -70,12 +79,14 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 export interface FileTableProps {
     files: FileModel[];
     selectedFiles: FileModel[];
+    markedFileIds: ID[];
+    setMarkedFileIds(ids: ID[]): void;
     onSelectSubPath(path: string): void;
     onSelectFile?(file: FileModel): void;
     onSelectFiles?(files: FileModel[]): void;
 }
 
-export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selectedFiles, onSelectSubPath, onSelectFile, onSelectFiles }) => {
+export const FileTable = memo<FileTableProps>(({ files, selectedFiles, markedFileIds, setMarkedFileIds, onSelectSubPath, onSelectFile, onSelectFiles }) => {
 
     const styles = useStyles();
 
@@ -93,7 +104,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
         }
 
         const tableCell = (
-            <TableCell scope="row" padding="none">
+            <TableCell scope="row" padding="none" onClick={() => onSelectFile && onSelectFile(file)}>
                 {file.filename}
             </TableCell>
         );
@@ -112,7 +123,47 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
         } else {
             return tableCell;
         }
-    }, [styles.tooltip]);
+    }, [onSelectFile, styles.tooltip]);
+
+    const isMarked = (file: FileModel) => {
+        return markedFileIds.indexOf(file.id) > -1;
+    };
+
+    const findNearest = (number: number, listOfNumbers: number[]) => {
+        return listOfNumbers.reduce((prev: number | null, value) => {
+            if (!prev) {
+                return value;
+            }
+            return (Math.abs(value - number) < Math.abs(prev - number)) ? value : prev;
+        }, null) as number;
+    }
+
+    const toggleFileMarked = (file: FileModel) => (e: MouseEvent) => {
+        e.preventDefault();
+        if (isMarked(file)) {
+            if (e.metaKey) {
+                setMarkedFileIds(markedFileIds.filter(fId => fId !== file.id));
+            } else {
+                setMarkedFileIds([file.id]);
+            }
+        } else {
+            if (e.shiftKey) {
+                const fileIndex = findIndex(files, f => f.id === file.id);
+                const markedFileIndexes = markedFileIds.map(fileId => findIndex(files, f => f.id === fileId));
+                const nearestIndex = findNearest(fileIndex, markedFileIndexes);
+                console.log(`create range between ${fileIndex} and ${nearestIndex}`);
+                const indexesRange = [
+                    ...range(Math.min(fileIndex, nearestIndex), Math.max(fileIndex, nearestIndex)),
+                    ...(fileIndex > nearestIndex ? [fileIndex] : [])
+                ];
+                setMarkedFileIds([...markedFileIds, ...indexesRange.map(findex => files[findex]).filter(f => !isMarked(f)).map(f => f.id)]);
+            } else if (e.metaKey) {
+                setMarkedFileIds([...markedFileIds, file.id]);
+            } else {
+                setMarkedFileIds([file.id]);
+            }
+        }
+    };
 
     return (
         <div>
@@ -161,14 +212,15 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                     <TableRow
                                         key={file.id}
                                         hover
-                                        onClick={e => {
-                                            e.preventDefault();
-                                            onSelectSubPath(file.filename);
-                                        }}
-                                        style={{ cursor: 'pointer', }}
+                                        className={clsx({ selected: isMarked(file) })}
                                     >
                                         <TableCell></TableCell>
-                                        <TableCell>
+                                        <TableCell
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                onSelectSubPath(file.filename);
+                                            }}
+                                        >
                                             <FolderOutlined style={{ position: 'relative', marginRight: 10 }} />
                                             {file.filename}
                                         </TableCell>
@@ -179,8 +231,8 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                         <TableRow
                                             key={file.id}
                                             hover
-                                            style={{ cursor: onSelectFile ? 'pointer' : 'default' }}
-                                            onClick={() => onSelectFile && onSelectFile(file)}
+                                            className={clsx({ selected: isMarked(file) })}
+                                            onClick={(!onSelectFiles && !onSelectFile) ? toggleFileMarked(file) : undefined}
                                         >
                                             <TableCell>
                                                 {!onSelectFiles && !onSelectFile && (

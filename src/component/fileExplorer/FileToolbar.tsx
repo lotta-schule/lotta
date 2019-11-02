@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, Fragment } from 'react';
-import { CloudUploadOutlined, CreateNewFolderOutlined } from '@material-ui/icons';
+import { CloudUploadOutlined, CreateNewFolderOutlined, FileCopyOutlined, DeleteOutlineOutlined } from '@material-ui/icons';
 import {
     makeStyles, Theme, createStyles, Typography, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Link,
 } from '@material-ui/core';
@@ -29,19 +29,23 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
 export interface FileToolbarProps {
     path: string;
     uploads: UploadModel[];
+    showFileEditingButtons: boolean;
     onChangePath(path: string): void;
     onSelectFilesToUpload(files: File[]): void;
     onClickOpenActiveUploadsDialog(): void;
     onClickOpenCreateNewFolderDialog(): void;
+    onClickOpenMoveFilesDialog(): void;
 }
 
 export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
     path,
     onChangePath,
     uploads,
+    showFileEditingButtons,
     onSelectFilesToUpload,
     onClickOpenActiveUploadsDialog,
-    onClickOpenCreateNewFolderDialog
+    onClickOpenCreateNewFolderDialog,
+    onClickOpenMoveFilesDialog
 }) => {
     const styles = useStyles();
 
@@ -117,6 +121,20 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                             <CloudUploadOutlined color={'secondary'} />
                         </IconButton>
                     </Tooltip>
+                    {showFileEditingButtons && (
+                        <>
+                            <Tooltip title="Dateien verschieben">
+                                <IconButton aria-label="Dateien verschieben" onClick={() => onClickOpenMoveFilesDialog()}>
+                                    <FileCopyOutlined color={'secondary'} />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Dateien löschen">
+                                <IconButton aria-label="Dateien löschen" onClick={() => onClickOpenCreateNewFolderDialog()}>
+                                    <DeleteOutlineOutlined color={'secondary'} />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    )}
                 </div>
             </Toolbar>
         </>
