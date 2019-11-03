@@ -35,6 +35,7 @@ export interface FileToolbarProps {
     onClickOpenActiveUploadsDialog(): void;
     onClickOpenCreateNewFolderDialog(): void;
     onClickOpenMoveFilesDialog(): void;
+    onClickDeleteFilesDialog(): void;
 }
 
 export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
@@ -45,7 +46,8 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
     onSelectFilesToUpload,
     onClickOpenActiveUploadsDialog,
     onClickOpenCreateNewFolderDialog,
-    onClickOpenMoveFilesDialog
+    onClickOpenMoveFilesDialog,
+    onClickDeleteFilesDialog
 }) => {
     const styles = useStyles();
 
@@ -129,7 +131,7 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Dateien löschen">
-                                <IconButton aria-label="Dateien löschen" onClick={() => onClickOpenCreateNewFolderDialog()}>
+                                <IconButton aria-label="Dateien löschen" onClick={() => onClickDeleteFilesDialog()}>
                                     <DeleteOutlineOutlined color={'secondary'} />
                                 </IconButton>
                             </Tooltip>

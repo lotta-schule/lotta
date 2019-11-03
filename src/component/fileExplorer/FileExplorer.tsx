@@ -1,12 +1,15 @@
 import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
+import { find } from 'lodash';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
 import { CreateNewFolderDialog } from './CreateNewFolderDialog';
+import { DeleteFilesDialog } from './DeleteFilesDialog';
 import { FileModel, FileModelType, UploadModel, ID } from 'model';
 import { FileTable } from './FileTable';
 import { FileToolbar } from './FileToolbar';
 import { GetUserFilesQuery } from 'api/query/GetUserFiles';
 import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
 import { MoveFileMutation } from 'api/mutation/MoveFileMutation';
+import { DeleteFileMutation } from 'api/mutation/DeleteFileMutation';
 import { SelectDirectoryTreeDialog } from './SelectDirectoryTreeDialog';
 import { State } from 'store/State';
 import { uniq } from 'lodash';
@@ -56,6 +59,20 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
   const uploads = useSelector<State, UploadModel[]>(s => (s.userFiles.uploads || []));
 
   const [moveFile] = useMutation(MoveFileMutation);
+  const [deleteFile] = useMutation(DeleteFileMutation, {
+    update: (cache, { data: { file } }) => {
+      setMarkedFileIds([]);
+      if (file) {
+        const data = cache.readQuery<{ files: FileModel[] }>({ query: GetUserFilesQuery }) || { files: [] };
+        cache.writeQuery({
+          query: GetUserFilesQuery,
+          data: {
+            files: data.files.filter(f => f.id !== file.id)
+          }
+        });
+      }
+    }
+  });
   const { data, error, loading: isLoading } = useQuery<{ files: FileModel[] }>(GetUserFilesQuery);
 
   const uploadQueue = useContext(UploadQueueContext);
@@ -63,6 +80,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
   const [isActiveUploadsDialogOpen, setIsActiveUploadsDialogOpen] = useState(false);
   const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
   const [isMoveFilesDialogOpen, setIsMoveFilesDialogOpen] = useState(false);
+  const [isDeleteFilesDialogOpen, setIsDeleteFilesDialogOpen] = useState(false);
 
   const closeDialog = useCallback(<T extends Function>(callback: T): T => {
     setSelectedFiles([]);
@@ -143,8 +161,17 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
         allFiles={files}
         onClose={() => setIsMoveFilesDialogOpen(false)}
         onConfirm={path => {
-          markedFileIds.forEach(fileId => moveFile({ variables: { id: fileId, path } }))
+          markedFileIds.forEach(fileId => moveFile({ variables: { id: fileId, path } }));
           setIsMoveFilesDialogOpen(false);
+        }}
+      />
+      <DeleteFilesDialog
+        open={isDeleteFilesDialogOpen}
+        filesToDelete={markedFileIds.map(fileId => find(files, { id: fileId })!)}
+        onClose={() => setIsDeleteFilesDialogOpen(false)}
+        onConfirm={() => {
+          markedFileIds.forEach(fileId => deleteFile({ variables: { id: fileId } }));
+          setIsDeleteFilesDialogOpen(false);
         }}
       />
 
@@ -157,6 +184,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
         onClickOpenActiveUploadsDialog={() => setIsActiveUploadsDialogOpen(true)}
         onClickOpenCreateNewFolderDialog={() => setIsCreateNewFolderDialogOpen(true)}
         onClickOpenMoveFilesDialog={() => setIsMoveFilesDialogOpen(true)}
+        onClickDeleteFilesDialog={() => setIsDeleteFilesDialogOpen(true)}
       />
 
       <FileTable
