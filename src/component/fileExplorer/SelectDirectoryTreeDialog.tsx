@@ -39,9 +39,7 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
     }
 
     const getTreeItems = (path: string) => {
-        console.log('path: ', path);
         return getDirsForPath(path).map(treePath => {
-            console.log('treepath: ', treePath);
             return (
                 <TreeItem nodeId={treePath} label={getDirNameForPath(treePath)} onClick={() => setPath(treePath)}>
                     {getTreeItems(treePath)}

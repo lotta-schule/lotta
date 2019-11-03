@@ -151,7 +151,6 @@ export const FileTable = memo<FileTableProps>(({ files, selectedFiles, markedFil
                 const fileIndex = findIndex(files, f => f.id === file.id);
                 const markedFileIndexes = markedFileIds.map(fileId => findIndex(files, f => f.id === fileId));
                 const nearestIndex = findNearest(fileIndex, markedFileIndexes);
-                console.log(`create range between ${fileIndex} and ${nearestIndex}`);
                 const indexesRange = [
                     ...range(Math.min(fileIndex, nearestIndex), Math.max(fileIndex, nearestIndex)),
                     ...(fileIndex > nearestIndex ? [fileIndex] : [])

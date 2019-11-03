@@ -1,22 +1,20 @@
 import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { client } from 'api/client';
-import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
-import { State } from 'store/State';
-import { FileModel, FileModelType, UploadModel, ID } from 'model';
-import { GetUserFilesQuery } from 'api/query/GetUserFiles';
-import { createSetFilesAction } from 'store/actions/userFiles';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
-import { UploadQueueContext } from 'context/UploadQueueContext';
-import { uniq } from 'lodash';
-import { FileToolbar } from './FileToolbar';
 import { CreateNewFolderDialog } from './CreateNewFolderDialog';
-import { SelectDirectoryTreeDialog } from './SelectDirectoryTreeDialog';
+import { FileModel, FileModelType, UploadModel, ID } from 'model';
 import { FileTable } from './FileTable';
-import { useLocalStorage } from 'util/useLocalStorage';
-import { useMutation } from '@apollo/react-hooks';
+import { FileToolbar } from './FileToolbar';
+import { GetUserFilesQuery } from 'api/query/GetUserFiles';
+import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
 import { MoveFileMutation } from 'api/mutation/MoveFileMutation';
+import { SelectDirectoryTreeDialog } from './SelectDirectoryTreeDialog';
+import { State } from 'store/State';
+import { uniq } from 'lodash';
+import { UploadQueueContext } from 'context/UploadQueueContext';
+import { useDropzone } from 'react-dropzone';
+import { useLocalStorage } from 'util/useLocalStorage';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
   overlayDropzoneActive: {
@@ -51,19 +49,16 @@ export interface FileExplorerProps {
 export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFilter, onSelectFile, onSelectFiles }) => {
   const styles = useStyles();
 
-  const files = useSelector<State, FileModel[] | null>(s => s.userFiles.files);
   const [selectedFiles, setSelectedFiles] = useState<FileModel[]>([]);
   const [markedFileIds, setMarkedFileIds] = useState<ID[]>([]);
   const [selectedPath, setSelectedPath] = useLocalStorage('lastSelectedFileExplorerPath', '/');
 
   const uploads = useSelector<State, UploadModel[]>(s => (s.userFiles.uploads || []));
 
-  const dispatch = useDispatch();
   const [moveFile] = useMutation(MoveFileMutation);
+  const { data, error, loading: isLoading } = useQuery<{ files: FileModel[] }>(GetUserFilesQuery);
 
   const uploadQueue = useContext(UploadQueueContext);
-
-  const setFilesCallback = useCallback(files => dispatch(createSetFilesAction(files)), [dispatch]);
 
   const [isActiveUploadsDialogOpen, setIsActiveUploadsDialogOpen] = useState(false);
   const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
@@ -91,14 +86,19 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
     setMarkedFileIds([]); // reset marked files when selectedPath changes
   }, [selectedPath]);
 
-
-  if (files === null) {
-    client.query<{ files: FileModel[] }>({
-      query: GetUserFilesQuery
-    }).then(({ data: { files } }) => setFilesCallback(files));
-
-    return (<span>Dateien werden geladen ...</span>);
+  if (error) {
+    return (
+      <p style={{ color: 'red' }}>{error.message}</p>
+    );
   }
+
+  if (!data || isLoading) {
+    return (
+      <span>Dateien werden geladen ...</span>
+    );
+  }
+
+  const files = data.files;
 
   const dirFiles = uniq(
     (files || [])
