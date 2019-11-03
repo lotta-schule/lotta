@@ -76,12 +76,6 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                     <TreeItem nodeId={'/'} label={'/'} onClick={() => setPath('/')}>
                         {getTreeItems('/')}
                     </TreeItem>
-                    {/* <TreeItem nodeId={'/'} label={'/'}>
-                        <TreeItem nodeId={'/bla'} label={'bla'} onClick={() => setPath('/bla')} />
-                        <TreeItem nodeId={'/blub'} label={'Blub'} onClick={() => setPath('/blub')}>
-                            <TreeItem nodeId={'/bla/blub'} label={'Blub'} onClick={() => setPath('/bla/blub')} />
-                        </TreeItem>
-                    </TreeItem> */}
                 </TreeView>
             </DialogContent>
             <DialogActions>
