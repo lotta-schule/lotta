@@ -6,7 +6,6 @@ export interface ClientState {
 }
 
 export interface UserFilesState {
-    files: FileModel[] | null;
     uploads: UploadModel[];
 }
 

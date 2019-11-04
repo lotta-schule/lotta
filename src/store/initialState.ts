@@ -7,6 +7,6 @@ import { State } from './State';
 export const initialState: State = {
     client: initialClientState,
     content: initialContentState,
-    userFiles: initialUserFilesState,
-    layout: initialLayoutState
+    layout: initialLayoutState,
+    userFiles: initialUserFilesState
 };
