@@ -8,4 +8,10 @@ defmodule Api.UploadService do
 
     %{ url: "#{System.get_env("UGC_S3_COMPAT_CDN_BASE_URL")}/#{bucket_name}/#{file_name}" }
   end
+
+  def delete_from_space(file_name) do
+    bucket_name = System.get_env("UGC_S3_COMPAT_BUCKET")
+    res = ExAws.S3.delete_object(bucket_name, file_name)
+    |> ExAws.request!
+  end
 end

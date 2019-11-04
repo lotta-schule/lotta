@@ -2,7 +2,7 @@ defmodule Api.Fixtures do
   alias Api.Repo
   alias Api.Accounts
   alias Api.Tenants.{Tenant, Category}
-  alias Api.Accounts.{User, UserGroup}
+  alias Api.Accounts.{User, UserGroup, File}
   alias Api.Content.{Article}
 
   # Tenant
@@ -143,9 +143,14 @@ defmodule Api.Fixtures do
     }
   end
 
-  def fixture(:file) do
-    {:ok, file} = Accounts.create_file(fixture(:valid_file_attrs))
-    file
+  def fixture(:file, user) do
+    {:ok, file} =
+      File
+      |> struct(fixture(:valid_file_attrs))
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:user, user)
+      |> Repo.insert()
+    Repo.get!(File, file.id)
   end
 
   # Content

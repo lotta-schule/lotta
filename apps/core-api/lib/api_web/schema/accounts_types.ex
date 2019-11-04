@@ -58,6 +58,19 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
       resolve &Api.FileResolver.upload/2
     end
+
+    field :move_file, type: :file do
+      arg :id, non_null(:lotta_id)
+      arg :path, non_null(:string)
+
+      resolve &Api.FileResolver.move/2
+    end
+    
+    field :delete_file, type: :file do
+      arg :id, non_null(:lotta_id)
+
+      resolve &Api.FileResolver.delete/2
+    end
   end
 
   input_object :register_user_params do

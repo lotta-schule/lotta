@@ -222,16 +222,13 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> update_file(file, %{field: new_value})
+      iex> move_file(file, path)
       {:ok, %File{}}
 
-      iex> update_file(file, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
-  def update_file(%File{} = file, attrs) do
+  def move_file(%File{} = file, path) do
     file
-    |> File.changeset(attrs)
+    |> File.move_changeset(path)
     |> Repo.update()
   end
 
