@@ -1,4 +1,4 @@
-import { ClientModel, FileModel, UploadModel, ArticleModel, CategoryModel } from '../model';
+import { ClientModel, UploadModel, ArticleModel, CategoryModel } from '../model';
 
 export interface ClientState {
     client: ClientModel | null;
