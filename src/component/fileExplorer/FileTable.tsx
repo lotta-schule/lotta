@@ -1,10 +1,8 @@
 import React, { MouseEvent, memo, useCallback } from 'react';
 import { findIndex, range } from 'lodash';
+import { FolderOutlined } from '@material-ui/icons';
 import {
-    Edit, Delete, FolderOutlined
-} from '@material-ui/icons';
-import {
-    IconButton, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, makeStyles, Theme, Checkbox
+    Table, TableHead, TableRow, TableCell, TableBody, Tooltip, makeStyles, Theme, Checkbox
 } from '@material-ui/core';
 import { FileModel, FileModelType, ID } from 'model';
 import { FileSize } from 'util/FileSize';
@@ -234,20 +232,6 @@ export const FileTable = memo<FileTableProps>(({ files, selectedFiles, markedFil
                                             onClick={(!onSelectFiles && !onSelectFile) ? toggleFileMarked(file) : undefined}
                                         >
                                             <TableCell>
-                                                {!onSelectFiles && !onSelectFile && (
-                                                    <>
-                                                        <Tooltip title="Dateiname bearbeiten">
-                                                            <IconButton disabled className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
-                                                                <Edit />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                        <Tooltip title="Datei löschen">
-                                                            <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
-                                                                <Delete color="secondary" />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                    </>
-                                                )}
                                                 {onSelectFiles && (
                                                     <Checkbox
                                                         checked={includes<FileModel>(selectedFiles, file)}
