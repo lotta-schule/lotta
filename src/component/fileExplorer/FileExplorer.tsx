@@ -195,6 +195,14 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
         onSelectSubPath={subPath => setSelectedPath([selectedPath, subPath].join('/').replace(/^\/\//, '/'))}
         onSelectFile={onSelectFile ? (file => closeDialog(onSelectFile)(file)) : undefined}
         onSelectFiles={onSelectFiles ? setSelectedFiles : undefined}
+        onClickOpenMoveFilesDialog={file => {
+          setMarkedFileIds([file.id]);
+          setIsMoveFilesDialogOpen(true)
+        }}
+        onClickDeleteFilesDialog={file => {
+          setMarkedFileIds([file.id]);
+          setIsDeleteFilesDialogOpen(true)
+        }}
       />
 
       {onSelectFiles && (
