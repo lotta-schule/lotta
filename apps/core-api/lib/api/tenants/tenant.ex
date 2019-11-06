@@ -2,15 +2,18 @@ defmodule Api.Tenants.Tenant do
   use Ecto.Schema
   import Ecto.Changeset
   alias Api.Tenants.Category
-  alias Api.Accounts.{User,UserGroup}
+  alias Api.Accounts
+  alias Api.Accounts.{File,User,UserGroup}
 
   schema "tenants" do
     field :slug, :string
     field :title, :string
+    field :custom_theme, :map
   
     has_many :categories, Category
     has_many :groups, UserGroup
     has_many :users, User
+    belongs_to :logo_image_file, File, on_replace: :nilify
 
     timestamps()
   end
@@ -18,7 +21,18 @@ defmodule Api.Tenants.Tenant do
   @doc false
   def changeset(tenant, attrs) do
     tenant
-    |> cast(attrs, [:slug, :title])
+    |> Api.Repo.preload(:logo_image_file)
+    |> cast(attrs, [:title, :custom_theme])
     |> validate_required([:slug, :title])
+    |> put_assoc_logo_image_file(attrs)
+  end
+
+  defp put_assoc_logo_image_file(changeset, attrs) do
+    case is_nil(attrs[:logo_image_file]) do
+      false ->
+        put_assoc(changeset, :logo_image_file, Accounts.get_file!(attrs.logo_image_file.id))
+      _ ->
+        changeset
+    end
   end
 end
