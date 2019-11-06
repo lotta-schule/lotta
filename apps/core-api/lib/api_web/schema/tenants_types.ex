@@ -20,6 +20,12 @@ defmodule ApiWeb.Schema.TenantsTypes do
   end
 
   object :tenants_mutations do
+    field :update_tenant, type: :tenant do
+      arg :tenant, non_null(:tenant_input)
+  
+      resolve &Api.TenantResolver.update/2
+    end
+
     field :update_category, type: :category do
       arg :id, non_null(:lotta_id)
       arg :category, non_null(:category_input)
@@ -40,6 +46,11 @@ defmodule ApiWeb.Schema.TenantsTypes do
   
       resolve &Api.WidgetResolver.update/2
     end
+  end
+
+  input_object :tenant_input do
+    field :title, non_null(:string)
+    field :logo_image_file, :file
   end
 
   input_object :category_input do
