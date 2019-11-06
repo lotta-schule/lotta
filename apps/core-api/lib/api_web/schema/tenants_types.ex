@@ -49,7 +49,8 @@ defmodule ApiWeb.Schema.TenantsTypes do
   end
 
   input_object :tenant_input do
-    field :title, non_null(:string)
+    field :title, :string
+    field :custom_theme, :json
     field :logo_image_file, :file
   end
 

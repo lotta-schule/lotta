@@ -8,6 +8,7 @@ defmodule Api.Tenants.Tenant do
   schema "tenants" do
     field :slug, :string
     field :title, :string
+    field :custom_theme, :map
   
     has_many :categories, Category
     has_many :groups, UserGroup
@@ -21,9 +22,9 @@ defmodule Api.Tenants.Tenant do
   def changeset(tenant, attrs) do
     tenant
     |> Api.Repo.preload(:logo_image_file)
-    |> cast(attrs, [:slug, :title])
-    |> put_assoc_logo_image_file(attrs)
+    |> cast(attrs, [:title, :custom_theme])
     |> validate_required([:slug, :title])
+    |> put_assoc_logo_image_file(attrs)
   end
 
   defp put_assoc_logo_image_file(changeset, attrs) do
