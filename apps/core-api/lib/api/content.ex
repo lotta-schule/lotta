@@ -8,7 +8,7 @@ defmodule Api.Content do
   alias Api.Repo
 
   alias Api.Content.Article
-  alias Api.Tenants.Tenant
+  alias Api.Tenants.{Category,Tenant}
   alias Api.Accounts.{User,UserGroup}
 
   def data() do
@@ -20,7 +20,7 @@ defmodule Api.Content do
   end
 
   @doc """
-  Returns the list of articles.
+  Returns the list of articles for the start page
 
   ## Examples
 
@@ -40,7 +40,9 @@ defmodule Api.Content do
       Ecto.Query.from(a in Article,
         where: a.tenant_id == ^tenant_id and not is_nil(a.category_id),
         join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
-        distinct: true)
+        join: c in Category, where: (c.id == a.category_id) and c.hide_articles_from_homepage != true,
+        distinct: true
+      )
       |> filter_query(filter)
       |> Repo.all
     end
@@ -58,7 +60,8 @@ defmodule Api.Content do
   def list_articles(tenant_id, category_id, user, filter) do
     if is_nil(user) do
       Ecto.Query.from(a in Article,
-        where: a.tenant_id == ^tenant_id and a.category_id == ^category_id and is_nil(a.group_id))
+        where: a.tenant_id == ^tenant_id and a.category_id == ^category_id and is_nil(a.group_id)
+      )
       |> filter_query(filter)
       |> Repo.all
     else
