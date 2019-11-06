@@ -22,7 +22,7 @@ export const BasicTenantSettings = memo(() => {
     const [title, setTitle] = useState(tenant.title);
     const [logo, setLogo] = useState(tenant.logoImageFile);
 
-    const [updateTenant] = useMutation(UpdateTenantMutation);
+    const [updateTenant, { loading: isLoading, error }] = useMutation(UpdateTenantMutation);
 
     return (
         <>
@@ -30,9 +30,13 @@ export const BasicTenantSettings = memo(() => {
                 Grundeinstellungen
             </Typography>
 
+            {error && (
+                <div style={{ color: 'red' }}>{error.message}</div>
+            )}
+
             <Typography variant={'h6'}>
                 Name der Seite
-                    </Typography>
+            </Typography>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={6}>
                     <TextField fullWidth value={title} onChange={e => setTitle(e.target.value)} />
@@ -65,6 +69,7 @@ export const BasicTenantSettings = memo(() => {
                 <Grid item sm={6} md={4} lg={3}>
                     <Button
                         fullWidth
+                        disabled={isLoading}
                         variant={'outlined'}
                         color={'secondary'}
                         onClick={() => updateTenant({ variables: { tenant: { title, logoImageFile: logo } } })}

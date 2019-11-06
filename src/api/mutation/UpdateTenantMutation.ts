@@ -6,6 +6,7 @@ export const UpdateTenantMutation = gql`
             id
             title
             slug
+            customTheme
             logoImageFile {
                 id
                 remoteLocation

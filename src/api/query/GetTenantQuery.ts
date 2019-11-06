@@ -6,6 +6,7 @@ export const GetTenantQuery = gql`
             id
             title
             slug
+            customTheme
             logoImageFile {
                 id
                 remoteLocation

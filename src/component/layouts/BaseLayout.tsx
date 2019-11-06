@@ -23,7 +23,10 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft: theme.spacing(2)
+        paddingLeft: theme.spacing(2),
+        [theme.breakpoints.down('sm')]: {
+            display: 'none'
+        },
     },
     titleGridItem: {
         display: 'flex',
@@ -44,7 +47,7 @@ export const BaseLayout = memo(({ children }) => {
         <Container>
             <header className={styles.header}>
                 <Grid container style={{ height: '100%' }}>
-                    <Grid item xs={false} sm={3} className={styles.logoGridItem}>
+                    <Grid item md={3} className={styles.logoGridItem}>
                         {tenant.logoImageFile && (
                             <img
                                 src={`https://afdptjdxen.cloudimg.io/height/80/foil1/${tenant.logoImageFile.remoteLocation}`}
@@ -52,7 +55,7 @@ export const BaseLayout = memo(({ children }) => {
                             />
                         )}
                     </Grid>
-                    <Grid item sm={9} className={styles.titleGridItem}>
+                    <Grid item md={9} className={styles.titleGridItem}>
                         <Typography variant="h5" gutterBottom>{tenant.title}</Typography>
                     </Grid>
                 </Grid>
