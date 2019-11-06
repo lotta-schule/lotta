@@ -1,8 +1,9 @@
 import React, { memo, useState } from 'react';
 import { uniq } from 'lodash';
-import { DialogTitle, DialogContent, DialogContentText, TextField, Button, DialogActions } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions, Tooltip, IconButton } from '@material-ui/core';
+import { CreateNewFolderDialog } from './CreateNewFolderDialog';
 import { TreeView, TreeItem } from '@material-ui/lab';
-import { ArrowDropDown, ArrowRight } from '@material-ui/icons';
+import { ArrowDropDown, ArrowRight, CreateNewFolderOutlined } from '@material-ui/icons';
 import { FileModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
@@ -15,8 +16,8 @@ export interface SelectDirectoryTreeDialogProps {
 }
 
 export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({ basePath, open, allFiles, onClose, onConfirm }) => {
-
     const [path, setPath] = useState(basePath);
+    const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
 
     const getDirNameForPath = (path: string) => {
         if (path === '/') {
@@ -55,15 +56,11 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                 <DialogContentText>
                     Wähle ein Zielort
                 </DialogContentText>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    label="Name des Ordners"
-                    type="text"
-                    onChange={e => setPath(e.target.value)}
-                    value={path}
-                    fullWidth
-                />
+                <Tooltip title="Ordner erstellen">
+                    <IconButton aria-label="Ordner erstellen" onClick={() => setIsCreateNewFolderDialogOpen(true)}>
+                        <CreateNewFolderOutlined color={'secondary'} />
+                    </IconButton>
+                </Tooltip>
                 <TreeView
                     defaultExpanded={['/']}
                     defaultCollapseIcon={<ArrowDropDown />}
@@ -77,6 +74,11 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                         {getTreeItems('/')}
                     </TreeItem>
                 </TreeView>
+                <CreateNewFolderDialog
+                    basePath={path}
+                    open={isCreateNewFolderDialogOpen}
+                    onClose={() => setIsCreateNewFolderDialogOpen(false)}
+                />
             </DialogContent>
             <DialogActions>
                 <Button

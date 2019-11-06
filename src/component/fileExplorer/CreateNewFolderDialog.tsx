@@ -40,7 +40,7 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                     Abbrechen
                 </Button>
                 <Button
-                    color="primary"
+                    color={'secondary'}
                     onClick={() => {
                         const tmpFile: FileModel = {
                             id: new Date().getTime(),
