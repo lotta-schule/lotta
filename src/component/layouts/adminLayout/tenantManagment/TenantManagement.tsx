@@ -1,9 +1,8 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import {
-    makeStyles, Theme, Paper, Typography, TextField, Grid, CardMedia, Fab, CardContent, Checkbox,
-    Card, CardActionArea, List, ListItem, ListItemText, Box, Button,
+    makeStyles, Theme, Paper, Typography, TextField, Grid, List, ListItem, ListItemText, Box, Button,
 } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
+import { BasicTenantSettings } from './BasicTenantSettings';
 import Divider from '@material-ui/core/Divider';
 import { Save as SaveIcon } from '@material-ui/icons';
 import { theme } from 'theme';
@@ -15,9 +14,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         paddingBottom: theme.spacing(3),
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
-    },
-    headlines: {
-        marginBottom: theme.spacing(2),
     },
     margintop: {
         marginTop: theme.spacing(3),
@@ -36,92 +32,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-export const ClientManagement: FunctionComponent = memo(() => {
+export const TenantManagement = memo(() => {
     const styles = useStyles();
 
     return (
         <Paper className={styles.root}>
-            <Typography variant="h5" className={styles.headlines}>
-                Mein Lotta – Grundeinstellungen
-            </Typography>
-            <Typography className={styles.margintop}>
-                <b>Farbschema</b>
-            </Typography>
-            <Grid container style={{ display: 'flex' }}>
-                <Grid item sm={3}>
-                    <CardMedia
-                        style={{ height: 150, margin: '0.5em', }}
-                        image="https://placeimg.com/200/150/any"
-                    />
-                    <CardContent style={{ display: 'flex', paddingTop: 0, }}>
-                        <Checkbox checked />
-                        <Typography style={{ margin: 'auto 0' }}>
-                            Standard
-                        </Typography>
-                    </CardContent>
-                </Grid>
-                <Grid item sm={3}>
-                    <CardMedia
-                        style={{ height: 150, margin: '0.5em', }}
-                        image="https://placeimg.com/200/150/any"
-                    />
-                    <CardContent style={{ display: 'flex', paddingTop: 0, }}>
-                        <Checkbox />
-                        <Typography style={{ margin: 'auto 0' }}>
-                            Königsblau
-                        </Typography>
-                    </CardContent>
-                </Grid>
-                <Grid item sm={3}>
-                    <CardMedia
-                        style={{ height: 150, margin: '0.5em', }}
-                        image="https://placeimg.com/200/150/any"
-                    />
-                    <CardContent style={{ display: 'flex', paddingTop: 0, }}>
-                        <Checkbox />
-                        <Typography style={{ margin: 'auto 0' }}>
-                            Immergrün
-                        </Typography>
-                    </CardContent>
-                </Grid>
-            </Grid>
-            <Grid container style={{ display: 'flex' }}>
-                <Grid item sm={5}>
-                    <Typography className={styles.margintop}>
-                        <b>Name der Seite</b>
-                    </Typography>
-                    <TextField
-                        defaultValue="Webseiten-Name"
-                        margin='dense'
-                        style={{ width: '80%' }}
-                    />
-                </Grid>
-                <Grid item sm={3}>
-                    <Typography className={styles.margintop}>
-                        <b>Logo der Seite</b>
-                    </Typography>
-                    <Card>
-                        <CardActionArea>
-                            <CardMedia
-                                style={{ height: 80, margin: '0.5em', }}
-                                image="https://placeimg.com/200/80/any"
-                            />
-                        </CardActionArea>
-                    </Card>
-                </Grid>
-                <Grid item sm={1} style={{ display: 'flex' }}>
-                    <Fab color="secondary" aria-label="Edit" size="small" style={{ margin: 'auto' }}>
-                        <Edit />
-                    </Fab>
-                </Grid>
-                <Grid item sm={3} style={{ display: 'flex' }}>
-                    <Typography style={{ margin: 'auto' }}>
-                        Das Logo sollte wird eine feste Höhe von 80px haben.
-                    </Typography>
-                </Grid>
-            </Grid>
+
+            <BasicTenantSettings />
+
             <Divider style={{ marginTop: theme.spacing(4), marginBottom: theme.spacing(2), }} />
-            <Typography variant="h5" className={styles.headlines}>
+
+
+            <Typography variant="h5">
                 Mein Lotta – Individuelle Anpassungen
             </Typography>
             <Grid style={{ display: 'flex' }}>

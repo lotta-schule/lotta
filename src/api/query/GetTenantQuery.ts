@@ -6,6 +6,10 @@ export const GetTenantQuery = gql`
             id
             title
             slug
+            logoImageFile {
+                id
+                remoteLocation
+            }
             groups {
                 id
                 name
