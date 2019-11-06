@@ -102,6 +102,15 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                                 {Widget.getIconForType(WidgetModelType.Calendar)} &nbsp;
                                 Kalender-Widget hinzufügen
                             </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    onClickCreateWidget('VPlan', WidgetModelType.Schedule);
+                                    popupState.close();
+                                }}
+                            >
+                                {Widget.getIconForType(WidgetModelType.Schedule)} &nbsp;
+                                VPlan-Widget hinzufügen
+                            </MenuItem>
                         </Menu>
                     </>
                 )}</PopupState>

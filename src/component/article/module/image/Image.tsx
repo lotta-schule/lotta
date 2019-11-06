@@ -1,11 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
-import { ContentModuleModel } from '../../../../model';
-import { CardContent } from '@material-ui/core';
-import { ImageStyle } from './Config';
-import { get } from 'lodash';
-import { Single } from './wrapper/Single';
-import { Galery } from './wrapper/Galery';
-import { Carousel } from './wrapper/Carousel';
+import { ContentModuleModel } from 'model';
+import { ImageImage } from './ImageImage';
 
 export interface ImageProps {
     contentModule: ContentModuleModel;
@@ -13,19 +8,21 @@ export interface ImageProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Image: FunctionComponent<ImageProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-    const imageStyle: ImageStyle = get(contentModule.configuration, 'imageStyle', ImageStyle.SINGLE);
+export const Image: FunctionComponent<ImageProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+    let imageCaption;
+    try {
+        const parsedText = JSON.parse(contentModule.text!);
+        imageCaption = parsedText[0];
+    } catch {
+        imageCaption = contentModule.text;
+    }
     return (
-        <CardContent>
-            {imageStyle === ImageStyle.SINGLE && (
-                <Single isEditModeEnabled={!!isEditModeEnabled} contentModule={contentModule} onUpdateModule={onUpdateModule} />
-            )}
-            {imageStyle === ImageStyle.GALERY && (
-                <Galery isEditModeEnabled={!!isEditModeEnabled} contentModule={contentModule} onUpdateModule={onUpdateModule} />
-            )}
-            {imageStyle === ImageStyle.CAROUSEL && (
-                <Carousel isEditModeEnabled={!!isEditModeEnabled} contentModule={contentModule} onUpdateModule={onUpdateModule} />
-            )}
-        </CardContent>
+        <ImageImage
+            isEditModeEnabled={isEditModeEnabled || false}
+            caption={imageCaption}
+            file={contentModule.files ? contentModule.files[0] : null}
+            onUpdateFile={newFile => onUpdateModule({ ...contentModule, files: [newFile] })}
+            onUpdateCaption={caption => onUpdateModule({ ...contentModule, text: JSON.stringify([caption]) })}
+        />
     );
 });

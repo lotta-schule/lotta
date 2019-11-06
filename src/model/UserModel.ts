@@ -4,6 +4,9 @@ import { FileModel } from 'model';
 
 export interface UserModel {
     id: ID;
+    createdAt: string;
+    updatedAt: string;
+    lastSeen: string;
     name: string;
     nickname: string;
     email: string;

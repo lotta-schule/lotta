@@ -5,6 +5,7 @@ export const AdminGroup: UserGroupModel = {
     createdAt: new Date(2015, 0, 1).toISOString(),
     updatedAt: new Date(2015, 0, 1).toISOString(),
     name: 'Administrator',
+    priority: 1000,
     isAdminGroup: true,
     tenant: null!
 }

@@ -6,6 +6,7 @@ export const GetCurrentUserQuery = gql`
             id
             insertedAt
             updatedAt
+            lastSeen
             name
             nickname
             email

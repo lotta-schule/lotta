@@ -3,9 +3,9 @@ import { deepOrange } from '@material-ui/core/colors';
 
 const palette = {
     primary: {
-        main: '#333',
+        main: '#d1d0d0',
         light: '#999',
-        dark: '#222',
+        dark: '#3b3b3b',
         contrastText: '#ffffff',
 
     },
@@ -70,7 +70,9 @@ export const theme = createMuiTheme({
     overrides: {
         MuiLink: {
             root: {
-                cursor: 'pointer'
+                cursor: 'pointer',
+                color: palette.primary.dark,
+                textDecoration: 'none',
             }
         },
         MuiAppBar: {

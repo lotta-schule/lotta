@@ -16,9 +16,9 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'stretch',
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
             position: 'sticky',
-            top: 70
+            top: 112
         }
     },
     tabsRoot: {

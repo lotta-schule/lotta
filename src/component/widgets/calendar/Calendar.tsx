@@ -39,9 +39,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     figcaption: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
+        textAlign: 'center',
         width: '100%',
         backgroundColor: theme.palette.primary.contrastText,
         '& > span': {
@@ -94,6 +92,16 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
     } else if (events) {
         return (
             <div className={styles.root}>
+                {calendars && calendars.length > 1 && (
+                    <figcaption className={styles.figcaption}>
+                        {calendars.map((calendar, i) => (
+                            <Typography variant={'body2'} component={'span'} key={i}>
+                                <FiberManualRecord fontSize={'inherit'} htmlColor={calendar.color || 'red'} className={styles.calendarColorDot} />
+                                {calendar.name}
+                            </Typography>
+                        ))}
+                    </figcaption>
+                )}
                 <List dense className={styles.list}>
                     {events.sort((ev1, ev2) => new Date(ev1.start).getTime() - new Date(ev2.start).getTime()).map((event, i) => (
                         <React.Fragment key={i}>
@@ -114,16 +122,6 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                         </React.Fragment>
                     ))}
                 </List>
-                {calendars.length > 1 && (
-                    <figcaption className={styles.figcaption}>
-                        {calendars.map((calendar, i) => (
-                            <Typography variant={'body2'} component={'span'} key={i}>
-                                <FiberManualRecord fontSize={'inherit'} htmlColor={calendar.color || 'red'} className={styles.calendarColorDot} />
-                                {calendar.name}
-                            </Typography>
-                        ))}
-                    </figcaption>
-                )}
             </div>
         );
     }

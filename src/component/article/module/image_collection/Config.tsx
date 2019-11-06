@@ -11,9 +11,8 @@ const useStyles = makeStyles(() => ({
 }))
 
 export enum ImageStyle {
-    SINGLE,
-    GALERY,
-    CAROUSEL,
+    GALLERY = 1,
+    CAROUSEL = 2,
 }
 
 interface ConfigProps {
@@ -24,7 +23,7 @@ interface ConfigProps {
 
 export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule, onRequestClose }) => {
 
-    const imageStyle: ImageStyle = get(contentModule.configuration, 'imageStyle', ImageStyle.SINGLE);
+    const imageStyle: ImageStyle = get(contentModule.configuration, 'imageStyle', ImageStyle.GALLERY);
     const styles = useStyles();
 
     return (
@@ -49,8 +48,7 @@ export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onU
                         id: 'image-style',
                     }}
                 >
-                    <MenuItem value={ImageStyle.SINGLE}>Einzelbild</MenuItem>
-                    <MenuItem value={ImageStyle.GALERY}>Galerie</MenuItem>
+                    <MenuItem value={ImageStyle.GALLERY}>Galerie</MenuItem>
                     <MenuItem value={ImageStyle.CAROUSEL}>Carousel</MenuItem>
                 </Select>
             </FormControl>

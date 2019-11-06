@@ -20,6 +20,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
     const [currentUser] = useCurrentUser();
     const { history } = useRouter();
 
+    const [classOrShortName, setClassOrShortName] = useState(currentUser && currentUser.class);
     const [email, setEmail] = useState(currentUser && currentUser.email);
     const [name, setName] = useState(currentUser && currentUser.name);
     const [nickname, setNickname] = useState(currentUser && currentUser.nickname);
@@ -97,6 +98,19 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     disabled={isLoading}
                                     fullWidth
                                 />
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="classOrShortName"
+                                    label="Deine Klasse / Dein Kürzel:"
+                                    value={classOrShortName}
+                                    onChange={e => setClassOrShortName(e.target.value)}
+                                    placeholder="7/4, 11, Wie"
+                                    helperText={'Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du Zugriff auf deinen Stundenplan erhalten.'}
+                                    type="text"
+                                    disabled={isLoading}
+                                    fullWidth
+                                />
                                 <Button
                                     type={'submit'}
                                     color="secondary"
@@ -108,6 +122,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                             user: {
                                                 name,
                                                 nickname,
+                                                class: classOrShortName,
                                                 email,
                                                 avatarImageFile
                                             }

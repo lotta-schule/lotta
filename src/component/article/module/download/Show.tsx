@@ -1,57 +1,51 @@
 import React, { memo } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
-import { Table, TableHead, TableRow, TableCell, TableBody, IconButton, Tooltip, Link } from '@material-ui/core';
-import { Delete } from '@material-ui/icons';
+import { CardContent, Typography, Button } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
+import { useStyles } from './Download';
 
-interface ShowProps {
+export interface ShowProps {
     contentModule: ContentModuleModel;
-    onRemoveFile?(file: FileModel): void;
 }
 
-export const Show = memo<ShowProps>(({ contentModule, onRemoveFile }) => {
+export const Show = memo<ShowProps>(({ contentModule }) => {
+    const styles = useStyles();
+
+    const getConfiguration = (file: FileModel) => {
+        if (contentModule.configuration && contentModule.configuration.files && contentModule.configuration.files[file.id]) {
+            return {
+                description: '',
+                sortKey: 0,
+                ...contentModule.configuration.files[file.id]
+            };
+        } else {
+            return {
+                description: '',
+                sortKey: 0,
+            };
+        }
+    };
+
     return (
-        <Table size="small">
-            <TableHead>
-                <TableRow>
-                    <TableCell>Datei</TableCell>
-                    <TableCell align="right">Dateigröße</TableCell>
-                    <TableCell align="right"></TableCell>
-                    {onRemoveFile && (
-                        <TableCell align="right"></TableCell>
-                    )}
-                    {/* {!onRemoveFile && (
-                        <TableCell align={'right'}></TableCell>
-                    )} */}
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {contentModule.files.map(file => (
-                    <TableRow key={file.id}>
-                        <TableCell component="th" scope="row">
-                            <Link href={file.remoteLocation} target={'_blank'}>{file.filename}</Link>
-                        </TableCell>
-                        <TableCell align="right">{new FileSize(file.filesize).humanize()}</TableCell>
-                        <TableCell align="right"></TableCell>
-                        {onRemoveFile && (
-                            <TableCell align="right">
-                                <Tooltip title={'Datei löschen'}>
-                                    <IconButton onClick={() => onRemoveFile(file)}>
-                                        <Delete />
-                                    </IconButton>
-                                </Tooltip>
-                            </TableCell>
-                        )}
-                        {/* {!onRemoveFile && (
-                            <TableCell align={'right'}>
-                                <Button component={Link} href={file.remoteLocation} download={file.filename} title={'Download'} target={'_blank'}>
-                                    <CloudDownloadOutlined />
-                                </Button>
-                            </TableCell>
-                        )} */}
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    );
+        <CardContent>
+            {contentModule.files.sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey).map(file => (
+                <div key={file.id} className={styles.downloadItemWrapper}>
+                    <div className={styles.downloadWrapperHeader}>
+                        <div>
+                            {getConfiguration(file).description && (
+                                <Typography className={styles.downloadDescription}>
+                                    {getConfiguration(file).description}
+                                </Typography>
+                            )}
+                            <Typography className={styles.secondaryHeading}>{new FileSize(file.filesize).humanize()}</Typography>
+                        </div>
+                        <Button color={'secondary'} component={'a'} href={file.remoteLocation} download={file.filename} target={'_blank'}>download</Button>
+                    </div>
+                    <Typography className={styles.filename}>
+                        {file.filename}
+                    </Typography>
+                </div>
+            ))}
+        </CardContent>
+    )
 });

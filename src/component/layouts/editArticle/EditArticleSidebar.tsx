@@ -1,31 +1,44 @@
 import React, { memo, useState, MouseEvent } from 'react';
-import { ArticleModel } from '../../../model';
+import { ArticleModel, ID } from '../../../model';
 import {
     Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel,
-    Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem
+    Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem, Divider, DialogTitle, DialogContent, DialogActions
 } from '@material-ui/core';
 import { CategorySelect } from './CategorySelect';
 import { DateTimePicker } from '@material-ui/pickers';
 import { GroupSelect } from './GroupSelect';
 import { parseISO } from 'date-fns';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
-import { Save as SaveIcon, ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
+import { Save as SaveIcon, ArrowDropDown as ArrowDropDownIcon, Warning } from '@material-ui/icons';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { uniqBy } from 'lodash';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
 import { UsersList } from './UsersList';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { useMutation } from 'react-apollo';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
 import useRouter from 'use-react-router';
+import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
 
 const useStyles = makeStyles(theme => ({
     root: {
         borderRadius: '0',
+        overflow: 'auto'
     },
     button: {
         marginBottom: theme.spacing(1),
+    },
+    deleteButtonDivider: {
+        marginTop: theme.spacing(1),
+    },
+    deleteButton: {
+        color: '#fff',
+        borderColor: 'red',
+        backgroundColor: 'red',
+        marginTop: theme.spacing(2)
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -53,8 +66,22 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
     const { history } = useRouter();
 
     const [isReadyToPublish, setIsReadyToPublish] = useState(article.readyToPublish || false);
-    const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = React.useState(false);
+    const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const saveOptionsMenuAnchorRef = React.useRef<HTMLDivElement | null>(null);
+
+    const [deleteArticle] = useMutation<{ article: ArticleModel }, { id: ID }>(DeleteArticleMutation, {
+        variables: {
+            id: article.id
+        },
+        onCompleted: () => {
+            if (article.category) {
+                history.push(`/category/${article.category.id}`);
+            } else {
+                history.push('/');
+            }
+        }
+    });
 
     const handleCloseSaveOptionsMenu = (event: MouseEvent<Document>): void => {
         if (saveOptionsMenuAnchorRef.current && saveOptionsMenuAnchorRef.current.contains(event.target as Node)) {
@@ -161,7 +188,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 <CardContent>
                     <FormControl component={'fieldset'}>
                         <FormLabel component={'legend'}>
-                            Gib den Artikel zur Kontrolle frei, um ihn als 'fertig' zu markieren.
+                            Gib den Beitrag zur Kontrolle frei, um ihn als 'fertig' zu markieren.
                             Ein Verantwortlicher kann ihn dann sichtbar schalten.
                     </FormLabel>
                         <FormControlLabel
@@ -235,6 +262,30 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 >
                     Abbrechen
                 </Button>
+
+                <Divider className={styles.deleteButtonDivider} />
+
+                <Button
+                    variant={'outlined'}
+                    size={'small'}
+                    className={styles.deleteButton}
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    fullWidth
+                >
+                    <Warning className={classNames(styles.leftIcon, styles.iconSmall)} />
+                    Beitrag löschen
+                </Button>
+                <ResponsiveFullScreenDialog open={isDeleteModalOpen}>
+                    <DialogTitle>Beitrag löschen</DialogTitle>
+                    <DialogContent>
+                        <p>Möchtest du den Beitrag "{article.title}" wirklich löschen?</p>
+                        <p>Der Beitrag ist dann unwiederbringbar verloren und kann nicht wiederhergestellt werden.</p>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsDeleteModalOpen(false)}>Abbrechen</Button>
+                        <Button color={'secondary'} onClick={() => deleteArticle()}>Löschen</Button>
+                    </DialogActions>
+                </ResponsiveFullScreenDialog>
             </CardContent>
         </Card>
     )

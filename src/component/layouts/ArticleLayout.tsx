@@ -19,7 +19,7 @@ const useStyle = makeStyles((theme: Theme) => ({
         paddingLeft: '1em',
         fontSize: '1.5rem',
         letterSpacing: '0.3em',
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.dark,
         backgroundColor: theme.palette.primary.contrastText,
         textTransform: 'uppercase',
     }
@@ -70,7 +70,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
             );
         }
         return (
-            <span style={{ color: 'red' }}>Artikel nicht gefunden.</span>
+            <span style={{ color: 'red' }}>Beitrag nicht gefunden.</span>
         );
 
     }, [client.title, data, error, isLoading, styles.siteTitle, title]);

@@ -15,7 +15,7 @@ import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-apollo';
 
 export const App = memo(() => {
-  const { data, loading: isLoading, error } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
+  const { data, loading: isLoading, error, called } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
 
   const [, { called: calledCurrentUser }] = useCurrentUser();
 
@@ -25,7 +25,7 @@ export const App = memo(() => {
     );
   }
 
-  if (isLoading || !calledCurrentUser) {
+  if (!called || !calledCurrentUser || isLoading) {
     return (
       <div>
         <CircularProgress />
@@ -33,7 +33,7 @@ export const App = memo(() => {
     );
   }
 
-  if (!data || !data.tenant) {
+  if (called && (!data || !data.tenant)) {
     return (
       <div>
         <span style={{ color: 'red' }}>Adresse ungültig.</span>
@@ -41,7 +41,7 @@ export const App = memo(() => {
     );
   }
 
-  const { tenant } = data;
+  const { tenant } = data!;
 
   return (
     <BrowserRouter>
