@@ -32,7 +32,9 @@ defmodule Api.Content do
     # Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id))
     if is_nil(user) do
       Ecto.Query.from(a in Article,
-        where: a.tenant_id == ^tenant_id and not is_nil(a.category_id) and is_nil(a.group_id))
+        where: a.tenant_id == ^tenant_id and not is_nil(a.category_id) and is_nil(a.group_id),
+        join: c in Category, where: (c.id == a.category_id) and c.hide_articles_from_homepage != true
+      )
       |> filter_query(filter)
       |> Repo.all
     else
