@@ -222,16 +222,13 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> update_file(file, %{field: new_value})
+      iex> move_file(file, path)
       {:ok, %File{}}
 
-      iex> update_file(file, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
-  def update_file(%File{} = file, attrs) do
+  def move_file(%File{} = file, path) do
     file
-    |> File.changeset(attrs)
+    |> File.move_changeset(path)
     |> Repo.update()
   end
 
@@ -376,6 +373,21 @@ defmodule Api.Accounts do
   """
   def get_user_group!(id) do
     Repo.get!(UserGroup, id)
+  end
+
+  @doc """
+  Sets the 'last seen' property on a user
+
+  ## Examples
+
+      iex> see_user(user)
+      %User{}
+
+  """
+  def see_user(%User{} = user) do
+    user
+    |> Ecto.Changeset.change(%{ last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second) })
+    |> Api.Repo.update!()
   end
 
 end

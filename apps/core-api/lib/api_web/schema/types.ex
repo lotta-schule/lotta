@@ -15,6 +15,7 @@ defmodule ApiWeb.Schema.Types do
     field :id, :lotta_id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
+    field :last_seen, :naive_datetime
     field :name, :string
     field :class, :string
     field :nickname, :string
@@ -38,6 +39,8 @@ defmodule ApiWeb.Schema.Types do
     field :id, :lotta_id
     field :title, :string
     field :slug, :string
+    field :custom_theme, :json
+    field :logo_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end
@@ -72,6 +75,7 @@ defmodule ApiWeb.Schema.Types do
   enum :widget_type do
     value :calendar, as: "calendar"
     value :vplan, as: "vplan"
+    value :schedule, as: "schedule"
     value :tagcloud, as: "tagcloud"
   end
 

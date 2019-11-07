@@ -78,6 +78,16 @@ defmodule Api.ArticleResolver do
       {:error, "Nur Administratoren oder Autoren dürfen Artikel bearbeiten."}
     end
   end
+  
+  def delete(%{id: id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+    article = Content.get_article!(id)
+    if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
+      article
+      |> Content.delete_article()
+    else
+      {:error, "Nur Administratoren oder Autoren dürfen Artikel löschen."}
+    end
+  end
 
   def toggle_pin(%{id: article_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
     if User.is_admin?(current_user, tenant) do

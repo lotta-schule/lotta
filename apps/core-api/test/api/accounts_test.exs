@@ -65,4 +65,33 @@ defmodule Api.AccountsTest do
     end
   end
 
+  describe "files" do
+    alias Api.Accounts.File
+
+    test "get_valid_path should return valid paths" do
+      assert File.get_valid_path("//a/b/") == "/a/b"
+      assert File.get_valid_path("mein//test/") == "/mein/test"
+      assert File.get_valid_path("") == "/"
+      assert File.get_valid_path("/////ich////sollte/viele///striche//vereinheitlichen") == "/ich/sollte/viele/striche/vereinheitlichen"
+    end
+
+    test "delete_file/1 should delete file" do
+      user = Fixtures.fixture(:registered_user)
+      file = Fixtures.fixture(:file, user)
+      
+      Accounts.delete_file(file)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Api.Repo.get!(Accounts.File, file.id)
+      end
+    end
+
+    test "move_file/1 should change a file's path" do
+      # user = Fixtures.fixture(:registered_user)
+      file = Fixtures.fixture(:file, nil)
+      Accounts.move_file(file, "/a/new/path")
+
+      assert Accounts.get_file!(file.id).path == "/a/new/path"
+    end
+  end
 end
