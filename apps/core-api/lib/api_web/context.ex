@@ -9,11 +9,16 @@ defmodule ApiWeb.Context do
 
   def call(conn, _) do
     conn
-    |> put_user_context
-    |> put_tenant_context
+    |> Absinthe.Plug.put_options(context: build_absinthe_context(conn))
   end
 
-  defp put_user_context(conn) do
+  def build_absinthe_context(conn, context \\ %{}) do
+    context
+    |> put_user(conn)
+    |> put_tenant(conn)
+  end
+
+  defp put_user(context, conn) do
     authorization_header = get_req_header(conn, "authorization")
     with ["Bearer " <> token] <- authorization_header do
       case Guardian.resource_from_token(token) do
@@ -25,26 +30,29 @@ defmodule ApiWeb.Context do
             |> Repo.preload(:tenant)
             |> Accounts.see_user()
           end)
-          conn
-          |> Absinthe.Plug.put_options(context: %{current_user: current_user})
+          context
+          |> Map.put(:current_user, current_user)
         {:error, _} ->
-          conn
+          context
       end
     else
       _ ->
-        conn
+        context
     end
   end
 
-  defp put_tenant_context(conn) do
+  defp put_tenant(context, conn) do
     tenant_header = get_req_header(conn, "tenant")
     with ["slug:" <> slug] <- tenant_header do
       tenant = case Tenants.get_tenant_by_slug(slug) do
         nil -> Tenants.get_tenant_by_slug!("ehrenberg")
         tenant -> tenant
       end
-      conn
-      |> Absinthe.Plug.put_options(context: %{tenant: tenant})
+      context
+      |> Map.put(:tenant, tenant)
+    else
+      _ ->
+        context
     end
   end
 end

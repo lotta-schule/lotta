@@ -1,7 +1,7 @@
 defmodule Api.ContentTest do
   use Api.DataCase
   alias Api.Fixtures
-  alias Api.{Content, Accounts}
+  alias Api.{Content}
 
   
   describe "article" do
@@ -47,7 +47,7 @@ defmodule Api.ContentTest do
       Content.delete_article(article)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Api.Repo.get!(Content.Article, article.id)
+        Api.Repo.get!(Article, article.id)
       end
     end
     

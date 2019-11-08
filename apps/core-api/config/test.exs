@@ -13,6 +13,10 @@ config :api, :rabbitmq_connection,
   password: "guest",
   host: "rabbitmq"
 
+config :api, Api.Guardian,
+  issuer: "lotta",
+  secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :api, ApiWeb.Endpoint,
