@@ -1,6 +1,7 @@
 defmodule Api.Repo.Seeder do
   def seed() do    
     {:ok, web_tenant} = Api.Repo.insert(%Api.Tenants.Tenant{slug: "web", title: "Web Beispiel"})
+    {:ok, lotta_tenant} = Api.Repo.insert(%Api.Tenants.Tenant{slug: "lotta", title: "Lotta"})
   
     {:ok, admin_group} = Api.Repo.insert(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Administration", is_admin_group: true, priority: 1000})
     {:ok, verwaltung_group} = Api.Repo.insert(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Verwaltung", priority: 800})
@@ -30,6 +31,7 @@ defmodule Api.Repo.Seeder do
     })
     Api.Accounts.register_user(%{name: "Max Mustermann", nickname: "MaXi", email: "maxi@einsa.net", password: "test123", tenant_id: web_tenant.id})
     Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@einsa.net", password: "test123", tenant_id: web_tenant.id})
+    Api.Accounts.register_user(%{name: "Marie Curie", nickname: "Polonium", email: "mcurie@lotta.schule", password: "test456", tenant_id: lotta_tenant.id})
   
     Api.Accounts.assign_user_to_group(alexis, admin_group)
     Api.Accounts.assign_user_to_group(billy, schueler_group)

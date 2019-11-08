@@ -1,6 +1,5 @@
 defmodule ApiWeb.Schema do
   use Absinthe.Schema
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types Absinthe.Plug.Types
   import_types ApiWeb.Schema.Types.JSON
   import_types ApiWeb.Schema.Types.LottaId

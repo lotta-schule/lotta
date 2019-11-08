@@ -23,7 +23,6 @@ defmodule Api.ContentTest do
     
     test "list_unpublished_articles/2 should return the tenants unpublished articles" do
       user = Fixtures.fixture(:registered_user)
-      admin = Fixtures.fixture(:admin_user) |> Api.Repo.preload([:tenant, :groups])
       article = Fixtures.fixture(:unpublished_article, user)
       |> Api.Repo.preload([:category, :users])
 

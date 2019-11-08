@@ -2,29 +2,42 @@ defmodule Api.UserResolver do
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper,User}
 
-  def all_with_groups(_args, %{context: %{current_user: current_user, tenant: tenant}}) do
-    case User.is_admin?(current_user, tenant) do
-      true -> {:ok, Accounts.list_users_with_groups(tenant.id)}
-      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
-    end
-  end
-
-  def get(%{id: id}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    if User.is_admin?(current_user, tenant) do
-      case Accounts.get_user!(id) do
-        nil -> {:error, "Nutzer mit der id #{id} nicht gefunden."}
-        user -> {:ok, user}
-      end
-    else
-      {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
-    end
-  end
-  
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
   end
   def get_current(_args, _info) do
     {:ok, nil}
+  end
+
+  def all_with_groups(_args, %{context: %{tenant: tenant} = context}) do
+    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      true -> {:ok, Accounts.list_users_with_groups(tenant.id)}
+      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+    end
+  end
+
+  def search(%{searchtext: searchtext}, %{context: %{tenant: tenant} = context}) do
+    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      true ->
+        if String.length(searchtext) > 2 do
+          Accounts.search_user(searchtext, tenant)
+        else
+          {:ok, []}
+        end
+      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+    end
+  end
+
+  def get(%{id: id}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      try do
+        {:ok, Accounts.get_user!(id)}
+      rescue
+        Ecto.NoResultsError -> {:ok, nil}
+      end
+    else
+      {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+    end
   end
 
   def assign_user(%{id: id, group_id: group_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
@@ -40,13 +53,6 @@ defmodule Api.UserResolver do
       end
     else
       {:error, "Nur Administrator dürfen Benutzer Gruppen zuweisen"}
-    end
-  end
-  
-  def find(%{searchtext: searchtext}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    case User.is_admin?(current_user, tenant) do
-      true -> Accounts.search_user(searchtext, tenant)
-      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
     end
   end
 

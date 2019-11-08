@@ -12,7 +12,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
     field :search_users, list_of(:user) do
       arg :searchtext, non_null(:string)
-      resolve &Api.UserResolver.find/2
+      resolve &Api.UserResolver.search/2
     end
 
     field :user, type: :user do

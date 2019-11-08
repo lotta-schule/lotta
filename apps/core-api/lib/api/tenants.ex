@@ -3,7 +3,7 @@ defmodule Api.Tenants do
   The Tenants context.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
   alias Api.Repo
 
   alias Api.Tenants.{Category,Tenant,Widget}
@@ -47,7 +47,8 @@ defmodule Api.Tenants do
 
   """
   def list_tenants do
-    Repo.all(Tenant)
+    Repo.all from t in Tenant,
+      order_by: :slug
   end
 
   @doc """

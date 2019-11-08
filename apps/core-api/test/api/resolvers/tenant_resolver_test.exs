@@ -1,5 +1,5 @@
 defmodule Api.TenantResolverTest do
-  use ApiWeb.ConnCase, async: true
+  use ApiWeb.ConnCase
   
   setup do
     Api.Repo.Seeder.seed()
@@ -71,24 +71,28 @@ defmodule Api.TenantResolverTest do
   @query """
   {
     tenants {
-      id
       slug
       title
     }
   }
   """
-  test "tenants field returns all registered tenants", %{web_tenant: web_tenant} do
+  test "tenants field returns all registered tenants" do
     res = build_conn()
     |> get("/api", query: @query)
     |> json_response(200)
 
     assert res == %{
       "data" => %{
-        "tenants" => [%{
-          "id" => web_tenant.id,
-          "slug" => "web",
-          "title" => "Web Beispiel"
-        }]
+        "tenants" => [
+          %{
+            "slug" => "lotta",
+            "title" => "Lotta"
+          },
+          %{
+            "slug" => "web",
+            "title" => "Web Beispiel"
+          }
+        ]
       }
     }
   end
@@ -134,7 +138,7 @@ defmodule Api.TenantResolverTest do
     }
   }
   """
-  test "update tenant mutation should return error if user is not admin", %{web_tenant: web_tenant, user_jwt: user_jwt} do
+  test "update tenant mutation should return error if user is not admin", %{user_jwt: user_jwt} do
     tenant = %{
       title: "Web Beispiel Neu"
     }
@@ -168,7 +172,7 @@ defmodule Api.TenantResolverTest do
     }
   }
   """
-  test "update tenant mutation should return error if user is not logged in", %{web_tenant: web_tenant} do
+  test "update tenant mutation should return error if user is not logged in" do
     tenant = %{
       title: "Web Beispiel Neu"
     }

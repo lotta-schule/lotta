@@ -28,7 +28,8 @@ defmodule Api.Accounts do
   def list_users_with_groups(tenant_id) do
     Repo.all from u in User,
       join: g in assoc(u, :groups),
-      where: g.tenant_id == ^tenant_id
+      where: g.tenant_id == ^tenant_id,
+      order_by: [u.name, u.email]
   end
 
   @doc """
@@ -60,13 +61,10 @@ defmodule Api.Accounts do
   def search_user(searchtext, tenant) do
     tenant_id = tenant.id
     matching_searchtext = "%#{searchtext}%"
-    if String.length(searchtext) > 3 do
-      query = Ecto.Query.from u in User,
+      query = Ecto.Query.from(u in User,
         where: u.email == ^searchtext or (u.tenant_id == ^tenant_id and (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext)))
+      )
       {:ok, Repo.all(query)}
-    else
-      {:ok, []}
-    end
   end
 
   @doc """
