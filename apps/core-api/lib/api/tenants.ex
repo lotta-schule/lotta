@@ -9,16 +9,14 @@ defmodule Api.Tenants do
   alias Api.Tenants.{Category,Tenant,Widget}
   alias Api.Accounts.{User,UserGroup}
 
-  def data(ctx) do
-    Dataloader.Ecto.new Api.Repo,
-      query: &query/2,
-      default_params: ctx.context
+  def data() do
+    Dataloader.Ecto.new(Api.Repo, query: &query/2)
   end
   def query(queryable, _params) do
     queryable
   end
 
-  def resolve_widgets(_args, %{ context: %{ context: params }, source: category }) do
+  def resolve_widgets(_args, %{context: context, source: category}) do
     category = category
     |> Repo.preload(:widgets)
     {:ok, category.widgets
@@ -30,8 +28,8 @@ defmodule Api.Tenants do
       case widget.group do
         nil -> true
         group ->
-          if Map.has_key?(params, :current_user) do
-            group.priority <= params.current_user |> User.get_max_priority_for_tenant(params.tenant)
+          if Map.has_key?(context, :current_user) do
+            group.priority <= context.current_user |> User.get_max_priority_for_tenant(context.tenant)
           else
             false
           end

@@ -10,7 +10,7 @@ defmodule Api.CalendarResolver do
             DateTime.utc_now() |> DateTime.add(-60 * 60 * 24, :second),
             DateTime.utc_now() |> Timex.shift(days: 120)
           )
-        }
+       }
       error ->
         error
     end

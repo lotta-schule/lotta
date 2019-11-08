@@ -386,7 +386,7 @@ defmodule Api.Accounts do
   """
   def see_user(%User{} = user) do
     user
-    |> Ecto.Changeset.change(%{ last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second) })
+    |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)})
     |> Api.Repo.update!()
   end
 

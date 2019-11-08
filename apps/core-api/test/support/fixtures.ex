@@ -12,7 +12,7 @@ defmodule Api.Fixtures do
       id: 1,
       slug: "test",
       title: "Test Tenant"
-    }
+   }
   end
   
   def fixture(:tenant) do
@@ -31,7 +31,7 @@ defmodule Api.Fixtures do
       is_homepage: false,
       hide_articles_from_homepage: false,
       tenant_id: fixture(:tenant).id
-    }
+   }
   end
   
   def fixture(:category) do
@@ -49,7 +49,7 @@ defmodule Api.Fixtures do
       name: "Meine Gruppe",
       priority: (if is_admin_group, do: 1000, else: 500),
       is_admin_group: is_admin_group
-    }
+   }
   end
 
   def fixture(:user_group, [is_admin_group: true]) do
@@ -75,7 +75,7 @@ defmodule Api.Fixtures do
       class: "5",
       password: "password",
       tenant_id: fixture(:tenant).id
-    }
+   }
   end
   
   def fixture(:valid_admin_attrs) do
@@ -86,7 +86,7 @@ defmodule Api.Fixtures do
       class: "Wie",
       password: "password",
       tenant_id: fixture(:tenant).id
-    }
+   }
   end
   
   def fixture(:updated_user_attrs) do
@@ -95,7 +95,7 @@ defmodule Api.Fixtures do
       name: "Alberta Smithers",
       nickname: "TheNewNick",
       class: "6"
-    }
+   }
   end
   
   def fixture(:invalid_user_attrs) do
@@ -103,7 +103,7 @@ defmodule Api.Fixtures do
       email: nil,
       name: nil,
       nickname: nil
-    }
+   }
   end
 
   def fixture(:registered_user) do
@@ -132,7 +132,7 @@ defmodule Api.Fixtures do
       mime_type: "some_mime_type",
       path: "some_path",
       remote_location: "some_remote_location"
-    }
+   }
   end
   
   def fixture(:invalid_file_attrs) do
@@ -140,7 +140,7 @@ defmodule Api.Fixtures do
       file_type: nil,
       filename: nil,
       filesize: 0
-    }
+   }
   end
 
   def fixture(:file, user) do
@@ -164,7 +164,7 @@ defmodule Api.Fixtures do
       is_pinned_to_top: false,
       tenant_id: fixture(:tenant).id,
       category: fixture(:category)
-    }
+   }
   end
   
   def fixture(:article, %User{} = user) do

@@ -3,7 +3,7 @@ defmodule Api.ArticleResolver do
   alias Api.Accounts.User
   alias Api.Repo
 
-  def get(%{id: id}, %{context: %{context: %{current_user: current_user}}}) do
+  def get(%{id: id}, %{context: %{current_user: current_user}}) do
     article = Content.get_article!(id) |> Repo.preload(:tenant)
     if User.is_author?(current_user, article) do
       {:ok, article}
@@ -23,23 +23,23 @@ defmodule Api.ArticleResolver do
   end
   def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
 
-  def all(%{category_id: category_id} = args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def all(%{category_id: category_id} = args, %{context: %{current_user: current_user, tenant: tenant}}) do
     {:ok, Content.list_articles(tenant.id, category_id, current_user, args[:filter])}
   end
-  def all(args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def all(args, %{context: %{current_user: current_user, tenant: tenant}}) do
     {:ok, Content.list_articles(tenant.id, nil, current_user, args[:filter])}
   end
-  def all(%{category_id: category_id} = args, %{context: %{context: %{ tenant: tenant }}}) do
+  def all(%{category_id: category_id} = args, %{context: %{tenant: tenant}}) do
     {:ok, Content.list_articles(tenant.id, category_id, nil, args[:filter])}
   end
-  def all(args, %{context: %{context: %{ tenant: tenant }}}) do
+  def all(args, %{context: %{tenant: tenant}}) do
     {:ok, Content.list_articles(tenant.id, nil, nil, args[:filter])}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
   
-  def all_unpublished(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def all_unpublished(_args, %{context: %{current_user: current_user, tenant: tenant}}) do
     if User.is_admin?(current_user, tenant) do
       {:ok, Content.list_unpublished_articles(tenant)}
     else
@@ -50,26 +50,26 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
   
-  def own(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def own(_args, %{context: %{current_user: current_user, tenant: tenant}}) do
       {:ok, Content.list_user_articles(tenant, current_user)}
   end
   def own(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def by_topic(%{topic: topic}, %{context: %{context: %{tenant: tenant}}}) do
+  def by_topic(%{topic: topic}, %{context: %{tenant: tenant}}) do
     {:ok, Content.list_articles_by_topic(tenant.id, topic)}
   end
   def by_topic(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def create(%{article: article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def create(%{article: article_input}, %{context: %{current_user: current_user, tenant: tenant}}) do
     article_input
     |> Content.create_article(tenant, current_user)
   end
 
-  def update(%{id: id, article: article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def update(%{id: id, article: article_input}, %{context: %{current_user: current_user, tenant: tenant}}) do
     article = Content.get_article!(id)
     if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
       article
@@ -79,7 +79,7 @@ defmodule Api.ArticleResolver do
     end
   end
   
-  def delete(%{id: id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def delete(%{id: id}, %{context: %{current_user: current_user, tenant: tenant}}) do
     article = Content.get_article!(id)
     if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
       article
@@ -89,7 +89,7 @@ defmodule Api.ArticleResolver do
     end
   end
 
-  def toggle_pin(%{id: article_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def toggle_pin(%{id: article_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
     if User.is_admin?(current_user, tenant) do
       Content.toggle_article_pin(article_id)
     else

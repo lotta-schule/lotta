@@ -2,14 +2,14 @@ defmodule Api.UserResolver do
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper,User}
 
-  def all_with_groups(_args, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+  def all_with_groups(_args, %{context: %{current_user: current_user, tenant: tenant}}) do
     case User.is_admin?(current_user, tenant) do
       true -> {:ok, Accounts.list_users_with_groups(tenant.id)}
       _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
     end
   end
 
-  def get(%{id: id}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+  def get(%{id: id}, %{context: %{current_user: current_user, tenant: tenant}}) do
     if User.is_admin?(current_user, tenant) do
       case Accounts.get_user!(id) do
         nil -> {:error, "Nutzer mit der id #{id} nicht gefunden."}
@@ -20,14 +20,14 @@ defmodule Api.UserResolver do
     end
   end
   
-  def get_current(_args, %{context: %{context: %{current_user: current_user}}}) do
+  def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
   end
   def get_current(_args, _info) do
     {:ok, nil}
   end
 
-  def assign_user(%{id: id, group_id: group_id}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+  def assign_user(%{id: id, group_id: group_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
     if User.is_admin?(current_user, tenant) do
       group = Accounts.get_user_group!(group_id)
       if group != nil and group.tenant_id == tenant.id do
@@ -43,14 +43,14 @@ defmodule Api.UserResolver do
     end
   end
   
-  def find(%{searchtext: searchtext}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+  def find(%{searchtext: searchtext}, %{context: %{current_user: current_user, tenant: tenant}}) do
     case User.is_admin?(current_user, tenant) do
       true -> Accounts.search_user(searchtext, tenant)
       _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten"}
     end
   end
 
-  def register(%{user: user_params, group_key: group_key}, %{context: %{context: %{tenant: tenant}}}) do
+  def register(%{user: user_params, group_key: group_key}, %{context: %{tenant: tenant}}) do
     with {:ok, user} <- Accounts.register_user(user_params |> Map.put(:tenant_id, tenant.id)),
       {:ok, user} <- (case group_key do
         # TODO: Remove as fast as possible. Is just very shitty workaround
@@ -65,7 +65,7 @@ defmodule Api.UserResolver do
         name: user.name,
         class: user.class,
         # groups: user.groups
-      }) do
+     }) do
         {:ok, %{user: user, token: jwt}}
     end
   end
@@ -78,12 +78,12 @@ defmodule Api.UserResolver do
           name: user.name,
           class: user.class,
           # groups: user.groups
-        }) do
+       }) do
       {:ok, %{user: user, token: jwt}}
     end
   end
 
-  def update_profile(%{user: user_params}, %{context: %{context: %{current_user: current_user}}}) do
+  def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
     current_user
     |> Accounts.update_user(user_params)
   end

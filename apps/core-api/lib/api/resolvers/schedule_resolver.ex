@@ -1,7 +1,7 @@
 defmodule Api.ScheduleResolver do
   alias Api.Tenants
 
-  def get(%{widget_id: widget_id}, %{context: %{context: %{current_user: %{class: class}}}}) do
+  def get(%{widget_id: widget_id}, %{context: %{current_user: %{class: class}}}) do
     widget = Tenants.get_widget!(widget_id)
     base_url = Application.fetch_env!(:api, :schedule_provider_url)
     case widget.configuration do
@@ -21,7 +21,7 @@ defmodule Api.ScheduleResolver do
         {:error, "Die Marginale ist unvollständig konfiguriert"}
     end
   end
-  def get(%{widget_id: _}, %{context: %{context: %{current_user: _}}}) do
+  def get(%{widget_id: _}, %{context: %{current_user: _}}) do
     {:error, "Du hast keine Klasse eingestellt"}
   end
   def get(_args, _info) do

@@ -36,7 +36,7 @@ defmodule Api.Content do
       |> filter_query(filter)
       |> Repo.all
     else
-      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
+      max_priority = User.get_max_priority_for_tenant(user, %Tenant{id: tenant_id})
       Ecto.Query.from(a in Article,
         where: a.tenant_id == ^tenant_id and not is_nil(a.category_id),
         join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
@@ -65,7 +65,7 @@ defmodule Api.Content do
       |> filter_query(filter)
       |> Repo.all
     else
-      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
+      max_priority = User.get_max_priority_for_tenant(user, %Tenant{id: tenant_id})
       Ecto.Query.from(a in Article,
         where: a.tenant_id == ^tenant_id and a.category_id == ^category_id,
         join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
@@ -306,7 +306,7 @@ defmodule Api.Content do
   def toggle_article_pin(article_id) do
     article = Repo.get(Article, article_id)
     article
-    |> Ecto.Changeset.cast(%{ is_pinned_to_top: !article.is_pinned_to_top }, [:is_pinned_to_top])
+    |> Ecto.Changeset.cast(%{is_pinned_to_top: !article.is_pinned_to_top}, [:is_pinned_to_top])
     |> Repo.update()
   end
 

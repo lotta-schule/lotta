@@ -8,51 +8,43 @@ defmodule ApiWeb.Context do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
-    Absinthe.Plug.put_options(conn, context: context)
+    conn
+    |> put_user_context
+    |> put_tenant_context
   end
 
-  defp build_context(conn) do
-    %{context: Map.merge(
-      get_user_context(conn),
-      get_tenant_context(conn)
-    )}
-  end
-
-  defp get_user_context(conn) do
+  defp put_user_context(conn) do
     authorization_header = get_req_header(conn, "authorization")
     with ["Bearer " <> token] <- authorization_header do
       case Guardian.resource_from_token(token) do
         {:ok, current_user, _claims} ->
-          user = %{
-            current_user: Repo.get(Accounts.User, current_user.id)
-            |> Repo.preload([:groups, :avatar_image_file])
-          }
+          current_user = Repo.get(Accounts.User, current_user.id)
+          |> Repo.preload([:groups, :avatar_image_file])
           Task.start_link(fn ->
             current_user
             |> Repo.preload(:tenant)
             |> Accounts.see_user()
           end)
-          user
+          conn
+          |> Absinthe.Plug.put_options(context: %{current_user: current_user})
         {:error, _} ->
-          %{}
+          conn
       end
     else
-      _ -> %{}
+      _ ->
+        conn
     end
   end
 
-  defp get_tenant_context(conn) do
+  defp put_tenant_context(conn) do
     tenant_header = get_req_header(conn, "tenant")
     with ["slug:" <> slug] <- tenant_header do
-      tenant = Tenants.get_tenant_by_slug(slug)
-      if is_nil(tenant) do
-        %{tenant: Tenants.get_tenant_by_slug!("ehrenberg")}
-      else
-        %{tenant: tenant}
+      tenant = case Tenants.get_tenant_by_slug(slug) do
+        nil -> Tenants.get_tenant_by_slug!("ehrenberg")
+        tenant -> tenant
       end
-    else
-      _ -> %{}
+      conn
+      |> Absinthe.Plug.put_options(context: %{tenant: tenant})
     end
   end
 end

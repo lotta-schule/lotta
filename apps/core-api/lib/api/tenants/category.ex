@@ -36,7 +36,7 @@ defmodule Api.Tenants.Category do
     |> put_assoc_widgets(attrs)
   end
 
-  defp put_assoc_banner_image_file(article, %{ banner_image_file: %{ id: banner_image_file_id } }) do
+  defp put_assoc_banner_image_file(article, %{banner_image_file: %{id: banner_image_file_id}}) do
     article
     |> put_assoc(:banner_image_file, Api.Repo.get(Api.Accounts.File, banner_image_file_id))
   end
@@ -45,7 +45,7 @@ defmodule Api.Tenants.Category do
     |> put_assoc(:banner_image_file, nil)
   end
   
-  defp put_assoc_group(article, %{ group: %{ id: group_id } }) do
+  defp put_assoc_group(article, %{group: %{id: group_id}}) do
     article
     |> put_assoc(:group, Api.Repo.get(Api.Accounts.UserGroup, group_id))
   end
@@ -54,7 +54,7 @@ defmodule Api.Tenants.Category do
     |> put_assoc(:group, nil)
   end
 
-  defp put_assoc_widgets(category, %{ widgets: widgets }) do
+  defp put_assoc_widgets(category, %{widgets: widgets}) do
     widgets = Repo.all(from w in Widget,
       where: w.id in ^(Enum.map(widgets, fn widget -> widget.id end))
     )

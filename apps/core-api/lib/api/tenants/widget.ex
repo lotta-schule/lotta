@@ -36,7 +36,7 @@ defmodule Api.Tenants.Widget do
     |> put_assoc_group(attrs)
   end
 
-  defp put_assoc_icon_image_file(widget, %{ icon_image_file: %{ id: icon_image_file_id } }) do
+  defp put_assoc_icon_image_file(widget, %{icon_image_file: %{id: icon_image_file_id}}) do
     widget
     |> put_assoc(:icon_image_file, Api.Repo.get(Api.Accounts.File, icon_image_file_id))
   end
@@ -45,7 +45,7 @@ defmodule Api.Tenants.Widget do
     |> put_assoc(:icon_image_file, nil)
   end
 
-  defp put_assoc_group(article, %{ group: %{ id: group_id } }) do
+  defp put_assoc_group(article, %{group: %{id: group_id}}) do
     article
     |> put_assoc(:group, Api.Repo.get(Api.Accounts.UserGroup, group_id))
   end

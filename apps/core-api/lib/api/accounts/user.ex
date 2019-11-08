@@ -110,7 +110,7 @@ defmodule Api.Accounts.User do
     end
   end
 
-  defp put_assoc_avatar_image_file(article, %{ avatar_image_file: %{ id: avatar_image_file_id } }) do
+  defp put_assoc_avatar_image_file(article, %{avatar_image_file: %{id: avatar_image_file_id}}) do
     article
     |> put_assoc(:avatar_image_file, Api.Repo.get(Api.Accounts.File, avatar_image_file_id))
   end
