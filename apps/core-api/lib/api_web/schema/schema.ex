@@ -1,11 +1,15 @@
 defmodule ApiWeb.Schema do
   use Absinthe.Schema
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   import_types Absinthe.Plug.Types
-  import_types ApiWeb.Schema.Types
+  import_types ApiWeb.Schema.Types.JSON
+  import_types ApiWeb.Schema.Types.LottaId
+  import_types Absinthe.Type.Custom
   import_types __MODULE__.TenantsTypes
   import_types __MODULE__.AccountsTypes
   import_types __MODULE__.ContentsTypes
   import_types __MODULE__.ScheduleTypes
+  import_types __MODULE__.CalendarTypes
 
   query do
 
@@ -13,11 +17,7 @@ defmodule ApiWeb.Schema do
     import_fields :tenants_queries
     import_fields :contents_queries
     import_fields :schedule_queries
-
-    field :calendar, list_of(:calendar_event) do
-      arg :url, :string
-      resolve &Api.CalendarResolver.get/2
-    end
+    import_fields :calendar_queries
   end
 
   mutation do

@@ -70,4 +70,79 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :icon_image_file, :file
     field :configuration, :json
   end
+
+  object :tenant do
+    field :id, :lotta_id
+    field :title, :string
+    field :slug, :string
+    field :custom_theme, :json
+    field :logo_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+  end
+
+  object :category do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :title, :string
+    field :is_sidenav, :boolean
+    field :is_homepage, :boolean
+    field :redirect, :string
+    field :hide_articles_from_homepage, :boolean
+    field :sort_key, :integer
+    field :banner_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+    field :widgets, list_of(:widget), resolve: &Api.Tenants.resolve_widgets/2
+  end
+
+  object :widget do
+    field :id, :lotta_id
+    field :title, :string
+    field :type, :widget_type
+    field :configuration, :json
+    field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  enum :widget_type do
+    value :calendar, as: "calendar"
+    value :vplan, as: "vplan"
+    value :schedule, as: "schedule"
+    value :tagcloud, as: "tagcloud"
+  end
+
+  object :file do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :filename, :string
+    field :filesize, :integer
+    field :mime_type, :string
+    field :path, :string
+    field :remote_location, :string
+    field :file_type, :file_type
+    field :user_id, :lotta_id
+    field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+  end
+
+  object :file_conversion do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :format, :string
+    field :mime_type, :string
+    field :remote_location, :string
+  end
+
+  enum :file_type do
+    value :image, as: "image"
+    value :audio, as: "audio"
+    value :video, as: "video"
+    value :pdf, as: "pdf"
+    value :misc, as: "misc"
+  end
 end

@@ -86,5 +86,34 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :nickname, :string
     field :avatar_image_file, :file
   end
+
+  object :authresult do
+    field :user, :user
+    field :token, :string
+  end
+
+  object :user do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :last_seen, :naive_datetime
+    field :name, :string
+    field :class, :string
+    field :nickname, :string
+    field :email, :string
+    field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+    field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+  end
+
+  object :user_group do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :name, :string
+    field :priority, :integer
+    field :is_admin_group, :boolean
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
   
 end

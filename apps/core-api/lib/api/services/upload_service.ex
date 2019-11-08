@@ -11,7 +11,7 @@ defmodule Api.UploadService do
 
   def delete_from_space(file_name) do
     bucket_name = System.get_env("UGC_S3_COMPAT_BUCKET")
-    res = ExAws.S3.delete_object(bucket_name, file_name)
+    ExAws.S3.delete_object(bucket_name, file_name)
     |> ExAws.request!
   end
 end
