@@ -38,25 +38,25 @@ defmodule Api.Repo.Seeder do
     Api.Accounts.assign_user_to_group(eike, lehrer_group)
   
     Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Start", is_homepage: true})
-    {:ok, profil} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Profil"})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "GTA"})
-    {:ok, projekt} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Projekt"})
-    {:ok, faecher} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Fächer"})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Material"})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Galerien"})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Impressum", is_sidenav: true})
+    {:ok, profil} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Profil", group_id: verwaltung_group.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 20, title: "GTA", group_id: schueler_group.id})
+    {:ok, projekt} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 30, title: "Projekt"})
+    {:ok, faecher} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 40, title: "Fächer", group_id: schueler_group.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 50, title: "Material", group_id: lehrer_group.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 60, title: "Galerien"})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 70, title: "Impressum", is_sidenav: true})
   
     # Fächer
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Sport", category_id: faecher.id})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Kunst", category_id: faecher.id})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Sprache", category_id: faecher.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Sport", category_id: faecher.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 20, title: "Kunst", category_id: faecher.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 30, title: "Sprache", category_id: faecher.id, group_id: lehrer_group.id})
   
     # Profil
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Podcast", category_id: profil.id})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Offene Kunst-AG", category_id: profil.id})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Schülerzeitung", category_id: profil.id})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Oskar-Reime-Chor", category_id: profil.id})
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Schüler-Radio", category_id: profil.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Podcast", category_id: profil.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 20, title: "Offene Kunst-AG", category_id: profil.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 30, title: "Schülerzeitung", category_id: profil.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 40, title: "Oskar-Reime-Chor", category_id: profil.id})
+    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 50, title: "Schüler-Radio", category_id: profil.id})
   
     # Kalender-Widget
     Api.Repo.insert(%Api.Tenants.Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})

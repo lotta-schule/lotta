@@ -94,7 +94,6 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :banner_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
     field :widgets, list_of(:widget), resolve: &Api.Tenants.resolve_widgets/2
   end
 

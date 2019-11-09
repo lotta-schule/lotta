@@ -128,7 +128,6 @@ defmodule Api.TenantResolverTest do
     }
   end
 
-
   @query """
   mutation ($tenant: TenantInput!) {
     updateTenant(tenant: $tenant) {
@@ -161,7 +160,6 @@ defmodule Api.TenantResolverTest do
       ]
     }
   end
-
 
   @query """
   mutation ($tenant: TenantInput!) {

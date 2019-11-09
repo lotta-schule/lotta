@@ -177,16 +177,22 @@ defmodule Api.Tenants do
   """
   def list_categories_by_tenant(tenant, user) do
     tenant_id = tenant.id
-    if is_nil(user) do
-      Repo.all(Ecto.Query.from c in Category, where: c.tenant_id == ^tenant_id and is_nil(c.group_id))
-    else
-      max_priority = user |> User.get_max_priority_for_tenant(tenant)
-      Ecto.Query.from(c in Category,
-        where: c.tenant_id == ^tenant_id,
-        join: ug in UserGroup, where: (not is_nil(c.group_id) and ug.priority <= ^max_priority and ug.id == c.group_id) or is_nil(c.group_id),
-        distinct: true)
+    case user do
+      nil ->
+        Ecto.Query.from(c in Category,
+          where: c.tenant_id == ^tenant_id and is_nil(c.group_id),
+          order_by: [desc: c.is_homepage, asc: c.sort_key]
+        )
+      user ->
+        max_priority = user
+        |> User.get_max_priority_for_tenant(tenant)
+        Ecto.Query.from(c in Category,
+          where: c.tenant_id == ^tenant_id,
+          join: ug in UserGroup, where: (not is_nil(c.group_id) and ug.priority <= ^max_priority and ug.id == c.group_id) or is_nil(c.group_id),
+          order_by: [desc: c.is_homepage, asc: c.sort_key],
+          distinct: true)
+      end
       |> Repo.all
-    end
   end
 
   @doc """

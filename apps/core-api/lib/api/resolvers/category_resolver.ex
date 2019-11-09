@@ -11,14 +11,31 @@ defmodule Api.CategoryResolver do
     {:error, "Tenant nicht gefunden"}
   end
 
-  def update(%{id: id, category: category_params}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    if User.is_admin?(current_user, tenant) do
-      case Api.Tenants.get_category!(id) do
-        nil -> {:error, "Kategorie mit der id #{id} nicht gefunden."}
-        category -> Api.Tenants.update_category(category, category_params)
+  def update(%{id: id, category: category_params}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      try do
+        category = Api.Tenants.get_category!(id)
+        case Api.Tenants.update_category(category, category_params) do
+          {:error, changeset} ->
+            {
+              :error,
+              message: "Registrierung fehlgeschlagen.",
+              details: error_details(changeset)
+            }
+          success ->
+            success
+        end
+      rescue
+        Ecto.NoResultsError ->
+          {:error, "Kategorie mit der id #{id} nicht gefunden."}
       end
     else
-      {:error, "Nur Administrator dürfen Kategorien bearbeiten"}
+      {:error, "Nur Administrator dürfen Kategorien bearbeiten."}
     end
+  end
+
+  defp error_details(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> Ecto.Changeset.traverse_errors(fn {msg, _} -> msg end)
   end
 end
