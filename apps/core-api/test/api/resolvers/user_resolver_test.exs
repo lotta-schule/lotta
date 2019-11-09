@@ -415,4 +415,266 @@ defmodule Api.UserResolverTest do
     }
   end
 
+
+  @query """
+  mutation register($user: RegisterUserParams!, $groupKey: String) {
+    register(user: $user, groupKey: $groupKey) {
+      user {
+        email
+        name
+        tenant {
+            slug
+        }
+        groups {
+            name
+        }
+      }
+    }
+  }
+  """
+  test "register field register the user if data is entered correctly" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123" }})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "register" => %{
+          "user" => %{
+            "name" => "Neuer Nutzer",
+            "email" => "neuernutzer@example.com",
+            "tenant" => %{
+                "slug" => "web"
+            },
+            "groups" => []
+          }
+        },
+      }
+    }
+  end
+
+  @query """
+  mutation register($user: RegisterUserParams!, $groupKey: String) {
+    register(user: $user, groupKey: $groupKey) {
+      user {
+        email
+        name
+        tenant {
+            slug
+        }
+        groups {
+            name
+        }
+      }
+    }
+  }
+  """
+  test "register field register the user and put him into groupkey's group" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123" }, groupKey: "LEb0815Hp!1969"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "register" => %{
+          "user" => %{
+            "name" => "Neuer Nutzer",
+            "email" => "neuernutzer@example.com",
+            "tenant" => %{
+                "slug" => "web"
+            },
+            "groups" => [%{
+                "name" => "Lehrer"
+            }]
+          }
+        },
+      }
+    }
+  end
+
+  @query """
+  mutation register($user: RegisterUserParams!, $groupKey: String) {
+    register(user: $user, groupKey: $groupKey) {
+      user {
+        email
+        name
+        tenant {
+            slug
+        }
+        groups {
+            name
+        }
+      }
+    }
+  }
+  """
+  test "register field returns error when email is already taken" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "alexis.rinaldoni@einsa.net", password: "test123" }, groupKey: "LEb0815Hp!1969"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "register" => nil,
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Registrierung fehlgeschlagen.",
+          "details" => %{"email" => ["has already been taken"]},
+          "path" => ["register"]
+        }
+      ]
+    }
+  end
+  
+  @query """
+  mutation register($user: RegisterUserParams!, $groupKey: String) {
+    register(user: $user, groupKey: $groupKey) {
+      user {
+        email
+        name
+        tenant {
+            slug
+        }
+        groups {
+            name
+        }
+      }
+    }
+  }
+  """
+  test "register field returns error when no password is given" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "alexis.rinaldoni@einsa.net", password: "" }, groupKey: "LEb0815Hp!1969"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "register" => nil,
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Registrierung fehlgeschlagen.",
+          "details" => %{"password" => ["can't be blank"]},
+          "path" => ["register"]
+        }
+      ]
+    }
+  end
+  
+  @query """
+  mutation register($user: RegisterUserParams!, $groupKey: String) {
+    register(user: $user, groupKey: $groupKey) {
+      user {
+        email
+        name
+        tenant {
+            slug
+        }
+        groups {
+            name
+        }
+      }
+    }
+  }
+  """
+  test "register field returns error when no name is given" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{user: %{ name: "", email: "alexis.rinaldoni@einsa.net", password: "test123" }, groupKey: "LEb0815Hp!1969"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "register" => nil,
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Registrierung fehlgeschlagen.",
+          "details" => %{"name" => ["can't be blank"]},
+          "path" => ["register"]
+        }
+      ]
+    }
+  end
+
+
+  @query """
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      user {
+        email
+        name
+        groups {
+            name
+        }
+      }
+    }
+  }
+  """
+  test "login field returns the user if data is entered correctly" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{username: "alexis.rinaldoni@einsa.net", password: "test123"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "login" => %{
+          "user" => %{
+            "name" => "Alexis Rinaldoni",
+            "email" => "alexis.rinaldoni@einsa.net",
+            "groups" => [%{ "name" => "Administration" }]
+          }
+        },
+      }
+    }
+  end
+  
+  test "login field returns an error if the username is non-existent" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "test123"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "login" => nil
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Falsche Zugangsdaten.",
+          "path" => ["login"]
+        }
+      ]
+    }
+  end
+  
+  test "login field returns an error if the password is wrong" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{username: "alexis.rinaldoni@einsa.net", password: "abcdef999"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "login" => nil
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Falsche Zugangsdaten.",
+          "path" => ["login"]
+        }
+      ]
+    }
+  end
 end

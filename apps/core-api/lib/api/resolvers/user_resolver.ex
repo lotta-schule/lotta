@@ -40,39 +40,35 @@ defmodule Api.UserResolver do
     end
   end
 
-  def assign_user(%{id: id, group_id: group_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    if User.is_admin?(current_user, tenant) do
-      group = Accounts.get_user_group!(group_id)
-      if group != nil and group.tenant_id == tenant.id do
-        case Accounts.get_user!(id) do
-          nil -> {:error, "Nutzer mit der id #{id} nicht gefunden."}
-          user -> Accounts.assign_user_to_group(user, group)
+  def register(%{user: user_params} = args, %{context: %{tenant: tenant}}) do
+    user_params = user_params
+    |> Map.put(:tenant_id, tenant.id)
+    case Accounts.register_user(user_params) do
+      {:ok, user} ->
+        {:ok, user} = case args[:group_key] do
+          # TODO: Remove as fast as possible. Is just very shitty workaround
+          "LEb0815Hp!1969" ->
+            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Lehrer"))
+          "ELa1789Re!1848" ->
+            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Eltern"))
+          "Seb034hP2?019" ->
+            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Schüler"))
+          _ ->
+            {:ok, user}
         end
-      else
-        {:error, "Gruppe mit der id #{group_id} nicht gefunden."}
-      end
-    else
-      {:error, "Nur Administrator dürfen Benutzer Gruppen zuweisen"}
-    end
-  end
-
-  def register(%{user: user_params, group_key: group_key}, %{context: %{tenant: tenant}}) do
-    with {:ok, user} <- Accounts.register_user(user_params |> Map.put(:tenant_id, tenant.id)),
-      {:ok, user} <- (case group_key do
-        # TODO: Remove as fast as possible. Is just very shitty workaround
-        "LEb0815Hp!1969" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Lehrer"))
-        "ELa1789Re!1848" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Eltern"))
-        "Seb034hP2?019" -> Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Schüler"))
-        _ -> {:ok, user}
-      end),
-      {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{
-        email: user.email,
-        nickname: user.nickname,
-        name: user.name,
-        class: user.class,
-        # groups: user.groups
-     }) do
+        {:ok, jwt, _} = Api.Guardian.encode_and_sign(user, %{
+          email: user.email,
+          nickname: user.nickname,
+          name: user.name,
+          class: user.class,
+        })
         {:ok, %{user: user, token: jwt}}
+      {:error, changeset} ->
+        {
+          :error,
+          message: "Registrierung fehlgeschlagen.",
+          details: error_details(changeset)
+        }
     end
   end
   
@@ -89,8 +85,29 @@ defmodule Api.UserResolver do
     end
   end
 
+  def assign_user(%{id: id, group_id: group_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
+    if User.is_admin?(current_user, tenant) do
+      group = Accounts.get_user_group!(group_id)
+      if group != nil and group.tenant_id == tenant.id do
+        case Accounts.get_user!(id) do
+          nil -> {:error, "Nutzer mit der id #{id} nicht gefunden."}
+          user -> Accounts.assign_user_to_group(user, group)
+        end
+      else
+        {:error, "Gruppe mit der id #{group_id} nicht gefunden."}
+      end
+    else
+      {:error, "Nur Administrator dürfen Benutzer Gruppen zuweisen"}
+    end
+  end
+
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
     current_user
     |> Accounts.update_user(user_params)
+  end
+
+  defp error_details(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> Ecto.Changeset.traverse_errors(fn {msg, _} -> msg end)
   end
 end
