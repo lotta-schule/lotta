@@ -35,9 +35,9 @@ const useStyles = makeStyles(theme => ({
         marginTop: theme.spacing(1),
     },
     deleteButton: {
-        color: '#fff',
-        borderColor: 'red',
-        backgroundColor: 'red',
+        color: theme.palette.error.contrastText,
+        borderColor: theme.palette.error.main,
+        backgroundColor: theme.palette.error.main,
         marginTop: theme.spacing(2)
     },
     leftIcon: {

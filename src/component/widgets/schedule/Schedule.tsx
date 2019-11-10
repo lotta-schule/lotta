@@ -9,6 +9,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
 import clsx from 'clsx';
+import { darken } from '@material-ui/core/styles';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
@@ -34,7 +35,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     updated: {
-        color: '#dd3333',
+        color: darken(theme.palette.error.main, .3),
         fontWeight: 'bolder'
     }
 }));

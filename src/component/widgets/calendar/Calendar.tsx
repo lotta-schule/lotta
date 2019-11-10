@@ -7,6 +7,7 @@ import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { WidgetModel, CalendarWidgetConfig, CalendarWidgetCalendarConfig } from 'model';
 import { FiberManualRecord } from '@material-ui/icons';
+import { lighten } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -35,13 +36,13 @@ const useStyles = makeStyles(theme => ({
     },
     tableline: {
         '&:hover': {
-            backgroundColor: '#f0f0f0',
+            backgroundColor: lighten(theme.palette.text.secondary, .8),
         }
     },
     figcaption: {
         textAlign: 'center',
         width: '100%',
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
         '& > span': {
             padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
         }

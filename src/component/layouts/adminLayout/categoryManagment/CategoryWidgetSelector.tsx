@@ -18,7 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             margin: 'auto',
-            border: '1px solid #333'
+            border: '1px solid',
+            borderColor: theme.palette.grey[700]
         },
         cardHeader: {
             padding: theme.spacing(1, 2),

@@ -9,6 +9,7 @@ import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { useCategories } from 'util/categories/useCategories';
+import { fade } from '@material-ui/core/styles';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -21,31 +22,28 @@ const useStyles = makeStyles<Theme>(theme => ({
 
         }
     },
-    appBar: {
-        backgroundColor: '#333',
-    },
     padding: {
         [theme.breakpoints.down('sm')]: {
             paddingRight: '3em'
         },
     },
     secondaryAppBar: {
-        backgroundColor: '#fffffff0',
+        backgroundColor: fade(theme.palette.background.paper, 0.9),
         maxHeight: 40,
         borderTop: `1.5px solid ${theme.palette.secondary.main}`,
-        boxShadow: '0px 2px 2px #0000002b',
+        boxShadow: `0px 2px 2px ${fade(theme.palette.text.primary, .2)}`,
     },
     navButton: {
         flexGrow: 1,
         flexShrink: 0,
         color: theme.palette.primary.contrastText,
-        border: '1px solid #333',
+        border: `1px solid transparent`,
         '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backgroundColor: fade(theme.palette.background.paper, .08),
         },
         '&.selected': {
             border: `1px solid ${theme.palette.secondary.main}`,
-            color: '#fff'
+            color: theme.palette.secondary.contrastText
         }
     },
     navButtonSecond: {
@@ -70,6 +68,9 @@ const useStyles = makeStyles<Theme>(theme => ({
             display: 'flex',
             width: '3em'
         },
+    },
+    iconButton: {
+        color: theme.palette.primary.contrastText
     },
     placeholder: {
         display: 'none',
@@ -140,7 +141,7 @@ export const Navbar = memo(() => {
                     </AppBar>
                 </Grid>
                 <Grid item xs={2} sm={1} className={styles.mobileBurgerMenuButton}>
-                    <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
+                    <IconButton className={styles.iconButton} size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
                         <Menu className={classNames(styles.menu)} />
                     </IconButton>
                 </Grid>

@@ -13,13 +13,6 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: theme.spacing(1),
         paddingRight: theme.spacing(1)
     },
-    colorPreview: {
-        height: '2em',
-        width: '2em',
-        marginRight: theme.spacing(2),
-        border: '1px solid',
-        borderColor: '#e0e0e0',
-    },
     description: {
         display: 'flex',
         flexDirection: 'column',
@@ -38,10 +31,6 @@ export const ColorSettingRow = memo<ColorSettingRowProps>(({ label, hint, value,
 
     return (
         <Grid container alignItems={'center'} className={styles.root}>
-            {/* <Grid item>
-                <div className={styles.colorPreview} style={{ backgroundColor: value }} />
-            </Grid> */}
-
             <Grid item sm={8} className={styles.description}>
                 <Typography component={'p'} variant={'subtitle1'}>{label}</Typography>
                 {hint && (<Typography component={'p'} variant={'subtitle2'}>{hint}</Typography>)}

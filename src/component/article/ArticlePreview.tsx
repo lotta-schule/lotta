@@ -12,12 +12,13 @@ import { User } from 'util/model';
 import { useMutation } from 'react-apollo';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { ID } from 'model/ID';
+import { fade } from '@material-ui/core/styles';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
         padding: '0.5em',
-        borderRadius: 4,
-        boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : '1px 1px 2px #0000003b',
+        borderRadius: theme.shape.borderRadius,
+        boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
         '&:hover': {
             '& .edit-button': {
                 border: 0,
@@ -29,16 +30,16 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     },
     editButton: {
         float: 'right',
-        color: '#ccc',
+        color: theme.palette.grey[400],
         background: 'transparent',
         transition: 'opacity ease-in 250ms',
     },
     pinButton: {
         float: 'right',
-        color: theme.palette.primary.contrastText,
+        color: theme.palette.grey[400],
         marginRight: '1em',
         '&.active': {
-            color: '#333'
+            color: theme.palette.grey[700]
         }
     },
     articlePreviewImage: {

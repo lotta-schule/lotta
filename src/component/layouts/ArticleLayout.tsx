@@ -20,7 +20,7 @@ const useStyle = makeStyles((theme: Theme) => ({
         fontSize: '1.5rem',
         letterSpacing: '0.3em',
         color: theme.palette.primary.dark,
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
         textTransform: 'uppercase',
     }
 }));

@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { merge } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { AdminLayout } from './layouts/AdminLayout';
@@ -15,6 +16,7 @@ import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-apollo';
+import { theme } from 'theme';
 
 export const App = memo(() => {
   const { data, loading: isLoading, error, called } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
@@ -46,7 +48,12 @@ export const App = memo(() => {
   const { tenant } = data!;
 
   return (
-    <ThemeProvider theme={theme => createMuiTheme({ ...theme, ...tenant.customTheme })}>
+    <ThemeProvider theme={() => {
+      if (tenant.customTheme) {
+        return createMuiTheme(merge({}, theme, tenant.customTheme));
+      }
+      return theme;
+    }}>
       <BrowserRouter>
         <Helmet>
           <title>{tenant.title}</title>

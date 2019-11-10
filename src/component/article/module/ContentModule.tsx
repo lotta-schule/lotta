@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         dragbar: {
             height: '2em',
-            backgroundColor: '#efefef',
+            backgroundColor: theme.palette.grey[200],
             display: 'flex',
             justifyContent: 'space-between',
             '& > span': {
@@ -35,8 +35,13 @@ const useStyles = makeStyles((theme: Theme) =>
             height: 32,
             width: 32
         },
+        dragHandle: {
+            marginTop: '0.15em',
+            marginLeft: '0.5em',
+            color: theme.palette.grey[700]
+        },
         buttonIcon: {
-            color: '#888'
+            color: theme.palette.grey[700]
         },
         activeButtonIcon: {
             color: theme.palette.primary.main
@@ -47,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
             left: 0,
             width: '100%',
             zIndex: 1,
-            backgroundColor: theme.palette.primary.contrastText
+            backgroundColor: theme.palette.background.paper
         }
     }),
 );
@@ -83,7 +88,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
             {isEditModeEnabled && (
                 <div {...(draggableProvided ? draggableProvided.dragHandleProps : undefined)} className={styles.dragbar}>
                     <span>
-                        <DragHandle style={{ marginTop: '0.15em', marginLeft: '0.5em', color: '#888' }} />
+                        <DragHandle className={styles.dragHandle} />
                         {includes(configurableContentModuleTypes, contentModule.type) && (
                             <IconButton
                                 classes={{ root: styles.dragbarButton }}
