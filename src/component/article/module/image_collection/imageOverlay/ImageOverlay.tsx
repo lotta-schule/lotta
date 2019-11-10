@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, MouseEvent, useEffect, KeyboardEventHandler, KeyboardEvent, useCallback } from 'react';
 import { FileModel } from 'model';
 import { makeStyles } from '@material-ui/styles';
-import { Theme, IconButton } from '@material-ui/core';
+import { Theme, IconButton, Typography } from '@material-ui/core';
 import { useWindowSize } from 'util/useWindowSize';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
 import { Close, ChevronLeft, ChevronRight } from '@material-ui/icons';
@@ -34,17 +34,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     rightButton: {
         position: 'absolute',
         right: theme.spacing(1),
+    },
+    subtitles: {
+        position: 'absolute',
+        bottom: '5%',
+        textAlign: 'center',
     }
 }));
 
 export interface ImageOverlayProps {
     selectedFile: FileModel | null;
+    caption?: string;
     onPrevious?(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
     onNext?(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
     onClose(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
 }
 
-export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ selectedFile, onPrevious, onNext, onClose }) => {
+export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ selectedFile, caption, onPrevious, onNext, onClose }) => {
     useLockBodyScroll();
     const styles = useStyles();
     const { innerHeight, innerWidth } = useWindowSize();
@@ -88,6 +94,11 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ select
                 </IconButton>
             )}
             <img src={imgUrl} alt={''} />
+            {caption && (
+                <Typography className={styles.subtitles}>
+                    {caption}
+                </Typography>
+            )}
         </div>
     );
 });
