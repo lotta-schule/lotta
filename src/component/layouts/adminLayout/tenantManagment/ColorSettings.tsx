@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { get, merge } from 'lodash';
-import { Button, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
+import { Button, CardMedia, CardContent, Checkbox, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
 import { ColorSettingRow } from './ColorSettingRow';
 import { useTenant } from 'util/client/useTenant';
 import { useMutation } from 'react-apollo';
@@ -33,6 +33,37 @@ export const ColorSettings = memo(() => {
             <Typography variant="h5" className={styles.heading}>
                 Darstellung
             </Typography>
+
+            <Typography variant={'h6'}>
+                Schema
+            </Typography>
+            <Grid container style={{ display: 'flex' }}>
+                <Grid item sm={3}>
+                    <CardMedia
+                        style={{ height: 150, margin: '0.5em', }}
+                        image="https://placeimg.com/200/150/any"
+                    />
+                    <CardContent style={{ display: 'flex', paddingTop: 0, }}>
+                        <Button>wählen</Button>
+                        <Typography style={{ margin: 'auto 0' }}>
+                            Standard
+                        </Typography>
+                    </CardContent>
+                </Grid>
+                <Grid item sm={3}>
+                    <CardMedia
+                        style={{ height: 150, margin: '0.5em', }}
+                        image="https://placeimg.com/200/150/any"
+                    />
+                    <CardContent style={{ display: 'flex', paddingTop: 0, }}>
+                        <Button>wählen</Button>
+                        <Typography style={{ margin: 'auto 0' }}>
+                            Königsblau
+                        </Typography>
+                    </CardContent>
+                </Grid>
+            </Grid>
+
 
             {error && (
                 <div style={{ color: 'red' }}>{error.message}</div>
