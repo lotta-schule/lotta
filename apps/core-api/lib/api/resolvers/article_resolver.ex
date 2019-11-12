@@ -70,14 +70,19 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def create(%{article: article_input}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    article_input
-    |> Content.create_article(tenant, current_user)
+  def create(%{article: article_input}, %{context: %{tenant: tenant} = context}) do
+    case context[:current_user] do
+      nil ->
+        {:error, "Nur angemeldete Nutzer können Beiträge erstellen."}
+      user ->
+        article_input
+        |> Content.create_article(tenant, user)
+    end
   end
 
-  def update(%{id: id, article: article_input}, %{context: %{current_user: current_user, tenant: tenant}}) do
+  def update(%{id: id, article: article_input}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
+    if context[:current_user] && (User.is_admin?(context[:current_user], tenant) || User.is_author?(context[:current_user], article)) do
       article
       |> Content.update_article(article_input)
     else
@@ -85,9 +90,9 @@ defmodule Api.ArticleResolver do
     end
   end
   
-  def delete(%{id: id}, %{context: %{current_user: current_user, tenant: tenant}}) do
+  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
+    if context[:current_user] && (User.is_admin?(context[:current_user], tenant) || User.is_author?(context[:current_user], article)) do
       article
       |> Content.delete_article()
     else
@@ -95,8 +100,8 @@ defmodule Api.ArticleResolver do
     end
   end
 
-  def toggle_pin(%{id: article_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    if User.is_admin?(current_user, tenant) do
+  def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context[:current_user], tenant) do
       Content.toggle_article_pin(article_id)
     else
       {:error, "Nur Administratoren dürfen Beiträge anpinnen."}

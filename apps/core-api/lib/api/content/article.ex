@@ -47,36 +47,28 @@ defmodule Api.Content.Article do
   end
 
 
-  defp put_assoc_users(article, %{users: users}) do
+  defp put_assoc_users(changeset, %{users: users}) do
     users = Enum.map(users, fn user -> Api.Repo.get!(Api.Accounts.User, user.id) end)
-    article
+    changeset
     |> put_assoc(:users, users)
   end
+  defp put_assoc_users(changeset, _), do: changeset
 
-  defp put_assoc_category(article, %{category: %{id: category_id}}) do
-    article
+  defp put_assoc_category(changeset, %{category: %{id: category_id}}) do
+    changeset
     |> put_assoc(:category, Api.Repo.get(Api.Tenants.Category, category_id))
   end
-  defp put_assoc_category(article, _args) do
-    article
-    |> put_assoc(:category, nil)
-  end
+  defp put_assoc_category(changeset, _), do: changeset
 
-  defp put_assoc_preview_image_file(article, %{preview_image_file: %{id: preview_image_file_id}}) do
-    article
+  defp put_assoc_preview_image_file(changeset, %{preview_image_file: %{id: preview_image_file_id}}) do
+    changeset
     |> put_assoc(:preview_image_file, Api.Repo.get(Api.Accounts.File, preview_image_file_id))
   end
-  defp put_assoc_preview_image_file(article, _args) do
-    article
-    |> put_assoc(:preview_image_file, nil)
-  end
+  defp put_assoc_preview_image_file(changeset, _), do: changeset
   
-  defp put_assoc_group(article, %{group: %{id: group_id}}) do
-    article
+  defp put_assoc_group(changeset, %{group: %{id: group_id}}) do
+    changeset
     |> put_assoc(:group, Api.Repo.get(Api.Accounts.UserGroup, group_id))
   end
-  defp put_assoc_group(article, _args) do
-    article
-    |> put_assoc(:group, nil)
-  end
+  defp put_assoc_group(changeset, _), do: changeset
 end
