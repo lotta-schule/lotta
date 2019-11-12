@@ -17,8 +17,10 @@ defmodule Api.ArticleResolver do
   def get(%{id: id}, _info) do
     article = Content.get_article!(id) |> Repo.preload(:group)
     case is_nil(article.group) do
-      true -> {:ok, article}
-      _ -> {:error, "Du hast keine Rechte diesen Beitrag anzusehen"}
+      true ->
+        {:ok, article}
+      _ ->
+        {:error, "Du hast keine Rechte diesen Beitrag anzusehen."}
     end
   end
   def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
@@ -39,11 +41,12 @@ defmodule Api.ArticleResolver do
     {:error, "Tenant nicht gefunden."}
   end
   
-  def all_unpublished(_args, %{context: %{current_user: current_user, tenant: tenant}}) do
-    if User.is_admin?(current_user, tenant) do
-      {:ok, Content.list_unpublished_articles(tenant)}
-    else
-      {:error, "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen"}
+  def all_unpublished(_args, %{context: %{tenant: tenant} = context}) do
+    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      true ->
+        {:ok, Content.list_unpublished_articles(tenant)}
+      _ ->
+        {:error, "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen."}
     end
   end
   def all_unpublished(_args, _info) do
@@ -53,12 +56,15 @@ defmodule Api.ArticleResolver do
   def own(_args, %{context: %{current_user: current_user, tenant: tenant}}) do
       {:ok, Content.list_user_articles(tenant, current_user)}
   end
+  def own(_args, %{context: %{tenant: _tenant}}) do
+    {:error, "Nur angemeldete Nutzer können eigene Beiträge abrufen."}
+  end
   def own(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def by_topic(%{topic: topic}, %{context: %{tenant: tenant}}) do
-    {:ok, Content.list_articles_by_topic(tenant.id, topic)}
+  def by_topic(%{topic: topic}, %{context: %{tenant: tenant} = context}) do
+    {:ok, Content.list_articles_by_topic(tenant.id, context[:current_user], topic)}
   end
   def by_topic(_args, _info) do
     {:error, "Tenant nicht gefunden."}

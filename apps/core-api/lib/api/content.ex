@@ -69,7 +69,8 @@ defmodule Api.Content do
       Ecto.Query.from(a in Article,
         where: a.tenant_id == ^tenant_id and a.category_id == ^category_id,
         join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
-        distinct: true)
+        distinct: true
+      )
       |> filter_query(filter)
       |> Repo.all
     end
@@ -85,8 +86,22 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles_by_topic(tenant_id, topic) do
-    Ecto.Query.from(a in Article, where: a.tenant_id == ^tenant_id and a.topic == ^topic)
+  def list_articles_by_topic(tenant_id, user, topic) do
+    case user do
+      nil ->
+        Ecto.Query.from(a in Article,
+          where: a.tenant_id == ^tenant_id and a.topic == ^topic and is_nil(a.group_id)
+        )
+      user ->
+        max_priority = User.get_max_priority_for_tenant(user, %Tenant{id: tenant_id})
+        Ecto.Query.from(
+          a in Article,
+          where: a.tenant_id == ^tenant_id and a.topic == ^topic,
+          join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
+          order_by: [desc: :updated_at],
+          distinct: true
+        )
+    end
     |> Repo.all
   end
   
@@ -118,7 +133,8 @@ defmodule Api.Content do
     user_id = user.id
     Repo.all(Ecto.Query.from a in Article,
       where: a.tenant_id == ^tenant_id,
-      join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id
+      join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id,
+      order_by: :id
     )
   end
 
@@ -311,7 +327,7 @@ defmodule Api.Content do
   end
 
   defp filter_query(query, filter) do
-    query = from q in query, order_by: {:desc, :updated_at}
+    query = from q in query, order_by: [desc: :updated_at, desc: :id]
     (filter || %{})
     |> Enum.reduce(query, fn 
       {_, nil}, query ->
