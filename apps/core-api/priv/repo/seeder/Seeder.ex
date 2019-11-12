@@ -37,7 +37,7 @@ defmodule Api.Repo.Seeder do
     Api.Accounts.assign_user_to_group(billy, schueler_group)
     Api.Accounts.assign_user_to_group(eike, lehrer_group)
   
-    Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Start", is_homepage: true})
+    {:ok, homepage} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Start", is_homepage: true})
     {:ok, profil} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Profil", group_id: verwaltung_group.id})
     Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 20, title: "GTA", group_id: schueler_group.id})
     {:ok, projekt} = Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 30, title: "Projekt"})
@@ -58,8 +58,15 @@ defmodule Api.Repo.Seeder do
     Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 40, title: "Oskar-Reime-Chor", category_id: profil.id})
     Api.Repo.insert(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 50, title: "Schüler-Radio", category_id: profil.id})
   
-    # Kalender-Widget
-    Api.Repo.insert(%Api.Tenants.Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})
+    # Kalender-Widgets
+    {:ok, widget1} = Api.Repo.insert(%Api.Tenants.Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})
+    {:ok, widget2} = Api.Repo.insert(%Api.Tenants.Widget{tenant_id: web_tenant.id, group_id: lehrer_group.id, title: "Kalender", type: "calendar"})
+    {:ok, widget3} = Api.Repo.insert(%Api.Tenants.Widget{tenant_id: web_tenant.id, group_id: lehrer_group.id, title: "Kalender", type: "calendar"})
+    homepage
+    |> Api.Repo.preload(:widgets)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:widgets, [widget1, widget2, widget3])
+    |> Api.Repo.update()
   
     # Articles
     
@@ -188,7 +195,7 @@ defmodule Api.Repo.Seeder do
           title: "Beitrag Projekt #{i} - nur für Lehrer",
           preview: "Lorem ipsum dolor sit amet.",
           inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
-          inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
+          updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
       })
       Api.Repo.insert(%Api.Content.Article{
           tenant_id: web_tenant.id,
@@ -197,7 +204,7 @@ defmodule Api.Repo.Seeder do
           title: "Beitrag Projekt #{i} - nur für Schüler",
           preview: "Lorem ipsum dolor sit amet.",
           inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
-          inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
+          updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
       })
     end)
     :ok
