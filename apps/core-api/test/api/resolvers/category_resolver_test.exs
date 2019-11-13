@@ -34,7 +34,7 @@ defmodule Api.CategoryResolverTest do
     categories {
       title
       sortKey
-      group {
+      groups {
         name
       }
       category {
@@ -53,22 +53,22 @@ defmodule Api.CategoryResolverTest do
     assert res == %{
       "data" => %{
         "categories" => [
-          %{"category" => nil, "sortKey" => 0, "group" => nil, "title" => "Start"},
-          %{"category" => nil, "group" => %{"name" => "Verwaltung"}, "sortKey" => 10, "title" => "Profil"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 10, "title" => "Podcast"},
-          %{"category" => nil, "group" => %{"name" => "Schüler"}, "sortKey" => 20, "title" => "GTA"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
-          %{"group" => nil, "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
-          %{"group" => nil, "category" => nil, "sortKey" => 30, "title" => "Projekt"},
-          %{"category" => %{"title" => "Fächer"}, "group" => %{"name" => "Lehrer"}, "sortKey" => 30, "title" => "Sprache"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 30, "title" => "Schülerzeitung"},
-          %{"category" => nil, "group" => %{"name" => "Schüler"}, "sortKey" => 40, "title" => "Fächer"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
-          %{"category" => nil, "group" => %{"name" => "Lehrer"}, "sortKey" => 50, "title" => "Material"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 50, "title" => "Schüler-Radio"},
-          %{"group" => nil, "category" => nil, "sortKey" => 60, "title" => "Galerien"},
-          %{"category" => nil, "group" => nil, "sortKey" => 70, "title" => "Impressum"}
+          %{"category" => nil, "sortKey" => 0, "groups" => [], "title" => "Start"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 10, "title" => "Podcast"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}], "sortKey" => 10, "title" => "Profil"},
+          %{"groups" => [], "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}, %{"name" => "Schüler"}], "sortKey" => 20, "title" => "GTA"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 30, "title" => "Schülerzeitung"},
+          %{"category" => %{"title" => "Fächer"}, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "sortKey" => 30, "title" => "Sprache"},
+          %{"groups" => [], "category" => nil, "sortKey" => 30, "title" => "Projekt"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}, %{"name" => "Schüler"}], "sortKey" => 40, "title" => "Fächer"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 50, "title" => "Schüler-Radio"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "sortKey" => 50, "title" => "Material"},
+          %{"groups" => [], "category" => nil, "sortKey" => 60, "title" => "Galerien"},
+          %{"category" => nil, "groups" => [], "sortKey" => 70, "title" => "Impressum"}
         ]
       }
     }
@@ -79,7 +79,7 @@ defmodule Api.CategoryResolverTest do
     categories {
       title
       sortKey
-      group {
+      groups {
         name
       }
       category {
@@ -88,7 +88,7 @@ defmodule Api.CategoryResolverTest do
     }
   }
   """
-  test "categories field should return all categories for lehrer and lower if user is in lehrer_group", %{lehrer_jwt: lehrer_jwt} do
+  test "categories field should return all categories for lehrer if user is in lehrer_group", %{lehrer_jwt: lehrer_jwt} do
     res = build_conn()
     |> put_req_header("tenant", "slug:web")
     |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
@@ -98,21 +98,21 @@ defmodule Api.CategoryResolverTest do
     assert res == %{
       "data" => %{
         "categories" => [
-          %{"category" => nil, "sortKey" => 0, "group" => nil, "title" => "Start"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 10, "title" => "Podcast"},
-          %{"category" => nil, "group" => %{"name" => "Schüler"}, "sortKey" => 20, "title" => "GTA"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
-          %{"group" => nil, "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
-          %{"group" => nil, "category" => nil, "sortKey" => 30, "title" => "Projekt"},
-          %{"category" => %{"title" => "Fächer"}, "group" => %{"name" => "Lehrer"}, "sortKey" => 30, "title" => "Sprache"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 30, "title" => "Schülerzeitung"},
-          %{"category" => nil, "group" => %{"name" => "Schüler"}, "sortKey" => 40, "title" => "Fächer"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
-          %{"category" => nil, "group" => %{"name" => "Lehrer"}, "sortKey" => 50, "title" => "Material"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 50, "title" => "Schüler-Radio"},
-          %{"group" => nil, "category" => nil, "sortKey" => 60, "title" => "Galerien"},
-          %{"category" => nil, "group" => nil, "sortKey" => 70, "title" => "Impressum"}
+          %{"category" => nil, "sortKey" => 0, "groups" => [], "title" => "Start"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 10, "title" => "Podcast"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
+          %{"groups" => [], "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}, %{"name" => "Schüler"}], "sortKey" => 20, "title" => "GTA"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 30, "title" => "Schülerzeitung"},
+          %{"category" => %{"title" => "Fächer"}, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "sortKey" => 30, "title" => "Sprache"},
+          %{"groups" => [], "category" => nil, "sortKey" => 30, "title" => "Projekt"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}, %{"name" => "Schüler"}], "sortKey" => 40, "title" => "Fächer"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 50, "title" => "Schüler-Radio"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "sortKey" => 50, "title" => "Material"},
+          %{"groups" => [], "category" => nil, "sortKey" => 60, "title" => "Galerien"},
+          %{"category" => nil, "groups" => [], "sortKey" => 70, "title" => "Impressum"}
         ]
       }
     }
@@ -123,7 +123,7 @@ defmodule Api.CategoryResolverTest do
     categories {
       title
       sortKey
-      group {
+      groups {
         name
       }
       category {
@@ -142,19 +142,19 @@ defmodule Api.CategoryResolverTest do
     assert res == %{
       "data" => %{
         "categories" => [
-          %{"category" => nil, "sortKey" => 0, "group" => nil, "title" => "Start"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 10, "title" => "Podcast"},
-          %{"category" => nil, "group" => %{"name" => "Schüler"}, "sortKey" => 20, "title" => "GTA"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
-          %{"group" => nil, "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
-          %{"group" => nil, "category" => nil, "sortKey" => 30, "title" => "Projekt"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 30, "title" => "Schülerzeitung"},
-          %{"category" => nil, "group" => %{"name" => "Schüler"}, "sortKey" => 40, "title" => "Fächer"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 50, "title" => "Schüler-Radio"},
-          %{"group" => nil, "category" => nil, "sortKey" => 60, "title" => "Galerien"},
-          %{"category" => nil, "group" => nil, "sortKey" => 70, "title" => "Impressum"}
+          %{"category" => nil, "sortKey" => 0, "groups" => [], "title" => "Start"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 10, "title" => "Podcast"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
+          %{"groups" => [], "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}, %{"name" => "Schüler"}], "sortKey" => 20, "title" => "GTA"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 30, "title" => "Schülerzeitung"},
+          %{"groups" => [], "category" => nil, "sortKey" => 30, "title" => "Projekt"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
+          %{"category" => nil, "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}, %{"name" => "Schüler"}], "sortKey" => 40, "title" => "Fächer"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 50, "title" => "Schüler-Radio"},
+          %{"groups" => [], "category" => nil, "sortKey" => 60, "title" => "Galerien"},
+          %{"category" => nil, "groups" => [], "sortKey" => 70, "title" => "Impressum"}
         ]
       }
     }
@@ -165,7 +165,7 @@ defmodule Api.CategoryResolverTest do
     categories {
       title
       sortKey
-      group {
+      groups {
         name
       }
       category {
@@ -184,17 +184,17 @@ defmodule Api.CategoryResolverTest do
     assert res == %{
       "data" => %{
         "categories" => [
-          %{"category" => nil, "sortKey" => 0, "group" => nil, "title" => "Start"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 10, "title" => "Podcast"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
-          %{"group" => nil, "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
-          %{"group" => nil, "category" => nil, "sortKey" => 30, "title" => "Projekt"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 30, "title" => "Schülerzeitung"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 50, "title" => "Schüler-Radio"},
-          %{"group" => nil, "category" => nil, "sortKey" => 60, "title" => "Galerien"},
-          %{"category" => nil, "group" => nil, "sortKey" => 70, "title" => "Impressum"}
+          %{"category" => nil, "sortKey" => 0, "groups" => [], "title" => "Start"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 10, "title" => "Podcast"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
+          %{"groups" => [], "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 30, "title" => "Schülerzeitung"},
+          %{"groups" => [], "category" => nil, "sortKey" => 30, "title" => "Projekt"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 50, "title" => "Schüler-Radio"},
+          %{"groups" => [], "category" => nil, "sortKey" => 60, "title" => "Galerien"},
+          %{"category" => nil, "groups" => [], "sortKey" => 70, "title" => "Impressum"}
         ]
       }
     }
@@ -205,7 +205,7 @@ defmodule Api.CategoryResolverTest do
     categories {
       title
       sortKey
-      group {
+      groups {
         name
       }
       category {
@@ -223,17 +223,17 @@ defmodule Api.CategoryResolverTest do
     assert res == %{
       "data" => %{
         "categories" => [
-          %{"category" => nil, "sortKey" => 0, "group" => nil, "title" => "Start"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 10, "title" => "Podcast"},
-          %{"group" => nil, "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
-          %{"group" => nil, "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
-          %{"group" => nil, "category" => nil, "sortKey" => 30, "title" => "Projekt"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 30, "title" => "Schülerzeitung"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
-          %{"category" => %{"title" => "Profil"}, "group" => nil, "sortKey" => 50, "title" => "Schüler-Radio"},
-          %{"group" => nil, "category" => nil, "sortKey" => 60, "title" => "Galerien"},
-          %{"category" => nil, "group" => nil, "sortKey" => 70, "title" => "Impressum"}
+          %{"category" => nil, "sortKey" => 0, "groups" => [], "title" => "Start"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 10, "title" => "Podcast"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 10, "title" => "Sport"},
+          %{"groups" => [], "category" => %{"title" => "Profil"}, "sortKey" => 20, "title" => "Offene Kunst-AG"},
+          %{"groups" => [], "category" => %{"title" => "Fächer"}, "sortKey" => 20, "title" => "Kunst"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 30, "title" => "Schülerzeitung"},
+          %{"groups" => [], "category" => nil, "sortKey" => 30, "title" => "Projekt"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 40, "title" => "Oskar-Reime-Chor"},
+          %{"category" => %{"title" => "Profil"}, "groups" => [], "sortKey" => 50, "title" => "Schüler-Radio"},
+          %{"groups" => [], "category" => nil, "sortKey" => 60, "title" => "Galerien"},
+          %{"category" => nil, "groups" => [], "sortKey" => 70, "title" => "Impressum"}
         ]
       }
     }

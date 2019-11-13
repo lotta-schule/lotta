@@ -20,16 +20,13 @@ defmodule Api.Tenants do
     category = category
     |> Repo.preload(:widgets)
     {:ok, category.widgets
-    |> Enum.map(fn widget ->
-      widget
-      |> Repo.preload(:group)
-    end)
+    |> Enum.map(&Repo.preload(&1, :groups))
     |> Enum.filter(fn widget ->
-      case widget.group do
-        nil -> true
-        group ->
+      case widget.groups do
+        [] -> true
+        groups ->
           if Map.has_key?(context, :current_user) do
-            group.priority <= context.current_user |> User.get_max_priority_for_tenant(context.tenant)
+            Enum.any?(groups, &(&1.id in User.group_ids(context.current_user)))
           else
             false
           end
@@ -175,24 +172,17 @@ defmodule Api.Tenants do
       [%Category{}, ...]
 
   """
-  def list_categories_by_tenant(tenant, user) do
-    tenant_id = tenant.id
-    case user do
-      nil ->
-        Ecto.Query.from(c in Category,
-          where: c.tenant_id == ^tenant_id and is_nil(c.group_id),
-          order_by: [desc: c.is_homepage, asc: c.sort_key]
-        )
-      user ->
-        max_priority = user
-        |> User.get_max_priority_for_tenant(tenant)
-        Ecto.Query.from(c in Category,
-          where: c.tenant_id == ^tenant_id,
-          join: ug in UserGroup, where: (not is_nil(c.group_id) and ug.priority <= ^max_priority and ug.id == c.group_id) or is_nil(c.group_id),
-          order_by: [desc: c.is_homepage, asc: c.sort_key],
-          distinct: true)
-      end
-      |> Repo.all
+  def list_categories_by_tenant(%Tenant{} = tenant, user) do
+    user_group_ids = User.group_ids(user)
+    from(c in Category,
+      left_join: cug in "categories_user_groups",
+      on: cug.category_id == c.id,
+      where: c.tenant_id == ^tenant.id and
+             ((cug.group_id in ^user_group_ids) or is_nil(cug.group_id) or ^User.is_admin?(user, tenant)),
+      order_by: [asc: :sort_key, asc: :category_id],
+      distinct: true
+    )
+    |> Repo.all
   end
 
   @doc """
@@ -287,18 +277,16 @@ defmodule Api.Tenants do
       [%Category{}, ...]
 
   """
-  def list_widgets_by_tenant(tenant, user) do
-    tenant_id = tenant.id
-    if is_nil(user) do
-      Repo.all(Ecto.Query.from w in Widget, where: w.tenant_id == ^tenant_id and is_nil(w.group_id))
-    else
-      max_priority = user |> User.get_max_priority_for_tenant(tenant)
-      Ecto.Query.from(w in Widget,
-        where: w.tenant_id == ^tenant_id,
-        join: ug in UserGroup, where: (not is_nil(w.group_id) and ug.priority <= ^max_priority and ug.id == w.group_id) or is_nil(w.group_id),
-        distinct: w.id)
-      |> Repo.all
-    end
+  def list_widgets_by_tenant(%Tenant{} = tenant, user) do
+    user_group_ids = User.group_ids(user)
+    from(w in Widget,
+      left_join: wug in "widgets_user_groups",
+      on: wug.widget_id == w.id,
+      where: w.tenant_id == ^tenant.id and
+             (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
+      distinct: w.id
+    )
+    |> Repo.all()
   end
 
   @doc """

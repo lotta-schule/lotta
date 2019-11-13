@@ -62,7 +62,7 @@ defmodule ApiWeb.Schema.ContentsTypes do
     field :ready_to_publish, :boolean
     field :topic, :string
     field :preview_image_file, :file
-    field :group, :user_group
+    field :groups, list_of(:user_group)
     field :category, :category
     field :content_modules, list_of(:content_module_input)
     field :users, list_of(:user)
@@ -94,7 +94,7 @@ defmodule ApiWeb.Schema.ContentsTypes do
     field :ready_to_publish, :boolean
     field :is_pinned_to_top, :boolean
     field :preview_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
     field :content_modules, list_of(:content_module), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
     field :users, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)

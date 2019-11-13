@@ -14,9 +14,13 @@ defmodule Api.Tenants.Category do
     field :hide_articles_from_homepage, :boolean
 
     belongs_to :banner_image_file, File, on_replace: :nilify
-    belongs_to :group, UserGroup, on_replace: :nilify
     belongs_to :category, Category
     belongs_to :tenant, Tenant
+    many_to_many :groups,
+      Api.Accounts.UserGroup,
+      join_through: "categories_user_groups",
+      join_keys: [category_id: :id, group_id: :id],
+      on_replace: :delete
     many_to_many :widgets,
       Widget,
       join_through: "categories_widgets",
@@ -28,42 +32,33 @@ defmodule Api.Tenants.Category do
   @doc false
   def changeset(category, attrs) do
     category
-    |> Api.Repo.preload([:banner_image_file, :group, :widgets])
+    |> Api.Repo.preload([:banner_image_file, :groups, :widgets])
     |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :sort_key])
     |> validate_required([:title])
     |> put_assoc_banner_image_file(attrs)
-    |> put_assoc_group(attrs)
+    |> put_assoc_groups(attrs)
     |> put_assoc_widgets(attrs)
   end
 
-  defp put_assoc_banner_image_file(article, %{banner_image_file: %{id: banner_image_file_id}}) do
-    article
+  defp put_assoc_banner_image_file(changeset, %{banner_image_file: %{id: banner_image_file_id}}) do
+    changeset
     |> put_assoc(:banner_image_file, Api.Repo.get(Api.Accounts.File, banner_image_file_id))
   end
-  defp put_assoc_banner_image_file(article, _args) do
-    article
-    |> put_assoc(:banner_image_file, nil)
-  end
+  defp put_assoc_banner_image_file(changeset, _args), do: changeset
   
-  defp put_assoc_group(article, %{group: %{id: group_id}}) do
-    article
-    |> put_assoc(:group, Api.Repo.get(Api.Accounts.UserGroup, group_id))
+  defp put_assoc_groups(changeset, %{groups: groups}) do
+    changeset
+    |> put_assoc(:groups, Repo.all(from ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id)))))
   end
-  defp put_assoc_group(article, _args) do
-    article
-    |> put_assoc(:group, nil)
-  end
+  defp put_assoc_groups(changeset, _args), do: changeset
 
-  defp put_assoc_widgets(category, %{widgets: widgets}) do
+  defp put_assoc_widgets(changeset, %{widgets: widgets}) do
     widgets = Repo.all(from w in Widget,
       where: w.id in ^(Enum.map(widgets, fn widget -> widget.id end))
     )
-    category
+    changeset
     |> put_assoc(:widgets, widgets)
   end
-  defp put_assoc_widgets(category, _args) do
-    category
-    |> put_assoc(:widgets, nil)
-  end
+  defp put_assoc_widgets(changeset, _args), do: changeset
 
 end

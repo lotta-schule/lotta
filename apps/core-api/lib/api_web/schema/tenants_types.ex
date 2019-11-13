@@ -60,13 +60,13 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :banner_image_file, :file
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
-    field :group, :user_group
+    field :groups, list_of(:user_group)
     field :widgets, list_of(:widget), default_value: []
   end
 
   input_object :widget_input do
     field :title, non_null(:string)
-    field :group, :user_group
+    field :groups, list_of(:user_group)
     field :icon_image_file, :file
     field :configuration, :json
   end
@@ -93,7 +93,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :sort_key, :integer
     field :banner_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
-    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
     field :widgets, list_of(:widget), resolve: &Api.Tenants.resolve_widgets/2
   end
 
@@ -103,7 +103,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :type, :widget_type
     field :configuration, :json
     field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :group, :user_group, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
 

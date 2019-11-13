@@ -13,6 +13,6 @@ defmodule ApiWeb.UserGroupView do
   def render("user_group.json", %{user_group: user_group}) do
     %{id: user_group.id,
       name: user_group.name,
-      priority: user_group.priority}
+      sort_key: user_group.sort_key}
   end
 end

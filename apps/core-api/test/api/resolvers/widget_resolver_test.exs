@@ -31,7 +31,7 @@ defmodule Api.WidgetResolverTest do
     widgets {
       title
       type
-      group {
+      groups {
         name
       }
     }
@@ -47,9 +47,9 @@ defmodule Api.WidgetResolverTest do
     assert res == %{
       "data" => %{
         "widgets" => [
-          %{"group" => nil, "title" => "Kalender", "type" => "CALENDAR"},
-          %{"group" => %{"name" => "Lehrer"}, "title" => "Kalender", "type" => "CALENDAR"},
-          %{"group" => %{"name" => "Lehrer"}, "title" => "Kalender", "type" => "CALENDAR"}
+          %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
+          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"},
+          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"}
         ]
       }
     }
@@ -59,7 +59,7 @@ defmodule Api.WidgetResolverTest do
     widgets {
       title
       type
-      group {
+      groups {
         name
       }
     }
@@ -75,9 +75,9 @@ defmodule Api.WidgetResolverTest do
     assert res == %{
       "data" => %{
         "widgets" => [
-          %{"group" => nil, "title" => "Kalender", "type" => "CALENDAR"},
-          %{"group" => %{"name" => "Lehrer"}, "title" => "Kalender", "type" => "CALENDAR"},
-          %{"group" => %{"name" => "Lehrer"}, "title" => "Kalender", "type" => "CALENDAR"}
+          %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
+          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"},
+          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"}
         ]
       }
     }
@@ -87,7 +87,7 @@ defmodule Api.WidgetResolverTest do
     widgets {
       title
       type
-      group {
+      groups {
         name
       }
     }
@@ -102,7 +102,7 @@ defmodule Api.WidgetResolverTest do
     assert res == %{
       "data" => %{
         "widgets" => [
-          %{"group" => nil, "title" => "Kalender", "type" => "CALENDAR"}
+          %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"}
         ]
       }
     }

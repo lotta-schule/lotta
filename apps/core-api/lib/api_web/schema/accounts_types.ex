@@ -112,7 +112,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :name, :string
-    field :priority, :integer
+    field :sort_key, :integer
     field :is_admin_group, :boolean
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end

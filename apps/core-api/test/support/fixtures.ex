@@ -47,7 +47,7 @@ defmodule Api.Fixtures do
   def fixture(:valid_user_group_attrs, [is_admin_group: is_admin_group]) do
     %{
       name: "Meine Gruppe",
-      priority: (if is_admin_group, do: 1000, else: 500),
+      sort_key: (if is_admin_group, do: 1000, else: 500),
       is_admin_group: is_admin_group
    }
   end
