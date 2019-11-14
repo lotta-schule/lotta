@@ -19,9 +19,9 @@ export const GetTopicQuery = gql`
                 filename
                 filesize
             }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
             category {

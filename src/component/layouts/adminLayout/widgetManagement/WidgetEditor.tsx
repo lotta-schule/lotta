@@ -44,7 +44,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
                 id: selectedWidget.id,
                 widget: {
                     title: widget.title,
-                    group: widget.group,
+                    groups: widget.groups,
                     iconImageFile: widget.iconImageFile,
                     configuration: JSON.stringify(widget.configuration)
                 }
@@ -94,8 +94,8 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
 
             <GroupSelect
                 className={styles.input}
-                selectedGroup={widget.group || null}
-                onSelectGroup={group => setWidget({ ...widget, group: group || undefined })}
+                selectedGroups={widget.groups || []}
+                onSelectGroups={groups => setWidget({ ...widget, groups })}
             />
 
             {widget.type === WidgetModelType.Calendar &&

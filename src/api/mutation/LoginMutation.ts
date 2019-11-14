@@ -19,7 +19,7 @@ export const LoginMutation = gql`
                 groups {
                     id
                     name
-                    priority
+                    sortKey
                     isAdminGroup
                     tenant {
                         id

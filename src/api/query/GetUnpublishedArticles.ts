@@ -44,9 +44,9 @@ export const GetUnpublishedArticlesQuery = gql`
                 id
                 title
             }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
             users {

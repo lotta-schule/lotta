@@ -43,9 +43,9 @@ export const GetOwnArticlesQuery = gql`
                 title
                 hideArticlesFromHomepage
             }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
             users {

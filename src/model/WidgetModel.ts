@@ -14,7 +14,7 @@ export interface WidgetModel<C = any> {
     title: string;
     type: WidgetModelType;
     iconImageFile?: FileModel;
-    group?: UserGroupModel;
+    groups: UserGroupModel[];
     configuration: C;
 }
 

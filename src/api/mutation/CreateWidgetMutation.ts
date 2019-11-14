@@ -11,9 +11,9 @@ export const CreateWidgetMutation = gql`
                     id
                     remoteLocation
                 }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
         }

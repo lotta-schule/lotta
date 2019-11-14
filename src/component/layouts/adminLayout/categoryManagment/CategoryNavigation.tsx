@@ -88,7 +88,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                         sortKey: index * 10 + 10,
                                         title: category.title,
                                         bannerImageFile: category.bannerImageFile,
-                                        group: category.group,
+                                        groups: category.groups,
                                         redirect: category.redirect,
                                         hideArticlesFromHomepage: category.hideArticlesFromHomepage
                                     }

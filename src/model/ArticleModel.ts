@@ -18,7 +18,7 @@ export interface ArticleModel {
     contentModules: ContentModuleModel[];
     users: UserModel[];
     category?: CategoryModel;
-    group?: UserGroupModel;
+    groups: UserGroupModel[];
 }
 
 export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {

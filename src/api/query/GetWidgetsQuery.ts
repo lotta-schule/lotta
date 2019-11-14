@@ -11,9 +11,9 @@ export const GetWidgetsQuery = gql`
                     id
                     remoteLocation
                 }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
         }
