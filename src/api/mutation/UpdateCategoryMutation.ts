@@ -12,9 +12,9 @@ export const UpdateCategoryMutation = gql`
                 id
                 remoteLocation
             }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
             category {
@@ -26,9 +26,9 @@ export const UpdateCategoryMutation = gql`
                 title
                 type
                 configuration
-                group {
+                groups {
                     id
-                    priority
+                    sortKey
                     name
                 }
             }

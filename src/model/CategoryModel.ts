@@ -11,7 +11,7 @@ export interface CategoryModel {
     isHomepage?: boolean;
     redirect?: string;
     hideArticlesFromHomepage?: boolean;
-    group?: UserGroupModel;
+    groups: UserGroupModel[];
     bannerImageFile?: FileModel;
     category?: CategoryModel;
     widgets?: WidgetModel[];

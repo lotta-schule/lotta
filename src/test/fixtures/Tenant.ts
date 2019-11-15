@@ -5,7 +5,7 @@ export const AdminGroup: UserGroupModel = {
     createdAt: new Date(2015, 0, 1).toISOString(),
     updatedAt: new Date(2015, 0, 1).toISOString(),
     name: 'Administrator',
-    priority: 1000,
+    sortKey: 1000,
     isAdminGroup: true,
     tenant: null!
 }
@@ -23,13 +23,15 @@ export const StartseiteCategory: CategoryModel = {
     id: 1,
     sortKey: 0,
     title: 'Start',
-    isHomepage: true
+    isHomepage: true,
+    groups: []
 };
 
 export const SuedAmerikaCategory: CategoryModel = {
     id: 2,
     sortKey: 10,
-    title: 'Südamerika'
+    title: 'Südamerika',
+    groups: []
 };
 
 export const ImpressumCategory: CategoryModel = {
@@ -38,7 +40,8 @@ export const ImpressumCategory: CategoryModel = {
     title: 'Impressum',
     isSidenav: true,
     hideArticlesFromHomepage: true,
-    redirect: '/article/100'
+    redirect: '/article/100',
+    groups: []
 };
 
 export const DatenschutzCategory: CategoryModel = {
@@ -47,5 +50,6 @@ export const DatenschutzCategory: CategoryModel = {
     title: 'Datenschutz',
     isSidenav: true,
     hideArticlesFromHomepage: true,
-    redirect: '/article/101'
+    redirect: '/article/101',
+    groups: []
 };

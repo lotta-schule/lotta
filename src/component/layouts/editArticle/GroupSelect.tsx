@@ -1,42 +1,52 @@
 import React, { memo } from 'react';
-import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@material-ui/core';
+import { Checkbox, FormControl, FormGroup, FormControlLabel, FormLabel } from '@material-ui/core';
 import { useUserGroups } from 'util/client/useUserGroups';
 import { UserGroupModel } from 'model/UserGroupModel';
 
 export interface GroupSelectProps {
-    selectedGroup: UserGroupModel | null;
+    selectedGroups: UserGroupModel[];
     className?: string;
     variant?: 'filled' | 'outlined' | 'standard';
-    onSelectGroup(group: UserGroupModel | null): void;
+    onSelectGroups(groups: UserGroupModel[]): void;
 }
 
-export const GroupSelect = memo<GroupSelectProps>(({ selectedGroup, onSelectGroup, variant, className }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ selectedGroups, onSelectGroups, variant, className }) => {
     const groups = useUserGroups();
-    const inputLabel = React.useRef<HTMLLabelElement>(null);
-    const [labelWidth, setLabelWidth] = React.useState(0);
-    React.useEffect(() => {
-        setLabelWidth(inputLabel.current!.offsetWidth);
-    }, []);
 
     return (
-        <FormControl variant={variant} fullWidth className={className}>
-            <InputLabel ref={inputLabel} htmlFor="outlined-visibility-select">
+        <FormControl component={'fieldset'} variant={variant} fullWidth className={className}>
+            <FormLabel htmlFor="outlined-visibility-select">
                 Sichtbarkeit:
-            </InputLabel>
-            <Select
-                fullWidth
-                variant={variant}
-                value={selectedGroup && selectedGroup.id}
-                onChange={({ target: { value } }) => {
-                    onSelectGroup(groups.find(group => group.id === value) || null);
-                }}
-                input={<OutlinedInput labelWidth={labelWidth} name="visibility" id="outlined-visibility-select" />}
-            >
-                {groups.map(group => (
-                    <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
+            </FormLabel>
+            <FormGroup>
+                <FormControlLabel
+                    label={<i>öffentlich sichtbar</i>}
+                    control={(
+                        <Checkbox checked={selectedGroups.length === 0} onChange={event => {
+                            if (event.target.checked) {
+                                onSelectGroups([]);
+                            } else {
+                                onSelectGroups([...groups]);
+                            }
+                        }} />
+                    )}
+                />
+                {groups.filter(g => !g.isAdminGroup).map(group => (
+                    <FormControlLabel
+                        key={group.id}
+                        label={group.name}
+                        control={(
+                            <Checkbox value={group.id} checked={selectedGroups.filter(g => g.id === group.id).length > 0} onChange={event => {
+                                if (event.target.checked) {
+                                    onSelectGroups([...selectedGroups, group]);
+                                } else {
+                                    onSelectGroups(selectedGroups.filter(g => g.id !== group.id));
+                                }
+                            }} />
+                        )}
+                    />
                 ))}
-                <MenuItem key={'undefined'} value={undefined}>Für alle sichtbar</MenuItem>
-            </Select>
+            </FormGroup>
         </FormControl>
     );
 });

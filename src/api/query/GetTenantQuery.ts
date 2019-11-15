@@ -9,7 +9,7 @@ export const GetTenantQuery = gql`
             groups {
                 id
                 name
-                priority
+                sortKey
                 isAdminGroup
             }
         }

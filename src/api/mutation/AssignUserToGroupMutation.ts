@@ -11,7 +11,7 @@ export const AssignUserToGroupMutation = gql`
             groups {
                 id
                 name
-                priority
+                sortKey
                 isAdminGroup
                 tenant {
                     id

@@ -19,7 +19,7 @@ export const RegisterMutation = gql`
                 groups {
                     id
                     name
-                    priority
+                    sortKey
                     isAdminGroup
                     tenant {
                         id
