@@ -1,8 +1,7 @@
 defmodule Api.Repo.Migrations.CreateWidgetsUserGroupsTable do
   use Ecto.Migration
-
-  use Ecto.Migration
   import Ecto.Query
+  alias Api.Accounts.UserGroup
 
   def up do
 
@@ -22,9 +21,11 @@ defmodule Api.Repo.Migrations.CreateWidgetsUserGroupsTable do
     |> Api.Repo.all()
     |> Enum.filter(fn row -> !is_nil(row.group_id) end)
     |> Enum.each(fn widget ->
-      Api.Repo.insert_all("widgets_user_groups", [
-        [widget_id: widget.id, group_id: widget.group_id]
-      ])
+      user_group = Api.Repo.one!(from ug in UserGroup, where: ug.id == ^widget.group_id)
+      groups = Api.Repo.all(from ug in UserGroup, where: ug.sort_key >= ^user_group.sort_key)
+      Api.Repo.insert_all("widgets_user_groups", Enum.map(groups, fn group ->
+        [widget_id: widget.id, group_id: group.id]
+      end))
     end)
 
     alter table(:widgets) do
@@ -43,10 +44,23 @@ defmodule Api.Repo.Migrations.CreateWidgetsUserGroupsTable do
 
     from(aug in "widgets_user_groups", select: [:widget_id, :group_id])
     |> Api.Repo.all()
-    |> Enum.each(fn row ->
+    |> Enum.reduce(%{}, fn widget_user_group, acc ->
+      group = Api.Repo.one!(from ug in UserGroup, where: ug.id == ^widget_user_group.group_id)
+      acc
+      |> Map.put(
+        widget_user_group.widget_id,
+        case acc[widget_user_group.widget_id] && acc[widget_user_group.widget_id] do
+          nil ->
+            group
+          old_group ->
+            if group.sort_key < old_group.sort_key, do: group, else: old_group
+        end
+      )
+    end)
+    |> Enum.each(fn {widget_id, group} ->
       Api.Repo.update_all(
-        from(a in "widgets", where: a.id == ^row.widget_id),
-        set: [group_id: row.group_id]
+        from(a in "widgets", where: a.id == ^widget_id),
+        set: [group_id: group.id]
       )
     end)
 

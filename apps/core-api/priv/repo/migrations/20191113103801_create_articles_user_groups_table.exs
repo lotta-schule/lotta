@@ -1,6 +1,7 @@
 defmodule Api.Repo.Migrations.CreateArticlesUserGroupsTable do
   use Ecto.Migration
   import Ecto.Query
+  alias Api.Accounts.UserGroup
 
   def up do
 
@@ -20,9 +21,11 @@ defmodule Api.Repo.Migrations.CreateArticlesUserGroupsTable do
     |> Api.Repo.all()
     |> Enum.filter(fn row -> !is_nil(row.group_id) end)
     |> Enum.each(fn article ->
-      Api.Repo.insert_all("articles_user_groups", [
-        [article_id: article.id, group_id: article.group_id]
-      ])
+      user_group = Api.Repo.one!(from ug in UserGroup, where: ug.id == ^article.group_id)
+      groups = Api.Repo.all(from ug in UserGroup, where: ug.sort_key >= ^user_group.sort_key)
+      Api.Repo.insert_all("articles_user_groups", Enum.map(groups, fn group ->
+        [article_id: article.id, group_id: group.id]
+      end))
     end)
 
     alter table(:articles) do
@@ -41,10 +44,23 @@ defmodule Api.Repo.Migrations.CreateArticlesUserGroupsTable do
 
     from(aug in "articles_user_groups", select: [:article_id, :group_id])
     |> Api.Repo.all()
-    |> Enum.each(fn row ->
+    |> Enum.reduce(%{}, fn article_user_group, acc ->
+      group = Api.Repo.one!(from ug in UserGroup, where: ug.id == ^article_user_group.group_id)
+      acc
+      |> Map.put(
+        article_user_group.article_id,
+        case acc[article_user_group.article_id] && acc[article_user_group.article_id] do
+          nil ->
+            group
+          old_group ->
+            if group.sort_key < old_group.sort_key, do: group, else: old_group
+        end
+      )
+    end)
+    |> Enum.each(fn {article_id, group} ->
       Api.Repo.update_all(
-        from(a in "articles", where: a.id == ^row.article_id),
-        set: [group_id: row.group_id]
+        from(a in "articles", where: a.id == ^article_id),
+        set: [group_id: group.id]
       )
     end)
 
