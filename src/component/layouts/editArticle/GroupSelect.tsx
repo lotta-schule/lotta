@@ -19,7 +19,18 @@ export const GroupSelect = memo<GroupSelectProps>(({ selectedGroups, onSelectGro
                 Sichtbarkeit:
             </FormLabel>
             <FormGroup>
-                <span></span>
+                <FormControlLabel
+                    label={<i>öffentlich sichtbar</i>}
+                    control={(
+                        <Checkbox checked={selectedGroups.length === 0} onChange={event => {
+                            if (event.target.checked) {
+                                onSelectGroups([]);
+                            } else {
+                                onSelectGroups([...groups]);
+                            }
+                        }} />
+                    )}
+                />
                 {groups.filter(g => !g.isAdminGroup).map(group => (
                     <FormControlLabel
                         key={group.id}
