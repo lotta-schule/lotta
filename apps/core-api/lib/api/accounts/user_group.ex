@@ -6,7 +6,7 @@ defmodule Api.Accounts.UserGroup do
 
   schema "user_groups" do
     field :name, :string
-    field :priority, :integer
+    field :sort_key, :integer
     field :is_admin_group, :boolean
 
     belongs_to :tenant, Api.Tenants.Tenant
@@ -21,7 +21,7 @@ defmodule Api.Accounts.UserGroup do
   @doc false
   def changeset(user_group, attrs) do
     user_group
-    |> cast(attrs, [:name, :priority])
-    |> validate_required([:name, :priority])
+    |> cast(attrs, [:name, :sort_key])
+    |> validate_required([:name, :sort_key])
   end
 end

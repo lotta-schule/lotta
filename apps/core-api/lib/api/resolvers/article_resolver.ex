@@ -3,9 +3,9 @@ defmodule Api.ArticleResolver do
   alias Api.Accounts.User
   alias Api.Repo
 
-  def get(%{id: id}, %{context: %{context: %{current_user: current_user}}}) do
-    article = Content.get_article!(id) |> Repo.preload(:tenant)
-    if User.is_author?(current_user, article) do
+  def get(%{id: id}, %{context: %{tenant: tenant, current_user: current_user}}) do
+    article = Repo.preload(Content.get_article!(id), :tenant)
+    if User.is_author?(current_user, article) || User.is_admin?(current_user, tenant) do
       {:ok, article}
     else
       case User.has_group_for_article?(current_user, article) do
@@ -15,63 +15,74 @@ defmodule Api.ArticleResolver do
     end
   end
   def get(%{id: id}, _info) do
-    article = Content.get_article!(id) |> Repo.preload(:group)
-    case is_nil(article.group) do
-      true -> {:ok, article}
-      _ -> {:error, "Du hast keine Rechte diesen Beitrag anzusehen"}
+    article = Repo.preload(Content.get_article!(id), :groups)
+    case article.groups do
+      [] ->
+        {:ok, article}
+      _ ->
+        {:error, "Du hast keine Rechte diesen Beitrag anzusehen."}
     end
   end
   def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
 
-  def all(%{category_id: category_id} = args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, category_id, current_user, args[:filter])}
+  def all(%{category_id: category_id} = args, %{context: %{current_user: current_user, tenant: tenant}}) do
+    {:ok, Content.list_articles(tenant, category_id, current_user, args[:filter])}
   end
-  def all(args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, nil, current_user, args[:filter])}
+  def all(args, %{context: %{current_user: current_user, tenant: tenant}}) do
+    {:ok, Content.list_articles(tenant, nil, current_user, args[:filter])}
   end
-  def all(%{category_id: category_id} = args, %{context: %{context: %{ tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, category_id, nil, args[:filter])}
+  def all(%{category_id: category_id} = args, %{context: %{tenant: tenant}}) do
+    {:ok, Content.list_articles(tenant, category_id, nil, args[:filter])}
   end
-  def all(args, %{context: %{context: %{ tenant: tenant }}}) do
-    {:ok, Content.list_articles(tenant.id, nil, nil, args[:filter])}
+  def all(args, %{context: %{tenant: tenant}}) do
+    {:ok, Content.list_articles(tenant, nil, nil, args[:filter])}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
   
-  def all_unpublished(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    if User.is_admin?(current_user, tenant) do
-      {:ok, Content.list_unpublished_articles(tenant)}
-    else
-      {:error, "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen"}
+  def all_unpublished(_args, %{context: %{tenant: tenant} = context}) do
+    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      true ->
+        {:ok, Content.list_unpublished_articles(tenant)}
+      _ ->
+        {:error, "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen."}
     end
   end
   def all_unpublished(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
   
-  def own(_args, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def own(_args, %{context: %{current_user: current_user, tenant: tenant}}) do
       {:ok, Content.list_user_articles(tenant, current_user)}
+  end
+  def own(_args, %{context: %{tenant: _tenant}}) do
+    {:error, "Nur angemeldete Nutzer können eigene Beiträge abrufen."}
   end
   def own(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def by_topic(%{topic: topic}, %{context: %{context: %{tenant: tenant}}}) do
-    {:ok, Content.list_articles_by_topic(tenant.id, topic)}
+  def by_topic(%{topic: topic}, %{context: %{tenant: tenant} = context}) do
+    {:ok, Content.list_articles_by_topic(tenant, context[:current_user], topic)}
   end
   def by_topic(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
 
-  def create(%{article: article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    article_input
-    |> Content.create_article(tenant, current_user)
+  def create(%{article: article_input}, %{context: %{tenant: tenant} = context}) do
+    case context[:current_user] do
+      nil ->
+        {:error, "Nur angemeldete Nutzer können Beiträge erstellen."}
+      user ->
+        article_input
+        |> Content.create_article(tenant, user)
+    end
   end
 
-  def update(%{id: id, article: article_input}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def update(%{id: id, article: article_input}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
+    if context[:current_user] && (User.is_admin?(context[:current_user], tenant) || User.is_author?(context[:current_user], article)) do
       article
       |> Content.update_article(article_input)
     else
@@ -79,9 +90,9 @@ defmodule Api.ArticleResolver do
     end
   end
   
-  def delete(%{id: id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if User.is_admin?(current_user, tenant) || User.is_author?(current_user, article) do
+    if context[:current_user] && (User.is_admin?(context[:current_user], tenant) || User.is_author?(context[:current_user], article)) do
       article
       |> Content.delete_article()
     else
@@ -89,8 +100,8 @@ defmodule Api.ArticleResolver do
     end
   end
 
-  def toggle_pin(%{id: article_id}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
-    if User.is_admin?(current_user, tenant) do
+  def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context[:current_user], tenant) do
       Content.toggle_article_pin(article_id)
     else
       {:error, "Nur Administratoren dürfen Beiträge anpinnen."}

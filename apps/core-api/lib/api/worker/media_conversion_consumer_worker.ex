@@ -97,7 +97,7 @@ defmodule Api.MediaConversionConsumerWorker do
         :mime_type => output["mimeType"],
         :file_type => output["fileType"],
         :file_id => file_id
-      }
+     }
       IO.inspect(Accounts.create_file_conversion(conversion))
     end
     Basic.ack channel, tag

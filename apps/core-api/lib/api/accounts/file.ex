@@ -52,7 +52,7 @@ defmodule Api.Accounts.File do
 
   def move_changeset(file, path) do
     file
-    |> Ecto.Changeset.change(%{ path: get_valid_path(path) })
+    |> Ecto.Changeset.change(%{path: get_valid_path(path)})
   end
 
   @doc false

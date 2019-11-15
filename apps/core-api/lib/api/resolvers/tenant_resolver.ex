@@ -6,15 +6,15 @@ defmodule Api.TenantResolver do
     {:ok, Tenants.list_tenants()}
   end
 
-  def current(_args, %{context: %{context: %{tenant: tenant}}}) do
+  def current(_args, %{context: %{tenant: tenant}}) do
     {:ok, tenant}
   end
   def current(_args, _info) do
     {:ok, nil}
   end
 
-  def update(%{tenant: tenant_input}, %{context: %{context: %{tenant: tenant, current_user: current_user}}}) do
-    if User.is_admin?(current_user, tenant) do
+  def update(%{tenant: tenant_input}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       tenant
       |> Tenants.update_tenant(tenant_input)
     else
