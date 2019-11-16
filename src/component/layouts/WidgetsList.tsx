@@ -9,6 +9,7 @@ import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
     widgets: WidgetModel[];
+    children?: JSX.Element;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -59,7 +60,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
+export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     const styles = useStyles();
     const theme = useTheme();
 
@@ -128,6 +129,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                 </>
             )}
             {shownWidgets && shownWidgets.length === 1 && swipeableViews}
+            {children}
         </div>
     );
 

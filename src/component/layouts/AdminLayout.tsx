@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import useRouter from 'use-react-router';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
@@ -9,8 +9,9 @@ import { CategoriesManagement } from './adminLayout/categoryManagment/CategoryMa
 import { TenantManagement } from './adminLayout/tenantManagment/TenantManagement';
 import { WidgetManagement } from './adminLayout/widgetManagement/WidgetManagement';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { WidgetsList } from './WidgetsList';
 
-export const AdminLayout: FunctionComponent = memo(() => {
+export const AdminLayout = memo(() => {
     const [currentUser] = useCurrentUser();
     const { history } = useRouter();
     if (!currentUser) {
@@ -28,7 +29,9 @@ export const AdminLayout: FunctionComponent = memo(() => {
                 </Switch>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
-                <Navigation />
+                <WidgetsList widgets={[]}>
+                    <Navigation />
+                </WidgetsList>
             </BaseLayoutSidebar>
         </>
     );
