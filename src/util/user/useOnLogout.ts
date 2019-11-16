@@ -25,7 +25,7 @@ export const useOnLogout = () => {
         apolloClient.clearStore();
         dispatch(createCloseDrawerAction());
         setTimeout(() => {
-            window.location.reload();
+            window.location.href = '/';
         }, 500);
     }
 };
