@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { get, merge } from 'lodash';
-import { Button, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
+import { Button, Grid, Typography, makeStyles } from '@material-ui/core';
 import { theme } from 'theme';
 import { ColorSettingRow } from './ColorSettingRow';
 import { useTenant } from 'util/client/useTenant';
@@ -25,12 +25,10 @@ export const ColorSettings = memo(() => {
     const tenant = useTenant();
 
     const [customTheme, setCustomTheme] = useState<any>(tenant.customTheme || {});
-    console.log(customTheme);
 
     const [updateTenant, { loading: isLoading, error }] = useMutation(UpdateTenantMutation);
 
     const getFromTheme = (key: string): any => {
-        debugger;
         return get(customTheme, key, get(theme, key));
     }
 
