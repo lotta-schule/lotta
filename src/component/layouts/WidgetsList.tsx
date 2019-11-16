@@ -1,4 +1,4 @@
-import React, { memo, useLayoutEffect, useState, useRef } from 'react';
+import React, { memo, useLayoutEffect, useRef } from 'react';
 import { WidgetModel } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
 import { useLocalStorage } from 'util/useLocalStorage';
