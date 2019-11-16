@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Add as AddCircleIcon, } from '@material-ui/icons';
 import { CollisionLink } from '../../general/CollisionLink';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
