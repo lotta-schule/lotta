@@ -52,6 +52,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :title, :string
     field :custom_theme, :json
     field :logo_image_file, :file
+    field :background_image_file, :file
   end
 
   input_object :category_input do
@@ -77,6 +78,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :slug, :string
     field :custom_theme, :json
     field :logo_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :background_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end
