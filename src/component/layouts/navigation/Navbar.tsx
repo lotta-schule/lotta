@@ -6,10 +6,10 @@ import { makeStyles } from '@material-ui/styles';
 import { Menu } from '@material-ui/icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
-import { useDispatch } from 'react-redux';
-import classNames from 'classnames';
 import { useCategories } from 'util/categories/useCategories';
+import { useDispatch } from 'react-redux';
 import { fade } from '@material-ui/core/styles';
+import classNames from 'classnames';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -91,12 +91,10 @@ export const Navbar = memo(() => {
     const styles = useStyles();
 
     const categories = useCategories();
-
     const currentCategoryId = useCurrentCategoryId();
     const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || 0);
 
     const dispatch = useDispatch();
-
     const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
 
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];

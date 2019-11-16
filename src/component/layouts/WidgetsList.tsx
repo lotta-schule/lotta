@@ -2,9 +2,11 @@ import React, { memo, useLayoutEffect, useState, useRef } from 'react';
 import { WidgetModel } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab, Theme } from '@material-ui/core';
 import { Widget } from 'component/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
+import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
+import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
@@ -12,14 +14,14 @@ export interface WidgetsListProps {
     children?: JSX.Element;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { isSecondNavigationOpen: boolean }>(theme => ({
     root: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'stretch',
         [theme.breakpoints.up('md')]: {
             position: 'sticky',
-            top: 112
+            top: ({ isSecondNavigationOpen }) => isSecondNavigationOpen ? 112 : 72
         }
     },
     tabsRoot: {
@@ -61,14 +63,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
-    const styles = useStyles();
-    const theme = useTheme();
-
     const isMobile = useIsMobile();
 
     const wrapperRef = useRef<HTMLDivElement | null>(null);
-
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
+
+    const currentCategoryId = useCurrentCategoryId();
+    const isSecondNavigationOpen = useCategoriesAncestorsForItem(currentCategoryId || 0).length > 0;
+
+    const styles = useStyles({ isSecondNavigationOpen });
+    const theme = useTheme();
 
     useLayoutEffect(() => {
         if (wrapperRef.current) {

@@ -42,14 +42,9 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const UserNavigation: FunctionComponent<{}> = memo(() => {
+export const UserNavigation = memo(() => {
     const styles = useStyles();
 
-    // const { data } = useQuery<{ currentUser: UserModel | null }>(GetCurrentUserQuery);
-    // let currentUser: UserModel | null = null;
-    // if (data && data.currentUser) {
-    //     currentUser = data.currentUser;
-    // }
     const [currentUser, { refetch }] = useCurrentUser();
     const { history } = useRouter();
     const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
