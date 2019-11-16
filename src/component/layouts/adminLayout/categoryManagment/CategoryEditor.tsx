@@ -49,7 +49,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                     sortKey: selectedCategory.sortKey,
                     title: category.title,
                     bannerImageFile: category.bannerImageFile,
-                    group: category.group,
+                    groups: category.groups,
                     redirect: category.redirect,
                     hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
                     widgets: category.widgets ? category.widgets.map(w => ({ ...w, configuration: JSON.stringify(w.configuration) })) : []
@@ -92,8 +92,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                 <>
                     <GroupSelect
                         className={styles.input}
-                        selectedGroup={category.group || null}
-                        onSelectGroup={group => setCategory({ ...category, group: group || undefined })}
+                        selectedGroups={category.groups || []}
+                        onSelectGroups={groups => setCategory({ ...category, groups })}
                     />
 
                     <Typography className={styles.input}>

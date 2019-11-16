@@ -14,9 +14,9 @@ export const GetCategoriesQuery = gql`
                 id
                 remoteLocation
             }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
             category {
@@ -33,9 +33,9 @@ export const GetCategoriesQuery = gql`
                     id
                     remoteLocation
                 }
-                group {
+                groups {
                     id
-                    priority
+                    sortKey
                     name
                 }
             }

@@ -8,7 +8,8 @@ import { Provider } from 'react-redux';
 import { theme } from './theme';
 import { ThemeProvider } from '@material-ui/styles';
 import { UploadQueueService } from 'api/UploadQueueService';
-import { createSetUploadsAction, createAddFileAction } from 'store/actions/userFiles';
+import { createSetUploadsAction } from 'store/actions/userFiles';
+import { GetUserFilesQuery } from 'api/query/GetUserFiles';
 import { UploadQueueContext } from 'context/UploadQueueContext';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import * as serviceWorker from './serviceWorker';
@@ -18,6 +19,7 @@ import ReactDOM from 'react-dom';
 import store from './store/Store';
 import { de } from 'date-fns/locale';
 import Matomo from 'matomo-ts';
+import { FileModel } from 'model';
 
 if (process.env.REACT_APP_MATOMO_URL && process.env.REACT_APP_MATOMO_SITEID) {
     Matomo.default().init(
@@ -42,7 +44,15 @@ try {
 
 const uploadQueue = new UploadQueueService(
     uploads => store.dispatch(createSetUploadsAction(uploads)),
-    file => store.dispatch(createAddFileAction(file))
+    file => {
+        const data = client.readQuery<{ files: FileModel[] }>({ query: GetUserFilesQuery }) || { files: [] };
+        client.writeQuery({
+            query: GetUserFilesQuery,
+            data: {
+                files: [...data.files, file]
+            }
+        });
+    }
 );
 
 ReactDOM.render(

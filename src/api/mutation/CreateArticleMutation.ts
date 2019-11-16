@@ -29,9 +29,9 @@ export const CreateArticleMutation = gql`
                 id
                 title
             }
-            group {
+            groups {
                 id
-                priority
+                sortKey
                 name
             }
             users {

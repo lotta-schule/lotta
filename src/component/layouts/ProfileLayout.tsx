@@ -64,6 +64,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                             <Grid item md={8}>
                                 <TextField
                                     autoFocus
+                                    fullWidth
                                     margin="dense"
                                     id="name"
                                     label="Dein Vor- und Nachname"
@@ -72,22 +73,28 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     onChange={e => setName(e.target.value)}
                                     type="name"
                                     disabled={isLoading}
-                                    fullWidth
+                                    inputProps={{
+                                        maxlength: 100
+                                    }}
                                 />
                                 <TextField
                                     autoFocus
+                                    fullWidth
                                     margin="dense"
                                     id="nickname"
                                     label="Dein Spitzname"
                                     value={nickname}
                                     onChange={e => setNickname(e.target.value)}
                                     placeholder="El Professore"
-                                    type="nickname"
+                                    type="text"
                                     disabled={isLoading}
-                                    fullWidth
+                                    inputProps={{
+                                        maxlength: 50
+                                    }}
                                 />
                                 <TextField
                                     autoFocus
+                                    fullWidth
                                     margin="dense"
                                     id="email"
                                     label="Deine Email-Adresse:"
@@ -96,10 +103,13 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     placeholder="beispiel@medienportal.org"
                                     type="email"
                                     disabled={isLoading}
-                                    fullWidth
+                                    inputProps={{
+                                        maxlength: 100
+                                    }}
                                 />
                                 <TextField
                                     autoFocus
+                                    fullWidth
                                     margin="dense"
                                     id="classOrShortName"
                                     label="Deine Klasse / Dein Kürzel:"
@@ -109,7 +119,9 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     helperText={'Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du Zugriff auf deinen Stundenplan erhalten.'}
                                     type="text"
                                     disabled={isLoading}
-                                    fullWidth
+                                    inputProps={{
+                                        maxlength: 25
+                                    }}
                                 />
                                 <Button
                                     type={'submit'}

@@ -44,8 +44,6 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
             return (<div><span style={{ color: 'red' }}>{error.message}</span></div>);
         }
 
-        console.log('data: ', data);
-
         if (data && data.article) {
             const { article } = data;
             return (

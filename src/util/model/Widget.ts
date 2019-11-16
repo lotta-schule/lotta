@@ -36,7 +36,8 @@ export const Widget = {
             id: 0,
             title: 'Profil',
             type: WidgetModelType.UserNavigation,
-            configuration: {}
+            configuration: {},
+            groups: []
         };
     }
 };

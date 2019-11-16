@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { get, merge } from 'lodash';
-import { Button, CardMedia, CardContent, Checkbox, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
+import { Button, CardMedia, CardContent, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
 import { ColorSettingRow } from './ColorSettingRow';
 import { useTenant } from 'util/client/useTenant';
 import { useMutation } from 'react-apollo';
