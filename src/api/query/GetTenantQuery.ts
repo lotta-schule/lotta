@@ -11,6 +11,10 @@ export const GetTenantQuery = gql`
                 id
                 remoteLocation
             }
+            backgroundImageFile {
+                id
+                remoteLocation
+            }
             groups {
                 id
                 name

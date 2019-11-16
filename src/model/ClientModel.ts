@@ -11,4 +11,5 @@ export interface ClientModel {
     customTheme?: any;
     groups: UserGroupModel[];
     logoImageFile?: FileModel;
+    backgroundImageFile?: FileModel;
 }

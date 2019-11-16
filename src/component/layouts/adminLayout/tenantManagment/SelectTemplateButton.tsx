@@ -22,13 +22,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             zIndex: 1,
             '& $imageBackdrop': {
                 opacity: 0.15,
-            },
-            '& $imageMarked': {
-                opacity: 0,
-            },
-            '& $imageTitle': {
-                border: '4px solid currentColor',
-            },
+            }
         },
     },
     focusVisible: {},
@@ -65,16 +59,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     imageTitle: {
         position: 'relative',
         padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(1) + 6}px`,
-    },
-    imageMarked: {
-        height: 3,
-        width: 18,
-        backgroundColor: theme.palette.common.white,
-        position: 'absolute',
-        bottom: -2,
-        left: 'calc(50% - 9px)',
-        transition: theme.transitions.create('opacity'),
-    },
+    }
 }));
 
 export const SelectTemplateButton = memo<SelectTemplateButtonProps>(({ imageUrl, title, onClick }) => {
@@ -103,7 +88,6 @@ export const SelectTemplateButton = memo<SelectTemplateButtonProps>(({ imageUrl,
                     className={classes.imageTitle}
                 >
                     {title}
-                    <span className={classes.imageMarked} />
                 </Typography>
             </span>
         </ButtonBase>

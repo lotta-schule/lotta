@@ -11,6 +11,10 @@ export const UpdateTenantMutation = gql`
                 id
                 remoteLocation
             }
+            backgroundImageFile {
+                id
+                remoteLocation
+            }
         }
     }
 `;

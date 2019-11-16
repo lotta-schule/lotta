@@ -1,13 +1,21 @@
 import React, { memo } from 'react';
-import { Grid, makeStyles, Container } from '@material-ui/core';
+import { Grid, Container, Theme, makeStyles } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { useIsMobile } from 'util/useIsMobile';
 import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
 import { useTenant } from 'util/client/useTenant';
+import { ClientModel } from 'model';
 import Typography from '@material-ui/core/Typography';
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
+    '@global': {
+        body: {
+            backgroundColor: theme.palette.background.default,
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundImage: ({ tenant }) => tenant.backgroundImageFile && `url(${tenant.backgroundImageFile.remoteLocation})`,
+        }
+    },
     header: {
         minWidth: '100%',
         height: 100,
@@ -40,9 +48,9 @@ const useStyles = makeStyles(theme => ({
 
 export const BaseLayout = memo(({ children }) => {
     usePiwikAnalytics();
-    const styles = useStyles();
-    const isMobile = useIsMobile();
     const tenant = useTenant();
+    const styles = useStyles({ tenant });
+    const isMobile = useIsMobile();
     return (
         <Container>
             <header className={styles.header}>

@@ -1,12 +1,15 @@
 import React, { memo, useState } from 'react';
 import { get, merge } from 'lodash';
-import { Button, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Button, Card, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
 import { theme } from 'theme';
 import { ColorSettingRow } from './ColorSettingRow';
 import { useTenant } from 'util/client/useTenant';
 import { useMutation } from 'react-apollo';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { SelectTemplateButton } from './SelectTemplateButton';
+import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
+import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles(theme => ({
     section: {
@@ -25,6 +28,7 @@ export const ColorSettings = memo(() => {
     const tenant = useTenant();
 
     const [customTheme, setCustomTheme] = useState<any>(tenant.customTheme || {});
+    const [backgroundImage, setBackgroundImage] = useState(tenant.backgroundImageFile);
 
     const [updateTenant, { loading: isLoading, error }] = useMutation(UpdateTenantMutation);
 
@@ -45,17 +49,29 @@ export const ColorSettings = memo(() => {
                 <Grid container>
                     <Grid item sm={3}>
                         <SelectTemplateButton
-                            imageUrl={'https://placeimg.com/200/200/any'}
+                            imageUrl={'/theme/default/preview.png'}
                             title={'standard'}
                             onClick={() => setCustomTheme({})}
                         />
                     </Grid>
-                    <Grid item sm={3}>
-                        <SelectTemplateButton
-                            imageUrl={'https://placeimg.com/200/200/any'}
-                            title={'Königsblau'}
-                        />
-                    </Grid>
+                    {['Königsblau'].map(title => {
+                        const pureName = title
+                            .toLowerCase()
+                            .replace(/ö/g, 'oe')
+                        return (
+                            <Grid item sm={3} key={pureName}>
+                                <SelectTemplateButton
+                                    imageUrl={`/theme/${pureName}/preview.png`}
+                                    title={title}
+                                    onClick={() => {
+                                        fetch(`/theme/${pureName}/theme.json`)
+                                            .then(res => res.json())
+                                            .then(setCustomTheme);
+                                    }}
+                                />
+                            </Grid>
+                        );
+                    })}
                 </Grid>
             </section>
 
@@ -123,6 +139,25 @@ export const ColorSettings = memo(() => {
                     </Grid>
                 </Grid>
 
+                <Grid container className={styles.gridContainer}>
+                    <Grid item sm={6}>
+                        <Card>
+                            <CardContent>
+                                <SelectFileOverlay label={'Hintergrundbild ändern'} onSelectFile={backgroundImage => setBackgroundImage(backgroundImage)}>
+                                    {backgroundImage ? (
+                                        <Img operation={'height'} size={'400x200'} src={backgroundImage.remoteLocation} />
+                                    ) : <PlaceholderImage width={'100%'} height={200} />}
+                                </SelectFileOverlay>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item sm={6}>
+                        <Typography>
+                            Für eine optimale Darstellung sollte das Hintergrundbild <i>mindestens</i> eine Auflösung von 1280x800 Pixeln haben.
+                        </Typography>
+                    </Grid>
+                </Grid>
+
                 <Grid container justify={'flex-end'}>
                     <Grid item sm={6} md={4} lg={3}>
                         <Button
@@ -130,7 +165,11 @@ export const ColorSettings = memo(() => {
                             disabled={isLoading}
                             variant={'outlined'}
                             color={'secondary'}
-                            onClick={() => updateTenant({ variables: { tenant: { customTheme: JSON.stringify(customTheme) } } })}
+                            onClick={() => updateTenant({
+                                variables: {
+                                    tenant: { customTheme: JSON.stringify(customTheme), backgroundImageFile: backgroundImage }
+                                }
+                            })}
                         >
                             speichern
                         </Button>
