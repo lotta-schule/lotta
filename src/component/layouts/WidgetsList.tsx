@@ -1,6 +1,7 @@
 import React, { memo, useLayoutEffect, useState, useRef } from 'react';
 import { WidgetModel } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
+import { useLocalStorage } from 'util/useLocalStorage';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Tabs, Tab, Theme } from '@material-ui/core';
 import { Widget } from 'component/widgets/Widget';
@@ -64,9 +65,7 @@ const useStyles = makeStyles<Theme, { isSecondNavigationOpen: boolean }>(theme =
 
 export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     const isMobile = useIsMobile();
-
     const wrapperRef = useRef<HTMLDivElement | null>(null);
-    const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
     const currentCategoryId = useCurrentCategoryId();
     const isSecondNavigationOpen = useCategoriesAncestorsForItem(currentCategoryId || 0).length > 0;
@@ -79,13 +78,16 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
             wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.offsetTop}px)`;
         }
     }, []);
-
     const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
+
+    const [currentTabIndex, setCurrentTabIndex] = useLocalStorage('widgetlist-last-selected-item-index', 0);
+
+    const activeTabIndex = currentTabIndex < shownWidgets.length ? currentTabIndex : 0;
 
     const swipeableViews = (
         <SwipeableViews
             axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-            index={currentTabIndex}
+            index={activeTabIndex}
             onChangeIndex={newIndex => setCurrentTabIndex(newIndex)}
             className={styles.swipeableViewsContainer}
         >
@@ -103,7 +105,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
             {shownWidgets && shownWidgets.length > 1 && (
                 <>
                     <Tabs
-                        value={currentTabIndex}
+                        value={activeTabIndex}
                         variant={isMobile ? 'fullWidth' : 'scrollable'}
                         scrollButtons="auto"
                         aria-label={'Marginales Modul wählen'}
