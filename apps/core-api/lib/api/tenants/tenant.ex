@@ -14,6 +14,7 @@ defmodule Api.Tenants.Tenant do
     has_many :groups, UserGroup
     has_many :users, User
     belongs_to :logo_image_file, File, on_replace: :nilify
+    belongs_to :background_image_file, File, on_replace: :nilify
 
     timestamps()
   end
@@ -21,16 +22,26 @@ defmodule Api.Tenants.Tenant do
   @doc false
   def changeset(tenant, attrs) do
     tenant
-    |> Api.Repo.preload(:logo_image_file)
+    |> Api.Repo.preload([:logo_image_file, :background_image_file])
     |> cast(attrs, [:title, :custom_theme])
     |> validate_required([:slug, :title])
     |> put_assoc_logo_image_file(attrs)
+    |> put_assoc_background_image_file(attrs)
   end
 
   defp put_assoc_logo_image_file(changeset, attrs) do
     case is_nil(attrs[:logo_image_file]) do
       false ->
         put_assoc(changeset, :logo_image_file, Accounts.get_file!(attrs.logo_image_file.id))
+      _ ->
+        changeset
+    end
+  end
+  
+  defp put_assoc_background_image_file(changeset, attrs) do
+    case is_nil(attrs[:background_image_file]) do
+      false ->
+        put_assoc(changeset, :background_image_file, Accounts.get_file!(attrs.background_image_file.id))
       _ ->
         changeset
     end
