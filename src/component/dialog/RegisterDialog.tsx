@@ -5,10 +5,14 @@ import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { useMutation } from '@apollo/react-hooks';
 import { useOnLogin } from 'util/user/useOnLogin';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
         marginBottom: theme.spacing(3),
+    },
+    groupKeyInput: {
+        backgroundColor: fade(theme.palette.secondary.main, .15)
     }
 }));
 
@@ -153,7 +157,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         type="text"
                         fullWidth
                         variant="outlined"
-                        style={{ backgroundColor: '#ff572226' }}
+                        className={styles.groupKeyInput}
                     />
                     <Typography variant="caption" >
                         Gib hier den Anmeldeschlüssel ein, um deine Nutzerrechte zu erhalten (Schüler, Lehrer, etc.).

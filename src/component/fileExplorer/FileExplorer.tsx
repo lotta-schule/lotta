@@ -16,8 +16,9 @@ import { uniq } from 'lodash';
 import { UploadQueueContext } from 'context/UploadQueueContext';
 import { useDropzone } from 'react-dropzone';
 import { useLocalStorage } from 'util/useLocalStorage';
-import { useMutation, useQuery } from '@apollo/react-hooks';
 import { useSelector } from 'react-redux';
+import { fade } from '@material-ui/core/styles';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
   overlayDropzoneActive: {
@@ -29,9 +30,10 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ccca',
+    backgroundColor: fade(theme.palette.grey[400], .67),
     zIndex: 10000,
-    border: '1px solid #333',
+    border: '1px solid',
+    borderColor: theme.palette.grey[700],
     borderRadius: 10,
   },
   bottomToolbar: {

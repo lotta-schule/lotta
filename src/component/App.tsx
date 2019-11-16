@@ -1,4 +1,7 @@
 import React, { memo } from 'react';
+import { merge } from 'lodash';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 import { AdminLayout } from './layouts/AdminLayout';
 import { ArticleRoute } from './routes/ArticleRoute';
 import { BaseLayout } from './layouts/BaseLayout';
@@ -13,6 +16,7 @@ import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-apollo';
+import { theme } from 'theme';
 
 export const App = memo(() => {
   const { data, loading: isLoading, error, called } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
@@ -44,24 +48,31 @@ export const App = memo(() => {
   const { tenant } = data!;
 
   return (
-    <BrowserRouter>
-      <Helmet>
-        <title>{tenant.title}</title>
-        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-      </Helmet>
-      <BaseLayout>
-        <Switch>
-          <Route exact path={'/'} component={CategoryRoute} />
-          <Route path={'/category/:id'} component={CategoryRoute} />
-          <Route path={'/article/:id/edit'} component={EditArticleRoute} />
-          <Route path={'/article/:id'} component={ArticleRoute} />
-          <Route path={'/profile'} component={ProfileLayout} />
-          <Route path={'/admin'} component={AdminLayout} />
-          <Route path={'/privacy'} component={PrivacyLayout} />
-          <Route component={() => <div>Nicht gefunden</div>} />
-        </Switch>
-      </BaseLayout>
-    </BrowserRouter>
+    <ThemeProvider theme={() => {
+      if (tenant.customTheme) {
+        return createMuiTheme(merge({}, theme, tenant.customTheme));
+      }
+      return theme;
+    }}>
+      <BrowserRouter>
+        <Helmet>
+          <title>{tenant.title}</title>
+          <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+        </Helmet>
+        <BaseLayout>
+          <Switch>
+            <Route exact path={'/'} component={CategoryRoute} />
+            <Route path={'/category/:id'} component={CategoryRoute} />
+            <Route path={'/article/:id/edit'} component={EditArticleRoute} />
+            <Route path={'/article/:id'} component={ArticleRoute} />
+            <Route path={'/profile'} component={ProfileLayout} />
+            <Route path={'/admin'} component={AdminLayout} />
+            <Route path={'/privacy'} component={PrivacyLayout} />
+            <Route component={() => <div>Nicht gefunden</div>} />
+          </Switch>
+        </BaseLayout>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 });

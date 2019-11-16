@@ -14,8 +14,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'flex',
         alignItems: 'center',
         width: 400,
-        backgroundColor: '#efefef',
-        borderRadius: 4,
+        backgroundColor: theme.palette.grey[200],
+        borderRadius: theme.shape.borderRadius,
     },
     container: {
         paddingTop: theme.spacing(3),

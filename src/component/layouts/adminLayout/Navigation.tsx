@@ -1,8 +1,8 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { Paper, Tabs, Tab } from '@material-ui/core';
 import useRouter from 'use-react-router';
 
-export const Navigation: FunctionComponent = memo(() => {
+export const Navigation = memo(() => {
     const { history, location } = useRouter();
     return (
         <Paper>

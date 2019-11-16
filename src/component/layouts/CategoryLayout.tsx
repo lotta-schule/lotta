@@ -7,16 +7,17 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
+import { fade } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     subheaderContainer: {
         height: '120px',
         border: '0.5em solid',
-        borderColor: theme.palette.primary.contrastText,
+        borderColor: theme.palette.background.paper,
         marginBottom: '0.5em',
-        backgroundColor: theme.palette.primary.contrastText,
-        borderRadius: 4,
-        boxShadow: '1px 1px 2px #0000003b',
+        backgroundColor: theme.palette.background.paper,
+        borderRadius: theme.shape.borderRadius,
+        boxShadow: `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
         [theme.breakpoints.down('xs')]: {
             display: 'none',
         },

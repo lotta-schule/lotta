@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Add as AddCircleIcon, } from '@material-ui/icons';
 import { CollisionLink } from '../../general/CollisionLink';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
@@ -19,7 +19,7 @@ import useRouter from 'use-react-router';
 const useStyles = makeStyles(theme => ({
     root: {
         top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(2),
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
         padding: '0.5em 1em 0.5em 0.5em',
         height: 136,
         flexShrink: 0,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
     button: {
         marginBottom: theme.spacing(1),
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -42,14 +42,9 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const UserNavigation: FunctionComponent<{}> = memo(() => {
+export const UserNavigation = memo(() => {
     const styles = useStyles();
 
-    // const { data } = useQuery<{ currentUser: UserModel | null }>(GetCurrentUserQuery);
-    // let currentUser: UserModel | null = null;
-    // if (data && data.currentUser) {
-    //     currentUser = data.currentUser;
-    // }
     const [currentUser, { refetch }] = useCurrentUser();
     const { history } = useRouter();
     const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);

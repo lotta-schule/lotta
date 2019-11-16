@@ -5,15 +5,6 @@ import { Theme, Typography, Button } from "@material-ui/core";
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: theme.spacing(2),
-        textAlign: 'center',
-        backgroundColor: theme.palette.primary.contrastText,
-        color: theme.palette.secondary.main,
-        borderColor: theme.palette.secondary.main,
-        borderRadius: 4,
-        border: '1px solid',
-        '&:hover': {
-            backgroundColor: theme.palette.secondary.light,
-        }
     },
     buttonLabel: {
         display: 'flex',
@@ -32,7 +23,7 @@ export const AddModuleButton: FunctionComponent<AddModuleButtonProps> = memo(({ 
     const styles = useStyles();
 
     return (
-        <Button classes={{ root: styles.root, label: styles.buttonLabel }} onClick={onClick}>
+        <Button color={'secondary'} variant={'outlined'} classes={{ root: styles.root, label: styles.buttonLabel }} onClick={onClick}>
             {icon}
             <Typography>{label}</Typography>
         </Button>

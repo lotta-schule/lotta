@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: '1em',
         margin: '0.5em 0 0 0',
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
         '& button': {
             width: '100%'
         }
