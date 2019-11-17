@@ -38,7 +38,7 @@ defmodule Api.Accounts.User do
     |> Map.fetch!(:groups)
     |> Enum.any?(fn group -> group.tenant_id == tenant.id && group.is_admin_group end)
   end
-  def is_admin?(nil, _), do: false
+  def is_admin?(_, _), do: false
 
   def is_author?(%User{} = user, %Article{} = article) do
     article
@@ -46,7 +46,7 @@ defmodule Api.Accounts.User do
     |> Map.get(:users)
     |> Enum.any?(fn u -> u.id == user.id end)
   end
-  def is_author?(nil, _), do: false
+  def is_author?(_, _), do: false
 
   def has_group_for_article?(%User{} = user, %Article{} = article) do
     user_group_ids = User.group_ids(user)
