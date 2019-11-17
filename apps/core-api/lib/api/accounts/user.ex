@@ -13,6 +13,7 @@ defmodule Api.Accounts.User do
     field :nickname, :string
     field :class, :string
     field :last_seen, :naive_datetime
+    field :hide_full_name, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string
 
@@ -32,39 +33,40 @@ defmodule Api.Accounts.User do
   end
 
   def is_admin?(%User{} = user, %Tenant{} = tenant) do
-    tenant_id = tenant.id
     user
     |> Repo.preload(:groups)
     |> Map.fetch!(:groups)
-    |> Enum.find(fn group -> Kernel.match?(%{tenant_id: ^tenant_id, is_admin_group: true}, group) end)
-    |> is_nil
-    |> Kernel.not
+    |> Enum.any?(fn group -> group.tenant_id == tenant.id && group.is_admin_group end)
   end
+  def is_admin?(nil, _), do: false
 
   def is_author?(%User{} = user, %Article{} = article) do
     article
     |> Repo.preload(:users)
     |> Map.get(:users)
-    |> Enum.find(fn u -> u.id == user.id end)
-    |> is_nil
-    |> Kernel.not
+    |> Enum.any?(fn u -> u.id == user.id end)
   end
+  def is_author?(nil, _), do: false
 
   def has_group_for_article?(%User{} = user, %Article{} = article) do
-    article = Repo.preload(article, [:group, :tenant])
-    if is_nil(article.group) do
-      true
-    else
-      article.group.priority <= get_max_priority_for_tenant(user, article.tenant)
-    end
+    user_group_ids = User.group_ids(user)
+    article_group_ids =
+      article
+      |> Repo.preload([:groups, :tenant])
+      |> Map.fetch!(:groups)
+      |> Enum.map(fn group -> group.id end)
+
+    article_group_ids
+    |> Enum.any?(&Enum.member?(user_group_ids, &1))
   end
 
-  def get_max_priority_for_tenant(%User{} = user, %Tenant{} = tenant) do
-    user.groups
-      |> Enum.filter(fn g -> g.tenant_id == tenant.id end)
-      |> Enum.map(fn g -> g.priority end)
-      |> Enum.max(fn -> 0 end)
+  def group_ids(%User{} = user) do
+    user
+    |> Repo.preload(:groups)
+    |> Map.fetch!(:groups)
+    |> Enum.map(fn group -> group.id end)
   end
+  def group_ids(nil), do: []
 
   @doc false
   def changeset(user, attrs) do
@@ -86,7 +88,7 @@ defmodule Api.Accounts.User do
   def update_changeset(%User{} = user, params \\ %{}) do
     user
     |> Repo.preload(:avatar_image_file)
-    |> cast(params, [:name, :class, :nickname, :email], [:password])
+    |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
     |> validate_required([:name, :email])
     |> unique_constraint(:email)
     |> put_pass_hash()
@@ -95,7 +97,7 @@ defmodule Api.Accounts.User do
 
   def registration_changeset(%User{} = user, params \\ %{}) do
     user
-    |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id])
+    |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
     |> validate_required([:name, :email, :password, :tenant_id])
     |> unique_constraint(:email)
     |> put_pass_hash()
@@ -110,7 +112,7 @@ defmodule Api.Accounts.User do
     end
   end
 
-  defp put_assoc_avatar_image_file(article, %{ avatar_image_file: %{ id: avatar_image_file_id } }) do
+  defp put_assoc_avatar_image_file(article, %{avatar_image_file: %{id: avatar_image_file_id}}) do
     article
     |> put_assoc(:avatar_image_file, Api.Repo.get(Api.Accounts.File, avatar_image_file_id))
   end

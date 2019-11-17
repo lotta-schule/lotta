@@ -62,7 +62,7 @@ defmodule ApiWeb.Schema.ContentsTypes do
     field :ready_to_publish, :boolean
     field :topic, :string
     field :preview_image_file, :file
-    field :group, :user_group
+    field :groups, list_of(:user_group)
     field :category, :category
     field :content_modules, list_of(:content_module_input)
     field :users, list_of(:user)
@@ -82,5 +82,42 @@ defmodule ApiWeb.Schema.ContentsTypes do
     field :files, list_of(:file)
     field :sort_key, :integer
     field :configuration, :json
+  end
+
+  object :article do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :title, :string
+    field :preview, :string
+    field :topic, :string
+    field :ready_to_publish, :boolean
+    field :is_pinned_to_top, :boolean
+    field :preview_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
+    field :content_modules, list_of(:content_module), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+    field :users, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  object :content_module do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :type, :content_module_type
+    field :text, :string
+    field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :sort_key, :integer
+    field :configuration, :json
+  end
+
+  enum :content_module_type do
+    value :title, as: "title"
+    value :text, as: "text"
+    value :image, as: "image"
+    value :image_collection, as: "image_collection"
+    value :video, as: "video"
+    value :audio, as: "audio"
+    value :download, as: "download"
   end
 end

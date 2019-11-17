@@ -1,7 +1,7 @@
 defmodule Api.ContentTest do
   use Api.DataCase
   alias Api.Fixtures
-  alias Api.{Content, Accounts}
+  alias Api.{Content}
 
   
   describe "article" do
@@ -23,7 +23,6 @@ defmodule Api.ContentTest do
     
     test "list_unpublished_articles/2 should return the tenants unpublished articles" do
       user = Fixtures.fixture(:registered_user)
-      admin = Fixtures.fixture(:admin_user) |> Api.Repo.preload([:tenant, :groups])
       article = Fixtures.fixture(:unpublished_article, user)
       |> Api.Repo.preload([:category, :users])
 
@@ -47,7 +46,7 @@ defmodule Api.ContentTest do
       Content.delete_article(article)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Api.Repo.get!(Content.Article, article.id)
+        Api.Repo.get!(Article, article.id)
       end
     end
     

@@ -8,51 +8,51 @@ defmodule ApiWeb.Context do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
-    Absinthe.Plug.put_options(conn, context: context)
+    conn
+    |> Absinthe.Plug.put_options(context: build_absinthe_context(conn))
   end
 
-  defp build_context(conn) do
-    %{context: Map.merge(
-      get_user_context(conn),
-      get_tenant_context(conn)
-    )}
+  def build_absinthe_context(conn, context \\ %{}) do
+    context
+    |> put_user(conn)
+    |> put_tenant(conn)
   end
 
-  defp get_user_context(conn) do
+  defp put_user(context, conn) do
     authorization_header = get_req_header(conn, "authorization")
     with ["Bearer " <> token] <- authorization_header do
       case Guardian.resource_from_token(token) do
         {:ok, current_user, _claims} ->
-          user = %{
-            current_user: Repo.get(Accounts.User, current_user.id)
-            |> Repo.preload([:groups, :avatar_image_file])
-          }
+          current_user = Repo.get(Accounts.User, current_user.id)
+          |> Repo.preload([:groups, :avatar_image_file])
           Task.start_link(fn ->
             current_user
             |> Repo.preload(:tenant)
             |> Accounts.see_user()
           end)
-          user
+          context
+          |> Map.put(:current_user, current_user)
         {:error, _} ->
-          %{}
+          context
       end
     else
-      _ -> %{}
+      _ ->
+        context
     end
   end
 
-  defp get_tenant_context(conn) do
+  defp put_tenant(context, conn) do
     tenant_header = get_req_header(conn, "tenant")
     with ["slug:" <> slug] <- tenant_header do
-      tenant = Tenants.get_tenant_by_slug(slug)
-      if is_nil(tenant) do
-        %{tenant: Tenants.get_tenant_by_slug!("ehrenberg")}
-      else
-        %{tenant: tenant}
+      tenant = case Tenants.get_tenant_by_slug(slug) do
+        nil -> Tenants.get_tenant_by_slug!("ehrenberg")
+        tenant -> tenant
       end
+      context
+      |> Map.put(:tenant, tenant)
     else
-      _ -> %{}
+      _ ->
+        context
     end
   end
 end

@@ -9,7 +9,7 @@ defmodule Api.Accounts.AuthHelper do
     user = Repo.get_by(User, email: String.downcase(username))
     cond do
       user && verify_pass(given_pass, user.password_hash) -> {:ok, user}
-      true -> {:error, "Incorrect Login Credentials"}
+      true -> {:error, "Falsche Zugangsdaten."}
     end
   end
 end

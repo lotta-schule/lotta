@@ -5,11 +5,11 @@ defmodule Api.FileResolver do
   alias Repo
   alias UUID
 
-  def all(%{}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) do
+  def all(%{}, %{context: %{current_user: current_user, tenant: tenant}}) do
     {:ok, Accounts.list_files(tenant.id, current_user.id)}
   end
 
-  def upload(%{path: path, file: file}, %{context: %{context: %{ current_user: current_user, tenant: tenant }}}) do
+  def upload(%{path: path, file: file}, %{context: %{current_user: current_user, tenant: tenant}}) do
     %{filename: filename,content_type: content_type,path: localfilepath} = file
     %{size: filesize} = File.stat! localfilepath
     oid = current_user.id + DateTime.to_unix(DateTime.utc_now) + :rand.uniform(9999)
@@ -29,7 +29,7 @@ defmodule Api.FileResolver do
     {:ok, file}
   end
 
-  def move(%{id: id, path: path}, %{context: %{context: %{ current_user: current_user }}}) do
+  def move(%{id: id, path: path}, %{context: %{current_user: current_user}}) do
     file = Accounts.get_file!(id)
     case Accounts.File.is_author?(file, current_user) do
       true ->
@@ -39,7 +39,7 @@ defmodule Api.FileResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %{context: %{ current_user: current_user }}}) do
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     file = Accounts.get_file!(id)
     case Accounts.File.is_author?(file, current_user) do
       true ->

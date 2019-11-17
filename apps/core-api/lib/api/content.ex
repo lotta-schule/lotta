@@ -3,13 +3,13 @@ defmodule Api.Content do
   The Content context.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
   import Ecto.Changeset
   alias Api.Repo
 
   alias Api.Content.Article
   alias Api.Tenants.{Category,Tenant}
-  alias Api.Accounts.{User,UserGroup}
+  alias Api.Accounts.{User}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -28,55 +28,17 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(tenant_id, nil, user, filter) do
-    # Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and not is_nil(a.category_id))
-    if is_nil(user) do
-      Ecto.Query.from(a in Article,
-        where: a.tenant_id == ^tenant_id and not is_nil(a.category_id) and is_nil(a.group_id),
-        join: c in Category, where: (c.id == a.category_id) and c.hide_articles_from_homepage != true
-      )
-      |> filter_query(filter)
-      |> Repo.all
-    else
-      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
-      Ecto.Query.from(a in Article,
-        where: a.tenant_id == ^tenant_id and not is_nil(a.category_id),
-        join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
-        join: c in Category, where: (c.id == a.category_id) and c.hide_articles_from_homepage != true,
-        distinct: true
-      )
-      |> filter_query(filter)
-      |> Repo.all
+  def list_articles(%Tenant{} = tenant, category_id, user, filter) do
+    query = list_public_articles(tenant, user)
+    case category_id do
+      nil ->
+        query
+      category_id ->
+        from a in query, where: a.category_id == ^category_id
     end
+    |> filter_query(filter)
+    |> Repo.all()
   end
-  
-  @doc """
-  Returns the list of articles belonging to a category_id.
-
-  ## Examples
-
-      iex> list_articles(category_id)
-      [%Article{}, ...]
-
-  """
-  def list_articles(tenant_id, category_id, user, filter) do
-    if is_nil(user) do
-      Ecto.Query.from(a in Article,
-        where: a.tenant_id == ^tenant_id and a.category_id == ^category_id and is_nil(a.group_id)
-      )
-      |> filter_query(filter)
-      |> Repo.all
-    else
-      max_priority = User.get_max_priority_for_tenant(user, %Tenant{ id: tenant_id })
-      Ecto.Query.from(a in Article,
-        where: a.tenant_id == ^tenant_id and a.category_id == ^category_id,
-        join: ug in UserGroup, where: (not is_nil(a.group_id) and ug.priority <= ^max_priority and ug.id == a.group_id) or is_nil(a.group_id),
-        distinct: true)
-      |> filter_query(filter)
-      |> Repo.all
-    end
-  end
-
     
   @doc """
   Returns the list of articles belonging to a topic.
@@ -87,8 +49,12 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles_by_topic(tenant_id, topic) do
-    Ecto.Query.from(a in Article, where: a.tenant_id == ^tenant_id and a.topic == ^topic)
+  def list_articles_by_topic(%Tenant{} = tenant, user, topic) do
+    query = list_public_articles(tenant, user)
+    from(a in query,
+      where: a.topic == ^topic,
+      order_by: [desc: :updated_at]
+    )
     |> Repo.all
   end
   
@@ -102,8 +68,7 @@ defmodule Api.Content do
 
   """
   def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
-    tenant_id = tenant.id
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant_id and a.ready_to_publish == true and is_nil(a.category_id))
+    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id))
   end
   
   @doc """
@@ -116,11 +81,11 @@ defmodule Api.Content do
 
   """
   def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
-    tenant_id = tenant.id
     user_id = user.id
     Repo.all(Ecto.Query.from a in Article,
-      where: a.tenant_id == ^tenant_id,
-      join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id
+      where: a.tenant_id == ^tenant.id,
+      join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id,
+      order_by: :id
     )
   end
 
@@ -308,12 +273,26 @@ defmodule Api.Content do
   def toggle_article_pin(article_id) do
     article = Repo.get(Article, article_id)
     article
-    |> Ecto.Changeset.cast(%{ is_pinned_to_top: !article.is_pinned_to_top }, [:is_pinned_to_top])
+    |> Ecto.Changeset.cast(%{is_pinned_to_top: !article.is_pinned_to_top}, [:is_pinned_to_top])
     |> Repo.update()
   end
 
+  defp list_public_articles(%Tenant{} = tenant, user) do
+    user_group_ids = User.group_ids(user)
+    from(a in Article,
+      left_join: aug in "articles_user_groups",
+      on: aug.article_id == a.id,
+      join: c in Category,
+      on: c.id == a.category_id,
+      where: a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
+             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^User.is_admin?(user, tenant))
+             and c.hide_articles_from_homepage != true,
+      distinct: true
+    )
+  end
+
   defp filter_query(query, filter) do
-    query = from q in query, order_by: {:desc, :updated_at}
+    query = from q in query, order_by: [desc: :updated_at, desc: :id]
     (filter || %{})
     |> Enum.reduce(query, fn 
       {_, nil}, query ->

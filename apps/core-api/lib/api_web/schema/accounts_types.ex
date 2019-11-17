@@ -12,7 +12,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
     field :search_users, list_of(:user) do
       arg :searchtext, non_null(:string)
-      resolve &Api.UserResolver.find/2
+      resolve &Api.UserResolver.search/2
     end
 
     field :user, type: :user do
@@ -75,6 +75,8 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
   input_object :register_user_params do
     field :name, :string
+    field :nickname, :string
+    field :hide_full_name, :boolean
     field :email, :string
     field :password, :string
   end
@@ -84,7 +86,38 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :email, :string
     field :class, :string
     field :nickname, :string
+    field :hide_full_name, :boolean
     field :avatar_image_file, :file
+  end
+
+  object :authresult do
+    field :token, :string
+  end
+
+  object :user do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :last_seen, :naive_datetime
+    field :name, :string, resolve: &Api.UserResolver.resolve_name/3
+    field :class, :string
+    field :nickname, :string
+    field :email, :string
+    field :hide_full_name, :boolean
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+    field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+  end
+
+  object :user_group do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :name, :string
+    field :sort_key, :integer
+    field :is_admin_group, :boolean
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
   
 end

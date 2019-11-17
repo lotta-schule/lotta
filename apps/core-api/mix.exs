@@ -32,13 +32,13 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:honeybadger, :lager, :logger, :runtime_tools, :amqp, :ssl, :inets]
+      extra_applications: [:honeybadger, :lager, :logger, :runtime_tools, :amqp, :ssl, :inets, :con_cache]
     ]
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(:test), do: ["lib", "priv/repo/seeder", "test/support"]
+  defp elixirc_paths(_), do: ["lib", "priv/repo/seeder"]
 
   # Specifies your project dependencies.
   #
@@ -68,7 +68,8 @@ defmodule Api.MixProject do
       {:uuid, "~> 1.1"},
       {:amqp, "~> 1.2"},
       {:ex_ical, "~> 0.2.0"},
-      {:honeybadger, "~>0.13.0"},
+      {:honeybadger, "~> 0.13.0"},
+      {:con_cache, "~> 0.14"},
       #test
       {:excoveralls, "~> 0.11", only: :test}
     ]
