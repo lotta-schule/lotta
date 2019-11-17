@@ -1,6 +1,5 @@
 defmodule Api.WidgetResolver do
   alias Api.Accounts.User
-  alias Api.Repo
 
   def all(_args, %{context: %{tenant: tenant} = context}) do
     {:ok, Api.Tenants.list_widgets_by_tenant(tenant, context[:current_user])}
