@@ -33,7 +33,7 @@ export interface CategoryNavigationProps {
 export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCategory, onSelectCategory }) => {
     const styles = useStyles();
 
-    const categories = useCategories();
+    const [categories] = useCategories();
 
     const [expandedMainCategoryId, setExpandedMainCategoryId] = useState<ID | null>(null);
 

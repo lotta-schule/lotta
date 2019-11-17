@@ -17,11 +17,12 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-apollo';
 import { theme } from 'theme';
+import { useCategories } from 'util/categories/useCategories';
 
 export const App = memo(() => {
     const { data, loading: isLoadingTenant, error, called: calledTenant } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
-
     const [, { called: calledCurrentUser, loading: isLoadingCurrentUser }] = useCurrentUser();
+    useCategories(); // start loading categories
 
     if (!calledTenant || !calledCurrentUser || isLoadingTenant || isLoadingCurrentUser) {
         return (

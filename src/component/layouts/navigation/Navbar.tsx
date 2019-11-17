@@ -90,7 +90,7 @@ export const Navbar = memo(() => {
 
     const styles = useStyles();
 
-    const categories = useCategories();
+    const [categories] = useCategories();
     const currentCategoryId = useCurrentCategoryId();
     const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || 0);
 

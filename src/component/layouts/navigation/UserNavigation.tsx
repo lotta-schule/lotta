@@ -55,7 +55,7 @@ export const UserNavigation = memo(() => {
     const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(false);
 
     useEffect(() => {
-        if (currentUser && !calledUnpublishedArticles) {
+        if (currentUser && User.isAdmin(currentUser) && !calledUnpublishedArticles) {
             loadUnpublishedArticles();
         }
     }, [calledUnpublishedArticles, currentUser, loadUnpublishedArticles]);
@@ -63,7 +63,7 @@ export const UserNavigation = memo(() => {
     const unpublishedArticles = unpublishedArticlesData ? (unpublishedArticlesData.articles || []) : [];
     const unpublishedBadgeNumber = [...unpublishedArticles].filter(article => !article.readyToPublish || !article.category).length;
 
-    const categories = useCategories().filter(category => category.isSidenav);
+    const categories = useCategories()[0].filter(category => category.isSidenav);
 
     return (
         <>
