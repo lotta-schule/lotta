@@ -1,8 +1,8 @@
 import React, { memo, useState, useEffect } from 'react';
 import { ArticleModel, FileModelType, UserModel } from 'model';
 import { ArticlesManagement } from 'component/profile/ArticlesManagement';
-import { BaseLayoutMainContent } from './BaseLayoutMainContent';
-import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
+import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
 import { Card, CardContent, Typography, TextField, Button, Fab, Avatar, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { FileExplorer } from 'component/fileExplorer/FileExplorer';
@@ -15,6 +15,7 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks';
 import { User } from 'util/model';
 import useRouter from 'use-react-router';
+import { WidgetsList } from '../WidgetsList';
 
 export const ProfileLayout = memo(() => {
     const [currentUser] = useCurrentUser();
@@ -177,7 +178,9 @@ export const ProfileLayout = memo(() => {
                     </CardContent>
                 </Card>
             </BaseLayoutMainContent>
-            <BaseLayoutSidebar />
+            <BaseLayoutSidebar>
+                <WidgetsList widgets={[]} />
+            </BaseLayoutSidebar>
         </>
     );
 });
