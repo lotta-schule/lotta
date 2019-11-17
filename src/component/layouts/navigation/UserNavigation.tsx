@@ -9,7 +9,7 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
 import { ArticleModel } from '../../../model';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
-import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
+import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useCategories } from 'util/categories/useCategories';
@@ -36,9 +36,8 @@ const useStyles = makeStyles(theme => ({
         fontSize: 20,
     },
     badge: {
-        top: '45%',
-        right: 80,
-        zIndex: 0,
+        left: '-2.5em',
+        transform: 'scale(1) translate(0%, 0%)'
     }
 }));
 
@@ -47,7 +46,7 @@ export const UserNavigation = memo(() => {
 
     const [currentUser, { refetch }] = useCurrentUser();
     const { history } = useRouter();
-    const [loadOwnArticles, { data: ownArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
+    const [loadUnpublishedArticles, { data: unpublishedArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery);
 
     const onLogout = useOnLogout();
 
@@ -57,12 +56,12 @@ export const UserNavigation = memo(() => {
 
     useEffect(() => {
         if (currentUser) {
-            loadOwnArticles();
+            loadUnpublishedArticles();
         }
-    }, [currentUser, loadOwnArticles]);
+    }, [currentUser, loadUnpublishedArticles]);
 
-    const ownArticles = ownArticlesData ? (ownArticlesData.articles || []) : [];
-    const profileBadgeNumber = [...ownArticles].filter(article => !article.readyToPublish || !article.category).length;
+    const unpublishedArticles = unpublishedArticlesData ? (unpublishedArticlesData.articles || []) : [];
+    const unpublishedBadgeNumber = [...unpublishedArticles].filter(article => !article.readyToPublish || !article.category).length;
 
     const categories = useCategories().filter(category => category.isSidenav);
 
@@ -90,19 +89,29 @@ export const UserNavigation = memo(() => {
                                 </>
                             }
                             {currentUser && (
-                                <li><Link component={CollisionLink} to={'/profile'}>
-                                    {profileBadgeNumber && profileBadgeNumber > 0 ? (
-                                        <Badge classes={{ badge: styles.badge }} badgeContent={profileBadgeNumber} color="secondary">
-                                            Mein Profil
-                                        </Badge>
-                                    ) : <span>Mein Profil</span>}
-                                </Link></li>
+                                <li>
+                                    <Link component={CollisionLink} to={'/profile'}>
+                                        Mein Profil
+                                    </Link>
+                                </li>
                             )}
                             {User.isAdmin(currentUser) && (
-                                <li><Link component={CollisionLink} to={'/admin'}>Administration</Link></li>
+                                <li>
+                                    <Badge
+                                        badgeContent={unpublishedBadgeNumber}
+                                        color="secondary"
+                                        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                                        classes={{ badge: styles.badge }}
+                                        showZero={false}
+                                    >
+                                        <Link component={CollisionLink} to={'/admin'}>Administration</Link>
+                                    </Badge>
+                                </li>
                             )}
                             {categories.map(category => (
-                                <li key={category.id}><Link component={CollisionLink} to={`/category/${category.id}`}>{category.title}</Link></li>
+                                <li key={category.id}>
+                                    <Link component={CollisionLink} to={`/category/${category.id}`}>{category.title}</Link>
+                                </li>
                             ))}
                             <li><Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link></li>
                         </ul>

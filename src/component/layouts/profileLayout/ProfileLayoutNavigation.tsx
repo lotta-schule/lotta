@@ -1,12 +1,8 @@
 import React, { memo } from 'react';
 import { Paper, Tabs, Tab } from '@material-ui/core';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
-import { UserModel } from 'model';
 import useRouter from 'use-react-router';
 
 export const ProfileLayoutNavigation = memo(() => {
-    const currentUser = useCurrentUser()[0] as UserModel;
     const { history, location } = useRouter();
     return (
         <Paper>
@@ -20,9 +16,6 @@ export const ProfileLayoutNavigation = memo(() => {
                 <Tab label="Meine Daten" value={'/profile'} />
                 <Tab label="Meine Dateien und Medien" value={'/profile/files'} />
                 <Tab label="Meine Beiträge" value={'/profile/articles'} />
-                {User.isAdmin(currentUser) && (
-                    <Tab label="Freizugebende Beiträge" value={'/profile/unpublished'} />
-                )}
             </Tabs>
         </Paper>
     );
