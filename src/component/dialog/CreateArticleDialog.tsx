@@ -2,7 +2,7 @@ import React, { FunctionComponent, memo, useState } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField } from '@material-ui/core';
 import { ArticleModel, ArticleModelInput } from '../../model';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
-import { client } from 'api/client';
+import { useMutation } from '@apollo/react-hooks';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
@@ -18,54 +18,47 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
     onAbort
 }) => {
     const [title, setTitle] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [createArticle, { loading: isLoading, error }] = useMutation<{ article: ArticleModel }, { article: Partial<ArticleModelInput> }>(CreateArticleMutation, {
+        variables: { article: { title } },
+        update: (cache, { data }) => {
+            if (data && data.article) {
+                let ownArticles: ArticleModel[] = [];
+                try {
+                    const readOwnArticlesResult = cache.readQuery<{ articles: ArticleModel[] }>({ query: GetOwnArticlesQuery });
+                    if (readOwnArticlesResult && readOwnArticlesResult.articles) {
+                        ownArticles = [...readOwnArticlesResult.articles];
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+                cache.writeQuery<{ articles: ArticleModel[] }>({
+                    query: GetOwnArticlesQuery,
+                    data: {
+                        articles: [...ownArticles, data.article]
+                    }
+                });
+            }
+        },
+        onCompleted: ({ article }) => {
+            onConfirm(article);
+        }
+    });
     const resetForm = () => {
         setTitle('');
     }
     return (
         <ResponsiveFullScreenDialog open={isOpen} fullWidth>
-            <form onSubmit={async (e) => {
+            <form onSubmit={(e) => {
                 e.preventDefault();
-                setErrorMessage(null);
-                setIsLoading(true);
-                try {
-                    const { data } = await client.mutate<{ article: ArticleModel }, { article: Partial<ArticleModelInput> }>({
-                        mutation: CreateArticleMutation,
-                        fetchPolicy: 'no-cache',
-                        variables: {
-                            article: {
-                                title
-                            }
-                        }
-                    });
-                    const ownArticles = await client.readQuery<{ articles: ArticleModel[] }>({
-                        query: GetOwnArticlesQuery
-                    });
-                    if (data && ownArticles && ownArticles.articles !== undefined) {
-                        await client.writeQuery<{ articles: ArticleModel[] }>({
-                            query: GetOwnArticlesQuery,
-                            data: {
-                                articles: ownArticles.articles.concat([data.article])
-                            }
-                        });
-                    }
-                    resetForm();
-                    onConfirm(data!.article);
-                } catch (e) {
-                    console.error(e);
-                    setErrorMessage(e.message);
-                } finally {
-                    setIsLoading(false);
-                }
+                createArticle();
             }}>
                 <DialogTitle>Beitrag erstellen</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Wähle zunächst einen Titel für deinen Beitrag
                     </DialogContentText>
-                    {errorMessage && (
-                        <p style={{ color: 'red' }}>{errorMessage}</p>
+                    {error && (
+                        <p style={{ color: 'red' }}>{error.message}</p>
                     )}
                     <TextField
                         autoFocus
