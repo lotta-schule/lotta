@@ -12,6 +12,9 @@ export const UploadFileMutation = gql`
             path
             remoteLocation
             fileType
+            fileConversions {
+                id
+            }
         }
     }
 `;

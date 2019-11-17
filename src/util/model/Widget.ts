@@ -13,6 +13,11 @@ export const Widget = {
 
     getIconForType(type: WidgetModelType) {
         switch (type) {
+            case WidgetModelType.Schedule:
+                return createElement('img', {
+                    src: '/img/schedule.svg',
+                    style: { width: '1.5rem', height: '1.5rem' }
+                });
             case WidgetModelType.Calendar:
                 return createElement('img', {
                     src: '/img/calendar.svg',
@@ -31,7 +36,8 @@ export const Widget = {
             id: 0,
             title: 'Profil',
             type: WidgetModelType.UserNavigation,
-            configuration: {}
+            configuration: {},
+            groups: []
         };
     }
 };

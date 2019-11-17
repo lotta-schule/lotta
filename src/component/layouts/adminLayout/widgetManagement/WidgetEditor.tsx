@@ -1,13 +1,14 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
 import { Typography, makeStyles, Theme, TextField, Button } from '@material-ui/core';
 import { WidgetModel, WidgetModelType } from 'model';
-import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
+import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from 'react-apollo';
 import { ID } from 'model/ID';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -43,7 +44,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
                 id: selectedWidget.id,
                 widget: {
                     title: widget.title,
-                    group: widget.group,
+                    groups: widget.groups,
                     iconImageFile: widget.iconImageFile,
                     configuration: JSON.stringify(widget.configuration)
                 }
@@ -93,12 +94,16 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
 
             <GroupSelect
                 className={styles.input}
-                selectedGroup={widget.group || null}
-                onSelectGroup={group => setWidget({ ...widget, group: group || undefined })}
+                selectedGroups={widget.groups || []}
+                onSelectGroups={groups => setWidget({ ...widget, groups })}
             />
 
             {widget.type === WidgetModelType.Calendar &&
                 <CalendarWidgetConfiguration
+                    configuration={widget.configuration || {}}
+                    setConfiguration={configuration => setWidget({ ...widget, configuration })} />}
+            {widget.type === WidgetModelType.Schedule &&
+                <ScheduleWidgetConfiguration
                     configuration={widget.configuration || {}}
                     setConfiguration={configuration => setWidget({ ...widget, configuration })} />}
 

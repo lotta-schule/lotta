@@ -4,5 +4,5 @@ import { useTenant } from './useTenant';
 
 export const useUserGroups = (): UserGroupModel[] => {
     const tenant = useTenant();
-    return useMemo(() => tenant.groups.sort((g1, g2) => g2.priority - g1.priority), [tenant.groups]);
+    return useMemo(() => tenant.groups.sort((g1, g2) => g2.sortKey - g1.sortKey), [tenant.groups]);
 }

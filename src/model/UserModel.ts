@@ -4,11 +4,15 @@ import { FileModel } from 'model';
 
 export interface UserModel {
     id: ID;
+    createdAt: string;
+    updatedAt: string;
+    lastSeen: string;
     name: string;
     nickname: string;
+    hideFullName: boolean;
     email: string;
-    groups: UserGroupModel[];
-    avatarImageFile?: FileModel;
     class?: string;
     phone?: string;
+    groups: UserGroupModel[];
+    avatarImageFile?: FileModel;
 }

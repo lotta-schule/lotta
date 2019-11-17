@@ -6,23 +6,21 @@ import { makeStyles } from '@material-ui/styles';
 import { Menu } from '@material-ui/icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
-import { useDispatch } from 'react-redux';
-import classNames from 'classnames';
 import { useCategories } from 'util/categories/useCategories';
+import { useDispatch } from 'react-redux';
+import { fade } from '@material-ui/core/styles';
+import classNames from 'classnames';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
         position: 'sticky',
         top: 0,
-        zIndex: 1,
+        zIndex: 2000,
         '& a': {
             marginLeft: theme.spacing(2),
             marginRight: theme.spacing(2),
 
         }
-    },
-    appBar: {
-        backgroundColor: '#333',
     },
     padding: {
         [theme.breakpoints.down('sm')]: {
@@ -30,22 +28,22 @@ const useStyles = makeStyles<Theme>(theme => ({
         },
     },
     secondaryAppBar: {
-        backgroundColor: '#fffffff0',
+        backgroundColor: fade(theme.palette.background.paper, 0.9),
         maxHeight: 40,
         borderTop: `1.5px solid ${theme.palette.secondary.main}`,
-        boxShadow: '0px 2px 2px #0000002b',
+        boxShadow: `0px 2px 2px ${fade(theme.palette.text.primary, .2)}`,
     },
     navButton: {
         flexGrow: 1,
         flexShrink: 0,
         color: theme.palette.primary.contrastText,
-        border: '1px solid #333',
+        border: `1px solid transparent`,
         '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backgroundColor: fade(theme.palette.background.paper, .08),
         },
         '&.selected': {
             border: `1px solid ${theme.palette.secondary.main}`,
-            color: '#fff'
+            color: theme.palette.secondary.contrastText
         }
     },
     navButtonSecond: {
@@ -65,11 +63,14 @@ const useStyles = makeStyles<Theme>(theme => ({
         boxShadow: '-2px 0px 2px #00000057',
         display: 'none',
         height: '100%',
-        zIndex: 10000,
+        zIndex: 2001,
         [theme.breakpoints.down('sm')]: {
             display: 'flex',
             width: '3em'
         },
+    },
+    iconButton: {
+        color: theme.palette.primary.contrastText
     },
     placeholder: {
         display: 'none',
@@ -89,13 +90,11 @@ export const Navbar = memo(() => {
 
     const styles = useStyles();
 
-    const categories = useCategories();
-
+    const [categories] = useCategories();
     const currentCategoryId = useCurrentCategoryId();
     const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || 0);
 
     const dispatch = useDispatch();
-
     const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
 
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
@@ -140,7 +139,7 @@ export const Navbar = memo(() => {
                     </AppBar>
                 </Grid>
                 <Grid item xs={2} sm={1} className={styles.mobileBurgerMenuButton}>
-                    <IconButton size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
+                    <IconButton className={styles.iconButton} size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
                         <Menu className={classNames(styles.menu)} />
                     </IconButton>
                 </Grid>

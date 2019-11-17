@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: '1em',
         margin: '0.5em 0 0 0',
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
         '& button': {
             width: '100%'
         }
@@ -37,7 +37,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                 alignItems={'center'}
                 spacing={3}
             >
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Text'}
                         icon={<FormatAlignLeft />}
@@ -52,7 +52,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Titel'}
                         icon={<TextFormat />}
@@ -67,7 +67,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Bild'}
                         icon={<Image />}
@@ -82,7 +82,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Galerie'}
                         icon={<BurstMode />}
@@ -97,7 +97,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Video'}
                         icon={<MovieCreation />}
@@ -112,7 +112,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Audio'}
                         icon={<Audiotrack />}
@@ -127,7 +127,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         }}
                     />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Dateien'}
                         icon={<FileCopyOutlined />}

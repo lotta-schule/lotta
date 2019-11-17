@@ -3,7 +3,7 @@ import {
     Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
 } from '@material-ui/core';
 import { CategoryModel } from 'model';
-import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
+import { GroupSelect } from 'component/edit/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import Img from 'react-cloudimage-responsive';
@@ -32,7 +32,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
 
     const styles = useStyles();
 
-    const categories = useCategories();
+    const [categories] = useCategories();
 
     const [category, setCategory] = useState<CategoryModel | null>(null);
 
@@ -49,7 +49,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                     sortKey: selectedCategory.sortKey,
                     title: category.title,
                     bannerImageFile: category.bannerImageFile,
-                    group: category.group,
+                    groups: category.groups,
                     redirect: category.redirect,
                     hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
                     widgets: category.widgets ? category.widgets.map(w => ({ ...w, configuration: JSON.stringify(w.configuration) })) : []
@@ -92,8 +92,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                 <>
                     <GroupSelect
                         className={styles.input}
-                        selectedGroup={category.group || null}
-                        onSelectGroup={group => setCategory({ ...category, group: group || undefined })}
+                        selectedGroups={category.groups || []}
+                        onSelectGroups={groups => setCategory({ ...category, groups })}
                     />
 
                     <Typography className={styles.input}>

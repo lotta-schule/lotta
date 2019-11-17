@@ -6,10 +6,12 @@ export const GetCurrentUserQuery = gql`
             id
             insertedAt
             updatedAt
+            lastSeen
             name
             nickname
             email
             class
+            hideFullName
             avatarImageFile {
                 remoteLocation
             }

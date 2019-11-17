@@ -16,7 +16,7 @@ export const UpdateProfileMutation = gql`
             groups {
                 id
                 name
-                priority
+                sortKey
                 isAdminGroup
                 tenant {
                     id

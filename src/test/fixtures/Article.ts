@@ -5,6 +5,7 @@ import { RegisteredUser } from './User';
 export const UeberSuedamerika: ArticleModel = {
     id: 1,
     contentModules: [],
+    groups: [],
     insertedAt: new Date(2018, 5, 1, 18, 0).toISOString(),
     updatedAt: new Date(2019, 9, 11, 6, 0).toISOString(),
     isPinnedToTop: false,
@@ -19,6 +20,7 @@ export const UeberSuedamerika: ArticleModel = {
 export const VivaLaRevolucion: ArticleModel = {
     id: 2,
     contentModules: [],
+    groups: [],
     insertedAt: new Date(2018, 5, 1, 18, 0).toISOString(),
     updatedAt: new Date(2019, 9, 11, 6, 0).toISOString(),
     isPinnedToTop: false,

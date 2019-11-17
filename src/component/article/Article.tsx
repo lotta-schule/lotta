@@ -4,13 +4,14 @@ import { ArticlePreview } from './ArticlePreview';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { makeStyles } from '@material-ui/core';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const useStyles = makeStyles(theme => ({
     root: {
         padding: '0.5em',
-        backgroundColor: theme.palette.primary.contrastText,
-        borderRadius: 4,
-        boxShadow: '1px 1px 2px #0000003b',
+        backgroundColor: theme.palette.background.paper,
+        borderRadius: theme.shape.borderRadius,
+        boxShadow: `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
     }
 }));
 

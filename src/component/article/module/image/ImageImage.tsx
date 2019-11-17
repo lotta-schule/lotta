@@ -17,15 +17,18 @@ export const ImageImage: FunctionComponent<ImageImageProps> = memo(({ isEditMode
     return (
         <figure style={{ marginLeft: 0, marginRight: 0, }}>
             {isEditModeEnabled ?
-                <SelectFileOverlay
-                    label={'Bild auswechseln'}
-                    fileFilter={f => f.fileType === FileModelType.Image}
-                    onSelectFile={onUpdateFile}
-                >
-                    <ImageContent file={file} {...otherProps} />
-                </SelectFileOverlay> :
-                <ImageContent file={file} onClick={onSelect} {...otherProps} />}
-            <ImageCaption isEditModeEnabled={isEditModeEnabled} value={caption} onUpdate={onUpdateCaption} />
+                <>
+                    <SelectFileOverlay
+                        label={'Bild auswechseln'}
+                        fileFilter={f => f.fileType === FileModelType.Image}
+                        onSelectFile={onUpdateFile}
+                    >
+                        <ImageContent file={file} {...otherProps} />
+                    </SelectFileOverlay>
+                    <ImageCaption isEditModeEnabled={isEditModeEnabled} value={caption} onUpdate={onUpdateCaption} />
+                </> :
+                <ImageContent file={file} onClick={onSelect} {...otherProps} />
+            }
         </figure>
     );
 });

@@ -1,28 +1,33 @@
-import React, { memo, useLayoutEffect, useState, useRef } from 'react';
+import React, { memo, useLayoutEffect, useRef } from 'react';
 import { WidgetModel } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
+import { useLocalStorage } from 'util/useLocalStorage';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab, Theme } from '@material-ui/core';
 import { Widget } from 'component/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
+import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
+import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
+import { useScrollEvent } from 'util/useScrollEvent';
 import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
     widgets: WidgetModel[];
+    children?: JSX.Element;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { isSecondNavigationOpen: boolean }>(theme => ({
     root: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'stretch',
         [theme.breakpoints.up('md')]: {
             position: 'sticky',
-            top: 112
+            top: ({ isSecondNavigationOpen }) => isSecondNavigationOpen ? 112 : 72
         }
     },
     tabsRoot: {
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
     },
     tabsScrollButtons: {
         width: 20,
@@ -30,6 +35,9 @@ const useStyles = makeStyles(theme => ({
     },
     tabsFlexContainer: {
         justifyContent: 'center'
+    },
+    tabsIndicator: {
+        display: 'none'
     },
     tabRoot: {
         lineHeight: 1,
@@ -56,28 +64,38 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
-    const styles = useStyles();
-    const theme = useTheme();
-
+export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     const isMobile = useIsMobile();
-
     const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-    const [currentTabIndex, setCurrentTabIndex] = useState(0);
+    const currentCategoryId = useCurrentCategoryId();
+    const isSecondNavigationOpen = useCategoriesAncestorsForItem(currentCategoryId || 0).length > 0;
+
+    const styles = useStyles({ isSecondNavigationOpen });
+    const theme = useTheme();
+
+    const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
 
     useLayoutEffect(() => {
         if (wrapperRef.current) {
-            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.offsetTop}px)`;
+            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
         }
     }, []);
 
-    const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
+    useScrollEvent(() => {
+        if (wrapperRef.current && !isMobile && widgets.length > 0) {
+            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
+        }
+    }, 200, [wrapperRef.current, isMobile, widgets.length]);
+
+    const [currentTabIndex, setCurrentTabIndex] = useLocalStorage('widgetlist-last-selected-item-index', 0);
+
+    const activeTabIndex = currentTabIndex < shownWidgets.length ? currentTabIndex : 0;
 
     const swipeableViews = (
         <SwipeableViews
             axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-            index={currentTabIndex}
+            index={activeTabIndex}
             onChangeIndex={newIndex => setCurrentTabIndex(newIndex)}
             className={styles.swipeableViewsContainer}
         >
@@ -95,8 +113,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
             {shownWidgets && shownWidgets.length > 1 && (
                 <>
                     <Tabs
-                        value={currentTabIndex}
-                        indicatorColor={theme.palette.primary.contrastText}
+                        value={activeTabIndex}
                         variant={isMobile ? 'fullWidth' : 'scrollable'}
                         scrollButtons="auto"
                         aria-label={'Marginales Modul wählen'}
@@ -104,7 +121,8 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                         classes={{
                             root: styles.tabsRoot,
                             flexContainer: styles.tabsFlexContainer,
-                            scrollButtons: styles.tabsScrollButtons
+                            scrollButtons: styles.tabsScrollButtons,
+                            indicator: styles.tabsIndicator
                         }}
                     >
                         {shownWidgets.map((widget, i) => (
@@ -125,6 +143,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets }) => {
                 </>
             )}
             {shownWidgets && shownWidgets.length === 1 && swipeableViews}
+            {children}
         </div>
     );
 

@@ -4,7 +4,7 @@ import { find } from 'lodash';
 import { ID } from 'model/ID';
 
 export const useCategoriesAncestorsForItem = (categoryId: ID): ID[] => {
-    const categories = useCategories();
+    const [categories] = useCategories();
     let categoriesHierarchy: ID[] = [];
     let lastFoundCategory: CategoryModel | null = null;
     for (let i = 0; i < 5; i++) { // max 5 levels

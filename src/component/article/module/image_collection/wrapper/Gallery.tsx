@@ -145,9 +145,11 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
                 if (selectedFileIndex < contentModule.files.length - 1) {
                     prevNextProps.onNext = () => setSelectedFileIndex(selectedFileIndex + 1);
                 }
+                const selectedFile = contentModule.files[selectedFileIndex];
                 return (
                     <ImageOverlay
-                        selectedFile={contentModule.files[selectedFileIndex]}
+                        selectedFile={selectedFile}
+                        caption={selectedFile && getConfiguration(selectedFile).caption}
                         onClose={() => setSelectedFileIndex(null)}
                         {...prevNextProps}
                     />

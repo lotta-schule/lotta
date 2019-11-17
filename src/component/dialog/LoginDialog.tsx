@@ -1,6 +1,5 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField } from '@material-ui/core';
-import { UserModel } from '../../model';
 import { useMutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
@@ -17,7 +16,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
 }) => {
     const onLogin = useOnLogin();
 
-    const [login, { loading: isLoading, error, data }] = useMutation<{ login: { user: UserModel, token: string } }, { username: string, password: string }>(LoginMutation, {
+    const [login, { loading: isLoading, error, data }] = useMutation<{ login: { token: string } }, { username: string, password: string }>(LoginMutation, {
         fetchPolicy: 'no-cache',
         refetchQueries: [`categories`]
     });
@@ -31,7 +30,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
 
     useEffect(() => {
         if (data) {
-            onLogin(data.login.user, data.login.token);
+            onLogin(data.login.token);
             resetForm();
             onRequestClose();
         }

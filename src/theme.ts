@@ -1,42 +1,38 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deepOrange } from '@material-ui/core/colors';
 
-const palette = {
-    primary: {
-        main: '#d1d0d0',
-        light: '#999',
-        dark: '#3b3b3b',
-        contrastText: '#ffffff',
-
-    },
-    secondary: {
-        main: deepOrange[500],
-        light: '#fff2ed',
-    },
-    action: {
-        active: 'rgba(0, 0, 0, 0.54)',
-        hover: 'rgba(0, 0, 0, 0.08)',
-        hoverOpacity: 0.08,
-        selected: 'rgba(0, 0, 0, 0.14)',
-        disabled: 'rgba(0, 0, 0, 0.26)',
-        disabledBackground: 'rgba(0, 0, 0, 0.12)',
-    },
-    error: {
-        light: '#e57373',
-        main: '#ff0000',
-        dark: '#d32f2f',
-        contrastText: '#fff',
-    },
-    text: {
-        primary: 'rgba(0, 0, 0, 0.87)',
-        secondary: 'rgba(0, 0, 0, 0.54)',
-        disabled: 'rgba(0, 0, 0, 0.38)',
-        hint: 'rgba(0, 0, 0, 0.38)',
-    }
-};
+const primaryColor = '#333'; // '#d1d0d0';
+const secondaryColor = deepOrange[500];
+const errorColor = '#ff0000';
+const disabledColor = 'rgba(0, 0, 0, 0.38)';
 
 export const theme = createMuiTheme({
-    palette,
+    palette: {
+        primary: {
+            main: primaryColor,
+            contrastText: '#fff'
+        },
+        secondary: {
+            main: deepOrange[500]
+        },
+        action: {
+            active: 'rgba(0, 0, 0, 0.54)',
+            hover: 'rgba(0, 0, 0, 0.08)',
+            hoverOpacity: 0.08,
+            selected: 'rgba(0, 0, 0, 0.14)',
+            disabled: 'rgba(0, 0, 0, 0.26)',
+            disabledBackground: 'rgba(0, 0, 0, 0.12)',
+        },
+        error: {
+            main: errorColor
+        },
+        text: {
+            primary: 'rgba(0, 0, 0, 0.87)',
+            secondary: 'rgba(0, 0, 0, 0.54)',
+            disabled: disabledColor,
+            hint: disabledColor,
+        }
+    },
     typography: {
         fontFamily: 'Muli'
     },
@@ -67,11 +63,17 @@ export const theme = createMuiTheme({
         'none',
         'none'
     ],
+    zIndex: {
+        appBar: 2000,
+        drawer: 3000,
+        modal: 4000,
+        snackbar: 5000,
+        tooltip: 6000
+    },
     overrides: {
         MuiLink: {
             root: {
                 cursor: 'pointer',
-                color: palette.primary.dark,
                 textDecoration: 'none',
             }
         },
@@ -107,7 +109,7 @@ export const theme = createMuiTheme({
             root: {
                 position: 'relative',
                 '&:hover $notchedOutline': {
-                    borderColor: palette.secondary.main,
+                    borderColor: secondaryColor,
                 },
                 // Reset on touch devices, it doesn't add specificity
                 '@media (hover: none)': {
@@ -116,14 +118,14 @@ export const theme = createMuiTheme({
                     },
                 },
                 '&$focused $notchedOutline': {
-                    borderColor: palette.secondary.main,
+                    borderColor: secondaryColor,
                     borderWidth: 2,
                 },
                 '&$error $notchedOutline': {
-                    borderColor: palette.error.main,
+                    borderColor: errorColor,
                 },
                 '&$disabled $notchedOutline': {
-                    borderColor: palette.action.disabled,
+                    borderColor: disabledColor,
                 },
             },
         },

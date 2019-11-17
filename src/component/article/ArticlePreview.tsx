@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import { ArticleModel } from '../../model';
 import { Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
-import { format, parseISO } from 'date-fns';
+import { format, isBefore, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
-import { Edit, Place } from '@material-ui/icons';
+import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -12,12 +12,13 @@ import { User } from 'util/model';
 import { useMutation } from 'react-apollo';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { ID } from 'model/ID';
+import { fade } from '@material-ui/core/styles';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
         padding: '0.5em',
-        borderRadius: 4,
-        boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : '1px 1px 2px #0000003b',
+        borderRadius: theme.shape.borderRadius,
+        boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
         '&:hover': {
             '& .edit-button': {
                 border: 0,
@@ -29,16 +30,16 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     },
     editButton: {
         float: 'right',
-        color: '#ccc',
+        color: theme.palette.grey[400],
         background: 'transparent',
         transition: 'opacity ease-in 250ms',
     },
     pinButton: {
         float: 'right',
-        color: theme.palette.primary.contrastText,
+        color: theme.palette.grey[400],
         marginRight: '1em',
         '&.active': {
-            color: '#333'
+            color: theme.palette.grey[700]
         }
     },
     articlePreviewImage: {
@@ -103,6 +104,9 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                 <Grid item xs>
                     <CardContent>
                         <Typography component={'h5'} variant={'h5'} gutterBottom className={styles.articleTitle}>
+                            {!isEmbedded && currentUser && currentUser.lastSeen && isBefore(parseISO(currentUser.lastSeen), parseISO(article.updatedAt)) && (
+                                <FiberManualRecord color={'secondary'} fontSize={'small'} />
+                            )}
                             {disableLink && (article.title)}
                             {!disableLink && (
                                 <Link
@@ -139,9 +143,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                         <Typography variant={'subtitle1'} className={classNames(styles.subtitle)}>
                             {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
                             {article.topic && <> | {article.topic}&nbsp;</>}
-                            {/* | 18 Views&nbsp; */}
                             {article.users && <> | Autoren: {article.users.map(user => User.getNickname(user)).join(', ')}&nbsp;</>}
-                            {/* | Bewertung&nbsp; */}
                         </Typography>
                         <Typography variant={'subtitle1'} color="textSecondary" className={classNames({ [styles.previewTextLimitedHeight]: limitedHeight })}>
                             {article.preview}

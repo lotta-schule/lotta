@@ -1,15 +1,18 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, { MouseEvent, memo, useCallback, useState, useEffect } from 'react';
+import { findIndex, range } from 'lodash';
 import {
-    Edit, Delete, FolderOutlined
+    FolderOutlined, MoreVert, FileCopyOutlined, DeleteOutlineOutlined
 } from '@material-ui/icons';
 import {
-    IconButton, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, makeStyles, Theme, Checkbox
+    Table, TableHead, TableRow, TableCell, TableBody, Tooltip, Theme, Checkbox, IconButton, Menu, MenuItem
 } from '@material-ui/core';
-import { FileModel, FileModelType } from 'model';
+import { makeStyles } from '@material-ui/styles';
+import { FileModel, FileModelType, ID } from 'model';
 import { FileSize } from 'util/FileSize';
 import { find, includes, some, every, uniqBy } from 'lodash';
+import clsx from 'clsx';
 
-const useStyles = makeStyles<Theme>((theme: Theme) => ({
+const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme) => ({
     root: {
         display: 'flex',
         flexDirection: 'column',
@@ -22,16 +25,24 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
             flexDirection: 'column',
             width: '100%',
             overflowY: 'scroll',
-            height: 600
+            height: 600,
+            '& tr': {
+                cursor: 'pointer'
+            }
         },
         '& tr': {
             display: 'flex',
             width: '100%',
             flexShrink: 0,
             boxSizing: 'border-box',
+            '&.selected, &.selected:hover': {
+                backgroundColor: theme.palette.primary.main
+            },
             '& > td, & > th': {
+                userSelect: 'none',
                 '&:nth-child(1)': {
-                    width: '10%'
+                    width: '10%',
+                    display: ({ filesAreEditable }) => filesAreEditable ? 'none' : 'initial'
                 },
                 '&:nth-child(2)': {
                     width: '50%'
@@ -41,6 +52,9 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
                 },
                 '&:nth-child(4)': {
                     width: '20%'
+                },
+                '&:nth-child(5)': {
+                    width: '10%'
                 },
             },
             '& > td': {
@@ -70,14 +84,46 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 export interface FileTableProps {
     files: FileModel[];
     selectedFiles: FileModel[];
+    markedFileIds: ID[];
+    setMarkedFileIds(ids: ID[]): void;
     onSelectSubPath(path: string): void;
+    onClickOpenMoveFilesDialog(file: FileModel): void;
+    onClickDeleteFilesDialog(file: FileModel): void;
     onSelectFile?(file: FileModel): void;
     onSelectFiles?(files: FileModel[]): void;
 }
 
-export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selectedFiles, onSelectSubPath, onSelectFile, onSelectFiles }) => {
+export const FileTable = memo<FileTableProps>(({
+    files, selectedFiles, markedFileIds, setMarkedFileIds, onSelectSubPath, onSelectFile, onSelectFiles, onClickOpenMoveFilesDialog, onClickDeleteFilesDialog
+}) => {
+    const filesAreEditable = !onSelectFile && !onSelectFiles;
+    const styles = useStyles({ filesAreEditable });
 
-    const styles = useStyles();
+    const [fileForOpenMenu, setFileForOpenMenu] = useState<null | FileModel>(null);
+    const [editMenuAnchorEl, setEditMenuAnchorEl] = React.useState<null | HTMLElement>(null);
+
+    const handleEditMenuClick = (file: FileModel) => (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        setFileForOpenMenu(file);
+        setEditMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleEditMenuClose = () => {
+        setFileForOpenMenu(null);
+        setEditMenuAnchorEl(null);
+    }
+
+    const handleEditMenuMove = () => {
+        onClickOpenMoveFilesDialog(fileForOpenMenu!);
+    };
+
+    const handleEditMenuDelete = () => {
+        onClickDeleteFilesDialog(fileForOpenMenu!);
+    };
+
+    useEffect(() => {
+        handleEditMenuClose();
+    }, [markedFileIds]);
 
     const getFilenameCell = useCallback((file: FileModel) => {
         let previewImageUrl: string | null = null;
@@ -93,7 +139,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
         }
 
         const tableCell = (
-            <TableCell scope="row" padding="none">
+            <TableCell scope="row" padding="none" onClick={() => onSelectFile && onSelectFile(file)}>
                 {file.filename}
             </TableCell>
         );
@@ -112,7 +158,46 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
         } else {
             return tableCell;
         }
-    }, [styles.tooltip]);
+    }, [onSelectFile, styles.tooltip]);
+
+    const isMarked = (file: FileModel) => {
+        return markedFileIds.indexOf(file.id) > -1;
+    };
+
+    const findNearest = (number: number, listOfNumbers: number[]) => {
+        return listOfNumbers.reduce((prev: number | null, value) => {
+            if (!prev) {
+                return value;
+            }
+            return (Math.abs(value - number) < Math.abs(prev - number)) ? value : prev;
+        }, null) as number;
+    }
+
+    const toggleFileMarked = (file: FileModel) => (e: MouseEvent) => {
+        e.preventDefault();
+        if (isMarked(file)) {
+            if (e.metaKey) {
+                setMarkedFileIds(markedFileIds.filter(fId => fId !== file.id));
+            } else {
+                setMarkedFileIds([file.id]);
+            }
+        } else {
+            if (e.shiftKey) {
+                const fileIndex = findIndex(files, f => f.id === file.id);
+                const markedFileIndexes = markedFileIds.map(fileId => findIndex(files, f => f.id === fileId));
+                const nearestIndex = findNearest(fileIndex, markedFileIndexes);
+                const indexesRange = [
+                    ...range(Math.min(fileIndex, nearestIndex), Math.max(fileIndex, nearestIndex)),
+                    ...(fileIndex > nearestIndex ? [fileIndex] : [])
+                ];
+                setMarkedFileIds([...markedFileIds, ...indexesRange.map(findex => files[findex]).filter(f => !isMarked(f)).map(f => f.id)]);
+            } else if (e.metaKey) {
+                setMarkedFileIds([...markedFileIds, file.id]);
+            } else {
+                setMarkedFileIds([file.id]);
+            }
+        }
+    };
 
     return (
         <div>
@@ -138,6 +223,7 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                         <TableCell>Dateiname</TableCell>
                         <TableCell>Dateigröße</TableCell>
                         <TableCell>Dateityp</TableCell>
+                        {filesAreEditable && <TableCell>&nbsp;</TableCell>}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -161,42 +247,32 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                     <TableRow
                                         key={file.id}
                                         hover
-                                        onClick={e => {
-                                            e.preventDefault();
-                                            onSelectSubPath(file.filename);
-                                        }}
-                                        style={{ cursor: 'pointer', }}
+                                        className={clsx({ selected: isMarked(file) })}
                                     >
                                         <TableCell></TableCell>
-                                        <TableCell>
+                                        <TableCell
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                onSelectSubPath(file.filename);
+                                            }}
+                                        >
                                             <FolderOutlined style={{ position: 'relative', marginRight: 10 }} />
                                             {file.filename}
                                         </TableCell>
-                                        <TableCell></TableCell>
-                                        <TableCell></TableCell>
+                                        <TableCell>&nbsp;</TableCell>
+                                        <TableCell>&nbsp;</TableCell>
+                                        {filesAreEditable && (
+                                            <TableCell>&nbsp;</TableCell>
+                                        )}
                                     </TableRow>
                                 ) : (
                                         <TableRow
                                             key={file.id}
                                             hover
-                                            style={{ cursor: onSelectFile ? 'pointer' : 'default' }}
-                                            onClick={() => onSelectFile && onSelectFile(file)}
+                                            className={clsx({ selected: isMarked(file) })}
+                                            onClick={filesAreEditable ? toggleFileMarked(file) : undefined}
                                         >
                                             <TableCell>
-                                                {!onSelectFiles && !onSelectFile && (
-                                                    <>
-                                                        <Tooltip title="Dateiname bearbeiten">
-                                                            <IconButton disabled className={styles.actionButton} aria-label="Dateiname bearbeiten" onClick={() => { }}>
-                                                                <Edit />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                        <Tooltip title="Datei löschen">
-                                                            <IconButton className={styles.actionButton} aria-label="Datei löschen" onClick={() => { }}>
-                                                                <Delete color="secondary" />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                    </>
-                                                )}
                                                 {onSelectFiles && (
                                                     <Checkbox
                                                         checked={includes<FileModel>(selectedFiles, file)}
@@ -214,11 +290,27 @@ export const FileTable: FunctionComponent<FileTableProps> = memo(({ files, selec
                                             {getFilenameCell(file)}
                                             <TableCell align="right">{new FileSize(file.filesize).humanize()}</TableCell>
                                             <TableCell align="right">{file.fileType}</TableCell>
+                                            {filesAreEditable && (
+                                                <TableCell>
+                                                    <IconButton aria-label="delete" size="small" onClick={handleEditMenuClick(file)}>
+                                                        <MoreVert fontSize="inherit" />
+                                                    </IconButton>
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     )
                             ))}
                 </TableBody>
             </Table>
+            <Menu
+                anchorEl={editMenuAnchorEl}
+                keepMounted
+                open={Boolean(editMenuAnchorEl)}
+                onClose={handleEditMenuClose}
+            >
+                <MenuItem onClick={handleEditMenuMove}><FileCopyOutlined color={'secondary'} />&nbsp;Verschieben</MenuItem>
+                <MenuItem onClick={handleEditMenuDelete}><DeleteOutlineOutlined color={'secondary'} />&nbsp;Löschen</MenuItem>
+            </Menu>
         </div>
     );
 });

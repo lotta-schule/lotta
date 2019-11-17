@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     searchUserField: {
         width: 'auto',
         maxWidth: 400,
-        backgroundColor: '#efefef'
+        backgroundColor: theme.palette.grey[200]
     },
     formControl: {
         width: '100%',

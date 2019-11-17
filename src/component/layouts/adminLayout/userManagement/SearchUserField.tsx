@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         padding: theme.spacing(1),
         display: 'flex',
         alignItems: 'center',
-        borderRadius: 4,
+        borderRadius: theme.shape.borderRadius,
     },
     input: {
         marginLeft: theme.spacing(1),
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
         left: 0,
         right: 0,
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
         borderBottom: `1px solid ${theme.palette.divider}`
     }
 }));

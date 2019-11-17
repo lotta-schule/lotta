@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback } from 'react';
+import React, { KeyboardEvent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
 import { Editor, EventHook } from 'slate-react';
 import { Value, CommandFunc } from 'slate';
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdateModule }) => {
+export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
     const [editorState, setEditorState] = useState<Value>(contentModule.text ? deserialize(contentModule.text) : Value.create());
     const [isCurrentlyEditing, setCurrentlyEditing] = useState(false);
@@ -121,8 +121,8 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
         editorRef.current.focus();
     }, [editorRef, wrapLink]);
 
-    const onKeyDownRef = useRef<EventHook>((event, editor, next) => {
-        if (!(event as KeyboardEvent).metaKey) {
+    const onKeyDownRef = useRef<EventHook<KeyboardEvent<Element>>>((event, editor, next) => {
+        if (!event.metaKey) {
             if (next) {
                 return next();
             }

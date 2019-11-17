@@ -7,13 +7,14 @@ export enum WidgetModelType {
     Calendar = 'CALENDAR',
     VPlan = 'VPLAN',
     TagCloud = 'TAGCLOUD',
+    Schedule = 'SCHEDULE',
 }
 export interface WidgetModel<C = any> {
     id: ID;
     title: string;
     type: WidgetModelType;
     iconImageFile?: FileModel;
-    group?: UserGroupModel;
+    groups: UserGroupModel[];
     configuration: C;
 }
 
@@ -26,4 +27,11 @@ export interface CalendarWidgetCalendarConfig {
     color?: string;
     name?: string;
     groupId?: ID;
+}
+
+export interface ScheduleWidgetConfig {
+    type: string;
+    schoolId: string;
+    username: string;
+    password: string;
 }

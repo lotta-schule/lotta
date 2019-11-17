@@ -6,10 +6,19 @@ export const GetTenantQuery = gql`
             id
             title
             slug
+            customTheme
+            logoImageFile {
+                id
+                remoteLocation
+            }
+            backgroundImageFile {
+                id
+                remoteLocation
+            }
             groups {
                 id
                 name
-                priority
+                sortKey
                 isAdminGroup
             }
         }

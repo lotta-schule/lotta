@@ -33,7 +33,7 @@ export interface CategoryNavigationProps {
 export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCategory, onSelectCategory }) => {
     const styles = useStyles();
 
-    const categories = useCategories();
+    const [categories] = useCategories();
 
     const [expandedMainCategoryId, setExpandedMainCategoryId] = useState<ID | null>(null);
 
@@ -88,7 +88,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                         sortKey: index * 10 + 10,
                                         title: category.title,
                                         bannerImageFile: category.bannerImageFile,
-                                        group: category.group,
+                                        groups: category.groups,
                                         redirect: category.redirect,
                                         hideArticlesFromHomepage: category.hideArticlesFromHomepage
                                     }

@@ -1,5 +1,6 @@
 import React, { FunctionComponent, memo, MouseEvent } from 'react';
 import { makeStyles, Theme, Button } from '@material-ui/core';
+import { fade } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -10,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         }
     },
     overlay: {
-        backgroundColor: '#eee6',
+        backgroundColor: fade(theme.palette.grey[200], .4),
         backdropFilter: 'blur(10px)',
         position: 'absolute',
         width: '100%',

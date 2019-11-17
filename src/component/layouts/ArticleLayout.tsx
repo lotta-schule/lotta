@@ -20,7 +20,7 @@ const useStyle = makeStyles((theme: Theme) => ({
         fontSize: '1.5rem',
         letterSpacing: '0.3em',
         color: theme.palette.primary.dark,
-        backgroundColor: theme.palette.primary.contrastText,
+        backgroundColor: theme.palette.background.paper,
         textTransform: 'uppercase',
     }
 }));
@@ -43,8 +43,6 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
         if (error) {
             return (<div><span style={{ color: 'red' }}>{error.message}</span></div>);
         }
-
-        console.log('data: ', data);
 
         if (data && data.article) {
             const { article } = data;
@@ -70,7 +68,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
             );
         }
         return (
-            <span style={{ color: 'red' }}>Artikel nicht gefunden.</span>
+            <span style={{ color: 'red' }}>Beitrag nicht gefunden.</span>
         );
 
     }, [client.title, data, error, isLoading, styles.siteTitle, title]);

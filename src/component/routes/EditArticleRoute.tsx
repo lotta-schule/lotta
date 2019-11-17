@@ -1,6 +1,6 @@
 import { ArticleModel, ArticleModelInput } from 'model';
 import { CircularProgress } from '@material-ui/core';
-import { EditArticleLayout } from 'component/layouts/EditArticleLayout';
+import { EditArticleLayout } from 'component/layouts/editArticleLayout/EditArticleLayout';
 import { omit } from 'lodash';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { useQuery, useMutation } from 'react-apollo';

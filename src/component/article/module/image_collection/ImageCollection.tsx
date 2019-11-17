@@ -55,7 +55,6 @@ export const ImageCollection: FunctionComponent<ImageProps> = memo(({ isEditMode
         };
     }
     // TODO Migration Part /END
-    console.log(shownContentModule);
 
     return (
         <CardContent>
