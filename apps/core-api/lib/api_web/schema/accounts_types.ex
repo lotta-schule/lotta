@@ -91,7 +91,6 @@ defmodule ApiWeb.Schema.AccountsTypes do
   end
 
   object :authresult do
-    field :user, :user
     field :token, :string
   end
 

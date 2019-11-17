@@ -2,16 +2,27 @@ defmodule Api.UserResolver do
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper,User}
 
-  def resolve_name(user, _args, %{context: %{tenant: tenant} = context}) do
+  def resolve_name(user, _args, %{context: context}) do
     cond do
       context[:current_user] && context.current_user.id == user.id ->
         {:ok, user.name}
-      context[:current_user] && User.is_admin?(context.current_user, tenant) ->
+      context[:current_user] && context[:tenant] && User.is_admin?(context.current_user, context.tenant) ->
         {:ok, user.name}
       user.hide_full_name ->
         {:ok, user.name}
       true ->
         {:error, "Der Name des Nutzers ist geheim."}
+    end
+  end
+  
+  def resolve_email(user, _args, %{context: context}) do
+    cond do
+      context[:current_user] && context.current_user.id == user.id ->
+        {:ok, user.email}
+      context[:current_user] && context[:tenant] && User.is_admin?(context.current_user, context.tenant) ->
+        {:ok, user.email}
+      true ->
+        {:error, "Die Email des Nutzers ist geheim."}
     end
   end
 
@@ -75,7 +86,7 @@ defmodule Api.UserResolver do
           name: user.name,
           class: user.class,
         })
-        {:ok, %{user: user, token: jwt}}
+        {:ok, %{token: jwt}}
       {:error, changeset} ->
         {
           :error,
@@ -94,7 +105,7 @@ defmodule Api.UserResolver do
           class: user.class,
           # groups: user.groups
        }) do
-      {:ok, %{user: user, token: jwt}}
+      {:ok, %{token: jwt}}
     end
   end
 
