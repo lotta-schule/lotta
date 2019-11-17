@@ -22,13 +22,15 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
         variables: { article: { title } },
         update: (cache, { data }) => {
             if (data && data.article) {
-                let readOwnArticlesResult = [];
+                let ownArticles: ArticleModel[] = [];
                 try {
-                    cache.readQuery<{ articles: ArticleModel[] }>({ query: GetOwnArticlesQuery });
+                    const readOwnArticlesResult = cache.readQuery<{ articles: ArticleModel[] }>({ query: GetOwnArticlesQuery });
+                    if (readOwnArticlesResult && readOwnArticlesResult.articles) {
+                        ownArticles = [...readOwnArticlesResult.articles];
+                    }
                 } catch (e) {
                     console.error(e);
                 }
-                const ownArticles = (readOwnArticlesResult && readOwnArticlesResult.articles) || [];
                 cache.writeQuery<{ articles: ArticleModel[] }>({
                     query: GetOwnArticlesQuery,
                     data: {
