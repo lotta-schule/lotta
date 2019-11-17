@@ -11,7 +11,7 @@ defmodule Api.UserResolver do
       user.hide_full_name ->
         {:ok, user.name}
       true ->
-        {:error, "Der Name des Nutzers ist geheim."}
+        {:ok, nil}
     end
   end
   

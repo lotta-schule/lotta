@@ -32,7 +32,11 @@ defmodule Api.Content do
     query = list_public_articles(tenant, user)
     case category_id do
       nil ->
-        query
+        from(a in query,
+          join: c in Category,
+          on: c.id == a.category_id,
+          where: c.hide_articles_from_homepage != true
+        )
       category_id ->
         from a in query, where: a.category_id == ^category_id
     end
@@ -285,8 +289,7 @@ defmodule Api.Content do
       join: c in Category,
       on: c.id == a.category_id,
       where: a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
-             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^User.is_admin?(user, tenant))
-             and c.hide_articles_from_homepage != true,
+             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^User.is_admin?(user, tenant)),
       distinct: true
     )
   end
