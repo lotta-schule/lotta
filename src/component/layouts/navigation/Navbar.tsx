@@ -63,7 +63,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         boxShadow: '-2px 0px 2px #00000057',
         display: 'none',
         height: '100%',
-        zIndex: 10000,
+        zIndex: 2001,
         [theme.breakpoints.down('sm')]: {
             display: 'flex',
             width: '3em'
