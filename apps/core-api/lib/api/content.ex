@@ -9,7 +9,7 @@ defmodule Api.Content do
 
   alias Api.Content.Article
   alias Api.Tenants.{Category,Tenant}
-  alias Api.Accounts.{User,UserGroup}
+  alias Api.Accounts.{User}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
