@@ -14,44 +14,17 @@ export const GetArticlesQuery = gql`
             previewImageFile {
                 id
                 remoteLocation
-                mimeType
-                fileType
-            }
-            contentModules {
-                id
-                type
-                text
-                sortKey
-                configuration
-                files {
-                    id
-                    remoteLocation
-                    mimeType
-                    fileType
-                    filename
-                filesize
-                    fileConversions {
-                        id
-                        format
-                        mimeType
-                        remoteLocation
-                    }
-                }
             }
             category {
                 id
-                title
                 hideArticlesFromHomepage
             }
             groups {
                 id
-                sortKey
-                name
             }
             users {
                 id
                 nickname
-                name
                 avatarImageFile {
                     remoteLocation
                 }
