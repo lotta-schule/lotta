@@ -3,7 +3,7 @@ import {
     Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
 } from '@material-ui/core';
 import { CategoryModel } from 'model';
-import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
+import { GroupSelect } from 'component/edit/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import Img from 'react-cloudimage-responsive';

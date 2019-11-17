@@ -11,6 +11,7 @@ export const GetCurrentUserQuery = gql`
             nickname
             email
             class
+            hideFullName
             avatarImageFile {
                 remoteLocation
             }

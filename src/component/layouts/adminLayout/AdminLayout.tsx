@@ -1,15 +1,17 @@
 import React, { memo } from 'react';
 import useRouter from 'use-react-router';
-import { BaseLayoutMainContent } from './BaseLayoutMainContent';
-import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
+import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
 import { Switch, Route } from 'react-router-dom';
-import { Navigation } from './adminLayout/Navigation';
-import { UserManagement } from './adminLayout/userManagement/UserManagement';
-import { CategoriesManagement } from './adminLayout/categoryManagment/CategoryManagement';
-import { TenantManagement } from './adminLayout/tenantManagment/TenantManagement';
-import { WidgetManagement } from './adminLayout/widgetManagement/WidgetManagement';
+import { AdminLayoutNavigation } from './AdminLayoutNavigation';
+import { UserManagement } from './userManagement/UserManagement';
+import { CategoriesManagement } from './categoryManagment/CategoryManagement';
+import { UnpublishedArticles } from '../profileLayout/UnpublishedArticles';
+import { TenantManagement } from './tenantManagment/TenantManagement';
+import { WidgetManagement } from './widgetManagement/WidgetManagement';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { WidgetsList } from './WidgetsList';
+import { WidgetsList } from '../WidgetsList';
+import { User } from 'util/model';
 
 export const AdminLayout = memo(() => {
     const [currentUser] = useCurrentUser();
@@ -26,11 +28,14 @@ export const AdminLayout = memo(() => {
                     <Route path='/admin/users' component={UserManagement} />
                     <Route path='/admin/categories' component={CategoriesManagement} />
                     <Route path='/admin/widgets' component={WidgetManagement} />
+                    {User.isAdmin(currentUser) && (
+                        <Route path='/admin/unpublished' component={UnpublishedArticles} />
+                    )}
                 </Switch>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <WidgetsList widgets={[]}>
-                    <Navigation />
+                    <AdminLayoutNavigation />
                 </WidgetsList>
             </BaseLayoutSidebar>
         </>

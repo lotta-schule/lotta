@@ -8,5 +8,6 @@ export const RegisteredUser: UserModel = {
     email: 'user@lotta.schule',
     name: 'Ernesto Guevara',
     groups: [],
+    hideFullName: false,
     nickname: 'Che'
 };

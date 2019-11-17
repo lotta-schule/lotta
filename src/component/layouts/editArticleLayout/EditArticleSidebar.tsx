@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import { CategorySelect } from './CategorySelect';
 import { DateTimePicker } from '@material-ui/pickers';
-import { GroupSelect } from './GroupSelect';
+import { GroupSelect } from '../../edit/GroupSelect';
 import { parseISO } from 'date-fns';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { Save as SaveIcon, ArrowDropDown as ArrowDropDownIcon, Warning } from '@material-ui/icons';
@@ -18,10 +18,10 @@ import { User } from 'util/model';
 import { UsersList } from './UsersList';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { useMutation } from 'react-apollo';
+import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
 import classNames from 'classnames';
 import Img from 'react-cloudimage-responsive';
 import useRouter from 'use-react-router';
-import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
 
 const useStyles = makeStyles(theme => ({
     root: {

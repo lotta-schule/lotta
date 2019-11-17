@@ -8,6 +8,7 @@ import { Widget } from 'component/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
+import { useScrollEvent } from 'util/useScrollEvent';
 import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
@@ -73,12 +74,19 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     const styles = useStyles({ isSecondNavigationOpen });
     const theme = useTheme();
 
+    const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
+
     useLayoutEffect(() => {
         if (wrapperRef.current) {
-            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.offsetTop}px)`;
+            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
         }
     }, []);
-    const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
+
+    useScrollEvent(() => {
+        if (wrapperRef.current && !isMobile && widgets.length > 0) {
+            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
+        }
+    }, 200, [wrapperRef.current, isMobile, widgets.length]);
 
     const [currentTabIndex, setCurrentTabIndex] = useLocalStorage('widgetlist-last-selected-item-index', 0);
 

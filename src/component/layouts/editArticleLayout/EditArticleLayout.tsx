@@ -1,13 +1,13 @@
 import React, { memo, useState, useEffect } from 'react';
-import { ArticleModel } from '../../model';
-import { Article } from '../article/Article';
-import { EditArticleSidebar } from './editArticle/EditArticleSidebar';
-import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { BaseLayoutMainContent } from './BaseLayoutMainContent';
-import useReactRouter from 'use-react-router';
+import { ArticleModel } from '../../../model';
+import { Article } from '../../article/Article';
+import { EditArticleSidebar } from './EditArticleSidebar';
+import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
+import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { omit } from 'lodash';
+import useReactRouter from 'use-react-router';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;

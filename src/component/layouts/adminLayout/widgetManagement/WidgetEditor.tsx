@@ -1,15 +1,15 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
 import { Typography, makeStyles, Theme, TextField, Button } from '@material-ui/core';
 import { WidgetModel, WidgetModelType } from 'model';
-import { GroupSelect } from 'component/layouts/editArticle/GroupSelect';
+import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from 'react-apollo';
 import { ID } from 'model/ID';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
-import Img from 'react-cloudimage-responsive';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
+import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {

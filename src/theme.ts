@@ -63,6 +63,13 @@ export const theme = createMuiTheme({
         'none',
         'none'
     ],
+    zIndex: {
+        appBar: 2000,
+        drawer: 3000,
+        modal: 4000,
+        snackbar: 5000,
+        tooltip: 6000
+    },
     overrides: {
         MuiLink: {
             root: {
