@@ -14,8 +14,6 @@ export const GetOwnArticlesQuery = gql`
             previewImageFile {
                 id
                 remoteLocation
-                mimeType
-                fileType
             }
             contentModules {
                 id
@@ -40,8 +38,6 @@ export const GetOwnArticlesQuery = gql`
             }
             category {
                 id
-                title
-                hideArticlesFromHomepage
             }
             groups {
                 id
@@ -51,7 +47,6 @@ export const GetOwnArticlesQuery = gql`
             users {
                 id
                 nickname
-                name
             }
         }
     }
