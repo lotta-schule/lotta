@@ -1,5 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
-import { throttle } from 'lodash';
+import React, { memo, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { CategoryLayout } from 'component/layouts/CategoryLayout';
 import { useCategory } from 'util/categories/useCategory';
@@ -9,24 +8,24 @@ import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
 import { EmptyLoadingLayout } from 'component/layouts/EmptyLoadingLayout';
 import { ID } from 'model/ID';
 import { parseISO } from 'date-fns';
+import { useScrollEvent } from 'util/useScrollEvent';
 
 export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
     const categoryId = Number(match.params.id);
     const category = useCategory(categoryId);
     const [lastFetchedElementDate, setLastFetchedElementDate] = useState<string | null>(null);
 
-    const FETCH_MORE_OFFSET = 200;
+    const FETCH_MORE_OFFSET = window.innerHeight || 1024;
     const FETCH_COUNT = 25;
 
     const { data, loading: isLoading, error, fetchMore, called } = useQuery<{ articles: ArticleModel[] }, { categoryId: ID, filter: ArticleFilter }>(
         GetArticlesQuery,
         {
-            variables: { categoryId, filter: { first: FETCH_COUNT } },
-            notifyOnNetworkStatusChange: true
+            variables: { categoryId, filter: { first: FETCH_COUNT } }
         },
     );
 
-    const handleScroll = useCallback(() => {
+    useScrollEvent(() => {
         if (window.innerHeight + Math.max(window.pageYOffset, document.documentElement.scrollTop) > document.documentElement.offsetHeight - FETCH_MORE_OFFSET) {
             if (data && data.articles && data.articles.length > FETCH_COUNT - 1 && !isLoading) {
                 const lastDate = data && data.articles
@@ -50,13 +49,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
                 }
             }
         }
-    }, [data, fetchMore, isLoading, lastFetchedElementDate]);
-
-    useEffect(() => {
-        const throttledHandleScroll = throttle(handleScroll, 250);
-        window.addEventListener('scroll', throttledHandleScroll);
-        return () => window.removeEventListener('scroll', throttledHandleScroll);
-    }, [handleScroll]);
+    }, 250, [data, fetchMore, isLoading, lastFetchedElementDate]);
 
     if (!called || isLoading) {
         return (
@@ -81,15 +74,10 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
             data.articles.filter(a => Boolean(a.category && !a.category.hideArticlesFromHomepage)) :
             data.articles;
         return (
-            <>
-                <CategoryLayout
-                    category={category}
-                    articles={articles}
-                />
-                {isLoading && (
-                    <EmptyLoadingLayout />
-                )}
-            </>
+            <CategoryLayout
+                category={category}
+                articles={articles}
+            />
         )
     }
 
