@@ -75,6 +75,8 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     const styles = useStyles({ isSecondNavigationOpen });
     const theme = useTheme();
 
+    const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
+
     useLayoutEffect(() => {
         if (wrapperRef.current) {
             wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
@@ -82,12 +84,10 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     }, []);
 
     useScrollEvent(() => {
-        if (wrapperRef.current && !isMobile) {
+        if (wrapperRef.current && !isMobile && widgets.length > 0) {
             wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
         }
-    }, 200, [wrapperRef.current]);
-
-    const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
+    }, 200, [wrapperRef.current, isMobile, widgets.length]);
 
     const swipeableViews = (
         <SwipeableViews
