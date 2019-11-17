@@ -1,5 +1,8 @@
 import React, { memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Typography, Grid, makeStyles, Theme } from '@material-ui/core';
+import {
+    Checkbox, DialogTitle, DialogContent, DialogContentText, DialogActions,
+    Button, TextField, Typography, Grid, makeStyles, Theme, FormGroup, FormControlLabel
+} from '@material-ui/core';
 import { UserModel } from '../../model';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { useMutation } from '@apollo/react-hooks';
@@ -28,10 +31,10 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     const onLogin = useOnLogin();
     const styles = useStyles();
 
-    const [register, { loading: isLoading, error }] = useMutation<{ register: { user: UserModel, token: string } }, { email: string, name: string, password: string, groupKey?: string }>(RegisterMutation, {
+    const [register, { loading: isLoading, error }] = useMutation<{ register: { user: UserModel, token: string } }, { user: Partial<UserModel> & { password: string }, groupKey?: string }>(RegisterMutation, {
         update: (_, { data }) => {
             if (data) {
-                onLogin(data.register.user, data.register.token);
+                onLogin(data.register.user, data.register.token, { redirect: '/profile' });
                 resetForm();
                 onRequestClose();
             }
@@ -40,10 +43,12 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [nickname, setNickname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordRepetition, setPasswordRepetition] = useState('');
     const [groupKey, setGroupKey] = useState('');
+    const [isHideFullName, setIsHideFullName] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
     const resetForm = () => {
         setPassword('');
@@ -53,13 +58,24 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
 
     return (
         <ResponsiveFullScreenDialog open={isOpen} fullWidth>
-            <form onSubmit={(e) => {
+            <form onSubmit={e => {
                 e.preventDefault();
                 setFormError(null);
                 if (password !== passwordRepetition) {
                     setFormError('Password und wiederholtes Passwort stimmen nicht überein');
                 } else {
-                    register({ variables: { email, name: `${firstName} ${lastName}`, password, groupKey } });
+                    register({
+                        variables: {
+                            user: {
+                                email,
+                                name: `${firstName} ${lastName}`,
+                                password,
+                                nickname,
+                                hideFullName: isHideFullName
+                            },
+                            groupKey
+                        }
+                    });
                 }
             }}>
                 <DialogTitle>Auf der Website registrieren.</DialogTitle>
@@ -67,11 +83,8 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                     <DialogContentText>
                         Gib hier deine Daten <b>korrekt</b> an, um dich als Nutzer zu registrieren.
                     </DialogContentText>
-                    {formError && (
-                        <p style={{ color: 'red' }}>{formError}</p>
-                    )}
-                    {error && (
-                        <p style={{ color: 'red' }}>{error.message}</p>
+                    {(formError || error) && (
+                        <p style={{ color: 'red' }}>{formError || error!.message}</p>
                     )}
                     <TextField
                         autoFocus
@@ -83,6 +96,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         label="Deine Email-Adresse:"
                         placeholder="beispiel@medienportal.org"
                         type="email"
+                        inputProps={{ maxLength: 100 }}
                         fullWidth
                         required
                     />
@@ -95,6 +109,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         label="Dein Passwort:"
                         placeholder={'Passwort'}
                         type="password"
+                        inputProps={{ maxLength: 100 }}
                         required
                         fullWidth
                     />
@@ -107,9 +122,10 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         label="Passwort wiederholen:"
                         placeholder={'Passwort'}
                         type="password"
+                        className={styles.margin}
+                        inputProps={{ maxLength: 100 }}
                         fullWidth
                         required
-                        className={styles.margin}
                     />
                     <Grid container style={{ display: 'flex' }}>
                         <Grid item xs={12} sm={6}>
@@ -122,6 +138,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                 label="Vorname"
                                 placeholder={'Maxi'}
                                 type="text"
+                                inputProps={{ maxLength: 50 }}
                                 fullWidth
                                 required
                             />
@@ -136,13 +153,42 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                 label="Nachname"
                                 placeholder={'Muster'}
                                 type="text"
+                                inputProps={{ maxLength: 50 }}
                                 fullWidth
                                 required
                             />
                         </Grid>
                     </Grid>
                     <Typography variant="caption">
-                        Bitte gib hier deinen richtigen, vollständigen Namen an, damit wir sehen ob du wirklich Schüler/Lehrer an deiner Schule bist. Deinen Nickname kannst du jederzeit in deinem Profil einstellen oder ändern.
+                        Bitte gib hier deinen richtigen, vollständigen Namen an, damit wir sehen ob du wirklich Schüler/Lehrer an deiner Schule bist.
+                        Deinen Spitznamen kannst du jederzeit in deinem Profil ändern.
+                    </Typography>
+                    <TextField
+                        margin="dense"
+                        id="nickname"
+                        disabled={isLoading}
+                        label="Spitzname"
+                        placeholder={'Mäxchen'}
+                        value={nickname}
+                        inputProps={{ maxLength: 25 }}
+                        onChange={e => {
+                            if (nickname.length === 0 && e.target.value.length > 0) {
+                                setIsHideFullName(true);
+                            }
+                            setNickname(e.target.value);
+                        }}
+                        type="text"
+                        fullWidth
+                    />
+                    <FormGroup>
+                        <FormControlLabel
+                            control={<Checkbox checked={isHideFullName} onChange={(e, checked) => setIsHideFullName(checked)} />}
+                            label={'Deinen vollständen Namen öffentlich verstecken'}
+                        />
+                    </FormGroup>
+                    <Typography variant="caption" component={'div'} className={styles.margin}>
+                        Verstecke deinen vollständigen Namen, damit er nur vom Administrator deiner Schule gesehen werden kann.
+                        Dein Name taucht nicht in den von dir erstellten Artikeln oder in deinem Profil auf. Stattdessen wird dein Spitzname angezeigt.
                     </Typography>
                     <Typography variant="body1" className={styles.margin}>
                         Hast du einen Anmeldeschlüssel?

@@ -58,7 +58,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
         return () => window.removeEventListener('scroll', throttledHandleScroll);
     }, [handleScroll]);
 
-    if (!called && !data && isLoading) {
+    if (!called || isLoading) {
         return (
             <EmptyLoadingLayout />
         );

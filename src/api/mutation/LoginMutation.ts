@@ -13,6 +13,7 @@ export const LoginMutation = gql`
                 nickname
                 email
                 class
+                hideFullName
                 avatarImageFile {
                     remoteLocation
                 }

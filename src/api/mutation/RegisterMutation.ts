@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const RegisterMutation = gql`
-    mutation Register($name: String!, $email: String!, $password: String!, $groupKey: String) {
-        register(user: { email: $email, name: $name, password: $password }, groupKey: $groupKey) {
+    mutation Register($user: RegisterUserParams!, $groupKey: String) {
+        register(user: $user, groupKey: $groupKey) {
             token,
             user {
                 id
@@ -13,6 +13,7 @@ export const RegisterMutation = gql`
                 nickname
                 email
                 class
+                hideFullName
                 avatarImageFile {
                     remoteLocation
                 }

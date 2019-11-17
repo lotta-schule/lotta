@@ -1,9 +1,9 @@
-import React, { FunctionComponent, memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { ArticleModel, FileModelType, UserModel } from 'model';
 import { ArticlesManagement } from 'component/profile/ArticlesManagement';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { Card, CardContent, Typography, TextField, Button, Fab, Avatar } from '@material-ui/core';
+import { Card, CardContent, Typography, TextField, Button, Fab, Avatar, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { FileExplorer } from 'component/fileExplorer/FileExplorer';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
@@ -16,14 +16,16 @@ import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks';
 import { User } from 'util/model';
 import useRouter from 'use-react-router';
 
-export const ProfileLayout: FunctionComponent = memo(() => {
+export const ProfileLayout = memo(() => {
     const [currentUser] = useCurrentUser();
     const { history } = useRouter();
 
-    const [classOrShortName, setClassOrShortName] = useState(currentUser && currentUser.class);
+    // TODO: TS 3.7 currentUser?.class ?? ''
+    const [classOrShortName, setClassOrShortName] = useState((currentUser && currentUser.class) || '');
     const [email, setEmail] = useState(currentUser && currentUser.email);
     const [name, setName] = useState(currentUser && currentUser.name);
     const [nickname, setNickname] = useState(currentUser && currentUser.nickname);
+    const [isHideFullName, setIsHideFullName] = useState(currentUser && currentUser.hideFullName);
     const [avatarImageFile, setAvatarImageFile] = useState(currentUser && currentUser.avatarImageFile);
 
     const { data: ownArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
@@ -73,9 +75,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     onChange={e => setName(e.target.value)}
                                     type="name"
                                     disabled={isLoading}
-                                    inputProps={{
-                                        maxlength: 100
-                                    }}
+                                    inputProps={{ maxLength: 100 }}
                                 />
                                 <TextField
                                     autoFocus
@@ -88,10 +88,20 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     placeholder="El Professore"
                                     type="text"
                                     disabled={isLoading}
-                                    inputProps={{
-                                        maxlength: 50
-                                    }}
+                                    inputProps={{ maxLength: 25 }}
                                 />
+
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={<Checkbox checked={isHideFullName!} onChange={(e, checked) => setIsHideFullName(checked)} />}
+                                        label={'Deinen vollständen Namen öffentlich verstecken'}
+                                    />
+                                </FormGroup>
+                                <Typography variant="caption" component={'div'}>
+                                    Verstecke deinen vollständigen Namen, damit er nur vom Administrator deiner Schule gesehen werden kann.
+                                    Dein Name taucht nicht in den von dir erstellten Artikeln oder in deinem Profil auf. Stattdessen wird dein Spitzname angezeigt.
+                                </Typography>
+
                                 <TextField
                                     autoFocus
                                     fullWidth
@@ -103,9 +113,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     placeholder="beispiel@medienportal.org"
                                     type="email"
                                     disabled={isLoading}
-                                    inputProps={{
-                                        maxlength: 100
-                                    }}
+                                    inputProps={{ maxLength: 100 }}
                                 />
                                 <TextField
                                     autoFocus
@@ -119,9 +127,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                     helperText={'Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du Zugriff auf deinen Stundenplan erhalten.'}
                                     type="text"
                                     disabled={isLoading}
-                                    inputProps={{
-                                        maxlength: 25
-                                    }}
+                                    inputProps={{ maxLength: 25 }}
                                 />
                                 <Button
                                     type={'submit'}
@@ -135,6 +141,7 @@ export const ProfileLayout: FunctionComponent = memo(() => {
                                                 name,
                                                 nickname,
                                                 class: classOrShortName,
+                                                hideFullName: isHideFullName,
                                                 email,
                                                 avatarImageFile
                                             }
