@@ -7,6 +7,7 @@ import { Widget } from 'component/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
+import { useScrollEvent } from 'util/useScrollEvent';
 import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
@@ -76,9 +77,15 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
 
     useLayoutEffect(() => {
         if (wrapperRef.current) {
-            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.offsetTop}px)`;
+            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
         }
     }, []);
+
+    useScrollEvent(() => {
+        if (wrapperRef.current && !isMobile) {
+            wrapperRef.current.style.height = `calc(100vh - ${wrapperRef.current.getBoundingClientRect().top}px)`;
+        }
+    }, 200, [wrapperRef.current]);
 
     const shownWidgets = isMobile ? [WidgetUtil.getProfileWidget(), ...widgets] : widgets;
 
