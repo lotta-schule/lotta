@@ -28,13 +28,13 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     isOpen,
     onRequestClose
 }) => {
-    const onLogin = useOnLogin();
+    const onLogin = useOnLogin({ redirect: '/profile' });
     const styles = useStyles();
 
-    const [register, { loading: isLoading, error }] = useMutation<{ register: { user: UserModel, token: string } }, { user: Partial<UserModel> & { password: string }, groupKey?: string }>(RegisterMutation, {
+    const [register, { loading: isLoading, error }] = useMutation<{ register: { token: string } }, { user: Partial<UserModel> & { password: string }, groupKey?: string }>(RegisterMutation, {
         update: (_, { data }) => {
             if (data) {
-                onLogin(data.register.user, data.register.token, { redirect: '/profile' });
+                onLogin(data.register.token);
                 resetForm();
                 onRequestClose();
             }

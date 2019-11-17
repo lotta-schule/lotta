@@ -44,9 +44,9 @@ const useStyles = makeStyles(theme => ({
 export const UserNavigation = memo(() => {
     const styles = useStyles();
 
-    const [currentUser, { refetch }] = useCurrentUser();
+    const [currentUser] = useCurrentUser();
     const { history } = useRouter();
-    const [loadUnpublishedArticles, { data: unpublishedArticlesData }] = useLazyQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery);
+    const [loadUnpublishedArticles, { data: unpublishedArticlesData, called: calledUnpublishedArticles }] = useLazyQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery);
 
     const onLogout = useOnLogout();
 
@@ -55,10 +55,10 @@ export const UserNavigation = memo(() => {
     const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(false);
 
     useEffect(() => {
-        if (currentUser) {
+        if (currentUser && !calledUnpublishedArticles) {
             loadUnpublishedArticles();
         }
-    }, [currentUser, loadUnpublishedArticles]);
+    }, [calledUnpublishedArticles, currentUser, loadUnpublishedArticles]);
 
     const unpublishedArticles = unpublishedArticlesData ? (unpublishedArticlesData.articles || []) : [];
     const unpublishedBadgeNumber = [...unpublishedArticles].filter(article => !article.readyToPublish || !article.category).length;
@@ -137,11 +137,11 @@ export const UserNavigation = memo(() => {
                 <>
                     <LoginDialog
                         isOpen={loginModalIsOpen}
-                        onRequestClose={() => { setLoginModalIsOpen(false); refetch(); }}
+                        onRequestClose={() => { setLoginModalIsOpen(false); }}
                     />
                     <RegisterDialog
                         isOpen={registerModalIsOpen}
-                        onRequestClose={() => { setRegisterModalIsOpen(false); refetch(); }}
+                        onRequestClose={() => { setRegisterModalIsOpen(false); }}
                     />
                 </>
             )}
