@@ -13,6 +13,7 @@ defmodule Api.Accounts.User do
     field :nickname, :string
     field :class, :string
     field :last_seen, :naive_datetime
+    field :hide_full_name, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string
 
@@ -87,7 +88,7 @@ defmodule Api.Accounts.User do
   def update_changeset(%User{} = user, params \\ %{}) do
     user
     |> Repo.preload(:avatar_image_file)
-    |> cast(params, [:name, :class, :nickname, :email], [:password])
+    |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
     |> validate_required([:name, :email])
     |> unique_constraint(:email)
     |> put_pass_hash()
@@ -96,7 +97,7 @@ defmodule Api.Accounts.User do
 
   def registration_changeset(%User{} = user, params \\ %{}) do
     user
-    |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id])
+    |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
     |> validate_required([:name, :email, :password, :tenant_id])
     |> unique_constraint(:email)
     |> put_pass_hash()

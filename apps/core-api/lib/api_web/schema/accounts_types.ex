@@ -75,6 +75,8 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
   input_object :register_user_params do
     field :name, :string
+    field :nickname, :string
+    field :hide_full_name, :boolean
     field :email, :string
     field :password, :string
   end
@@ -84,6 +86,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :email, :string
     field :class, :string
     field :nickname, :string
+    field :hide_full_name, :boolean
     field :avatar_image_file, :file
   end
 
@@ -97,10 +100,11 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :last_seen, :naive_datetime
-    field :name, :string
+    field :name, :string, resolve: &Api.UserResolver.resolve_name/3
     field :class, :string
     field :nickname, :string
     field :email, :string
+    field :hide_full_name, :boolean
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)

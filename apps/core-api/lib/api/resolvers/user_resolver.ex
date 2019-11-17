@@ -2,6 +2,19 @@ defmodule Api.UserResolver do
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper,User}
 
+  def resolve_name(user, _args, %{context: %{tenant: tenant} = context}) do
+    cond do
+      context[:current_user] && context.current_user.id == user.id ->
+        {:ok, user.name}
+      context[:current_user] && User.is_admin?(context.current_user, tenant) ->
+        {:ok, user.name}
+      user.hide_full_name ->
+        {:ok, user.name}
+      true ->
+        {:error, "Der Name des Nutzers ist geheim."}
+    end
+  end
+
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
   end
