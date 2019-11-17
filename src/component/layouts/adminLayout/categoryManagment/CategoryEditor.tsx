@@ -32,7 +32,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
 
     const styles = useStyles();
 
-    const categories = useCategories();
+    const [categories] = useCategories();
 
     const [category, setCategory] = useState<CategoryModel | null>(null);
 

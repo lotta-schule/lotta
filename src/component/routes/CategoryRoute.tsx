@@ -9,10 +9,12 @@ import { EmptyLoadingLayout } from 'component/layouts/EmptyLoadingLayout';
 import { ID } from 'model/ID';
 import { parseISO } from 'date-fns';
 import { useScrollEvent } from 'util/useScrollEvent';
+import { useCategories } from 'util/categories/useCategories';
 
 export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
     const categoryId = Number(match.params.id);
     const category = useCategory(categoryId);
+    const [, { loading: isLoadingCategories }] = useCategories();
     const [lastFetchedElementDate, setLastFetchedElementDate] = useState<string | null>(null);
 
     const FETCH_MORE_OFFSET = window.innerHeight || 1024;
@@ -51,7 +53,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
         }
     }, 250, [data, fetchMore, isLoading, lastFetchedElementDate]);
 
-    if (!called || isLoading) {
+    if (!called || isLoading || isLoadingCategories) {
         return (
             <EmptyLoadingLayout />
         );

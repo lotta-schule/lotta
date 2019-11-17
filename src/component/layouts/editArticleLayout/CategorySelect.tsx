@@ -11,7 +11,7 @@ export interface CategorySelectProps {
 }
 
 export const CategorySelect: FunctionComponent<CategorySelectProps> = memo(({ selectedCategoryId, onSelectCategory }) => {
-    const categories = useCategories();
+    const [categories] = useCategories();
 
     const inputLabel = React.useRef<HTMLLabelElement>(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
