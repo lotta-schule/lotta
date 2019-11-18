@@ -56,8 +56,7 @@ defmodule Api.Accounts.User do
       |> Map.fetch!(:groups)
       |> Enum.map(fn group -> group.id end)
 
-    article_group_ids
-    |> Enum.any?(&Enum.member?(user_group_ids, &1))
+    Enum.empty?(article_group_ids) || Enum.any?(article_group_ids, &Enum.member?(user_group_ids, &1))
   end
 
   def group_ids(%User{} = user) do
