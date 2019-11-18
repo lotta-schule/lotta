@@ -26,7 +26,7 @@ defmodule Api.Tenants do
         [] -> true
         groups ->
           if Map.has_key?(context, :current_user) do
-            Enum.any?(groups, &(&1.id in User.group_ids(context.current_user)))
+            User.is_admin?(context.current_user, context[:tenant]) || Enum.any?(groups, &(&1.id in User.group_ids(context.current_user)))
           else
             false
           end
