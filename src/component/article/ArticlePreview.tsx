@@ -87,18 +87,31 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
         variables: { id: article.id }
     });
 
+    const maybeLinked = (content: any) => disableLink ? content : (
+        <Link
+            component={CollisionLink}
+            color='inherit'
+            underline='none'
+            to={`/article/${article.id}`}
+        >
+            {content}
+        </Link>
+    );
+
     return (
         <Card className={styles.root} data-testid={'ArticlePreview'}>
             <Grid container style={{ display: 'flex' }}>
                 {article.previewImageFile && (
                     <Grid item xs={12} sm={4}>
-                        <Img
-                            operation={'cover'}
-                            size={'300x200'}
-                            src={article.previewImageFile.remoteLocation}
-                            className={styles.articlePreviewImage}
-                            alt={`Vorschaubild zu ${article.title}`}
-                        />
+                        {maybeLinked(
+                            <Img
+                                operation={'cover'}
+                                size={'300x200'}
+                                src={article.previewImageFile.remoteLocation}
+                                className={styles.articlePreviewImage}
+                                alt={`Vorschaubild zu ${article.title}`}
+                            />
+                        )}
                     </Grid>
                 )}
                 <Grid item xs>
@@ -107,17 +120,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                             {!isEmbedded && currentUser && currentUser.lastSeen && isBefore(parseISO(currentUser.lastSeen), parseISO(article.updatedAt)) && (
                                 <FiberManualRecord color={'secondary'} fontSize={'small'} />
                             )}
-                            {disableLink && (article.title)}
-                            {!disableLink && (
-                                <Link
-                                    component={CollisionLink}
-                                    color='inherit'
-                                    underline='none'
-                                    to={`/article/${article.id}`}
-                                >
-                                    {article.title}
-                                </Link>
-                            )}
+                            {maybeLinked(article.title)}
                             {!disableEdit && User.canEditArticle(currentUser, article) && (
                                 <Fab
                                     aria-label="Edit"
