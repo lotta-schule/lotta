@@ -21,6 +21,8 @@ ugc_s3_compat_secret_access_key = System.fetch_env!("UGC_S3_COMPAT_SECRET_ACCESS
 ugc_s3_compat_bucket = System.fetch_env!("UGC_S3_COMPAT_BUCKET")
 ugc_s3_compat_region = System.fetch_env!("UGC_S3_COMPAT_REGION")
 ugc_s3_compat_cdn_base_url = System.fetch_env!("UGC_S3_COMPAT_CDN_BASE_URL")
+# App base URL
+base_url = System.get_env("BASE_URL") || ".lotta.schule"
 # Schedule Provider
 schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 # Sentry Error Logging
@@ -40,7 +42,10 @@ config :api, :rabbitmq_connection,
   password: rabbitmq_password,
   host: rabbitmq_host
 
-config :api, :schedule_provider_url, schedule_provider_url
+config :api, :base_url,
+  base_url
+config :api, :schedule_provider_url,
+  schedule_provider_url
 
 config :api, ApiWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],

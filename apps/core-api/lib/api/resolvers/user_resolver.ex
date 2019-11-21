@@ -86,6 +86,7 @@ defmodule Api.UserResolver do
           name: user.name,
           class: user.class,
         })
+        Api.EmailPublisherWorker.send_registration_email(tenant, user)
         {:ok, %{token: jwt}}
       {:error, changeset} ->
         {

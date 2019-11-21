@@ -15,6 +15,7 @@ defmodule Api.Application do
       # Starts a worker by calling: Api.Worker.start_link(arg)
       Api.MediaConversionPublisherWorker,
       Api.MediaConversionConsumerWorker,
+      Api.EmailPublisherWorker,
       {ConCache, [name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)]}
     ]
 
