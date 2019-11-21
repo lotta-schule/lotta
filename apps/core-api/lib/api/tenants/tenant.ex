@@ -29,6 +29,11 @@ defmodule Api.Tenants.Tenant do
     |> put_assoc_background_image_file(attrs)
   end
 
+  def get_main_url(%Api.Tenants.Tenant{slug: slug}) do
+    base_url = Application.fetch_env!(:api, :base_url)
+    "https://" <> slug  <> base_url
+  end
+
   defp put_assoc_logo_image_file(changeset, attrs) do
     case is_nil(attrs[:logo_image_file]) do
       false ->

@@ -20,7 +20,7 @@ defmodule Api.Tenants do
     category = category
     |> Repo.preload(:widgets)
     {:ok, category.widgets
-    |> Enum.map(&Repo.preload(&1, :groups))
+    |> Enum.map(&Repo.preload(&1, :groups)) # TODO: This is a bottleneck, we should use a join here
     |> Enum.filter(fn widget ->
       case widget.groups do
         [] -> true

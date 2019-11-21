@@ -48,6 +48,9 @@ config :api, Api.Guardian,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 
+config :api, :base_url,
+  ".medienportal.lvh.me:3000"
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
