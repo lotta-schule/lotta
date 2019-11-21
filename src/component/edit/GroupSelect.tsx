@@ -31,6 +31,21 @@ export const GroupSelect = memo<GroupSelectProps>(({ selectedGroups, onSelectGro
                         }} />
                     )}
                 />
+                {groups.filter(g => g.isAdminGroup).map(group => (
+                    <FormControlLabel
+                        key={group.id}
+                        label={<i>{group.name}</i>}
+                        control={(
+                            <Checkbox checked={selectedGroups.filter(g => g.id === group.id).length > 0} onChange={event => {
+                                if (event.target.checked) {
+                                    onSelectGroups([...groups.filter(g => g.isAdminGroup)]);
+                                } else {
+                                    onSelectGroups([]);
+                                }
+                            }} />
+                        )}
+                    />
+                ))}
                 {groups.filter(g => !g.isAdminGroup).map(group => (
                     <FormControlLabel
                         key={group.id}
