@@ -50,7 +50,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                     title: category.title,
                     bannerImageFile: category.bannerImageFile,
                     groups: category.groups,
-                    redirect: category.redirect,
+                    redirect: category.redirect === 'null' ? null : category.redirect,
                     hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
                     widgets: category.widgets ? category.widgets.map(w => ({ ...w, configuration: JSON.stringify(w.configuration) })) : []
                 }
@@ -122,7 +122,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                     <FormControl className={styles.input}>
                         <InputLabel htmlFor={'category-redirect'}>Zu einer anderen Kategorie weiterleiten ...</InputLabel>
                         <Select
-                            value={category.redirect}
+                            value={category.redirect || 'null'}
                             onChange={({ target }) => setCategory({ ...category, redirect: target.value as string })}
                             inputProps={{
                                 id: 'category-redirect'
@@ -130,7 +130,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                             displayEmpty
                             fullWidth
                         >
-                            <MenuItem value={undefined}>
+                            <MenuItem value={'null'}>
+                                <em>Nicht weiterleiten</em>
                             </MenuItem>
                             {categories.map(category => (
                                 <MenuItem key={category.id} value={`/category/${category.id}`}>
