@@ -9,10 +9,10 @@ export interface CategoryModel {
     sortKey: number;
     isSidenav?: boolean;
     isHomepage?: boolean;
-    redirect?: string;
+    redirect?: string | null;
     hideArticlesFromHomepage?: boolean;
     groups: UserGroupModel[];
-    bannerImageFile?: FileModel;
-    category?: CategoryModel;
+    bannerImageFile?: FileModel | null;
+    category?: CategoryModel | null;
     widgets?: WidgetModel[];
 }
