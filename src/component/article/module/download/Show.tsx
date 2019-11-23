@@ -37,13 +37,15 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                     {getConfiguration(file).description}
                                 </Typography>
                             )}
-                            <Typography className={styles.secondaryHeading}>{new FileSize(file.filesize).humanize()}</Typography>
+                            <Typography className={styles.filename}>
+                                {file.filename}
+                            </Typography>
+                            <Typography className={styles.secondaryHeading}>
+                                {new FileSize(file.filesize).humanize()}
+                            </Typography>
                         </div>
-                        <Button color={'secondary'} component={'a'} href={file.remoteLocation} download={file.filename} target={'_blank'}>download</Button>
+                        <Button variant={'outlined'} color={'secondary'} component={'a'} href={file.remoteLocation} download={file.filename} target={'_blank'}>download</Button>
                     </div>
-                    <Typography className={styles.filename}>
-                        {file.filename}
-                    </Typography>
                 </div>
             ))}
         </CardContent>

@@ -12,7 +12,7 @@ export interface DownloadProps {
 
 export const useStyles = makeStyles(theme => ({
     downloadItemWrapper: {
-        marginBottom: theme.spacing(3)
+        marginBottom: theme.spacing(2)
     },
     downloadWrapperHeader: {
         display: 'flex',
@@ -36,7 +36,7 @@ export const useStyles = makeStyles(theme => ({
         font: 'inherit'
     },
     filename: {
-        fontSize: theme.typography.pxToRem(13)
+        fontSize: theme.typography.pxToRem(15),
     }
 }));
 export const Download = memo<DownloadProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
