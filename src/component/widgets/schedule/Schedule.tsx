@@ -142,7 +142,7 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                             </>
                         )}
                         {data.schedule.footer.comments && (
-                            <Typography variant={'subtitle2'}>
+                            <Typography variant={'subtitle2'} style={{ padding: '0.5em' }}>
                                 {data.schedule.footer.comments.join('')}
                             </Typography>
                         )}
