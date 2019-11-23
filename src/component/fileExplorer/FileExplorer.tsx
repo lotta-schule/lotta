@@ -147,7 +147,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
     .sort();
 
   return (
-    <Paper style={{ position: 'relative', ...style }} className={className} {...getRootProps()}>
+    <Paper style={{ position: 'relative', outline: 'none', ...style }} className={className} {...getRootProps()}>
       <input {...getInputProps()} />
       {(isDragActive || isDragAccept) && (
         <div className={styles.overlayDropzoneActive}>

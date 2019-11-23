@@ -70,7 +70,7 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                         console.log(`${nodeId} is ${isExpanded ? 'expanded' : 'not expanded'}`);
                     }}
                 >
-                    <TreeItem nodeId={'/'} label={'/'} onClick={() => setPath('/')}>
+                    <TreeItem nodeId={'/'} label={'Medien'} onClick={() => setPath('/')}>
                         {getTreeItems('/')}
                     </TreeItem>
                 </TreeView>

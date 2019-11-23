@@ -36,7 +36,7 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
             flexShrink: 0,
             boxSizing: 'border-box',
             '&.selected, &.selected:hover': {
-                backgroundColor: theme.palette.primary.main
+                backgroundColor: theme.palette.action.selected
             },
             '& > td, & > th': {
                 userSelect: 'none',
