@@ -531,6 +531,34 @@ defmodule Api.UserResolverTest do
       ]
     }
   end
+  
+  @query """
+  mutation register($user: RegisterUserParams!, $groupKey: String) {
+    register(user: $user, groupKey: $groupKey) {
+      token
+    }
+  }
+  """
+  test "register field returns error when hide_full_name is selected but no nickname is given" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{user: %{ name: "Napoleon Bonaparte", email: "napoleon@bonaparte.fr", password: "test123", hide_full_name: true }})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "register" => nil,
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Registrierung fehlgeschlagen.",
+          "details" => %{"nickname" => ["can't be blank"]},
+          "path" => ["register"]
+        }
+      ]
+    }
+  end
 
 
   @query """
