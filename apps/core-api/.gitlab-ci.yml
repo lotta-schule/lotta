@@ -66,6 +66,7 @@ deploy staging:
       --namespace lotta-staging
       --set image.pullPolicy=Always
       --set appEnvironment=staging
+      --set baseUrl=staging.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
       --set jwtSecret=$JWT_SECRET
@@ -110,6 +111,7 @@ deploy production:
     - helm upgrade --install lotta-api lotta/lotta-api
       --namespace lotta
       --set appEnvironment=production
+      --set baseUrl=.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=2
       --set jwtSecret=$JWT_SECRET
