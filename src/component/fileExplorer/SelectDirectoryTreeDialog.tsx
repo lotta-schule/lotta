@@ -66,9 +66,6 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                     defaultCollapseIcon={<ArrowDropDown />}
                     defaultExpandIcon={<ArrowRight />}
                     defaultEndIcon={<div style={{ width: 24 }} />}
-                    onNodeToggle={(nodeId, isExpanded) => {
-                        console.log(`${nodeId} is ${isExpanded ? 'expanded' : 'not expanded'}`);
-                    }}
                 >
                     <TreeItem nodeId={'/'} label={'/'} onClick={() => setPath('/')}>
                         {getTreeItems('/')}
