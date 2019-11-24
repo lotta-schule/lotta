@@ -90,7 +90,7 @@ defmodule Api.Accounts.User do
     |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
     |> validate_required([:name, :email])
     |> unique_constraint(:email)
-    |> put_pass_hash()
+    |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_assoc_avatar_image_file(params)
   end
 
@@ -101,6 +101,7 @@ defmodule Api.Accounts.User do
     |> unique_constraint(:email)
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
+    |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_pass_hash()
   end
 
