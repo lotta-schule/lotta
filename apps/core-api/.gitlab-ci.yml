@@ -23,11 +23,14 @@ test:
     POSTGRES_PASSWORD: lotta
     POSTGRES_USER: lotta
     POSTGRES_DB: api_test
+    REDIS_PASSWORD: lotta
   # gitlab k8s-runner has a problem with service hostname exposition
   # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
   services:
     - postgres:latest
     - rabbitmq:latest
+    - rabbitmq:latest
+    - bitnami/redis:latest
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
