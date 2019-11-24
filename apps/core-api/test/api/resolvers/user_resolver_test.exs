@@ -602,4 +602,126 @@ defmodule Api.UserResolverTest do
       ]
     }
   end
+  
+  @query """
+  mutation requestPasswordReset($email: String!) {
+    requestPasswordReset(email: $email)
+  }
+  """
+  test "requestPasswordReset returns true if the user exists" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@einsa.net"})
+    |> json_response(200)
+    
+    assert res == %{
+      "data" => %{
+        "requestPasswordReset" => true
+      }
+    }
+    assert {:ok, 1} = Redix.command(:redix, ["EXISTS", "user-email-verify-token-alexis.rinaldoni@einsa.net"])
+    Redix.command(:redix, ["FLUSHALL"])
+  end
+  
+  @query """
+  mutation requestPasswordReset($email: String!) {
+    requestPasswordReset(email: $email)
+  }
+  """
+  test "requestPasswordReset returns true if the user does not exist" do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{email: "abcZZa@invalid.email"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "requestPasswordReset" => true
+      }
+    }
+    assert {:ok, 0} = Redix.command(:redix, ["EXISTS", "user-email-verify-token-abcZZa@invalid.email"])
+    Redix.command(:redix, ["FLUSHALL"])
+  end
+  
+  @query """
+  mutation resetPassword($email: String!, $token: String!, $password: String!) {
+    resetPassword(email: $email, token: $token, password: $password) {
+      token
+    }
+  }
+  """
+  test "resetPassword returns an auth token if given user info is correct" do
+    token = "abcdef123"
+    Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token])
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@einsa.net", token: token, password: "abcdef"})
+    |> json_response(200)
+
+    user = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
+    
+    assert String.valid?(res["data"]["resetPassword"]["token"])
+    assert true = Bcrypt.verify_pass("abcdef", user.password_hash)
+    Redix.command(:redix, ["FLUSHALL"])
+  end
+  
+  @query """
+  mutation resetPassword($email: String!, $token: String!, $password: String!) {
+    resetPassword(email: $email, token: $token, password: $password) {
+      token
+    }
+  }
+  """
+  test "resetPassword returns an error if given token is not correct" do
+    token = "abcdef123"
+    Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token <> "blub"])
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@einsa.net", token: token, password: "abcdef"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "resetPassword" => nil
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut.",
+          "path" => ["resetPassword"]
+        }
+      ]
+    }
+    Redix.command(:redix, ["FLUSHALL"])
+  end
+  
+  @query """
+  mutation resetPassword($email: String!, $token: String!, $password: String!) {
+    resetPassword(email: $email, token: $token, password: $password) {
+      token
+    }
+  }
+  """
+  test "resetPassword returns an error if given email is not correct" do
+    token = "abcdef123"
+    Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token])
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@blub.einsa.net", token: token, password: "abcdef"})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "resetPassword" => nil
+      },
+      "errors" => [
+        %{
+          "locations" => [%{"column" => 0, "line" => 2}],
+          "message" => "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut.",
+          "path" => ["resetPassword"]
+        }
+      ]
+    }
+    Redix.command(:redix, ["FLUSHALL"])
+  end
 end

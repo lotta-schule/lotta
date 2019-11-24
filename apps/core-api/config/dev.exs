@@ -21,7 +21,7 @@ config :api, :rabbitmq_connection,
   password: "guest",
   host: "rabbitmq"
 
-config :api, :redis,
+config :api, :redis_connection,
   host: "redis",
   password: "lotta",
   name: :redix

@@ -145,7 +145,7 @@ defmodule Api.Accounts.User do
   defp validate_has_nickname_if_hide_full_name_is_set(%Ecto.Changeset{} = changeset) do
     case fetch_field(changeset, :hide_full_name) do
       {_, true} ->
-        validate_required(:nickname)
+        validate_required(changeset, :nickname)
       _ ->
         changeset
     end

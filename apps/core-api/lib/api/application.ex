@@ -7,7 +7,7 @@ defmodule Api.Application do
 
   def start(_type, _args) do
 
-    redis_config = Application.fetch_env!(:api, :redis)
+    redis_config = Application.fetch_env!(:api, :redis_connection)
 
     # List all child processes to be supervised
     children = [
