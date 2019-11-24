@@ -13,6 +13,11 @@ config :api, :rabbitmq_connection,
   password: "guest",
   host: "rabbitmq"
 
+config :api, :redis,
+  host: "redis",
+  password: "lotta",
+  name: :redix
+
 config :api, Api.Guardian,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"

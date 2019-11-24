@@ -76,7 +76,7 @@ defmodule Api.Accounts.User do
   end
 
   @doc false
-  def assign_group_changeset(user, %{group: newgroup}) do
+  def assign_group_changeset(%User{} = user, %{group: newgroup}) do
     groups = Repo.all(from g in UserGroup, where: g.tenant_id != ^newgroup.tenant_id) ++ [newgroup]
     user
     |> Repo.preload(:groups)
@@ -99,7 +99,31 @@ defmodule Api.Accounts.User do
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
     |> validate_required([:name, :email, :password, :tenant_id])
     |> unique_constraint(:email)
+    |> validate_required(:password)
+    |> validate_length(:password, min: 6, max: 150)
     |> put_pass_hash()
+  end
+
+  def update_password_changeset(%User{} = user, password) when is_binary(password) and byte_size(password) > 0 do
+    user
+    |> Ecto.Changeset.change(%{password: password})
+    |> validate_required(:password)
+    |> validate_length(:password, min: 6, max: 150)
+    |> put_pass_hash()
+  end
+
+  def get_signed_jwt(%User{} = user) do
+    claims = %{
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
+      name: user.name,
+      class: user.class
+    }
+    case Api.Guardian.encode_and_sign(user, claims) do
+      {:ok, jwt, _} -> {:ok, jwt}
+      error -> error
+    end
   end
 
   defp put_pass_hash(changeset) do
@@ -116,4 +140,13 @@ defmodule Api.Accounts.User do
     |> put_assoc(:avatar_image_file, Api.Repo.get(Api.Accounts.File, avatar_image_file_id))
   end
   defp put_assoc_avatar_image_file(article, _args), do: article
+
+  defp validate_has_nickname_if_hide_full_name_is_set(%Ecto.Changeset{} = changeset) do
+    case fetch_field(changeset, :hide_full_name) do
+      {_, true} ->
+        validate_required(:nickname)
+      _ ->
+        changeset
+    end
+  end
 end

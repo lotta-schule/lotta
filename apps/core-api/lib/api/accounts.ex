@@ -168,6 +168,40 @@ defmodule Api.Accounts do
     User.changeset(user, %{})
   end
 
+  def request_password_reset_token(email, token) do
+    case Repo.get_by(User, email: email) do
+      nil ->
+        {:error, "User not found"}
+      user ->
+        case Redix.command(:redix, ["SET", "user-email-verify-token-#{email}", token, "EX", 6 * 60 * 60]) do
+          {:ok, _} ->
+            {:ok, user}
+          error ->
+            error
+        end
+    end
+  end
+
+  def find_user_by_reset_token(email, token) do
+    with {:ok, reset_token} <- Redix.command(:redix, ["GET", "user-email-verify-token-#{email}"]),
+        false <- is_nil(token),
+        true <- token == reset_token,
+        user <- Repo.get_by(User, email: email),
+        false <- is_nil(user) do
+      Redix.command(:redix, ["DEL", "user-email-verify-token-#{email}"])
+      {:ok, user}
+    else
+      error ->
+        {:error, :invalid_token}
+    end
+  end
+  
+  def update_password(%User{} = user, password) when is_binary(password) and byte_size(password) > 0 do
+    user
+    |> User.update_password_changeset(password)
+    |> Repo.update()
+  end
+
   @doc """
   Returns the list of files.
 

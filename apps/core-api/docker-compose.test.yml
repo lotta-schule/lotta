@@ -7,3 +7,6 @@ services:
   postgres:
     environment:
       POSTGRES_DB: lotta_api
+  redis:
+    volumes:
+      - ./_test/redis:/bitnami/redis/data

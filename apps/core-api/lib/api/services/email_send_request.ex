@@ -1,6 +1,6 @@
 defmodule Api.Services.EmailSendRequest do
   alias Api.Tenants.Tenant
-  defstruct [:to, :subject, :template, :templatevars]
+  defstruct [:to, :sender_name, :subject, :template, :templatevars]
 
   def get_tenant_info(%Tenant{} = tenant) do
     tenant = Api.Repo.preload(tenant, :logo_image_file)
