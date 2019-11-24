@@ -20,21 +20,17 @@ defmodule ApiWeb.Context do
 
   defp put_user(context, conn) do
     authorization_header = get_req_header(conn, "authorization")
-    with ["Bearer " <> token] <- authorization_header do
-      case Guardian.resource_from_token(token) do
-        {:ok, current_user, _claims} ->
-          current_user = Repo.get(Accounts.User, current_user.id)
-          |> Repo.preload([:groups, :avatar_image_file])
-          Task.start_link(fn ->
-            current_user
-            |> Repo.preload(:tenant)
-            |> Accounts.see_user()
-          end)
-          context
-          |> Map.put(:current_user, current_user)
-        {:error, _} ->
-          context
-      end
+    with ["Bearer " <> token] <- authorization_header,
+        {:ok, current_user, _claims} <- Guardian.resource_from_token(token) do
+      current_user =
+        Repo.get(Accounts.User, current_user.id)
+        |> Repo.preload([:groups, :avatar_image_file])
+      Task.start_link(fn ->
+        current_user
+        |> Repo.preload(:tenant)
+        |> Accounts.see_user()
+      end)
+      Map.put(context, :current_user, current_user)
     else
       _ ->
         context

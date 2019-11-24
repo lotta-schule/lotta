@@ -49,6 +49,41 @@ defmodule Api.EmailPublisherWorker do
     })
   end
 
+  def send_request_password_reset_email(%Tenant{} = tenant, %Api.Accounts.User{} = user, email, token) do
+    url =
+      %{ e: Base.encode64(email), t: token }
+      |> URI.encode_query
+      |> String.replace_prefix("", "#{Tenant.get_main_url(tenant)}/password/reset?")
+
+    Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+      to: email,
+      sender_name: tenant.title,
+      subject: "Passwort zurücksetzen",
+      template: "default",
+      templatevars: %{
+        tenant: EmailSendRequest.get_tenant_info(tenant),
+        heading: "Setz dein Passwort zurück",
+        content: "Hallo #{user.name},<br />über die Seite #{Tenant.get_main_url(tenant)} wurde eine Anfrage zum zurücksetzen deines Passworts gesendet.<br />" <>
+          "Dein Passwort kannst du über folgenden Link zurücksetzen: <a href='#{url}'>#{url}</a>.<br /><br />" <>
+          "Solltest du die Anfrage nicht selbst versandt haben, kannst du diese Nachricht ignorieren."
+      }
+    })
+  end
+
+  def send_password_changed_email(%Tenant{} = tenant, %Api.Accounts.User{} = user) do
+    Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+      to: user.email,
+      sender_name: tenant.title,
+      subject: "Dein Passwort wurde geändert",
+      template: "default",
+      templatevars: %{
+        tenant: EmailSendRequest.get_tenant_info(tenant),
+        heading: "Dein Passwort",
+        content: "Hallo #{user.name},<br />Dein Passwort wurde über die Seite #{Tenant.get_main_url(tenant)} erfolgreich geändert.<br />"
+      }
+    })
+  end
+
   def publish(message) do
     GenServer.cast(:email_publisher, {:publish, message})
   end

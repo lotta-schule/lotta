@@ -45,6 +45,20 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
       resolve &Api.UserResolver.update_profile/2
     end
+    
+    field :request_password_reset, type: :boolean do
+      arg :email, non_null(:string)
+
+      resolve &Api.UserResolver.request_password_reset/2
+    end
+
+    field :reset_password, type: :authresult do
+      arg :email, non_null(:string)
+      arg :token, non_null(:string)
+      arg :password, non_null(:string)
+
+      resolve &Api.UserResolver.reset_password/2
+    end
 
     field :assign_user_to_group, type: :user do
       arg :id, non_null(:lotta_id)

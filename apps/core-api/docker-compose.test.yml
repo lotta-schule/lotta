@@ -4,6 +4,11 @@ services:
   app:
     environment:
       MIX_ENV: test
+
   postgres:
     environment:
       POSTGRES_DB: lotta_api
+
+  redis:
+    volumes:
+      - ./_test/redis:/bitnami/redis/data

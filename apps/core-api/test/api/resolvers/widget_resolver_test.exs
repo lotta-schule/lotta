@@ -26,247 +26,208 @@ defmodule Api.WidgetResolverTest do
     }}
   end
 
-  @query """
-  {
-    widgets {
-      title
-      type
-      groups {
-        name
+  describe "widgets qurey" do
+    @query """
+    {
+      widgets {
+        title
+        type
+        groups {
+          name
+        }
       }
     }
-  }
-  """
-  test "widgets field returns widgets if user is admin", %{admin_jwt: admin_jwt} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{admin_jwt}")
-    |> get("/api", query: @query)
-    |> json_response(200)
+    """
 
-    assert res == %{
-      "data" => %{
-        "widgets" => [
-          %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
-          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"},
-          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"}
+    test "returns widgets if user is admin", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "widgets" => [
+            %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
+            %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"},
+            %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"}
+          ]
+        }
+      }
+    end
+
+    test "returns widgets if user is not admin", %{user_jwt: user_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "widgets" => [
+            %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
+            %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"},
+            %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"}
+          ]
+        }
+      }
+    end
+
+    test "returns widgets if user is not logged in" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "widgets" => [
+            %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"}
+          ]
+        }
+      }
+    end
+  end
+
+
+  describe "createWidget mutation" do
+    @query """
+    mutation createWidget($title: String!, $type: WidgetType!) {
+      createWidget (title: $title, type: $type) {
+        title
+        type
+      }
+    }
+    """
+
+    test "creates a widget if user is admin", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{ title: "New Widget", type: "CALENDAR" })
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "createWidget" => %{
+            "title" => "New Widget",
+            "type" => "CALENDAR"
+          }
+        }
+      }
+    end
+  
+    test "returns an error if user is not admin", %{user_jwt: user_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{ title: "New Widget", type: "CALENDAR" })
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "createWidget" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Widgets erstellen.",
+            "path" => ["createWidget"]
+          }
         ]
       }
-    }
-  end
-  @query """
-  {
-    widgets {
-      title
-      type
-      groups {
-        name
-      }
-    }
-  }
-  """
-  test "widgets field returns widgets if user is not admin", %{user_jwt: user_jwt} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{user_jwt}")
-    |> get("/api", query: @query)
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "widgets" => [
-          %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"},
-          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"},
-          %{"groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}], "title" => "Kalender", "type" => "CALENDAR"}
+    end
+  
+    test "returns an error if user is not logged in" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{ title: "New Widget", type: "CALENDAR" })
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "createWidget" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Widgets erstellen.",
+            "path" => ["createWidget"]
+          }
         ]
       }
-    }
+    end
   end
-  @query """
-  {
-    widgets {
-      title
-      type
-      groups {
-        name
+
+
+  describe "updateWidget mutation" do
+    @query """
+    mutation updateWidget($id: ID!, $widget: WidgetInput!) {
+      updateWidget (id: $id, widget: $widget) {
+        title
+        type
       }
     }
-  }
-  """
-  test "widgets field returns widgets if user is not logged in" do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> get("/api", query: @query)
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "widgets" => [
-          %{"groups" => [], "title" => "Kalender", "type" => "CALENDAR"}
+    """
+  
+    test "creates a widget if user is admin", %{admin_jwt: admin_jwt, widget: widget} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: widget.id, widget: %{title: "Changed Widget"}})
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "updateWidget" => %{
+            "title" => "Changed Widget",
+            "type" => "CALENDAR"
+          }
+        }
+      }
+    end
+  
+    test "returns an error if user is not admin", %{user_jwt: user_jwt, widget: widget} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{id: widget.id, widget: %{title: "Changed Widget"}})
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "updateWidget" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Widgets bearbeiten.",
+            "path" => ["updateWidget"]
+          }
         ]
       }
-    }
-  end
-
-
-  @query """
-  mutation createWidget($title: String!, $type: WidgetType!) {
-    createWidget (title: $title, type: $type) {
-      title
-      type
-    }
-  }
-  """
-  test "createWidget field should create a widget if user is admin", %{admin_jwt: admin_jwt} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{admin_jwt}")
-    |> post("/api", query: @query, variables: %{ title: "New Widget", type: "CALENDAR" })
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "createWidget" => %{
-          "title" => "New Widget",
-          "type" => "CALENDAR"
-        }
+    end
+  
+    test "returns an error if user is not logged in", %{widget: widget} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{id: widget.id, widget: %{title: "Changed Widget"}})
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "updateWidget" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Widgets bearbeiten.",
+            "path" => ["updateWidget"]
+          }
+        ]
       }
-    }
-  end
-  @query """
-  mutation createWidget($title: String!, $type: WidgetType!) {
-    createWidget (title: $title, type: $type) {
-      title
-      type
-    }
-  }
-  """
-  test "createWidget field should return an error if user is not admin", %{user_jwt: user_jwt} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{user_jwt}")
-    |> post("/api", query: @query, variables: %{ title: "New Widget", type: "CALENDAR" })
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "createWidget" => nil
-      },
-      "errors" => [
-        %{
-          "locations" => [%{"column" => 0, "line" => 2}],
-          "message" => "Nur Administrator dürfen Widgets erstellen.",
-          "path" => ["createWidget"]
-        }
-      ]
-    }
-  end
-  @query """
-  mutation createWidget($title: String!, $type: WidgetType!) {
-    createWidget (title: $title, type: $type) {
-      title
-      type
-    }
-  }
-  """
-  test "createWidget field should return an error if user is not logged in" do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> post("/api", query: @query, variables: %{ title: "New Widget", type: "CALENDAR" })
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "createWidget" => nil
-      },
-      "errors" => [
-        %{
-          "locations" => [%{"column" => 0, "line" => 2}],
-          "message" => "Nur Administrator dürfen Widgets erstellen.",
-          "path" => ["createWidget"]
-        }
-      ]
-    }
-  end
-
-
-  @query """
-  mutation updateWidget($id: ID!, $widget: WidgetInput!) {
-    updateWidget (id: $id, widget: $widget) {
-      title
-      type
-    }
-  }
-  """
-  test "updateWidget field should create a widget if user is admin", %{admin_jwt: admin_jwt, widget: widget} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{admin_jwt}")
-    |> post("/api", query: @query, variables: %{id: widget.id, widget: %{title: "Changed Widget"}})
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "updateWidget" => %{
-          "title" => "Changed Widget",
-          "type" => "CALENDAR"
-        }
-      }
-    }
-  end
-  @query """
-  mutation updateWidget($id: String!, $widget: WidgetInput!) {
-    updateWidget (id: $id, widget: $widget) {
-      title
-      type
-    }
-  }
-  """
-  test "updateWidget field should return an error if user is not admin", %{user_jwt: user_jwt, widget: widget} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{user_jwt}")
-    |> post("/api", query: @query, variables: %{id: widget.id, widget: %{title: "Changed Widget"}})
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "updateWidget" => nil
-      },
-      "errors" => [
-        %{
-          "locations" => [%{"column" => 0, "line" => 2}],
-          "message" => "Nur Administrator dürfen Widgets bearbeiten.",
-          "path" => ["updateWidget"]
-        }
-      ]
-    }
-  end
-  @query """
-  mutation updateWidget($id: String!, $widget: WidgetInput!) {
-    updateWidget (id: $id, widget: $widget) {
-      title
-      type
-    }
-  }
-  """
-  test "updateWidget field should return an error if user is not logged in", %{widget: widget} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> post("/api", query: @query, variables: %{id: widget.id, widget: %{title: "Changed Widget"}})
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "updateWidget" => nil
-      },
-      "errors" => [
-        %{
-          "locations" => [%{"column" => 0, "line" => 2}],
-          "message" => "Nur Administrator dürfen Widgets bearbeiten.",
-          "path" => ["updateWidget"]
-        }
-      ]
-    }
+    end
   end
 end

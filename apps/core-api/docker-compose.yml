@@ -4,6 +4,7 @@ networks:
   api:
     driver: bridge
   postgres:
+  redis:
   rabbitmq:
     driver: bridge
 
@@ -11,6 +12,7 @@ volumes:
   elixir-mix:
 
 services:
+
   app:
     image: elixir:1.9.2
     volumes:
@@ -23,27 +25,40 @@ services:
     depends_on:
       - rabbitmq
       - postgres
+      - redis
     networks:
       - api
       - postgres
       - rabbitmq
+      - redis
     environment:
       MIX_ENV: dev
     env_file:
       - .env
 
+
   postgres:
     image: postgres:11
     volumes:
-      - ./_postgres-data:/var/lib/postgresql/data
+      - ./_data/postgres:/var/lib/postgresql/data
     restart: always
     networks:
       - postgres
-      - rabbitmq
     environment:
       POSTGRES_USER: lotta
       POSTGRES_PASSWORD: lotta
       POSTGRES_DB: lotta
+
+
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      - REDIS_PASSWORD=lotta
+    networks:
+      - redis
+    volumes:
+      - ./_data/redis:/bitnami/redis/data
+
 
   rabbitmq:
     image: rabbitmq:3.7-management

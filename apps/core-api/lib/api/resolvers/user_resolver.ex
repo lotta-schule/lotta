@@ -80,12 +80,7 @@ defmodule Api.UserResolver do
           _ ->
             {:ok, user}
         end
-        {:ok, jwt, _} = Api.Guardian.encode_and_sign(user, %{
-          email: user.email,
-          nickname: user.nickname,
-          name: user.name,
-          class: user.class,
-        })
+        {:ok, jwt} = User.get_signed_jwt(user)
         Api.EmailPublisherWorker.send_registration_email(tenant, user)
         {:ok, %{token: jwt}}
       {:error, changeset} ->
@@ -99,14 +94,31 @@ defmodule Api.UserResolver do
   
   def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-        {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{
-          email: user.email,
-          nickname: user.nickname,
-          name: user.name,
-          class: user.class,
-          # groups: user.groups
-       }) do
+        {:ok, jwt} <- User.get_signed_jwt(user) do
       {:ok, %{token: jwt}}
+    end
+  end
+
+  def request_password_reset(%{email: email}, %{context: %{tenant: tenant}}) do
+    token =
+      :crypto.strong_rand_bytes(32)
+      |> Base.url_encode64(padding: false)
+      |> URI.encode()
+    with {:ok, user} <- Accounts.request_password_reset_token(email, token) do
+      Api.EmailPublisherWorker.send_request_password_reset_email(tenant, user, email, token)
+    end
+    {:ok, true}
+  end
+
+  def reset_password(%{email: email, token: token, password: password}, %{context: %{tenant: tenant}}) do
+    with {:ok, user} <-  Accounts.find_user_by_reset_token(email, token),
+        {:ok, user} <- Accounts.update_password(user, password),
+        {:ok, jwt} <- User.get_signed_jwt(user) do
+          Api.EmailPublisherWorker.send_password_changed_email(tenant, user)
+          {:ok, %{ token: jwt }}
+    else
+      error ->
+        {:error, "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut."}
     end
   end
 

@@ -6,6 +6,9 @@ defmodule Api.Application do
   use Application
 
   def start(_type, _args) do
+
+    redis_config = Application.fetch_env!(:api, :redis_connection)
+
     # List all child processes to be supervised
     children = [
       # Start the Ecto repository
@@ -16,7 +19,8 @@ defmodule Api.Application do
       Api.MediaConversionPublisherWorker,
       Api.MediaConversionConsumerWorker,
       Api.EmailPublisherWorker,
-      {ConCache, [name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)]}
+      {Redix, redis_config},
+      {ConCache, name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -69,6 +69,7 @@ defmodule Api.MixProject do
       {:amqp, "~> 1.2"},
       {:ex_ical, "~> 0.2.0"},
       {:honeybadger, "~> 0.13.0"},
+      {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
       #test
       {:excoveralls, "~> 0.11", only: :test}
