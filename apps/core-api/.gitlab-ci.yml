@@ -27,10 +27,11 @@ test:
   # gitlab k8s-runner has a problem with service hostname exposition
   # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
   services:
-    - postgres:latest
-    - rabbitmq:latest
-    - rabbitmq:latest
-    - bitnami/redis:latest
+    - name: postgres:latest
+    - name: rabbitmq:latest
+    - name: rabbitmq:latest
+    - name: bitnami/redis:latest
+      alias: redis
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
