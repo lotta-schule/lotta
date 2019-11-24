@@ -10,6 +10,9 @@ db_user = System.fetch_env!("POSTGRES_USER")
 db_password = System.fetch_env!("POSTGRES_PASSWORD")
 db_host = System.fetch_env!("POSTGRES_HOST")
 db_name = System.fetch_env!("POSTGRES_DB")
+# redis
+redis_host = System.fetch_env!("REDIS_HOST")
+redis_password = System.fetch_env!("REDIS_PASSWORD")
 # rabbitMQ
 rabbitmq_username = System.fetch_env!("RABBITMQ_USERNAME")
 rabbitmq_password = System.fetch_env!("RABBITMQ_PASSWORD")
@@ -41,6 +44,11 @@ config :api, :rabbitmq_connection,
   username: rabbitmq_username,
   password: rabbitmq_password,
   host: rabbitmq_host
+
+config :api, :redis_connection,
+  host: redis_host,
+  password: redis_password,
+  name: :redix
 
 config :api, :base_url,
   base_url
