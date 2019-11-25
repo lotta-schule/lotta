@@ -1,4 +1,5 @@
 import React, { memo, useState } from 'react';
+import { find } from 'lodash';
 import {
     Checkbox, DialogTitle, DialogContent, DialogContentText, DialogActions,
     Button, TextField, Typography, Grid, makeStyles, Theme, FormGroup, FormControlLabel
@@ -9,6 +10,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { useOnLogin } from 'util/user/useOnLogin';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { fade } from '@material-ui/core/styles/colorManipulator';
+import { useGetFieldError } from 'util/useGetFieldError';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
@@ -38,8 +40,10 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                 resetForm();
                 onRequestClose();
             }
-        }
+        },
+        errorPolicy: 'all'
     });
+    const getFieldError = useGetFieldError(error);
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -96,6 +100,8 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         label="Deine Email-Adresse:"
                         placeholder="beispiel@medienportal.org"
                         type="email"
+                        error={!!getFieldError('email')}
+                        helperText={getFieldError('email')}
                         inputProps={{ maxLength: 100 }}
                         fullWidth
                         required
@@ -109,7 +115,9 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         label="Dein Passwort:"
                         placeholder={'Passwort'}
                         type="password"
-                        inputProps={{ minlength: 6, maxLength: 150 }}
+                        error={!!getFieldError('password')}
+                        helperText={getFieldError('password')}
+                        inputProps={{ minLength: 6, maxLength: 150 }}
                         required
                         fullWidth
                     />
@@ -135,6 +143,8 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                 value={firstName}
                                 onChange={e => setFirstName(e.target.value)}
                                 disabled={isLoading}
+                                error={!!getFieldError('name')}
+                                helperText={getFieldError('email')}
                                 label="Vorname"
                                 placeholder={'Maxi'}
                                 type="text"
@@ -152,6 +162,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                                 disabled={isLoading}
                                 label="Nachname"
                                 placeholder={'Muster'}
+                                error={!!getFieldError('name')}
                                 type="text"
                                 inputProps={{ maxLength: 50 }}
                                 fullWidth
@@ -170,6 +181,8 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         label="Spitzname"
                         placeholder={'Mäxchen'}
                         value={nickname}
+                        error={!!getFieldError('nickname')}
+                        helperText={getFieldError('nickname')}
                         inputProps={{ maxLength: 25 }}
                         onChange={e => {
                             if (nickname.length === 0 && e.target.value.length > 0) {
