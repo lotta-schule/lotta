@@ -11,7 +11,7 @@ export const useLocalStorage = <T extends any>(key: string, initialValue: T): [T
             return item ? JSON.parse(item) : initialValue;
         } catch (error) {
             // If error also return initialValue
-            console.log(error);
+            console.error(error);
             return initialValue;
         }
     });

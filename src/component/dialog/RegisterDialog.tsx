@@ -109,7 +109,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         label="Dein Passwort:"
                         placeholder={'Passwort'}
                         type="password"
-                        inputProps={{ maxLength: 100 }}
+                        inputProps={{ minlength: 6, maxLength: 150 }}
                         required
                         fullWidth
                     />
