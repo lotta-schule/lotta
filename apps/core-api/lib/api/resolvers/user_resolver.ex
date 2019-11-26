@@ -139,12 +139,20 @@ defmodule Api.UserResolver do
   end
 
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
-    current_user
-    |> Accounts.update_user(user_params)
+    case Accounts.update_user(current_user, user_params) do
+      {:error, changeset} ->
+        {
+          :error,
+          message: "Speichern fehlgeschlagen.",
+          details: error_details(changeset)
+        }
+      response ->
+        response
+    end
   end
 
   defp error_details(%Ecto.Changeset{} = changeset) do
     changeset
-    |> Ecto.Changeset.traverse_errors(fn {msg, _} -> msg end)
+    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
   end
 end
