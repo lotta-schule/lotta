@@ -123,7 +123,7 @@ export const ResetPasswordLayout = memo(() => {
                                     label="Dein neues Passwort:"
                                     placeholder="Passwort"
                                     type="password"
-                                    inputProps={{ minlength: 6, maxLength: 150 }}
+                                    inputProps={{ minLength: 6, maxLength: 150 }}
                                     fullWidth
                                 />
                                 <TextField

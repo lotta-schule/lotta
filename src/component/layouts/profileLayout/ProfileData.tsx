@@ -7,6 +7,7 @@ import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { User } from 'util/model';
 import { Edit } from '@material-ui/icons';
 import { FileModelType, UserModel } from 'model';
+import { useGetFieldError } from 'util/useGetFieldError';
 
 export const ProfileData = memo(() => {
 
@@ -21,6 +22,7 @@ export const ProfileData = memo(() => {
     const [avatarImageFile, setAvatarImageFile] = useState(currentUser.avatarImageFile);
 
     const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation);
+    const getFieldError = useGetFieldError(error);
 
     return (
         <Card>
@@ -35,8 +37,8 @@ export const ProfileData = memo(() => {
                         <SelectFileButton
                             buttonComponent={Fab}
                             buttonComponentProps={{ color: 'secondary', size: 'small', disabled: isLoading }}
-                            label={<Edit />}
                             fileFilter={f => f.fileType === FileModelType.Image}
+                            label={<Edit />}
                             onSelectFile={setAvatarImageFile}
                         />
                     </Grid>
@@ -48,11 +50,13 @@ export const ProfileData = memo(() => {
                             id="name"
                             label="Dein Vor- und Nachname"
                             placeholder="Minnie Musterchen"
-                            value={name}
                             onChange={e => setName(e.target.value)}
-                            type="name"
-                            disabled={isLoading}
                             inputProps={{ maxLength: 100 }}
+                            disabled={isLoading}
+                            error={!!getFieldError('name')}
+                            helperText={getFieldError('name')}
+                            value={name}
+                            type="name"
                         />
                         <TextField
                             autoFocus
@@ -64,6 +68,8 @@ export const ProfileData = memo(() => {
                             onChange={e => setNickname(e.target.value)}
                             placeholder="El Professore"
                             type="text"
+                            error={!!getFieldError('nickname')}
+                            helperText={getFieldError('nickname')}
                             disabled={isLoading}
                             inputProps={{ maxLength: 25 }}
                         />
@@ -89,6 +95,8 @@ export const ProfileData = memo(() => {
                             onChange={e => setEmail(e.target.value)}
                             placeholder="beispiel@medienportal.org"
                             type="email"
+                            error={!!getFieldError('email')}
+                            helperText={getFieldError('email')}
                             disabled={isLoading}
                             inputProps={{ maxLength: 100 }}
                         />
@@ -101,7 +109,10 @@ export const ProfileData = memo(() => {
                             value={classOrShortName}
                             onChange={e => setClassOrShortName(e.target.value)}
                             placeholder="7/4, 11, Wie"
-                            helperText={'Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du Zugriff auf deinen Stundenplan erhalten.'}
+                            error={!!getFieldError('class')}
+                            helperText={getFieldError('class') || (
+                                'Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du Zugriff auf deinen Stundenplan erhalten.'
+                            )}
                             type="text"
                             disabled={isLoading}
                             inputProps={{ maxLength: 25 }}
