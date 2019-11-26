@@ -367,7 +367,7 @@ defmodule Api.UserResolverTest do
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Registrierung fehlgeschlagen.",
-            "details" => %{"email" => ["has already been taken"]},
+            "details" => %{"email" => ["ist schon belegt"]},
             "path" => ["register"]
           }
         ]
@@ -388,7 +388,7 @@ defmodule Api.UserResolverTest do
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Registrierung fehlgeschlagen.",
-            "details" => %{"password" => ["can't be blank"]},
+            "details" => %{"password" => ["darf nicht leer sein"]},
             "path" => ["register"]
           }
         ]
@@ -409,7 +409,7 @@ defmodule Api.UserResolverTest do
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Registrierung fehlgeschlagen.",
-            "details" => %{"name" => ["can't be blank"]},
+            "details" => %{"name" => ["darf nicht leer sein"]},
             "path" => ["register"]
           }
         ]
@@ -430,7 +430,7 @@ defmodule Api.UserResolverTest do
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Registrierung fehlgeschlagen.",
-            "details" => %{"nickname" => ["can't be blank"]},
+            "details" => %{"nickname" => ["darf nicht leer sein"]},
             "path" => ["register"]
           }
         ]
