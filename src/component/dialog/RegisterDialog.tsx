@@ -1,5 +1,4 @@
 import React, { memo, useState } from 'react';
-import { find } from 'lodash';
 import {
     Checkbox, DialogTitle, DialogContent, DialogContentText, DialogActions,
     Button, TextField, Typography, Grid, makeStyles, Theme, FormGroup, FormControlLabel
