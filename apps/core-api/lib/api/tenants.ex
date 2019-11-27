@@ -213,8 +213,8 @@ defmodule Api.Tenants do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_category(attrs \\ %{}) do
-    %Category{}
+  def create_category(%Tenant{} = tenant, attrs \\ %{}) do
+    %Category{ tenant_id: tenant.id, sort_key: Category.get_max_sort_key(tenant) + 10 }
     |> Category.changeset(attrs)
     |> Repo.insert()
   end

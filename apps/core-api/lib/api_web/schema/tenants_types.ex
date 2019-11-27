@@ -26,11 +26,23 @@ defmodule ApiWeb.Schema.TenantsTypes do
       resolve &Api.TenantResolver.update/2
     end
 
+    field :create_category, type: :category do
+      arg :category, non_null(:category_input)
+  
+      resolve &Api.CategoryResolver.create/2
+    end
+
     field :update_category, type: :category do
       arg :id, non_null(:lotta_id)
       arg :category, non_null(:category_input)
   
       resolve &Api.CategoryResolver.update/2
+    end
+    
+    field :delete_category, type: :category do
+      arg :id, non_null(:lotta_id)
+  
+      resolve &Api.CategoryResolver.delete/2
     end
     
     field :create_widget, type: :widget do
@@ -57,8 +69,10 @@ defmodule ApiWeb.Schema.TenantsTypes do
 
   input_object :category_input do
     field :title, non_null(:string)
+    field :is_sidenav, :boolean
     field :sort_key, :integer
     field :banner_image_file, :file
+    field :category, :category
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
     field :groups, list_of(:user_group)

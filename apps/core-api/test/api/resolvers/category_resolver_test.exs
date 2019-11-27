@@ -286,4 +286,181 @@ defmodule Api.CategoryResolverTest do
       }
     end
   end
+
+  describe "createCategory mutation" do
+    @query """
+    mutation CreateCategory($category: CategoryInput!) {
+      createCategory(category: $category) {
+        title
+      }
+    }
+    """
+
+    test "creates new category", %{admin_jwt: admin_jwt, faecher_category: faecher_category} do
+      category = %{
+        title: "Brandneu"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{category: category})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "createCategory" => %{
+            "title" => "Brandneu"
+          }
+        }
+      }
+    end
+
+    test "returns error if user is not admin", %{user_jwt: user_jwt, faecher_category: faecher_category} do
+      category = %{
+        title: "Neue Fächer"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{category: category})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "createCategory" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Kategorien erstellen.",
+            "path" => ["createCategory"]
+          }
+        ]
+      }
+    end
+
+    test "returns error if user is not logged in", %{faecher_category: faecher_category} do
+      category = %{
+        title: "Neue Fächer"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{category: category})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "createCategory" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Kategorien erstellen.",
+            "path" => ["createCategory"]
+          }
+        ]
+      }
+    end
+  end
+  
+  
+  describe "deleteCategory mutation" do
+    @query """
+    mutation DeleteCategory($id: ID!) {
+      deleteCategory(id: $id) {
+        title
+      }
+    }
+    """
+
+    test "deletes new category", %{admin_jwt: admin_jwt, faecher_category: faecher_category} do
+      category = %{
+        title: "Brandneu"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: faecher_category.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteCategory" => %{
+            "title" => "Fächer"
+          }
+        }
+      }
+    end
+
+    test "returns error if category does not exist", %{admin_jwt: admin_jwt} do
+      category = %{
+        title: "Neue Fächer"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: 0})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteCategory" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Kategorie mit der id 0 nicht gefunden.",
+            "path" => ["deleteCategory"]
+          }
+        ]
+      }
+    end
+
+    test "returns error if user is not admin", %{user_jwt: user_jwt, faecher_category: faecher_category} do
+      category = %{
+        title: "Neue Fächer"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{id: faecher_category.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteCategory" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Kategorien löschen.",
+            "path" => ["deleteCategory"]
+          }
+        ]
+      }
+    end
+
+    test "returns error if user is not logged in", %{faecher_category: faecher_category} do
+      category = %{
+        title: "Neue Fächer"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{id: faecher_category.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteCategory" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administrator dürfen Kategorien löschen.",
+            "path" => ["deleteCategory"]
+          }
+        ]
+      }
+    end
+  end
 end
