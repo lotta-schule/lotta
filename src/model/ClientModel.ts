@@ -1,5 +1,6 @@
 import { FileModel } from './FileModel';
 import { UserGroupModel } from './UserGroupModel';
+import { CustomDomainModel } from './CustomDomainModel';
 import { ID } from './ID';
 
 export interface ClientModel {
@@ -12,4 +13,5 @@ export interface ClientModel {
     groups: UserGroupModel[];
     logoImageFile?: FileModel;
     backgroundImageFile?: FileModel;
+    customDomains: CustomDomainModel[];
 }
