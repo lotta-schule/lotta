@@ -140,7 +140,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 <>
                     <CardContent>
                         <CategorySelect
-                            selectedCategoryId={article.category && article.category.id}
+                            selectedCategory={article.category || null}
                             onSelectCategory={category => onUpdate({ ...article, category })}
                         />
                     </CardContent>

@@ -110,7 +110,12 @@ export const UserNavigation = memo(() => {
                             )}
                             {categories.map(category => (
                                 <li key={category.id}>
-                                    <Link component={CollisionLink} to={`/category/${category.id}`}>{category.title}</Link>
+                                    <Link
+                                        component={CollisionLink}
+                                        to={category.redirect ? category.redirect : `/category/${category.id}`}
+                                    >
+                                        {category.title}
+                                    </Link>
                                 </li>
                             ))}
                             <li><Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link></li>
