@@ -1,17 +1,19 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
 import {
-    Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
+    Divider, Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
 } from '@material-ui/core';
+import { Delete } from '@material-ui/icons';
 import { CategoryModel } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
-import Img from 'react-cloudimage-responsive';
 import { useCategories } from 'util/categories/useCategories';
 import { useMutation } from 'react-apollo';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { ID } from 'model/ID';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
+import Img from 'react-cloudimage-responsive';
+import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -20,21 +22,32 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     switchBase: {
         color: 'gray'
+    },
+    saveButton: {
+        float: 'right',
+        marginBottom: theme.spacing(2)
+    },
+    deleteDivider: {
+        clear: 'both',
+        marginBottom: theme.spacing(2),
+        marginTop: theme.spacing(2)
     }
 }));
 
 export interface CategoryEditorProps {
     selectedCategory: CategoryModel | null;
+    onSelectCategory(category: CategoryModel | null): void;
 }
 
 
-export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) => {
+export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onSelectCategory }) => {
 
     const styles = useStyles();
 
     const [categories] = useCategories();
 
     const [category, setCategory] = useState<CategoryModel | null>(null);
+    const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] = useState(false);
 
     const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation);
 
@@ -154,7 +167,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
             />
             <p>&nbsp;</p>
             <Button
-                style={{ float: 'right' }}
+                className={styles.saveButton}
                 disabled={isLoading}
                 variant={'contained'}
                 color={'secondary'}
@@ -163,14 +176,29 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory }) =
                 Kategorie speichern
             </Button>
 
-            {/* <Divider style={{ marginBottom: theme.spacing(2), marginTop: theme.spacing(2) }} />
-            <Button size="small" variant="contained" color="secondary" className={styles.button}>
-                <Delete className={classNames(styles.leftIcon, styles.iconSmall)} />
-                Kategorie löschen
-            </Button>
-            <Typography>
-                (Achtung: kann im Nachhinein nicht mehr rückgängig gemacht werden!)
-            </Typography> */}
+            {!category.isHomepage && (
+                <>
+                    <Divider className={styles.deleteDivider} />
+                    <Button
+                        size="small"
+                        variant="contained"
+                        color="secondary"
+                        startIcon={<Delete />}
+                        onClick={() => setIsDeleteCategoryDialogOpen(true)}
+                    >
+                        Kategorie löschen
+                    </Button>
+                    <DeleteCategoryDialog
+                        isOpen={isDeleteCategoryDialogOpen}
+                        categoryToDelete={category}
+                        onClose={() => setIsDeleteCategoryDialogOpen(false)}
+                        onConfirm={() => {
+                            setIsDeleteCategoryDialogOpen(false);
+                            onSelectCategory(null);
+                        }}
+                    />
+                </>
+            )}
         </>
     );
 
