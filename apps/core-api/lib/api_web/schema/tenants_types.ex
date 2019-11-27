@@ -95,6 +95,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :background_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :custom_domains, list_of(:custom_domain), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
 
   object :category do
@@ -121,6 +122,14 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  object :custom_domain do
+    field :id, :lotta_id
+    field :host, :string
+    field :is_main_domain, :boolean
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
   end
 
   enum :widget_type do

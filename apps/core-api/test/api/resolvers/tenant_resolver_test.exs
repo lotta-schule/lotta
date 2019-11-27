@@ -31,7 +31,7 @@ defmodule Api.TenantResolverTest do
     }
     """
 
-    test "returns nil if slug tenant header is not set" do
+    test "returns nil if slug tenant header or origin header is not set" do
       res = build_conn()
       |> get("/api", query: @query)
       |> json_response(200)
@@ -39,6 +39,36 @@ defmodule Api.TenantResolverTest do
       assert res == %{
         "data" => %{
           "tenant" => nil
+        }
+      }
+    end
+    
+    test "returns nil if slug tenant header and origin is not a known domain" do
+      res = build_conn()
+      |> put_req_header("origin", "unknown.com")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "tenant" => nil
+        }
+      }
+    end
+
+    test "returns current tenant if origin is a known domain", %{web_tenant: web_tenant} do
+      res = build_conn()
+      |> put_req_header("origin", "https://lotta.web")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "tenant" => %{
+            "id" => web_tenant.id,
+            "slug" => "web",
+            "title" => "Web Beispiel"
+          }
         }
       }
     end

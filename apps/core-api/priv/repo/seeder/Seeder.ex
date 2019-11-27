@@ -2,6 +2,9 @@ defmodule Api.Repo.Seeder do
 
   def seed() do
     web_tenant = Api.Repo.insert!(%Api.Tenants.Tenant{slug: "web", title: "Web Beispiel"})
+    web_tenant
+    |> Ecto.build_assoc(:custom_domains, %{ host: "lotta.web", is_main_domain: true })
+    |> Api.Repo.insert!() # add "lotta.web" as custom domain
     lotta_tenant = Api.Repo.insert!(%Api.Tenants.Tenant{slug: "lotta", title: "Lotta"})
   
     admin_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Administration", is_admin_group: true, sort_key: 1000})

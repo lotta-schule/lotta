@@ -6,7 +6,7 @@ defmodule Api.Tenants do
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Tenants.{Category,Tenant,Widget}
+  alias Api.Tenants.{Category,CustomDomain,Tenant,Widget}
   alias Api.Accounts.{User}
 
   def data() do
@@ -67,18 +67,45 @@ defmodule Api.Tenants do
   @doc """
   Gets a single tenant by slug.
 
-  Raises `Ecto.NoResultsError` if the Tenant does not exist.
+  Returns nil if no tenant is found
 
   ## Examples
 
-      iex> get_tenant_by_slug!(123)
+      iex> get_tenant_by_slug("test123")
       %Tenant{}
 
-      iex> get_tenant_by_slug!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_tenant_by_slug("doesnotexist")
+      nil
 
   """
   def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, [slug: slug])
+
+  @doc """
+  Gets a single tenant by its custom domain's host.
+
+  Returns nil if no tenant is found
+
+  ## Examples
+
+      iex> get_tenant_by_custom_domain_host("meinlotta.de")
+      %Tenant{}
+
+      iex> get_tenant_by_custom_domain_host("doesnotexist.com")
+      nil
+
+  """
+  def get_tenant_by_custom_domain_host(host) when is_binary(host) do
+    with %CustomDomain{tenant_id: tenant_id} <- Repo.get_by(CustomDomain, host: host),
+        tenant <- Repo.get(Tenant, tenant_id),
+        false <- is_nil(tenant) do
+      tenant
+    else
+      error ->
+        IO.inspect(error)
+        nil
+    end
+  end
+  def get_tenant_by_custom_domain_host(nil), do: nil
 
   @doc """
   Gets a single tenant by slug.
