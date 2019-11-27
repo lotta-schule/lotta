@@ -59,7 +59,7 @@ export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(({ isOpen, c
                     Alle Beiträge, die dieser Kategorie zugeordnet sind, sind dann ohne Kategorie und damit nicht mehr sichtbar.<br />
                     <em>Beiträge: {isLoadingArticles ? <CircularProgress /> : articlesData && articlesData.articles.length}</em>
                 </DialogContentText>
-                {!category.isSidenav && (
+                {!categoryToDelete.isSidenav && (
                     <DialogContentText>
                         Unterkategorien, die dieser Kategorie zugeordnet waren, werden zu Hauptkategorien.<br />
                         <em>Unterkategorien: {categories.filter(cat => cat.category && cat.category.id === categoryToDelete.id).length}</em>
