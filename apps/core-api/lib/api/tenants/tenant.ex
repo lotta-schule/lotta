@@ -1,7 +1,7 @@
 defmodule Api.Tenants.Tenant do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Api.Tenants.Category
+  alias Api.Tenants.{Category, CustomDomain}
   alias Api.Accounts
   alias Api.Accounts.{File,User,UserGroup}
 
@@ -13,6 +13,7 @@ defmodule Api.Tenants.Tenant do
     has_many :categories, Category
     has_many :groups, UserGroup
     has_many :users, User
+    has_many :custom_domains, CustomDomain
     belongs_to :logo_image_file, File, on_replace: :nilify
     belongs_to :background_image_file, File, on_replace: :nilify
 
