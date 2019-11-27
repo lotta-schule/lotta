@@ -16,7 +16,8 @@ export const TestTenant: ClientModel = {
     slug: 'test',
     createdAt: new Date(2015, 0, 1).toISOString(),
     updatedAt: new Date(2015, 0, 1).toISOString(),
-    groups: [AdminGroup]
+    groups: [AdminGroup],
+    customDomains: []
 };
 
 export const StartseiteCategory: CategoryModel = {

@@ -21,6 +21,10 @@ export const GetTenantQuery = gql`
                 sortKey
                 isAdminGroup
             }
+            customDomains {
+                host
+                isMainDomain
+            }
         }
     }
 `;
