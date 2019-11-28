@@ -141,6 +141,15 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                                 />
                             </>
                         )}
+                        {data.schedule.footer.supervisions && (
+                            <ul>
+                                {data.schedule.footer.supervisions.map(supervision => (
+                                    <li>
+                                        <Typography variant={'subtitle2'}>{supervision.time} {supervision.location}</Typography>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                         {data.schedule.footer.comments && (
                             <ul>
                                 {data.schedule.footer.comments.map(comment => (
