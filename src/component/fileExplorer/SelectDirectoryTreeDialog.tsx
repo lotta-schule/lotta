@@ -67,7 +67,7 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                     defaultExpandIcon={<ArrowRight />}
                     defaultEndIcon={<div style={{ width: 24 }} />}
                 >
-                    <TreeItem nodeId={'/'} label={'/'} onClick={() => setPath('/')}>
+                    <TreeItem nodeId={'/'} label={'Medien'} onClick={() => setPath('/')}>
                         {getTreeItems('/')}
                     </TreeItem>
                 </TreeView>
