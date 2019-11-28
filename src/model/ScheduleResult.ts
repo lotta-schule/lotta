@@ -29,4 +29,8 @@ export interface ScheduleResultBody {
 
 export interface ScheduleResultFooter {
     comments?: string[];
+    supervisions?: {
+        time: string;
+        location: string;
+    }[];
 }
