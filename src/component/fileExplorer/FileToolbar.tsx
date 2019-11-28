@@ -73,7 +73,7 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
         <>
             <Toolbar>
                 <div className={styles.title}>
-                    <Typography variant="button">
+                    <Typography variant="subtitle1">
                         {pathLinks.map((pathLink, i) => (
                             <Fragment key={pathLink.path}>
                                 &nbsp;
