@@ -42,8 +42,8 @@ const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'flex-end',
-        paddingTop: theme.spacing(1),
-        paddingRight: theme.spacing(2)
+        paddingRight: theme.spacing(2),
+        margin: 'auto 0'
     }
 }));
 
@@ -66,7 +66,7 @@ export const BaseLayout = memo(({ children }) => {
                         )}
                     </Grid>
                     <Grid item md={9} className={styles.titleGridItem}>
-                        <Typography variant="h5" gutterBottom>{tenant.title}</Typography>
+                        <Typography variant="h5" style={{ marginBottom: 0, }} gutterBottom>{tenant.title}</Typography>
                     </Grid>
                 </Grid>
             </header>
