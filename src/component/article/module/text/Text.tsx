@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
-import { CardContent, Typography, makeStyles } from '@material-ui/core';
+import { CardContent, makeStyles } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
