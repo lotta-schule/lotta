@@ -7,15 +7,21 @@ defmodule Api.UserResolverTest do
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
     admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
     user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@einsa.net"])
+    user2 = Api.Repo.get_by!(Api.Accounts.User, [email: "mcurie@lotta.schule"])
     {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
     {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
+    schueler_group = Api.Repo.get_by!(Api.Accounts.UserGroup, name: "Schüler")
+    lehrer_group = Api.Repo.get_by!(Api.Accounts.UserGroup, name: "Lehrer")
 
     {:ok, %{
       web_tenant: web_tenant,
       admin: admin,
       admin_jwt: admin_jwt,
       user: user,
+      user2: user2,
       user_jwt: user_jwt,
+      schueler_group: schueler_group,
+      lehrer_group: lehrer_group
     }}
   end
 
@@ -604,6 +610,75 @@ defmodule Api.UserResolverTest do
         ]
       }
       Redix.command(:redix, ["FLUSHALL"])
+    end
+  end
+
+  describe "setUserGroups mutation" do
+    @query """
+    mutation setUserGroups($id: ID!, $groupIds: [ID!]!) {
+      setUserGroups(id: $id, groupIds: $groupIds) {
+        email
+        groups {
+          name
+        }
+      }
+    }
+    """
+
+    test "should return user with requested groups if user is admin", %{admin_jwt: admin_jwt, user2: user2, schueler_group: schueler_group, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: user2.id, groupIds: [schueler_group.id, lehrer_group.id]})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserGroups" => %{"email" => "mcurie@lotta.schule", "groups" => [%{"name" => "Schüler"}, %{"name" => "Lehrer"}]}
+        }
+      }
+    end
+
+    test "should return an error if user does not exist", %{admin_jwt: admin_jwt, user_jwt: user_jwt, schueler_group: schueler_group, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: 0, groupIds: [schueler_group.id, lehrer_group.id]})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserGroups" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nutzer mit der id 0 nicht gefunden.",
+            "path" => ["setUserGroups"]
+          }
+        ]
+      }
+    end
+
+    test "should return an error if user is not an admin", %{user_jwt: user_jwt, user2: user2, schueler_group: schueler_group, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{id: user2.id, groupIds: [schueler_group.id, lehrer_group.id]})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserGroups" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Benutzern Gruppen zuweisen.",
+            "path" => ["setUserGroups"]
+          }
+        ]
+      }
     end
   end
 end

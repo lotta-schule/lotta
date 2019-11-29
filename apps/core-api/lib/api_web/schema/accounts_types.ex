@@ -60,10 +60,10 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve &Api.UserResolver.reset_password/2
     end
 
-    field :assign_user_to_group, type: :user do
+    field :set_user_groups, type: :user do
       arg :id, non_null(:lotta_id)
-      arg :group_id, non_null(:lotta_id)
-      resolve &Api.UserResolver.assign_user/2
+      arg :group_ids, non_null(list_of(:lotta_id))
+      resolve &Api.UserResolver.set_user_groups/2
     end
 
     field :upload_file, type: :file do

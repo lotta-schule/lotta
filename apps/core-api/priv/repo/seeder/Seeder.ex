@@ -37,9 +37,9 @@ defmodule Api.Repo.Seeder do
     Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@einsa.net", password: "test123", tenant_id: web_tenant.id})
     Api.Accounts.register_user(%{name: "Marie Curie", nickname: "Polonium", email: "mcurie@lotta.schule", password: "test456", tenant_id: lotta_tenant.id})
   
-    Api.Accounts.assign_user_to_group(alexis, admin_group)
-    Api.Accounts.assign_user_to_group(billy, schueler_group)
-    Api.Accounts.assign_user_to_group(eike, lehrer_group)
+    Api.Accounts.set_user_groups(alexis, web_tenant, [admin_group])
+    Api.Accounts.set_user_groups(billy, web_tenant, [schueler_group])
+    Api.Accounts.set_user_groups(eike, web_tenant, [lehrer_group])
   
     homepage = Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Start", is_homepage: true})
     profil = Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Profil"})

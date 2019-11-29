@@ -72,11 +72,11 @@ defmodule Api.UserResolver do
         {:ok, user} = case args[:group_key] do
           # TODO: Remove as fast as possible. Is just very shitty workaround
           "LEb0815Hp!1969" ->
-            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Lehrer"))
+            Accounts.set_user_groups(user, tenant, [Api.Repo.get_by!(Accounts.UserGroup, name: "Lehrer")])
           "ELa1789Re!1848" ->
-            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Eltern"))
+            Accounts.set_user_groups(user, tenant, [Api.Repo.get_by!(Accounts.UserGroup, name: "Eltern")])
           "Seb034hP2?019" ->
-            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Schüler"))
+            Accounts.set_user_groups(user, tenant, [Api.Repo.get_by!(Accounts.UserGroup, name: "Schüler")])
           _ ->
             {:ok, user}
         end
@@ -122,19 +122,28 @@ defmodule Api.UserResolver do
     end
   end
 
-  def assign_user(%{id: id, group_id: group_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    if User.is_admin?(current_user, tenant) do
-      group = Accounts.get_user_group!(group_id)
-      if group != nil and group.tenant_id == tenant.id do
-        case Accounts.get_user!(id) do
-          nil -> {:error, "Nutzer mit der id #{id} nicht gefunden."}
-          user -> Accounts.assign_user_to_group(user, group)
+  def set_user_groups(%{id: id, group_ids: group_ids}, %{context: %{current_user: current_user, tenant: tenant}}) do
+    case User.is_admin?(current_user, tenant) do
+      true ->
+        groups =
+          group_ids
+          |> Enum.map(fn group_id ->
+            try do
+              Accounts.get_user_group!(group_id)
+            rescue
+              Ecto.NoResultsError -> nil
+            end
+          end)
+          |> Enum.filter(fn group -> !is_nil(group) && group.tenant_id == tenant.id end)
+        try do
+          Accounts.get_user!(id)
+          |> Accounts.set_user_groups(tenant, groups)
+        rescue
+          Ecto.NoResultsError ->
+            {:error, "Nutzer mit der id #{id} nicht gefunden."}
         end
-      else
-        {:error, "Gruppe mit der id #{group_id} nicht gefunden."}
-      end
-    else
-      {:error, "Nur Administrator dürfen Benutzer Gruppen zuweisen"}
+      false ->
+        {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}
     end
   end
 
