@@ -17,12 +17,21 @@ export const VideoVideo: FunctionComponent<VideoVideoProps> = memo(({ contentMod
     const posterFileLocation = posterFile && posterFile.remoteLocation;
     if (!file) {
         return (
-            <PlaceholderImage width={'100%'} height={350} />
+            <PlaceholderImage
+                width={'100%'}
+                height={350}
+                icon={'video'}
+            />
         );
     }
     if (!videoFiles || !videoFiles.length) {
         return (
-            <PlaceholderImage width={'100%'} height={350} icon={'video'} />
+            <PlaceholderImage
+                width={'100%'}
+                height={350}
+                icon={'video'}
+                description={'Bitte habe etwas Geduld! Das Video wird nun für verschiedene Endgeräte optimiert. Der Prozess kann einige Minuten dauern.'}
+            />
         );
     }
     return (
