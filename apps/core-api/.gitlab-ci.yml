@@ -41,15 +41,17 @@ test:
 
 build docker image:
   stage: build
-  image: docker:19.03.0
-  services:
-    - docker:19.03.0-dind
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - docker build --cache-from lotta/api:latest -t lotta/api:$CI_COMMIT_SHA .
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
-    - if [ $CI_COMMIT_REF_NAME == "develop" ]; then docker tag lotta/api:$CI_COMMIT_SHA lotta/api:staging; fi;
-    - if [ $CI_COMMIT_REF_NAME == "master" ]; then docker tag lotta/api:$CI_COMMIT_SHA lotta/api:latest; fi;
-    - docker push lotta/api
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+    - if [ $CI_COMMIT_REF_NAME == "develop" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:staging;
+        elif [ $CI_COMMIT_REF_NAME == "master" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:stable --destination lotta/api:latest;
+        else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA;
+        fi
 
 deploy staging:
   stage: deploy
