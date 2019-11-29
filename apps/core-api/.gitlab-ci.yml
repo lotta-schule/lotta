@@ -37,9 +37,6 @@ test:
   script:
     # gitlab k8s-runner has a problem with service hostname exposition
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
-    - echo "127.0.0.1 postgres" >> /etc/hosts
-    - echo "127.0.0.1 rabbitmq" >> /etc/hosts
-    - echo "127.0.0.1 redis" >> /etc/hosts
     - make tests-ci
   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
 
