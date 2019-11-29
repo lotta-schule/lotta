@@ -30,7 +30,20 @@ defmodule Api.Tenants.Tenant do
     |> put_assoc_background_image_file(attrs)
   end
 
-  def get_main_url(%Api.Tenants.Tenant{slug: slug}) do
+  def get_main_url(%Api.Tenants.Tenant{} = tenant) do
+    main_domain = tenant
+    |> Api.Repo.preload(:custom_domains)
+    |> Map.fetch!(:custom_domains)
+    |> Enum.find(&(&1.is_main_domain === true))
+    case main_domain do
+      %CustomDomain{host: host} ->
+        "https://" <> host
+      _ ->
+        get_lotta_url(tenant)
+    end
+  end
+  
+  def get_lotta_url(%Api.Tenants.Tenant{slug: slug}) do
     base_url = Application.fetch_env!(:api, :base_url)
     "https://" <> slug  <> base_url
   end
