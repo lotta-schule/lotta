@@ -31,6 +31,9 @@ export const theme = createMuiTheme({
             secondary: 'rgba(0, 0, 0, 0.54)',
             disabled: disabledColor,
             hint: disabledColor,
+        },
+        background: {
+            default: '#cacdd7'
         }
     },
     typography: {
