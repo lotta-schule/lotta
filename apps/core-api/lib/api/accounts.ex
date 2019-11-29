@@ -29,7 +29,8 @@ defmodule Api.Accounts do
     Repo.all from u in User,
       join: g in assoc(u, :groups),
       where: g.tenant_id == ^tenant_id,
-      order_by: [u.name, u.email]
+      order_by: [u.name, u.email],
+      distinct: true
   end
 
   @doc """
@@ -108,16 +109,24 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> assign_user_to_group(user, %{field: new_value})
+      iex> set_user_groups(user, tenant, %{field: new_value})
       {:ok, %User{}}
 
-      iex> assign_user_to_group(user, %{field: bad_value})
+      iex> set_user_groups(user, tenant, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def assign_user_to_group(%User{} = user, %UserGroup{} = group) do
+  def set_user_groups(%User{} = user, %Api.Tenants.Tenant{} = tenant, groups) do
+    groups = user
+    |> Repo.preload(:groups)
+    |> Map.fetch!(:groups)
+    |> Enum.filter(fn group -> group.tenant_id !== tenant.id end)
+    |> Enum.concat(groups)
+    
     user
-    |> User.assign_group_changeset(%{group: group})
+    |> Repo.preload(:groups)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:groups, groups)
     |> Repo.update()
   end
 
