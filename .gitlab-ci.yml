@@ -165,7 +165,7 @@ build docker image:review:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL=""
-      --build-arg MATOMO_SITEID="" .
+      --build-arg MATOMO_SITEID=""
   except:
     refs:
       - develop
