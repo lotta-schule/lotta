@@ -15,7 +15,7 @@ export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
         captions = [];
     }
     return (
-        <figure>
+        <figure style={{ margin: 0, }}>
             <VideoVideo contentModule={contentModule} />
             <figcaption>
                 <Typography variant={'subtitle2'}>{captions[0]}</Typography>
