@@ -4,19 +4,17 @@ import {
     CircularProgress, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Button
 } from '@material-ui/core';
 import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
-import { AddUserToGroupDialog } from './AddUserToGroupDialog';
+import { AssignUserToGroupsDialog } from './AssignUserToGroupsDialog';
 import { useQuery } from 'react-apollo';
-import { UserModel } from 'model';
+import { ID, UserModel, UserGroupModel } from 'model';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
-import { groupBy, find } from 'lodash';
+import { find } from 'lodash';
 import { User } from 'util/model';
-import { useTenant } from 'util/client/useTenant';
 import { useUserGroups } from 'util/client/useUserGroups';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SearchUserField } from './SearchUserField';
 import { UserAvatar } from 'component/user/UserAvatar';
 import classNames from 'classnames';
-import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -53,7 +51,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export const UserManagement = memo(() => {
-    const tenant = useTenant();
     const groups = useUserGroups();
     const [currentUser] = useCurrentUser();
 
@@ -63,16 +60,12 @@ export const UserManagement = memo(() => {
 
     const styles = useStyles();
 
-    const getGroupedUsers = useCallback((users: UserModel[]) => {
-        return groupBy(users, user => {
-            const currentGroup = find(user.groups, group => group.tenant.id === tenant.id);
-            if (currentGroup) {
-                return currentGroup.id;
-            } else {
-                return null;
-            }
-        });
-    }, [tenant.id]);
+    const getUsersForGroup = useCallback((group: UserGroupModel) => {
+        if (!data || !data.users) {
+            return [];
+        }
+        return data.users.filter(user => !!find(user.groups, userGroup => userGroup.id === group.id));
+    }, [data]);
 
     if (loading) {
         return (
@@ -81,7 +74,6 @@ export const UserManagement = memo(() => {
     }
 
     if (data && data.users) {
-        const groupedUsers = getGroupedUsers(data.users);
         return (
             <>
                 <Paper className={styles.root}>
@@ -105,7 +97,7 @@ export const UserManagement = memo(() => {
                                     {group.name}
                                 </Typography>
                                 <Typography className={styles.secondaryExpandHeading}>
-                                    {groupedUsers[group.id] ? groupedUsers[group.id].length : 0} Nutzer
+                                    {getUsersForGroup(group).length} Nutzer
                                 </Typography>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
@@ -118,7 +110,7 @@ export const UserManagement = memo(() => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {groupedUsers[group.id] && groupedUsers[group.id].sort((u1, u2) => u1.name.localeCompare(u2.name)).map(user => (
+                                        {getUsersForGroup(group).sort((u1, u2) => u1.name.localeCompare(u2.name)).map(user => (
                                             <TableRow key={user.id}>
                                                 <TableCell>
                                                     <UserAvatar className={styles.avatar} user={user} />
@@ -140,7 +132,7 @@ export const UserManagement = memo(() => {
                     ))}
                 </Paper>
                 {selectedUser && (
-                    <AddUserToGroupDialog
+                    <AssignUserToGroupsDialog
                         onAbort={() => setSelectedUser(null)}
                         onConfirm={() => {
                             setSelectedUser(null);

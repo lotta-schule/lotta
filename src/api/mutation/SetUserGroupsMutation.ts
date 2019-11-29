@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const AssignUserToGroupMutation = gql`
-    mutation AssignUserToGroup($id: ID!, $groupId: ID!) {
-        user: AssignUserToGroup(id: $id, groupId: $groupId) {
+export const SetUserGroupsMutation = gql`
+    mutation SetUserGroups($id: ID!, $groupIds: [ID!]!) {
+        user: SetUserGroups(id: $id, groupIds: $groupIds) {
             id
             name
             nickname
