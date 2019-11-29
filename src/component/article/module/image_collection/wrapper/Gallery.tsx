@@ -1,4 +1,5 @@
 import React, { memo, useState } from 'react';
+import { uniqBy } from 'lodash';
 import { ContentModuleModel, FileModel } from 'model';
 import { ImageImage } from '../../image/ImageImage';
 import { Grid, makeStyles, IconButton } from '@material-ui/core';
@@ -116,7 +117,7 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
                     onSelectFiles={f => {
                         onUpdateModule({
                             ...contentModule,
-                            files: contentModule.files.concat(f),
+                            files: uniqBy(contentModule.files.concat(f), file => file.id),
                             configuration: {
                                 ...contentModule.configuration,
                                 files: {
