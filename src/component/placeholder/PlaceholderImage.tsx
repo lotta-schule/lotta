@@ -1,6 +1,5 @@
 import React, { FunctionComponent, memo } from 'react';
 import { Theme, makeStyles, Typography } from '@material-ui/core';
-import { useTheme } from '@material-ui/styles';
 
 export interface PlaceholderImageProps {
     width: number | string;
