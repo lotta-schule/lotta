@@ -27,7 +27,6 @@ test:
   services:
     - name: postgres:latest
     - name: rabbitmq:latest
-    - name: rabbitmq:latest
     - name: bitnami/redis:latest
       alias: redis
   before_script:
