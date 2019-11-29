@@ -4,13 +4,16 @@ import { useUserGroups } from 'util/client/useUserGroups';
 import { UserGroupModel } from 'model/UserGroupModel';
 
 export interface GroupSelectProps {
-    selectedGroups: UserGroupModel[];
     className?: string;
     variant?: 'filled' | 'outlined' | 'standard';
+    hidePublicGroupSelection?: boolean;
+    publicGroupSelectionLabel?: string;
+    disableAdminGroupsExclusivity?: boolean;
+    selectedGroups: UserGroupModel[];
     onSelectGroups(groups: UserGroupModel[]): void;
 }
 
-export const GroupSelect = memo<GroupSelectProps>(({ selectedGroups, onSelectGroups, variant, className }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ variant, className, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, onSelectGroups }) => {
     const groups = useUserGroups();
 
     return (
@@ -19,18 +22,20 @@ export const GroupSelect = memo<GroupSelectProps>(({ selectedGroups, onSelectGro
                 Sichtbarkeit:
             </FormLabel>
             <FormGroup>
-                <FormControlLabel
-                    label={<i>öffentlich sichtbar</i>}
-                    control={(
-                        <Checkbox checked={selectedGroups.length === 0} onChange={event => {
-                            if (event.target.checked) {
-                                onSelectGroups([]);
-                            } else {
-                                onSelectGroups([...groups]);
-                            }
-                        }} />
-                    )}
-                />
+                {hidePublicGroupSelection !== true && (
+                    <FormControlLabel
+                        label={<i>{publicGroupSelectionLabel || 'öffentlich sichtbar'}</i>}
+                        control={(
+                            <Checkbox checked={selectedGroups.length === 0} onChange={event => {
+                                if (event.target.checked) {
+                                    onSelectGroups([]);
+                                } else {
+                                    onSelectGroups([...groups]);
+                                }
+                            }} />
+                        )}
+                    />
+                )}
                 {groups.filter(g => g.isAdminGroup).map(group => (
                     <FormControlLabel
                         key={group.id}
@@ -38,9 +43,17 @@ export const GroupSelect = memo<GroupSelectProps>(({ selectedGroups, onSelectGro
                         control={(
                             <Checkbox checked={selectedGroups.filter(g => g.id === group.id).length > 0} onChange={event => {
                                 if (event.target.checked) {
-                                    onSelectGroups([...groups.filter(g => g.isAdminGroup)]);
+                                    onSelectGroups(
+                                        disableAdminGroupsExclusivity ?
+                                            [...selectedGroups, group] :
+                                            [...groups.filter(g => g.isAdminGroup)]
+                                    );
                                 } else {
-                                    onSelectGroups([]);
+                                    onSelectGroups(
+                                        disableAdminGroupsExclusivity ?
+                                            selectedGroups.filter(g => g.id !== group.id) :
+                                            []
+                                    );
                                 }
                             }} />
                         )}
