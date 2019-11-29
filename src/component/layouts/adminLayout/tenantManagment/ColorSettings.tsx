@@ -72,6 +72,24 @@ export const ColorSettings = memo(() => {
                             </Grid>
                         );
                     })}
+                    {['Leipzig'].map(title => {
+                        const pureName = title
+                            .toLowerCase()
+                            .replace(/ö/g, 'oe')
+                        return (
+                            <Grid item sm={3} key={pureName}>
+                                <SelectTemplateButton
+                                    imageUrl={`/theme/${pureName}/preview.png`}
+                                    title={title}
+                                    onClick={() => {
+                                        fetch(`/theme/${pureName}/theme.json`)
+                                            .then(res => res.json())
+                                            .then(setCustomTheme);
+                                    }}
+                                />
+                            </Grid>
+                        );
+                    })}
                 </Grid>
             </section>
 

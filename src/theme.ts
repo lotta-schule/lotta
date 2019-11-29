@@ -13,7 +13,7 @@ export const theme = createMuiTheme({
             contrastText: '#fff'
         },
         secondary: {
-            main: deepOrange[500]
+            main: deepOrange[500],
         },
         action: {
             active: 'rgba(0, 0, 0, 0.54)',
