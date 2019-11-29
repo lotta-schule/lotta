@@ -5,8 +5,8 @@ stages:
 
 variables:
   # set docker host to connect to docker in kubernetes
-  # DOCKER_HOST: tcp://localhost:2375/
-  # DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
   DOCKER_TLS_CERTDIR: "/certs"
 
@@ -24,8 +24,6 @@ test:
     POSTGRES_USER: lotta
     POSTGRES_DB: api_test
     REDIS_PASSWORD: lotta
-  # gitlab k8s-runner has a problem with service hostname exposition
-  # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
   services:
     - name: postgres:latest
     - name: rabbitmq:latest
@@ -37,6 +35,11 @@ test:
     - mix local.rebar --force
     - mix deps.get --only test
   script:
+    # gitlab k8s-runner has a problem with service hostname exposition
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
+    - echo "127.0.0.1 postgres" >> /etc/hosts
+    - echo "127.0.0.1 rabbitmq" >> /etc/hosts
+    - echo "127.0.0.1 redis" >> /etc/hosts
     - make tests-ci
   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
 
