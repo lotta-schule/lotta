@@ -54,7 +54,7 @@ export const ColorSettings = memo(() => {
                             onClick={() => setCustomTheme({})}
                         />
                     </Grid>
-                    {['Königsblau'].map(title => {
+                    {['Königsblau', 'Leipzig'].map(title => {
                         const pureName = title
                             .toLowerCase()
                             .replace(/ö/g, 'oe')

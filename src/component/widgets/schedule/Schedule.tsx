@@ -37,6 +37,12 @@ const useStyles = makeStyles(theme => ({
     updated: {
         color: darken(theme.palette.error.main, .3),
         fontWeight: 'bolder'
+    },
+    notes: {
+        marginBottom: '0.5em',
+        paddingLeft: '0.3em',
+        borderLeft: '2px solid',
+        borderColor: theme.palette.secondary.main,
     }
 }));
 
@@ -151,9 +157,9 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                             </ul>
                         )}
                         {data.schedule.footer.comments && (
-                            <ul>
+                            <ul style={{ margin: '0.5em 0.5em 0 0.5em' }}>
                                 {data.schedule.footer.comments.map(comment => (
-                                    <li>
+                                    <li className={styles.notes}>
                                         <Typography variant={'subtitle2'}>{comment}</Typography>
                                     </li>
                                 ))}
