@@ -632,11 +632,11 @@ defmodule Api.UserResolverTest do
       |> post("/api", query: @query, variables: %{id: user2.id, groupIds: [schueler_group.id, lehrer_group.id]})
       |> json_response(200)
 
-      assert res == %{
-        "data" => %{
-          "setUserGroups" => %{"email" => "mcurie@lotta.schule", "groups" => [%{"name" => "Schüler"}, %{"name" => "Lehrer"}]}
-        }
-      }
+      assert res["data"]
+      assert res["data"]["setUserGroups"]
+      assert res["data"]["setUserGroups"]["email"] == "mcurie@lotta.schule"
+      assert Enum.find(res["data"]["setUserGroups"]["groups"], fn %{"name" => name} -> name == "Schüler" end)
+      assert Enum.find(res["data"]["setUserGroups"]["groups"], fn %{"name" => name} -> name == "Lehrer" end)
     end
 
     test "should return an error if user does not exist", %{admin_jwt: admin_jwt, user_jwt: user_jwt, schueler_group: schueler_group, lehrer_group: lehrer_group} do
