@@ -9,15 +9,6 @@ variables:
   DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
   DOCKER_TLS_CERTDIR: ""
-  CI_COMMIT_SHA: $CI_COMMIT_SHA
-  CI_COMMIT_SHA: $CI_COMMIT_SHA
-  APP_BASE_DOMAIN: $APP_BASE_DOMAIN
-  API_URL: $API_URL
-  AUTHENTICATION_TOKEN_NAME: $AUTHENTICATION_TOKEN_NAME
-  CLOUDIMG_TOKEN: $CLOUDIMG_TOKEN
-  HONEYBADGER_API_KEY: $HONEYBADGER_API_KEY
-  MATOMO_URL: $MATOMO_URL
-  MATOMO_SITEID: $MATOMO_SITEID
 
 cache:
   key: "lotta-web-node-modules"
