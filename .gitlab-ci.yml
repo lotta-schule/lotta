@@ -9,6 +9,13 @@ variables:
   DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
   DOCKER_TLS_CERTDIR: ""
+  APP_BASE_DOMAIN: $APP_BASE_DOMAIN
+  API_URL: $API_URL
+  AUTHENTICATION_TOKEN_NAME: $AUTHENTICATION_TOKEN_NAME
+  CLOUDIMG_TOKEN: $CLOUDIMG_TOKEN
+  HONEYBADGER_API_KEY: $HONEYBADGER_API_KEY
+  MATOMO_URL: $MATOMO_URL
+  MATOMO_SITEID: $MATOMO_SITEID
 
 cache:
   key: "lotta-web-node-modules"
@@ -37,19 +44,19 @@ build docker image:staging:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context ${CI_PROJECT_DIR}
-      --dockerfile ${CI_PROJECT_DIR}/Dockerfile
+    - /kaniko/executor --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/Dockerfile
       --destination lotta/web:$CI_COMMIT_SHA
       --destination lotta/web:staging
-      --build-arg=APP_ENVIRONMENT=staging
-      --build-arg=APP_REVISION=${CI_COMMIT_SHA}
-      --build-arg=APP_BASE_DOMAIN=${APP_BASE_DOMAIN}
-      --build-arg=API_URL=${API_URL}
-      --build-arg=AUTHENTICATION_TOKEN_NAME=${AUTHENTICATION_TOKEN_NAME}
-      --build-arg=CLOUDIMG_TOKEN=${CLOUDIMG_TOKEN}
-      --build-arg=HONEYBADGER_API_KEY=${HONEYBADGER_API_KEY}
-      --build-arg=MATOMO_URL=${MATOMO_URL}
-      --build-arg=MATOMO_SITEID=${MATOMO_SITEID}
+      --build-arg APP_ENVIRONMENT=staging
+      --build-arg APP_REVISION=$CI_COMMIT_SHA
+      --build-arg APP_BASE_DOMAIN=$APP_BASE_DOMAIN
+      --build-arg API_URL=$API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME=$AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN=$CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY=$HONEYBADGER_API_KEY
+      --build-arg MATOMO_URL=$MATOMO_URL
+      --build-arg MATOMO_SITEID=$MATOMO_SITEID
   only:
     refs:
       - develop
@@ -90,19 +97,19 @@ build docker image:production:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context ${CI_PROJECT_DIR}
-      --dockerfile ${CI_PROJECT_DIR}/Dockerfile
-      --destination lotta/web:${CI_COMMIT_SHA}
+    - /kaniko/executor --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --destination lotta/web:$CI_COMMIT_SHA
       --destination lotta/web:production
-      --build-arg=APP_ENVIRONMENT=production
-      --build-arg=APP_REVISION=${CI_COMMIT_SHA}
-      --build-arg=APP_BASE_DOMAIN=${APP_BASE_DOMAIN}
-      --build-arg=API_URL=${API_URL}
-      --build-arg=AUTHENTICATION_TOKEN_NAME=${AUTHENTICATION_TOKEN_NAME}
-      --build-arg=CLOUDIMG_TOKEN=${CLOUDIMG_TOKEN}
-      --build-arg=HONEYBADGER_API_KEY=${HONEYBADGER_API_KEY}
-      --build-arg=MATOMO_URL=${MATOMO_URL}
-      --build-arg=MATOMO_SITEID=${MATOMO_SITEID}
+      --build-arg APP_ENVIRONMENT=production
+      --build-arg APP_REVISION=$CI_COMMIT_SHA
+      --build-arg APP_BASE_DOMAIN=$APP_BASE_DOMAIN
+      --build-arg API_URL=$API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME=$AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN=$CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY=$HONEYBADGER_API_KEY
+      --build-arg MATOMO_URL=$MATOMO_URL
+      --build-arg MATOMO_SITEID=$MATOMO_SITEID
   only:
     refs:
       - master
@@ -154,18 +161,18 @@ build docker image:review:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context ${CI_PROJECT_DIR}
-      --dockerfile ${CI_PROJECT_DIR}/Dockerfile
-      --destination lotta/web:${CI_COMMIT_SHA}
-      --build-arg=APP_ENVIRONMENT=review/${CI_COMMIT_REF_NAME}
-      --build-arg=APP_REVISION=${CI_COMMIT_SHA}
-      --build-arg=APP_BASE_DOMAIN=.${CI_ENVIRONMENT_SLUG}.lotta.schule
-      --build-arg=API_URL=${API_URL}
-      --build-arg=AUTHENTICATION_TOKEN_NAME=${AUTHENTICATION_TOKEN_NAME}
-      --build-arg=CLOUDIMG_TOKEN=${CLOUDIMG_TOKEN}
-      --build-arg=HONEYBADGER_API_KEY=${HONEYBADGER_API_KEY}
-      --build-arg=MATOMO_URL=""
-      --build-arg=MATOMO_SITEID=""
+    - /kaniko/executor --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --destination lotta/web:$CI_COMMIT_SHA
+      --build-arg APP_ENVIRONMENT=review/$CI_COMMIT_REF_NAME
+      --build-arg APP_REVISION=$CI_COMMIT_SHA
+      --build-arg APP_BASE_DOMAIN=.$CI_ENVIRONMENT_SLUG.lotta.schule
+      --build-arg API_URL=$API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME=$AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN=$CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY=$HONEYBADGER_API_KEY
+      --build-arg MATOMO_URL=""
+      --build-arg MATOMO_SITEID=""
   except:
     refs:
       - develop
