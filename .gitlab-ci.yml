@@ -31,16 +31,15 @@ lint:
     - npm run lint -- --max-warnings=0
 
 build docker image:staging:
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
   stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+  environment:
+    name: staging
   script:
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/Dockerfile
-      --destination lotta/web:$CI_COMMIT_SHA
-      --destination lotta/web:staging
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker build -t lotta/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=staging
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
@@ -49,7 +48,9 @@ build docker image:staging:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID
+      --build-arg MATOMO_SITEID .
+    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:staging
+    - docker push lotta/web
   only:
     refs:
       - develop
@@ -84,16 +85,15 @@ deploy:staging:
       - develop
 
 build docker image:production:
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
   stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+  environment:
+    name: production
   script:
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/Dockerfile
-      --destination lotta/web:$CI_COMMIT_SHA
-      --destination lotta/web:production
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker build -t lotta/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=production
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
@@ -102,7 +102,9 @@ build docker image:production:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID
+      --build-arg MATOMO_SITEID .
+    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:production
+    - docker push lotta/web
   only:
     refs:
       - master
@@ -146,17 +148,17 @@ deploy:production:
   only:
     refs:
       - master
-
+  
 build docker image:review:
+  image: docker:19.03.0
+  services:
+    - docker:19.03.0-dind
   stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
   script:
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/Dockerfile
-      --destination lotta/web:$CI_COMMIT_SHA
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker build -t lotta/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=review/$CI_COMMIT_REF_NAME
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN=.$CI_ENVIRONMENT_SLUG.lotta.schule
@@ -165,7 +167,9 @@ build docker image:review:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL=""
-      --build-arg MATOMO_SITEID=""
+      --build-arg MATOMO_SITEID="" .
+    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:$CI_ENVIRONMENT_SLUG
+    - docker push lotta/web
   except:
     refs:
       - develop
