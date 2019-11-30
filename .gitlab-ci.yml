@@ -43,13 +43,13 @@ build docker image:staging:
       --destination lotta/web:staging
       --build-arg APP_ENVIRONMENT=staging
       --build-arg APP_REVISION=$CI_COMMIT_SHA
-      --build-arg APP_BASE_DOMAIN=$APP_BASE_DOMAIN
-      --build-arg API_URL=$API_URL
-      --build-arg AUTHENTICATION_TOKEN_NAME=$AUTHENTICATION_TOKEN_NAME
-      --build-arg CLOUDIMG_TOKEN=$CLOUDIMG_TOKEN
-      --build-arg HONEYBADGER_API_KEY=$HONEYBADGER_API_KEY
-      --build-arg MATOMO_URL=$MATOMO_URL
-      --build-arg MATOMO_SITEID=$MATOMO_SITEID
+      --build-arg APP_BASE_DOMAIN
+      --build-arg API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY
+      --build-arg MATOMO_URL
+      --build-arg MATOMO_SITEID
   only:
     refs:
       - develop
@@ -96,13 +96,13 @@ build docker image:production:
       --destination lotta/web:production
       --build-arg APP_ENVIRONMENT=production
       --build-arg APP_REVISION=$CI_COMMIT_SHA
-      --build-arg APP_BASE_DOMAIN=$APP_BASE_DOMAIN
-      --build-arg API_URL=$API_URL
-      --build-arg AUTHENTICATION_TOKEN_NAME=$AUTHENTICATION_TOKEN_NAME
-      --build-arg CLOUDIMG_TOKEN=$CLOUDIMG_TOKEN
-      --build-arg HONEYBADGER_API_KEY=$HONEYBADGER_API_KEY
-      --build-arg MATOMO_URL=$MATOMO_URL
-      --build-arg MATOMO_SITEID=$MATOMO_SITEID
+      --build-arg APP_BASE_DOMAIN
+      --build-arg API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY
+      --build-arg MATOMO_URL
+      --build-arg MATOMO_SITEID
   only:
     refs:
       - master
@@ -160,10 +160,10 @@ build docker image:review:
       --build-arg APP_ENVIRONMENT=review/$CI_COMMIT_REF_NAME
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN=.$CI_ENVIRONMENT_SLUG.lotta.schule
-      --build-arg API_URL=$API_URL
-      --build-arg AUTHENTICATION_TOKEN_NAME=$AUTHENTICATION_TOKEN_NAME
-      --build-arg CLOUDIMG_TOKEN=$CLOUDIMG_TOKEN
-      --build-arg HONEYBADGER_API_KEY=$HONEYBADGER_API_KEY
+      --build-arg API_URL
+      --build-arg AUTHENTICATION_TOKEN_NAME
+      --build-arg CLOUDIMG_TOKEN
+      --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL=""
       --build-arg MATOMO_SITEID=""
   except:
