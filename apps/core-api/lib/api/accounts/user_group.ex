@@ -10,6 +10,8 @@ defmodule Api.Accounts.UserGroup do
     field :is_admin_group, :boolean
 
     belongs_to :tenant, Api.Tenants.Tenant
+    has_many :enrollment_tokens, Api.Accounts.GroupEnrollmentToken,
+      foreign_key: :group_id
     many_to_many :users,
       User,
       join_through: "user_user_group",

@@ -91,6 +91,18 @@ defmodule Api.UserResolver do
         }
     end
   end
+
+  def get_group(%{id: id}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      try do
+        {:ok, Accounts.get_user_group!(id)}
+      rescue
+        Ecto.NoResultsError -> {:ok, nil}
+      end
+    else
+      {:error, "Nur Administratoren dürfen Gruppen anzeigen."}
+    end
+  end
   
   def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),

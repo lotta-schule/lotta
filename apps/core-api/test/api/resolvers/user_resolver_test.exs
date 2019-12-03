@@ -332,6 +332,88 @@ defmodule Api.UserResolverTest do
   end
 
 
+  describe "group query" do
+    @query """
+    query group($id: ID!) {
+      group(id: $id) {
+        name
+        enrollmentTokens {
+          token
+        }
+      }
+    }
+    """
+
+    test "should return group with requested", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> get("/api", query: @query, variables: %{id: lehrer_group.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "group" => %{"name" => "Lehrer", "enrollmentTokens" => [%{"token" => "LEb0815Hp!1969"}]}
+        }
+      }
+    end
+
+    test "should return nil if user is admin, but requested id does not exist", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> get("/api", query: @query, variables: %{id: 0})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "group" => nil,
+        }
+      }
+    end
+
+    test "should return an error if user is not an admin", %{user_jwt: user_jwt, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> get("/api", query: @query, variables: %{id: lehrer_group.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "group" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
+            "path" => ["group"]
+          }
+        ]
+      }
+    end
+
+    test "should return an error if user is not logged in" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> get("/api", query: @query, variables: %{id: 0})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "group" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
+            "path" => ["group"]
+          }
+        ]
+      }
+    end
+  end
+
   describe "register mutation" do
     @query """
     mutation register($user: RegisterUserParams!, $groupKey: String) {
