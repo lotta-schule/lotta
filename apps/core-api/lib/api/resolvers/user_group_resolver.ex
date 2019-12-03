@@ -38,6 +38,23 @@ defmodule Api.UserGroupResolver do
     end
   end
 
+  def create(%{group: group_input}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      case Accounts.create_user_group(tenant, group_input) do
+        {:error, changeset} ->
+          {
+            :error,
+            message: "Fehler beim Erstellen der Gruppe.",
+            details: error_details(changeset)
+          }
+        success ->
+          success
+      end
+    else
+      {:error, "Nur Administratoren dürfen Gruppen erstellen."}
+    end
+  end
+
   def update(%{id: id, group: group_input}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
@@ -49,5 +66,10 @@ defmodule Api.UserGroupResolver do
     else
       {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
     end
+  end
+
+  defp error_details(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> Ecto.Changeset.traverse_errors(fn {msg, _} -> msg end)
   end
 end

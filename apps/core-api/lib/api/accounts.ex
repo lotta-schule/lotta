@@ -7,6 +7,7 @@ defmodule Api.Accounts do
   alias Api.Repo
 
   alias Api.Accounts.{User,UserGroup,File}
+  alias Api.Tenants.Tenant
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -116,7 +117,7 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def set_user_groups(%User{} = user, %Api.Tenants.Tenant{} = tenant, groups) do
+  def set_user_groups(%User{} = user, %Tenant{} = tenant, groups) do
     groups = user
     |> Repo.preload(:groups)
     |> Map.fetch!(:groups)
@@ -406,7 +407,7 @@ defmodule Api.Accounts do
   ## Examples
 
       iex> get_user_group!(123)
-      %User{}
+      %UserGroup{}
 
       iex> get_user_group!(456)
       ** (Ecto.NoResultsError)
@@ -414,6 +415,32 @@ defmodule Api.Accounts do
   """
   def get_user_group!(id) do
     Repo.get!(UserGroup, id)
+  end
+
+  @doc """
+  Creates a group.
+
+  ## Examples
+
+      iex> create_user_group(tenant, user_group)
+      {:ok, %UserGroup{}}
+
+      iex> create_user_group(tenant, user_group)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_user_group(%Tenant{} = tenant, attrs) do
+    attrs = case attrs do
+      %{ sort_key: sort_key } ->
+        attrs
+      attrs ->
+        attrs
+        |> Map.put(:sort_key, UserGroup.get_max_sort_key(tenant) + 10)
+    end
+    tenant
+    |> Ecto.build_assoc(:groups)
+    |> UserGroup.changeset(attrs)
+    |> Repo.insert()
   end
 
   @doc """

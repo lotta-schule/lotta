@@ -195,4 +195,72 @@ describe "group query" do
       }
     end
   end
+  
+  describe "createGroup mutation" do
+    @query """
+    mutation createGroup($group: UserGroupInput!) {
+      createGroup(group: $group) {
+        name
+        enrollmentTokens {
+          token
+        }
+      }
+    }
+    """
+
+    test "should create group", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: lehrer_group.id, group: %{ "name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"] }})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "createGroup" => %{"name" => "Die Lehrer", "enrollmentTokens" => [%{"token" => "L1"}, %{"token" => "L2"}]}
+        }
+      }
+    end
+
+    test "should return an error if user is not an admin", %{user_jwt: user_jwt, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{id: lehrer_group.id, group: %{ "name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"] }})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "createGroup" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Gruppen erstellen.",
+            "path" => ["createGroup"]
+          }
+        ]
+      }
+    end
+
+    test "should return an error if user is not logged in" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{id: 0, group: %{ "name" => "Die Lehrer", "enrollmentTokens" => ["L1", "L2"] }})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "createGroup" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Gruppen erstellen.",
+            "path" => ["createGroup"]
+          }
+        ]
+      }
+    end
+  end
 end

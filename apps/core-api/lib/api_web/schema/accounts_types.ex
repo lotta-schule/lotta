@@ -51,6 +51,12 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve &Api.UserResolver.update_profile/2
     end
 
+    field :create_group, type: :user_group do
+      arg :group, non_null(:user_group_input)
+
+      resolve &Api.UserGroupResolver.create/2
+    end
+
     field :update_group, type: :user_group do
       arg :id, non_null(:lotta_id)
       arg :group, non_null(:user_group_input)
