@@ -91,31 +91,6 @@ defmodule Api.UserResolver do
         }
     end
   end
-
-  def get_group(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
-      try do
-        {:ok, Accounts.get_user_group!(id)}
-      rescue
-        Ecto.NoResultsError -> {:ok, nil}
-      end
-    else
-      {:error, "Nur Administratoren dürfen Gruppen anzeigen."}
-    end
-  end
-
-  def update_group(%{id: id, group: group_input}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
-      try do
-        group = Accounts.get_user_group!(id)
-        Accounts.update_user_group(group, group_input)
-      rescue
-        Ecto.NoResultsError -> {:error, "Gruppe existiert nicht."}
-      end
-    else
-      {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
-    end
-  end
   
   def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),

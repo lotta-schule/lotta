@@ -22,7 +22,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     
     field :group, type: :user_group do
       arg :id, :lotta_id
-      resolve &Api.UserResolver.get_group/2
+      resolve &Api.UserGroupResolver.get/2
     end
 
     field :files, list_of(:file) do
@@ -55,7 +55,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
       arg :id, non_null(:lotta_id)
       arg :group, non_null(:user_group_input)
 
-      resolve &Api.UserResolver.update_group/2
+      resolve &Api.UserGroupResolver.update/2
     end
     
     field :request_password_reset, type: :boolean do
