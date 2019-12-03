@@ -50,6 +50,13 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
       resolve &Api.UserResolver.update_profile/2
     end
+
+    field :update_group, type: :user_group do
+      arg :id, non_null(:lotta_id)
+      arg :group, non_null(:user_group_input)
+
+      resolve &Api.UserResolver.update_group/2
+    end
     
     field :request_password_reset, type: :boolean do
       arg :email, non_null(:string)
@@ -107,6 +114,11 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :nickname, :string
     field :hide_full_name, :boolean
     field :avatar_image_file, :file
+  end
+  
+  input_object :user_group_input do
+    field :name, :string
+    field :enrollment_tokens, list_of(:string)
   end
 
   object :authresult do

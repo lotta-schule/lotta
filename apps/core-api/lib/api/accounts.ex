@@ -417,6 +417,24 @@ defmodule Api.Accounts do
   end
 
   @doc """
+  Updates a group.
+
+  ## Examples
+
+      iex> update_user_group(user_group, %{field: new_value})
+      {:ok, %User{}}
+
+      iex> update_user_group(user_group, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_group(%UserGroup{} = group, attrs) do
+    group
+    |> UserGroup.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Sets the 'last seen' property on a user
 
   ## Examples
