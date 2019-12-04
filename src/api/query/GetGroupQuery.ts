@@ -5,6 +5,7 @@ export const GetGroupQuery = gql`
         group(id: $id) {
             id
             name
+            isAdminGroup
             sortKey
             enrollmentTokens {
                 id
