@@ -26,7 +26,7 @@ defmodule Api.Tenants do
       on: wug.widget_id == w.id,
       join: cw in "categories_widgets",
       on: w.id == cw.widget_id,
-      where: (wug.group_id in ^user_group_ids or is_nil(wug.group_id)) and
+      where: (^User.is_admin?(user, tenant) or (wug.group_id in ^user_group_ids) or is_nil(wug.group_id)) and
              cw.category_id == ^(category.id),
       distinct: w.id
     )
