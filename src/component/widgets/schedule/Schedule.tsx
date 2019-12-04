@@ -8,8 +8,8 @@ import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
 import { useQuery } from '@apollo/react-hooks';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
-import clsx from 'clsx';
 import { darken } from '@material-ui/core/styles';
+import clsx from 'clsx';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
@@ -37,6 +37,12 @@ const useStyles = makeStyles(theme => ({
     updated: {
         color: darken(theme.palette.error.main, .3),
         fontWeight: 'bolder'
+    },
+    notes: {
+        marginBottom: '0.5em',
+        paddingLeft: '0.3em',
+        borderLeft: '2px solid',
+        borderColor: theme.palette.secondary.main,
     }
 }));
 
@@ -141,10 +147,23 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                                 />
                             </>
                         )}
+                        {data.schedule.footer.supervisions && (
+                            <ul>
+                                {data.schedule.footer.supervisions.map(supervision => (
+                                    <li>
+                                        <Typography variant={'subtitle2'}>{supervision.time} {supervision.location}</Typography>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                         {data.schedule.footer.comments && (
-                            <Typography variant={'subtitle2'}>
-                                {data.schedule.footer.comments.join('')}
-                            </Typography>
+                            <ul style={{ margin: '0.5em 0.5em 0 0.5em' }}>
+                                {data.schedule.footer.comments.map(comment => (
+                                    <li className={styles.notes}>
+                                        <Typography variant={'subtitle2'}>{comment}</Typography>
+                                    </li>
+                                ))}
+                            </ul>
                         )}
                     </>
                 )}

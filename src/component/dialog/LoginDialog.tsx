@@ -1,19 +1,31 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Link, makeStyles } from '@material-ui/core';
 import { useMutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+import { CollisionLink } from 'component/general/CollisionLink';
 
 export interface LoginDialogProps {
     isOpen: boolean;
     onRequestClose(): void;
 }
 
+const useStyles = makeStyles(theme => ({
+    root: {
+        '& a': {
+            display: 'block',
+            marginTop: theme.spacing(1),
+            float: 'right'
+        }
+    }
+}))
+
 export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
     isOpen,
     onRequestClose
 }) => {
+    const styles = useStyles();
     const onLogin = useOnLogin();
 
     const [login, { loading: isLoading, error, data }] = useMutation<{ login: { token: string } }, { username: string, password: string }>(LoginMutation, {
@@ -37,7 +49,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
     }, [data, onLogin, onRequestClose]);
 
     return (
-        <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+        <ResponsiveFullScreenDialog open={isOpen} className={styles.root} fullWidth>
             <form onSubmit={(e) => {
                 e.preventDefault();
                 login({ variables: { username: email, password } });
@@ -73,6 +85,14 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                         type="password"
                         fullWidth
                     />
+                    <Link
+                        component={CollisionLink}
+                        color='inherit'
+                        underline='none'
+                        to={`/password/request-reset`}
+                    >
+                        Passwort vergessen?
+                    </Link>
                 </DialogContent>
                 <DialogActions>
                     <Button

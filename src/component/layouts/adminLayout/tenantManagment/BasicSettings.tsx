@@ -1,22 +1,20 @@
 import React, { memo, useState } from 'react';
-import { Button, Card, CardContent, Grid, TextField, Typography, makeStyles } from '@material-ui/core';
+import { Button, Card, CardContent, Grid, Link, Table, TableBody, TableRow, TableCell, TextField, Typography, makeStyles } from '@material-ui/core';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { useTenant } from 'util/client/useTenant';
+import { Tenant } from 'util/model';
 import { useMutation } from 'react-apollo';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles(theme => ({
-    heading: {
-        marginBottom: theme.spacing(2)
-    },
     gridContainer: {
         marginBottom: theme.spacing(3),
     }
 }));
 
-export const BasicTenantSettings = memo(() => {
+export const BasicSettings = memo(() => {
     const styles = useStyles();
     const tenant = useTenant();
     const [title, setTitle] = useState(tenant.title);
@@ -26,9 +24,6 @@ export const BasicTenantSettings = memo(() => {
 
     return (
         <>
-            <Typography variant="h5" className={styles.heading}>
-                Grundeinstellungen
-            </Typography>
 
             {error && (
                 <div style={{ color: 'red' }}>{error.message}</div>
@@ -62,6 +57,34 @@ export const BasicTenantSettings = memo(() => {
                     <Typography>
                         Für eine optimale Darstellung sollte das Logo eine Höhe von mindestens 160 Pixeln haben.
                     </Typography>
+                </Grid>
+            </Grid>
+
+            <Typography variant={'h6'}>
+                Domains
+            </Typography>
+            <Grid container className={styles.gridContainer}>
+                <Grid item sm={12}>
+                    <Table size={'small'}>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>
+                                    <Link href={`https://${Tenant.getLottaDomainHost(tenant)}`}>
+                                        {Tenant.getLottaDomainHost(tenant)}
+                                    </Link>
+                                </TableCell>
+                            </TableRow>
+                            {tenant.customDomains.map(customDomain => (
+                                <TableRow key={customDomain.host}>
+                                    <TableCell>
+                                        <Link href={`https://${customDomain.host}`}>
+                                            {customDomain.host}
+                                        </Link>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </Grid>
             </Grid>
 

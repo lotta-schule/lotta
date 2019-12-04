@@ -1,17 +1,37 @@
 import React, { FunctionComponent, memo } from 'react';
-import { Theme } from '@material-ui/core';
-import { useTheme } from '@material-ui/styles';
+import { Theme, makeStyles, Typography } from '@material-ui/core';
 
 export interface PlaceholderImageProps {
     width: number | string;
     height: number | string;
     icon?: 'video' | 'image';
+    description?: string;
 }
 
-export const PlaceholderImage: FunctionComponent<PlaceholderImageProps> = memo(({ width, height, icon }) => {
-    const theme: Theme = useTheme();
+const useStyles = makeStyles<Theme, { iconSource: string, description?: string }>(theme => ({
+    root: {
+        backgroundImage: ({ iconSource }) => `url("${iconSource}")`,
+        backgroundColor: theme.palette.grey[200],
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: ({ description }) => description ? '35%' : 'contain',
+        backgroundPosition: ({ description }) => description ? 'top center' : 'center center',
+        display: 'flex',
+        alignItems: ({ description }) => description ? 'flex-end' : 'center',
+        textAlign: 'center',
+    }
+}));
+
+export const PlaceholderImage: FunctionComponent<PlaceholderImageProps> = memo(({ width, height, icon, description }) => {
     const iconSource = icon === 'video' ? '/img/SwitchVideo.svg' : '/img/Photo.svg';
+    const styles = useStyles({ iconSource, description });
     return (
-        <div style={{ width, height, background: `${theme.palette.grey[200]} url("${iconSource}") no-repeat scroll center center` }} />
+        <div
+            style={{ width, height }}
+            className={styles.root}
+        >
+            <Typography variant={'h5'} style={{ marginBottom: '1em' }}>
+                {description}
+            </Typography>
+        </div >
     );
 });

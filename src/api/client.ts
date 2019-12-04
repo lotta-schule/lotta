@@ -6,7 +6,6 @@ import { get } from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const customFetch = (url: string, options: any) => {
-    const slug = window.location.host.split('.')[0];
     const jwtToken = get(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME);
 
     const { headers, body, method, ...miscOptions } = options;
@@ -15,7 +14,6 @@ const customFetch = (url: string, options: any) => {
         ...miscOptions,
         headers: {
             ...headers,
-            tenant: `slug:${slug}`,
             ...(jwtToken ? {
                 Authorization: `Bearer ${jwtToken}`
             } : {})

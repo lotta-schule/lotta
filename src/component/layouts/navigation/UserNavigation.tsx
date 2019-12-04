@@ -104,13 +104,18 @@ export const UserNavigation = memo(() => {
                                         classes={{ badge: styles.badge }}
                                         showZero={false}
                                     >
-                                        <Link component={CollisionLink} to={'/admin'}>Administration</Link>
+                                        <Link component={CollisionLink} to={'/admin/tenant/general'}>Administration</Link>
                                     </Badge>
                                 </li>
                             )}
                             {categories.map(category => (
                                 <li key={category.id}>
-                                    <Link component={CollisionLink} to={`/category/${category.id}`}>{category.title}</Link>
+                                    <Link
+                                        component={CollisionLink}
+                                        to={category.redirect ? category.redirect : `/category/${category.id}`}
+                                    >
+                                        {category.title}
+                                    </Link>
                                 </li>
                             ))}
                             <li><Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link></li>

@@ -11,16 +11,16 @@ export const AdminLayoutNavigation = memo(() => {
     return (
         <Paper>
             <Tabs
-                value={location.pathname}
+                value={location.pathname.split('/').slice(0, 3).join('/')}
                 onChange={(_, value) => { history.push(value); }}
                 orientation="vertical"
                 variant="scrollable"
                 aria-label="Admin Einstellungen"
             >
-                <Tab label="Mein Lotta" value={'/admin'} />
-                <Tab label="Nutzerverwaltung" value={'/admin/users'} />
-                <Tab label="Kategorienverwaltung" value={'/admin/categories'} />
-                <Tab label="Widgetverwaltung" value={'/admin/widgets'} />
+                <Tab label="Mein Lotta" value={'/admin/tenant'} />
+                <Tab label="Nutzer &amp; Gruppen" value={'/admin/users'} />
+                <Tab label="Kategorien" value={'/admin/categories'} />
+                <Tab label="Marginalen" value={'/admin/widgets'} />
                 {User.isAdmin(currentUser) && (
                     <Tab label="Freizugebende Beiträge" value={'/admin/unpublished'} />
                 )}

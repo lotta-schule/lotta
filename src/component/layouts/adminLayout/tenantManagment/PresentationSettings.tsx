@@ -15,15 +15,12 @@ const useStyles = makeStyles(theme => ({
     section: {
         marginBottom: theme.spacing(2)
     },
-    heading: {
-        marginBottom: theme.spacing(2)
-    },
     gridContainer: {
         marginBottom: theme.spacing(3),
     }
 }));
 
-export const ColorSettings = memo(() => {
+export const PresentationSettings = memo(() => {
     const styles = useStyles();
     const tenant = useTenant();
 
@@ -38,10 +35,6 @@ export const ColorSettings = memo(() => {
 
     return (
         <>
-            <Typography variant="h5" className={styles.heading}>
-                Darstellung
-            </Typography>
-
             <section className={styles.section}>
                 <Typography variant={'h6'}>
                     Vorlagen
@@ -54,7 +47,7 @@ export const ColorSettings = memo(() => {
                             onClick={() => setCustomTheme({})}
                         />
                     </Grid>
-                    {['Königsblau'].map(title => {
+                    {['Königsblau', 'Leipzig'].map(title => {
                         const pureName = title
                             .toLowerCase()
                             .replace(/ö/g, 'oe')

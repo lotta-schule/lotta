@@ -140,7 +140,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
             {error && <div style={{ color: 'red' }}>{error.message}</div>}
             <Grid container justify="center" alignItems="center" className={styles.root}>
                 <Grid item>
-                    {isLoadingPossibleWidgets || listOfWidgets('Mögliche Marginale', possibleWidgets)}
+                    {isLoadingPossibleWidgets ? null : listOfWidgets('Mögliche Marginale', possibleWidgets)}
                 </Grid>
                 <Grid item>
                     <Grid container direction="column" alignItems="center">

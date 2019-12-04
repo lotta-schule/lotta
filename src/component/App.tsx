@@ -12,6 +12,8 @@ import { EditArticleRoute } from './routes/EditArticleRoute';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { PrivacyLayout } from './layouts/PrivacyLayout';
 import { ProfileLayout } from './layouts/profileLayout/ProfileLayout';
+import { ResetPasswordLayout } from './layouts/ResetPasswordLayout';
+import { RequestPasswordResetLayout } from './layouts/RequestPasswordResetLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Helmet } from 'react-helmet';
@@ -70,6 +72,9 @@ export const App = memo(() => {
                         <Route path={'/profile'} component={ProfileLayout} />
                         <Route path={'/admin'} component={AdminLayout} />
                         <Route path={'/privacy'} component={PrivacyLayout} />
+
+                        <Route path={'/password/request-reset'} component={RequestPasswordResetLayout} />
+                        <Route path={'/password/reset'} component={ResetPasswordLayout} />
                         <Route component={() => <div>Nicht gefunden</div>} />
                     </Switch>
                 </BaseLayout>

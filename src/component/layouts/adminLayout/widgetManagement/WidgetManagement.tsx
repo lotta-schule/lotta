@@ -77,7 +77,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
     return (
         <Paper className={styles.root}>
             <Typography variant={'h4'} className={styles.headline}>
-                Widgetverwaltung
+                Marginalen
 
                 <PopupState variant={'popover'} popupId={'addWidgetButtonPopup'}>{popupState => (
                     <>
@@ -90,7 +90,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                             {...bindTrigger(popupState)}
                         >
                             <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
-                            Widget hinzufügen
+                            Widget erstellen
                         </Button>
                         <Menu {...bindMenu(popupState)}>
                             <MenuItem
@@ -100,7 +100,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                                 }}
                             >
                                 {Widget.getIconForType(WidgetModelType.Calendar)} &nbsp;
-                                Kalender-Widget hinzufügen
+                                Kalender-Widget erstellen
                             </MenuItem>
                             <MenuItem
                                 onClick={() => {
@@ -109,7 +109,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                                 }}
                             >
                                 {Widget.getIconForType(WidgetModelType.Schedule)} &nbsp;
-                                VPlan-Widget hinzufügen
+                                VPlan-Widget erstellen
                             </MenuItem>
                         </Menu>
                     </>

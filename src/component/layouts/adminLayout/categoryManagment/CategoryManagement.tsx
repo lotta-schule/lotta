@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { CategoryModel } from 'model';
 import { CategoryNavigation } from './CategoryNavigation';
 import { CategoryEditor } from './CategoryEditor';
+import { CreateCategoryDialog } from './CreateCategoryDialog';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -46,20 +47,22 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
     const styles = useStyles();
 
     const [selectedCategory, setSelectedCategory] = useState<CategoryModel | null>(null);
+    const [isCreateCategoryDialogOpen, setIsCreateCategoryDialogOpen] = useState(false);
 
     return (
         <Paper className={styles.container}>
             <Typography variant="h4" className={styles.headlines}>
-                Kategorienverwaltung
-                    <Button
+                Kategorien
+                <Button
                     size="small"
                     variant="contained"
                     color="secondary"
                     className={styles.button}
+                    onClick={() => setIsCreateCategoryDialogOpen(true)}
                 >
                     <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
-                    Kategorie hinzufügen
-                    </Button>
+                    Kategorie erstellen
+                </Button>
             </Typography>
 
             <Grid container>
@@ -68,10 +71,19 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
                 </Grid>
                 <Grid item sm={7}>
                     {selectedCategory && (
-                        <CategoryEditor selectedCategory={selectedCategory} />
+                        <CategoryEditor selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
                     )}
                 </Grid>
             </Grid>
+
+            <CreateCategoryDialog
+                isOpen={isCreateCategoryDialogOpen}
+                onAbort={() => setIsCreateCategoryDialogOpen(false)}
+                onConfirm={category => {
+                    setIsCreateCategoryDialogOpen(false);
+                    setSelectedCategory(category);
+                }}
+            />
         </Paper>
     );
 });

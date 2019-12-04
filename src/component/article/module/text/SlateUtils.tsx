@@ -1,5 +1,6 @@
 import React from 'react';
 import { RenderMarkProps, Plugins, RenderBlockProps, RenderInlineProps } from "slate-react";
+import { Typography } from '@material-ui/core';
 import { Editor } from 'slate';
 import Lists from '@convertkit/slate-lists';
 
@@ -73,6 +74,10 @@ export const renderBlock = (props: RenderBlockProps, editor: Editor, next: () =>
                 />
             );
         }
+        case 'paragraph':
+            return (
+                <Typography variant={'body1'} component={'p'} {...props.attributes}>{props.children}</Typography>
+            );
         default:
             return next();
     }

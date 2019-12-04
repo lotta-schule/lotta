@@ -17,7 +17,7 @@ export interface ArticleModel {
     previewImageFile?: FileModel;
     contentModules: ContentModuleModel[];
     users: UserModel[];
-    category?: CategoryModel;
+    category?: CategoryModel | null;
     groups: UserGroupModel[];
 }
 

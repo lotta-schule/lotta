@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
-import { CardContent, Typography, makeStyles } from '@material-ui/core';
+import { CardContent, makeStyles } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
@@ -15,6 +15,13 @@ const useStyles = makeStyles(theme => ({
         '& a': {
             textDecoration: 'none',
             color: theme.palette.secondary.main
+        },
+        '& p, & ul, & ol': {
+            marginTop: theme.spacing(1),
+            marginBottom: theme.spacing(1),
+        },
+        '& ul, & ol': {
+            ...theme.typography.body1
         }
     }
 }));
@@ -23,15 +30,13 @@ export const Text: FunctionComponent<TextProps> = memo(({ isEditModeEnabled, con
     const styles = useStyles();
     return (
         <CardContent className={styles.root}>
-            <Typography variant={'body1'}>
-                {isEditModeEnabled && onUpdateModule ?
-                    (
-                        <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-                    ) : (
-                        <Show contentModule={contentModule} />
-                    )
-                }
-            </Typography>
+            {isEditModeEnabled && onUpdateModule ?
+                (
+                    <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+                ) : (
+                    <Show contentModule={contentModule} />
+                )
+            }
         </CardContent>
     );
 });

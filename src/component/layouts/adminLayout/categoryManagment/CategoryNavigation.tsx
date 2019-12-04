@@ -45,7 +45,18 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
         return categories.filter(c => c.category && c.category.id === category.id);
     }, [categories]);
 
-    const [mutateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation);
+    const [updateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+        optimisticResponse: ({ id, category }) => {
+            return {
+                __typename: 'Mutation',
+                category: {
+                    __typename: 'Category',
+                    id,
+                    sortKey: category.sortKey
+                }
+            } as any;
+        }
+    });
 
     return (
         <>
@@ -74,14 +85,14 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                         return;
                     }
 
-                    const initialCategoriesArray = destination.droppableId === 'root' ? mainCategories : getSubcategoriesForCategory({ id: Number(destination.droppableId) });
+                    const initialCategoriesArray = destination.droppableId === 'categories-root' ? mainCategories : getSubcategoriesForCategory({ id: Number(destination.droppableId) });
                     const sourceIndex = findIndex(initialCategoriesArray, { id: Number(draggableId) })
                     const newCategoriesArray = [...initialCategoriesArray];
                     newCategoriesArray.splice(sourceIndex, 1);
                     newCategoriesArray.splice(destination.index, 0, initialCategoriesArray[sourceIndex]);
                     newCategoriesArray.forEach((category, index) => {
                         if (category) {
-                            mutateCategory({
+                            updateCategory({
                                 variables: {
                                     id: category.id,
                                     category: {
@@ -98,7 +109,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                     });
                 }}
             >
-                <Droppable droppableId={'root'}>
+                <Droppable droppableId={'categories-root'} type={'root-categories'}>
                     {({ droppableProps, innerRef, placeholder }) => (
                         <div {...droppableProps} ref={innerRef} style={{ paddingBottom: '5em' }}>
                             {mainCategories.map((category, index) => (
@@ -130,31 +141,29 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                                 </Typography>
                                             </ExpansionPanelSummary>
                                             <ExpansionPanelDetails>
-                                                <Droppable droppableId={String(category.id)}>
+                                                <Droppable droppableId={String(category.id)} type={`subcategories-to-${category.id}`}>
                                                     {({ droppableProps, innerRef, placeholder }) => (
                                                         <List component="nav" innerRef={innerRef} {...droppableProps}>
-                                                            {
-                                                                getSubcategoriesForCategory(category).map(subcategory => (
-                                                                    <Draggable key={subcategory.id} draggableId={String(subcategory.id)} index={index}>
-                                                                        {({ innerRef, dragHandleProps, draggableProps }) => (
-                                                                            <ListItem
-                                                                                className={'expansionSummary'}
-                                                                                style={{ cursor: 'pointer' }}
-                                                                                onClick={() => onSelectCategory(subcategory)}
-                                                                                innerRef={innerRef}
-                                                                                {...draggableProps}
-                                                                            >
-                                                                                <Typography>
-                                                                                    <span {...dragHandleProps}>
-                                                                                        <MoreVert className={styles.moveCategoryHandlerIcon} />
-                                                                                    </span>
-                                                                                    {subcategory.title}
-                                                                                </Typography>
-                                                                            </ListItem>
-                                                                        )}
-                                                                    </Draggable>
-                                                                ))
-                                                            }
+                                                            {getSubcategoriesForCategory(category).map((subcategory, index) => (
+                                                                <Draggable key={subcategory.id} draggableId={String(subcategory.id)} index={index}>
+                                                                    {({ innerRef, dragHandleProps, draggableProps }) => (
+                                                                        <ListItem
+                                                                            className={'expansionSummary'}
+                                                                            style={{ cursor: 'pointer' }}
+                                                                            onClick={() => onSelectCategory(subcategory)}
+                                                                            innerRef={innerRef}
+                                                                            {...draggableProps}
+                                                                        >
+                                                                            <Typography>
+                                                                                <span {...dragHandleProps}>
+                                                                                    <MoreVert className={styles.moveCategoryHandlerIcon} />
+                                                                                </span>
+                                                                                {subcategory.title}
+                                                                            </Typography>
+                                                                        </ListItem>
+                                                                    )}
+                                                                </Draggable>
+                                                            ))}
                                                             {placeholder}
                                                         </List>
                                                     )}
