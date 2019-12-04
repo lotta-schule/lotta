@@ -69,17 +69,19 @@ defmodule Api.UserResolver do
     |> Map.put(:tenant_id, tenant.id)
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-        {:ok, user} = case args[:group_key] do
-          # TODO: Remove as fast as possible. Is just very shitty workaround
-          "LEb0815Hp!1969" ->
-            Accounts.set_user_groups(user, tenant, [Api.Repo.get_by!(Accounts.UserGroup, name: "Lehrer")])
-          "ELa1789Re!1848" ->
-            Accounts.set_user_groups(user, tenant, [Api.Repo.get_by!(Accounts.UserGroup, name: "Eltern")])
-          "Seb034hP2?019" ->
-            Accounts.set_user_groups(user, tenant, [Api.Repo.get_by!(Accounts.UserGroup, name: "Schüler")])
+        user = with false <- is_nil(args[:group_key]),
+          groups <- Accounts.get_groups_by_enrollment_token(tenant, args[:group_key]),
+          {:ok, user} <- Accounts.set_user_groups(user, tenant, groups) do
+          user
+        else
+          {:error, error} ->
+            IO.inspect("Error")
+            IO.inspect(error)
+            user
           _ ->
-            {:ok, user}
+            user
         end
+
         {:ok, jwt} = User.get_signed_jwt(user)
         Api.EmailPublisherWorker.send_registration_email(tenant, user)
         {:ok, %{token: jwt}}
@@ -118,6 +120,7 @@ defmodule Api.UserResolver do
           {:ok, %{ token: jwt }}
     else
       error ->
+        IO.inspect(error)
         {:error, "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut."}
     end
   end

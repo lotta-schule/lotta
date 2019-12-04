@@ -357,6 +357,12 @@ defmodule Api.UserResolverTest do
       |> json_response(200)
 
       assert String.valid?(res["data"]["register"]["token"])
+      user_groups =
+        Api.Repo.get_by!(Api.Accounts.User, email: "neuernutzer@example.com")
+        |> Api.Repo.preload(:groups)
+        |> Map.fetch!(:groups)
+      [%{name: group_name}] = user_groups
+      assert group_name == "Lehrer"
     end
 
     test "returns error when email is already taken" do
