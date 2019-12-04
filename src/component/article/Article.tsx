@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ArticleModel } from '../../model';
 import { ArticlePreview } from './ArticlePreview';
 import { ContentModule } from './module/ContentModule';
@@ -21,7 +21,7 @@ interface ArticleProps {
     onUpdateArticle?(article: ArticleModel): void;
 }
 
-export const Article: FunctionComponent<ArticleProps> = memo(({ article, isEditModeEnabled, onUpdateArticle }) => {
+export const Article = memo<ArticleProps>(({ article, isEditModeEnabled, onUpdateArticle }) => {
     const styles = useStyles();
     return (
         <article className={styles.root} data-testid={'Article'}>
