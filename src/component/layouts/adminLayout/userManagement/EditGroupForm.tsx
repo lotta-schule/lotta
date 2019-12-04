@@ -60,6 +60,8 @@ export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
         );
     }
 
+    const isSoleAdminGroup = isAdminGroup && groups.filter(g => g.isAdminGroup).length < 2;
+
     return (
         <form className={styles.root} onSubmit={e => {
             e.preventDefault();
@@ -87,7 +89,7 @@ export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
             <FormControl>
                 <FormControlLabel
                     control={<Checkbox />}
-                    disabled={isLoadingUpdateGroup || (isAdminGroup && groups.filter(g => g.isAdminGroup).length < 2)}
+                    disabled={isLoadingUpdateGroup || isSoleAdminGroup}
                     label={'Diese Gruppe hat universelle Administratorrechte'}
                     checked={!!isAdminGroup}
                     onChange={(_, checked) => setIsAdminGroup(checked)}
@@ -129,20 +131,24 @@ export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
             >
                 Gruppe speichern
             </Button>
-            <Button
-                className={styles.deleteButton}
-                variant={'contained'}
-                size={'small'}
-                onClick={() => setIsDeleteUserGroupDialogOpen(true)}
-            >
-                Gruppe "{group.name}" löschen
-            </Button>
-            <DeleteUserGroupDialog
-                isOpen={isDeleteUserGroupDialogOpen}
-                group={group}
-                onClose={() => setIsDeleteUserGroupDialogOpen(false)}
-                onConfirm={() => setIsDeleteUserGroupDialogOpen(false)}
-            />
+            {!isSoleAdminGroup && (
+                <>
+                    <Button
+                        className={styles.deleteButton}
+                        variant={'contained'}
+                        size={'small'}
+                        onClick={() => setIsDeleteUserGroupDialogOpen(true)}
+                    >
+                        Gruppe "{group.name}" löschen
+                    </Button>
+                    <DeleteUserGroupDialog
+                        isOpen={isDeleteUserGroupDialogOpen}
+                        group={group}
+                        onClose={() => setIsDeleteUserGroupDialogOpen(false)}
+                        onConfirm={() => setIsDeleteUserGroupDialogOpen(false)}
+                    />
+                </>
+            )}
         </form>
     );
 });
