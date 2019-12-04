@@ -130,6 +130,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
   
   input_object :user_group_input do
     field :name, :string
+    field :sort_key, :integer
     field :enrollment_tokens, list_of(:string)
   end
 

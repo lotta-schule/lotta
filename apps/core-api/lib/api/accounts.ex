@@ -6,7 +6,7 @@ defmodule Api.Accounts do
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Accounts.{User,UserGroup,File}
+  alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,File}
   alias Api.Tenants.Tenant
 
   def data() do
@@ -132,6 +132,19 @@ defmodule Api.Accounts do
   end
 
   @doc """
+  Get groups which have a given enrollment token
+
+  """
+  def get_groups_by_enrollment_token(%Tenant{} = tenant, token) when is_binary(token) do
+    from(g in UserGroup,
+      join: t in GroupEnrollmentToken,
+      on: g.id == t.group_id,
+      where: t.token == ^token and g.tenant_id == ^(tenant.id),
+      distinct: true)
+    |> Repo.all()
+  end
+
+  @doc """
   Registers a user.
 
   ## Examples
@@ -202,6 +215,7 @@ defmodule Api.Accounts do
       {:ok, user}
     else
       error ->
+        IO.inspect(error)
         {:error, :invalid_token}
     end
   end
@@ -431,7 +445,7 @@ defmodule Api.Accounts do
   """
   def create_user_group(%Tenant{} = tenant, attrs) do
     attrs = case attrs do
-      %{ sort_key: sort_key } ->
+      %{ sort_key: _ } ->
         attrs
       attrs ->
         attrs
