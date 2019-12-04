@@ -7,7 +7,8 @@ export const AdminGroup: UserGroupModel = {
     name: 'Administrator',
     sortKey: 1000,
     isAdminGroup: true,
-    tenant: null!
+    tenant: null!,
+    enrollmentTokens: []
 }
 
 export const TestTenant: ClientModel = {

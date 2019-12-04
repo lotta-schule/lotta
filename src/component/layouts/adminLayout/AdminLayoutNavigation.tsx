@@ -11,7 +11,7 @@ export const AdminLayoutNavigation = memo(() => {
     return (
         <Paper>
             <Tabs
-                value={location.pathname}
+                value={location.pathname.split('/').slice(0, 3).join('/')}
                 onChange={(_, value) => { history.push(value); }}
                 orientation="vertical"
                 variant="scrollable"

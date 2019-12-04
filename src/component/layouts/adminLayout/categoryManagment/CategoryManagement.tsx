@@ -61,7 +61,7 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
                     onClick={() => setIsCreateCategoryDialogOpen(true)}
                 >
                     <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
-                    Kategorie hinzufügen
+                    Kategorie erstellen
                 </Button>
             </Typography>
 
