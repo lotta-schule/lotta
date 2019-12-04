@@ -95,6 +95,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
             <GroupSelect
                 className={styles.input}
                 selectedGroups={widget.groups || []}
+                disableAdminGroupsExclusivity
                 onSelectGroups={groups => setWidget({ ...widget, groups })}
             />
 
