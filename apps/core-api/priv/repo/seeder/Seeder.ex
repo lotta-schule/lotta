@@ -11,6 +11,12 @@ defmodule Api.Repo.Seeder do
     verwaltung_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Verwaltung", sort_key: 800})
     lehrer_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Lehrer", sort_key: 600})
     schueler_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Schüler", sort_key: 400})
+    Ecto.build_assoc(lehrer_group, :enrollment_tokens)
+    |> Map.put(:token, "LEb0815Hp!1969")
+    |> Api.Repo.insert!
+    Ecto.build_assoc(schueler_group, :enrollment_tokens)
+    |> Map.put(:token, "Seb034hP2?019")
+    |> Api.Repo.insert!
   
     {:ok, alexis} = Api.Accounts.register_user(%{
         name: "Alexis Rinaldoni",

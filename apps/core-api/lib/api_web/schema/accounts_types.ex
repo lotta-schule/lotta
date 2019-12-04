@@ -16,8 +16,13 @@ defmodule ApiWeb.Schema.AccountsTypes do
     end
 
     field :user, type: :user do
-      arg :id, :lotta_id
+      arg :id, non_null(:lotta_id)
       resolve &Api.UserResolver.get/2
+    end
+    
+    field :group, type: :user_group do
+      arg :id, non_null(:lotta_id)
+      resolve &Api.UserGroupResolver.get/2
     end
 
     field :files, list_of(:file) do
@@ -44,6 +49,25 @@ defmodule ApiWeb.Schema.AccountsTypes do
       arg :user, non_null(:update_user_params)
 
       resolve &Api.UserResolver.update_profile/2
+    end
+
+    field :create_user_group, type: :user_group do
+      arg :group, non_null(:user_group_input)
+
+      resolve &Api.UserGroupResolver.create/2
+    end
+
+    field :update_user_group, type: :user_group do
+      arg :id, non_null(:lotta_id)
+      arg :group, non_null(:user_group_input)
+
+      resolve &Api.UserGroupResolver.update/2
+    end
+
+    field :delete_user_group, type: :user_group do
+      arg :id, non_null(:lotta_id)
+
+      resolve &Api.UserGroupResolver.delete/2
     end
     
     field :request_password_reset, type: :boolean do
@@ -103,6 +127,11 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :hide_full_name, :boolean
     field :avatar_image_file, :file
   end
+  
+  input_object :user_group_input do
+    field :name, :string
+    field :enrollment_tokens, list_of(:string)
+  end
 
   object :authresult do
     field :token, :string
@@ -132,6 +161,12 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :sort_key, :integer
     field :is_admin_group, :boolean
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :enrollment_tokens, list_of(:group_enrollment_token), resolve: &Api.UserGroupResolver.resolve_enrollment_tokens/3
+  end
+
+  object :group_enrollment_token do
+    field :id, :lotta_id
+    field :token, :string
   end
   
 end
