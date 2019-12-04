@@ -16,17 +16,18 @@ defmodule Api.Tenants do
     queryable
   end
 
-  def resolve_widgets(_args, %{context: context, source: category}) do
+  def resolve_widgets(_args, %{context: %{tenant: tenant} = context, source: category}) do
     user_group_ids = case context do
       %{ current_user: user } -> User.group_ids(user)
       _ -> []
     end
+    user_is_admin = (context[:current_user] && User.is_admin?(context.current_user, tenant)) == true
     widgets = from(w in Widget,
       left_join: wug in "widgets_user_groups",
       on: wug.widget_id == w.id,
       join: cw in "categories_widgets",
       on: w.id == cw.widget_id,
-      where: (wug.group_id in ^user_group_ids or is_nil(wug.group_id)) and
+      where: (^user_is_admin or (wug.group_id in ^user_group_ids) or is_nil(wug.group_id)) and
              cw.category_id == ^(category.id),
       distinct: w.id
     )
