@@ -6,6 +6,7 @@ export * from './ContentModuleModel';
 export * from './CustomDomainModel';
 export * from './EditModePayload';
 export * from './FileModel';
+export * from './GroupEnrollmentTokenModel';
 export * from './PageModel';
 export * from './ScheduleResult';
 export * from './UserModel';

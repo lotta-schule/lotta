@@ -45,17 +45,18 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
         return categories.filter(c => c.category && c.category.id === category.id);
     }, [categories]);
 
-    const [mutateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+    const [updateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
         optimisticResponse: ({ id, category }) => {
             return {
-            __typename: 'Mutation',
-            category: {
-                __typename: 'Category',
-                id,
-                sortKey: category.sortKey
-            }
-         } as any;
-    }});
+                __typename: 'Mutation',
+                category: {
+                    __typename: 'Category',
+                    id,
+                    sortKey: category.sortKey
+                }
+            } as any;
+        }
+    });
 
     return (
         <>
@@ -91,7 +92,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                     newCategoriesArray.splice(destination.index, 0, initialCategoriesArray[sourceIndex]);
                     newCategoriesArray.forEach((category, index) => {
                         if (category) {
-                            mutateCategory({
+                            updateCategory({
                                 variables: {
                                     id: category.id,
                                     category: {

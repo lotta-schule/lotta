@@ -9,15 +9,12 @@ import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles(theme => ({
-    heading: {
-        marginBottom: theme.spacing(2)
-    },
     gridContainer: {
         marginBottom: theme.spacing(3),
     }
 }));
 
-export const BasicTenantSettings = memo(() => {
+export const BasicSettings = memo(() => {
     const styles = useStyles();
     const tenant = useTenant();
     const [title, setTitle] = useState(tenant.title);
@@ -27,9 +24,6 @@ export const BasicTenantSettings = memo(() => {
 
     return (
         <>
-            <Typography variant="h5" className={styles.heading}>
-                Grundeinstellungen
-            </Typography>
 
             {error && (
                 <div style={{ color: 'red' }}>{error.message}</div>

@@ -104,7 +104,7 @@ export const UserNavigation = memo(() => {
                                         classes={{ badge: styles.badge }}
                                         showZero={false}
                                     >
-                                        <Link component={CollisionLink} to={'/admin'}>Administration</Link>
+                                        <Link component={CollisionLink} to={'/admin/tenant/general'}>Administration</Link>
                                     </Badge>
                                 </li>
                             )}

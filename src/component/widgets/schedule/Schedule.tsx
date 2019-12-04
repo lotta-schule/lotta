@@ -8,8 +8,8 @@ import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
 import { useQuery } from '@apollo/react-hooks';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
-import clsx from 'clsx';
 import { darken } from '@material-ui/core/styles';
+import clsx from 'clsx';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
