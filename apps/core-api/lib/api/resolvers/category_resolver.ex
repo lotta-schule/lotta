@@ -19,7 +19,7 @@ defmodule Api.CategoryResolver do
           {:error, changeset} ->
             {
               :error,
-              message: "Registrierung fehlgeschlagen.",
+              message: "Fehler beim Bearbeiten der Kategorie.",
               details: error_details(changeset)
             }
           success ->
@@ -31,6 +31,46 @@ defmodule Api.CategoryResolver do
       end
     else
       {:error, "Nur Administrator dürfen Kategorien bearbeiten."}
+    end
+  end
+  
+  def create(%{category: category_params}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      case Api.Tenants.create_category(tenant, category_params) do
+        {:error, changeset} ->
+          {
+            :error,
+            message: "Fehler beim Erstellen der Kategorie.",
+            details: error_details(changeset)
+          }
+        success ->
+          success
+      end
+    else
+      {:error, "Nur Administrator dürfen Kategorien erstellen."}
+    end
+  end
+  
+  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      try do
+        category = Api.Tenants.get_category!(id)
+        case Api.Tenants.delete_category(category) do
+          {:error, changeset} ->
+            {
+              :error,
+              message: "Fehler beim Löschen der Kategorie.",
+              details: error_details(changeset)
+            }
+          success ->
+            success
+        end
+      rescue
+        Ecto.NoResultsError ->
+          {:error, "Kategorie mit der id #{id} nicht gefunden."}
+      end
+    else
+      {:error, "Nur Administrator dürfen Kategorien löschen."}
     end
   end
 

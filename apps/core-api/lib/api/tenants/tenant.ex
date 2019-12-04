@@ -1,7 +1,7 @@
 defmodule Api.Tenants.Tenant do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Api.Tenants.Category
+  alias Api.Tenants.{Category, CustomDomain}
   alias Api.Accounts
   alias Api.Accounts.{File,User,UserGroup}
 
@@ -13,6 +13,7 @@ defmodule Api.Tenants.Tenant do
     has_many :categories, Category
     has_many :groups, UserGroup
     has_many :users, User
+    has_many :custom_domains, CustomDomain
     belongs_to :logo_image_file, File, on_replace: :nilify
     belongs_to :background_image_file, File, on_replace: :nilify
 
@@ -27,6 +28,24 @@ defmodule Api.Tenants.Tenant do
     |> validate_required([:slug, :title])
     |> put_assoc_logo_image_file(attrs)
     |> put_assoc_background_image_file(attrs)
+  end
+
+  def get_main_url(%Api.Tenants.Tenant{} = tenant) do
+    main_domain = tenant
+    |> Api.Repo.preload(:custom_domains)
+    |> Map.fetch!(:custom_domains)
+    |> Enum.find(&(&1.is_main_domain === true))
+    case main_domain do
+      %CustomDomain{host: host} ->
+        "https://" <> host
+      _ ->
+        get_lotta_url(tenant)
+    end
+  end
+  
+  def get_lotta_url(%Api.Tenants.Tenant{slug: slug}) do
+    base_url = Application.fetch_env!(:api, :base_url)
+    "https://" <> slug  <> base_url
   end
 
   defp put_assoc_logo_image_file(changeset, attrs) do

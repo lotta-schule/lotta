@@ -21,7 +21,10 @@ config :api, :rabbitmq_connection,
   password: "guest",
   host: "rabbitmq"
 
-config :api, :schedule_provider_url, "http://schedule_provider:3000"
+config :api, :redis_connection,
+  host: "redis",
+  password: "lotta",
+  name: :redix
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
@@ -47,6 +50,12 @@ config :api, ApiWeb.Endpoint,
 config :api, Api.Guardian,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
+
+config :api, :base_url,
+  ".medienportal.lvh.me:3000"
+
+config :api, :schedule_provider_url,
+  "http://schedule_provider:3000"
 
 # ## SSL Support
 #

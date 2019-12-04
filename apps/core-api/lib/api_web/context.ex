@@ -20,21 +20,17 @@ defmodule ApiWeb.Context do
 
   defp put_user(context, conn) do
     authorization_header = get_req_header(conn, "authorization")
-    with ["Bearer " <> token] <- authorization_header do
-      case Guardian.resource_from_token(token) do
-        {:ok, current_user, _claims} ->
-          current_user = Repo.get(Accounts.User, current_user.id)
-          |> Repo.preload([:groups, :avatar_image_file])
-          Task.start_link(fn ->
-            current_user
-            |> Repo.preload(:tenant)
-            |> Accounts.see_user()
-          end)
-          context
-          |> Map.put(:current_user, current_user)
-        {:error, _} ->
-          context
-      end
+    with ["Bearer " <> token] <- authorization_header,
+        {:ok, current_user, _claims} <- Guardian.resource_from_token(token) do
+      current_user =
+        Repo.get(Accounts.User, current_user.id)
+        |> Repo.preload([:groups, :avatar_image_file])
+      Task.start_link(fn ->
+        current_user
+        |> Repo.preload(:tenant)
+        |> Accounts.see_user()
+      end)
+      Map.put(context, :current_user, current_user)
     else
       _ ->
         context
@@ -42,17 +38,44 @@ defmodule ApiWeb.Context do
   end
 
   defp put_tenant(context, conn) do
-    tenant_header = get_req_header(conn, "tenant")
-    with ["slug:" <> slug] <- tenant_header do
-      tenant = case Tenants.get_tenant_by_slug(slug) do
-        nil -> Tenants.get_tenant_by_slug!("ehrenberg")
-        tenant -> tenant
-      end
-      context
-      |> Map.put(:tenant, tenant)
+    tenant = tenant_by_slug_header(conn) || tenant_by_origin_header(conn)
+    if !is_nil(tenant), do: Map.put(context, :tenant, tenant), else: context
+  end
+
+  defp tenant_by_slug_header(conn) do
+    with ["slug:" <> slug] <- get_req_header(conn, "tenant") do
+      Tenants.get_tenant_by_slug(slug)
     else
       _ ->
-        context
+        nil
+    end
+  end
+  
+  defp tenant_by_origin_header(conn) do
+    with [origin] <- get_req_header(conn, "origin"),
+        %URI{host: host} <- URI.parse(origin),
+        false <- is_nil(host) do
+      case Tenants.get_tenant_by_custom_domain_host(host) do
+        nil ->
+          IO.inspect("custom domain is not found with #{host}. Trying to recognize lotta slug")
+          base_url_without_port = Regex.replace(~r/:\d*$/, Application.fetch_env!(:api, :base_url), "")
+          with {:ok, regex} <- Regex.compile("^(?<slug>.*)#{Regex.escape(base_url_without_port)}"),
+              %{"slug" => slug} <- Regex.named_captures(regex, host) do
+            Tenants.get_tenant_by_slug(slug)
+          else
+            error ->
+              IO.inspect(error)
+              IO.inspect("tenant not found by slug or host, host is #{host}")
+              nil
+          end
+        tenant ->
+          tenant
+      end
+    else
+      error ->
+        IO.inspect("could not parse origin header")
+        IO.inspect(error)
+        nil
     end
   end
 end

@@ -19,178 +19,190 @@ defmodule Api.TenantResolverTest do
     }}
   end
 
-  @query """
-  {
-    tenant {
-      id
-      slug
-      title
-    }
-  }
-  """
-  test "tenant field returns nil if slug tenant header is not set" do
-    res = build_conn()
-    |> get("/api", query: @query)
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "tenant" => nil
+  
+  describe "tenant query" do
+    @query """
+    {
+      tenant {
+        id
+        slug
+        title
       }
     }
-  end
+    """
 
+    test "returns nil if slug tenant header or origin header is not set" do
+      res = build_conn()
+      |> get("/api", query: @query)
+      |> json_response(200)
 
-  @query """
-  {
-    tenant {
-      id
-      slug
-      title
-    }
-  }
-  """
-  test "tenant field returns current tenant if slug is set in tenant header", %{web_tenant: web_tenant} do
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> get("/api", query: @query)
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "tenant" => %{
-          "id" => web_tenant.id,
-          "slug" => "web",
-          "title" => "Web Beispiel"
+      assert res == %{
+        "data" => %{
+          "tenant" => nil
         }
       }
-    }
-  end
+    end
+    
+    test "returns nil if slug tenant header and origin is not a known domain" do
+      res = build_conn()
+      |> put_req_header("origin", "unknown.com")
+      |> get("/api", query: @query)
+      |> json_response(200)
 
+      assert res == %{
+        "data" => %{
+          "tenant" => nil
+        }
+      }
+    end
 
-  @query """
-  {
-    tenants {
-      slug
-      title
-    }
-  }
-  """
-  test "tenants field returns all registered tenants" do
-    res = build_conn()
-    |> get("/api", query: @query)
-    |> json_response(200)
+    test "returns current tenant if origin is a known domain", %{web_tenant: web_tenant} do
+      res = build_conn()
+      |> put_req_header("origin", "https://lotta.web")
+      |> get("/api", query: @query)
+      |> json_response(200)
 
-    assert res == %{
-      "data" => %{
-        "tenants" => [
-          %{
-            "slug" => "lotta",
-            "title" => "Lotta"
-          },
-          %{
+      assert res == %{
+        "data" => %{
+          "tenant" => %{
+            "id" => web_tenant.id,
             "slug" => "web",
             "title" => "Web Beispiel"
           }
+        }
+      }
+    end
+
+    test "returns current tenant if slug is set in tenant header", %{web_tenant: web_tenant} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "tenant" => %{
+            "id" => web_tenant.id,
+            "slug" => "web",
+            "title" => "Web Beispiel"
+          }
+        }
+      }
+    end
+  end
+
+
+  describe "tenants query" do
+    @query """
+    {
+      tenants {
+        slug
+        title
+      }
+    }
+    """
+
+    test "returns all registered tenants" do
+      res = build_conn()
+      |> get("/api", query: @query)
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "tenants" => [
+            %{
+              "slug" => "lotta",
+              "title" => "Lotta"
+            },
+            %{
+              "slug" => "web",
+              "title" => "Web Beispiel"
+            }
+          ]
+        }
+      }
+    end
+  end
+
+
+  describe "updateTenant mutation" do
+    @query """
+    mutation UpdateTenant($tenant: TenantInput!) {
+      updateTenant(tenant: $tenant) {
+        id
+        slug
+        title
+      }
+    }
+    """
+
+    test "upates title", %{web_tenant: web_tenant, admin_jwt: admin_jwt} do
+      tenant = %{
+        title: "Web Beispiel Neu"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{tenant: tenant})
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "updateTenant" => %{
+            "id" => web_tenant.id,
+            "slug" => "web",
+            "title" => "Web Beispiel Neu"
+          }
+        }
+      }
+    end
+  
+    test "returns error if user is not admin", %{user_jwt: user_jwt} do
+      tenant = %{
+        title: "Web Beispiel Neu"
+      }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{tenant: tenant})
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "updateTenant" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen das.",
+            "path" => ["updateTenant"]
+          }
         ]
       }
-    }
-  end
-
-
-  @query """
-  mutation ($tenant: TenantInput!) {
-    updateTenant(tenant: $tenant) {
-      id
-      slug
-      title
-    }
-  }
-  """
-  test "update tenant mutation should upate title", %{web_tenant: web_tenant, admin_jwt: admin_jwt} do
-    tenant = %{
-      title: "Web Beispiel Neu"
-    }
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{admin_jwt}")
-    |> post("/api", query: @query, variables: %{tenant: tenant})
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "updateTenant" => %{
-          "id" => web_tenant.id,
-          "slug" => "web",
-          "title" => "Web Beispiel Neu"
-        }
+    end
+  
+    test "returns error if user is not logged in" do
+      tenant = %{
+        title: "Web Beispiel Neu"
       }
-    }
-  end
-
-  @query """
-  mutation ($tenant: TenantInput!) {
-    updateTenant(tenant: $tenant) {
-      id
-      slug
-      title
-    }
-  }
-  """
-  test "update tenant mutation should return error if user is not admin", %{user_jwt: user_jwt} do
-    tenant = %{
-      title: "Web Beispiel Neu"
-    }
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> put_req_header("authorization", "Bearer #{user_jwt}")
-    |> post("/api", query: @query, variables: %{tenant: tenant})
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "updateTenant" => nil
-      },
-      "errors" => [
-        %{
-          "locations" => [%{"column" => 0, "line" => 2}],
-          "message" => "Nur Administratoren dürfen das.",
-          "path" => ["updateTenant"]
-        }
-      ]
-    }
-  end
-
-  @query """
-  mutation ($tenant: TenantInput!) {
-    updateTenant(tenant: $tenant) {
-      id
-      slug
-      title
-    }
-  }
-  """
-  test "update tenant mutation should return error if user is not logged in" do
-    tenant = %{
-      title: "Web Beispiel Neu"
-    }
-    res = build_conn()
-    |> put_req_header("tenant", "slug:web")
-    |> post("/api", query: @query, variables: %{tenant: tenant})
-    |> json_response(200)
-
-    assert res == %{
-      "data" => %{
-        "updateTenant" => nil
-      },
-      "errors" => [
-        %{
-          "locations" => [%{"column" => 0, "line" => 2}],
-          "message" => "Nur Administratoren dürfen das.",
-          "path" => ["updateTenant"]
-        }
-      ]
-    }
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{tenant: tenant})
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "updateTenant" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen das.",
+            "path" => ["updateTenant"]
+          }
+        ]
+      }
+    end
   end
 
 end

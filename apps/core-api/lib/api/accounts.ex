@@ -6,7 +6,8 @@ defmodule Api.Accounts do
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Accounts.{User,UserGroup,File}
+  alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,File}
+  alias Api.Tenants.Tenant
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -29,7 +30,8 @@ defmodule Api.Accounts do
     Repo.all from u in User,
       join: g in assoc(u, :groups),
       where: g.tenant_id == ^tenant_id,
-      order_by: [u.name, u.email]
+      order_by: [u.name, u.email],
+      distinct: true
   end
 
   @doc """
@@ -108,17 +110,38 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> assign_user_to_group(user, %{field: new_value})
+      iex> set_user_groups(user, tenant, %{field: new_value})
       {:ok, %User{}}
 
-      iex> assign_user_to_group(user, %{field: bad_value})
+      iex> set_user_groups(user, tenant, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def assign_user_to_group(%User{} = user, %UserGroup{} = group) do
+  def set_user_groups(%User{} = user, %Tenant{} = tenant, groups) do
+    groups = user
+    |> Repo.preload(:groups)
+    |> Map.fetch!(:groups)
+    |> Enum.filter(fn group -> group.tenant_id !== tenant.id end)
+    |> Enum.concat(groups)
+    
     user
-    |> User.assign_group_changeset(%{group: group})
+    |> Repo.preload(:groups)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:groups, groups)
     |> Repo.update()
+  end
+
+  @doc """
+  Get groups which have a given enrollment token
+
+  """
+  def get_groups_by_enrollment_token(%Tenant{} = tenant, token) when is_binary(token) do
+    from(g in UserGroup,
+      join: t in GroupEnrollmentToken,
+      on: g.id == t.group_id,
+      where: t.token == ^token and g.tenant_id == ^(tenant.id),
+      distinct: true)
+    |> Repo.all()
   end
 
   @doc """
@@ -166,6 +189,41 @@ defmodule Api.Accounts do
   """
   def change_user(%User{} = user) do
     User.changeset(user, %{})
+  end
+
+  def request_password_reset_token(email, token) do
+    case Repo.get_by(User, email: email) do
+      nil ->
+        {:error, "User not found"}
+      user ->
+        case Redix.command(:redix, ["SET", "user-email-verify-token-#{email}", token, "EX", 6 * 60 * 60]) do
+          {:ok, _} ->
+            {:ok, user}
+          error ->
+            error
+        end
+    end
+  end
+
+  def find_user_by_reset_token(email, token) do
+    with {:ok, reset_token} <- Redix.command(:redix, ["GET", "user-email-verify-token-#{email}"]),
+        false <- is_nil(token),
+        true <- token == reset_token,
+        user <- Repo.get_by(User, email: email),
+        false <- is_nil(user) do
+      Redix.command(:redix, ["DEL", "user-email-verify-token-#{email}"])
+      {:ok, user}
+    else
+      error ->
+        IO.inspect(error)
+        {:error, :invalid_token}
+    end
+  end
+  
+  def update_password(%User{} = user, password) when is_binary(password) and byte_size(password) > 0 do
+    user
+    |> User.update_password_changeset(password)
+    |> Repo.update()
   end
 
   @doc """
@@ -363,7 +421,7 @@ defmodule Api.Accounts do
   ## Examples
 
       iex> get_user_group!(123)
-      %User{}
+      %UserGroup{}
 
       iex> get_user_group!(456)
       ** (Ecto.NoResultsError)
@@ -371,6 +429,66 @@ defmodule Api.Accounts do
   """
   def get_user_group!(id) do
     Repo.get!(UserGroup, id)
+  end
+
+  @doc """
+  Creates a group.
+
+  ## Examples
+
+      iex> create_user_group(tenant, user_group)
+      {:ok, %UserGroup{}}
+
+      iex> create_user_group(tenant, user_group)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_user_group(%Tenant{} = tenant, attrs) do
+    attrs = case attrs do
+      %{ sort_key: _ } ->
+        attrs
+      attrs ->
+        attrs
+        |> Map.put(:sort_key, UserGroup.get_max_sort_key(tenant) + 10)
+    end
+    tenant
+    |> Ecto.build_assoc(:groups)
+    |> UserGroup.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a group.
+
+  ## Examples
+
+      iex> update_user_group(user_group, %{field: new_value})
+      {:ok, %User{}}
+
+      iex> update_user_group(user_group, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_group(%UserGroup{} = group, attrs) do
+    group
+    |> UserGroup.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Group.
+
+  ## Examples
+
+      iex> delete_user_group(user_group)
+      {:ok, %UserGroup{}}
+
+      iex> delete_user_group(user_group)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user_group(%UserGroup{} = group) do
+    Repo.delete(group)
   end
 
   @doc """

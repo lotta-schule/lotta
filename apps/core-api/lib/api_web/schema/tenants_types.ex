@@ -26,11 +26,23 @@ defmodule ApiWeb.Schema.TenantsTypes do
       resolve &Api.TenantResolver.update/2
     end
 
+    field :create_category, type: :category do
+      arg :category, non_null(:category_input)
+  
+      resolve &Api.CategoryResolver.create/2
+    end
+
     field :update_category, type: :category do
       arg :id, non_null(:lotta_id)
       arg :category, non_null(:category_input)
   
       resolve &Api.CategoryResolver.update/2
+    end
+    
+    field :delete_category, type: :category do
+      arg :id, non_null(:lotta_id)
+  
+      resolve &Api.CategoryResolver.delete/2
     end
     
     field :create_widget, type: :widget do
@@ -57,8 +69,10 @@ defmodule ApiWeb.Schema.TenantsTypes do
 
   input_object :category_input do
     field :title, non_null(:string)
+    field :is_sidenav, :boolean
     field :sort_key, :integer
     field :banner_image_file, :file
+    field :category, :category
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
     field :groups, list_of(:user_group)
@@ -81,6 +95,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :background_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :custom_domains, list_of(:custom_domain), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
 
   object :category do
@@ -107,6 +122,14 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+  end
+
+  object :custom_domain do
+    field :id, :lotta_id
+    field :host, :string
+    field :is_main_domain, :boolean
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
   end
 
   enum :widget_type do

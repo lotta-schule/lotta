@@ -2,12 +2,21 @@ defmodule Api.Repo.Seeder do
 
   def seed() do
     web_tenant = Api.Repo.insert!(%Api.Tenants.Tenant{slug: "web", title: "Web Beispiel"})
+    web_tenant
+    |> Ecto.build_assoc(:custom_domains, %{ host: "lotta.web", is_main_domain: true })
+    |> Api.Repo.insert!() # add "lotta.web" as custom domain
     lotta_tenant = Api.Repo.insert!(%Api.Tenants.Tenant{slug: "lotta", title: "Lotta"})
   
     admin_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Administration", is_admin_group: true, sort_key: 1000})
     verwaltung_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Verwaltung", sort_key: 800})
     lehrer_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Lehrer", sort_key: 600})
     schueler_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Schüler", sort_key: 400})
+    Ecto.build_assoc(lehrer_group, :enrollment_tokens)
+    |> Map.put(:token, "LEb0815Hp!1969")
+    |> Api.Repo.insert!
+    Ecto.build_assoc(schueler_group, :enrollment_tokens)
+    |> Map.put(:token, "Seb034hP2?019")
+    |> Api.Repo.insert!
   
     {:ok, alexis} = Api.Accounts.register_user(%{
         name: "Alexis Rinaldoni",
@@ -34,9 +43,9 @@ defmodule Api.Repo.Seeder do
     Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@einsa.net", password: "test123", tenant_id: web_tenant.id})
     Api.Accounts.register_user(%{name: "Marie Curie", nickname: "Polonium", email: "mcurie@lotta.schule", password: "test456", tenant_id: lotta_tenant.id})
   
-    Api.Accounts.assign_user_to_group(alexis, admin_group)
-    Api.Accounts.assign_user_to_group(billy, schueler_group)
-    Api.Accounts.assign_user_to_group(eike, lehrer_group)
+    Api.Accounts.set_user_groups(alexis, web_tenant, [admin_group])
+    Api.Accounts.set_user_groups(billy, web_tenant, [schueler_group])
+    Api.Accounts.set_user_groups(eike, web_tenant, [lehrer_group])
   
     homepage = Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Start", is_homepage: true})
     profil = Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Profil"})

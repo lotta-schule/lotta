@@ -6,8 +6,8 @@ defmodule Api.Tenants do
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Tenants.{Category,Tenant,Widget}
-  alias Api.Accounts.{User}
+  alias Api.Tenants.{Category,CustomDomain,Tenant,Widget}
+  alias Api.Accounts.{User,UserGroup}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -17,21 +17,21 @@ defmodule Api.Tenants do
   end
 
   def resolve_widgets(_args, %{context: context, source: category}) do
-    category = category
-    |> Repo.preload(:widgets)
-    {:ok, category.widgets
-    |> Enum.map(&Repo.preload(&1, :groups))
-    |> Enum.filter(fn widget ->
-      case widget.groups do
-        [] -> true
-        groups ->
-          if Map.has_key?(context, :current_user) do
-            User.is_admin?(context.current_user, context[:tenant]) || Enum.any?(groups, &(&1.id in User.group_ids(context.current_user)))
-          else
-            false
-          end
-      end
-    end)}
+    user_group_ids = case context do
+      %{ current_user: user } -> User.group_ids(user)
+      _ -> []
+    end
+    widgets = from(w in Widget,
+      left_join: wug in "widgets_user_groups",
+      on: wug.widget_id == w.id,
+      join: cw in "categories_widgets",
+      on: w.id == cw.widget_id,
+      where: (wug.group_id in ^user_group_ids or is_nil(wug.group_id)) and
+             cw.category_id == ^(category.id),
+      distinct: w.id
+    )
+    |> Repo.all()
+    {:ok, widgets}
   end
 
   @doc """
@@ -67,18 +67,45 @@ defmodule Api.Tenants do
   @doc """
   Gets a single tenant by slug.
 
-  Raises `Ecto.NoResultsError` if the Tenant does not exist.
+  Returns nil if no tenant is found
 
   ## Examples
 
-      iex> get_tenant_by_slug!(123)
+      iex> get_tenant_by_slug("test123")
       %Tenant{}
 
-      iex> get_tenant_by_slug!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_tenant_by_slug("doesnotexist")
+      nil
 
   """
   def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, [slug: slug])
+
+  @doc """
+  Gets a single tenant by its custom domain's host.
+
+  Returns nil if no tenant is found
+
+  ## Examples
+
+      iex> get_tenant_by_custom_domain_host("meinlotta.de")
+      %Tenant{}
+
+      iex> get_tenant_by_custom_domain_host("doesnotexist.com")
+      nil
+
+  """
+  def get_tenant_by_custom_domain_host(host) when is_binary(host) do
+    with %CustomDomain{tenant_id: tenant_id} <- Repo.get_by(CustomDomain, host: host),
+        tenant <- Repo.get(Tenant, tenant_id),
+        false <- is_nil(tenant) do
+      tenant
+    else
+      error ->
+        IO.inspect(error)
+        nil
+    end
+  end
+  def get_tenant_by_custom_domain_host(nil), do: nil
 
   @doc """
   Gets a single tenant by slug.
@@ -213,8 +240,8 @@ defmodule Api.Tenants do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_category(attrs \\ %{}) do
-    %Category{}
+  def create_category(%Tenant{} = tenant, attrs \\ %{}) do
+    %Category{ tenant_id: tenant.id, sort_key: Category.get_max_sort_key(tenant) + 10 }
     |> Category.changeset(attrs)
     |> Repo.insert()
   end

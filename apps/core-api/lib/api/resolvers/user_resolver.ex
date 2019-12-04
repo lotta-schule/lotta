@@ -69,23 +69,21 @@ defmodule Api.UserResolver do
     |> Map.put(:tenant_id, tenant.id)
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-        {:ok, user} = case args[:group_key] do
-          # TODO: Remove as fast as possible. Is just very shitty workaround
-          "LEb0815Hp!1969" ->
-            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Lehrer"))
-          "ELa1789Re!1848" ->
-            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Eltern"))
-          "Seb034hP2?019" ->
-            Accounts.assign_user_to_group(user, Api.Repo.get_by(Accounts.UserGroup, name: "Schüler"))
+        user = with false <- is_nil(args[:group_key]),
+          groups <- Accounts.get_groups_by_enrollment_token(tenant, args[:group_key]),
+          {:ok, user} <- Accounts.set_user_groups(user, tenant, groups) do
+          user
+        else
+          {:error, error} ->
+            IO.inspect("Error")
+            IO.inspect(error)
+            user
           _ ->
-            {:ok, user}
+            user
         end
-        {:ok, jwt, _} = Api.Guardian.encode_and_sign(user, %{
-          email: user.email,
-          nickname: user.nickname,
-          name: user.name,
-          class: user.class,
-        })
+
+        {:ok, jwt} = User.get_signed_jwt(user)
+        Api.EmailPublisherWorker.send_registration_email(tenant, user)
         {:ok, %{token: jwt}}
       {:error, changeset} ->
         {
@@ -98,40 +96,75 @@ defmodule Api.UserResolver do
   
   def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-        {:ok, jwt, _} <- Api.Guardian.encode_and_sign(user, %{
-          email: user.email,
-          nickname: user.nickname,
-          name: user.name,
-          class: user.class,
-          # groups: user.groups
-       }) do
+        {:ok, jwt} <- User.get_signed_jwt(user) do
       {:ok, %{token: jwt}}
     end
   end
 
-  def assign_user(%{id: id, group_id: group_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    if User.is_admin?(current_user, tenant) do
-      group = Accounts.get_user_group!(group_id)
-      if group != nil and group.tenant_id == tenant.id do
-        case Accounts.get_user!(id) do
-          nil -> {:error, "Nutzer mit der id #{id} nicht gefunden."}
-          user -> Accounts.assign_user_to_group(user, group)
-        end
-      else
-        {:error, "Gruppe mit der id #{group_id} nicht gefunden."}
-      end
+  def request_password_reset(%{email: email}, %{context: %{tenant: tenant}}) do
+    token =
+      :crypto.strong_rand_bytes(32)
+      |> Base.url_encode64(padding: false)
+      |> URI.encode()
+    with {:ok, user} <- Accounts.request_password_reset_token(email, token) do
+      Api.EmailPublisherWorker.send_request_password_reset_email(tenant, user, email, token)
+    end
+    {:ok, true}
+  end
+
+  def reset_password(%{email: email, token: token, password: password}, %{context: %{tenant: tenant}}) do
+    with {:ok, user} <-  Accounts.find_user_by_reset_token(email, token),
+        {:ok, user} <- Accounts.update_password(user, password),
+        {:ok, jwt} <- User.get_signed_jwt(user) do
+          Api.EmailPublisherWorker.send_password_changed_email(tenant, user)
+          {:ok, %{ token: jwt }}
     else
-      {:error, "Nur Administrator dürfen Benutzer Gruppen zuweisen"}
+      error ->
+        IO.inspect(error)
+        {:error, "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut."}
+    end
+  end
+
+  def set_user_groups(%{id: id, group_ids: group_ids}, %{context: %{current_user: current_user, tenant: tenant}}) do
+    case User.is_admin?(current_user, tenant) do
+      true ->
+        groups =
+          group_ids
+          |> Enum.map(fn group_id ->
+            try do
+              Accounts.get_user_group!(group_id)
+            rescue
+              Ecto.NoResultsError -> nil
+            end
+          end)
+          |> Enum.filter(fn group -> !is_nil(group) && group.tenant_id == tenant.id end)
+        try do
+          Accounts.get_user!(id)
+          |> Accounts.set_user_groups(tenant, groups)
+        rescue
+          Ecto.NoResultsError ->
+            {:error, "Nutzer mit der id #{id} nicht gefunden."}
+        end
+      false ->
+        {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}
     end
   end
 
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
-    current_user
-    |> Accounts.update_user(user_params)
+    case Accounts.update_user(current_user, user_params) do
+      {:error, changeset} ->
+        {
+          :error,
+          message: "Speichern fehlgeschlagen.",
+          details: error_details(changeset)
+        }
+      response ->
+        response
+    end
   end
 
   defp error_details(%Ecto.Changeset{} = changeset) do
     changeset
-    |> Ecto.Changeset.traverse_errors(fn {msg, _} -> msg end)
+    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
   end
 end

@@ -33,8 +33,9 @@ defmodule Api.Tenants.Category do
   def changeset(category, attrs) do
     category
     |> Api.Repo.preload([:banner_image_file, :groups, :widgets])
-    |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :sort_key])
+    |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :is_sidenav, :sort_key])
     |> validate_required([:title])
+    |> put_assoc_category(attrs)
     |> put_assoc_banner_image_file(attrs)
     |> put_assoc_groups(attrs)
     |> put_assoc_widgets(attrs)
@@ -45,6 +46,12 @@ defmodule Api.Tenants.Category do
     |> put_assoc(:banner_image_file, Api.Repo.get(Api.Accounts.File, banner_image_file_id))
   end
   defp put_assoc_banner_image_file(changeset, _args), do: changeset
+
+  defp put_assoc_category(changeset, %{category: %{id: category_id}}) do
+    changeset
+    |> put_assoc(:category, Api.Repo.get(Api.Tenants.Category, category_id))
+  end
+  defp put_assoc_category(changeset, _args), do: changeset
   
   defp put_assoc_groups(changeset, %{groups: groups}) do
     changeset
@@ -60,5 +67,10 @@ defmodule Api.Tenants.Category do
     |> put_assoc(:widgets, widgets)
   end
   defp put_assoc_widgets(changeset, _args), do: changeset
+
+  def get_max_sort_key(%Tenant{id: tenant_id}) do
+    from(c in Category, where: c.tenant_id == ^tenant_id, select: max(c.sort_key))
+    |> Repo.one
+  end
 
 end

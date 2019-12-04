@@ -5,10 +5,10 @@ stages:
 
 variables:
   # set docker host to connect to docker in kubernetes
-  # DOCKER_HOST: tcp://localhost:2375/
-  # DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
-  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_TLS_CERTDIR: ""
 
 cache:
   key: "lotta-api-deps"
@@ -23,30 +23,35 @@ test:
     POSTGRES_PASSWORD: lotta
     POSTGRES_USER: lotta
     POSTGRES_DB: api_test
-  # gitlab k8s-runner has a problem with service hostname exposition
-  # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
+    REDIS_PASSWORD: lotta
   services:
-    - postgres:latest
-    - rabbitmq:latest
+    - name: postgres:latest
+    - name: rabbitmq:latest
+    - name: bitnami/redis:latest
+      alias: redis
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
     - mix deps.get --only test
   script:
+    # gitlab k8s-runner has a problem with service hostname exposition
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
     - make tests-ci
   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
 
 build docker image:
   stage: build
-  image: docker:19.03.0
-  services:
-    - docker:19.03.0-dind
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - docker build --cache-from lotta/api:latest -t lotta/api:$CI_COMMIT_SHA .
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
-    - if [ $CI_COMMIT_REF_NAME == "develop" ]; then docker tag lotta/api:$CI_COMMIT_SHA lotta/api:staging; fi;
-    - if [ $CI_COMMIT_REF_NAME == "master" ]; then docker tag lotta/api:$CI_COMMIT_SHA lotta/api:latest; fi;
-    - docker push lotta/api
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+    - if [ $CI_COMMIT_REF_NAME == "develop" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:staging;
+        elif [ $CI_COMMIT_REF_NAME == "master" ];
+        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:stable --destination lotta/api:latest;
+        else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA;
+        fi
 
 deploy staging:
   stage: deploy
@@ -62,6 +67,7 @@ deploy staging:
       --namespace lotta-staging
       --set image.pullPolicy=Always
       --set appEnvironment=staging
+      --set baseUrl=.staging.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
       --set jwtSecret=$JWT_SECRET
@@ -85,10 +91,13 @@ deploy staging:
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
+      --set redis.password=$REDIS_PASSWORD
+      --set redis.cluster.slaveCount=1
+      --set redis.metrics.enabled=true
       --set resources.limits.cpu=300m
-      --set resources.limits.memory=1024Mi
-      --set resources.requests.cpu=250m
-      --set resources.requests.memory=512Mi
+      --set resources.limits.memory=768Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=384Mi
   only:
     refs:
       - develop
@@ -106,6 +115,7 @@ deploy production:
     - helm upgrade --install lotta-api lotta/lotta-api
       --namespace lotta
       --set appEnvironment=production
+      --set baseUrl=.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=2
       --set jwtSecret=$JWT_SECRET
@@ -133,10 +143,13 @@ deploy production:
       --set-string postgresql.backupJob.s3Compat.hostBucket="\%(bucket)s\.fra1\.digitaloceanspaces\.com"
       --set postgresql.backupJob.s3Compat.bucketName=lotta-backup-data
       --set postgresql.backupJob.s3Compat.path="/postgres"
+      --set redis.password=$REDIS_PASSWORD
+      --set redis.cluster.slaveCount=2
+      --set redis.metrics.enabled=true
       --set resources.limits.cpu=500m
-      --set resources.limits.memory=2048Mi
-      --set resources.requests.cpu=250m
-      --set resources.requests.memory=1024Mi
+      --set resources.limits.memory=1536Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=512Mi
   only:
     refs:
       - master
