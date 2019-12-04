@@ -462,6 +462,22 @@ defmodule Api.Accounts do
   end
 
   @doc """
+  Deletes a Group.
+
+  ## Examples
+
+      iex> delete_user_group(user_group)
+      {:ok, %UserGroup{}}
+
+      iex> delete_user_group(user_group)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user_group(%UserGroup{} = group) do
+    Repo.delete(group)
+  end
+
+  @doc """
   Sets the 'last seen' property on a user
 
   ## Examples

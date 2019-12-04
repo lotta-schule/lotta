@@ -58,13 +58,34 @@ defmodule Api.UserGroupResolver do
   def update(%{id: id, group: group_input}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
-        group = Accounts.get_user_group!(id)
-        Accounts.update_user_group(group, group_input)
+        group = Accounts.get_user_group!(id) |> Api.Repo.preload(:tenant)
+        if group.tenant.id == tenant.id do
+          Accounts.update_user_group(group, group_input)
+        else
+          {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
+        end
       rescue
         Ecto.NoResultsError -> {:error, "Gruppe existiert nicht."}
       end
     else
       {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
+    end
+  end
+
+  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      try do
+        group = Accounts.get_user_group!(id) |> Api.Repo.preload(:tenant)
+        if group.tenant.id == tenant.id do
+          Accounts.delete_user_group(group)
+        else
+          {:error, "Nur Administratoren dürfen Gruppen löschen."}
+        end
+      rescue
+        Ecto.NoResultsError -> {:error, "Gruppe existiert nicht."}
+      end
+    else
+      {:error, "Nur Administratoren dürfen Gruppen löschen."}
     end
   end
 

@@ -16,12 +16,12 @@ defmodule ApiWeb.Schema.AccountsTypes do
     end
 
     field :user, type: :user do
-      arg :id, :lotta_id
+      arg :id, non_null(:lotta_id)
       resolve &Api.UserResolver.get/2
     end
     
     field :group, type: :user_group do
-      arg :id, :lotta_id
+      arg :id, non_null(:lotta_id)
       resolve &Api.UserGroupResolver.get/2
     end
 
@@ -51,17 +51,23 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve &Api.UserResolver.update_profile/2
     end
 
-    field :create_group, type: :user_group do
+    field :create_user_group, type: :user_group do
       arg :group, non_null(:user_group_input)
 
       resolve &Api.UserGroupResolver.create/2
     end
 
-    field :update_group, type: :user_group do
+    field :update_user_group, type: :user_group do
       arg :id, non_null(:lotta_id)
       arg :group, non_null(:user_group_input)
 
       resolve &Api.UserGroupResolver.update/2
+    end
+
+    field :delete_user_group, type: :user_group do
+      arg :id, non_null(:lotta_id)
+
+      resolve &Api.UserGroupResolver.delete/2
     end
     
     field :request_password_reset, type: :boolean do

@@ -107,10 +107,10 @@ describe "group query" do
     end
   end
   
-  describe "updateGroup mutation" do
+  describe "UpdateUserGroup mutation" do
     @query """
-    mutation updateGroup($id: ID!, $group: UserGroupInput!) {
-      updateGroup(id: $id, group: $group) {
+    mutation UpdateUserGroup($id: ID!, $group: UserGroupInput!) {
+      UpdateUserGroup(id: $id, group: $group) {
         name
         enrollmentTokens {
           token
@@ -128,7 +128,7 @@ describe "group query" do
 
       assert res == %{
         "data" => %{
-          "updateGroup" => %{"name" => "Die Lehrer", "enrollmentTokens" => [%{"token" => "L1"}, %{"token" => "L2"}]}
+          "UpdateUserGroup" => %{"name" => "Die Lehrer", "enrollmentTokens" => [%{"token" => "L1"}, %{"token" => "L2"}]}
         }
       }
     end
@@ -142,13 +142,13 @@ describe "group query" do
 
       assert res == %{
         "data" => %{
-          "updateGroup" => nil,
+          "UpdateUserGroup" => nil,
         },
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Gruppe existiert nicht.",
-            "path" => ["updateGroup"]
+            "path" => ["UpdateUserGroup"]
           }
         ]
       }
@@ -163,13 +163,13 @@ describe "group query" do
 
       assert res == %{
         "data" => %{
-          "updateGroup" => nil,
+          "UpdateUserGroup" => nil,
         },
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
-            "path" => ["updateGroup"]
+            "path" => ["UpdateUserGroup"]
           }
         ]
       }
@@ -183,23 +183,112 @@ describe "group query" do
 
       assert res == %{
         "data" => %{
-          "updateGroup" => nil,
+          "UpdateUserGroup" => nil,
         },
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
-            "path" => ["updateGroup"]
+            "path" => ["UpdateUserGroup"]
           }
         ]
       }
     end
   end
   
-  describe "createGroup mutation" do
+  describe "deleteUserGroup mutation" do
     @query """
-    mutation createGroup($group: UserGroupInput!) {
-      createGroup(group: $group) {
+    mutation deleteUserGroup($id: ID!) {
+      deleteUserGroup(id: $id) {
+        name
+      }
+    }
+    """
+
+    test "should delete group", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: lehrer_group.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteUserGroup" => %{"name" => "Lehrer"}
+        }
+      }
+      assert_raise Ecto.NoResultsError, fn ->
+        Api.Accounts.get_user_group!(lehrer_group.id)
+      end
+    end
+
+    test "should return an error if user is admin, but requested id does not exist", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: 0})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteUserGroup" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Gruppe existiert nicht.",
+            "path" => ["deleteUserGroup"]
+          }
+        ]
+      }
+    end
+
+    test "should return an error if user is not an admin", %{user_jwt: user_jwt, lehrer_group: lehrer_group} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{id: lehrer_group.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteUserGroup" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Gruppen löschen.",
+            "path" => ["deleteUserGroup"]
+          }
+        ]
+      }
+    end
+
+    test "should return an error if user is not logged in" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{id: 0})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteUserGroup" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Gruppen löschen.",
+            "path" => ["deleteUserGroup"]
+          }
+        ]
+      }
+    end
+  end
+  
+  describe "createUserGroup mutation" do
+    @query """
+    mutation createUserGroup($group: UserGroupInput!) {
+      createUserGroup(group: $group) {
         name
         enrollmentTokens {
           token
@@ -217,7 +306,7 @@ describe "group query" do
 
       assert res == %{
         "data" => %{
-          "createGroup" => %{"name" => "Die Lehrer", "enrollmentTokens" => [%{"token" => "L1"}, %{"token" => "L2"}]}
+          "createUserGroup" => %{"name" => "Die Lehrer", "enrollmentTokens" => [%{"token" => "L1"}, %{"token" => "L2"}]}
         }
       }
     end
@@ -231,13 +320,13 @@ describe "group query" do
 
       assert res == %{
         "data" => %{
-          "createGroup" => nil,
+          "createUserGroup" => nil,
         },
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Nur Administratoren dürfen Gruppen erstellen.",
-            "path" => ["createGroup"]
+            "path" => ["createUserGroup"]
           }
         ]
       }
@@ -251,13 +340,13 @@ describe "group query" do
 
       assert res == %{
         "data" => %{
-          "createGroup" => nil,
+          "createUserGroup" => nil,
         },
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Nur Administratoren dürfen Gruppen erstellen.",
-            "path" => ["createGroup"]
+            "path" => ["createUserGroup"]
           }
         ]
       }
