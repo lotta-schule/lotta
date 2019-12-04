@@ -52,7 +52,7 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
     return (
         <Paper className={styles.container}>
             <Typography variant="h4" className={styles.headlines}>
-                Kategorienverwaltung
+                Kategorien
                 <Button
                     size="small"
                     variant="contained"

@@ -77,7 +77,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
     return (
         <Paper className={styles.root}>
             <Typography variant={'h4'} className={styles.headline}>
-                Widgetverwaltung
+                Marginalen
 
                 <PopupState variant={'popover'} popupId={'addWidgetButtonPopup'}>{popupState => (
                     <>

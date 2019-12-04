@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
 export const UserManagement = memo(() => {
     const styles = useStyles();
     const { history, location } = useRouter();
+
     return (
         <Paper>
             <Tabs value={location.pathname} indicatorColor={'primary'} textColor={'primary'} onChange={(_, pathname) => history.push(pathname)}>

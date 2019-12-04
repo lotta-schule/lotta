@@ -7,11 +7,9 @@ import { ID } from 'model';
 import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 
 const useStyles = makeStyles(theme => ({
-    headline: {
-        marginBottom: theme.spacing(2),
-    },
     createButton: {
-        float: 'right'
+        float: 'right',
+        marginBottom: theme.spacing(3)
     }
 }));
 
@@ -25,9 +23,6 @@ export const GroupsList = memo(() => {
         <>
             <Grid container>
                 <Grid item sm={8}>
-                    <Typography variant="h4" className={styles.headline}>
-                        Gruppenverwaltung
-                    </Typography>
                 </Grid>
                 <Grid item sm={4}>
                     <Button

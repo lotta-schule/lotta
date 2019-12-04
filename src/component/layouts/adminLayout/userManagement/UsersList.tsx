@@ -70,9 +70,6 @@ export const UsersList = memo(() => {
     if (data && data.users) {
         return (
             <>
-                <Typography variant="h4" className={styles.headlines}>
-                    Nutzerverwaltung
-                    </Typography>
                 <SearchUserField className={classNames(styles.searchUserField, styles.headlines)} onSelectUser={setSelectedUser} />
                 {groups.map(group => (
                     <ExpansionPanel

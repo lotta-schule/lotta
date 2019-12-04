@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import useRouter from 'use-react-router';
 import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Redirect, Route } from 'react-router-dom';
 import { AdminLayoutNavigation } from './AdminLayoutNavigation';
 import { UserManagement } from './userManagement/UserManagement';
 import { CategoriesManagement } from './categoryManagment/CategoryManagement';
@@ -24,7 +24,10 @@ export const AdminLayout = memo(() => {
         <>
             <BaseLayoutMainContent>
                 <Switch>
-                    <Route exact path='/admin' component={TenantManagement} />
+                    <Route exact path='/admin'>
+                        <Redirect to={'/admin/tenant/general'} />
+                    </Route>
+                    <Route path='/admin/tenant' component={TenantManagement} />
                     <Route path='/admin/users' component={UserManagement} />
                     <Route path='/admin/categories' component={CategoriesManagement} />
                     <Route path='/admin/widgets' component={WidgetManagement} />
