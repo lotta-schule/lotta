@@ -7,7 +7,7 @@ defmodule Api.Tenants do
   alias Api.Repo
 
   alias Api.Tenants.{Category,CustomDomain,Tenant,Widget}
-  alias Api.Accounts.{User}
+  alias Api.Accounts.{User,UserGroup}
 
   def data() do
     Dataloader.Ecto.new(Api.Repo, query: &query/2)
@@ -17,21 +17,21 @@ defmodule Api.Tenants do
   end
 
   def resolve_widgets(_args, %{context: context, source: category}) do
-    category = category
-    |> Repo.preload(:widgets)
-    {:ok, category.widgets
-    |> Enum.map(&Repo.preload(&1, :groups)) # TODO: This is a bottleneck, we should use a join here
-    |> Enum.filter(fn widget ->
-      case widget.groups do
-        [] -> true
-        groups ->
-          if Map.has_key?(context, :current_user) do
-            User.is_admin?(context.current_user, context[:tenant]) || Enum.any?(groups, &(&1.id in User.group_ids(context.current_user)))
-          else
-            false
-          end
-      end
-    end)}
+    user_group_ids = case context do
+      %{ current_user: user } -> User.group_ids(user)
+      _ -> []
+    end
+    widgets = from(w in Widget,
+      left_join: wug in "widgets_user_groups",
+      on: wug.widget_id == w.id,
+      join: cw in "categories_widgets",
+      on: w.id == cw.widget_id,
+      where: (wug.group_id in ^user_group_ids or is_nil(wug.group_id)) and
+             cw.category_id == ^(category.id),
+      distinct: w.id
+    )
+    |> Repo.all()
+    {:ok, widgets}
   end
 
   @doc """
