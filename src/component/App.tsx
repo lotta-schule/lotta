@@ -25,7 +25,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 export const App = memo(() => {
     const { data, loading: isLoadingTenant, error, called: calledTenant } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
     const [, { called: calledCurrentUser, loading: isLoadingCurrentUser }] = useCurrentUser();
-    useCategories(); // start loading categories
+    useCategories();
 
     if (!calledTenant || !calledCurrentUser || isLoadingTenant || isLoadingCurrentUser) {
         return (

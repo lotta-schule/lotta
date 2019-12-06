@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, useState, useCallback, FormEvent } from 'react';
 import {
-    DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Typography, Grid, CircularProgress, Theme, makeStyles,
+    DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, CircularProgress, Theme, makeStyles
 } from '@material-ui/core';
 import { find } from 'lodash';
 import { ID, UserGroupModel, UserModel } from 'model';
@@ -15,6 +15,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
+        marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
     }
 }));
@@ -51,11 +52,8 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
     return (
         <ResponsiveFullScreenDialog open={true} fullWidth>
             <form onSubmit={onSubmitForm}>
-                <DialogTitle>{user.name} eine Gruppe zuweisen</DialogTitle>
+                <DialogTitle>{user.name}s Gruppen</DialogTitle>
                 <DialogContent>
-                    <DialogContentText variant="body2">
-                        Weise dem Nutzer eine Gruppe mit den dazugehörigen Rechten zu.
-                    </DialogContentText>
                     <ErrorMessage error={error || setUserGroupsError} />
                     <Grid container justify={'space-evenly'}>
                         <Grid item xs={3}>
@@ -90,6 +88,7 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                             className={styles.margin}
                             selectedGroups={selectedGroups}
                             onSelectGroups={setSelectedGroups}
+                            label={null}
                         />
                     )}
                 </DialogContent>
