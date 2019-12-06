@@ -3,7 +3,6 @@ import { CategoryModel, ArticleModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
-import { ErrorMessage } from 'component/general/ErrorMessage';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { parseISO } from 'date-fns';
