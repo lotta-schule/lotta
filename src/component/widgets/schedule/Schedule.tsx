@@ -149,7 +149,7 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                         )}
                         {data.schedule.footer.supervisions && (
                             <ul>
-                                {data.schedule.footer.supervisions.map(supervision => (
+                                {data.schedule.footer.supervisions.filter(Boolean).map(supervision => (
                                     <li>
                                         <Typography variant={'subtitle2'}>{supervision.time} {supervision.location}</Typography>
                                     </li>
