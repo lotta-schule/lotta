@@ -1,9 +1,10 @@
 import React, { memo } from 'react';
 import { ArticleModel } from 'model';
 import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
-import { ArticlesManagement } from 'component/profile/ArticlesManagement';
 import { useQuery } from 'react-apollo';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ArticlesManagement } from 'component/profile/ArticlesManagement';
 
 export const ProfileArticles = memo(() => {
 
@@ -13,11 +14,7 @@ export const ProfileArticles = memo(() => {
         <Card>
             <CardContent>
                 <Typography variant={'h4'}>Meine Beiträge</Typography>
-
-                {error && (
-                    <div style={{ color: 'red' }}>{error.message}</div>
-                )}
-
+                <ErrorMessage error={error} />
                 {isLoading && (
                     <CircularProgress />
                 )}

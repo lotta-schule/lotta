@@ -2,13 +2,14 @@ import React, { memo, useState } from 'react';
 import { get, merge } from 'lodash';
 import { Button, Card, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
 import { theme } from 'theme';
-import { ColorSettingRow } from './ColorSettingRow';
-import { useTenant } from 'util/client/useTenant';
 import { useMutation } from 'react-apollo';
+import { useTenant } from 'util/client/useTenant';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
-import { SelectTemplateButton } from './SelectTemplateButton';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { ColorSettingRow } from './ColorSettingRow';
+import { SelectTemplateButton } from './SelectTemplateButton';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles(theme => ({
@@ -69,12 +70,10 @@ export const PresentationSettings = memo(() => {
             </section>
 
             <section className={styles.section}>
-                {error && (
-                    <div style={{ color: 'red' }}>{error.message}</div>
-                )}
                 <Typography variant={'h6'}>
                     Farben
                 </Typography>
+                <ErrorMessage error={error} />
                 <Grid container className={styles.gridContainer}>
                     <Grid item sm={6}>
                         <ColorSettingRow

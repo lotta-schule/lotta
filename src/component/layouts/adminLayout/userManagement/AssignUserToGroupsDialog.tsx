@@ -2,16 +2,16 @@ import React, { FunctionComponent, memo, useState, useCallback, FormEvent } from
 import {
     DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Typography, Grid, CircularProgress, Theme, makeStyles,
 } from '@material-ui/core';
-import { UserModel } from 'model';
+import { find } from 'lodash';
+import { ID, UserGroupModel, UserModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { useUserGroups } from 'util/client/useUserGroups';
 import { GetUserQuery } from 'api/query/GetUserQuery';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { find } from 'lodash';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { SetUserGroupsMutation } from 'api/mutation/SetUserGroupsMutation';
-import { ID, UserGroupModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
@@ -56,9 +56,7 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                     <DialogContentText variant="body2">
                         Weise dem Nutzer eine Gruppe mit den dazugehörigen Rechten zu.
                     </DialogContentText>
-                    {(error || setUserGroupsError) && (
-                        <p style={{ color: 'red' }}>{error ? error.message : setUserGroupsError!.message}</p>
-                    )}
+                    <ErrorMessage error={error || setUserGroupsError} />
                     <Grid container justify={'space-evenly'}>
                         <Grid item xs={3}>
                             <UserAvatar user={user} />

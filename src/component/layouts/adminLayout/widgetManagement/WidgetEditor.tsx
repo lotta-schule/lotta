@@ -8,6 +8,7 @@ import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfi
 import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import Img from 'react-cloudimage-responsive';
 
@@ -74,10 +75,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
             <Typography color={'textSecondary'} variant={'subtitle2'}>
                 {widget.type}
             </Typography>
-            {error && (
-                <div style={{ color: 'red' }}>{error.message}</div>
-            )}
-
+            <ErrorMessage error={error} />
             <TextField
                 className={styles.input}
                 fullWidth

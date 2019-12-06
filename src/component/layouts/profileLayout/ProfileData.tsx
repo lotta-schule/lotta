@@ -1,13 +1,14 @@
 import React, { memo, useState } from 'react';
 import { Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField, Typography, Fab } from '@material-ui/core';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useMutation } from 'react-apollo';
+import { Edit } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { User } from 'util/model';
-import { Edit } from '@material-ui/icons';
 import { FileModelType, UserModel } from 'model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const ProfileData = memo(() => {
 
@@ -28,9 +29,7 @@ export const ProfileData = memo(() => {
         <Card>
             <CardContent>
                 <Typography variant={'h4'}>Meine Daten</Typography>
-                {error && (
-                    <div style={{ color: 'red' }}>{error.message}</div>
-                )}
+                <ErrorMessage error={error} />
                 <Grid container>
                     <Grid item md={4} style={{ marginTop: '1em' }}>
                         <Avatar src={avatarImageFile ? avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(currentUser!)} alt={User.getNickname(currentUser!)} />

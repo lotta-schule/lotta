@@ -19,6 +19,7 @@ import { useLocalStorage } from 'util/useLocalStorage';
 import { useSelector } from 'react-redux';
 import { fade } from '@material-ui/core/styles';
 import { useMutation, useQuery } from '@apollo/react-hooks';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
   overlayDropzoneActive: {
@@ -40,8 +41,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'flex-end'
   }
-})
-);
+}));
 
 export interface FileExplorerProps {
   style?: React.CSSProperties;
@@ -108,7 +108,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
 
   if (error) {
     return (
-      <p style={{ color: 'red' }}>{error.message}</p>
+      <ErrorMessage error={error} />
     );
   }
 

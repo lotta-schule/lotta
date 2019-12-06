@@ -6,6 +6,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { ResetPasswordMutation } from 'api/mutation/ResetPasswordMutation';
 import { useLocationSearchQuery } from 'util/useLocationSearchQuery';
 import { CollisionLink } from 'component/general/CollisionLink';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 const useStyles = makeStyles(theme => ({
     helpText: {
@@ -106,13 +107,9 @@ export const ResetPasswordLayout = memo(() => {
                                     }
                                 });
                             }}>
-                                {(error || mutationError) && (
-                                    <div>
-                                        <p style={{ color: 'red' }}>{mutationError ? mutationError.message : error}</p>
-                                        {mutationError && linkToRequestResetPasswordPage}
-                                        <p>&nbsp;</p>
-                                    </div>
-                                )}
+                                <ErrorMessage error={error || mutationError}>
+                                    {mutationError && linkToRequestResetPasswordPage}
+                                </ErrorMessage>
                                 <TextField
                                     autoFocus
                                     margin="dense"

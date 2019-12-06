@@ -7,9 +7,10 @@ import { UserModel } from '../../model';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { useMutation } from '@apollo/react-hooks';
 import { useOnLogin } from 'util/user/useOnLogin';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import { fade } from '@material-ui/core/styles';
 import { useGetFieldError } from 'util/useGetFieldError';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
@@ -86,9 +87,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                     <DialogContentText>
                         Gib hier deine Daten <b>korrekt</b> an, um dich als Nutzer zu registrieren.
                     </DialogContentText>
-                    {(formError || error) && (
-                        <p style={{ color: 'red' }}>{formError || error!.message}</p>
-                    )}
+                    <ErrorMessage error={formError || error} />
                     <TextField
                         autoFocus
                         margin="dense"

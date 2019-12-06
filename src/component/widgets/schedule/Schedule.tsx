@@ -3,12 +3,13 @@ import { uniq } from 'lodash';
 import {
     makeStyles, CircularProgress, Table, TableBody, TableRow, TableCell, Typography, Link
 } from '@material-ui/core';
-import { GetScheduleQuery } from 'api/query/GetScheduleQuery';
-import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
 import { useQuery } from '@apollo/react-hooks';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SelectCoursesDialog } from './SelectCoursesDialog';
 import { darken } from '@material-ui/core/styles';
+import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
+import { GetScheduleQuery } from 'api/query/GetScheduleQuery';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { SelectCoursesDialog } from './SelectCoursesDialog';
 import clsx from 'clsx';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
@@ -70,15 +71,14 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
 
     if (!currentUser) {
         return (
-            <span style={{ color: 'red' }}>Du musst angemeldet sein um den Vertretungsplan zu sehen.</span>
+            <ErrorMessage error={new Error('Du musst angemeldet sein um den Vertretungsplan zu sehen.')} />
         );
     } else if (!currentUser.class) {
+        const errorMessage = /Teacher/.test(widget.configuration.type) ?
+            'Sie haben kein Kürzel im Profil eingestellt.' :
+            'Du hast keine Klasse im Profil eingestellt.';
         return (
-            <span style={{ color: 'red' }}>
-                {/Teacher/.test(widget.configuration.type) ?
-                    'Sie haben kein Kürzel im Profil eingestellt.' :
-                    'Du hast keine Klasse im Profil eingestellt.'}
-            </span>
+            <ErrorMessage error={new Error(errorMessage)} />
         );
     }
 
@@ -88,7 +88,7 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
         );
     } else if (error) {
         return (
-            <span style={{ color: 'red' }}>{error.message}</span>
+            <ErrorMessage error={error} />
         );
     } else if (data) {
         return (
