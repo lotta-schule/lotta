@@ -7,7 +7,7 @@ import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        minHeight: '80vh'
+        minHeight: '85vh'
     },
     content: {
         paddingTop: theme.spacing(3),

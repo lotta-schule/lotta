@@ -5,14 +5,14 @@ import { format, isBefore, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
 import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
-import classNames from 'classnames';
-import Img from 'react-cloudimage-responsive';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
 import { useMutation } from 'react-apollo';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { ID } from 'model/ID';
 import { fade } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import Img from 'react-cloudimage-responsive';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
@@ -125,7 +125,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                                 <Fab
                                     aria-label="Edit"
                                     size="small"
-                                    className={classNames(styles.editButton, 'edit-button')}
+                                    className={clsx(styles.editButton, 'edit-button')}
                                     component={CollisionLink}
                                     to={`/article/${article.id}/edit`}
                                 >
@@ -136,19 +136,19 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                                 <Fab
                                     aria-label="Pin"
                                     size="small"
-                                    className={classNames(styles.pinButton, { active: article.isPinnedToTop })}
+                                    className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
                                     onClick={() => toggleArticlePin()}
                                 >
                                     <Place />
                                 </Fab>
                             )}
                         </Typography>
-                        <Typography variant={'subtitle1'} className={classNames(styles.subtitle)}>
+                        <Typography variant={'subtitle1'} className={clsx(styles.subtitle)}>
                             {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
                             {article.topic && <> | {article.topic}&nbsp;</>}
                             {article.users && <> | Autoren: {article.users.map(user => User.getNickname(user)).join(', ')}&nbsp;</>}
                         </Typography>
-                        <Typography variant={'subtitle1'} color="textSecondary" className={classNames({ [styles.previewTextLimitedHeight]: limitedHeight })}>
+                        <Typography variant={'subtitle1'} color="textSecondary" className={clsx({ [styles.previewTextLimitedHeight]: limitedHeight })}>
                             {article.preview}
                         </Typography>
                     </CardContent>

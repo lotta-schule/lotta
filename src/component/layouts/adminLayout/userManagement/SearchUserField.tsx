@@ -1,41 +1,18 @@
-import React, { memo, useState, useEffect, useCallback, MouseEvent } from 'react';
-import { InputBase, Theme, Paper, MenuItem, ListItemAvatar, ListItemText, CircularProgress } from '@material-ui/core';
+import React, { memo, useState, useEffect } from 'react';
+import { CircularProgress, Grid, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { Autocomplete } from '@material-ui/lab';
+import { useLazyQuery } from '@apollo/react-hooks';
 import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
 import { useDebounce } from 'util/useDebounce';
-import { useLazyQuery } from '@apollo/react-hooks';
-import { User } from 'util/model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { UserModel } from 'model';
-import classNames from 'classnames';
-import Downshift from 'downshift';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        padding: theme.spacing(1),
-        display: 'flex',
-        alignItems: 'center',
-        borderRadius: theme.shape.borderRadius,
-    },
-    input: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        width: '100%'
-    },
+const useStyles = makeStyles(theme => ({
     avatar: {
         padding: '.25em',
         height: 50,
         width: 50
-    },
-    menuContainer: {
-        position: 'absolute',
-        zIndex: 1,
-        marginTop: theme.spacing(1),
-        width: '100%',
-        left: 0,
-        right: 0,
-        backgroundColor: theme.palette.background.paper,
-        borderBottom: `1px solid ${theme.palette.divider}`
     }
 }));
 
@@ -48,14 +25,10 @@ export interface SearchUserFieldProps {
 export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelectUser }) => {
     const styles = useStyles();
     const [searchtext, setSearchtext] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+    const [autocompleteOptions, setAutocompleteOptions] = useState<UserModel[]>([]);
     const debouncedSearchtext = useDebounce(searchtext, 500);
-    const [execute, { data, loading }] = useLazyQuery<{ users: UserModel[] }, { searchtext: string }>(SearchUsersQuery);
-
-    const onSelect = useCallback((e: MouseEvent<HTMLElement>, user: UserModel) => {
-        e.preventDefault();
-        setSearchtext('');
-        onSelectUser(user);
-    }, [onSelectUser]);
+    const [execute, { data, loading: isLoading }] = useLazyQuery<{ users: UserModel[] }, { searchtext: string }>(SearchUsersQuery);
 
     useEffect(() => {
         if (debouncedSearchtext && debouncedSearchtext.length > 3) {
@@ -63,63 +36,64 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
         }
     }, [debouncedSearchtext, execute]);
 
+    useEffect(() => {
+        if (data?.users) {
+            setAutocompleteOptions(data.users);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (!isOpen) {
+            setAutocompleteOptions([]);
+        }
+    }, [isOpen])
+
     return (
-        <div className={classNames(styles.root, className)}>
-            <Downshift id="downshift-simple">
-                {({
-                    getInputProps,
-                    getItemProps,
-                    getLabelProps,
-                    getMenuProps,
-                    highlightedIndex,
-                    inputValue,
-                    isOpen,
-                    selectedItem,
-                }) => {
-                    if (inputValue) {
-                        setSearchtext(inputValue);
-                    }
-                    const { ...inputProps } = getInputProps({
-                        placeholder: 'Nach Namen suchen oder Email-Adresse eingeben...',
-                    });
-
-                    return (
-                        <div style={{ position: 'relative', flex: 1 }}>
-                            <InputBase
-                                placeholder="Suche nach Nutzern"
-                                className={styles.input}
-                                inputProps={inputProps}
-                            />
-
-                            <div {...getMenuProps()}>
-                                {isOpen ? (
-                                    <Paper className={styles.menuContainer} square>
-                                        {((inputValue && inputValue.length > 3 && data && data.users) || []).map((userSuggestion, index) =>
-                                            <MenuItem
-                                                {...getItemProps({ item: userSuggestion.id, onClick: e => onSelect(e, userSuggestion) })}
-                                                key={userSuggestion.id}
-                                                selected={index === highlightedIndex}
-                                                component="div"
-                                                button
-                                                dense
-                                            >
-                                                <ListItemAvatar>
-                                                    <UserAvatar className={styles.avatar} user={userSuggestion} />
-                                                </ListItemAvatar>
-                                                <ListItemText primary={`${userSuggestion.nickname && userSuggestion.nickname + ' | '}${User.getName(userSuggestion)}`} secondary={userSuggestion.email} />
-                                            </MenuItem>
-                                        )}
-                                    </Paper>
-                                ) : null}
-                            </div>
-                        </div>
-                    );
-                }}
-            </Downshift>
-
-            {loading && (
-                <CircularProgress />
+        <Autocomplete
+            disableOpenOnFocus
+            autoHighlight
+            open={isOpen}
+            onOpen={() => setIsOpen(true)}
+            onClose={() => setIsOpen(false)}
+            onChange={(_e, user) => onSelectUser(user)}
+            getOptionLabel={option => option.name}
+            options={autocompleteOptions}
+            loading={isLoading}
+            renderInput={params => (
+                <TextField
+                    {...params}
+                    fullWidth
+                    className={className}
+                    label={'Nutzer suchen'}
+                    variant={'outlined'}
+                    onChange={e => setSearchtext(e.target.value)}
+                    InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                            <React.Fragment>
+                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                            </React.Fragment>
+                        ),
+                    }}
+                />
             )}
-        </div>
+            renderOption={user => (
+                <Grid container alignItems="center">
+                    <Grid item>
+                        <UserAvatar className={styles.avatar} user={user} />
+                    </Grid>
+                    <Grid item xs>
+                        <Typography variant="body1" color="textPrimary">
+                            {user.name}&nbsp;
+                            {user.nickname && <>(<strong>{user.nickname}</strong>)</>}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {user.email}
+                        </Typography>
+                    </Grid>
+                </Grid>
+            )}
+        />
     );
 });

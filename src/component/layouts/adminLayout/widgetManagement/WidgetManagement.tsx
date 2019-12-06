@@ -12,7 +12,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { WidgetEditor } from './WidgetEditor';
 import { WidgetNavigation } from './WidgetNavigation';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -90,7 +90,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                             disabled={isLoadingCreateWidget}
                             {...bindTrigger(popupState)}
                         >
-                            <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                            <AddCircleIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
                             Widget erstellen
                         </Button>
                         <Menu {...bindMenu(popupState)}>

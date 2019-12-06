@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { merge } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
+import { deDE } from '@material-ui/core/locale';
 import { AdminLayout } from './layouts/adminLayout/AdminLayout';
 import { ArticleRoute } from './routes/ArticleRoute';
 import { BaseLayout } from './layouts/BaseLayout';
@@ -52,7 +53,7 @@ export const App = memo(() => {
     return (
         <ThemeProvider theme={() => {
             if (tenant.customTheme) {
-                return createMuiTheme(merge({}, theme, tenant.customTheme));
+                return createMuiTheme(merge({}, theme, tenant.customTheme), deDE);
             }
             return theme;
         }}>
