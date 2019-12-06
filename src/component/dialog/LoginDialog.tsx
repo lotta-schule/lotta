@@ -3,8 +3,9 @@ import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, T
 import { useMutation } from 'react-apollo';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { CollisionLink } from 'component/general/CollisionLink';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 export interface LoginDialogProps {
     isOpen: boolean;
@@ -59,9 +60,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                     <DialogContentText>
                         Melde dich hier mit deinen Zugangsdaten an.
                     </DialogContentText>
-                    {error && (
-                        <p style={{ color: 'red' }}>{error.message}</p>
-                    )}
+                    <ErrorMessage error={error} />
                     <TextField
                         autoFocus
                         margin="dense"

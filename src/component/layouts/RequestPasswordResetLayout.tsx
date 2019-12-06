@@ -2,8 +2,9 @@ import React, { memo, useEffect, useState } from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { Button, Card, CardContent, Grid, TextField, Typography, makeStyles } from '@material-ui/core';
 import { useMutation } from '@apollo/react-hooks';
-import { RequestPasswordResetMutation } from 'api/mutation/RequestPasswordResetMutation';
 import useRouter from 'use-react-router';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { RequestPasswordResetMutation } from 'api/mutation/RequestPasswordResetMutation';
 
 const useStyles = makeStyles(theme => ({
     helpText: {
@@ -54,9 +55,7 @@ export const RequestPasswordResetLayout = memo(() => {
                                         Sieh in deinem Postfach nach; Falls ein Benutzerkonto gefunden wurde, hast du eine Email bekommen.
                                     </p>
                                 )}
-                                {error && (
-                                    <p style={{ color: 'red' }}>{error.message}</p>
-                                )}
+                                <ErrorMessage error={error} />
                                 <TextField
                                     autoFocus
                                     margin="dense"

@@ -1,36 +1,41 @@
 import React, { memo, useState } from 'react';
 import { Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField, Typography, Fab } from '@material-ui/core';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { Redirect } from 'react-router-dom';
 import { useMutation } from 'react-apollo';
+import { Edit } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { User } from 'util/model';
-import { Edit } from '@material-ui/icons';
 import { FileModelType, UserModel } from 'model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const ProfileData = memo(() => {
 
-    const currentUser = useCurrentUser()[0] as UserModel;
+    const currentUser = useCurrentUser()[0] as UserModel | undefined;
 
-    // TODO: TS 3.7 currentUser?.class ?? ''
-    const [classOrShortName, setClassOrShortName] = useState((currentUser.class) || '');
-    const [email, setEmail] = useState(currentUser.email);
-    const [name, setName] = useState(currentUser.name);
-    const [nickname, setNickname] = useState(currentUser.nickname);
-    const [isHideFullName, setIsHideFullName] = useState(currentUser.hideFullName);
-    const [avatarImageFile, setAvatarImageFile] = useState(currentUser.avatarImageFile);
+    const [classOrShortName, setClassOrShortName] = useState(currentUser?.class ?? '');
+    const [email, setEmail] = useState(currentUser?.email);
+    const [name, setName] = useState(currentUser?.name);
+    const [nickname, setNickname] = useState(currentUser?.nickname);
+    const [isHideFullName, setIsHideFullName] = useState(currentUser?.hideFullName);
+    const [avatarImageFile, setAvatarImageFile] = useState(currentUser?.avatarImageFile);
 
     const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation);
     const getFieldError = useGetFieldError(error);
+
+    if (!currentUser) {
+        return (
+            <Redirect to={'/'} />
+        );
+    }
 
     return (
         <Card>
             <CardContent>
                 <Typography variant={'h4'}>Meine Daten</Typography>
-                {error && (
-                    <div style={{ color: 'red' }}>{error.message}</div>
-                )}
+                <ErrorMessage error={error} />
                 <Grid container>
                     <Grid item md={4} style={{ marginTop: '1em' }}>
                         <Avatar src={avatarImageFile ? avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(currentUser!)} alt={User.getNickname(currentUser!)} />

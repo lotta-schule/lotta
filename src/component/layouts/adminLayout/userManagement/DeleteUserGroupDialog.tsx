@@ -1,10 +1,11 @@
 import React, { memo } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ClientModel, UserGroupModel, ID } from 'model';
 import { useMutation } from 'react-apollo';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { DeleteUserGroupMutation } from 'api/mutation/DeleteUserGroupMutation';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export interface DeleteUserGroupDialogProps {
     isOpen: boolean;
@@ -38,9 +39,7 @@ export const DeleteUserGroupDialog = memo<DeleteUserGroupDialogProps>(({ isOpen,
         <ResponsiveFullScreenDialog open={isOpen} onClose={onClose} aria-labelledby="delete-user-group-dialog">
             <DialogTitle id="delete-user-group-dialog-title">Gruppe löschen</DialogTitle>
             <DialogContent>
-                {error && (
-                    <p style={{ color: 'red' }}>{error.message}</p>
-                )}
+                <ErrorMessage error={error} />
                 <DialogContentText>
                     Möchtest du die Nutzergruppe "{group.name}" wirklich löschen? Sie ist dann unwiederbringlich verloren.
                 </DialogContentText>

@@ -4,6 +4,7 @@ import { ArticleModel, ArticleModelInput } from '../../model';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
 import { useMutation } from '@apollo/react-hooks';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 export interface CreateArticleDialogProps {
@@ -57,9 +58,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                     <DialogContentText>
                         Wähle zunächst einen Titel für deinen Beitrag
                     </DialogContentText>
-                    {error && (
-                        <p style={{ color: 'red' }}>{error.message}</p>
-                    )}
+                    <ErrorMessage error={error} />
                     <TextField
                         autoFocus
                         margin="dense"

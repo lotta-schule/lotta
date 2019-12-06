@@ -13,7 +13,7 @@ export const BaseLayoutMainContent = memo<BaseLayoutMainContentProps>(({ childre
 
     useLayoutEffect(() => {
         if (rootElement.current) {
-            setIsFullWidth(!(rootElement.current.nextSibling && rootElement.current.nextSibling.nodeType === 1)); // TODO: TS 3.7
+            setIsFullWidth(!(rootElement.current.nextSibling?.nodeType === 1));
         }
     }, []);
 

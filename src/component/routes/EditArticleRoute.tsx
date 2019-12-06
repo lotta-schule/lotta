@@ -1,14 +1,15 @@
 import { ArticleModel, ArticleModelInput } from 'model';
-import { CircularProgress } from '@material-ui/core';
-import { EditArticleLayout } from 'component/layouts/editArticleLayout/EditArticleLayout';
-import { omit } from 'lodash';
-import { GetArticleQuery } from 'api/query/GetArticleQuery';
-import { useQuery, useMutation } from 'react-apollo';
-import { RouteComponentProps } from 'react-router-dom';
-import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import React, { memo } from 'react';
-import { ID } from 'model/ID';
 import useRouter from 'use-react-router';
+import { CircularProgress } from '@material-ui/core';
+import { omit } from 'lodash';
+import { RouteComponentProps } from 'react-router-dom';
+import { useQuery, useMutation } from 'react-apollo';
+import { GetArticleQuery } from 'api/query/GetArticleQuery';
+import { EditArticleLayout } from 'component/layouts/editArticleLayout/EditArticleLayout';
+import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ID } from 'model/ID';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
     const id = Number(match.params.id);
@@ -28,7 +29,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
     }
     if (error) {
         return (
-            <div><span style={{ color: 'red' }}>{error.message}</span></div>
+            <ErrorMessage error={error} />
         );
     }
     if (data) {

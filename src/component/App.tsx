@@ -20,6 +20,7 @@ import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-apollo';
 import { theme } from 'theme';
 import { useCategories } from 'util/categories/useCategories';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const App = memo(() => {
     const { data, loading: isLoadingTenant, error, called: calledTenant } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
@@ -36,15 +37,13 @@ export const App = memo(() => {
 
     if (calledTenant && (!data || !data.tenant)) {
         return (
-            <div>
-                <span style={{ color: 'red' }}>Adresse ungültig.</span>
-            </div>
+            <ErrorMessage error={new Error('Adresse ungültig')} />
         );
     }
 
     if (error) {
         return (
-            <div><span style={{ color: 'red' }}>{error.message}</span></div>
+            <ErrorMessage error={error} />
         );
     }
 

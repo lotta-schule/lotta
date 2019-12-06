@@ -3,15 +3,16 @@ import {
     Paper, Typography, makeStyles, Theme, Button, Grid, CircularProgress, Menu, MenuItem
 } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
-import classNames from 'classnames';
 import { WidgetModel, WidgetModelType } from 'model';
-import { WidgetEditor } from './WidgetEditor';
-import { WidgetNavigation } from './WidgetNavigation';
 import { useQuery, useMutation } from 'react-apollo';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { CreateWidgetMutation } from 'api/mutation/CreateWidgetMutation';
 import { Widget } from 'util/model';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { WidgetEditor } from './WidgetEditor';
+import { WidgetNavigation } from './WidgetNavigation';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -70,7 +71,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
 
     if (error) {
         return (
-            <div style={{ color: 'red' }}>{error.message}</div>
+            <ErrorMessage error={error} />
         );
     }
 
@@ -115,9 +116,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                     </>
                 )}</PopupState>
             </Typography>
-
-            {errorCreateWidget && <div style={{ color: 'red' }}>{errorCreateWidget.message}</div>}
-
+            <ErrorMessage error={errorCreateWidget} />
             <Grid container>
                 <Grid item sm={5} className={styles.navigationWrapper} >
                     <WidgetNavigation widgets={data!.widgets} selectedWidget={selectedWidget} onSelectWidget={setSelectedWidget} />

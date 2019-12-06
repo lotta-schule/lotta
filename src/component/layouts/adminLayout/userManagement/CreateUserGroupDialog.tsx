@@ -1,10 +1,11 @@
 import React, { memo, useState } from 'react';
 import { Button, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField } from '@material-ui/core';
+import { useMutation } from '@apollo/react-hooks';
 import { ClientModel, UserGroupModel } from 'model';
 import { CreateUserGroupMutation } from 'api/mutation/CreateUserGroupMutation';
-import { useMutation } from '@apollo/react-hooks';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export interface CreateUserGroupDialogProps {
     isOpen: boolean;
@@ -57,9 +58,7 @@ export const CreateUserGroupDialog = memo<CreateUserGroupDialogProps>(({
                     <DialogContentText>
                         Erstelle eine neue Gruppe
                     </DialogContentText>
-                    {error && (
-                        <p style={{ color: 'red' }}>{error.message}</p>
-                    )}
+                    <ErrorMessage error={error} />
                     <TextField
                         margin="dense"
                         id="name"
