@@ -27,7 +27,7 @@ const useStyles = makeStyles<Theme, { hasError: boolean }>(theme => ({
 export const ErrorMessage = memo<ErrorMessageProps>(({ error, className, children }) => {
     const styles = useStyles({ hasError: !!error });
     const errorMessage = useMemo(() => {
-        const errorMessage = typeof error === 'string' ? error : error && error.message; // TODO: TS 3.7
+        const errorMessage = typeof error === 'string' ? error : error?.message;
         if (errorMessage) {
             return errorMessage.replace(/^GraphQL error: /, '');
         }

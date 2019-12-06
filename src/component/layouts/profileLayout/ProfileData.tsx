@@ -1,5 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField, Typography, Fab } from '@material-ui/core';
+import { Redirect } from 'react-router-dom';
 import { useMutation } from 'react-apollo';
 import { Edit } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
@@ -12,18 +13,23 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const ProfileData = memo(() => {
 
-    const currentUser = useCurrentUser()[0] as UserModel;
+    const currentUser = useCurrentUser()[0] as UserModel | undefined;
 
-    // TODO: TS 3.7 currentUser?.class ?? ''
-    const [classOrShortName, setClassOrShortName] = useState((currentUser.class) || '');
-    const [email, setEmail] = useState(currentUser.email);
-    const [name, setName] = useState(currentUser.name);
-    const [nickname, setNickname] = useState(currentUser.nickname);
-    const [isHideFullName, setIsHideFullName] = useState(currentUser.hideFullName);
-    const [avatarImageFile, setAvatarImageFile] = useState(currentUser.avatarImageFile);
+    const [classOrShortName, setClassOrShortName] = useState(currentUser?.class ?? '');
+    const [email, setEmail] = useState(currentUser?.email);
+    const [name, setName] = useState(currentUser?.name);
+    const [nickname, setNickname] = useState(currentUser?.nickname);
+    const [isHideFullName, setIsHideFullName] = useState(currentUser?.hideFullName);
+    const [avatarImageFile, setAvatarImageFile] = useState(currentUser?.avatarImageFile);
 
     const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation);
     const getFieldError = useGetFieldError(error);
+
+    if (!currentUser) {
+        return (
+            <Redirect to={'/'} />
+        );
+    }
 
     return (
         <Card>
