@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useState } from 'react';
-import { CircularProgress, Theme, makeStyles } from '@material-ui/core';
+import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles } from '@material-ui/core';
 import { AssignUserToGroupsDialog } from './AssignUserToGroupsDialog';
 import { useQuery } from 'react-apollo';
 import { UserModel, UserGroupModel } from 'model';
@@ -10,7 +10,7 @@ import { UserAvatar } from 'component/user/UserAvatar';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { VirtualizedTable } from 'component/general/VirtualizedTable';
 import { SearchUserField } from './SearchUserField';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     avatar: {
@@ -18,11 +18,18 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '1em',
         margin: '.15em .25em .15em 0',
     },
-    headlines: {
+    divider: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+
+    },
+    headline: {
         marginBottom: theme.spacing(2),
     },
+    inputField: {
+        maxWidth: 400
+    },
     searchUserField: {
-        width: 'auto',
         maxWidth: 400,
         backgroundColor: theme.palette.grey[200]
     },
@@ -42,6 +49,7 @@ export const UsersList = memo(() => {
 
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
     const [selectedGroupsFilter, setSelectedGroupsFilter] = useState<UserGroupModel[]>([...groups]);
+    const [filterText, setFilterText] = useState('');
     const { data, loading } = useQuery<{ users: UserModel[] }>(GetUsersQuery);
 
     const styles = useStyles();
@@ -49,6 +57,8 @@ export const UsersList = memo(() => {
     const rows = useMemo(() => {
         return data?.users?.filter(user =>
             user.groups.find(group => selectedGroupsFilter.find(g => g.id === group.id))
+        )?.filter(user =>
+            !filterText ? true : new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name)
         )?.map(user =>
             ({
                 avatarImage: <UserAvatar className={styles.avatar} user={user} />,
@@ -57,7 +67,7 @@ export const UsersList = memo(() => {
                 user
             })
         ) ?? [];
-    }, [data, selectedGroupsFilter, styles.avatar]);
+    }, [data, filterText, selectedGroupsFilter, styles.avatar]);
 
     if (loading) {
         return (
@@ -68,7 +78,11 @@ export const UsersList = memo(() => {
     if (data?.users) {
         return (
             <>
-                <SearchUserField className={classNames(styles.searchUserField, styles.headlines)} onSelectUser={setSelectedUser} />
+                <SearchUserField className={clsx(styles.inputField, styles.searchUserField, styles.headline)} onSelectUser={setSelectedUser} />
+
+                <Divider className={styles.divider} />
+
+                <Typography variant={'h5'} className={styles.headline}>In Gruppen eingetragene Nutzer</Typography>
                 <GroupSelect
                     row
                     hidePublicGroupSelection
@@ -76,6 +90,15 @@ export const UsersList = memo(() => {
                     label={null}
                     selectedGroups={selectedGroupsFilter}
                     onSelectGroups={setSelectedGroupsFilter}
+                />
+                <TextField
+                    fullWidth
+                    className={styles.inputField}
+                    margin={'dense'}
+                    value={filterText}
+                    onChange={e => setFilterText(e.target.value)}
+                    placeholder={'Tabelle nach Name filtern'}
+                    helperText={'"*"-Zeichen ersetzt beliebige Zeichen'}
                 />
                 <VirtualizedTable
                     className={styles.virtualizedTable}

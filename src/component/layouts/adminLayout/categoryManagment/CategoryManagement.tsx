@@ -3,7 +3,7 @@ import {
     Paper, Typography, makeStyles, Theme, Button, Grid
 } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { CategoryModel } from 'model';
 import { CategoryNavigation } from './CategoryNavigation';
 import { CategoryEditor } from './CategoryEditor';
@@ -60,7 +60,7 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
                     className={styles.button}
                     onClick={() => setIsCreateCategoryDialogOpen(true)}
                 >
-                    <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                    <AddCircleIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
                     Kategorie erstellen
                 </Button>
             </Typography>

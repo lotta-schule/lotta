@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, FocusEvent } from 'react';
 import { Typography, makeStyles, Theme } from '@material-ui/core';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     figcaption: {
@@ -30,7 +30,7 @@ export const ImageCaption: FunctionComponent<ImageCaptionProps> = memo(({ isEdit
                 contentEditable={isEditModeEnabled}
                 defaultValue={value}
                 children={isEditModeEnabled ? undefined : value}
-                className={classNames({ [styles.figcaption]: isEditModeEnabled })}
+                className={clsx({ [styles.figcaption]: isEditModeEnabled })}
                 onBlur={isEditModeEnabled ? (e: FocusEvent<HTMLInputElement>) => onUpdate((e.target as HTMLInputElement).value) : undefined}
             />
         </figcaption>

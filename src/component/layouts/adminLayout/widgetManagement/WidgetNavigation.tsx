@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, ExpansionPanel, ExpansionPanelSummary } from '@material-ui/core';
 import { WidgetModel } from 'model';
 import { Widget } from 'util/model';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => {
     return ({
@@ -44,7 +44,7 @@ export const WidgetNavigation = memo<WidgetNavigationProps>(({ widgets, selected
                         >
                             <Typography variant="body1">
                                 {Widget.getIcon(widget)} &nbsp;
-                                <span className={classNames({ [styles.selected]: selectedWidget && selectedWidget.id === widget.id })}>
+                                <span className={clsx({ [styles.selected]: selectedWidget && selectedWidget.id === widget.id })}>
                                     {widget.title}
                                 </span>
                             </Typography>

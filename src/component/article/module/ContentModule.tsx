@@ -13,7 +13,7 @@ import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@material-ui/core';
 import { DragHandle, Delete, Settings } from '@material-ui/icons';
 import { includes } from 'lodash';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -95,7 +95,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
                                 aria-label="Settings"
                                 onClick={() => toggleConfigMode(contentModule.id)}
                             >
-                                <Settings className={classNames(styles.buttonIcon, { [styles.activeButtonIcon]: showConfigModeContentModuleId === contentModule.id })} />
+                                <Settings className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: showConfigModeContentModuleId === contentModule.id })} />
                             </IconButton>
                         )}
                     </span>
@@ -107,7 +107,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
                             style={{ float: 'right' }}
                             onClick={() => onRemoveContentModule()}
                         >
-                            <Delete className={classNames(styles.buttonIcon)} />
+                            <Delete className={clsx(styles.buttonIcon)} />
                         </IconButton>
                     </span>
                 </div>

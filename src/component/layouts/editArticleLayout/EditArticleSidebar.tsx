@@ -19,7 +19,7 @@ import { UsersList } from './UsersList';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { useMutation } from 'react-apollo';
 import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
 import useRouter from 'use-react-router';
 
@@ -215,7 +215,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                         onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: undefined })}
                         fullWidth
                     >
-                        <SaveIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                        <SaveIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
                         speichern
                     </Button>
                     <Button
@@ -272,7 +272,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                     onClick={() => setIsDeleteModalOpen(true)}
                     fullWidth
                 >
-                    <Warning className={classNames(styles.leftIcon, styles.iconSmall)} />
+                    <Warning className={clsx(styles.leftIcon, styles.iconSmall)} />
                     Beitrag löschen
                 </Button>
                 <ResponsiveFullScreenDialog open={isDeleteModalOpen}>
