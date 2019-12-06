@@ -90,82 +90,78 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
         return (
             <span style={{ color: 'red' }}>{error.message}</span>
         );
-    } else if (data) {
+    } else if (data && data.schedule) {
         return (
             <div className={styles.root}>
-                {data.schedule && (
+                <Typography variant={'caption'} className={styles.date}>
+                    <span>{data.schedule.head.date}</span>
+                    {['11', '12'].indexOf(currentUser.class) > -1 && (
+                        <Link color={'secondary'} href={'#'} onClick={() => setIsSelectCoursesDialogOpen(true)}>Kurse</Link>
+                    )}
+                </Typography>
+                {data.schedule.body && (
                     <>
-                        <Typography variant={'caption'} className={styles.date}>
-                            <span>{data.schedule.head.date}</span>
-                            {['11', '12'].indexOf(currentUser.class) > -1 && (
-                                <Link color={'secondary'} href={'#'} onClick={() => setIsSelectCoursesDialogOpen(true)}>Kurse</Link>
-                            )}
-                        </Typography>
-                        {data.schedule.body && (
-                            <>
-                                <Table size={'small'}>
-                                    <TableBody>
-                                        {data.schedule.body.schedule
-                                            .sort((l1, l2) => l1.lessonIndex - l2.lessonIndex)
-                                            .filter(line => {
-                                                if (selectedCourses !== null && ['11', '12'].indexOf(currentUser.class!) > -1) {
-                                                    return selectedCourses.indexOf(line.lessonName) > -1;
-                                                }
-                                                return true;
-                                            })
-                                            .map(line => (
-                                                <>
-                                                    <TableRow key={line.id}>
-                                                        <TableCell>{line.lessonIndex}</TableCell>
-                                                        <TableCell className={clsx({ [styles.updated]: line.lessonNameHasChanged })}>
-                                                            {line.lessonName}
-                                                        </TableCell>
-                                                        <TableCell className={clsx({ [styles.updated]: line.teacherHasChanged })}>
-                                                            {line.teacher === '&nbsp;' ? '-' : line.teacher}
-                                                        </TableCell>
-                                                        <TableCell className={clsx({ [styles.updated]: line.roomHasChanged })}>
-                                                            {line.room}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                    {line.comment && (
-                                                        <TableRow key={`${line.id}-comment`}>
-                                                            <TableCell colSpan={4} align={'right'}>
-                                                                <Typography variant={'subtitle2'}>
-                                                                    {line.comment}
-                                                                </Typography>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )}
-                                                </>
-                                            ))}
-                                    </TableBody>
-                                </Table>
-                                <SelectCoursesDialog
-                                    isOpen={isSelectCoursesDialogOpen}
-                                    possibleCourses={uniq(data.schedule.body.schedule.map(schedule => schedule.lessonName))}
-                                    onClose={() => setIsSelectCoursesDialogOpen(false)}
-                                />
-                            </>
-                        )}
-                        {data.schedule.footer.supervisions && (
-                            <ul>
-                                {data.schedule.footer.supervisions.filter(Boolean).map(supervision => (
-                                    <li>
-                                        <Typography variant={'subtitle2'}>{supervision.time} {supervision.location}</Typography>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                        {data.schedule.footer.comments && (
-                            <ul style={{ margin: '0.5em 0.5em 0 0.5em' }}>
-                                {data.schedule.footer.comments.map(comment => (
-                                    <li className={styles.notes}>
-                                        <Typography variant={'subtitle2'}>{comment}</Typography>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                        <Table size={'small'}>
+                            <TableBody>
+                                {data.schedule.body.schedule
+                                    .sort((l1, l2) => l1.lessonIndex - l2.lessonIndex)
+                                    .filter(line => {
+                                        if (selectedCourses !== null && ['11', '12'].indexOf(currentUser.class!) > -1) {
+                                            return selectedCourses.indexOf(line.lessonName) > -1;
+                                        }
+                                        return true;
+                                    })
+                                    .map((line, index) => (
+                                        <React.Fragment key={index}>
+                                            <TableRow>
+                                                <TableCell>{line.lessonIndex}</TableCell>
+                                                <TableCell className={clsx({ [styles.updated]: line.lessonNameHasChanged })}>
+                                                    {line.lessonName}
+                                                </TableCell>
+                                                <TableCell className={clsx({ [styles.updated]: line.teacherHasChanged })}>
+                                                    {line.teacher === '&nbsp;' ? '-' : line.teacher}
+                                                </TableCell>
+                                                <TableCell className={clsx({ [styles.updated]: line.roomHasChanged })}>
+                                                    {line.room}
+                                                </TableCell>
+                                            </TableRow>
+                                            {line.comment && (
+                                                <TableRow key={`${index}-comment`}>
+                                                    <TableCell colSpan={4} align={'right'}>
+                                                        <Typography variant={'subtitle2'}>
+                                                            {line.comment}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </React.Fragment>
+                                    )) || 'Kein Vertretungsplan'}
+                            </TableBody>
+                        </Table>
+                        <SelectCoursesDialog
+                            isOpen={isSelectCoursesDialogOpen}
+                            possibleCourses={uniq(data.schedule.body.schedule.map(schedule => schedule.lessonName))}
+                            onClose={() => setIsSelectCoursesDialogOpen(false)}
+                        />
                     </>
+                )}
+                {data.schedule.footer.supervisions && (
+                    <ul>
+                        {data.schedule.footer.supervisions.filter(Boolean).map((supervision, i) => (
+                            <li key={i}>
+                                <Typography variant={'subtitle2'}>{supervision.time} {supervision.location}</Typography>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                {data.schedule.footer.comments && (
+                    <ul style={{ margin: '0.5em 0.5em 0 0.5em' }}>
+                        {data.schedule.footer.comments.map((comment, i) => (
+                            <li key={i} className={styles.notes}>
+                                <Typography variant={'subtitle2'}>{comment}</Typography>
+                            </li>
+                        ))}
+                    </ul>
                 )}
             </div>
         );
