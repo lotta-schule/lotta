@@ -10,18 +10,22 @@ export interface GroupSelectProps {
     publicGroupSelectionLabel?: string;
     disableAdminGroupsExclusivity?: boolean;
     selectedGroups: UserGroupModel[];
+    label?: string | null;
+    row?: boolean;
     onSelectGroups(groups: UserGroupModel[]): void;
 }
 
-export const GroupSelect = memo<GroupSelectProps>(({ variant, className, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, onSelectGroups }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, onSelectGroups }) => {
     const groups = useUserGroups();
 
     return (
         <FormControl component={'fieldset'} variant={variant} fullWidth className={className}>
-            <FormLabel htmlFor="outlined-visibility-select">
-                Sichtbarkeit:
-            </FormLabel>
-            <FormGroup>
+            {label !== null && (
+                <FormLabel htmlFor="outlined-visibility-select">
+                    {label || 'Sichtbarkeit:'}
+                </FormLabel>
+            )}
+            <FormGroup row={row}>
                 {hidePublicGroupSelection !== true && (
                     <FormControlLabel
                         label={<i>{publicGroupSelectionLabel || 'öffentlich sichtbar'}</i>}
