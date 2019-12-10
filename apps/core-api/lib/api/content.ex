@@ -39,6 +39,14 @@ defmodule Api.Content do
     |> filter_query(filter)
     |> Repo.all()
   end
+
+  def get_topics(%Tenant{} = tenant, user) do
+    query = list_public_articles(tenant, user)
+    Ecto.Query.from([a, ...] in query,
+      where: not is_nil(a.topic),
+      select: a.topic)
+    |> Repo.all
+  end
     
   @doc """
   Returns the list of articles belonging to a topic.
