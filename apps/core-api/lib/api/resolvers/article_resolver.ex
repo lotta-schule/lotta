@@ -25,6 +25,10 @@ defmodule Api.ArticleResolver do
   end
   def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
 
+  def get_topics(_args, %{context: %{tenant: tenant} = context}) do
+    {:ok, Content.get_topics(tenant, context[:current_user])}
+  end
+
   def all(%{category_id: category_id} = args, %{context: %{current_user: current_user, tenant: tenant}}) do
     {:ok, Content.list_articles(tenant, category_id, current_user, args[:filter])}
   end

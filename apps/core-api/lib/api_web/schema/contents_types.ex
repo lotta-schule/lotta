@@ -20,6 +20,10 @@ defmodule ApiWeb.Schema.ContentsTypes do
     field :own_articles, list_of(:article) do
       resolve &Api.ArticleResolver.own/2
     end
+    
+    field :topics, list_of(:string) do
+      resolve &Api.ArticleResolver.get_topics/2
+    end
 
     field :topic, list_of(:article) do
       arg :topic, non_null(:string)

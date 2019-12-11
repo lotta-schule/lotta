@@ -689,6 +689,40 @@ defmodule Api.ArticleResolverTest do
     end
   end
 
+  describe "get topics query" do
+    @query """
+    query topics {
+      topics
+    }
+    """
+
+    test "topics: returns a list of topics for a normal user" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "topics" => []
+        }
+      }
+    end
+
+    test "topics: returns a list of topics for an admin user", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> get("/api", query: @query)
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "topics" => ["KleinKunst 2018"]
+        }
+      }
+    end
+  end
 
   describe "topic query" do
     @query """
