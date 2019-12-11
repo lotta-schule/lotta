@@ -718,7 +718,7 @@ defmodule Api.ArticleResolverTest do
 
       assert res == %{
         "data" => %{
-          "topics" => ["Kleinkunst 2018"]
+          "topics" => ["KleinKunst 2018"]
         }
       }
     end
