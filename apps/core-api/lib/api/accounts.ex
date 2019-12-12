@@ -140,7 +140,8 @@ defmodule Api.Accounts do
       join: t in GroupEnrollmentToken,
       on: g.id == t.group_id,
       where: t.token == ^token and g.tenant_id == ^(tenant.id),
-      distinct: true)
+      distinct: true
+    )
     |> Repo.all()
   end
 
