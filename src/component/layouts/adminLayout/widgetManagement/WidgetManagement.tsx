@@ -123,7 +123,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                 </Grid>
                 <Grid item sm={7}>
                     {selectedWidget && (
-                        <WidgetEditor selectedWidget={selectedWidget} />
+                        <WidgetEditor selectedWidget={selectedWidget} onSelectWidget={setSelectedWidget} />
                     )}
                 </Grid>
             </Grid>
