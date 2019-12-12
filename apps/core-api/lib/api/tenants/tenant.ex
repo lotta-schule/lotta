@@ -1,6 +1,7 @@
 defmodule Api.Tenants.Tenant do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias Api.Tenants.{Category, CustomDomain}
   alias Api.Accounts
   alias Api.Accounts.{File,User,UserGroup}
@@ -46,6 +47,15 @@ defmodule Api.Tenants.Tenant do
   def get_lotta_url(%Api.Tenants.Tenant{slug: slug}) do
     base_url = Application.fetch_env!(:api, :base_url)
     "https://" <> slug  <> base_url
+  end
+
+  def get_admin_users(%Api.Tenants.Tenant{} = tenant) do
+    from(u in User,
+      join: g in assoc(u, :groups),
+      where: g.tenant_id == ^(tenant.id) and g.is_admin_group == true,
+      order_by: [u.name, u.email],
+      distinct: true)
+    |> Api.Repo.all
   end
 
   defp put_assoc_logo_image_file(changeset, attrs) do

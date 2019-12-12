@@ -84,6 +84,28 @@ defmodule Api.EmailPublisherWorker do
     })
   end
 
+  def send_article_is_ready_admin_notification(%Api.Content.Article{} = article) do
+    article = Api.Repo.preload(article, :tenant)
+    tenant = article.tenant
+    article_url = Api.Content.Article.get_url(article)
+    tenant
+    |> Tenant.get_admin_users
+    |> Enum.map(fn admin ->
+      Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+        to: admin.email,
+        sender_name: tenant.title,
+        subject: "Ein Artikel wurde fertig gestellt",
+        template: "default",
+        templatevars: %{
+          tenant: EmailSendRequest.get_tenant_info(tenant),
+          heading: "Artikel fertiggestellt",
+          content: "Hallo #{admin.name},<br />" <>
+            "Der Artikel <a href='#{article_url}'>#{article.title}</a> wurde auf #{Tenant.get_main_url(tenant)} als \"fertig\" markiert.<br />"
+        }
+      })
+    end)
+  end
+
   def publish(message) do
     GenServer.cast(:email_publisher, {:publish, message})
   end
