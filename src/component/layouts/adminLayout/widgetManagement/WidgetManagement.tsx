@@ -45,7 +45,11 @@ export const WidgetManagement: FunctionComponent = memo(() => {
     const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null);
 
     const { data, loading: isLoading, error } = useQuery<{ widgets: WidgetModel[] }>(GetWidgetsQuery);
-    const [createWidget, { loading: isLoadingCreateWidget, error: errorCreateWidget }] = useMutation<{ widget: WidgetModel }, { title: string; type: WidgetModelType }>(CreateWidgetMutation);
+    const [createWidget, { loading: isLoadingCreateWidget, error: errorCreateWidget }] = useMutation<{ widget: WidgetModel }, { title: string; type: WidgetModelType }>(CreateWidgetMutation, {
+        onCompleted: ({ widget }) => {
+            setSelectedWidget(widget);
+        }
+    });
 
     const onClickCreateWidget = (title: string, type: WidgetModelType) => {
         createWidget({
@@ -59,7 +63,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                     query: GetWidgetsQuery,
                     data: { widgets: widgets.concat([data!.widget]) }
                 });
-            }
+            },
         })
     };
 
@@ -123,7 +127,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
                 </Grid>
                 <Grid item sm={7}>
                     {selectedWidget && (
-                        <WidgetEditor selectedWidget={selectedWidget} />
+                        <WidgetEditor selectedWidget={selectedWidget} onSelectWidget={setSelectedWidget} />
                     )}
                 </Grid>
             </Grid>

@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
-import { Typography, makeStyles, Theme, TextField, Button } from '@material-ui/core';
+import { Button, Divider, TextField, Typography, makeStyles } from '@material-ui/core';
 import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from 'react-apollo';
@@ -10,9 +10,11 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
+import { DeleteWidgetDialog } from './DeleteWidgetDialog';
 import Img from 'react-cloudimage-responsive';
+import clsx from 'clsx';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(theme => ({
     input: {
         marginTop: theme.spacing(3),
         marginBottom: theme.spacing(3),
@@ -20,19 +22,32 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     switchBase: {
         color: 'gray'
+    },
+    button: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+    },
+    divider: {
+        clear: 'both'
+    },
+    deleteButton: {
+        backgroundColor: theme.palette.error.main,
+        color: theme.palette.error.contrastText
     }
 }));
 
 export interface WidgetEditorProps {
     selectedWidget: WidgetModel | null;
+    onSelectWidget(widget: WidgetModel | null): void;
 }
 
 
-export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
+export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectWidget }) => {
 
     const styles = useStyles();
 
     const [widget, setWidget] = useState<WidgetModel | null>(null);
+    const [isDeleteWidgetDialogOpen, setIsDeleteWidgetDialogOpen] = useState(false);
 
     const [mutateWidget, { loading: isLoading, error }] = useMutation<{ widget: WidgetModel }, { id: ID, widget: Partial<WidgetModel> }>(UpdateWidgetMutation);
 
@@ -106,16 +121,33 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget }) => {
                     configuration={widget.configuration || {}}
                     setConfiguration={configuration => setWidget({ ...widget, configuration })} />}
 
-            <p>&nbsp;</p>
             <Button
                 style={{ float: 'right' }}
                 disabled={isLoading}
                 variant={'contained'}
                 color={'secondary'}
+                className={styles.button}
                 onClick={() => updateWidget()}
             >
-                Widget speichern
+                Marginale speichern
             </Button>
+            <Divider className={styles.divider} />
+            <Button
+                variant={'contained'}
+                className={clsx(styles.button, styles.deleteButton)}
+                onClick={() => setIsDeleteWidgetDialogOpen(true)}
+            >
+                Marginale löschen
+            </Button>
+            <DeleteWidgetDialog
+                isOpen={isDeleteWidgetDialogOpen}
+                widget={widget}
+                onClose={() => setIsDeleteWidgetDialogOpen(false)}
+                onConfirm={() => {
+                    setIsDeleteWidgetDialogOpen(false);
+                    onSelectWidget(null);
+                }}
+            />
         </>
     );
 
