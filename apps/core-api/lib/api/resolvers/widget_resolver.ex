@@ -13,20 +13,35 @@ defmodule Api.WidgetResolver do
         %{title: title, type: type, tenant_id: tenant.id}
         |> Api.Tenants.create_widget
     else
-        {:error, "Nur Administrator dürfen Widgets erstellen."}
+        {:error, "Nur Administratoren dürfen Widgets erstellen."}
     end
   end
 
   def update(%{id: id, widget: widget_params}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
-      case Api.Tenants.get_widget!(id) do
-        nil ->
-          {:error, "Kategorie mit der id #{id} nicht gefunden."}
-        widget ->
-          Api.Tenants.update_widget(widget, widget_params)
+      try do
+        widget = Api.Tenants.get_widget!(id)
+        Api.Tenants.update_widget(widget, widget_params)
+      rescue
+        Ecto.NoResultsError ->
+          {:error, "Marginale mit der id #{id} nicht gefunden."}
       end
     else
-      {:error, "Nur Administrator dürfen Widgets bearbeiten."}
+      {:error, "Nur Administratoren dürfen Widgets bearbeiten."}
+    end
+  end
+  
+  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      try do
+        widget = Api.Tenants.get_widget!(id)
+        Api.Tenants.delete_widget(widget)
+      rescue
+        Ecto.NoResultsError ->
+          {:error, "Marginale mit der id #{id} nicht gefunden."}
+      end
+    else
+      {:error, "Nur Administratoren dürfen Marginalen löschen."}
     end
   end
 end

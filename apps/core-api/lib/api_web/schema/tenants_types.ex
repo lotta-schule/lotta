@@ -58,6 +58,12 @@ defmodule ApiWeb.Schema.TenantsTypes do
   
       resolve &Api.WidgetResolver.update/2
     end
+    
+    field :delete_widget, type: :widget do
+      arg :id, non_null(:lotta_id)
+  
+      resolve &Api.WidgetResolver.delete/2
+    end
   end
 
   input_object :tenant_input do
