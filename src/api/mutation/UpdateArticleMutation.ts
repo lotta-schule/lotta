@@ -32,6 +32,7 @@ export const UpdateArticleMutation = gql`
                     fileType
                     filename
                     filesize
+                    insertedAt
                     fileConversions {
                         id
                         format

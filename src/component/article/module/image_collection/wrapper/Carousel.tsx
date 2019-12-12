@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ContentModuleModel } from 'model';
 import { ImageCarousel } from '../carousel/ImageCarousel';
 import { Gallery } from './Gallery';
@@ -9,13 +9,13 @@ export interface CarouselProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Carousel: FunctionComponent<CarouselProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+export const Carousel = memo<CarouselProps>(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
     if (isEditModeEnabled) {
         return (
             <Gallery contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
         );
     }
     return (
-        <ImageCarousel files={contentModule.files} filesConfiguration={(contentModule.configuration && contentModule.configuration.files) || {}} />
+        <ImageCarousel contentModule={contentModule} />
     );
 });
