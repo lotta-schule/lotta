@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback } from 'react';
+import React, { KeyboardEvent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback, useEffect } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
 import { Editor, EventHook } from 'slate-react';
 import { Value, CommandFunc } from 'slate';
@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme: Theme) =>
 export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
     const [editorState, setEditorState] = useState<Value>(contentModule.text ? deserialize(contentModule.text) : Value.create());
-    const [isCurrentlyEditing, setCurrentlyEditing] = useState(false);
 
     const styles = useStyles();
 
@@ -153,9 +152,21 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
     const activeMarks = editorState.activeMarks.flatMap(mark => mark ? [mark.type] : []);
 
+    const isFocused = editorRef.current?.value.selection.isFocused;
+
+    useEffect(() => {
+        if (isFocused === false) {
+            onUpdateModule({
+                ...contentModule,
+                text: serialize(editorRef.current.value)
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isFocused]);
+
     return (
         <>
-            <Collapse in={isCurrentlyEditing}>
+            <Collapse in={isFocused}>
                 <Toolbar className={styles.toolbar}>
                     <ToggleButtonGroup size={'small'} value={activeMarks.toArray()}>
                         <ToggleButton value={'bold'} onClick={e => onClickMark(e, 'bold')}>
@@ -173,8 +184,9 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                         </ToggleButton> */}
                     </ToggleButtonGroup>
                     &nbsp;
-                    <ToggleButtonGroup size={'small'} value={null}>
+                    <ToggleButtonGroup size={'small'} value={'none'}>
                         <ToggleButton
+                            value={'link'}
                             selected={editorRef.current && editorRef.current.value.inlines.some(inline => Boolean(inline && inline.type === 'link'))}
                             onClick={e => onClickLink(e)}
                         >
@@ -182,14 +194,16 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                         </ToggleButton>
                     </ToggleButtonGroup>
                     &nbsp;
-                    <ToggleButtonGroup size={'small'} value={null}>
+                    <ToggleButtonGroup size={'small'} value={'none'}>
                         <ToggleButton
+                            value={'unordered-list'}
                             selected={editorRef.current && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'unordered-list'))))}
                             onClick={e => onClickBlock(e, 'unordered-list')}
                         >
                             <FormatListBulleted />
                         </ToggleButton>
                         <ToggleButton
+                            value={'ordered-list'}
                             selected={editorRef.current && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'ordered-list'))))}
                             onClick={e => onClickBlock(e, 'ordered-list')}
                         >
@@ -197,29 +211,19 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                         </ToggleButton>
                     </ToggleButtonGroup>
                     &nbsp;
-                    <ToggleButtonGroup size={'small'} value={null}>
-                        <SelectFileButton buttonComponent={ToggleButton} buttonComponentProps={{ size: 'small' }} onSelectFile={onClickImage} label={<Image />} />
+                    <ToggleButtonGroup size={'small'} value={'none'}>
+                        <SelectFileButton
+                            buttonComponent={ToggleButton}
+                            buttonComponentProps={{ size: 'small', value: 'select-file' }}
+                            onSelectFile={onClickImage}
+                            label={<Image />}
+                        />
                     </ToggleButtonGroup>
                 </Toolbar>
             </Collapse>
             <Editor
                 ref={editorRef}
                 value={editorState}
-                // plugins={plugins}
-                onFocus={(ev, editor, next) => {
-                    setTimeout(() => setCurrentlyEditing(true));
-                    next();
-                }}
-                onBlur={(ev, editor, next) => {
-                    setTimeout(() => {
-                        setCurrentlyEditing(false);
-                        onUpdateModule({
-                            ...contentModule,
-                            text: serialize(editor.value)
-                        });
-                    });
-                    next();
-                }}
                 onChange={(ev: { value: Value }) => setEditorState(ev.value)}
                 onKeyDown={onKeyDownRef.current}
                 renderMark={renderMark}

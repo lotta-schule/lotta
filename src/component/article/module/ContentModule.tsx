@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState, useCallback } from 'react';
+import React, { memo, useState, useCallback } from 'react';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
@@ -65,7 +65,7 @@ interface ContentModuleProps {
     onRemoveContentModule(): void;
 }
 
-export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
+export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
 
     const styles = useStyles();
     const [showConfigModeContentModuleId, setShowConfigModeContentModuleId] = useState<ID | null>(null);

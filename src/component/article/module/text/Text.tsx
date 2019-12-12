@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { CardContent, makeStyles } from '@material-ui/core';
 import { Edit } from './Edit';
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const Text: FunctionComponent<TextProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+export const Text = memo<TextProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
     const styles = useStyles();
     return (
         <CardContent className={styles.root}>
