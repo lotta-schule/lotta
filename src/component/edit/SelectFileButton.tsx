@@ -14,7 +14,7 @@ interface SelectFileButtonProps {
     onSelectFiles?(file: FileModel[]): void;
 }
 
-export const SelectFileButton: FunctionComponent<SelectFileButtonProps> = memo(({ label, fileFilter, onSelectFile, onSelectFiles, buttonComponent, buttonComponentProps }) => {
+export const SelectFileButton = memo<SelectFileButtonProps>(({ label, fileFilter, onSelectFile, onSelectFiles, buttonComponent, buttonComponentProps }) => {
     const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(false);
     const fileExplorerOptions: Partial<FileExplorerProps> = {};
     if (onSelectFile) {
