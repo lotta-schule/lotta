@@ -133,7 +133,7 @@ defmodule Api.WidgetResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administrator dürfen Widgets erstellen.",
+            "message" => "Nur Administratoren dürfen Widgets erstellen.",
             "path" => ["createWidget"]
           }
         ]
@@ -153,7 +153,7 @@ defmodule Api.WidgetResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administrator dürfen Widgets erstellen.",
+            "message" => "Nur Administratoren dürfen Widgets erstellen.",
             "path" => ["createWidget"]
           }
         ]
@@ -203,7 +203,7 @@ defmodule Api.WidgetResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administrator dürfen Widgets bearbeiten.",
+            "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
             "path" => ["updateWidget"]
           }
         ]
@@ -223,8 +223,75 @@ defmodule Api.WidgetResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administrator dürfen Widgets bearbeiten.",
+            "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
             "path" => ["updateWidget"]
+          }
+        ]
+      }
+    end
+  end
+
+  describe "deleteWidget mutation" do
+    @query """
+    mutation deleteWidget($id: ID!) {
+      deleteWidget (id: $id) {
+        id
+      }
+    }
+    """
+
+    test "deletes a widget if user is admin", %{admin_jwt: admin_jwt, widget: widget} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{ id: widget.id })
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "deleteWidget" => %{
+            "id" => widget.id
+          }
+        }
+      }
+    end
+  
+    test "returns an error if user is not admin", %{user_jwt: user_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{ id: 0 })
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "deleteWidget" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Marginalen löschen.",
+            "path" => ["deleteWidget"]
+          }
+        ]
+      }
+    end
+  
+    test "returns an error if user is not logged in" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{ id: 0 })
+      |> json_response(200)
+  
+      assert res == %{
+        "data" => %{
+          "deleteWidget" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Marginalen löschen.",
+            "path" => ["deleteWidget"]
           }
         ]
       }
