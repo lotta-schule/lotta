@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { FileModel } from '../../model';
 import { DialogTitle, Button } from '@material-ui/core';
 import { FileExplorer, FileExplorerProps } from 'component/fileExplorer/FileExplorer';

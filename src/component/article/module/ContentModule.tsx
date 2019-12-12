@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState, useCallback } from 'react';
+import React, { memo, useState, useCallback } from 'react';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
