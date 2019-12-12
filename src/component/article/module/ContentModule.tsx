@@ -1,5 +1,9 @@
 import React, { memo, useState, useCallback } from 'react';
-import { ContentModuleModel, ContentModuleType } from '../../../model';
+import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
+import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@material-ui/core';
+import { DragHandle, Delete, Settings } from '@material-ui/icons';
+import { includes } from 'lodash';
+import { ContentModuleModel, ContentModuleType, ID } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
 import { Config as TitleConfig } from './title/Config';
@@ -9,12 +13,7 @@ import { Config as ImageCollectionConfig } from './image_collection/Config';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
-import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
-import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@material-ui/core';
-import { DragHandle, Delete, Settings } from '@material-ui/icons';
-import { includes } from 'lodash';
 import clsx from 'clsx';
-import { ID } from 'model/ID';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
             top: '2.25em',
             left: 0,
             width: '100%',
-            zIndex: 1,
+            zIndex: 100,
             backgroundColor: theme.palette.background.paper
         }
     }),

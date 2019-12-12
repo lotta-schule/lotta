@@ -1,12 +1,10 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import MobileStepper from '@material-ui/core/MobileStepper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import { Button, MobileStepper, Typography } from '@material-ui/core';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import SwipeableViews from 'react-swipeable-views';
-import { FileModel } from 'model';
+import { FileSorter } from '../Config';
+import { ContentModuleModel, FileModel } from 'model';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -49,15 +47,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export interface ImageCarousel {
-    files: FileModel[];
-    filesConfiguration: { [id: number]: { caption: string; sortKey: number } };
+    contentModule: ContentModuleModel;
 }
 
-export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, filesConfiguration }) => {
+export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
     const styles = useStyles();
     const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
-    const maxSteps = files.length;
+    const filesConfiguration: { [id: number]: { caption: string; sortKey: number } } = contentModule.configuration?.files ?? {};
+    const maxSteps = contentModule.files.length;
 
     const handleNext = useCallback(() => {
         setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -85,8 +83,7 @@ export const ImageCarousel: FunctionComponent<ImageCarousel> = memo(({ files, fi
             };
         }
     }
-    const sortedFiles = (files || [])
-        .sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey);
+    const sortedFiles = (contentModule.files || []).sort(FileSorter(contentModule, getConfiguration));
 
     return (
         <div className={styles.root}>
