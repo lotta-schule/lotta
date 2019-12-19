@@ -33,10 +33,12 @@ defmodule ApiWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
 
-  plug CORSPlug,
-    headers: [
+  plug Corsica,
+    max_age: 7200,
+    origins: {ApiWeb.Cors, :allow_origin},
+    allow_headers: [
       "Authorization",
-      "tenant",
+      "Tenant",
       "Content-Type",
       "Accept",
       "Origin",
@@ -48,7 +50,8 @@ defmodule ApiWeb.Endpoint do
       "X-Requested-With",
       "If-Modified-Since",
       "X-CSRF-Token"
-    ]
+    ],
+    allow_credentials: true
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.

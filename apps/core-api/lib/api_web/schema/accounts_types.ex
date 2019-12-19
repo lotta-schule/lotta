@@ -43,6 +43,13 @@ defmodule ApiWeb.Schema.AccountsTypes do
       arg :password, :string
 
       resolve &Api.UserResolver.login/2
+      middleware(fn resolution, _ ->
+        with %{value: %{token: token}} <- resolution do
+          Map.update!(resolution, :context, fn ctx ->
+            Map.put(ctx, :auth_token, token)
+          end)
+        end
+      end)
     end
 
     field :update_profile, type: :user do
