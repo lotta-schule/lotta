@@ -1,9 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState } from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { Button, Card, CardContent, Grid, Link, TextField, Typography, makeStyles } from '@material-ui/core';
 import { useOnLogin } from 'util/user/useOnLogin';
-import { useMutation } from '@apollo/react-hooks';
-import { ResetPasswordMutation } from 'api/mutation/ResetPasswordMutation';
 import { useLocationSearchQuery } from 'util/useLocationSearchQuery';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -24,21 +22,13 @@ const useStyles = makeStyles(theme => ({
 export const ResetPasswordLayout = memo(() => {
     const styles = useStyles();
 
-    const onLogin = useOnLogin({ redirect: '/' });
+    const [data, setData] = useState();
+    const [sendResetPassword, { error: mutationError, loading: isLoading }] = useOnLogin('resetPassword', { redirect: '/', onCompleted: setData });
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [passwordRepetition, setPasswordRepetition] = useState('');
     const { e, t: token } = useLocationSearchQuery<{ e: string; t: string; }>();
-    const [sendResetPassword, { data, loading: isLoading, error: mutationError }] = useMutation<{ resetPassword: { token: string } }, { email: string; password: string; token: string; }>(
-        ResetPasswordMutation, { fetchPolicy: 'no-cache' }
-    );
     const email = e && atob(e);
-
-    useEffect(() => {
-        if (data) {
-            setTimeout(() => onLogin(data.resetPassword.token), 6000);
-        }
-    })
 
     const linkToRequestResetPasswordPage = (
         <Link

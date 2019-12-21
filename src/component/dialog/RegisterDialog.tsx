@@ -3,9 +3,6 @@ import {
     Checkbox, DialogTitle, DialogContent, DialogContentText, DialogActions,
     Button, TextField, Typography, Grid, makeStyles, Theme, FormGroup, FormControlLabel
 } from '@material-ui/core';
-import { UserModel } from '../../model';
-import { RegisterMutation } from 'api/mutation/RegisterMutation';
-import { useMutation } from '@apollo/react-hooks';
 import { useOnLogin } from 'util/user/useOnLogin';
 import { fade } from '@material-ui/core/styles';
 import { useGetFieldError } from 'util/useGetFieldError';
@@ -30,19 +27,9 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     isOpen,
     onRequestClose
 }) => {
-    const onLogin = useOnLogin({ redirect: '/profile' });
+    const [register, { error, loading: isLoading }] = useOnLogin('register', { redirect: '/profile', onCompleted: onRequestClose });
     const styles = useStyles();
 
-    const [register, { loading: isLoading, error }] = useMutation<{ register: { token: string } }, { user: Partial<UserModel> & { password: string }, groupKey?: string }>(RegisterMutation, {
-        update: (_, { data }) => {
-            if (data) {
-                onLogin(data.register.token);
-                resetForm();
-                onRequestClose();
-            }
-        },
-        errorPolicy: 'all'
-    });
     const getFieldError = useGetFieldError(error);
 
     const [firstName, setFirstName] = useState('');
