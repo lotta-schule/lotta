@@ -2,25 +2,18 @@ import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createLink } from 'apollo-absinthe-upload-link';
 import { ApolloLink, concat } from 'apollo-link';
-import { get } from 'js-cookie';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const customFetch = (url: string, options: any) => {
-    const jwtToken = get(process.env.REACT_APP_AUTHENTICATION_TOKEN_NAME);
-
     const { headers, body, method, ...miscOptions } = options;
 
     const config: AxiosRequestConfig = {
         ...miscOptions,
-        headers: {
-            ...headers,
-            ...(jwtToken ? {
-                Authorization: `Bearer ${jwtToken}`
-            } : {})
-        },
+        headers,
         url,
         method,
         data: body,
+        withCredentials: true,
     };
 
     return axios(config).then(axiosResponse => {
