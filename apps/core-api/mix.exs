@@ -52,7 +52,7 @@ defmodule Api.MixProject do
       {:absinthe, "~> 1.4.16"},
       {:absinthe_plug, "~> 1.4.7"},
       {:dataloader, "~> 1.0.0"},
-      {:cors_plug, "~> 2.0.0"},
+      {:corsica, "~> 1.1.2"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},

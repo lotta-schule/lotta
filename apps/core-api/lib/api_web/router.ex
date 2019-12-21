@@ -19,7 +19,8 @@ defmodule ApiWeb.Router do
     pipe_through :auth
 
     forward "/", Absinthe.Plug,
-      schema: ApiWeb.Schema
+      schema: ApiWeb.Schema,
+      before_send: {ApiWeb.AbsintheHooks, :before_send}
   end
 
   scope "/_debug" do
