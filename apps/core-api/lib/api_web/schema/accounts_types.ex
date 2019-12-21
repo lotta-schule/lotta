@@ -52,6 +52,15 @@ defmodule ApiWeb.Schema.AccountsTypes do
       end)
     end
 
+    field :logout, type: :boolean do
+      resolve fn (_args, _info) -> {:ok, true} end
+      middleware(fn resolution, _ ->
+        Map.update!(resolution, :context, fn ctx ->
+          Map.put(ctx, :auth_token, nil)
+        end)
+      end)
+    end
+
     field :update_profile, type: :user do
       arg :user, non_null(:update_user_params)
 
