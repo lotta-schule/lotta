@@ -36,6 +36,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
       arg :group_key, :string
 
       resolve &Api.UserResolver.register/2
+      middleware &Api.AbsintheMiddlewares.set_user_token/2
     end
 
     field :login, type: :authresult do
@@ -43,13 +44,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
       arg :password, :string
 
       resolve &Api.UserResolver.login/2
-      middleware(fn resolution, _ ->
-        with %{value: %{token: token}} <- resolution do
-          Map.update!(resolution, :context, fn ctx ->
-            Map.put(ctx, :auth_token, token)
-          end)
-        end
-      end)
+      middleware &Api.AbsintheMiddlewares.set_user_token/2
     end
 
     field :logout, type: :boolean do
@@ -98,6 +93,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
       arg :password, non_null(:string)
 
       resolve &Api.UserResolver.reset_password/2
+      middleware &Api.AbsintheMiddlewares.set_user_token/2
     end
 
     field :set_user_groups, type: :user do
