@@ -10,18 +10,17 @@ export const useOnLogout = () => {
     const apolloClient = useApolloClient();
     const [logout] = useMutation(LogoutMutation, {
         onCompleted: () => {
+            if (window._paq) {
+                Matomo.default().resetUserId();
+            }
+            apolloClient.resetStore();
+            localStorage.clear();
             apolloClient.writeQuery<{ currentUser: UserModel | null }>({
                 query: GetCurrentUserQuery,
                 data: {
                     currentUser: null
                 }
             });
-            if (window._paq) {
-                Matomo.default().resetUserId();
-            }
-            apolloClient.resetStore();
-            localStorage.clear();
-
             dispatch(createCloseDrawerAction());
         }
     });
