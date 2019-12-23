@@ -7,6 +7,7 @@ export const GetUserFilesQuery = gql`
             insertedAt
             updatedAt
             path
+            isPublic
             filename
             filesize
             remoteLocation

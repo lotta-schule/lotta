@@ -14,8 +14,9 @@ export class UploadQueueService {
         this.addFileAction = addFileAction;
     }
 
-    public uploadFile(file: File, path: string): void {
-        const upload = new UploadService(file, path);
+    public uploadFile(file: File, path: string, isPublic: boolean): void {
+        console.log(`upload (public: ${isPublic}) file ${file} to ${path}`)
+        const upload = new UploadService(file, path, isPublic);
         this.uploads.push(upload);
         upload.startUploading(
             this.update.bind(this),
@@ -43,6 +44,7 @@ export class UploadQueueService {
             this.uploads.map(upload => ({
                 id: upload.id,
                 path: upload.path,
+                isPublic: upload.isPublic,
                 filename: upload.filename,
                 uploadProgress: upload.uploadProgress
             }))

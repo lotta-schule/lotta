@@ -10,12 +10,13 @@ import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScree
 export interface SelectDirectoryTreeDialogProps {
     basePath: string;
     open: boolean;
+    isPublic?: boolean;
     allFiles: FileModel[];
     onClose(event: {}, reason: 'backdropClick' | 'escapeKeyDown' | 'auto'): void;
     onConfirm(newPath: string): void;
 }
 
-export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({ basePath, open, allFiles, onClose, onConfirm }) => {
+export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({ basePath, open, isPublic, allFiles, onClose, onConfirm }) => {
     const [path, setPath] = useState(basePath);
     const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
 
@@ -73,6 +74,7 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                 </TreeView>
                 <CreateNewFolderDialog
                     basePath={path}
+                    isPublic={isPublic}
                     open={isCreateNewFolderDialogOpen}
                     onClose={() => setIsCreateNewFolderDialogOpen(false)}
                 />

@@ -1,16 +1,11 @@
-import React, { MouseEvent, memo, useCallback, useState, useEffect } from 'react';
-import { findIndex, range } from 'lodash';
+import React, { MouseEvent, memo } from 'react';
+import { includes, some, every, uniqBy, findIndex, range } from 'lodash';
 import {
-    FolderOutlined, MoreVert, FileCopyOutlined, DeleteOutlineOutlined
-} from '@material-ui/icons';
-import {
-    Table, TableHead, TableRow, TableCell, TableBody, Tooltip, Theme, Checkbox, IconButton, Menu, MenuItem
+    Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { FileModel, FileModelType, ID } from 'model';
-import { FileSize } from 'util/FileSize';
-import { find, includes, some, every, uniqBy } from 'lodash';
-import clsx from 'clsx';
+import { FileTableRow } from './FileTableRow';
 
 const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme) => ({
     root: {
@@ -40,44 +35,38 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
             },
             '& > td, & > th': {
                 userSelect: 'none',
+                padding: theme.spacing(1),
+                boxSizing: 'border-box',
                 '&:nth-child(1)': {
                     width: '10%',
                     display: ({ filesAreEditable }) => filesAreEditable ? 'none' : 'initial'
                 },
                 '&:nth-child(2)': {
-                    width: '50%'
+                    width: '2em',
                 },
                 '&:nth-child(3)': {
-                    width: '20%'
+                    width: 'auto',
+                    flexGrow: 1,
+                    flexShrink: 1
                 },
                 '&:nth-child(4)': {
                     width: '20%'
                 },
                 '&:nth-child(5)': {
-                    width: '10%'
-                },
+                    width: '3em'
+                }
             },
             '& > td': {
                 display: 'flex',
-                boxSizing: 'border-box',
                 flexDirection: 'row',
                 alignItems: 'center',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
                 flexGrow: 0,
-                flexShrink: 0,
-                padding: 6
+                flexShrink: 0
             }
         }
-    },
-    actionButton: {
-        height: 24,
-        width: 24,
-        padding: 0
-    },
-    tooltip: {
-        backgroundColor: 'transparent'
     }
 }));
 
@@ -85,6 +74,8 @@ export interface FileTableProps {
     files: FileModel[];
     selectedFiles: FileModel[];
     markedFileIds: ID[];
+    canEditPublicFiles: boolean;
+    isPublic: boolean;
     setMarkedFileIds(ids: ID[]): void;
     onSelectSubPath(path: string): void;
     onClickOpenMoveFilesDialog(file: FileModel): void;
@@ -94,71 +85,11 @@ export interface FileTableProps {
 }
 
 export const FileTable = memo<FileTableProps>(({
-    files, selectedFiles, markedFileIds, setMarkedFileIds, onSelectSubPath, onSelectFile, onSelectFiles, onClickOpenMoveFilesDialog, onClickDeleteFilesDialog
+    files, selectedFiles, markedFileIds, canEditPublicFiles, isPublic,
+    setMarkedFileIds, onSelectSubPath, onSelectFile, onSelectFiles, onClickOpenMoveFilesDialog, onClickDeleteFilesDialog
 }) => {
     const filesAreEditable = !onSelectFile && !onSelectFiles;
     const styles = useStyles({ filesAreEditable });
-
-    const [fileForOpenMenu, setFileForOpenMenu] = useState<null | FileModel>(null);
-    const [editMenuAnchorEl, setEditMenuAnchorEl] = React.useState<null | HTMLElement>(null);
-
-    const handleEditMenuClick = (file: FileModel) => (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
-        setFileForOpenMenu(file);
-        setEditMenuAnchorEl(event.currentTarget);
-    };
-
-    const handleEditMenuClose = () => {
-        setFileForOpenMenu(null);
-        setEditMenuAnchorEl(null);
-    }
-
-    const handleEditMenuMove = () => {
-        onClickOpenMoveFilesDialog(fileForOpenMenu!);
-    };
-
-    const handleEditMenuDelete = () => {
-        onClickDeleteFilesDialog(fileForOpenMenu!);
-    };
-
-    useEffect(() => {
-        handleEditMenuClose();
-    }, [markedFileIds]);
-
-    const getFilenameCell = useCallback((file: FileModel) => {
-        let previewImageUrl: string | null = null;
-        if (file.fileType === FileModelType.Image) {
-            previewImageUrl = file.remoteLocation;
-        } else {
-            const imageConversionFile = file.fileConversions &&
-                file.fileConversions.length > 0 &&
-                find(file.fileConversions, fc => /^storyboard/.test(fc.format));
-            if (imageConversionFile) {
-                previewImageUrl = imageConversionFile.remoteLocation;
-            }
-        }
-
-        const tableCell = (
-            <TableCell scope="row" padding="none" onClick={() => onSelectFile && onSelectFile(file)}>
-                {file.filename}
-            </TableCell>
-        );
-
-        if (previewImageUrl) {
-            return (
-                <Tooltip className={styles.tooltip} title={(
-                    <img
-                        src={`https://afdptjdxen.cloudimg.io/bound/200x200/foil1/${previewImageUrl}`}
-                        alt={file.filename}
-                    />
-                )}>
-                    {tableCell}
-                </Tooltip>
-            );
-        } else {
-            return tableCell;
-        }
-    }, [onSelectFile, styles.tooltip]);
 
     const isMarked = (file: FileModel) => {
         return markedFileIds.indexOf(file.id) > -1;
@@ -220,9 +151,9 @@ export const FileTable = memo<FileTableProps>(({
                                 />
                             )}
                         </TableCell>
+                        <TableCell>&nbsp;</TableCell>
                         <TableCell>Dateiname</TableCell>
                         <TableCell>Dateigröße</TableCell>
-                        <TableCell>Dateityp</TableCell>
                         {filesAreEditable && <TableCell>&nbsp;</TableCell>}
                     </TableRow>
                 </TableHead>
@@ -241,76 +172,37 @@ export const FileTable = memo<FileTableProps>(({
                                 }
                                 return file1.filename.localeCompare(file2.filename);
                             })
-                            .map((file: FileModel) => (
-                                file.fileType === FileModelType.Directory ? (
-                                    // directory
-                                    <TableRow
-                                        key={file.id}
-                                        hover
-                                        className={clsx({ selected: isMarked(file) })}
-                                    >
-                                        <TableCell></TableCell>
-                                        <TableCell
-                                            onClick={e => {
-                                                e.preventDefault();
-                                                onSelectSubPath(file.filename);
-                                            }}
-                                        >
-                                            <FolderOutlined style={{ position: 'relative', marginRight: 10 }} />
-                                            {file.filename}
-                                        </TableCell>
-                                        <TableCell>&nbsp;</TableCell>
-                                        <TableCell>&nbsp;</TableCell>
-                                        {filesAreEditable && (
-                                            <TableCell>&nbsp;</TableCell>
-                                        )}
-                                    </TableRow>
-                                ) : (
-                                        <TableRow
-                                            key={file.id}
-                                            hover
-                                            className={clsx({ selected: isMarked(file) })}
-                                            onClick={filesAreEditable ? toggleFileMarked(file) : undefined}
-                                        >
-                                            <TableCell>
-                                                {onSelectFiles && (
-                                                    <Checkbox
-                                                        checked={includes<FileModel>(selectedFiles, file)}
-                                                        onChange={(e, checked) => {
-                                                            e.preventDefault();
-                                                            if (checked && !includes(selectedFiles, file)) {
-                                                                onSelectFiles(selectedFiles.concat(file));
-                                                            } else if (!checked) {
-                                                                onSelectFiles(selectedFiles.filter(f => f.id !== file.id));
-                                                            }
-                                                        }}
-                                                    />
-                                                )}
-                                            </TableCell>
-                                            {getFilenameCell(file)}
-                                            <TableCell align="right">{new FileSize(file.filesize).humanize()}</TableCell>
-                                            <TableCell align="right">{file.fileType}</TableCell>
-                                            {filesAreEditable && (
-                                                <TableCell>
-                                                    <IconButton aria-label="delete" size="small" onClick={handleEditMenuClick(file)}>
-                                                        <MoreVert fontSize="inherit" />
-                                                    </IconButton>
-                                                </TableCell>
-                                            )}
-                                        </TableRow>
-                                    )
+                            .map(file => (
+                                <FileTableRow
+                                    key={file.id}
+                                    file={file}
+                                    isPublic={isPublic}
+                                    canEditPublicFiles={canEditPublicFiles}
+                                    filesAreEditable={filesAreEditable}
+                                    marked={isMarked(file)}
+                                    selected={includes<FileModel>(selectedFiles, file)}
+                                    onMark={toggleFileMarked(file)}
+                                    onSelect={() => {
+                                        if (file.fileType === FileModelType.Directory) {
+                                            onSelectSubPath(file.filename);
+                                        } else {
+                                            onSelectFile?.(file);
+                                        }
+                                    }}
+                                    onCheck={onSelectFiles && (checked => {
+                                        if (checked && !includes(selectedFiles, file)) {
+                                            onSelectFiles(selectedFiles.concat(file));
+                                        } else if (!checked) {
+                                            onSelectFiles(selectedFiles.filter(f => f.id !== file.id));
+                                        }
+                                    })}
+                                    onEditMenuMove={() => onClickOpenMoveFilesDialog(file)}
+                                    onEditMenuDelete={() => onClickDeleteFilesDialog(file)}
+                                />
                             ))}
                 </TableBody>
             </Table>
-            <Menu
-                anchorEl={editMenuAnchorEl}
-                keepMounted
-                open={Boolean(editMenuAnchorEl)}
-                onClose={handleEditMenuClose}
-            >
-                <MenuItem onClick={handleEditMenuMove}><FileCopyOutlined color={'secondary'} />&nbsp;Verschieben</MenuItem>
-                <MenuItem onClick={handleEditMenuDelete}><DeleteOutlineOutlined color={'secondary'} />&nbsp;Löschen</MenuItem>
-            </Menu>
+
         </div>
     );
 });

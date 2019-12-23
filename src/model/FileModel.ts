@@ -1,6 +1,7 @@
 import { ID } from './ID';
 
 export enum FileModelType {
+    Pdf = 'PDF',
     Image = 'IMAGE',
     Video = 'VIDEO',
     Audio = 'AUDIO',
@@ -12,6 +13,7 @@ export interface FileModel {
     id: ID;
     insertedAt: string;
     updatedAt: string;
+    isPublic: boolean;
     path: string;
     filename: string;
     filesize: number;

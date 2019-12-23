@@ -1,13 +1,15 @@
 import { client } from './client';
 import { UploadModel, FileModel } from '../model';
-import { UploadFileMutation } from './mutation/UploadFile';
+import { UploadFileMutation } from './mutation/UploadFileMutation';
 
 export class UploadService implements UploadModel {
+    public id = new Date().getTime() + Math.random() * 1000;
+
     public path: string;
 
     public uploadProgress: number;
 
-    public id = new Date().getTime() + Math.random() * 1000;
+    public isPublic: boolean;
 
     protected file: File;
 
@@ -15,9 +17,10 @@ export class UploadService implements UploadModel {
         return this.file.name;
     }
 
-    public constructor(file: File, path: string) {
+    public constructor(file: File, path: string, isPublic: boolean) {
         this.file = file;
         this.path = path;
+        this.isPublic = isPublic;
         this.uploadProgress = 0;
     }
 
@@ -30,6 +33,7 @@ export class UploadService implements UploadModel {
             mutation: UploadFileMutation,
             variables: {
                 path: this.path,
+                isPublic: this.isPublic,
                 file: this.file
             },
             errorPolicy: 'all',
