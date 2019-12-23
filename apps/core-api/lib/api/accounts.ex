@@ -237,7 +237,11 @@ defmodule Api.Accounts do
 
   """
   def list_files(tenant_id, user_id) do
-    Repo.all(Ecto.Query.from f in File, where: f.tenant_id == ^tenant_id and f.user_id == ^user_id)
+    Ecto.Query.from(f in File,
+      where: f.tenant_id == ^tenant_id and (f.user_id == ^user_id or f.is_public == true),
+      order_by: [:is_public, :path, :filename]
+    )
+    |> Repo.all()
   end
 
   @doc """
@@ -268,9 +272,9 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_file(attrs \\ %{}) do
+  def create_file(attrs, is_admin_user \\ false) do
     %File{}
-    |> File.changeset(attrs)
+    |> File.changeset(attrs, is_admin_user)
     |> Repo.insert()
   end
 
@@ -283,9 +287,9 @@ defmodule Api.Accounts do
       {:ok, %File{}}
 
   """
-  def move_file(%File{} = file, path) do
+  def move_file(%File{} = file, attrs, can_edit_public_files \\ false) do
     file
-    |> File.move_changeset(path)
+    |> File.move_changeset(attrs, can_edit_public_files)
     |> Repo.update()
   end
 

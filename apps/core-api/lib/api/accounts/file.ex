@@ -4,11 +4,12 @@ defmodule Api.Accounts.File do
   import Ecto.Changeset
 
   schema "files" do
+    field :path, :string
+    field :is_public, :boolean
+    field :mime_type, :string
     field :file_type, :string
     field :filename, :string
     field :filesize, :integer
-    field :mime_type, :string
-    field :path, :string
     field :remote_location, :string
 
     has_many :file_conversions, Api.Accounts.FileConversion
@@ -44,15 +45,30 @@ defmodule Api.Accounts.File do
   end
 
   @doc false
-  def changeset(file, attrs) do
+  def changeset(file, attrs, is_admin_user \\ false) do
+    properties = case is_admin_user do
+      true ->
+        [:path, :filename, :is_public, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id]
+      false ->
+        [:path, :filename, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id]
+    end
     file
-    |> cast(attrs, [:path, :filename, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id])
+    |> cast(attrs, properties)
+    |> update_change(:path, &get_valid_path/1)
     |> validate_required([:path, :filename, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id])
   end
 
-  def move_changeset(file, path) do
+  def move_changeset(file, attrs, can_edit_public_files \\ false) do
+    properties = case can_edit_public_files do
+      true ->
+        [:path, :filename, :is_public]
+      false ->
+        [:path, :filename]
+    end
     file
-    |> Ecto.Changeset.change(%{path: get_valid_path(path)})
+    |> cast(attrs, properties)
+    |> update_change(:path, &get_valid_path/1)
+    |> validate_required([:path, :filename])
   end
 
   @doc false

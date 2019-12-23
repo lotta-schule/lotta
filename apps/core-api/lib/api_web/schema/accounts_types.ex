@@ -105,13 +105,15 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :upload_file, type: :file do
       arg :path, :string, default_value: "/"
       arg :file, non_null(:upload)
+      arg :is_public, :boolean
 
       resolve &Api.FileResolver.upload/2
     end
 
     field :move_file, type: :file do
       arg :id, non_null(:lotta_id)
-      arg :path, non_null(:string)
+      arg :path, :string
+      arg :is_public, :boolean
 
       resolve &Api.FileResolver.move/2
     end
@@ -180,6 +182,38 @@ defmodule ApiWeb.Schema.AccountsTypes do
   object :group_enrollment_token do
     field :id, :lotta_id
     field :token, :string
+  end
+
+  object :file do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :is_public, :boolean
+    field :filename, :string
+    field :filesize, :integer
+    field :mime_type, :string
+    field :path, :string
+    field :remote_location, :string
+    field :file_type, :file_type
+    field :user_id, :lotta_id
+    field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+  end
+
+  object :file_conversion do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :format, :string
+    field :mime_type, :string
+    field :remote_location, :string
+  end
+
+  enum :file_type do
+    value :image, as: "image"
+    value :audio, as: "audio"
+    value :video, as: "video"
+    value :pdf, as: "pdf"
+    value :misc, as: "misc"
   end
   
 end
