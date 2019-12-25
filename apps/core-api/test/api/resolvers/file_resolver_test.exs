@@ -264,4 +264,88 @@ defmodule Api.FileResolverTest do
     }
   end
 
+  describe "delete file mutation" do
+    @query """
+    mutation deleteFile($id: ID!) {
+      deleteFile(id: $id) {
+        path
+        filename
+        isPublic
+      }
+    }
+    """
+    test "delete a user's own file", %{user2_file: user2_file, user2_jwt: user2_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user2_jwt}")
+      |> post("/api", query: @query, variables: %{id: user2_file.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "deleteFile" => %{"filename" => "wieartig1.jpg", "isPublic" => false, "path" => "/avatar"}
+        }
+      }
+    end
+
+    test "returns error when user is not owner of file", %{user2_file: user2_file, admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: user2_file.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{"deleteFile" => nil},
+        "errors" => [
+          %{"locations" => [%{"column" => 0, "line" => 2}], "message" => "Du darfst diese Datei nicht löschen.", "path" => ["deleteFile"]}
+        ]
+      }
+    end
+    
+    test "returns error when file does not exist", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: 0})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{"deleteFile" => nil},
+        "errors" => [
+          %{"locations" => [%{"column" => 0, "line" => 2}], "message" => "Datei mit der id 0 nicht gefunden.", "path" => ["deleteFile"]}
+        ]
+      }
+    end
+  end
+
+  test "deletes a public file as admin", %{public_file: public_file, admin_jwt: admin_jwt} do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> put_req_header("authorization", "Bearer #{admin_jwt}")
+    |> post("/api", query: @query, variables: %{id: public_file.id})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{
+        "deleteFile" => %{"filename" => "logo1.jpg", "isPublic" => true, "path" => "/logos"}
+      }
+    }
+  end
+  
+  test "returns error when trying to delete a public file as non-admin", %{public_file: public_file, user2_jwt: user2_jwt} do
+    res = build_conn()
+    |> put_req_header("tenant", "slug:web")
+    |> put_req_header("authorization", "Bearer #{user2_jwt}")
+    |> post("/api", query: @query, variables: %{id: public_file.id})
+    |> json_response(200)
+
+    assert res == %{
+      "data" => %{"deleteFile" => nil},
+      "errors" => [
+        %{"locations" => [%{"column" => 0, "line" => 2}], "message" => "Du darfst diese Datei nicht löschen.", "path" => ["deleteFile"]}
+      ]
+    }
+  end
+
 end

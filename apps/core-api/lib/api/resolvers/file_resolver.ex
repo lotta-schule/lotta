@@ -46,18 +46,23 @@ defmodule Api.FileResolver do
   end
 
   def delete(%{id: id}, %{context: %{current_user: current_user}}) do
-    file = Accounts.get_file!(id)
-    case Accounts.File.is_author?(file, current_user) do
-      true ->
-        file = Api.Repo.preload(file, :file_conversions)
-        Enum.map(file.file_conversions, fn file_conversion ->
-          Accounts.delete_file_conversion(file_conversion)
-          Accounts.File.delete_attachment(file_conversion)
-        end)
-        Accounts.delete_file(file)
-        Accounts.File.delete_attachment(file)
-      false ->
-        {:error, "Du darfst diese Datei nicht löschen."}
+    try do
+      file = Accounts.get_file!(id)
+      |> Api.Repo.preload(:tenant)
+      case Accounts.File.is_author?(file, current_user) || (file.is_public && Accounts.User.is_admin?(current_user, file.tenant)) do
+        true ->
+          file = Api.Repo.preload(file, :file_conversions)
+          Enum.map(file.file_conversions, fn file_conversion ->
+            Accounts.delete_file_conversion(file_conversion)
+            Accounts.File.delete_attachment(file_conversion)
+          end)
+          Accounts.delete_file(file)
+          Accounts.File.delete_attachment(file)
+        false ->
+          {:error, "Du darfst diese Datei nicht löschen."}
+      end
+    rescue
+      Ecto.NoResultsError -> {:error, "Datei mit der id #{id} nicht gefunden."}
     end
   end
 
