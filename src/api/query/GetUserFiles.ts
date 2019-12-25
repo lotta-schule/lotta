@@ -13,6 +13,7 @@ export const GetUserFilesQuery = gql`
             remoteLocation
             mimeType
             fileType
+            userId
             fileConversions {
                 id
                 insertedAt

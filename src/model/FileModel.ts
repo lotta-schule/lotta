@@ -11,6 +11,7 @@ export enum FileModelType {
 
 export interface FileModel {
     id: ID;
+    userId: ID;
     insertedAt: string;
     updatedAt: string;
     isPublic: boolean;

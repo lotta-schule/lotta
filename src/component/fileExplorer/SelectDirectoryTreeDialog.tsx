@@ -1,24 +1,20 @@
 import React, { memo, useState } from 'react';
-import { uniq } from 'lodash';
 import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions, Tooltip, IconButton } from '@material-ui/core';
-import { CreateNewFolderDialog } from './CreateNewFolderDialog';
 import { TreeView, TreeItem } from '@material-ui/lab';
 import { ArrowDropDown, ArrowRight, CreateNewFolderOutlined } from '@material-ui/icons';
-import { FileModel } from 'model';
+import { useMutation } from '@apollo/react-hooks';
+import { uniq } from 'lodash';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { useFileExplorerData } from './context/useFileExplorerData';
+import { MoveFileMutation } from 'api/mutation/MoveFileMutation';
+import { CreateNewFolderDialog } from './CreateNewFolderDialog';
 
-export interface SelectDirectoryTreeDialogProps {
-    basePath: string;
-    open: boolean;
-    isPublic?: boolean;
-    allFiles: FileModel[];
-    onClose(event: {}, reason: 'backdropClick' | 'escapeKeyDown' | 'auto'): void;
-    onConfirm(newPath: string): void;
-}
-
-export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({ basePath, open, isPublic, allFiles, onClose, onConfirm }) => {
-    const [path, setPath] = useState(basePath);
+export const SelectDirectoryTreeDialog = memo(() => {
+    const [state, dispatch] = useFileExplorerData();
+    const [path, setPath] = useState(state.currentPath);
     const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
+
+    const [moveFile] = useMutation(MoveFileMutation);
 
     const getDirNameForPath = (path: string) => {
         if (path === '/') {
@@ -30,7 +26,7 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
 
     const getDirsForPath = (rootDir: string) => {
         return uniq(
-            allFiles
+            state.files
                 .map(f => f.path)
                 .filter(path => new RegExp(`^${rootDir}`).test(path))
                 .map(path => path.replace(new RegExp(`^${rootDir}`), ''))
@@ -51,7 +47,7 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
     }
 
     return (
-        <ResponsiveFullScreenDialog open={open} onClose={onClose} aria-labelledby="select-directory-tree-dialog">
+        <ResponsiveFullScreenDialog open={state.showMoveFiles} onClose={() => dispatch({ type: 'hideMoveFiles' })} aria-labelledby="select-directory-tree-dialog">
             <DialogTitle id="select-directory-tree-dialog-title">Dateien verschieben</DialogTitle>
             <DialogContent>
                 <DialogContentText>
@@ -74,7 +70,7 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
                 </TreeView>
                 <CreateNewFolderDialog
                     basePath={path}
-                    isPublic={isPublic}
+                    isPublic={state.isPublic}
                     open={isCreateNewFolderDialogOpen}
                     onClose={() => setIsCreateNewFolderDialogOpen(false)}
                 />
@@ -82,13 +78,16 @@ export const SelectDirectoryTreeDialog = memo<SelectDirectoryTreeDialogProps>(({
             <DialogActions>
                 <Button
                     color={'primary'}
-                    onClick={e => onClose(e, 'auto')}
+                    onClick={() => dispatch({ type: 'hideMoveFiles' })}
                 >
                     Abbrechen
                 </Button>
                 <Button
                     color={'secondary'}
-                    onClick={() => onConfirm(path)}
+                    onClick={() => {
+                        state.markedFiles.forEach(file => moveFile({ variables: { id: file.id, path } }));
+                        dispatch({ type: 'hideMoveFiles' });
+                    }}
                 >
                     Dateien verschieben
                 </Button>

@@ -1,10 +1,11 @@
-import React, { FunctionComponent, memo, Fragment } from 'react';
+import React, { memo, Fragment } from 'react';
 import { CloudUploadOutlined, CreateNewFolderOutlined, FileCopyOutlined, DeleteOutlineOutlined, FolderSharedOutlined, PublicOutlined } from '@material-ui/icons';
-import {
-    makeStyles, Theme, createStyles, Typography, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Link,
-} from '@material-ui/core';
+import { makeStyles, Theme, createStyles, Typography, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Link } from '@material-ui/core';
 import { UploadModel } from 'model';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
+import { useFileExplorerData } from './context/useFileExplorerData';
+import { useSelector } from 'react-redux';
+import { State } from 'store/State';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
     createStyles({
@@ -32,44 +33,29 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
 );
 
 export interface FileToolbarProps {
-    path: string;
-    uploads: UploadModel[];
     showFileCreateButtons: boolean;
     showFileEditingButtons: boolean;
     publicModeAvailable: boolean;
-    publicModeSelected: boolean;
-    onSetIsPublicModeSelected(value: boolean): void;
-    onChangePath(path: string): void;
     onSelectFilesToUpload(files: File[]): void;
-    onClickOpenActiveUploadsDialog(): void;
-    onClickOpenCreateNewFolderDialog(): void;
-    onClickOpenMoveFilesDialog(): void;
-    onClickDeleteFilesDialog(): void;
 }
 
-export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
-    path,
-    onChangePath,
-    uploads,
+export const FileToolbar = memo<FileToolbarProps>(({
     showFileCreateButtons,
     showFileEditingButtons,
     publicModeAvailable,
-    publicModeSelected,
-    onSetIsPublicModeSelected,
-    onSelectFilesToUpload,
-    onClickOpenActiveUploadsDialog,
-    onClickOpenCreateNewFolderDialog,
-    onClickOpenMoveFilesDialog,
-    onClickDeleteFilesDialog
+    onSelectFilesToUpload
 }) => {
     const styles = useStyles();
+
+    const uploads = (useSelector<State, UploadModel[]>(s => s.userFiles.uploads) || []);
+    const [state, dispatch] = useFileExplorerData();
 
     const uploadLength = uploads.length;
     const uploadTotalProgress = uploads.map(upload => upload.uploadProgress)
         .reduce(((prevProgress, currProgress) => prevProgress + currProgress), 0) / uploadLength;
-    const rootDescription = publicModeSelected ? 'Schulweite Medien' : 'Meine Medien';
+    const rootDescription = state.isPublic ? 'Schulweite Medien' : 'Meine Medien';
 
-    const pathLinks = path.replace(/^\//, '').split('/').reduce(
+    const pathLinks = state.currentPath.replace(/^\//, '').split('/').reduce(
         ((prevPathComps, currentPathComp) => {
             if (!currentPathComp) {
                 return prevPathComps;
@@ -91,8 +77,8 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                         <ToggleButtonGroup
                             exclusive
                             size={'small'}
-                            value={publicModeSelected}
-                            onChange={(_e, value) => onSetIsPublicModeSelected(value)}
+                            value={state.isPublic}
+                            onChange={(_e, enabled) => dispatch({ type: enabled ? 'enableIsPublic' : 'disableIsPublic' })}
                             aria-label={'Ansicht zwischen meinen Dateien und schulweiten Dateien wechseln'}
                         >
                             <ToggleButton value={false}>
@@ -116,7 +102,8 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                                 <Link
                                     onClick={(e: any) => {
                                         e.preventDefault();
-                                        onChangePath(pathLink.path)
+
+                                        dispatch({ type: 'setCurrentPath', path: pathLink.path });
                                     }}
                                 >{pathLink.name}</Link>
                                 {i !== 0 && <span>&nbsp;/&nbsp;</span>}
@@ -131,7 +118,7 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                             {uploadLength > 0 && (
                                 <Tooltip title={`${uploadLength} Dateien werden hochgeladen`}>
                                     <Badge color={'primary'} badgeContent={uploadLength}>
-                                        <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => onClickOpenActiveUploadsDialog()}>
+                                        <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })}>
                                             <CircularProgress
                                                 size={20}
                                                 variant={'static'}
@@ -142,7 +129,7 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                                 </Tooltip>
                             )}
                             <Tooltip title="Ordner erstellen">
-                                <IconButton aria-label="Ordner erstellen" onClick={() => onClickOpenCreateNewFolderDialog()}>
+                                <IconButton aria-label="Ordner erstellen" onClick={() => dispatch({ type: 'showCreateNewFolder' })}>
                                     <CreateNewFolderOutlined color={'secondary'} />
                                 </IconButton>
                             </Tooltip>
@@ -166,12 +153,12 @@ export const FileToolbar: FunctionComponent<FileToolbarProps> = memo(({
                     {showFileEditingButtons && (
                         <>
                             <Tooltip title="Dateien verschieben">
-                                <IconButton aria-label="Dateien verschieben" onClick={() => onClickOpenMoveFilesDialog()}>
+                                <IconButton aria-label="Dateien verschieben" onClick={() => dispatch({ type: 'showMoveFiles' })}>
                                     <FileCopyOutlined color={'secondary'} />
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Dateien löschen">
-                                <IconButton aria-label="Dateien löschen" onClick={() => onClickDeleteFilesDialog()}>
+                                <IconButton aria-label="Dateien löschen" onClick={() => dispatch({ type: 'showDeleteFiles' })}>
                                     <DeleteOutlineOutlined color={'secondary'} />
                                 </IconButton>
                             </Tooltip>

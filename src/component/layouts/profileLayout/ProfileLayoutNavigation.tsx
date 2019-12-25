@@ -14,7 +14,7 @@ export const ProfileLayoutNavigation = memo(() => {
                 aria-label="Admin Einstellungen"
             >
                 <Tab label="Meine Daten" value={'/profile'} />
-                <Tab label="Meine Dateien und Medien" value={'/profile/files'} />
+                <Tab label="Dateien und Medien" value={'/profile/files'} />
                 <Tab label="Meine Beiträge" value={'/profile/articles'} />
             </Tabs>
         </Paper>

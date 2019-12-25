@@ -4,8 +4,9 @@ import {
     Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { FileModel, FileModelType, ID } from 'model';
+import { FileModel, FileModelType } from 'model';
 import { FileTableRow } from './FileTableRow';
+import { useFileExplorerData } from './context/useFileExplorerData';
 
 const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme) => ({
     root: {
@@ -72,27 +73,19 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
 
 export interface FileTableProps {
     files: FileModel[];
-    selectedFiles: FileModel[];
-    markedFileIds: ID[];
     canEditPublicFiles: boolean;
-    isPublic: boolean;
-    setMarkedFileIds(ids: ID[]): void;
-    onSelectSubPath(path: string): void;
-    onClickOpenMoveFilesDialog(file: FileModel): void;
-    onClickDeleteFilesDialog(file: FileModel): void;
     onSelectFile?(file: FileModel): void;
     onSelectFiles?(files: FileModel[]): void;
 }
 
-export const FileTable = memo<FileTableProps>(({
-    files, selectedFiles, markedFileIds, canEditPublicFiles, isPublic,
-    setMarkedFileIds, onSelectSubPath, onSelectFile, onSelectFiles, onClickOpenMoveFilesDialog, onClickDeleteFilesDialog
-}) => {
+export const FileTable = memo<FileTableProps>(({ files, canEditPublicFiles, onSelectFile, onSelectFiles }) => {
     const filesAreEditable = !onSelectFile && !onSelectFiles;
     const styles = useStyles({ filesAreEditable });
 
+    const [state, dispatch] = useFileExplorerData();
+
     const isMarked = (file: FileModel) => {
-        return markedFileIds.indexOf(file.id) > -1;
+        return state.markedFiles.findIndex(f => f.id === file.id) > -1;
     };
 
     const findNearest = (number: number, listOfNumbers: number[]) => {
@@ -108,24 +101,24 @@ export const FileTable = memo<FileTableProps>(({
         e.preventDefault();
         if (isMarked(file)) {
             if (e.metaKey) {
-                setMarkedFileIds(markedFileIds.filter(fId => fId !== file.id));
+                dispatch({ type: 'setMarkedFiles', files: state.markedFiles.filter(f => f.id !== file.id) });
             } else {
-                setMarkedFileIds([file.id]);
+                dispatch({ type: 'markSingleFile', file });
             }
         } else {
             if (e.shiftKey) {
                 const fileIndex = findIndex(files, f => f.id === file.id);
-                const markedFileIndexes = markedFileIds.map(fileId => findIndex(files, f => f.id === fileId));
+                const markedFileIndexes = state.markedFiles.map(file => files.findIndex(f => f.id === file.id));
                 const nearestIndex = findNearest(fileIndex, markedFileIndexes);
                 const indexesRange = [
                     ...range(Math.min(fileIndex, nearestIndex), Math.max(fileIndex, nearestIndex)),
                     ...(fileIndex > nearestIndex ? [fileIndex] : [])
                 ];
-                setMarkedFileIds([...markedFileIds, ...indexesRange.map(findex => files[findex]).filter(f => !isMarked(f)).map(f => f.id)]);
+                dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, ...indexesRange.map(findex => files[findex]).filter(f => !isMarked(f))] });
             } else if (e.metaKey) {
-                setMarkedFileIds([...markedFileIds, file.id]);
+                dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, file] });
             } else {
-                setMarkedFileIds([file.id]);
+                dispatch({ type: 'markSingleFile', file });
             }
         }
     };
@@ -138,14 +131,14 @@ export const FileTable = memo<FileTableProps>(({
                         <TableCell>
                             {onSelectFiles && (
                                 <Checkbox
-                                    indeterminate={!every(files.filter(f => f.fileType !== FileModelType.Directory), f => selectedFiles.includes(f)) && some(selectedFiles, selectedFile => files.includes(selectedFile))}
-                                    checked={every(files.filter(f => f.fileType !== FileModelType.Directory), f => selectedFiles.includes(f))}
+                                    indeterminate={!every(files.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f)) && some(state.selectedFiles, selectedFile => files.includes(selectedFile))}
+                                    checked={every(files.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f))}
                                     onChange={(e, checked) => {
                                         e.preventDefault();
                                         if (checked) {
-                                            onSelectFiles(uniqBy(selectedFiles.concat(files.filter(f => f.fileType !== FileModelType.Directory)), 'id'))
+                                            onSelectFiles(uniqBy(state.selectedFiles.concat(files.filter(f => f.fileType !== FileModelType.Directory)), 'id'))
                                         } else {
-                                            onSelectFiles(selectedFiles.filter(selectedFile => !files.includes(selectedFile)));
+                                            onSelectFiles(state.selectedFiles.filter(selectedFile => !files.includes(selectedFile)));
                                         }
                                     }}
                                 />
@@ -176,28 +169,34 @@ export const FileTable = memo<FileTableProps>(({
                                 <FileTableRow
                                     key={file.id}
                                     file={file}
-                                    isPublic={isPublic}
+                                    isPublic={state.isPublic}
                                     canEditPublicFiles={canEditPublicFiles}
                                     filesAreEditable={filesAreEditable}
                                     marked={isMarked(file)}
-                                    selected={includes<FileModel>(selectedFiles, file)}
+                                    selected={includes<FileModel>(state.selectedFiles, file)}
                                     onMark={toggleFileMarked(file)}
                                     onSelect={() => {
                                         if (file.fileType === FileModelType.Directory) {
-                                            onSelectSubPath(file.filename);
+                                            dispatch({ type: 'selectDirectory', directory: file.filename });
                                         } else {
                                             onSelectFile?.(file);
                                         }
                                     }}
                                     onCheck={onSelectFiles && (checked => {
-                                        if (checked && !includes(selectedFiles, file)) {
-                                            onSelectFiles(selectedFiles.concat(file));
+                                        if (checked && !includes(state.selectedFiles, file)) {
+                                            onSelectFiles(state.selectedFiles.concat(file));
                                         } else if (!checked) {
-                                            onSelectFiles(selectedFiles.filter(f => f.id !== file.id));
+                                            onSelectFiles(state.selectedFiles.filter(f => f.id !== file.id));
                                         }
                                     })}
-                                    onEditMenuMove={() => onClickOpenMoveFilesDialog(file)}
-                                    onEditMenuDelete={() => onClickDeleteFilesDialog(file)}
+                                    onEditMenuMove={() => {
+                                        dispatch({ type: 'markSingleFile', file });
+                                        dispatch({ type: 'showMoveFiles' });
+                                    }}
+                                    onEditMenuDelete={() => {
+                                        dispatch({ type: 'markSingleFile', file });
+                                        dispatch({ type: 'showDeleteFiles' });
+                                    }}
                                 />
                             ))}
                 </TableBody>
