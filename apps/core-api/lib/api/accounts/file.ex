@@ -73,7 +73,7 @@ defmodule Api.Accounts.File do
 
   @doc false
   def delete_attachment(file) do
-    cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL") || Mix.get_env()
+    cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL") || " "
     case String.starts_with?(file.remote_location, cdn_base_url) do 
       true ->
         file.remote_location
