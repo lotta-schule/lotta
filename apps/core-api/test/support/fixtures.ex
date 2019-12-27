@@ -131,7 +131,8 @@ defmodule Api.Fixtures do
       filesize: 42,
       mime_type: "some_mime_type",
       path: "some_path",
-      remote_location: "some_remote_location"
+      remote_location: "some_remote_location",
+      tenant_id: fixture(:tenant).id
    }
   end
   

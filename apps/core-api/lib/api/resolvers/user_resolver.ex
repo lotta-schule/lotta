@@ -101,7 +101,7 @@ defmodule Api.UserResolver do
     end
   end
   
-  def logout(_args, %{context: %{current_user: current_user}}) do
+  def logout(_args, _info) do
     {:ok, nil}
   end
 
