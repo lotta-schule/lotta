@@ -7,7 +7,7 @@ export const ProfileMediaFiles = memo(() => {
     return (
         <Card>
             <CardContent>
-                <Typography variant={'h4'}>Meine Dateien und Medien</Typography>
+                <Typography variant={'h4'}>Dateien und Medien</Typography>
                 <FileExplorer />
             </CardContent>
         </Card>

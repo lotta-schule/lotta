@@ -1,25 +1,23 @@
-import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
-import { find } from 'lodash';
+import React, { Reducer, memo, useCallback, useContext, useEffect, useReducer } from 'react';
+import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
+import { useQuery } from '@apollo/react-hooks';
+import { fade } from '@material-ui/core/styles';
+import { uniq } from 'lodash';
+import { useDropzone } from 'react-dropzone';
+import { FileModel, FileModelType } from 'model';
+import { GetUserFilesQuery } from 'api/query/GetUserFiles';
+import { UploadQueueContext } from 'context/UploadQueueContext';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { User } from 'util/model';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
 import { CreateNewFolderDialog } from './CreateNewFolderDialog';
 import { DeleteFilesDialog } from './DeleteFilesDialog';
-import { FileModel, FileModelType, UploadModel, ID } from 'model';
 import { FileTable } from './FileTable';
 import { FileToolbar } from './FileToolbar';
-import { GetUserFilesQuery } from 'api/query/GetUserFiles';
-import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
-import { MoveFileMutation } from 'api/mutation/MoveFileMutation';
-import { DeleteFileMutation } from 'api/mutation/DeleteFileMutation';
 import { SelectDirectoryTreeDialog } from './SelectDirectoryTreeDialog';
-import { State } from 'store/State';
-import { uniq } from 'lodash';
-import { UploadQueueContext } from 'context/UploadQueueContext';
-import { useDropzone } from 'react-dropzone';
-import { useLocalStorage } from 'util/useLocalStorage';
-import { useSelector } from 'react-redux';
-import { fade } from '@material-ui/core/styles';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Provider, defaultState } from './context/FileExplorerContext';
+import { Action, reducer } from './context/reducer';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
   overlayDropzoneActive: {
@@ -54,57 +52,38 @@ export interface FileExplorerProps {
 export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFilter, onSelectFile, onSelectFiles }) => {
   const styles = useStyles();
 
-  const [selectedFiles, setSelectedFiles] = useState<FileModel[]>([]);
-  const [markedFileIds, setMarkedFileIds] = useState<ID[]>([]);
-  const [selectedPath, setSelectedPath] = useLocalStorage('lastSelectedFileExplorerPath', '/');
+  const [state, dispatch] = useReducer<Reducer<typeof defaultState, Action>>(reducer, defaultState);
 
-  const uploads = useSelector<State, UploadModel[]>(s => (s.userFiles.uploads || []));
-
-  const [moveFile] = useMutation(MoveFileMutation);
-  const [deleteFile] = useMutation(DeleteFileMutation, {
-    update: (cache, { data: { file } }) => {
-      setMarkedFileIds([]);
-      if (file) {
-        const data = cache.readQuery<{ files: FileModel[] }>({ query: GetUserFilesQuery }) || { files: [] };
-        cache.writeQuery({
-          query: GetUserFilesQuery,
-          data: {
-            files: data.files.filter(f => f.id !== file.id)
-          }
-        });
-      }
-    }
-  });
   const { data, error, loading: isLoading } = useQuery<{ files: FileModel[] }>(GetUserFilesQuery);
+  useEffect(() => {
+    if (data) {
+      dispatch({ type: 'setFiles', files: data.files });
+    }
+  }, [data])
 
   const uploadQueue = useContext(UploadQueueContext);
+  const [currentUser] = useCurrentUser();
 
-  const [isActiveUploadsDialogOpen, setIsActiveUploadsDialogOpen] = useState(false);
-  const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
-  const [isMoveFilesDialogOpen, setIsMoveFilesDialogOpen] = useState(false);
-  const [isDeleteFilesDialogOpen, setIsDeleteFilesDialogOpen] = useState(false);
+  const isWriteable = !state.isPublic || User.isAdmin(currentUser);
 
   const closeDialog = useCallback(<T extends Function>(callback: T): T => {
-    setSelectedFiles([]);
-    setIsActiveUploadsDialogOpen(false);
+    dispatch({ type: 'resetSelectedFiles' });
+    dispatch({ type: 'hideActiveUploads' });
     return callback;
-  }, [setSelectedFiles, setIsActiveUploadsDialogOpen])
+  }, [])
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, selectedPath));
+      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, state.currentPath, state.isPublic));
     }
-  }, [selectedPath, uploadQueue]);
+  }, [state.currentPath, state.isPublic, uploadQueue]);
   const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles } = useDropzone({
     onDrop,
+    disabled: !isWriteable,
     multiple: true,
     preventDropOnDocument: true,
     noClick: true
   });
-
-  useEffect(() => {
-    setMarkedFileIds([]); // reset marked files when selectedPath changes
-  }, [selectedPath]);
 
   if (error) {
     return (
@@ -118,19 +97,21 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
     );
   }
 
-  const files = data.files;
+  const files = state.files
+    .filter(f => Boolean(f.isPublic) === state.isPublic);
 
   const dirFiles = uniq(
     (files || [])
       .map(f => f.path)
-      .filter(path => new RegExp(`^${selectedPath}`).test(path))
-      .map(path => path.replace(new RegExp(`^${selectedPath}`), ''))
+      .filter(path => new RegExp(`^${state.currentPath}`).test(path))
+      .map(path => path.replace(new RegExp(`^${state.currentPath}`), ''))
       .map(path => path.replace(/^\//, ''))
       .filter(Boolean)
       .map(path => path.split('/')[0])
   )
     .map(path => ({
       id: (new Date().getTime() + Math.random() * 1000 + Math.random() * 1000),
+      isPublic: state.isPublic,
       fileType: FileModelType.Directory,
       filename: path,
       filesize: 0,
@@ -139,86 +120,60 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
       mimeType: 'application/medienportal-keep-dir',
       path: path,
       remoteLocation: '',
-      fileConversions: []
+      fileConversions: [],
+      userId: currentUser!.id
     } as FileModel));
 
   const currentFiles = (files || [])
-    .filter(f => f.filename !== '.lotta-keep' && f.path === selectedPath && (fileFilter ? fileFilter(f) : true))
+    .filter(f => f.filename !== '.lotta-keep' && f.path === state.currentPath && (fileFilter ? fileFilter(f) : true))
     .sort();
 
   return (
-    <Paper style={{ position: 'relative', outline: 'none', ...style }} className={className} {...getRootProps()}>
-      <input {...getInputProps()} />
-      {(isDragActive || isDragAccept) && (
-        <div className={styles.overlayDropzoneActive}>
-          {/* {!isDragActive && isDragAccept && <span>Dateien hierher ziehen</span>} */}
-          {isDragActive && <span>Loslassen, um {draggedFiles.length} Dateien hochzuladen</span>}
-        </div>
-      )}
-      <ActiveUploadsModal open={isActiveUploadsDialogOpen} onClose={() => setIsActiveUploadsDialogOpen(false)} />
-      <CreateNewFolderDialog basePath={selectedPath} open={isCreateNewFolderDialogOpen} onClose={() => setIsCreateNewFolderDialogOpen(false)} />
-      <SelectDirectoryTreeDialog
-        open={isMoveFilesDialogOpen}
-        basePath={selectedPath}
-        allFiles={files}
-        onClose={() => setIsMoveFilesDialogOpen(false)}
-        onConfirm={path => {
-          markedFileIds.forEach(fileId => moveFile({ variables: { id: fileId, path } }));
-          setIsMoveFilesDialogOpen(false);
-        }}
-      />
-      <DeleteFilesDialog
-        open={isDeleteFilesDialogOpen}
-        filesToDelete={markedFileIds.map(fileId => find(files, { id: fileId })!)}
-        onClose={() => setIsDeleteFilesDialogOpen(false)}
-        onConfirm={() => {
-          markedFileIds.forEach(fileId => deleteFile({ variables: { id: fileId } }));
-          setIsDeleteFilesDialogOpen(false);
-        }}
-      />
+    <Provider value={[state, dispatch]}>
+      <Paper style={{ position: 'relative', outline: 'none', ...style }} className={className} {...getRootProps()}>
+        <input {...getInputProps()} />
+        {(isDragActive || isDragAccept) && (
+          <div className={styles.overlayDropzoneActive}>
+            {isDragActive && <span>Loslassen, um {draggedFiles.length} Dateien hochzuladen</span>}
+          </div>
+        )}
+        <ActiveUploadsModal />
+        <CreateNewFolderDialog
+          open={state.showCreateNewFolder}
+          basePath={state.currentPath}
+          isPublic={state.isPublic}
+          onClose={() => dispatch({ type: 'hideCreateNewFolder' })}
+        />
+        <SelectDirectoryTreeDialog />
+        <DeleteFilesDialog />
 
-      <FileToolbar
-        path={selectedPath}
-        uploads={uploads}
-        showFileEditingButtons={markedFileIds.length > 0}
-        onChangePath={setSelectedPath}
-        onSelectFilesToUpload={onDrop}
-        onClickOpenActiveUploadsDialog={() => setIsActiveUploadsDialogOpen(true)}
-        onClickOpenCreateNewFolderDialog={() => setIsCreateNewFolderDialogOpen(true)}
-        onClickOpenMoveFilesDialog={() => setIsMoveFilesDialogOpen(true)}
-        onClickDeleteFilesDialog={() => setIsDeleteFilesDialogOpen(true)}
-      />
+        <FileToolbar
+          publicModeAvailable
+          showFileCreateButtons={isWriteable}
+          showFileEditingButtons={isWriteable && state.markedFiles.length > 0}
+          onSelectFilesToUpload={onDrop}
+        />
 
-      <FileTable
-        selectedFiles={selectedFiles}
-        files={[...dirFiles, ...currentFiles]}
-        markedFileIds={markedFileIds}
-        setMarkedFileIds={setMarkedFileIds}
-        onSelectSubPath={subPath => setSelectedPath([selectedPath, subPath].join('/').replace(/^\/\//, '/'))}
-        onSelectFile={onSelectFile ? (file => closeDialog(onSelectFile)(file)) : undefined}
-        onSelectFiles={onSelectFiles ? setSelectedFiles : undefined}
-        onClickOpenMoveFilesDialog={file => {
-          setMarkedFileIds([file.id]);
-          setIsMoveFilesDialogOpen(true)
-        }}
-        onClickDeleteFilesDialog={file => {
-          setMarkedFileIds([file.id]);
-          setIsDeleteFilesDialogOpen(true)
-        }}
-      />
+        <FileTable
+          canEditPublicFiles={User.isAdmin(currentUser)}
+          files={[...dirFiles, ...currentFiles]}
+          onSelectFile={onSelectFile ? (file => closeDialog(onSelectFile)(file)) : undefined}
+          onSelectFiles={onSelectFiles ? (files => dispatch({ type: 'setSelectedFiles', files })) : undefined}
+        />
 
-      {onSelectFiles && (
-        <Toolbar className={styles.bottomToolbar}>
-          <Button
-            disabled={selectedFiles.length < 1}
-            onClick={() => closeDialog(onSelectFiles)(selectedFiles)}
-          >
-            {selectedFiles.length ? (
-              `${selectedFiles.length} Bilder auswählen`
-            ) : 'Bilder auswählen'}
-          </Button>
-        </Toolbar>
-      )}
-    </Paper>
+        {onSelectFiles && (
+          <Toolbar className={styles.bottomToolbar}>
+            <Button
+              disabled={state.selectedFiles.length < 1}
+              onClick={() => closeDialog(onSelectFiles)(state.selectedFiles)}
+            >
+              {state.selectedFiles.length ? (
+                `${state.selectedFiles.length} Bilder auswählen`
+              ) : 'Bilder auswählen'}
+            </Button>
+          </Toolbar>
+        )}
+      </Paper>
+    </Provider>
   );
 });

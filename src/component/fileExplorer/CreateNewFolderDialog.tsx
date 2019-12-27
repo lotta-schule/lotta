@@ -7,11 +7,12 @@ import { GetUserFilesQuery } from 'api/query/GetUserFiles';
 
 export interface CreateNewFolderDialogProps {
     basePath?: string;
+    isPublic?: boolean;
     open: boolean;
     onClose(event: {}, reason: 'backdropClick' | 'escapeKeyDown' | 'auto'): void;
 }
 
-export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps> = memo(({ basePath, open, onClose }) => {
+export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps> = memo(({ basePath, isPublic, open, onClose }) => {
 
     const [path, setPath] = useState('');
     const client = useApolloClient();
@@ -47,6 +48,7 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                             fileType: FileModelType.Misc,
                             filename: '.lotta-keep',
                             filesize: 0,
+                            isPublic: isPublic === true,
                             insertedAt: new Date().toString(),
                             updatedAt: new Date().toString(),
                             mimeType: 'application/medienportal-keep-dir',
@@ -68,6 +70,6 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                     Ordner anlegen
                 </Button>
             </DialogActions>
-        </ResponsiveFullScreenDialog>
+        </ResponsiveFullScreenDialog >
     );
 });
