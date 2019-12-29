@@ -119,6 +119,14 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve &Api.FileResolver.move/2
     end
     
+    field :move_directory, type: list_of(:file) do
+      arg :path, non_null(:string)
+      arg :is_public, non_null(:boolean)
+      arg :new_path, non_null(:string)
+
+      resolve &Api.FileResolver.move_directory/2
+    end
+    
     field :delete_file, type: :file do
       arg :id, non_null(:lotta_id)
 

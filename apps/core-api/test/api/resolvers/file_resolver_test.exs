@@ -348,4 +348,82 @@ defmodule Api.FileResolverTest do
     }
   end
 
+  
+  describe "move directory mutation" do
+    @query """
+    mutation moveDirectory($path: String!, $isPublic: Boolean!, $newPath: String!) {
+      moveDirectory(path: $path, isPublic: $isPublic, newPath: $newPath) {
+        path
+        filename
+        isPublic
+      }
+    }
+    """
+    test "move a user's own directory", %{user2_jwt: user2_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user2_jwt}")
+      |> post("/api", query: @query, variables: %{path: "/podcast", isPublic: false, newPath: "/new-podcast"})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "moveDirectory" => [
+            %{"filename" => "pocst7.m4v", "isPublic" => false, "path" => "/new-podcast"},
+            %{"filename" => "podcast5.mp4", "isPublic" => false, "path" => "/new-podcast"},
+            %{"filename" => "podcast6.mov", "isPublic" => false, "path" => "/new-podcast"},
+          ]
+        }
+      }
+    end
+
+    test "returns empty array if no files are found for user", %{user2_jwt: user2_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user2_jwt}")
+      |> post("/api", query: @query, variables: %{path: "/logos", isPublic: false, newPath: "/new-logos"})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{"moveDirectory" => []}
+      }
+    end
+
+    test "move public directory if admin", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{path: "/logos", isPublic: true, newPath: "/new-logos"})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "moveDirectory" => [
+            %{"filename" => "logo1.jpg", "isPublic" => true, "path" => "/new-logos"},
+            %{"filename" => "logo2.jpg", "isPublic" => true, "path" => "/new-logos"},
+            %{"filename" => "logo3.png", "isPublic" => true, "path" => "/new-logos"},
+            %{"filename" => "logo4.png", "isPublic" => true, "path" => "/new-logos"},
+            %{"filename" => "chamaeleon.png", "isPublic" => true, "path" => "/new-logos/chamaeleon"},
+            %{"filename" => "podcast1.png", "isPublic" => true, "path" => "/new-logos/podcast"},
+            %{"filename" => "podcast2.png", "isPublic" => true, "path" => "/new-logos/podcast"}
+          ]
+        }
+      }
+    end
+
+    test "returns error if non-admin tries to move public files", %{user2_jwt: user2_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user2_jwt}")
+      |> post("/api", query: @query, variables: %{path: "/logos", isPublic: true, newPath: "/new-logos"})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{"moveDirectory" => nil},
+        "errors" => [
+          %{"locations" => [%{"column" => 0, "line" => 2}], "message" => "Du darfst diesen Ordner nicht verschieben.", "path" => ["moveDirectory"]}
+        ]
+      }
+    end
+  end
 end
