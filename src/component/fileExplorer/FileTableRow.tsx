@@ -1,4 +1,4 @@
-import React, { MouseEvent, memo, useState } from 'react';
+import React, { MouseEvent, memo, useState, useCallback } from 'react';
 import { TableRow, TableCell, Checkbox, IconButton, Menu, MenuItem, Divider } from '@material-ui/core';
 import { MoreVert, FileCopyOutlined, DeleteOutlineOutlined, FolderSharedOutlined, PublicOutlined, CreateOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
@@ -27,53 +27,26 @@ export const FileTableRow = memo<FileTableRowProps>(({ file, marked, selected, i
     const [editMenuAnchorEl, setEditMenuAnchorEl] = useState<null | HTMLElement>(null);
     const [isRenamingFile, setIsRenamingFile] = useState(false);
 
+    const isDirectory = file.fileType === FileModelType.Directory;
 
     const handleEditMenuClose = () => {
         setEditMenuAnchorEl(null);
     }
 
     const [moveFile] = useMutation(MoveFileMutation, {
-        onCompleted: () => {
-            setEditMenuAnchorEl(null);
-        }
+        onCompleted: () => setEditMenuAnchorEl(null)
     });
 
-    const handleEditMenuClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleEditMenuClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setEditMenuAnchorEl(event.currentTarget);
-    };
+    }, []);
 
-    const handleEditMenuClickRename = (event: MouseEvent<HTMLElement>) => {
+    const handleEditMenuClickRename = useCallback((event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
         setEditMenuAnchorEl(null);
         setIsRenamingFile(true);
-    };
-
-    if (file.fileType === FileModelType.Directory) {
-        // directory
-        return (
-            <TableRow
-                key={file.id}
-                hover
-                className={clsx({ selected: marked })}
-            >
-                <TableCell></TableCell>
-                <TableCell>{File.getIconForFile(file)}</TableCell>
-                <TableCell
-                    onClick={e => {
-                        e.preventDefault();
-                        onSelect();
-                    }}
-                >
-                    {file.filename}
-                </TableCell>
-                <TableCell>&nbsp;</TableCell>
-                {filesAreEditable && (
-                    <TableCell>&nbsp;</TableCell>
-                )}
-            </TableRow>
-        );
-    }
+    }, []);
 
     return (
         <TableRow
@@ -83,7 +56,7 @@ export const FileTableRow = memo<FileTableRowProps>(({ file, marked, selected, i
             onClick={filesAreEditable ? onMark : undefined}
         >
             <TableCell>
-                {onCheck && (
+                {(!isDirectory && onCheck) && (
                     <Checkbox
                         checked={selected}
                         onChange={(e, checked) => onCheck(checked)}
@@ -92,7 +65,10 @@ export const FileTableRow = memo<FileTableRowProps>(({ file, marked, selected, i
             </TableCell>
             <TableCell>{File.getIconForFile(file)}</TableCell>
             <FileTableRowFilenameCell file={file} isRenaming={isRenamingFile} onCompleteRenaming={() => setIsRenamingFile(false)} onSelect={onSelect} />
-            <TableCell align="right">{new FileSize(file.filesize).humanize()}</TableCell>
+            <TableCell align="right">
+                {isDirectory && <>&nbsp;</>}
+                {!isDirectory && new FileSize(file.filesize).humanize()}
+            </TableCell>
             {filesAreEditable && (
                 <TableCell>
                     <IconButton aria-label="delete" size="small" onClick={handleEditMenuClick}>
@@ -101,28 +77,30 @@ export const FileTableRow = memo<FileTableRowProps>(({ file, marked, selected, i
                     <Menu
                         anchorEl={editMenuAnchorEl}
                         open={Boolean(editMenuAnchorEl)}
-                        onClose={handleEditMenuClose}
+                        onClose={() => handleEditMenuClose()}
                     >
                         {[
-                            <MenuItem key={'move'} onClick={() => onEditMenuMove()}><FileCopyOutlined color={'secondary'} />&nbsp;Verschieben</MenuItem>,
                             <MenuItem key={'rename'} onClick={(e) => handleEditMenuClickRename(e)}><CreateOutlined color={'secondary'} />&nbsp;Umbenennen</MenuItem>,
-                            <MenuItem key={'del'} onClick={() => onEditMenuDelete()}><DeleteOutlineOutlined color={'secondary'} />&nbsp;Löschen</MenuItem>,
-                            ...(canEditPublicFiles ? [
+                            ...(!isDirectory ? [
+                                <MenuItem key={'del'} onClick={() => onEditMenuDelete()}><DeleteOutlineOutlined color={'secondary'} />&nbsp;Löschen</MenuItem>,
+                                <MenuItem key={'move'} onClick={() => onEditMenuMove()}><FileCopyOutlined color={'secondary'} />&nbsp;Verschieben</MenuItem>
+                            ] : []),
+                            ...(!isDirectory && canEditPublicFiles ? [
                                 <Divider key={'divider1'} />,
                                 isPublic ? (
                                     <MenuItem key={'movePrivate'} onClick={() => moveFile({ variables: { id: file.id, isPublic: false } })}>
                                         <FolderSharedOutlined color={'secondary'} />&nbsp;zu eigenen Dateien verschieben
-                                        </MenuItem>
+                                    </MenuItem>
                                 ) : (
                                         <MenuItem key={'movePublic'} onClick={() => moveFile({ variables: { id: file.id, isPublic: true } })}>
                                             <PublicOutlined color={'secondary'} />&nbsp;zu schulweiten Dateien verschieben
-                                            </MenuItem>
+                                        </MenuItem>
                                     )
                             ] : [])
                         ]}
                     </Menu>
                 </TableCell>
             )}
-        </TableRow>
+        </TableRow >
     );
 });

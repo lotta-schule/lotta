@@ -1,9 +1,10 @@
 import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { FileModel, FileModelType } from 'model';
-import { IconButton, InputAdornment, TableCell, TextField, Tooltip, makeStyles } from '@material-ui/core';
+import { IconButton, InputAdornment, TableCell, TextField, Tooltip, makeStyles, CircularProgress } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
 import { MoveFileMutation } from 'api/mutation/MoveFileMutation';
+import { MoveDirectoryMutation } from 'api/mutation/MoveDirectoryMutation';
 
 export interface FileTableRowFilenameCellProps {
     file: FileModel;
@@ -20,7 +21,6 @@ const useStyles = makeStyles(() => ({
 
 export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ file, isRenaming, onCompleteRenaming, onSelect }) => {
     const styles = useStyles();
-
     const [newFilename, setNewFilename] = useState(file.filename);
 
     const renamingInputRef = useRef<HTMLInputElement>();
@@ -38,7 +38,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
         setNewFilename(file.filename);
     }, [file.filename, isRenaming]);
 
-    const [moveFile] = useMutation(MoveFileMutation, {
+    const [moveFile, { loading: isLoadingMoveFile }] = useMutation(MoveFileMutation, {
         variables: {
             id: file.id,
             filename: newFilename
@@ -59,6 +59,25 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
             renamingInputRef.current?.blur();
         }
     });
+    const [moveDirectory, { loading: isLoadingMoveDirectory }] = useMutation(MoveDirectoryMutation, {
+        variables: {
+            path: file.path,
+            isPublic: file.isPublic,
+            newPath: file.path.replace(/\/[^/]*$/, `/${newFilename}`)
+        },
+        onCompleted: () => {
+            onCompleteRenaming();
+            renamingInputRef.current?.blur();
+        }
+    });
+
+    const move = () => {
+        if (file.fileType === FileModelType.Directory) {
+            moveDirectory();
+        } else {
+            moveFile();
+        }
+    };
 
     if (isRenaming) {
         return (
@@ -66,7 +85,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
                 <form style={{ width: '100%' }} onSubmit={e => {
                     e.preventDefault();
                     if (newFilename.length > 0) {
-                        moveFile();
+                        move();
                     }
                 }}>
                     <TextField
@@ -75,21 +94,25 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
                         value={newFilename}
                         onChange={e => setNewFilename(e.target.value)}
                         InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="OK"
-                                        disabled={newFilename.length < 1}
-                                        color={'secondary'}
-                                        onMouseDown={e => {
-                                            e.preventDefault();
-                                            moveFile();
-                                        }}
-                                    >
-                                        <Done />
-                                    </IconButton>
+                            endAdornment: (isLoadingMoveFile || isLoadingMoveDirectory) ? (
+                                <InputAdornment position={'end'}>
+                                    <CircularProgress style={{ width: '1em', height: '1em' }} />
                                 </InputAdornment>
-                            ),
+                            ) : (
+                                    <InputAdornment position={'end'}>
+                                        <IconButton
+                                            aria-label="OK"
+                                            disabled={newFilename.length < 1}
+                                            color={'secondary'}
+                                            onMouseDown={e => {
+                                                e.preventDefault();
+                                                move();
+                                            }}
+                                        >
+                                            <Done />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
                         }}
                     />
                 </form>
@@ -108,7 +131,10 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
     }
 
     const tableCell = (
-        <TableCell scope="row" padding="none" onClick={() => onSelect?.()}>
+        <TableCell scope="row" padding="none" onClick={e => {
+            e.preventDefault();
+            onSelect?.();
+        }}>
             {file.filename}
         </TableCell>
     );

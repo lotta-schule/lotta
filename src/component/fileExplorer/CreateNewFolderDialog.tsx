@@ -4,6 +4,7 @@ import { FileModel, FileModelType } from 'model';
 import { useApolloClient } from '@apollo/react-hooks';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { GetUserFilesQuery } from 'api/query/GetUserFiles';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export interface CreateNewFolderDialogProps {
     basePath?: string;
@@ -16,6 +17,7 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
 
     const [path, setPath] = useState('');
     const client = useApolloClient();
+    const [currentUser] = useCurrentUser();
 
     return (
         <ResponsiveFullScreenDialog open={open} onClose={onClose} aria-labelledby="create-new-folder-dialog-title">
@@ -55,6 +57,7 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                             path: [basePath, path].filter(Boolean).join(basePath === '/' ? '' : '/'),
                             remoteLocation: '',
                             fileConversions: [],
+                            userId: currentUser!.id,
                             __typename: 'File'
                         } as any;
                         const data = client.readQuery<{ files: FileModel[] }>({ query: GetUserFilesQuery }) || { files: [] };

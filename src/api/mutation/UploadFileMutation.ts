@@ -13,6 +13,7 @@ export const UploadFileMutation = gql`
             mimeType
             remoteLocation
             fileType
+            userId
             fileConversions {
                 id
             }
