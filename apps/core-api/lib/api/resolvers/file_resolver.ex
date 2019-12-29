@@ -45,6 +45,18 @@ defmodule Api.FileResolver do
     end
   end
 
+  def move_directory(%{path: path, new_path: new_path, is_public: false}, %{context: %{current_user: current_user}}) do
+    Accounts.move_private_directory(current_user, path, new_path)
+  end
+  def move_directory(%{path: path, new_path: new_path, is_public: true}, %{context: %{current_user: current_user, tenant: tenant}}) do
+    case Accounts.User.is_admin?(current_user, tenant) do
+      true ->
+        Accounts.move_public_directory(tenant, path, new_path)
+      false ->
+        {:error, "Du darfst diesen Ordner nicht verschieben."}
+    end
+  end
+
   def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     try do
       file = Accounts.get_file!(id)

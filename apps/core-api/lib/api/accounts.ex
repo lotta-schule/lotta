@@ -293,6 +293,30 @@ defmodule Api.Accounts do
     |> Repo.update()
   end
 
+  def move_public_directory(%Tenant{} = tenant, path, new_path) do
+    files = from(f in File,
+      where: f.is_public == true and f.tenant_id == ^(tenant.id) and like(f.path, ^"#{path}%"),
+      update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
+      select: [:id]
+    )
+    |> Api.Repo.update_all([])
+    |> elem(1)
+    files = Api.Repo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
+    {:ok, files}
+  end
+  
+  def move_private_directory(%User{} = user, path, new_path) do
+    files = from(f in File,
+      where: f.is_public == false and f.user_id == ^(user.id) and like(f.path, ^"#{path}%"),
+      update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
+      select: [:id]
+    )
+    |> Api.Repo.update_all([])
+    |> elem(1)
+    files = Api.Repo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
+    {:ok, files}
+  end
+
   @doc """
   Deletes a File.
 
