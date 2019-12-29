@@ -102,15 +102,15 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
 
   const dirFiles = uniq(
     (files || [])
-      .map(f => f.path)
-      .filter(path => new RegExp(`^${state.currentPath}`).test(path))
+      .map(file => file.path)
+      .filter((path) => new RegExp(`^${state.currentPath}`).test(path))
       .map(path => path.replace(new RegExp(`^${state.currentPath}`), ''))
       .map(path => path.replace(/^\//, ''))
-      .filter(Boolean)
+      .filter(path => Boolean(path))
       .map(path => path.split('/')[0])
   )
     .map(path => ({
-      id: (new Date().getTime() + Math.random() * 1000 + Math.random() * 1000),
+      id: [state.currentPath, path].join('/').replace(/^\/\//, '/') as any,
       isPublic: state.isPublic,
       fileType: FileModelType.Directory,
       filename: path,
@@ -118,7 +118,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
       insertedAt: new Date().toString(),
       updatedAt: new Date().toString(),
       mimeType: 'application/medienportal-keep-dir',
-      path: path,
+      path: [state.currentPath, path].join('/').replace(/^\/\//, '/'),
       remoteLocation: '',
       fileConversions: [],
       userId: currentUser!.id

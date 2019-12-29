@@ -1,8 +1,6 @@
 import React, { MouseEvent, memo } from 'react';
 import { includes, some, every, uniqBy, findIndex, range } from 'lodash';
-import {
-    Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox
-} from '@material-ui/core';
+import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { FileModel, FileModelType } from 'model';
 import { FileTableRow } from './FileTableRow';
