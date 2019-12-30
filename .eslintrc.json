@@ -1,6 +1,7 @@
 {
     "extends": "react-app",
     "rules": {
-        "@typescript-eslint/consistent-type-assertions": 0
+        "@typescript-eslint/consistent-type-assertions": 0,
+        "@typescript-eslint/no-unused-expressions": 0
     }
 }

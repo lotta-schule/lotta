@@ -18,7 +18,6 @@ export const ImageCollection: FunctionComponent<ImageProps> = memo(({ isEditMode
 
     let oldImageCaptions: (string | null)[] = [];
     if (contentModule.text) {
-        // debugger;
         // TODO: this is migration data and could probably be removed someday
         try {
             oldImageCaptions = JSON.parse(contentModule.text);

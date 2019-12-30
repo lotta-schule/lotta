@@ -1,15 +1,16 @@
 import React, { memo, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { CategoryLayout } from 'component/layouts/CategoryLayout';
-import { useCategory } from 'util/categories/useCategory';
 import { useQuery } from 'react-apollo';
+import { parseISO } from 'date-fns';
 import { ArticleModel, ArticleFilter } from 'model';
 import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
+import { CategoryLayout } from 'component/layouts/CategoryLayout';
+import { useCategory } from 'util/categories/useCategory';
 import { EmptyLoadingLayout } from 'component/layouts/EmptyLoadingLayout';
 import { ID } from 'model/ID';
-import { parseISO } from 'date-fns';
 import { useScrollEvent } from 'util/useScrollEvent';
 import { useCategories } from 'util/categories/useCategories';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
     const categoryId = Number(match.params.id);
@@ -61,13 +62,13 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
 
     if (error) {
         return (
-            <div><span style={{ color: 'red' }}>{error.message}</span></div>
+            <ErrorMessage error={error} />
         );
     }
 
     if (!category) {
         return (
-            <div><span style={{ color: 'red' }}>Seite nicht gefunden!</span></div>
+            <ErrorMessage error={new Error('Seite nicht gefunden!')} />
         );
     }
 

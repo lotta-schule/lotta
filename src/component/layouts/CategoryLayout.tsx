@@ -2,12 +2,12 @@ import React, { memo } from 'react';
 import { CategoryModel, ArticleModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
+import { fade } from '@material-ui/core/styles';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
-import { fade } from '@material-ui/core/styles';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model/User';
 

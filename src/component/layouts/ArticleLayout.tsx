@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from 'react';
+import { useQuery } from 'react-apollo';
 import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
 import { CircularProgress, Typography, makeStyles, Theme } from '@material-ui/core';
@@ -7,8 +8,8 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { RelatedArticlesList } from 'component/article/RelatedArticlesList';
 import { Helmet } from 'react-helmet';
 import { useTenant } from 'util/client/useTenant';
-import { useQuery } from 'react-apollo';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
 import { WidgetsList } from './WidgetsList';
 
@@ -41,7 +42,9 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
             return <div><CircularProgress /></div>;
         }
         if (error) {
-            return (<div><span style={{ color: 'red' }}>{error.message}</span></div>);
+            return (
+                <ErrorMessage error={error} />
+            );
         }
 
         if (data && data.article) {
@@ -68,7 +71,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
             );
         }
         return (
-            <span style={{ color: 'red' }}>Beitrag nicht gefunden.</span>
+            <ErrorMessage error={new Error('Beitrag nicht gefunden')} />
         );
 
     }, [client.title, data, error, isLoading, styles.siteTitle, title]);

@@ -8,6 +8,7 @@ import { Autocomplete } from '@material-ui/lab';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GetGroupQuery } from 'api/query/GetGroupQuery';
 import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 export interface EditGroupForm {
     group: UserGroupModel;
@@ -72,9 +73,7 @@ export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
                 }
             })
         }}>
-            {(loadDetailsError || updateError) && (
-                <span style={{ color: 'red' }}>{loadDetailsError ? loadDetailsError.message : updateError!.message}</span>
-            )}
+            <ErrorMessage error={loadDetailsError || updateError} />
             <FormControl>
                 <InputLabel htmlFor="group-name">Gruppenname</InputLabel>
                 <Input

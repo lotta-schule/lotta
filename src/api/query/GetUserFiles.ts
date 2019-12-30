@@ -7,11 +7,13 @@ export const GetUserFilesQuery = gql`
             insertedAt
             updatedAt
             path
+            isPublic
             filename
             filesize
             remoteLocation
             mimeType
             fileType
+            userId
             fileConversions {
                 id
                 insertedAt

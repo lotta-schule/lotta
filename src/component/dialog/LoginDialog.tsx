@@ -1,10 +1,9 @@
-import React, { FunctionComponent, memo, useState, useEffect } from 'react';
+import React, { FunctionComponent, memo, useState } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Link, makeStyles } from '@material-ui/core';
-import { useMutation } from 'react-apollo';
-import { LoginMutation } from 'api/mutation/LoginMutation';
 import { useOnLogin } from 'util/user/useOnLogin';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { CollisionLink } from 'component/general/CollisionLink';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 export interface LoginDialogProps {
     isOpen: boolean;
@@ -26,11 +25,8 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
     onRequestClose
 }) => {
     const styles = useStyles();
-    const onLogin = useOnLogin();
-
-    const [login, { loading: isLoading, error, data }] = useMutation<{ login: { token: string } }, { username: string, password: string }>(LoginMutation, {
-        fetchPolicy: 'no-cache',
-        refetchQueries: [`categories`]
+    const [login, { error, loading: isLoading }] = useOnLogin('login', {
+        onCompleted: onRequestClose
     });
 
     const [email, setEmail] = useState('');
@@ -39,14 +35,6 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
         setEmail('');
         setPassword('');
     }
-
-    useEffect(() => {
-        if (data) {
-            onLogin(data.login.token);
-            resetForm();
-            onRequestClose();
-        }
-    }, [data, onLogin, onRequestClose]);
 
     return (
         <ResponsiveFullScreenDialog open={isOpen} className={styles.root} fullWidth>
@@ -59,9 +47,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                     <DialogContentText>
                         Melde dich hier mit deinen Zugangsdaten an.
                     </DialogContentText>
-                    {error && (
-                        <p style={{ color: 'red' }}>{error.message}</p>
-                    )}
+                    <ErrorMessage error={error} />
                     <TextField
                         autoFocus
                         margin="dense"

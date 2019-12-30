@@ -13,7 +13,7 @@ import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useCategories } from 'util/categories/useCategories';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
@@ -126,7 +126,7 @@ export const UserNavigation = memo(() => {
             {currentUser && (
                 <>
                     <Button size="small" variant="outlined" color="secondary" className={styles.button} onClick={() => setCreateArticleModalIsOpen(true)}>
-                        <AddCircleIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                        <AddCircleIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
                         Neuer Beitrag
                     </Button>
                     <CreateArticleDialog

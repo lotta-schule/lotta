@@ -2,6 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Card, CardContent, Grid, Link, Table, TableBody, TableRow, TableCell, TextField, Typography, makeStyles } from '@material-ui/core';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useTenant } from 'util/client/useTenant';
 import { Tenant } from 'util/model';
 import { useMutation } from 'react-apollo';
@@ -24,11 +25,7 @@ export const BasicSettings = memo(() => {
 
     return (
         <>
-
-            {error && (
-                <div style={{ color: 'red' }}>{error.message}</div>
-            )}
-
+            <ErrorMessage error={error} />
             <Typography variant={'h6'}>
                 Name der Seite
             </Typography>

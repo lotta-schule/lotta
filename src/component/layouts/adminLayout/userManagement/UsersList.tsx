@@ -1,65 +1,73 @@
-import React, { memo, useState, useCallback } from 'react';
-import {
-    Typography, Table, TableHead, TableRow, TableCell, TableBody, makeStyles, Theme,
-    CircularProgress, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Button
-} from '@material-ui/core';
-import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
+import React, { memo, useMemo, useState } from 'react';
+import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles } from '@material-ui/core';
 import { AssignUserToGroupsDialog } from './AssignUserToGroupsDialog';
 import { useQuery } from 'react-apollo';
-import { ID, UserModel, UserGroupModel } from 'model';
+import { UserModel, UserGroupModel } from 'model';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
-import { find } from 'lodash';
-import { User } from 'util/model';
-import { useUserGroups } from 'util/client/useUserGroups';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SearchUserField } from './SearchUserField';
+import { useUserGroups } from 'util/client/useUserGroups';
 import { UserAvatar } from 'component/user/UserAvatar';
-import classNames from 'classnames';
+import { GroupSelect } from 'component/edit/GroupSelect';
+import { VirtualizedTable } from 'component/general/VirtualizedTable';
+import { SearchUserField } from './SearchUserField';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     avatar: {
-        height: 50,
-        width: 50,
-        margin: '.25em .5em .25em 0',
+        height: '1em',
+        width: '1em',
+        margin: '.15em .25em .15em 0',
     },
-    headlines: {
+    divider: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+
+    },
+    headline: {
         marginBottom: theme.spacing(2),
     },
+    inputField: {
+        maxWidth: 400
+    },
     searchUserField: {
-        width: 'auto',
         maxWidth: 400,
         backgroundColor: theme.palette.grey[200]
     },
     formControl: {
         width: '100%',
     },
-    expandHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        flexBasis: '50%',
-        flexShrink: 0,
-    },
-    secondaryExpandHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        color: theme.palette.text.secondary,
-    },
+    virtualizedTable: {
+        '& .ReactVirtualized__Table__headerColumn:last-child': {
+            flex: '1 !important'
+        }
+    }
 }));
 
 export const UsersList = memo(() => {
-    const groups = useUserGroups();
     const [currentUser] = useCurrentUser();
+    const groups = useUserGroups();
 
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
-    const [expandedGroupId, setExpandedGroupId] = useState<ID | null>(null);
-    const { data, loading, refetch } = useQuery<{ users: UserModel[] }>(GetUsersQuery);
+    const [selectedGroupsFilter, setSelectedGroupsFilter] = useState<UserGroupModel[]>([...groups]);
+    const [filterText, setFilterText] = useState('');
+    const { data, loading } = useQuery<{ users: UserModel[] }>(GetUsersQuery);
 
     const styles = useStyles();
 
-    const getUsersForGroup = useCallback((group: UserGroupModel) => {
-        if (!data || !data.users) {
-            return [];
-        }
-        return data.users.filter(user => !!find(user.groups, userGroup => userGroup.id === group.id));
-    }, [data]);
+    const rows = useMemo(() => {
+        return data?.users?.filter(user =>
+            user.groups.find(group => selectedGroupsFilter.find(g => g.id === group.id))
+        )?.filter(user =>
+            !filterText ? true : new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name)
+        )?.map(user =>
+            ({
+                avatarImage: <UserAvatar className={styles.avatar} user={user} />,
+                name: <>{user.name}{user.nickname && <> &nbsp; (<strong>{user.nickname}</strong>)</>}</>,
+                groups: user.groups.map(g => g.name).join(', '),
+                user
+            })
+        ) ?? [];
+    }, [data, filterText, selectedGroupsFilter, styles.avatar]);
 
     if (loading) {
         return (
@@ -67,65 +75,64 @@ export const UsersList = memo(() => {
         );
     }
 
-    if (data && data.users) {
+    if (data?.users) {
         return (
             <>
-                <SearchUserField className={classNames(styles.searchUserField, styles.headlines)} onSelectUser={setSelectedUser} />
-                {groups.map(group => (
-                    <ExpansionPanel
-                        key={group.id}
-                        expanded={expandedGroupId === group.id}
-                        onChange={(_, expanded) => setExpandedGroupId(expanded ? group.id : null)}
-                        TransitionProps={{ unmountOnExit: true }}
-                    >
-                        <ExpansionPanelSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls={`group-panel-${group.id}-content`}
-                            id={`group-panel-${group.id}-header`}
-                        >
-                            <Typography className={styles.expandHeading}>
-                                {group.name}
-                            </Typography>
-                            <Typography className={styles.secondaryExpandHeading}>
-                                {getUsersForGroup(group).length} Nutzer
-                                </Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <Table size={'small'}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell></TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Gruppe</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {getUsersForGroup(group).sort((u1, u2) => u1.name.localeCompare(u2.name)).map(user => (
-                                        <TableRow key={user.id}>
-                                            <TableCell>
-                                                <UserAvatar className={styles.avatar} user={user} />
-                                            </TableCell>
-                                            <TableCell>{User.getName(user)}{user.nickname && <><br /><strong>{user.nickname}</strong></>}</TableCell>
-                                            <TableCell>
-                                                {user.id !== currentUser!.id && (
-                                                    <Button variant={'outlined'} onClick={() => { setSelectedUser(user); }}>
-                                                        bearbeiten
-                                                    </Button>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                ))}
+                <SearchUserField className={clsx(styles.inputField, styles.searchUserField, styles.headline)} onSelectUser={setSelectedUser} />
+
+                <Divider className={styles.divider} />
+
+                <Typography variant={'h5'} className={styles.headline}>In Gruppen eingetragene Nutzer</Typography>
+                <GroupSelect
+                    row
+                    hidePublicGroupSelection
+                    disableAdminGroupsExclusivity
+                    label={null}
+                    selectedGroups={selectedGroupsFilter}
+                    onSelectGroups={setSelectedGroupsFilter}
+                />
+                <TextField
+                    fullWidth
+                    className={styles.inputField}
+                    margin={'dense'}
+                    value={filterText}
+                    onChange={e => setFilterText(e.target.value)}
+                    placeholder={'Tabelle nach Name filtern'}
+                    helperText={'"*"-Zeichen ersetzt beliebige Zeichen'}
+                />
+                <VirtualizedTable
+                    className={styles.virtualizedTable}
+                    rowCount={rows.length}
+                    rowGetter={({ index }) => rows[index]}
+                    headerHeight={48}
+                    rowHeight={48}
+                    onRowClick={({ rowData: { user } }) => {
+                        if (user.id !== currentUser?.id) {
+                            setSelectedUser(user);
+                        }
+                    }}
+                    columns={[
+                        {
+                            width: 30,
+                            label: '',
+                            dataKey: 'avatarImage',
+                        },
+                        {
+                            width: 300,
+                            label: 'Name',
+                            dataKey: 'name',
+                        },
+                        {
+                            label: 'Gruppen',
+                            dataKey: 'groups',
+                        }
+                    ]}
+                />
                 {selectedUser && (
                     <AssignUserToGroupsDialog
                         onAbort={() => setSelectedUser(null)}
                         onConfirm={() => {
                             setSelectedUser(null);
-                            refetch();
                         }}
                         user={selectedUser}
                     />

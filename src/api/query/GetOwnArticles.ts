@@ -28,6 +28,7 @@ export const GetOwnArticlesQuery = gql`
                     fileType
                     filename
                     filesize
+                    insertedAt
                     fileConversions {
                         id
                         format

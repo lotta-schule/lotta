@@ -3,13 +3,11 @@ import {
     Checkbox, DialogTitle, DialogContent, DialogContentText, DialogActions,
     Button, TextField, Typography, Grid, makeStyles, Theme, FormGroup, FormControlLabel
 } from '@material-ui/core';
-import { UserModel } from '../../model';
-import { RegisterMutation } from 'api/mutation/RegisterMutation';
-import { useMutation } from '@apollo/react-hooks';
 import { useOnLogin } from 'util/user/useOnLogin';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import { fade } from '@material-ui/core/styles';
 import { useGetFieldError } from 'util/useGetFieldError';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
@@ -29,19 +27,9 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     isOpen,
     onRequestClose
 }) => {
-    const onLogin = useOnLogin({ redirect: '/profile' });
+    const [register, { error, loading: isLoading }] = useOnLogin('register', { redirect: '/profile', onCompleted: onRequestClose });
     const styles = useStyles();
 
-    const [register, { loading: isLoading, error }] = useMutation<{ register: { token: string } }, { user: Partial<UserModel> & { password: string }, groupKey?: string }>(RegisterMutation, {
-        update: (_, { data }) => {
-            if (data) {
-                onLogin(data.register.token);
-                resetForm();
-                onRequestClose();
-            }
-        },
-        errorPolicy: 'all'
-    });
     const getFieldError = useGetFieldError(error);
 
     const [firstName, setFirstName] = useState('');
@@ -86,9 +74,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                     <DialogContentText>
                         Gib hier deine Daten <b>korrekt</b> an, um dich als Nutzer zu registrieren.
                     </DialogContentText>
-                    {(formError || error) && (
-                        <p style={{ color: 'red' }}>{formError || error!.message}</p>
-                    )}
+                    <ErrorMessage error={formError || error} />
                     <TextField
                         autoFocus
                         margin="dense"

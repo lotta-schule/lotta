@@ -18,7 +18,7 @@ export const User = {
     },
 
     isAdmin(user?: UserModel | null) {
-        return user && user.groups && user.groups.some(g => g.isAdminGroup);
+        return user?.groups?.some(g => g.isAdminGroup) ?? false;
     },
 
     isAuthor(user: UserModel | null | undefined, article: ArticleModel) {

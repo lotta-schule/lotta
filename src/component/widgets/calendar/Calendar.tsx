@@ -1,13 +1,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, makeStyles, Divider, CircularProgress, Tooltip, Typography } from '@material-ui/core';
-import { GetCalendarQuery } from 'api/query/GetCalendarQuery';
-import { CalendarEventModel } from 'model/CalendarEventModel';
 import { useApolloClient } from '@apollo/react-hooks';
 import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { WidgetModel, CalendarWidgetConfig, CalendarWidgetCalendarConfig } from 'model';
 import { FiberManualRecord } from '@material-ui/icons';
 import { lighten } from '@material-ui/core/styles';
+import { GetCalendarQuery } from 'api/query/GetCalendarQuery';
+import { CalendarEventModel } from 'model/CalendarEventModel';
+import { WidgetModel, CalendarWidgetConfig, CalendarWidgetCalendarConfig } from 'model';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -88,7 +89,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
         );
     } else if (error) {
         return (
-            <span style={{ color: 'red' }}>{error.message}</span>
+            <ErrorMessage error={error} />
         );
     } else if (events) {
         return (

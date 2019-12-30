@@ -4,17 +4,20 @@ import { FileModel, FileModelType } from 'model';
 import { useApolloClient } from '@apollo/react-hooks';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { GetUserFilesQuery } from 'api/query/GetUserFiles';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export interface CreateNewFolderDialogProps {
     basePath?: string;
+    isPublic?: boolean;
     open: boolean;
     onClose(event: {}, reason: 'backdropClick' | 'escapeKeyDown' | 'auto'): void;
 }
 
-export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps> = memo(({ basePath, open, onClose }) => {
+export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps> = memo(({ basePath, isPublic, open, onClose }) => {
 
     const [path, setPath] = useState('');
     const client = useApolloClient();
+    const [currentUser] = useCurrentUser();
 
     return (
         <ResponsiveFullScreenDialog open={open} onClose={onClose} aria-labelledby="create-new-folder-dialog-title">
@@ -47,12 +50,14 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                             fileType: FileModelType.Misc,
                             filename: '.lotta-keep',
                             filesize: 0,
+                            isPublic: isPublic === true,
                             insertedAt: new Date().toString(),
                             updatedAt: new Date().toString(),
                             mimeType: 'application/medienportal-keep-dir',
                             path: [basePath, path].filter(Boolean).join(basePath === '/' ? '' : '/'),
                             remoteLocation: '',
                             fileConversions: [],
+                            userId: currentUser!.id,
                             __typename: 'File'
                         } as any;
                         const data = client.readQuery<{ files: FileModel[] }>({ query: GetUserFilesQuery }) || { files: [] };
@@ -68,6 +73,6 @@ export const CreateNewFolderDialog: FunctionComponent<CreateNewFolderDialogProps
                     Ordner anlegen
                 </Button>
             </DialogActions>
-        </ResponsiveFullScreenDialog>
+        </ResponsiveFullScreenDialog >
     );
 });

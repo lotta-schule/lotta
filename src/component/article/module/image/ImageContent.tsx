@@ -3,7 +3,7 @@ import { FileModel } from '../../../../model';
 import { makeStyles, Theme } from '@material-ui/core';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import Img, { ImgProps } from 'react-cloudimage-responsive';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     clickableImage: {
@@ -19,6 +19,6 @@ export const ImageContent: FunctionComponent<ImageContentProps> = memo(({ file, 
     const styles = useStyles();
     const imageSource = file ? file.remoteLocation : null;
     return imageSource ?
-        <Img src={imageSource} {...otherProps} className={classNames({ [styles.clickableImage]: !!otherProps.onClick }, otherProps.className)} /> :
+        <Img src={imageSource} {...otherProps} className={clsx({ [styles.clickableImage]: !!otherProps.onClick }, otherProps.className)} /> :
         <PlaceholderImage width={'100%'} height={350} />;
 });

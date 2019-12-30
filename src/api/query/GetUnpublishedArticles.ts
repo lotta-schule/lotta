@@ -32,6 +32,7 @@ export const GetUnpublishedArticlesQuery = gql`
                     fileType
                     filename
                     filesize
+                    insertedAt
                     fileConversions {
                         id
                         format

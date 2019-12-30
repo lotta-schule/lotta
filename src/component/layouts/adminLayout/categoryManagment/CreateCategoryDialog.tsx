@@ -6,6 +6,7 @@ import { CategoryModel } from 'model';
 import { CreateCategoryMutation } from 'api/mutation/CreateCategoryMutation';
 import { useMutation } from '@apollo/react-hooks';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { CategorySelect } from '../../editArticleLayout/CategorySelect';
 
@@ -65,9 +66,7 @@ export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> 
                     <DialogContentText>
                         Erstelle eine neue Kategorie
                     </DialogContentText>
-                    {error && (
-                        <p style={{ color: 'red' }}>{error.message}</p>
-                    )}
+                    <ErrorMessage error={error} />
                     <TextField
                         margin="dense"
                         id="title"

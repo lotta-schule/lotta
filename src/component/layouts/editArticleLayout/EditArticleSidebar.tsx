@@ -1,25 +1,26 @@
 import React, { memo, useState, MouseEvent } from 'react';
-import { ArticleModel, ID } from '../../../model';
 import {
     Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel,
     Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem, Divider, DialogTitle, DialogContent, DialogActions
 } from '@material-ui/core';
-import { CategorySelect } from './CategorySelect';
 import { DateTimePicker } from '@material-ui/pickers';
-import { GroupSelect } from '../../edit/GroupSelect';
 import { parseISO } from 'date-fns';
+import { uniqBy } from 'lodash';
+import { useMutation } from 'react-apollo';
+import { CategorySelect } from './CategorySelect';
+import { GroupSelect } from '../../edit/GroupSelect';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { Save as SaveIcon, ArrowDropDown as ArrowDropDownIcon, Warning } from '@material-ui/icons';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
+import { ArticleModel, ID } from '../../../model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
-import { uniqBy } from 'lodash';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
-import { UsersList } from './UsersList';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { useMutation } from 'react-apollo';
 import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
-import classNames from 'classnames';
+import { UsersList } from './UsersList';
+import { SelectTopicAutocomplete } from './SelectTopicAutocomplete';
+import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
 import useRouter from 'use-react-router';
 
@@ -145,15 +146,9 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                         />
                     </CardContent>
                     <CardContent>
-                        <TextField
-                            label="Thema"
-                            value={article.topic || ''}
-                            onChange={e => onUpdate({ ...article, topic: e.target.value || '' })}
-                            fullWidth
-                            variant="outlined"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
+                        <SelectTopicAutocomplete
+                            value={article.topic ?? ''}
+                            onChange={topic => onUpdate({ ...article, topic })}
                         />
                     </CardContent>
                 </>
@@ -215,7 +210,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                         onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: undefined })}
                         fullWidth
                     >
-                        <SaveIcon className={classNames(styles.leftIcon, styles.iconSmall)} />
+                        <SaveIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
                         speichern
                     </Button>
                     <Button
@@ -272,7 +267,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                     onClick={() => setIsDeleteModalOpen(true)}
                     fullWidth
                 >
-                    <Warning className={classNames(styles.leftIcon, styles.iconSmall)} />
+                    <Warning className={clsx(styles.leftIcon, styles.iconSmall)} />
                     Beitrag löschen
                 </Button>
                 <ResponsiveFullScreenDialog open={isDeleteModalOpen}>

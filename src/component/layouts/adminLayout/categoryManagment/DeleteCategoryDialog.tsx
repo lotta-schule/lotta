@@ -1,8 +1,9 @@
 import React, { memo } from 'react';
 import { CircularProgress, DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ArticleModel, CategoryModel, ID } from 'model';
 import { useQuery, useMutation } from 'react-apollo';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
 import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
 import { DeleteCategoryMutation } from 'api/mutation/DeleteCategoryMutation';
@@ -49,9 +50,7 @@ export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(({ isOpen, c
         <ResponsiveFullScreenDialog open={isOpen} onClose={onClose} aria-labelledby="delete-category-dialog">
             <DialogTitle id="delete-category-dialog-title">Kategorie löschen</DialogTitle>
             <DialogContent>
-                {error && (
-                    <p style={{ color: 'red' }}>{error.message}</p>
-                )}
+                <ErrorMessage error={error} />
                 <DialogContentText>
                     Möchtest du die folgende Kategorie wirklich löschen? Sie ist dann unwiederbringlich verloren.
                 </DialogContentText>

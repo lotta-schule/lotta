@@ -1,13 +1,14 @@
 import React, { memo, useState } from 'react';
 import { Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Typography, makeStyles } from '@material-ui/core';
 import { AddCircle, ExpandMore, DragHandle } from '@material-ui/icons';
-import { useUserGroups } from 'util/client/useUserGroups';
-import { EditGroupForm } from './EditGroupForm';
+import { useMutation } from 'react-apollo';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
-import { useMutation } from 'react-apollo';
-import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
+import { useUserGroups } from 'util/client/useUserGroups';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { EditGroupForm } from './EditGroupForm';
+import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 
 const useStyles = makeStyles(theme => ({
     createButton: {
@@ -88,9 +89,7 @@ export const GroupsList = memo(() => {
                     }
                 });
             }}>
-                {error && (
-                    <div style={{ color: 'red' }}>{error.message}</div>
-                )}
+                <ErrorMessage error={error} />
                 <Droppable droppableId={'groups-root'} type={'root-groups'}>
                     {({ droppableProps, innerRef, placeholder }) => (
                         <div {...droppableProps} ref={innerRef} style={{ paddingBottom: '5em' }}>

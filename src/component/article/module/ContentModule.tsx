@@ -1,5 +1,9 @@
-import React, { FunctionComponent, memo, useState, useCallback } from 'react';
-import { ContentModuleModel, ContentModuleType } from '../../../model';
+import React, { memo, useState, useCallback } from 'react';
+import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
+import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@material-ui/core';
+import { DragHandle, Delete, Settings } from '@material-ui/icons';
+import { includes } from 'lodash';
+import { ContentModuleModel, ContentModuleType, ID } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
 import { Config as TitleConfig } from './title/Config';
@@ -9,12 +13,7 @@ import { Config as ImageCollectionConfig } from './image_collection/Config';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
-import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
-import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@material-ui/core';
-import { DragHandle, Delete, Settings } from '@material-ui/icons';
-import { includes } from 'lodash';
-import classNames from 'classnames';
-import { ID } from 'model/ID';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
             top: '2.25em',
             left: 0,
             width: '100%',
-            zIndex: 1,
+            zIndex: 100,
             backgroundColor: theme.palette.background.paper
         }
     }),
@@ -65,7 +64,7 @@ interface ContentModuleProps {
     onRemoveContentModule(): void;
 }
 
-export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
+export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
 
     const styles = useStyles();
     const [showConfigModeContentModuleId, setShowConfigModeContentModuleId] = useState<ID | null>(null);
@@ -95,7 +94,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
                                 aria-label="Settings"
                                 onClick={() => toggleConfigMode(contentModule.id)}
                             >
-                                <Settings className={classNames(styles.buttonIcon, { [styles.activeButtonIcon]: showConfigModeContentModuleId === contentModule.id })} />
+                                <Settings className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: showConfigModeContentModuleId === contentModule.id })} />
                             </IconButton>
                         )}
                     </span>
@@ -107,7 +106,7 @@ export const ContentModule: FunctionComponent<ContentModuleProps> = memo(({ isEd
                             style={{ float: 'right' }}
                             onClick={() => onRemoveContentModule()}
                         >
-                            <Delete className={classNames(styles.buttonIcon)} />
+                            <Delete className={clsx(styles.buttonIcon)} />
                         </IconButton>
                     </span>
                 </div>

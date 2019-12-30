@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { merge } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
+import { deDE } from '@material-ui/core/locale';
 import { AdminLayout } from './layouts/adminLayout/AdminLayout';
 import { ArticleRoute } from './routes/ArticleRoute';
 import { BaseLayout } from './layouts/BaseLayout';
@@ -20,11 +21,12 @@ import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-apollo';
 import { theme } from 'theme';
 import { useCategories } from 'util/categories/useCategories';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const App = memo(() => {
     const { data, loading: isLoadingTenant, error, called: calledTenant } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
     const [, { called: calledCurrentUser, loading: isLoadingCurrentUser }] = useCurrentUser();
-    useCategories(); // start loading categories
+    useCategories();
 
     if (!calledTenant || !calledCurrentUser || isLoadingTenant || isLoadingCurrentUser) {
         return (
@@ -36,15 +38,13 @@ export const App = memo(() => {
 
     if (calledTenant && (!data || !data.tenant)) {
         return (
-            <div>
-                <span style={{ color: 'red' }}>Adresse ungültig.</span>
-            </div>
+            <ErrorMessage error={new Error('Adresse ungültig')} />
         );
     }
 
     if (error) {
         return (
-            <div><span style={{ color: 'red' }}>{error.message}</span></div>
+            <ErrorMessage error={error} />
         );
     }
 
@@ -53,7 +53,7 @@ export const App = memo(() => {
     return (
         <ThemeProvider theme={() => {
             if (tenant.customTheme) {
-                return createMuiTheme(merge({}, theme, tenant.customTheme));
+                return createMuiTheme(merge({}, theme, tenant.customTheme), deDE);
             }
             return theme;
         }}>

@@ -4,15 +4,16 @@ import {
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { CategoryModel } from 'model';
+import { useMutation } from 'react-apollo';
+import Img from 'react-cloudimage-responsive';
+import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
+import { ID } from 'model/ID';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
-import { useMutation } from 'react-apollo';
-import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
-import { ID } from 'model/ID';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
-import Img from 'react-cloudimage-responsive';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -90,9 +91,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
             <Typography variant="h5">
                 {selectedCategory ? selectedCategory.title : category && category.title}
             </Typography>
-            {error && (
-                <div style={{ color: 'red' }}>{error.message}</div>
-            )}
+            <ErrorMessage error={error} />
             <TextField
                 className={styles.input}
                 fullWidth

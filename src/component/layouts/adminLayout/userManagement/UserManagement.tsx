@@ -6,6 +6,9 @@ import { GroupsList } from './GroupsList';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
+    root: {
+        minHeight: '85vh'
+    },
     content: {
         paddingTop: theme.spacing(3),
         paddingBottom: theme.spacing(3),
@@ -19,7 +22,7 @@ export const UserManagement = memo(() => {
     const { history, location } = useRouter();
 
     return (
-        <Paper>
+        <Paper className={styles.root}>
             <Tabs value={location.pathname} indicatorColor={'primary'} textColor={'primary'} onChange={(_, pathname) => history.push(pathname)}>
                 <Tab value={'/admin/users/list'} label={'Nutzer'} />
                 <Tab value={'/admin/users/groups'} label={'Gruppen'} />

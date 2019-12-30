@@ -1,11 +1,12 @@
 import React, { memo, useState } from 'react';
 import { uniqBy } from 'lodash';
-import { ContentModuleModel, FileModel } from 'model';
-import { ImageImage } from '../../image/ImageImage';
 import { Grid, makeStyles, IconButton } from '@material-ui/core';
-import { SelectFileButton } from 'component/edit/SelectFileButton';
-import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
 import { Delete } from '@material-ui/icons';
+import { ContentModuleModel, FileModel } from 'model';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { FileSorter } from '../Config';
+import { ImageImage } from '../../image/ImageImage';
+import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
 
 const useStyles = makeStyles(() => ({
     img: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles(() => ({
         position: 'absolute',
         right: '1.5em',
         top: '.5em',
-        zIndex: 1000
+        zIndex: 5
     }
 }));
 
@@ -47,8 +48,7 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
             };
         }
     }
-    const sortedFiles = (contentModule.files || [])
-        .sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey);
+    const sortedFiles = (contentModule.files || []).sort(FileSorter(contentModule, getConfiguration));
     return (
         <>
             <Grid container>

@@ -1,24 +1,16 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
+import { Dialog, DialogTitle, List, ListItem, ListItemAvatar, CircularProgress, ListItemText } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import { State } from 'store/State';
 import { UploadModel } from 'model';
-import { useSelector } from 'react-redux';
-import { Dialog, DialogTitle, List, ListItem, ListItemAvatar, CircularProgress, ListItemText } from '@material-ui/core';
+import { useFileExplorerData } from './context/useFileExplorerData';
 
-export interface ActiveUploadsModalProps {
-    open: boolean;
-    onClose(event: {}, reason: 'backdropClick' | 'escapeKeyDown'): void;
-}
-
-export const ActiveUploadsModal: FunctionComponent<ActiveUploadsModalProps> = memo(({ open, onClose }) => {
-    const uploads: UploadModel[] = (useSelector<State, UploadModel[] | null>(s => s.userFiles.uploads) || []);
-
-    if (uploads.length < 1) {
-        onClose({}, 'backdropClick');
-        return null;
-    }
+export const ActiveUploadsModal = memo(() => {
+    const uploads = (useSelector<State, UploadModel[]>(s => s.userFiles.uploads) || []);
+    const [state, dispatch] = useFileExplorerData();
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={state.showActiveUploads && uploads.length > 0} onClose={() => dispatch({ type: 'hideActiveUploads' })}>
             <DialogTitle>{uploads.length} Dateien werden hochgeladen</DialogTitle>
             <List>
                 {uploads.map(upload => (

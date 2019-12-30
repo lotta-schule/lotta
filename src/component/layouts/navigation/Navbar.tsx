@@ -9,7 +9,7 @@ import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
 import { useDispatch } from 'react-redux';
 import { fade } from '@material-ui/core/styles';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -116,7 +116,7 @@ export const Navbar = memo(() => {
                                     to={'/'}
                                     variant="text"
                                     size={'medium'}
-                                    className={classNames(styles.navButton, { selected: currentCategoryId === null })}
+                                    className={clsx(styles.navButton, { selected: currentCategoryId === null })}
                                     color='inherit'
                                 >
                                     {homepageCategory.title}
@@ -129,7 +129,7 @@ export const Navbar = memo(() => {
                                     component={CollisionLink}
                                     to={category.redirect ? category.redirect : `/category/${category.id}`}
                                     size={'medium'}
-                                    className={classNames(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                    className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                                 >
                                     {category.title}
                                 </Button>
@@ -140,7 +140,7 @@ export const Navbar = memo(() => {
                 </Grid>
                 <Grid item xs={2} sm={1} className={styles.mobileBurgerMenuButton}>
                     <IconButton className={styles.iconButton} size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
-                        <Menu className={classNames(styles.menu)} />
+                        <Menu className={clsx(styles.menu)} />
                     </IconButton>
                 </Grid>
             </Grid>
@@ -154,7 +154,7 @@ export const Navbar = memo(() => {
                                 component={CollisionLink}
                                 to={category.redirect ? category.redirect : `/category/${category.id}`}
                                 size={'small'}
-                                className={classNames(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                             >
                                 {category.title}
                             </Button>

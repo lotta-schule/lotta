@@ -1,18 +1,10 @@
 import React, { memo, useCallback, useMemo } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import List from '@material-ui/core/List';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
+import { Button, Card, CardHeader, Checkbox, Divider, Grid, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
 import { useQuery } from 'react-apollo';
-import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -54,7 +46,6 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
 
     const { data, loading: isLoadingPossibleWidgets, error } = useQuery<{ widgets: WidgetModel[] }>(GetWidgetsQuery);
     const allWidgets = data ? data.widgets || [] : [];
-    // const [possibleWidgets, setPossibleWidgets] = React.useState<WidgetModel[]>(allWidgets);
     const possibleWidgets = useMemo(() => not(allWidgets, selectedWidgets), [allWidgets, selectedWidgets]);
 
     const leftChecked = intersection(checkedWidgets, possibleWidgets);
@@ -85,12 +76,10 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
 
     const handleCheckedRight = () => {
         setSelectedWidgets(selectedWidgets.concat(leftChecked));
-        // setPossibleWidgets(not(possibleWidgets, leftChecked));
         setCheckedWidgets(not(checkedWidgets, leftChecked));
     };
 
     const handleCheckedLeft = () => {
-        // setPossibleWidgets(possibleWidgets.concat(rightChecked));
         setSelectedWidgets(not(selectedWidgets, rightChecked));
         setCheckedWidgets(not(checkedWidgets, rightChecked));
     };
@@ -137,7 +126,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
 
     return (
         <>
-            {error && <div style={{ color: 'red' }}>{error.message}</div>}
+            <ErrorMessage error={error} />
             <Grid container justify="center" alignItems="center" className={styles.root}>
                 <Grid item>
                     {isLoadingPossibleWidgets ? null : listOfWidgets('Mögliche Marginale', possibleWidgets)}
