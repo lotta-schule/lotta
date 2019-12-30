@@ -95,9 +95,9 @@ deploy staging:
       --set redis.cluster.slaveCount=1
       --set redis.metrics.enabled=true
       --set resources.limits.cpu=300m
-      --set resources.limits.memory=768Mi
+      --set resources.limits.memory=384Mi
       --set resources.requests.cpu=200m
-      --set resources.requests.memory=384Mi
+      --set resources.requests.memory=256Mi
   only:
     refs:
       - develop
@@ -149,7 +149,7 @@ deploy production:
       --set resources.limits.cpu=500m
       --set resources.limits.memory=1536Mi
       --set resources.requests.cpu=200m
-      --set resources.requests.memory=512Mi
+      --set resources.requests.memory=256Mi
   only:
     refs:
       - master

@@ -58,6 +58,12 @@ defmodule ApiWeb.Schema.TenantsTypes do
   
       resolve &Api.WidgetResolver.update/2
     end
+    
+    field :delete_widget, type: :widget do
+      arg :id, non_null(:lotta_id)
+  
+      resolve &Api.WidgetResolver.delete/2
+    end
   end
 
   input_object :tenant_input do
@@ -137,36 +143,5 @@ defmodule ApiWeb.Schema.TenantsTypes do
     value :vplan, as: "vplan"
     value :schedule, as: "schedule"
     value :tagcloud, as: "tagcloud"
-  end
-
-  object :file do
-    field :id, :lotta_id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
-    field :filename, :string
-    field :filesize, :integer
-    field :mime_type, :string
-    field :path, :string
-    field :remote_location, :string
-    field :file_type, :file_type
-    field :user_id, :lotta_id
-    field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-  end
-
-  object :file_conversion do
-    field :id, :lotta_id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
-    field :format, :string
-    field :mime_type, :string
-    field :remote_location, :string
-  end
-
-  enum :file_type do
-    value :image, as: "image"
-    value :audio, as: "audio"
-    value :video, as: "video"
-    value :pdf, as: "pdf"
-    value :misc, as: "misc"
   end
 end

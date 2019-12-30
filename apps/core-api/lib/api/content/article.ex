@@ -4,7 +4,7 @@ defmodule Api.Content.Article do
   import Ecto.Query
   alias Api.Repo
   alias Api.Accounts.{File,User,UserGroup}
-  alias Api.Content.{ContentModule}
+  alias Api.Content.{Article,ContentModule}
   alias Api.Tenants.{Category,Tenant}
 
   schema "articles" do
@@ -31,6 +31,14 @@ defmodule Api.Content.Article do
     timestamps()
   end
 
+  def get_url(%Article{} = article) do
+    article
+    |> Api.Repo.preload(:tenant)
+    |> Map.fetch!(:tenant)
+    |> Tenant.get_main_url()
+    |> String.replace_suffix("", "/article/#{article.id}")
+  end
+
   @doc false
   def create_changeset(article, attrs) do
     article
@@ -50,8 +58,8 @@ defmodule Api.Content.Article do
     |> put_assoc_preview_image_file(attrs)
     |> put_assoc_groups(attrs)
     |> cast_assoc(:content_modules, required: false)
+    |> maybe_send_admin_notification()
   end
-
 
   defp put_assoc_users(changeset, %{users: users}) do
     changeset
@@ -76,4 +84,16 @@ defmodule Api.Content.Article do
     |> put_assoc(:groups, Repo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))
   end
   defp put_assoc_groups(changeset, _), do: changeset
+
+  defp maybe_send_admin_notification(changeset) do
+    if changeset.valid? && get_change(changeset, :ready_to_publish) do
+      case apply_action(changeset, :update) do
+        {:ok, article} ->
+          Api.EmailPublisherWorker.send_article_is_ready_admin_notification(article)
+        {:error, _} ->
+          nil
+      end
+    end
+    changeset
+  end
 end

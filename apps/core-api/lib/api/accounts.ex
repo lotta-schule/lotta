@@ -140,7 +140,8 @@ defmodule Api.Accounts do
       join: t in GroupEnrollmentToken,
       on: g.id == t.group_id,
       where: t.token == ^token and g.tenant_id == ^(tenant.id),
-      distinct: true)
+      distinct: true
+    )
     |> Repo.all()
   end
 
@@ -236,7 +237,11 @@ defmodule Api.Accounts do
 
   """
   def list_files(tenant_id, user_id) do
-    Repo.all(Ecto.Query.from f in File, where: f.tenant_id == ^tenant_id and f.user_id == ^user_id)
+    Ecto.Query.from(f in File,
+      where: f.tenant_id == ^tenant_id and (f.user_id == ^user_id or f.is_public == true),
+      order_by: [:is_public, :path, :filename]
+    )
+    |> Repo.all()
   end
 
   @doc """
@@ -267,9 +272,9 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_file(attrs \\ %{}) do
+  def create_file(attrs, is_admin_user \\ false) do
     %File{}
-    |> File.changeset(attrs)
+    |> File.changeset(attrs, is_admin_user)
     |> Repo.insert()
   end
 
@@ -282,10 +287,34 @@ defmodule Api.Accounts do
       {:ok, %File{}}
 
   """
-  def move_file(%File{} = file, path) do
+  def move_file(%File{} = file, attrs, can_edit_public_files \\ false) do
     file
-    |> File.move_changeset(path)
+    |> File.move_changeset(attrs, can_edit_public_files)
     |> Repo.update()
+  end
+
+  def move_public_directory(%Tenant{} = tenant, path, new_path) do
+    files = from(f in File,
+      where: f.is_public == true and f.tenant_id == ^(tenant.id) and like(f.path, ^"#{path}%"),
+      update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
+      select: [:id]
+    )
+    |> Api.Repo.update_all([])
+    |> elem(1)
+    files = Api.Repo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
+    {:ok, files}
+  end
+  
+  def move_private_directory(%User{} = user, path, new_path) do
+    files = from(f in File,
+      where: f.is_public == false and f.user_id == ^(user.id) and like(f.path, ^"#{path}%"),
+      update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
+      select: [:id]
+    )
+    |> Api.Repo.update_all([])
+    |> elem(1)
+    files = Api.Repo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
+    {:ok, files}
   end
 
   @doc """

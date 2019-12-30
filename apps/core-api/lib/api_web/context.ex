@@ -19,9 +19,17 @@ defmodule ApiWeb.Context do
   end
 
   defp put_user(context, conn) do
+    conn = conn
+      |> Plug.Conn.fetch_cookies()
     authorization_header = get_req_header(conn, "authorization")
-    with ["Bearer " <> token] <- authorization_header,
-        {:ok, current_user, _claims} <- Guardian.resource_from_token(token) do
+    authorization_token = with ["Bearer " <> token] <- authorization_header do
+      token
+    else
+      _ ->
+        conn.cookies["LottaAuth"]
+    end
+    with false <- is_nil(authorization_token),
+        {:ok, current_user, _claims} <- Guardian.resource_from_token(authorization_token) do
       current_user =
         Repo.get(Accounts.User, current_user.id)
         |> Repo.preload([:groups, :avatar_image_file])

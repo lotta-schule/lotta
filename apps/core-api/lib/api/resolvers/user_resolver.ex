@@ -100,6 +100,10 @@ defmodule Api.UserResolver do
       {:ok, %{token: jwt}}
     end
   end
+  
+  def logout(_args, _info) do
+    {:ok, nil}
+  end
 
   def request_password_reset(%{email: email}, %{context: %{tenant: tenant}}) do
     token =

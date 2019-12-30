@@ -89,7 +89,7 @@ defmodule Api.AccountsTest do
     test "move_file/1 should change a file's path" do
       # user = Fixtures.fixture(:registered_user)
       file = Fixtures.fixture(:file, nil)
-      Accounts.move_file(file, "/a/new/path")
+      Accounts.move_file(file, %{path: "/a/new/path"})
 
       assert Accounts.get_file!(file.id).path == "/a/new/path"
     end
