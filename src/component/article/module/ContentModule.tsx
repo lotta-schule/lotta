@@ -1,9 +1,8 @@
-import React, { memo, useState, useCallback } from 'react';
-import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
-import { Card, makeStyles, Theme, createStyles, IconButton, Collapse } from '@material-ui/core';
-import { DragHandle, Delete, Settings } from '@material-ui/icons';
-import { includes } from 'lodash';
-import { ContentModuleModel, ContentModuleType, ID } from '../../../model';
+import React, { memo, useMemo } from 'react';
+import { Draggable, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import { Card, makeStyles, Theme, createStyles, IconButton, Popover, Box, Divider, Button } from '@material-ui/core';
+import { MoreVert, Delete } from '@material-ui/icons';
+import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
 import { Config as TitleConfig } from './title/Config';
@@ -13,18 +12,37 @@ import { Config as ImageCollectionConfig } from './image_collection/Config';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
+import { bindTrigger, bindPopover, usePopupState } from 'material-ui-popup-state/hooks';
 import clsx from 'clsx';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles<Theme, { isEditModeEnabled: boolean }>(theme =>
     createStyles({
         card: {
-            position: 'relative'
+            position: 'relative',
+            borderWidth: ({ isEditModeEnabled }) => isEditModeEnabled ? 1 : 0,
+            borderColor: 'transparent',
+            borderStyle: 'solid',
+            '&.dragging': {
+                borderColor: theme.palette.secondary.main,
+                '& $dragbar': {
+                    backgroundColor: theme.palette.secondary.main,
+                    opacity: 1
+                }
+            },
+            '&:hover, &:focus-within, &.active': {
+                borderColor: theme.palette.grey[200],
+                '& $dragbar': {
+                    opacity: .8
+                }
+            }
         },
         dragbar: {
+            opacity: 0,
             height: '2em',
             backgroundColor: theme.palette.grey[200],
             display: 'flex',
             justifyContent: 'space-between',
+            transition: 'opacity 250ms ease-in',
             '& > span': {
                 display: 'flex'
             }
@@ -33,11 +51,6 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: '0 5px',
             height: 32,
             width: 32
-        },
-        dragHandle: {
-            marginTop: '0.15em',
-            marginLeft: '0.5em',
-            color: theme.palette.grey[700]
         },
         buttonIcon: {
             color: theme.palette.grey[700]
@@ -66,66 +79,84 @@ interface ContentModuleProps {
 
 export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
 
-    const styles = useStyles();
-    const [showConfigModeContentModuleId, setShowConfigModeContentModuleId] = useState<ID | null>(null);
-    const toggleConfigMode = useCallback((id: ID) => {
-        if (showConfigModeContentModuleId === id) {
-            setShowConfigModeContentModuleId(null);
-        } else {
-            setShowConfigModeContentModuleId(id);
-        }
-    }, [showConfigModeContentModuleId]);
-    const configurableContentModuleTypes = [ContentModuleType.TITLE, ContentModuleType.IMAGE_COLLECTION];
+    const styles = useStyles({ isEditModeEnabled: isEditModeEnabled ?? false });
 
-    const card = (draggableProvided?: DraggableProvided) => (
+    const popupState = usePopupState({ variant: 'popover', popupId: 'contentmodule-configuration' })
+
+    const config = useMemo(() => {
+        switch (contentModule.type) {
+            case ContentModuleType.TITLE:
+                return <TitleConfig
+                    contentModule={contentModule}
+                    onUpdateModule={onUpdateModule}
+                    onRequestClose={popupState.close}
+                />;
+            case ContentModuleType.IMAGE_COLLECTION:
+                return <ImageCollectionConfig
+                    contentModule={contentModule}
+                    onUpdateModule={onUpdateModule}
+                    onRequestClose={popupState.close}
+                />;
+        }
+    }, [contentModule, onUpdateModule, popupState]);
+
+    const card = (draggableProvided?: DraggableProvided, snapshot?: DraggableStateSnapshot) => (
         <Card
-            className={styles.card}
+            className={clsx(styles.card, { active: popupState.isOpen, dragging: snapshot?.isDragging })}
             component={'section'}
-            innerRef={draggableProvided && draggableProvided.innerRef}
-            {...(draggableProvided ? draggableProvided.draggableProps : undefined)}
+            innerRef={draggableProvided?.innerRef}
+            {...draggableProvided?.draggableProps}
         >
             {isEditModeEnabled && (
-                <div {...(draggableProvided ? draggableProvided.dragHandleProps : undefined)} className={styles.dragbar}>
-                    <span>
-                        <DragHandle className={styles.dragHandle} />
-                        {includes(configurableContentModuleTypes, contentModule.type) && (
-                            <IconButton
-                                classes={{ root: styles.dragbarButton }}
-                                aria-label="Settings"
-                                onClick={() => toggleConfigMode(contentModule.id)}
-                            >
-                                <Settings className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: showConfigModeContentModuleId === contentModule.id })} />
-                            </IconButton>
-                        )}
-                    </span>
+                <div {...draggableProvided?.dragHandleProps} className={styles.dragbar}>
                     <span>
                         <IconButton
-                            color={'primary'}
                             classes={{ root: styles.dragbarButton }}
-                            aria-label="Delete"
-                            style={{ float: 'right' }}
-                            onClick={() => onRemoveContentModule()}
+                            style={{ position: 'absolute', top: 0, right: 0 }}
+                            aria-label="Settings"
+                            {...bindTrigger(popupState)}
                         >
-                            <Delete className={clsx(styles.buttonIcon)} />
+                            <MoreVert className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: popupState.isOpen })} />
                         </IconButton>
+                        <Popover
+                            {...bindPopover(popupState)}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                        >
+                            <Box py={1} px={2}>
+                                {config && (
+                                    <>
+                                        {config}
+                                        <Divider />
+                                    </>
+                                )}
+                                <Button
+                                    color={'primary'}
+                                    startIcon={<Delete className={clsx(styles.buttonIcon)} />}
+                                    aria-label={'Delete'}
+                                    style={{ float: 'right' }}
+                                    onClick={() => onRemoveContentModule()}
+                                >
+                                    Modul löschen
+                                </Button>
+                            </Box>
+                        </Popover>
                     </span>
                 </div>
-            )}
+            )
+            }
             {contentModule.type === ContentModuleType.TITLE && (
-                <>
-                    <Collapse in={showConfigModeContentModuleId === contentModule.id} className={styles.configSection}>
-                        <TitleConfig
-                            contentModule={contentModule}
-                            onUpdateModule={onUpdateModule}
-                            onRequestClose={() => setShowConfigModeContentModuleId(null)}
-                        />
-                    </Collapse>
-                    <Title
-                        contentModule={contentModule}
-                        isEditModeEnabled={isEditModeEnabled}
-                        onUpdateModule={onUpdateModule}
-                    />
-                </>
+                <Title
+                    contentModule={contentModule}
+                    isEditModeEnabled={isEditModeEnabled}
+                    onUpdateModule={onUpdateModule}
+                />
             )}
             {contentModule.type === ContentModuleType.TEXT && (
                 <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
@@ -134,20 +165,11 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                 <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
             )}
             {contentModule.type === ContentModuleType.IMAGE_COLLECTION && (
-                <>
-                    <Collapse in={showConfigModeContentModuleId === contentModule.id} className={styles.configSection}>
-                        <ImageCollectionConfig
-                            contentModule={contentModule}
-                            onUpdateModule={onUpdateModule}
-                            onRequestClose={() => setShowConfigModeContentModuleId(null)}
-                        />
-                    </Collapse>
-                    <ImageCollection
-                        contentModule={contentModule}
-                        isEditModeEnabled={isEditModeEnabled}
-                        onUpdateModule={onUpdateModule}
-                    />
-                </>
+                <ImageCollection
+                    contentModule={contentModule}
+                    isEditModeEnabled={isEditModeEnabled}
+                    onUpdateModule={onUpdateModule}
+                />
             )}
             {contentModule.type === ContentModuleType.VIDEO && (
                 <Video contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
@@ -166,7 +188,5 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
             <Draggable draggableId={String(contentModule.id)} index={index}>
                 {card}
             </Draggable>
-        ) : (
-            card()
-        );
+        ) : card();
 });

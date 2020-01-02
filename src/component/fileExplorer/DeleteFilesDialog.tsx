@@ -43,10 +43,12 @@ export const DeleteFilesDialog = memo(() => {
                 <DialogContentText>
                     Sollten Sie in Beiträgen, Modulen oder als Profilbild verwendet werden, wird die Referenz auch dort entfernt.
                 </DialogContentText>
-                <DialogContentText component={'ul'}>
-                    {state.markedFiles.map(file => (
-                        <li key={file.id}>{getFullFilePath(file)}</li>
-                    ))}
+                <DialogContentText>
+                    <ul>
+                        {state.markedFiles.map(file => (
+                            <li key={file.id}>{getFullFilePath(file)}</li>
+                        ))}
+                    </ul>
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
