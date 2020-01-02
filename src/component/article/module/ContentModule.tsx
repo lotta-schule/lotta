@@ -129,7 +129,7 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                                 horizontal: 'right',
                             }}
                         >
-                            <Box py={1} px={2}>
+                            <Box py={1} px={2} style={{ overflow: 'auto' }}>
                                 {config && (
                                     <>
                                         {config}
