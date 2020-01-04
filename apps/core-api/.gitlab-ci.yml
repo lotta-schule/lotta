@@ -134,6 +134,9 @@ deploy production:
       --set ingress.hosts[0].host=api.lotta.schule
       --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]=api.lotta.schule
+      --set ingress.hosts[1].host=*.lotta.schule
+      --set ingress.hosts[1].paths[0]=/api
+      --set ingress.tls[1].hosts[0]=*.lotta.schule
       --set postgresql.postgresqlDatabase=$POSTGRES_DB
       --set postgresql.postgresqlUsername=$POSTGRES_USER
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
