@@ -9,6 +9,7 @@ export interface ScheduleResultHead {
     timestamp: string;
     type: string;
     filename: string;
+    skipDates: string[];
 }
 
 export interface ScheduleResultBody {
