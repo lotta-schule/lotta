@@ -1,7 +1,10 @@
+/* eslint-disable no-loop-func */
 import React, { memo, useState, useEffect } from 'react';
 import { uniq } from 'lodash';
+import { addBusinessDays, isSameDay, parse, parseISO, subBusinessDays, format } from 'date-fns';
+import { de } from 'date-fns/locale';
 import {
-    makeStyles, CircularProgress, Table, TableBody, TableRow, TableCell, Typography, Link
+    makeStyles, CircularProgress, Table, TableBody, TableRow, TableCell, Typography, Link, IconButton, Tooltip
 } from '@material-ui/core';
 import { useQuery } from '@apollo/react-hooks';
 import { darken } from '@material-ui/core/styles';
@@ -11,6 +14,7 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
 import clsx from 'clsx';
+import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
@@ -56,7 +60,16 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
     const [currentUser] = useCurrentUser();
     const [isSelectCoursesDialogOpen, setIsSelectCoursesDialogOpen] = useState(false);
     const [selectedCourses, setSelectedCourses] = useState<string[] | null>(null);
-    const { data, loading: isLoading, error } = useQuery<{ schedule: ScheduleResult }>(GetScheduleQuery, { variables: { widgetId: widget.id }, skip: !currentUser || !currentUser.class });
+    const [customDate, setCustomDate] = useState<Date | undefined>();
+    console.log('customDate: ', customDate);
+    const { data, loading: isLoading, error } = useQuery<{ schedule: ScheduleResult }>(GetScheduleQuery, {
+        variables: { widgetId: widget.id, date: customDate && format(customDate, 'yyyy-MM-dd') },
+        skip: !currentUser || !currentUser.class
+    });
+
+    if (customDate && error) {
+        setTimeout(() => setCustomDate(undefined), 2500);
+    }
 
     useEffect(() => {
         if (isSelectCoursesDialogOpen === false) {
@@ -91,13 +104,44 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
             <ErrorMessage error={error} />
         );
     } else if (data && data.schedule) {
+        const dateString = data.schedule.head.date;
+        const currentDate = parse(dateString.split(', ')[1], 'PPP', new Date(), { locale: de });
+
+        const previousDate = (() => {
+            let dateCursor = new Date(currentDate);
+            while (true) {
+                dateCursor = subBusinessDays(dateCursor, 1);
+                if (data.schedule.head.skipDates.findIndex(skipDate => isSameDay(new Date(skipDate), dateCursor)) < 0) {
+                    return dateCursor;
+                }
+                // if the date is in the skipDates array, continue with next day
+            }
+        })();
+
+        const nextDate = (() => {
+            let dateCursor = new Date(currentDate);
+            while (true) {
+                dateCursor = addBusinessDays(dateCursor, 1);
+                if (data.schedule.head.skipDates.findIndex(skipDate => isSameDay(new Date(skipDate), dateCursor)) < 0) {
+                    return dateCursor;
+                }
+                // if the date is in the skipDates array, continue with next day
+            }
+        })();
+
         return (
             <div className={styles.root}>
+                {['11', '12'].indexOf(currentUser.class) > -1 && (
+                    <Link color={'secondary'} href={'#'} onClick={() => setIsSelectCoursesDialogOpen(true)}>Kurse</Link>
+                )}
                 <Typography variant={'caption'} className={styles.date}>
+                    <Tooltip title={format(previousDate, 'PP', { locale: de })}>
+                        <IconButton onClick={() => setCustomDate(previousDate)}><ArrowBackIos /></IconButton>
+                    </Tooltip>
                     <span>{data.schedule.head.date}</span>
-                    {['11', '12'].indexOf(currentUser.class) > -1 && (
-                        <Link color={'secondary'} href={'#'} onClick={() => setIsSelectCoursesDialogOpen(true)}>Kurse</Link>
-                    )}
+                    <Tooltip title={format(nextDate, 'PP', { locale: de })}>
+                        <IconButton onClick={() => setCustomDate(nextDate)}><ArrowForwardIos /></IconButton>
+                    </Tooltip>
                 </Typography>
                 {data.schedule.body && (
                     <>
