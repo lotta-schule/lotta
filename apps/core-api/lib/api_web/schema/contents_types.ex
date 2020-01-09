@@ -123,5 +123,6 @@ defmodule ApiWeb.Schema.ContentsTypes do
     value :video, as: "video"
     value :audio, as: "audio"
     value :download, as: "download"
+    value :form, as: "form"
   end
 end
