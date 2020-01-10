@@ -12,6 +12,7 @@ import { Config as ImageCollectionConfig } from './image_collection/Config';
 import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
+import { Form } from './form/Form';
 import { bindTrigger, bindPopover, usePopupState } from 'material-ui-popup-state/hooks';
 import clsx from 'clsx';
 
@@ -179,6 +180,9 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
             )}
             {contentModule.type === ContentModuleType.DOWNLOAD && (
                 <Download contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+            )}
+            {contentModule.type === ContentModuleType.FORM && (
+                <Form contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
             )}
         </Card>
     );
