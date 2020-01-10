@@ -58,21 +58,23 @@ defmodule Api.Tenants.Tenant do
     |> Api.Repo.all
   end
 
-  defp put_assoc_logo_image_file(changeset, attrs) do
-    case is_nil(attrs[:logo_image_file]) do
-      false ->
-        put_assoc(changeset, :logo_image_file, Accounts.get_file!(attrs.logo_image_file.id))
-      _ ->
-        changeset
-    end
+  defp put_assoc_logo_image_file(changeset, %{logo_image_file: %{id: logo_image_file_id}}) do
+    changeset
+    |> put_assoc(:logo_image_file, Api.Repo.get(Api.Accounts.File, logo_image_file_id))
   end
+  defp put_assoc_logo_image_file(changeset, %{logo_image_file: nil}) do
+    changeset
+    |> put_assoc(:logo_image_file, nil)
+  end
+  defp put_assoc_logo_image_file(changeset, _args), do: changeset
   
-  defp put_assoc_background_image_file(changeset, attrs) do
-    case is_nil(attrs[:background_image_file]) do
-      false ->
-        put_assoc(changeset, :background_image_file, Accounts.get_file!(attrs.background_image_file.id))
-      _ ->
-        changeset
-    end
+  defp put_assoc_background_image_file(changeset, %{background_image_file: %{id: background_image_file_id}}) do
+    changeset
+    |> put_assoc(:background_image_file, Api.Repo.get(Api.Accounts.File, background_image_file_id))
   end
+  defp put_assoc_background_image_file(changeset, %{background_image_file: nil}) do
+    changeset
+    |> put_assoc(:background_image_file, nil)
+  end
+  defp put_assoc_background_image_file(changeset, _args), do: changeset
 end
