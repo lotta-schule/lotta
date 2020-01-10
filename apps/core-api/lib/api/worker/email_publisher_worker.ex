@@ -106,6 +106,35 @@ defmodule Api.EmailPublisherWorker do
     end)
   end
 
+  def send_content_module_form_response(%Api.Content.ContentModule{} = content_module, %{} = responses) do
+    content_module = Api.Repo.preload(content_module, :article)
+    article =
+      content_module.article
+      |> Api.Repo.preload(:tenant)
+    tenant = article.tenant
+    responses_list =
+      responses
+      |> Enum.map(fn {key, value} -> "<li><strong>#{key}:</strong> #{value}</li>" end)
+      |> Enum.join("")
+      |> (&("<ul>" <> &1 <> "</ul>")).()
+
+    Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+      to: content_module.configuration["destination"],
+      sender_name: tenant.title,
+      subject: "Formular im Beitrag \"#{article.title}\" wurde versendet",
+      template: "default",
+      templatevars: %{
+        tenant: EmailSendRequest.get_tenant_info(tenant),
+        heading: "Formular versendet",
+        content: "Hallo,<br />" <>
+          "Das Formular im Beitrag \"#{article.title}\" wurde versendet.<br />" <>
+          "Das sind die Antworten:<br /><br />" <>
+          responses_list
+      }
+    })
+
+  end
+
   def publish(message) do
     GenServer.cast(:email_publisher, {:publish, message})
   end
