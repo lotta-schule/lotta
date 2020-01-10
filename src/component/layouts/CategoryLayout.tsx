@@ -5,7 +5,6 @@ import { Grid, Typography, makeStyles } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { parseISO } from 'date-fns';
 import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -91,7 +90,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                                 if (a1.isPinnedToTop) { return -1; }
                                 if (a2.isPinnedToTop) { return 1; }
                             }
-                            return parseISO(a2.updatedAt).getTime() - parseISO(a1.updatedAt).getTime();
+                            return new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime();
                         })
                         .map(article => (
                             <ArticlePreview key={article.id} article={article} limitedHeight />

@@ -61,7 +61,7 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
     const [isSelectCoursesDialogOpen, setIsSelectCoursesDialogOpen] = useState(false);
     const [selectedCourses, setSelectedCourses] = useState<string[] | null>(null);
     const [customDate, setCustomDate] = useState<Date | undefined>();
-    console.log('customDate: ', customDate);
+
     const { data, loading: isLoading, error } = useQuery<{ schedule: ScheduleResult }>(GetScheduleQuery, {
         variables: { widgetId: widget.id, date: customDate && format(customDate, 'yyyy-MM-dd') },
         skip: !currentUser || !currentUser.class
