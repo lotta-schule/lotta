@@ -25,8 +25,8 @@ export const CategorySelect: FunctionComponent<CategorySelectProps> = memo(({ di
 
     const getMenuItemForCategory = useCallback((category: CategoryModel) => (
         <MenuItem key={category.id} value={category.id}>
-            {category.category && <strong>{category.title}</strong>}
-            {!category.category && <span>&nbsp;{category.title}</span>}
+            {!category.category && <strong>{category.title}</strong>}
+            {category.category && <span style={{ paddingLeft: '2em' }}>{category.title}</span>}
         </MenuItem>
     ), []);
 
@@ -47,7 +47,7 @@ export const CategorySelect: FunctionComponent<CategorySelectProps> = memo(({ di
                 onChange={e => onSelectCategory(find(categories, cat => e.target.value !== 'null' && cat.id === e.target.value) || null)}
                 input={<OutlinedInput labelWidth={labelWidth} name={'category'} id={'outlined-category-select'} />}
             >
-                <MenuItem key={'null'} value={'null'}>Kategorie wählen</MenuItem>
+                <MenuItem key={'null'} value={'null'}><i>Kategorie wählen</i></MenuItem>
                 {menuItems}
             </Select>
         </FormControl>
