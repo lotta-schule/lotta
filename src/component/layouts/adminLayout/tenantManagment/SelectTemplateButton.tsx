@@ -21,9 +21,6 @@ const useStyles = makeStyles<Theme, { partialTheme: Partial<Theme> }>((theme: Th
         },
         '&:hover, &$focusVisible': {
             zIndex: 1,
-            // '& $imageBackdrop': {
-            //     opacity: 0.15,
-            // }
         },
     },
     focusVisible: {},
