@@ -135,7 +135,7 @@ export const PresentationSettings = memo(() => {
                     <Grid item sm={6}>
                         <Card>
                             <CardContent>
-                                <SelectFileOverlay label={'Hintergrundbild ändern'} onSelectFile={backgroundImage => setBackgroundImage(backgroundImage)}>
+                                <SelectFileOverlay label={'Hintergrundbild ändern'} onSelectFile={backgroundImage => setBackgroundImage(backgroundImage)} allowDeletion>
                                     {backgroundImage ? (
                                         <Img operation={'height'} size={'400x200'} src={backgroundImage.remoteLocation} />
                                     ) : <PlaceholderImage width={'100%'} height={200} />}

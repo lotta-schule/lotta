@@ -99,7 +99,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                 onChange={e => setWidget({ ...widget, title: e.target.value })}
             />
 
-            <SelectFileOverlay label={'Icon ändern'} onSelectFile={iconImageFile => setWidget({ ...widget, iconImageFile })}>
+            <SelectFileOverlay label={'Icon ändern'} onSelectFile={iconImageFile => setWidget({ ...widget, iconImageFile })} allowDeletion>
                 {widget.iconImageFile ? (
                     <Img operation={'cover'} size={'100x100'} src={widget.iconImageFile.remoteLocation} />
                 ) : (<PlaceholderImage width={'100%'} height={100} />)}

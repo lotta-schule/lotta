@@ -13,7 +13,7 @@ export interface WidgetModel<C = any> {
     id: ID;
     title: string;
     type: WidgetModelType;
-    iconImageFile?: FileModel;
+    iconImageFile?: FileModel | null;
     groups: UserGroupModel[];
     configuration: C;
 }

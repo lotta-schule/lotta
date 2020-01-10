@@ -112,7 +112,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                         <b>Wähle ein Banner für diese Kategorie</b>
                     </Typography>
 
-                    <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })}>
+                    <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })} allowDeletion>
                         {category.bannerImageFile ? (
                             <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
                         ) : (<PlaceholderImage width={'100%'} height={75} />)}
