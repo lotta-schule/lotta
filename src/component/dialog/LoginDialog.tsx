@@ -71,14 +71,16 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                         type="password"
                         fullWidth
                     />
-                    <Link
-                        component={CollisionLink}
-                        color='inherit'
-                        underline='none'
-                        to={`/password/request-reset`}
-                    >
-                        <Typography variant="body1" color="secondary"> Passwort vergessen? </Typography>
-                    </Link>
+                    <Typography variant="body1" color="secondary"> 
+                        <Link
+                            component={CollisionLink}
+                            color='inherit'
+                            underline='none'
+                            to={`/password/request-reset`}
+                        >
+                            Passwort vergessen?
+                        </Link>
+                    </Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button
