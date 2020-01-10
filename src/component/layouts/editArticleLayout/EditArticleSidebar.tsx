@@ -155,7 +155,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 </>
             )}
             <CardContent>
-                <SelectFileOverlay label={'Vorschaubild ändern'} onSelectFile={previewImageFile => onUpdate({ ...article, previewImageFile })}>
+                <SelectFileOverlay allowDeletion label={'Vorschaubild ändern'} onSelectFile={previewImageFile => onUpdate({ ...article, previewImageFile })}>
                     {article.previewImageFile ? (
                         <Img operation={'width'} size={'300x200'} src={article.previewImageFile.remoteLocation} />
                     ) : <PlaceholderImage width={'100%'} height={150} />}

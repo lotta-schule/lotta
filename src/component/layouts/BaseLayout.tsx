@@ -14,7 +14,7 @@ const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
             [theme.breakpoints.up('md')]: {
-                backgroundImage: ({ tenant }) => tenant.backgroundImageFile && `url(${tenant.backgroundImageFile.remoteLocation})`,
+                backgroundImage: ({ tenant }) => tenant.backgroundImageFile ? `url(${tenant.backgroundImageFile.remoteLocation})` : undefined,
             }
         }
     },

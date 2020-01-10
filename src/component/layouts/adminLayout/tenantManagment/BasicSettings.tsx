@@ -42,7 +42,7 @@ export const BasicSettings = memo(() => {
                 <Grid item sm={6}>
                     <Card>
                         <CardContent>
-                            <SelectFileOverlay label={'Logo ändern'} onSelectFile={logo => setLogo(logo)}>
+                            <SelectFileOverlay label={'Logo ändern'} onSelectFile={logo => setLogo(logo)} allowDeletion>
                                 {logo ? (
                                     <Img operation={'height'} size={'200x80'} src={logo.remoteLocation} />
                                 ) : <PlaceholderImage width={'100%'} height={80} />}

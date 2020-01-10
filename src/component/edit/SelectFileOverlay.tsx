@@ -7,15 +7,17 @@ import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScree
 
 interface SelectFileOverlayProps {
     label: string;
+    allowDeletion?: boolean;
     fileFilter?(file: FileModel): boolean;
-    onSelectFile(file: FileModel): void;
+    onSelectFile(file: FileModel | null): void;
 }
 
-export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo(({ children, label, fileFilter, onSelectFile }) => {
+export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo(({ children, label, allowDeletion, fileFilter, onSelectFile }) => {
     const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(false);
+    const onClickRemove = allowDeletion ? (() => onSelectFile(null)) : undefined;
     return (
         <>
-            <EditOverlay label={label} onClick={() => setIsSelectFileDialogOpen(true)}>
+            <EditOverlay label={label} onClick={() => setIsSelectFileDialogOpen(true)} onClickRemove={onClickRemove}>
                 {children}
             </EditOverlay>
             <ResponsiveFullScreenDialog open={isSelectFileDialogOpen} onClose={() => setIsSelectFileDialogOpen(false)} fullWidth>
