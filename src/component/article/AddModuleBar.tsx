@@ -1,10 +1,11 @@
 import React, { FunctionComponent, memo } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, Grid } from '@material-ui/core';
-import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined } from '@material-ui/icons';
+import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined, Feedback } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { AddModuleButton } from './AddModuleButton';
 import { Value } from 'slate';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 const { serialize } = require('slate-base64-serializer').default;
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -25,6 +26,7 @@ export interface AddModuleBarProps {
 export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddModule }) => {
 
     const styles = useStyles();
+    const [currentUser] = useCurrentUser();
 
     return (
         <div className={styles.root}>
@@ -137,6 +139,22 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 sortKey: null!,
                                 type: ContentModuleType.DOWNLOAD,
                                 text: '[]',
+                                files: [],
+                            });
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={4} sm={3} md={2}>
+                    <AddModuleButton
+                        label={'Formular'}
+                        icon={<Feedback />}
+                        onClick={() => {
+                            onAddModule({
+                                id: new Date().getTime() + Math.random() * 1000,
+                                sortKey: null!,
+                                type: ContentModuleType.FORM,
+                                configuration: { destination: currentUser!.email, elements: [] },
+                                text: undefined,
                                 files: [],
                             });
                         }}
