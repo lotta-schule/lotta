@@ -140,6 +140,10 @@ defmodule Api.Accounts.User do
     article
     |> put_assoc(:avatar_image_file, Api.Repo.get(Api.Accounts.File, avatar_image_file_id))
   end
+  defp put_assoc_avatar_image_file(article, %{avatar_image_file: nil}) do
+    article
+    |> put_assoc(:avatar_image_file, nil)
+  end
   defp put_assoc_avatar_image_file(article, _args), do: article
 
   defp validate_has_nickname_if_hide_full_name_is_set(%Ecto.Changeset{} = changeset) do

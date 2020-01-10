@@ -77,6 +77,10 @@ defmodule Api.Content.Article do
     changeset
     |> put_assoc(:preview_image_file, Repo.get(File, preview_image_file_id))
   end
+  defp put_assoc_preview_image_file(changeset, %{preview_image_file: nil}) do
+    changeset
+    |> put_assoc(:preview_image_file, nil)
+  end
   defp put_assoc_preview_image_file(changeset, _), do: changeset
   
   defp put_assoc_groups(changeset, %{groups: groups}) do
