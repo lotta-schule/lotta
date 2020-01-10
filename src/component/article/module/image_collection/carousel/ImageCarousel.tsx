@@ -10,20 +10,15 @@ const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
         fontFamily: 'Muli',
+        border: '1px solid #bdbdbd',
+        borderRadius: theme.shape.borderRadius,
     },
     header: {
         display: 'flex',
         alignItems: 'center',
-        height: 50,
-        paddingLeft: theme.spacing(4),
-        backgroundColor: theme.palette.background.default,
-    },
-    img: {
-        height: 255,
-        display: 'block',
-        maxWidth: 400,
-        overflow: 'hidden',
-        width: '100%',
+        marginBottom: theme.spacing(1),
+        background: 'none',
+        borderBottom: '1px solid #bdbdbd'
     },
     imgContainer: {
         display: 'flex',
@@ -40,7 +35,6 @@ const useStyles = makeStyles(theme => ({
         width: 'auto',
         zIndex: 1,
         background: theme.palette.primary.contrastText,
-        right: 0,
         bottom: 0,
         padding: '0 .5em',
     }
@@ -54,7 +48,7 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
     const styles = useStyles();
     const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
-    const filesConfiguration: { [id: number]: { caption: string; sortKey: number } } = contentModule.configuration?.files ?? {};
+    const filesConfiguration: { [id: number]: { caption: string; sortKey: number } } = contentModule.configuration ?.files ?? {};
     const maxSteps = contentModule.files.length;
 
     const handleNext = useCallback(() => {
@@ -88,6 +82,7 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
     return (
         <div className={styles.root}>
             <MobileStepper
+                className={styles.header}
                 steps={maxSteps}
                 position="static"
                 variant="text"
@@ -110,6 +105,7 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
                 onChangeIndex={handleStepChange}
                 axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                 enableMouseEvents
+                style={{ paddingBottom: '0.5em' }}
             >
                 {sortedFiles.map((file, index) => (
                     <div key={file.id} className={styles.imgContainer}>
@@ -119,7 +115,7 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
                             </Typography>
                         )}
                         {Math.abs(activeStep - index) <= 2 ? (
-                            <img src={`https://afdptjdxen.cloudimg.io/fit/600x500/foil1/${file.remoteLocation}`} alt={getConfiguration(file).caption || file.remoteLocation} />
+                            <img src={`https://afdptjdxen.cloudimg.io/fit/800x500/foil1/${file.remoteLocation}`} alt={getConfiguration(file).caption || file.remoteLocation} />
                         ) : null}
                     </div>
                 ))}
