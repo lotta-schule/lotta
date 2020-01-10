@@ -130,6 +130,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                     fullWidth
                     label="Datum"
                     inputVariant="outlined"
+                    format={'PPP'}
                     ampm={false}
                     disableFuture={true}
                     animateYearScrolling={true}
