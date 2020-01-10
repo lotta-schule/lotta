@@ -13,22 +13,24 @@ interface ImageImageProps extends Omit<ImageContentProps, 'onClick'> {
     onSelect?(e: MouseEvent<HTMLImageElement>): void;
 }
 
-export const ImageImage: FunctionComponent<ImageImageProps> = memo(({ isEditModeEnabled, file, caption, onUpdateFile, onUpdateCaption, onSelect, ...otherProps }) => {
+export const ImageImage = memo<ImageImageProps>(({ isEditModeEnabled, file, caption, onUpdateFile, onUpdateCaption, onSelect, ...otherProps }) => {
+    const imageContent = isEditModeEnabled ?
+        (
+            <SelectFileOverlay
+                label={'Bild auswechseln'}
+                fileFilter={f => f.fileType === FileModelType.Image}
+                onSelectFile={onUpdateFile}
+            >
+                <ImageContent file={file} {...otherProps} />
+            </SelectFileOverlay>
+        ) :
+        (
+            <ImageContent file={file} {...otherProps} />
+        );
     return (
         <figure style={{ marginLeft: 0, marginRight: 0, }}>
-            {isEditModeEnabled ?
-                <>
-                    <SelectFileOverlay
-                        label={'Bild auswechseln'}
-                        fileFilter={f => f.fileType === FileModelType.Image}
-                        onSelectFile={onUpdateFile}
-                    >
-                        <ImageContent file={file} {...otherProps} />
-                    </SelectFileOverlay>
-                    <ImageCaption isEditModeEnabled={isEditModeEnabled} value={caption} onUpdate={onUpdateCaption} />
-                </> :
-                <ImageContent file={file} onClick={onSelect} {...otherProps} />
-            }
+            {imageContent}
+            <ImageCaption isEditModeEnabled={isEditModeEnabled} value={caption} onUpdate={onUpdateCaption} />
         </figure>
     );
 });
