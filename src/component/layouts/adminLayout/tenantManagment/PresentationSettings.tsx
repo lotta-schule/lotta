@@ -1,7 +1,6 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { get, merge } from 'lodash';
-import { Button, Card, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
-import { theme } from 'theme';
+import { Button, Card, CardContent, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
 import { useMutation } from 'react-apollo';
 import { useTenant } from 'util/client/useTenant';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
@@ -24,6 +23,9 @@ const useStyles = makeStyles(theme => ({
 export const PresentationSettings = memo(() => {
     const styles = useStyles();
     const tenant = useTenant();
+    const theme = useTheme();
+
+    const [allThemes, setAllThemes] = useState<{ title: string; theme: Partial<Theme> }[]>([{ title: 'Standard', theme: {} }]);
 
     const [customTheme, setCustomTheme] = useState<any>(tenant.customTheme || {});
     const [backgroundImage, setBackgroundImage] = useState(tenant.backgroundImageFile);
@@ -34,6 +36,16 @@ export const PresentationSettings = memo(() => {
         return get(customTheme, key, get(theme, key));
     }
 
+    useEffect(() => {
+        Promise.all(['Königsblau', 'Leipzig'].map(async title => {
+            const pureName = title
+                .toLowerCase()
+                .replace(/ö/g, 'oe');
+            const partialTheme = await fetch(`/theme/${pureName}/theme.json`).then(res => res.json())
+            return { title, theme: merge({}, theme, partialTheme) };
+        })).then(customThemes => setAllThemes([{ title: 'Standard', theme: {} }, ...customThemes]));
+    }, [theme]);
+
     return (
         <>
             <section className={styles.section}>
@@ -41,27 +53,13 @@ export const PresentationSettings = memo(() => {
                     Vorlagen
                 </Typography>
                 <Grid container>
-                    <Grid item sm={3}>
-                        <SelectTemplateButton
-                            imageUrl={'/theme/default/preview.png'}
-                            title={'standard'}
-                            onClick={() => setCustomTheme({})}
-                        />
-                    </Grid>
-                    {['Königsblau', 'Leipzig'].map(title => {
-                        const pureName = title
-                            .toLowerCase()
-                            .replace(/ö/g, 'oe')
+                    {allThemes.map(({ title, theme: partialTheme }, index) => {
                         return (
-                            <Grid item sm={3} key={pureName}>
+                            <Grid item sm={3} key={index}>
                                 <SelectTemplateButton
-                                    imageUrl={`/theme/${pureName}/preview.png`}
                                     title={title}
-                                    onClick={() => {
-                                        fetch(`/theme/${pureName}/theme.json`)
-                                            .then(res => res.json())
-                                            .then(setCustomTheme);
-                                    }}
+                                    theme={partialTheme}
+                                    onClick={() => setCustomTheme(partialTheme)}
                                 />
                             </Grid>
                         );
@@ -78,7 +76,7 @@ export const PresentationSettings = memo(() => {
                     <Grid item sm={6}>
                         <ColorSettingRow
                             label={'Primärfarbe'}
-                            hint={'Hintergrund der Seite'}
+                            hint={'Hintergrund der Navigationsleiste, Farbe der Links'}
                             value={getFromTheme('palette.primary.main')}
                             onChange={value => setCustomTheme(merge({}, customTheme, {
                                 palette: {
@@ -87,8 +85,8 @@ export const PresentationSettings = memo(() => {
                             }))}
                         />
                         <ColorSettingRow
-                            label={'Sekundärfarbe'}
-                            hint={'Hintergrund der Seite'}
+                            label={'Akzentfarbe'}
+                            hint={'Farbe der Buttons und für Farbakzente im Seitenlayout'}
                             value={getFromTheme('palette.secondary.main')}
                             onChange={value => setCustomTheme(merge({}, customTheme, {
                                 palette: {
@@ -110,7 +108,7 @@ export const PresentationSettings = memo(() => {
                     <Grid item sm={6}>
                         <ColorSettingRow
                             label={'primäre Textfarbe'}
-                            hint={'Hintergrund der Seite'}
+                            hint={'Standard-Text und Überschriften'}
                             value={getFromTheme('palette.text.primary')}
                             onChange={value => setCustomTheme(merge({}, customTheme, {
                                 palette: {
@@ -120,7 +118,7 @@ export const PresentationSettings = memo(() => {
                         />
                         <ColorSettingRow
                             label={'sekundäre Textfarbe'}
-                            hint={'Hintergrund der Seite'}
+                            hint={'Hinweistext, Vorschautext'}
                             value={getFromTheme('palette.text.secondary')}
                             onChange={value => setCustomTheme(merge({}, customTheme, {
                                 palette: {

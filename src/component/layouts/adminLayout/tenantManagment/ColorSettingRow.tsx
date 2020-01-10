@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { Grid, TextField, Typography, makeStyles } from '@material-ui/core';
+import { theme } from 'theme';
 
 export interface ColorSettingRowProps {
     label: string;
@@ -10,8 +11,7 @@ export interface ColorSettingRowProps {
 
 const useStyles = makeStyles(theme => ({
     root: {
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1)
+        paddingRight: theme.spacing(2)
     },
     description: {
         display: 'flex',
@@ -31,11 +31,9 @@ export const ColorSettingRow = memo<ColorSettingRowProps>(({ label, hint, value,
 
     return (
         <Grid container alignItems={'center'} className={styles.root}>
-            <Grid item sm={8} className={styles.description}>
-                <Typography component={'p'} variant={'subtitle1'}>{label}</Typography>
-                {hint && (<Typography component={'p'} variant={'subtitle2'}>{hint}</Typography>)}
-            </Grid>
-            <Grid item sm={4}>
+            <Grid item sm={3} style={{
+                paddingRight: theme.spacing(2),
+            }}>
                 <TextField
                     fullWidth
                     type={'color'}
@@ -44,6 +42,10 @@ export const ColorSettingRow = memo<ColorSettingRowProps>(({ label, hint, value,
                     margin={'dense'}
                     variant={'outlined'}
                 />
+            </Grid>
+            <Grid item sm={9} className={styles.description}>
+                <Typography component={'p'} variant={'subtitle1'}>{label}</Typography>
+                {hint && (<Typography component={'p'} variant={'subtitle2'}>{hint}</Typography>)}
             </Grid>
         </Grid >
     );

@@ -93,7 +93,7 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ select
                     <ChevronRight />
                 </IconButton>
             )}
-            <img src={imgUrl} alt={''} />
+            <img style={{ border: '1px solid #bdbdbd' }} src={imgUrl} alt={''} />
             {caption && (
                 <Typography className={styles.subtitles}>
                     {caption}
