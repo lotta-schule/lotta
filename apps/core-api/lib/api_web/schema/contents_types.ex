@@ -56,6 +56,13 @@ defmodule ApiWeb.Schema.ContentsTypes do
 
       resolve &Api.ArticleResolver.toggle_pin/2
     end
+
+    field :send_form_response, type: :boolean do
+      arg :content_module_id, non_null(:lotta_id)
+      arg :response, non_null(:json)
+
+      resolve &Api.ContentModuleResolver.send_form_response/2
+    end
   end
 
   input_object :article_input do
