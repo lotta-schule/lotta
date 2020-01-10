@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { ArticleModel } from '../../model';
 import { Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
-import { format, isBefore, parseISO } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CollisionLink } from '../general/CollisionLink';
 import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
@@ -117,7 +117,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                 <Grid item xs>
                     <CardContent>
                         <Typography component={'h5'} variant={'h5'} gutterBottom className={styles.articleTitle}>
-                            {!isEmbedded && currentUser && currentUser.lastSeen && isBefore(parseISO(currentUser.lastSeen), parseISO(article.updatedAt)) && (
+                            {!isEmbedded && currentUser && currentUser.lastSeen && isBefore(new Date(currentUser.lastSeen), new Date(article.updatedAt)) && (
                                 <FiberManualRecord color={'secondary'} fontSize={'small'} />
                             )}
                             {maybeLinked(article.title)}
@@ -144,7 +144,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                             )}
                         </Typography>
                         <Typography variant={'subtitle1'} className={clsx(styles.subtitle)}>
-                            {format(parseISO(article.updatedAt), 'PPP', { locale: de }) + ' '}
+                            {format(new Date(article.updatedAt), 'PPP', { locale: de }) + ' '}
                             {article.topic && <> | {article.topic}&nbsp;</>}
                             {article.users && <> | Autoren: {article.users.map(user => User.getNickname(user)).join(', ')}&nbsp;</>}
                         </Typography>

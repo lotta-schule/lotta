@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { get } from 'lodash';
 import { FormControl, Select, InputLabel, MenuItem, makeStyles } from '@material-ui/core';
 import { ContentModuleModel, FileModel } from 'model';
-import { parseISO } from 'date-fns';
 
 const useStyles = makeStyles(theme => ({
     formControl: {
@@ -37,9 +36,9 @@ export const FileSorter = (contendModule: ContentModuleModel, getConfiguration: 
         case Sorting.FILENAME_DESC:
             return file2.filename.localeCompare(file1.filename);
         case Sorting.FILE_UPLOAD_DATE_ASC:
-            return parseISO(file1.insertedAt).getTime() - parseISO(file2.insertedAt).getTime();
+            return new Date(file1.insertedAt).getTime() - new Date(file2.insertedAt).getTime();
         case Sorting.FILE_UPLOAD_DATE_DESC:
-            return parseISO(file1.insertedAt).getTime() - parseISO(file2.insertedAt).getTime();
+            return new Date(file1.insertedAt).getTime() - new Date(file2.insertedAt).getTime();
         default:
             return getConfiguration(file1).sortKey - getConfiguration(file2).sortKey;
     }

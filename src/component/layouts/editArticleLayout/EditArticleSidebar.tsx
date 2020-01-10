@@ -4,7 +4,6 @@ import {
     Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem, Divider, DialogTitle, DialogContent, DialogActions
 } from '@material-ui/core';
 import { DateTimePicker } from '@material-ui/pickers';
-import { parseISO } from 'date-fns';
 import { uniqBy } from 'lodash';
 import { useMutation } from 'react-apollo';
 import { CategorySelect } from './CategorySelect';
@@ -128,12 +127,13 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
             </CardContent>
             <CardContent>
                 <DateTimePicker
+                    fullWidth
                     label="Datum"
                     inputVariant="outlined"
                     ampm={false}
                     disableFuture={true}
                     animateYearScrolling={true}
-                    value={parseISO(article.insertedAt)}
+                    value={new Date(article.insertedAt)}
                     onChange={date => date && onUpdate({ ...article, insertedAt: date.toISOString() })}
                 />
             </CardContent>
@@ -235,7 +235,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                             <Paper id="menu-list-grow">
                                 <ClickAwayListener onClickAway={handleCloseSaveOptionsMenu}>
                                     <MenuList>
-                                        <MenuItem onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: parseISO(article.updatedAt).toISOString() })}>
+                                        <MenuItem onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: new Date(article.updatedAt).toISOString() })}>
                                             Ohne Aktualisierszeit zu ändern
                                         </MenuItem>
                                         <MenuItem onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: article.insertedAt })}>
