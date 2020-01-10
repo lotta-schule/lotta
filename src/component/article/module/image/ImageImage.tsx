@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, MouseEvent } from 'react';
+import React, { memo, MouseEvent } from 'react';
 import { FileModelType, FileModel } from '../../../../model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { ImageContent, ImageContentProps } from './ImageContent';
