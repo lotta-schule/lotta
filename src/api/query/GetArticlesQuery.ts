@@ -25,6 +25,7 @@ export const GetArticlesQuery = gql`
             users {
                 id
                 nickname
+                name
                 avatarImageFile {
                     remoteLocation
                 }
