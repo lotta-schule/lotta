@@ -1,11 +1,11 @@
 import React, { memo, useState } from 'react';
-import { Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField, Typography, Fab } from '@material-ui/core';
+import { Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField, Typography, IconButton, Badge } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { useMutation } from 'react-apollo';
-import { Edit } from '@material-ui/icons';
+import { Clear } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { User } from 'util/model';
-import { FileModelType, UserModel } from 'model';
+import { FileModelType, UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
@@ -20,7 +20,7 @@ export const ProfileData = memo(() => {
     const [name, setName] = useState(currentUser?.name);
     const [nickname, setNickname] = useState(currentUser?.nickname);
     const [isHideFullName, setIsHideFullName] = useState(currentUser?.hideFullName);
-    const [avatarImageFile, setAvatarImageFile] = useState(currentUser?.avatarImageFile);
+    const [avatarImageFile, setAvatarImageFile] = useState<FileModel | null | undefined>(currentUser?.avatarImageFile);
 
     const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation);
     const getFieldError = useGetFieldError(error);
@@ -38,12 +38,25 @@ export const ProfileData = memo(() => {
                 <ErrorMessage error={error} />
                 <Grid container>
                     <Grid item md={4} style={{ marginTop: '1em' }}>
-                        <Avatar src={avatarImageFile ? avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(currentUser!)} alt={User.getNickname(currentUser!)} />
+                        <Badge
+                            overlap={'circle'}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            badgeContent={(
+                                <IconButton size={'small'} onClick={() => setAvatarImageFile(null)}>
+                                    <Clear />
+                                </IconButton>
+                            )}
+                        >
+                            <Avatar src={avatarImageFile ? avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(currentUser!)} alt={User.getNickname(currentUser!)} />
+                        </Badge>
+                        <br />
                         <SelectFileButton
-                            buttonComponent={Fab}
                             buttonComponentProps={{ color: 'secondary', size: 'small', disabled: isLoading }}
                             fileFilter={f => f.fileType === FileModelType.Image}
-                            label={<Edit />}
+                            label={'Profilbild ändern'}
                             onSelectFile={setAvatarImageFile}
                         />
                     </Grid>

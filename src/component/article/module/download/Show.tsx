@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
-import { CardContent, Typography, Button } from '@material-ui/core';
+import { CardContent, Typography, Button, Grid } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { useStyles } from './Download';
 
@@ -31,20 +31,39 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
             {contentModule.files.sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey).map(file => (
                 <div key={file.id} className={styles.downloadItemWrapper}>
                     <div className={styles.downloadWrapperHeader}>
-                        <div>
-                            {getConfiguration(file).description && (
-                                <Typography className={styles.downloadDescription}>
-                                    {getConfiguration(file).description}
-                                </Typography>
-                            )}
-                            <Typography className={styles.filename}>
-                                {file.filename}
-                            </Typography>
-                            <Typography className={styles.secondaryHeading}>
-                                {new FileSize(file.filesize).humanize()}
-                            </Typography>
-                        </div>
-                        <Button variant={'outlined'} color={'secondary'} component={'a'} href={file.remoteLocation} download={file.filename} target={'_blank'}>download</Button>
+                        <Grid
+                            container
+                            direction={'row'}
+                            justify={'flex-start'}
+                            alignItems={'flex-start'}
+                            spacing={1}>
+                            <Grid item xs={12} sm={8} md={10}>
+                                <div>
+                                    {getConfiguration(file).description && (
+                                        <Typography className={styles.downloadDescription}>
+                                            {getConfiguration(file).description}
+                                        </Typography>
+                                    )}
+                                    <Typography className={styles.filename}>
+                                        {file.filename}
+                                    </Typography>
+                                    <Typography className={styles.secondaryHeading}>
+                                        {new FileSize(file.filesize).humanize()}
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={4} md={2}>
+                                <Button
+                                    variant={'outlined'}
+                                    color={'secondary'}
+                                    component={'a'}
+                                    href={file.remoteLocation}
+                                    download={file.filename}
+                                    target={'_blank'}>
+                                    download
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </div>
                 </div>
             ))}

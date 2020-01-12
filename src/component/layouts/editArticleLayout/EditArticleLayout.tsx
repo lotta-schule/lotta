@@ -36,8 +36,8 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article, onUpdateAr
                         contentModules: [
                             ...editedArticle.contentModules,
                             {
-                                ...contentModule,
                                 configuration: {},
+                                ...contentModule,
                                 sortKey: editedArticle.contentModules.length ?
                                     Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10 :
                                     0,

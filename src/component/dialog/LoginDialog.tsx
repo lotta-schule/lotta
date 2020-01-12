@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Link, makeStyles } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Link, makeStyles, Typography } from '@material-ui/core';
 import { useOnLogin } from 'util/user/useOnLogin';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -71,14 +71,16 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                         type="password"
                         fullWidth
                     />
-                    <Link
-                        component={CollisionLink}
-                        color='inherit'
-                        underline='none'
-                        to={`/password/request-reset`}
-                    >
-                        Passwort vergessen?
-                    </Link>
+                    <Typography variant="body1" color="secondary"> 
+                        <Link
+                            component={CollisionLink}
+                            color='inherit'
+                            underline='none'
+                            to={`/password/request-reset`}
+                        >
+                            Passwort vergessen?
+                        </Link>
+                    </Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button

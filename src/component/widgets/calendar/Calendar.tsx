@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, makeStyles, Divider, CircularProgress, Tooltip, Typography } from '@material-ui/core';
 import { useApolloClient } from '@apollo/react-hooks';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { FiberManualRecord } from '@material-ui/icons';
 import { lighten } from '@material-ui/core/styles';
@@ -112,7 +112,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                                     {calendars.length > 1 && (
                                         <FiberManualRecord fontSize={'inherit'} htmlColor={event.calendar.color || 'red'} className={styles.calendarColorDot} />
                                     )}
-                                    {format(parseISO(event.start), 'P', { locale: de })}
+                                    {format(new Date(event.start), 'P', { locale: de })}
                                 </ListItemText>
                                 <ListItemText className={styles.listItemTextEventDescription}>
                                     <Tooltip title={event.description}>

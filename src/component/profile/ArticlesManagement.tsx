@@ -7,7 +7,7 @@ import { Edit } from '@material-ui/icons';
 import { ArticleModel } from 'model';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { User } from 'util/model';
-import { parseISO, format } from 'date-fns';
+import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -68,7 +68,7 @@ export const ArticlesManagement = memo<ArticlesManagementProps>(({ articles }) =
                             </Tooltip>
                         </TableCell> */}
                         <TableCell>
-                            {format(parseISO(article.insertedAt), 'PPP', { locale: de }) + ' '}
+                            {format(new Date(article.insertedAt), 'PPP', { locale: de }) + ' '}
                         </TableCell>
                         <TableCell>
                             {article.previewImageFile && (
