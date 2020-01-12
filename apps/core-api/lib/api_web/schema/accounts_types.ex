@@ -62,6 +62,13 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve &Api.UserResolver.update_profile/2
     end
 
+    field :set_user_blocked, type: :user do
+      arg :id, non_null(:lotta_id)
+      arg :is_blocked, non_null(:boolean)
+      
+      resolve &Api.UserResolver.set_user_blocked/2
+    end
+
     field :create_user_group, type: :user_group do
       arg :group, non_null(:user_group_input)
 
@@ -175,6 +182,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
     field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :is_blocked, :boolean, resolve: &Api.UserResolver.resolve_is_blocked/3
   end
 
   object :user_group do

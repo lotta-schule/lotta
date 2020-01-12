@@ -25,6 +25,11 @@ defmodule Api.UserResolver do
         {:error, "Die Email des Nutzers ist geheim."}
     end
   end
+  
+  def resolve_is_blocked(user, _args, %{context: %{ tenant: tenant }}) do
+    {:ok, User.is_blocked?(user, tenant)}
+  end
+  def resolve_is_blocked(user, _args, _context), do: {:ok, false}
 
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
@@ -94,8 +99,9 @@ defmodule Api.UserResolver do
     end
   end
   
-  def login(%{username: username, password: password}, _info) do
+  def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
+        :ok <- AuthHelper.check_if_blocked(user, tenant),
         {:ok, jwt} <- User.get_signed_jwt(user) do
       {:ok, %{token: jwt}}
     end
@@ -164,6 +170,21 @@ defmodule Api.UserResolver do
         }
       response ->
         response
+    end
+  end
+
+  def set_user_blocked(%{id: id, is_blocked: is_blocked}, %{context: %{tenant: tenant} = context}) do
+    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+      true ->
+        try do
+          Accounts.get_user!(id)
+          |> Accounts.set_user_blocked(tenant, is_blocked)
+        rescue
+          Ecto.NoResultsError ->
+            {:error, "Nutzer mit der id #{id} nicht gefunden."}
+        end
+      false ->
+        {:error, "Nur Administratoren dürfen Benutzer blocken."}
     end
   end
 

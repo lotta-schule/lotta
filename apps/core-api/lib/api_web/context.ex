@@ -14,8 +14,8 @@ defmodule ApiWeb.Context do
 
   def build_absinthe_context(conn, context \\ %{}) do
     context
-    |> put_user(conn)
     |> put_tenant(conn)
+    |> put_user(conn)
   end
 
   defp put_user(context, conn) do
@@ -28,8 +28,10 @@ defmodule ApiWeb.Context do
       _ ->
         conn.cookies["LottaAuth"]
     end
+    tenant = context[:tenant]
     with false <- is_nil(authorization_token),
-        {:ok, current_user, _claims} <- Guardian.resource_from_token(authorization_token) do
+        {:ok, current_user, _claims} <- Guardian.resource_from_token(authorization_token),
+        true <- !tenant || !Accounts.User.is_blocked?(current_user, tenant) do
       current_user =
         Repo.get(Accounts.User, current_user.id)
         |> Repo.preload([:groups, :avatar_image_file])
