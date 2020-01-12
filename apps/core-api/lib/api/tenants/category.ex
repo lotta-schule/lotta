@@ -45,6 +45,10 @@ defmodule Api.Tenants.Category do
     changeset
     |> put_assoc(:banner_image_file, Api.Repo.get(Api.Accounts.File, banner_image_file_id))
   end
+  defp put_assoc_banner_image_file(changeset, %{banner_image_file: nil}) do
+    changeset
+    |> put_assoc(:banner_image_file, nil)
+  end
   defp put_assoc_banner_image_file(changeset, _args), do: changeset
 
   defp put_assoc_category(changeset, %{category: %{id: category_id}}) do

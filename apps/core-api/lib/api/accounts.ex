@@ -227,6 +227,25 @@ defmodule Api.Accounts do
     |> Repo.update()
   end
 
+  def set_user_blocked(%User{} = user, %Tenant{} = tenant, true) do
+    user = Api.Repo.preload(user, :blocked_tenants)
+    blocked_tenants =
+      Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end) ++ [%Api.Accounts.BlockedTenant{user_id: user.id, tenant_id: tenant.id}]
+    user
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:blocked_tenants, blocked_tenants)
+    |> Api.Repo.update()
+  end
+  def set_user_blocked(%User{} = user, %Tenant{} = tenant, false) do
+    user = Api.Repo.preload(user, :blocked_tenants)
+    blocked_tenants =
+      Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end)
+    user
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:blocked_tenants, blocked_tenants)
+    |> Api.Repo.update()
+  end
+
   @doc """
   Returns the list of files.
 
