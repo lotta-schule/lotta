@@ -18,8 +18,11 @@ defmodule Api.Accounts.User do
     field :password_hash, :string
 
     belongs_to :tenant, Api.Tenants.Tenant
-    belongs_to :avatar_image_file, Api.Accounts.File, on_replace: :nilify
+    belongs_to :avatar_image_file, Api.Accounts.File,
+      on_replace: :nilify
     has_many :files, Api.Accounts.File
+    has_many :blocked_tenants, Api.Accounts.BlockedTenant,
+      on_replace: :delete
     many_to_many :groups,
       UserGroup,
       join_through: "user_user_group",
@@ -57,6 +60,13 @@ defmodule Api.Accounts.User do
       |> Enum.map(fn group -> group.id end)
 
     Enum.empty?(article_group_ids) || Enum.any?(article_group_ids, &Enum.member?(user_group_ids, &1))
+  end
+
+  def is_blocked?(%User{} = user, %Tenant{} = tenant) do
+    user
+      |> Api.Repo.preload(:blocked_tenants)
+      |> Map.fetch!(:blocked_tenants)
+      |> Enum.any?(fn blocked_tenant -> blocked_tenant.tenant_id == tenant.id end)
   end
 
   def group_ids(%User{} = user) do

@@ -8,6 +8,7 @@ defmodule Api.UserResolverTest do
     admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
     user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@einsa.net"])
     user2 = Api.Repo.get_by!(Api.Accounts.User, [email: "mcurie@lotta.schule"])
+    evil_user = Api.Repo.get_by!(Api.Accounts.User, [email: "drevil@lotta.schule"])
     {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
     {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
     schueler_group = Api.Repo.get_by!(Api.Accounts.UserGroup, name: "Schüler")
@@ -19,6 +20,7 @@ defmodule Api.UserResolverTest do
       admin_jwt: admin_jwt,
       user: user,
       user2: user2,
+      evil_user: evil_user,
       user_jwt: user_jwt,
       schueler_group: schueler_group,
       lehrer_group: lehrer_group
@@ -508,6 +510,26 @@ defmodule Api.UserResolverTest do
         ]
       }
     end
+
+    test "returns an error if the user is blocked for this tenant" do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{username: "drevil@lotta.schule", password: "test123"})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "login" => nil
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Du wurdest für diese Seite geblockt. Du darfst dich nicht anmelden.",
+            "path" => ["login"]
+          }
+        ]
+      }
+    end
   end
   
   describe "requestPasswordResetMutation" do
@@ -645,7 +667,7 @@ defmodule Api.UserResolverTest do
       assert Enum.find(res["data"]["setUserGroups"]["groups"], fn %{"name" => name} -> name == "Lehrer" end)
     end
 
-    test "should return an error if user does not exist", %{admin_jwt: admin_jwt, user_jwt: user_jwt, schueler_group: schueler_group, lehrer_group: lehrer_group} do
+    test "should return an error if user does not exist", %{admin_jwt: admin_jwt, schueler_group: schueler_group, lehrer_group: lehrer_group} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
@@ -682,6 +704,127 @@ defmodule Api.UserResolverTest do
             "locations" => [%{"column" => 0, "line" => 2}],
             "message" => "Nur Administratoren dürfen Benutzern Gruppen zuweisen.",
             "path" => ["setUserGroups"]
+          }
+        ]
+      }
+    end
+  end
+
+  describe "setUserBlocked mutation" do
+    @query """
+    mutation setUserBlocked($id: ID!, $isBlocked: Boolean!) {
+      setUserBlocked(id: $id, isBlocked: $isBlocked) {
+        email
+        isBlocked
+      }
+    }
+    """
+
+    test "should return blocked user when isBlocked is set to true and if user is admin, non-blocked user given", %{admin_jwt: admin_jwt, user2: user2} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: user2.id, isBlocked: true})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserBlocked" => %{
+            "email" => "mcurie@lotta.schule",
+            "isBlocked" => true
+          }
+        }
+      }
+    end
+
+    test "should return non-blocked user when isBlocked is set to false and if user is admin, non-blocked user given", %{admin_jwt: admin_jwt, user2: user2} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: user2.id, isBlocked: false})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserBlocked" => %{
+            "email" => "mcurie@lotta.schule",
+            "isBlocked" => false
+          }
+        }
+      }
+    end
+    
+    test "should return blocked user when isBlocked is set to true and if user is admin, blocked user given", %{admin_jwt: admin_jwt, evil_user: evil_user} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: true})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserBlocked" => %{
+            "email" => "drevil@lotta.schule",
+            "isBlocked" => true
+          }
+        }
+      }
+    end
+
+    test "should return non-blocked user when isBlocked is set to false and if user is admin, blocked user given", %{admin_jwt: admin_jwt, evil_user: evil_user} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: false})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserBlocked" => %{
+            "email" => "drevil@lotta.schule",
+            "isBlocked" => false
+          }
+        }
+      }
+    end
+
+    test "should return an error if user is not an admin", %{user_jwt: user_jwt, evil_user: evil_user} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: false})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserBlocked" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nur Administratoren dürfen Benutzer blocken.",
+            "path" => ["setUserBlocked"]
+          }
+        ]
+      }
+    end
+
+    test "should return an error if user does not exist", %{admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{id: 0, isBlocked: true})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "setUserBlocked" => nil,
+        },
+        "errors" => [
+          %{
+            "locations" => [%{"column" => 0, "line" => 2}],
+            "message" => "Nutzer mit der id 0 nicht gefunden.",
+            "path" => ["setUserBlocked"]
           }
         ]
       }
