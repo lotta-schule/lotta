@@ -12,10 +12,11 @@ export interface GroupSelectProps {
     selectedGroups: UserGroupModel[];
     label?: string | null;
     row?: boolean;
+    disabled?: boolean;
     onSelectGroups(groups: UserGroupModel[]): void;
 }
 
-export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, onSelectGroups }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, disabled, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, onSelectGroups }) => {
     const groups = useUserGroups();
 
     return (
@@ -29,6 +30,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
                 {hidePublicGroupSelection !== true && (
                     <FormControlLabel
                         label={<i>{publicGroupSelectionLabel || 'öffentlich sichtbar'}</i>}
+                        disabled={disabled}
                         control={(
                             <Checkbox checked={selectedGroups.length === 0} onChange={event => {
                                 if (event.target.checked) {
@@ -44,6 +46,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
                     <FormControlLabel
                         key={group.id}
                         label={<i>{group.name}</i>}
+                        disabled={disabled}
                         control={(
                             <Checkbox checked={selectedGroups.filter(g => g.id === group.id).length > 0} onChange={event => {
                                 if (event.target.checked) {
@@ -67,6 +70,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
                     <FormControlLabel
                         key={group.id}
                         label={group.name}
+                        disabled={disabled}
                         control={(
                             <Checkbox value={group.id} checked={selectedGroups.filter(g => g.id === group.id).length > 0} onChange={event => {
                                 if (event.target.checked) {

@@ -10,6 +10,7 @@ import { UserAvatar } from 'component/user/UserAvatar';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { VirtualizedTable } from 'component/general/VirtualizedTable';
 import { SearchUserField } from './SearchUserField';
+import { Block } from '@material-ui/icons';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -62,7 +63,7 @@ export const UsersList = memo(() => {
         )?.map(user =>
             ({
                 avatarImage: <UserAvatar className={styles.avatar} user={user} />,
-                name: <>{user.name}{user.nickname && <> &nbsp; (<strong>{user.nickname}</strong>)</>}</>,
+                name: <>{user.isBlocked && <Block color={'error'} />}{user.name}{user.nickname && <> &nbsp; (<strong>{user.nickname}</strong>)</>}</>,
                 groups: user.groups.map(g => g.name).join(', '),
                 user
             })
@@ -130,10 +131,7 @@ export const UsersList = memo(() => {
                 />
                 {selectedUser && (
                     <AssignUserToGroupsDialog
-                        onAbort={() => setSelectedUser(null)}
-                        onConfirm={() => {
-                            setSelectedUser(null);
-                        }}
+                        onClose={() => setSelectedUser(null)}
                         user={selectedUser}
                     />
                 )}

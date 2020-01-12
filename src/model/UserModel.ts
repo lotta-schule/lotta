@@ -15,4 +15,5 @@ export interface UserModel {
     phone?: string;
     groups: UserGroupModel[];
     avatarImageFile?: FileModel;
+    isBlocked?: boolean;
 }

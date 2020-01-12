@@ -10,6 +10,7 @@ export const GetUserQuery = gql`
             nickname
             email
             class
+            isBlocked
             groups {
                 id
                 name
