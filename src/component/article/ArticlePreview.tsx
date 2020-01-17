@@ -7,7 +7,7 @@ import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
+import { User, Article } from 'util/model';
 import { useMutation } from 'react-apollo';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
@@ -106,7 +106,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
             component={CollisionLink}
             color='inherit'
             underline='none'
-            to={`/article/${article.id}`}
+            to={Article.getPath(article)}
         >
             {content}
         </Link>
@@ -156,7 +156,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                                     size="small"
                                     className={clsx(styles.editButton, 'edit-button')}
                                     component={CollisionLink}
-                                    to={`/article/${article.id}/edit`}
+                                    to={Article.getPath(article, { edit: true })}
                                 >
                                     <Edit />
                                 </Fab>

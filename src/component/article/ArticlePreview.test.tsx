@@ -23,7 +23,7 @@ describe('component/article/ArticlePreview', () => {
             const title = container.querySelector('h5');
             const titleLink = title!.querySelector('a');
             expect(titleLink).toBeDefined();
-            expect(titleLink).toHaveAttribute('href', `/article/${UeberSuedamerika.id}`);
+            expect(titleLink).toHaveAttribute('href', `/a/${UeberSuedamerika.id}-Mein-Artikel`);
             expect(titleLink).toHaveTextContent('Mein Artikel');
         });
 
