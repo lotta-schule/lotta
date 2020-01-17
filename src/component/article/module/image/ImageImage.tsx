@@ -25,7 +25,7 @@ export const ImageImage = memo<ImageImageProps>(({ isEditModeEnabled, file, capt
             </SelectFileOverlay>
         ) :
         (
-            <ImageContent file={file} {...otherProps} />
+            <ImageContent onClick={onSelect} file={file} {...otherProps} />
         );
     return (
         <figure style={{ marginLeft: 0, marginRight: 0, }}>
