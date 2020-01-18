@@ -33,21 +33,23 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
                 const lastDate = data && data.articles
                     .sort((a1, a2) => new Date(a1.updatedAt).getTime() - new Date(a2.updatedAt).getTime())[0].updatedAt;
                 if (lastFetchedElementDate !== lastDate) {
-                    fetchMore({
-                        variables: { filter: { first: FETCH_COUNT, updated_before: lastDate } },
-                        updateQuery: (prev: { articles: ArticleModel[] }, { fetchMoreResult }) => {
-                            if (!fetchMoreResult) return prev;
-                            const fetchedArticles = fetchMoreResult.articles;
-                            if (fetchedArticles && fetchedArticles.length) {
-                                setLastFetchedElementDate(lastDate);
-                            }
-                            return {
-                                ...prev,
-                                articles: [...data.articles, ...fetchMoreResult.articles]
-                            };
-                        },
+                    try {
+                        fetchMore({
+                            variables: { filter: { first: FETCH_COUNT, updated_before: lastDate } },
+                            updateQuery: (prev: { articles: ArticleModel[] }, { fetchMoreResult }) => {
+                                if (!fetchMoreResult) return prev;
+                                const fetchedArticles = fetchMoreResult.articles;
+                                if (fetchedArticles && fetchedArticles.length) {
+                                    setLastFetchedElementDate(lastDate);
+                                }
+                                return {
+                                    ...prev,
+                                    articles: [...data.articles, ...fetchMoreResult.articles]
+                                };
+                            },
 
-                    });
+                        });
+                    } catch {}
                 }
             }
         }
