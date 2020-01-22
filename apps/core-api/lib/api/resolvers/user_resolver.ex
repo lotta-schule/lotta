@@ -26,7 +26,7 @@ defmodule Api.UserResolver do
     end
   end
   
-  def resolve_is_blocked(user, _args, %{context: %{ tenant: tenant }}) do
+  def resolve_is_blocked(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.is_blocked?(user, tenant)}
   end
   def resolve_is_blocked(user, _args, _context), do: {:ok, false}
@@ -36,6 +36,22 @@ defmodule Api.UserResolver do
   end
   def get_current(_args, _info) do
     {:ok, nil}
+  end
+
+  def resolve_groups(user, _args, %{context: %{tenant: tenant}}) do
+    {:ok, User.get_groups(user, tenant)}
+  end
+  
+  def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
+    {:ok, User.get_assigned_groups(user)}
+  end
+
+  def resolve_enrollment_tokens(user, _args, %{context: %{tenant: tenant}}) do
+    user = Api.Repo.preload(user, :enrollment_tokens)
+    tokens =
+      user.enrollment_tokens
+      |> Enum.map(&(&1.enrollment_token))
+    {:ok, tokens}
   end
 
   def all_with_groups(_args, %{context: %{tenant: tenant} = context}) do
@@ -72,21 +88,12 @@ defmodule Api.UserResolver do
   def register(%{user: user_params} = args, %{context: %{tenant: tenant}}) do
     user_params = user_params
     |> Map.put(:tenant_id, tenant.id)
+    |> Map.put(:enrollment_tokens, case args do
+      %{group_key: group_key} -> [group_key]
+      _ -> []
+    end)
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-        user = with false <- is_nil(args[:group_key]),
-          groups <- Accounts.get_groups_by_enrollment_token(tenant, args[:group_key]),
-          {:ok, user} <- Accounts.set_user_groups(user, tenant, groups) do
-          user
-        else
-          {:error, error} ->
-            IO.inspect("Error")
-            IO.inspect(error)
-            user
-          _ ->
-            user
-        end
-
         {:ok, jwt} = User.get_signed_jwt(user)
         Api.EmailPublisherWorker.send_registration_email(tenant, user)
         {:ok, %{token: jwt}}

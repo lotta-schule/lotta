@@ -23,6 +23,8 @@ defmodule Api.Accounts.User do
     has_many :files, Api.Accounts.File
     has_many :blocked_tenants, Api.Accounts.BlockedTenant,
       on_replace: :delete
+    has_many :enrollment_tokens, Api.Accounts.UserEnrollmentToken,
+      on_replace: :delete
     many_to_many :groups,
       UserGroup,
       join_through: "user_user_group",
@@ -37,8 +39,7 @@ defmodule Api.Accounts.User do
 
   def is_admin?(%User{} = user, %Tenant{} = tenant) do
     user
-    |> Repo.preload(:groups)
-    |> Map.fetch!(:groups)
+    |> get_groups(tenant)
     |> Enum.any?(fn group -> group.tenant_id == tenant.id && group.is_admin_group end)
   end
   def is_admin?(_, _), do: false
@@ -52,7 +53,7 @@ defmodule Api.Accounts.User do
   def is_author?(_, _), do: false
 
   def has_group_for_article?(%User{} = user, %Article{} = article) do
-    user_group_ids = User.group_ids(user)
+    user_group_ids = User.group_ids(user, Api.Repo.preload(article, :tenant).tenant)
     article_group_ids =
       article
       |> Repo.preload([:groups, :tenant])
@@ -69,13 +70,33 @@ defmodule Api.Accounts.User do
       |> Enum.any?(fn blocked_tenant -> blocked_tenant.tenant_id == tenant.id end)
   end
 
-  def group_ids(%User{} = user) do
+  def get_assigned_groups(%User{} = user) do
     user
     |> Repo.preload(:groups)
     |> Map.fetch!(:groups)
+  end
+
+  def get_dynamic_groups(%User{} = user, %Tenant{} = tenant) do
+    user = user
+    |> Repo.preload(:enrollment_tokens)
+    tokens =
+      user
+      |> Map.fetch!(:enrollment_tokens)
+      |> Enum.map(&(&1.enrollment_token))
+    tenant
+    |> Api.Accounts.get_groups_by_enrollment_tokens(tokens)
+  end
+
+  def get_groups(%User{} = user, %Tenant{} = tenant) do
+    get_assigned_groups(user) ++ get_dynamic_groups(user, tenant)
+  end
+
+  def group_ids(%User{} = user, %Tenant{} = tenant) do
+    user
+    |> User.get_groups(tenant)
     |> Enum.map(fn group -> group.id end)
   end
-  def group_ids(nil), do: []
+  def group_ids(nil, _), do: []
 
   @doc false
   def changeset(user, attrs) do
@@ -85,27 +106,28 @@ defmodule Api.Accounts.User do
     |> validate_required([:name, :email])
   end
 
-  @doc false
   def assign_group_changeset(%User{} = user, %{group: newgroup}) do
     groups = Repo.all(from g in UserGroup, where: g.tenant_id != ^newgroup.tenant_id) ++ [newgroup]
     user
     |> Repo.preload(:groups)
-    |> Ecto.Changeset.change
+    |> Ecto.Changeset.change()
     |> put_assoc(:groups, groups)
   end
 
   def update_changeset(%User{} = user, params \\ %{}) do
     user
-    |> Repo.preload(:avatar_image_file)
+    |> Repo.preload([:avatar_image_file, :enrollment_tokens])
     |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
     |> validate_required([:name, :email])
     |> unique_constraint(:email)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_assoc_avatar_image_file(params)
+    |> put_assoc_enrollment_tokens(params)
   end
 
   def registration_changeset(%User{} = user, params \\ %{}) do
     user
+    |> Api.Repo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
     |> validate_required([:name, :email, :password, :tenant_id])
     |> unique_constraint(:email)
@@ -113,10 +135,12 @@ defmodule Api.Accounts.User do
     |> validate_length(:password, min: 6, max: 150)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_pass_hash()
+    |> put_assoc_enrollment_tokens(params)
   end
 
   def update_password_changeset(%User{} = user, password) when is_binary(password) and byte_size(password) > 0 do
     user
+    |> Api.Repo.preload(:enrollment_tokens)
     |> Ecto.Changeset.change(%{password: password})
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
@@ -146,15 +170,21 @@ defmodule Api.Accounts.User do
     end
   end
 
-  defp put_assoc_avatar_image_file(article, %{avatar_image_file: %{id: avatar_image_file_id}}) do
-    article
+  defp put_assoc_avatar_image_file(user, %{avatar_image_file: %{id: avatar_image_file_id}}) do
+    user
     |> put_assoc(:avatar_image_file, Api.Repo.get(Api.Accounts.File, avatar_image_file_id))
   end
-  defp put_assoc_avatar_image_file(article, %{avatar_image_file: nil}) do
-    article
+  defp put_assoc_avatar_image_file(user, %{avatar_image_file: nil}) do
+    user
     |> put_assoc(:avatar_image_file, nil)
   end
-  defp put_assoc_avatar_image_file(article, _args), do: article
+  defp put_assoc_avatar_image_file(user, _args), do: user
+
+  defp put_assoc_enrollment_tokens(user, %{enrollment_tokens: enrollment_tokens}) do
+    user
+    |> put_assoc(:enrollment_tokens, Enum.map(enrollment_tokens, &(%{ enrollment_token: &1 })))
+  end
+  defp put_assoc_enrollment_tokens(user, _args), do: user
 
   defp validate_has_nickname_if_hide_full_name_is_set(%Ecto.Changeset{} = changeset) do
     case fetch_field(changeset, :hide_full_name) do
