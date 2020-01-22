@@ -1,6 +1,6 @@
 defmodule Api.UserResolverTest do
   use ApiWeb.ConnCase
-  
+
   setup do
     Api.Repo.Seeder.seed()
 
@@ -360,9 +360,7 @@ defmodule Api.UserResolverTest do
 
       assert String.valid?(res["data"]["register"]["token"])
       user_groups =
-        Api.Repo.get_by!(Api.Accounts.User, email: "neuernutzer@example.com")
-        |> Api.Repo.preload(:groups)
-        |> Map.fetch!(:groups)
+        Api.Accounts.User.get_groups(Api.Repo.get_by!(Api.Accounts.User, email: "neuernutzer@example.com"), Api.Repo.get_by!(Api.Tenants.Tenant, slug: "web"))
       [%{name: group_name}] = user_groups
       assert group_name == "Lehrer"
     end
@@ -387,7 +385,7 @@ defmodule Api.UserResolverTest do
         ]
       }
     end
-    
+
     test "returns error when no password is given" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -408,7 +406,7 @@ defmodule Api.UserResolverTest do
         ]
       }
     end
-    
+
     test "returns error when no name is given" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -429,7 +427,7 @@ defmodule Api.UserResolverTest do
         ]
       }
     end
-    
+
     test "returns error when hide_full_name is selected but no nickname is given" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -467,16 +465,16 @@ defmodule Api.UserResolverTest do
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{username: "alexis.rinaldoni@einsa.net", password: "test123"})
       |> json_response(200)
-      
+
       assert String.valid?(res["data"]["login"]["token"])
     end
-    
+
     test "returns an error if the username is non-existent" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "test123"})
       |> json_response(200)
-      
+
       assert res == %{
         "data" => %{
           "login" => nil
@@ -490,7 +488,7 @@ defmodule Api.UserResolverTest do
           ]
         }
       end
-      
+
     test "returns an error if the password is wrong" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -531,7 +529,7 @@ defmodule Api.UserResolverTest do
       }
     end
   end
-  
+
   describe "requestPasswordResetMutation" do
     @query """
     mutation requestPasswordReset($email: String!) {
@@ -544,7 +542,7 @@ defmodule Api.UserResolverTest do
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@einsa.net"})
       |> json_response(200)
-      
+
       assert res == %{
         "data" => %{
           "requestPasswordReset" => true
@@ -553,7 +551,7 @@ defmodule Api.UserResolverTest do
       assert {:ok, 1} = Redix.command(:redix, ["EXISTS", "user-email-verify-token-alexis.rinaldoni@einsa.net"])
       Redix.command(:redix, ["FLUSHALL"])
     end
-    
+
     test "returns true if the user does not exist" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -569,7 +567,7 @@ defmodule Api.UserResolverTest do
       Redix.command(:redix, ["FLUSHALL"])
     end
   end
-  
+
   describe "resetPassword mutation" do
     @query """
     mutation resetPassword($email: String!, $token: String!, $password: String!) {
@@ -588,12 +586,12 @@ defmodule Api.UserResolverTest do
       |> json_response(200)
 
       user = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
-      
+
       assert String.valid?(res["data"]["resetPassword"]["token"])
       assert true = Bcrypt.verify_pass("abcdef", user.password_hash)
       Redix.command(:redix, ["FLUSHALL"])
     end
-    
+
     test "returns an error if given token is not correct" do
       token = "abcdef123"
       Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token <> "blub"])
@@ -616,7 +614,7 @@ defmodule Api.UserResolverTest do
       }
       Redix.command(:redix, ["FLUSHALL"])
     end
-    
+
     test "returns an error if given email is not correct" do
       token = "abcdef123"
       Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token])
@@ -753,7 +751,7 @@ defmodule Api.UserResolverTest do
         }
       }
     end
-    
+
     test "should return blocked user when isBlocked is set to true and if user is admin, blocked user given", %{admin_jwt: admin_jwt, evil_user: evil_user} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
