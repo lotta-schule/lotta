@@ -66,12 +66,12 @@ export const App = memo(() => {
                 <BaseLayout>
                     <Switch>
                         <Route exact path={'/'} component={CategoryRoute} />
-                        <Route path={'/category/:id'} component={CategoryRoute} />
                         <Route path={'/c/:id'} component={CategoryRoute} />
-                        <Route path={'/article/:id/edit'} component={EditArticleRoute} />
-                        <Route path={'/article/:id'} component={ArticleRoute} />
+                        <Route path={'/category/:id'} component={CategoryRoute} />
                         <Route path={'/a/:id/edit'} component={EditArticleRoute} />
                         <Route path={'/a/:id'} component={ArticleRoute} />
+                        <Route path={'/article/:id/edit'} component={EditArticleRoute} />
+                        <Route path={'/article/:id'} component={ArticleRoute} />
                         <Route path={'/profile'} component={ProfileLayout} />
                         <Route path={'/admin'} component={AdminLayout} />
                         <Route path={'/privacy'} component={PrivacyLayout} />
