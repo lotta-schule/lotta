@@ -1,5 +1,8 @@
 import React, { memo, useState } from 'react';
-import { Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField, Typography, IconButton, Badge } from '@material-ui/core';
+import {
+    Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField,
+    Typography, IconButton, Badge, Divider, makeStyles, List, ListItemText, ListItem, ListSubheader
+} from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { useMutation } from 'react-apollo';
 import { Clear } from '@material-ui/icons';
@@ -10,10 +13,19 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
+
+export const useStyles = makeStyles(theme => ({
+    divider: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+    }
+}))
 
 export const ProfileData = memo(() => {
+    const styles = useStyles();
 
-    const currentUser = useCurrentUser()[0] as UserModel | undefined;
+    const [currentUser] = useCurrentUser();
 
     const [classOrShortName, setClassOrShortName] = useState(currentUser?.class ?? '');
     const [email, setEmail] = useState(currentUser?.email);
@@ -21,6 +33,7 @@ export const ProfileData = memo(() => {
     const [nickname, setNickname] = useState(currentUser?.nickname);
     const [isHideFullName, setIsHideFullName] = useState(currentUser?.hideFullName);
     const [avatarImageFile, setAvatarImageFile] = useState<FileModel | null | undefined>(currentUser?.avatarImageFile);
+    const [enrollmentTokens, setEnrollmentTokens] = useState<string[]>(currentUser?.enrollmentTokens ?? []);
 
     const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation);
     const getFieldError = useGetFieldError(error);
@@ -59,6 +72,14 @@ export const ProfileData = memo(() => {
                             label={'Profilbild ändern'}
                             onSelectFile={setAvatarImageFile}
                         />
+                        <Divider className={styles.divider} style={{ width: '80%' }} />
+                        <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>}>
+                            {currentUser.groups.sort((g1, g2) => g2.sortKey - g1.sortKey).map(group => (
+                                <ListItem key={group.id}>
+                                    <ListItemText>{group.name}</ListItemText>
+                                </ListItem>
+                            ))}
+                        </List>
                     </Grid>
                     <Grid item md={8}>
                         <TextField
@@ -101,8 +122,7 @@ export const ProfileData = memo(() => {
                         <Typography variant="caption" component={'div'}>
                             Verstecke deinen vollständigen Namen, damit er nur vom Administrator deiner Schule gesehen werden kann.
                             Dein Name taucht nicht in den von dir erstellten Artikeln oder in deinem Profil auf. Stattdessen wird dein Spitzname angezeigt.
-                    </Typography>
-
+                        </Typography>
                         <TextField
                             autoFocus
                             fullWidth
@@ -135,6 +155,16 @@ export const ProfileData = memo(() => {
                             disabled={isLoading}
                             inputProps={{ maxLength: 25 }}
                         />
+                        <Divider className={styles.divider} />
+                        <Typography variant={'h5'}>Meine Einschreibeschlüssel</Typography>
+                        <EnrollmentTokensEditor
+                            disabled={isLoading}
+                            tokens={enrollmentTokens}
+                            setTokens={setEnrollmentTokens}
+                        />
+                        <Typography variant="caption" component={'div'}>
+                            Nutze Einschreibeschlüssel, um dich selbst in Gruppen einzutragen.
+                        </Typography>
                         <Button
                             type={'submit'}
                             color="secondary"
@@ -149,13 +179,14 @@ export const ProfileData = memo(() => {
                                         class: classOrShortName,
                                         hideFullName: isHideFullName,
                                         email,
-                                        avatarImageFile
+                                        avatarImageFile,
+                                        enrollmentTokens
                                     }
                                 }
                             })}
                         >
                             Speichern
-                    </Button>
+                        </Button>
                     </Grid>
                 </Grid>
             </CardContent>
