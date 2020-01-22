@@ -88,21 +88,12 @@ defmodule Api.UserResolver do
   def register(%{user: user_params} = args, %{context: %{tenant: tenant}}) do
     user_params = user_params
     |> Map.put(:tenant_id, tenant.id)
+    |> Map.put(:enrollment_tokens, case args do
+      %{group_key: group_key} -> [group_key]
+      _ -> []
+    end)
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-        user = with false <- is_nil(args[:group_key]),
-          groups <- Accounts.get_groups_by_enrollment_token(tenant, args[:group_key]),
-          {:ok, user} <- Accounts.set_user_groups(user, tenant, groups) do
-          user
-        else
-          {:error, error} ->
-            IO.inspect("Error")
-            IO.inspect(error)
-            user
-          _ ->
-            user
-        end
-
         {:ok, jwt} = User.get_signed_jwt(user)
         Api.EmailPublisherWorker.send_registration_email(tenant, user)
         {:ok, %{token: jwt}}
