@@ -145,7 +145,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                             />
                         </Grid>
                         <Grid item md={6} style={{ maxHeight: '8.5em' }}>
-                            <Typography variant={'body1'}>
+                            <Typography variant={'body1'} align={'center'} >
                                 Vorschau:
                             </Typography>
                             <div className={styles.previewIcon} >
