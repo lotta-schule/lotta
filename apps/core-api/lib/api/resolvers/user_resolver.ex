@@ -26,7 +26,7 @@ defmodule Api.UserResolver do
     end
   end
   
-  def resolve_is_blocked(user, _args, %{context: %{ tenant: tenant }}) do
+  def resolve_is_blocked(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.is_blocked?(user, tenant)}
   end
   def resolve_is_blocked(user, _args, _context), do: {:ok, false}
@@ -36,6 +36,18 @@ defmodule Api.UserResolver do
   end
   def get_current(_args, _info) do
     {:ok, nil}
+  end
+
+  def resolve_groups(user, _args, %{context: %{tenant: tenant}}) do
+    {:ok, User.get_groups(user, tenant)}
+  end
+
+  def resolve_enrollment_tokens(user, _args, %{context: %{tenant: tenant}}) do
+    user = Api.Repo.preload(user, :enrollment_tokens)
+    tokens =
+      user.enrollment_tokens
+      |> Enum.map(&(&1.enrollment_token))
+    {:ok, tokens}
   end
 
   def all_with_groups(_args, %{context: %{tenant: tenant} = context}) do

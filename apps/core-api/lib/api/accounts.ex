@@ -6,7 +6,7 @@ defmodule Api.Accounts do
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,File}
+  alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,UserEnrollmentToken,File}
   alias Api.Tenants.Tenant
 
   def data() do
@@ -27,11 +27,21 @@ defmodule Api.Accounts do
 
   """
   def list_users_with_groups(tenant_id) do
-    Repo.all from u in User,
+    assigned_groups_query = from u in User,
       join: g in assoc(u, :groups),
       where: g.tenant_id == ^tenant_id,
-      order_by: [u.name, u.email],
       distinct: true
+    dynamic_groups_query = from u in User,
+      join: g in UserGroup,
+      join: ut in UserEnrollmentToken,
+      on: ut.user_id == u.id,
+      join: t in GroupEnrollmentToken,
+      on: g.id == t.group_id and t.token == ut.enrollment_token,
+      distinct: true
+
+    query = from q in subquery(union(assigned_groups_query, ^dynamic_groups_query)),
+      order_by: [q.name, q.email]
+    Repo.all(query)
   end
 
   @doc """
@@ -123,7 +133,7 @@ defmodule Api.Accounts do
     |> Map.fetch!(:groups)
     |> Enum.filter(fn group -> group.tenant_id !== tenant.id end)
     |> Enum.concat(groups)
-    
+
     user
     |> Repo.preload(:groups)
     |> Ecto.Changeset.change()
@@ -140,6 +150,20 @@ defmodule Api.Accounts do
       join: t in GroupEnrollmentToken,
       on: g.id == t.group_id,
       where: t.token == ^token and g.tenant_id == ^(tenant.id),
+      distinct: true
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Get groups which have given enrollment tokens
+
+  """
+  def get_groups_by_enrollment_tokens(%Tenant{} = tenant, tokens) when is_list(tokens) do
+    from(g in UserGroup,
+      join: t in GroupEnrollmentToken,
+      on: g.id == t.group_id,
+      where: t.token in ^tokens and g.tenant_id == ^(tenant.id),
       distinct: true
     )
     |> Repo.all()
@@ -220,7 +244,7 @@ defmodule Api.Accounts do
         {:error, :invalid_token}
     end
   end
-  
+
   def update_password(%User{} = user, password) when is_binary(password) and byte_size(password) > 0 do
     user
     |> User.update_password_changeset(password)
@@ -323,7 +347,7 @@ defmodule Api.Accounts do
     files = Api.Repo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
     {:ok, files}
   end
-  
+
   def move_private_directory(%User{} = user, path, new_path) do
     files = from(f in File,
       where: f.is_public == false and f.user_id == ^(user.id) and like(f.path, ^"#{path}%"),

@@ -18,7 +18,7 @@ defmodule Api.Tenants do
 
   def resolve_widgets(_args, %{context: %{tenant: tenant} = context, source: category}) do
     user_group_ids = case context do
-      %{ current_user: user } -> User.group_ids(user)
+      %{ current_user: user } -> User.group_ids(user, tenant)
       _ -> []
     end
     user_is_admin = (context[:current_user] && User.is_admin?(context.current_user, tenant)) == true
@@ -201,7 +201,7 @@ defmodule Api.Tenants do
 
   """
   def list_categories_by_tenant(%Tenant{} = tenant, user) do
-    user_group_ids = User.group_ids(user)
+    user_group_ids = User.group_ids(user, tenant)
     from(c in Category,
       left_join: cug in "categories_user_groups",
       on: cug.category_id == c.id,
@@ -306,7 +306,7 @@ defmodule Api.Tenants do
 
   """
   def list_widgets_by_tenant(%Tenant{} = tenant, user) do
-    user_group_ids = User.group_ids(user)
+    user_group_ids = User.group_ids(user, tenant)
     from(w in Widget,
       left_join: wug in "widgets_user_groups",
       on: wug.widget_id == w.id,
