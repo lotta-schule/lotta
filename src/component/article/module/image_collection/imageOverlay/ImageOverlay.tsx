@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, MouseEvent, useEffect, KeyboardEventHandler, KeyboardEvent, useCallback } from 'react';
-import { FileModel } from 'model';
 import { makeStyles } from '@material-ui/styles';
-import { Theme, IconButton, Typography } from '@material-ui/core';
+import { useMediaQuery, Theme, IconButton, Typography } from '@material-ui/core';
+import { FileModel } from 'model';
 import { useWindowSize } from 'util/useWindowSize';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
 import { Close, ChevronLeft, ChevronRight } from '@material-ui/icons';
@@ -18,6 +18,11 @@ const useStyles = makeStyles((theme: Theme) => ({
         justifyContent: 'center',
         zIndex: 100000,
         backgroundColor: theme.palette.background.paper,
+        '& img': {
+            border: '1px solid #bdbdbd',
+            maxWidth: '80vw',
+            maxHeight: '80vh'
+        }
     },
     closeButton: {
         position: 'absolute',
@@ -54,7 +59,8 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ select
     useLockBodyScroll();
     const styles = useStyles();
     const { innerHeight, innerWidth } = useWindowSize();
-    const [width, height] = [Math.floor(innerWidth * .8), Math.floor(innerHeight * .8)];
+    const retinaMultiplier = useMediaQuery('screen and (-webkit-min-device-pixel-ratio: 2)') ? 2 : 1;
+    const [width, height] = [innerWidth, innerHeight].map(px => Math.floor(px * .8 * retinaMultiplier));
 
     const onKeyDown: KeyboardEventHandler<Window> = useCallback(event => {
         if (event.keyCode === 27) { // ESC
@@ -93,7 +99,7 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ select
                     <ChevronRight />
                 </IconButton>
             )}
-            <img style={{ border: '1px solid #bdbdbd' }} src={imgUrl} alt={''} />
+            <img src={imgUrl} alt={''} />
             {caption && (
                 <Typography className={styles.subtitles}>
                     {caption}
