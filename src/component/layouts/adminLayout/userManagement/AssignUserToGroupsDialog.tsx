@@ -52,6 +52,8 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
     const [setUserGroups, { loading: setUserGroupsLoading, error: setUserGroupsError }] = useMutation<{ user: UserModel }, { id: ID, groupIds: ID[] }>(SetUserGroupsMutation);
     const [setUserBlocked, { loading: setUserBlockedLoading, error: setUserBlockedError }] = useMutation<{ user: UserModel }, { id: ID, isBlocked: boolean }>(SetUserBlockedMutation);
 
+    const dynamicGroups = data && data.user.groups.filter(group => !(data.user.assignedGroups ?? []).find(assignedGroup => assignedGroup.id === group.id))
+
     return (
         <ResponsiveFullScreenDialog open={true} fullWidth>
             <DialogTitle>{user.name}s Details</DialogTitle>
@@ -93,12 +95,18 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                                 hidePublicGroupSelection
                                 disableAdminGroupsExclusivity
                                 className={styles.margin}
-                                selectedGroups={data.user.groups}
+                                selectedGroups={data.user?.assignedGroups ?? []}
                                 onSelectGroups={groups => setUserGroups({ variables: { id: user.id, groupIds: groups.map(g => g.id) } })}
                                 disabled={setUserGroupsLoading}
                                 label={'Gruppe zuweisen'}
                             />
                         </section>
+                        {dynamicGroups && (
+                            <span>
+                                Über einschreibeschlüssel zugewiesene Gruppen:
+                                {dynamicGroups.map((group, i, arr) => <><em>{group.name}</em>{i !== arr.length - 1 && <>, </>}</>)}
+                            </span>
+                        )}
                         <Divider />
                         <section>
                             {data.user.isBlocked && (

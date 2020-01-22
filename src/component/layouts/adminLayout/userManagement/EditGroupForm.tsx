@@ -2,14 +2,15 @@ import React, { memo, useEffect, useState } from 'react';
 import { UserGroupModel, ID, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/client/useUserGroups';
 import {
-    CircularProgress, Checkbox, Chip, FormControl, Input, InputLabel, FormHelperText, FormControlLabel, Button, TextField, Typography, makeStyles
+    CircularProgress, Checkbox, FormControl, Input, InputLabel, FormHelperText, FormControlLabel, Button, Typography, makeStyles
 } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GetGroupQuery } from 'api/query/GetGroupQuery';
 import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
+import { EnrollmentTokensEditor } from 'component/layouts/EnrollmentTokensEditor';
+
 export interface EditGroupForm {
     group: UserGroupModel;
 }
@@ -98,29 +99,10 @@ export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
             <Typography variant={'body2'}>
                 Nutzer, die bei der Registrierung einen Einschreibeschlüsselverwenden, werden automatisch dieser Gruppe zugeordnet.
             </Typography>
-            <Autocomplete
-                multiple
+            <EnrollmentTokensEditor
                 disabled={isLoadingUpdateGroup}
-                id="tags-filled"
-                options={[]}
-                value={enrollmentTokens}
-                onChange={(_, value) => setEnrollmentTokens(value)}
-                freeSolo
-                renderTags={(value: string[], getTagProps) =>
-                    value.map((option: string, index: number) => (
-                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                    ))
-                }
-                renderInput={params => (
-                    <TextField
-                        {...params}
-                        variant="filled"
-                        label="Einschreibeschlüssel"
-                        placeholder="Einschreibeschlüssel"
-                        margin="normal"
-                        fullWidth
-                    />
-                )}
+                tokens={enrollmentTokens}
+                setTokens={setEnrollmentTokens}
             />
             <Button
                 className={styles.saveButton}
