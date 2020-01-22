@@ -1,6 +1,6 @@
 import React, { createElement, memo, useState, useEffect, useCallback } from 'react';
 import { Button, Divider, TextField, Typography, makeStyles, Grid } from '@material-ui/core';
-import { Lens } from '@material-ui/icons';
+import { Lens, Bookmark, CalendarToday, AccountCircle, CheckCircle, Work, ChatBubble, Folder, School, Cloud, MenuBook, Label, SportsSoccer, Attachment, InsertDriveFile, Search, Extension, Favorite } from '@material-ui/icons';
 import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from 'react-apollo';
@@ -32,6 +32,23 @@ const useStyles = makeStyles(theme => ({
     deleteButton: {
         backgroundColor: theme.palette.error.main,
         color: theme.palette.error.contrastText
+    },
+    iconScrollbar: {
+        display: 'flex', 
+        overflowX: 'auto', 
+        marginBottom: theme.spacing(2), 
+        height: '4em'
+    },
+    previewIcon: {
+        textAlign: 'center', 
+        position: 'relative', 
+        zIndex: 100,
+    },
+    previewIconText: {
+        textAlign: 'center', 
+        position: 'relative', 
+        zIndex: 1000, 
+        top: '-5.25em',
     }
 }));
 
@@ -103,9 +120,9 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                     <Typography variant={'h6'}>
                         Icon wählen
                     </Typography>
-                    <div style={{ display: 'flex', overflowX: 'auto', marginBottom: theme.spacing(2) }}>
-                        {[Lens, Lens, Lens, Lens, Lens, Lens, Lens, Lens, Lens].map(IconClass => (
-                            <Button color={'secondary'}>
+                    <div className={styles.iconScrollbar}>
+                        {[Lens, Bookmark, CalendarToday, Label, AccountCircle, CheckCircle, Work, ChatBubble, Folder, Cloud, MenuBook, School, SportsSoccer, InsertDriveFile, Search, Extension, Favorite, ].map(IconClass => (
+                            <Button color={'secondary'} size="large">
                                 {createElement(IconClass)}
                             </Button>
                         ))}
@@ -113,23 +130,31 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                 </Grid>
                 <Grid item xs={12} style={{ display: 'flex' }}>
                     <Grid container>
-                        <Grid item sm={6}>
+                        <Grid item md={6}>
                             <Typography variant={'body1'} style={{ marginBottom: theme.spacing(1) }}>
-                                Icon um einen Buchstaben/eine Zahl ergänzen:
+                                Icon um einen Buchstaben oder eine Zahl ergänzen:
                             </Typography>
-                            <TextField id="outlined-basic" label="Buchstabe/Zahl" variant="outlined" />
+                            <TextField
+                                style={{ marginBottom: theme.spacing(2), width: '25%' }}
+                                label="X"
+                                variant="outlined"
+                                color="secondary"
+                                inputProps={{
+                                    maxLength: 1
+                                }}
+                            />
                         </Grid>
-                        <Grid item sm={6}>
+                        <Grid item md={6} style={{ maxHeight: '8.5em' }}>
                             <Typography variant={'body1'}>
                                 Vorschau:
                             </Typography>
-                            <div style={{ textAlign: 'center', position: 'relative', zIndex: 100, }}>
-                                <Lens 
+                            <div className={styles.previewIcon} >
+                                <Work 
                                     color={'secondary'} 
                                     style={{ height: '4em', width: 'auto' }}
                                 />
                             </div>
-                            <div style={{ textAlign: 'center', position: 'relative', zIndex: 1000, top: '-5.25em' }}>
+                            <div className={styles.previewIconText}>
                                 <Typography variant={'h3'} style={{ fontWeight: 'bold', color: theme.palette.background.paper }}>A</Typography>
                             </div>
                         </Grid>
