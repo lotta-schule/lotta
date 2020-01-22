@@ -41,6 +41,10 @@ defmodule Api.UserResolver do
   def resolve_groups(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.get_groups(user, tenant)}
   end
+  
+  def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
+    {:ok, User.get_assigned_groups(user)}
+  end
 
   def resolve_enrollment_tokens(user, _args, %{context: %{tenant: tenant}}) do
     user = Api.Repo.preload(user, :enrollment_tokens)

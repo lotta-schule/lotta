@@ -163,6 +163,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :name, :string
     field :sort_key, :integer
     field :enrollment_tokens, list_of(:string)
+    field :is_admin_group, :boolean
   end
 
   object :authresult do
@@ -183,6 +184,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
     field :groups, list_of(:user_group), resolve: &Api.UserResolver.resolve_groups/3
+    field :assigned_groups, list_of(:user_group), resolve: &Api.UserResolver.resolve_assigned_groups/3
     field :enrollment_tokens, list_of(:string), resolve: &Api.UserResolver.resolve_enrollment_tokens/3
     field :is_blocked, :boolean, resolve: &Api.UserResolver.resolve_is_blocked/3
   end
