@@ -1,18 +1,17 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
-import { Button, Divider, TextField, Typography, makeStyles } from '@material-ui/core';
+import React, { createElement, memo, useState, useEffect, useCallback } from 'react';
+import { Button, Divider, TextField, Typography, makeStyles, Grid } from '@material-ui/core';
+import { Lens } from '@material-ui/icons';
 import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from 'react-apollo';
 import { ID } from 'model/ID';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
-import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
-import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
-import Img from 'react-cloudimage-responsive';
 import clsx from 'clsx';
+import { theme } from 'theme';
 
 const useStyles = makeStyles(theme => ({
     input: {
@@ -99,11 +98,45 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                 onChange={e => setWidget({ ...widget, title: e.target.value })}
             />
 
-            <SelectFileOverlay label={'Icon ändern'} onSelectFile={iconImageFile => setWidget({ ...widget, iconImageFile })}>
-                {widget.iconImageFile ? (
-                    <Img operation={'cover'} size={'100x100'} src={widget.iconImageFile.remoteLocation} />
-                ) : (<PlaceholderImage width={'100%'} height={100} />)}
-            </SelectFileOverlay>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Typography variant={'h6'}>
+                        Icon wählen
+                    </Typography>
+                    <div style={{ display: 'flex', overflowX: 'auto', marginBottom: theme.spacing(2) }}>
+                        {[Lens, Lens, Lens, Lens, Lens, Lens, Lens, Lens, Lens].map(IconClass => (
+                            <Button color={'secondary'}>
+                                {createElement(IconClass)}
+                            </Button>
+                        ))}
+                    </div>
+                </Grid>
+                <Grid item xs={12} style={{ display: 'flex' }}>
+                    <Grid container>
+                        <Grid item sm={6}>
+                            <Typography variant={'body1'} style={{ marginBottom: theme.spacing(1) }}>
+                                Icon um einen Buchstaben/eine Zahl ergänzen:
+                            </Typography>
+                            <TextField id="outlined-basic" label="Buchstabe/Zahl" variant="outlined" />
+                        </Grid>
+                        <Grid item sm={6}>
+                            <Typography variant={'body1'}>
+                                Vorschau:
+                            </Typography>
+                            <div style={{ textAlign: 'center', position: 'relative', zIndex: 100, }}>
+                                <Lens 
+                                    color={'secondary'} 
+                                    style={{ height: '4em', width: 'auto' }}
+                                />
+                            </div>
+                            <div style={{ textAlign: 'center', position: 'relative', zIndex: 1000, top: '-5.25em' }}>
+                                <Typography variant={'h3'} style={{ fontWeight: 'bold', color: theme.palette.background.paper }}>A</Typography>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Divider />
 
             <GroupSelect
                 className={styles.input}

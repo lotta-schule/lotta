@@ -122,10 +122,10 @@ export const WidgetManagement: FunctionComponent = memo(() => {
             </Typography>
             <ErrorMessage error={errorCreateWidget} />
             <Grid container>
-                <Grid item sm={5} className={styles.navigationWrapper} >
+                <Grid item xs={12} sm={5} className={styles.navigationWrapper} >
                     <WidgetNavigation widgets={data!.widgets} selectedWidget={selectedWidget} onSelectWidget={setSelectedWidget} />
                 </Grid>
-                <Grid item sm={7}>
+                <Grid item xs={12} sm={7}>
                     {selectedWidget && (
                         <WidgetEditor selectedWidget={selectedWidget} onSelectWidget={setSelectedWidget} />
                     )}
