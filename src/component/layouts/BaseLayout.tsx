@@ -10,12 +10,22 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
     '@global': {
         body: {
-            backgroundColor: theme.palette.background.default,
-            backgroundAttachment: 'fixed',
-            backgroundSize: 'cover',
-            [theme.breakpoints.up('md')]: {
-                backgroundImage: ({ tenant }) => tenant.backgroundImageFile ? `url(${tenant.backgroundImageFile.remoteLocation})` : undefined,
-            }
+            '&:after': {
+                // taken from https://stackoverflow.com/questions/24154666/background-size-cover-not-working-on-ios/31445503#31445503
+                content: "''",
+                position: 'fixed', /* stretch a fixed position to the whole screen */
+                top: 0,
+                height: '100vh', /* fix for mobile browser address bar appearing disappearing */
+                left: 0,
+                right: 0,
+                zIndex: -1,
+                backgroundColor: theme.palette.background.default,
+                backgroundAttachment: 'scroll',
+                backgroundSize: 'cover',
+                [theme.breakpoints.up('md')]: {
+                    backgroundImage: ({ tenant }) => tenant.backgroundImageFile ? `url(${tenant.backgroundImageFile.remoteLocation})` : undefined,
+                }
+            },
         }
     },
     header: {
