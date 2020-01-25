@@ -6,7 +6,7 @@ import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
+import { Category, User } from 'util/model';
 import { ArticleModel } from '../../../model';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
@@ -112,7 +112,7 @@ export const UserNavigation = memo(() => {
                                 <li key={category.id}>
                                     <Link
                                         component={CollisionLink}
-                                        to={category.redirect ? category.redirect : `/category/${category.id}`}
+                                        to={category.redirect ? category.redirect : Category.getPath(category)}
                                     >
                                         {category.title}
                                     </Link>

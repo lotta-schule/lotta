@@ -12,6 +12,7 @@ export const GetCurrentUserQuery = gql`
             email
             class
             hideFullName
+            enrollmentTokens
             avatarImageFile {
                 remoteLocation
             }

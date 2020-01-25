@@ -1,22 +1,22 @@
-import React, { memo } from 'react';
-import { ArticleModel } from '../../model';
-import { Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
+import React, { memo, useMemo } from 'react';
+import { Avatar, Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme, Tooltip } from '@material-ui/core';
+import { AvatarGroup } from '@material-ui/lab';
+import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
+import { fade } from '@material-ui/core/styles';
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { CollisionLink } from '../general/CollisionLink';
-import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
+import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
+import { User, Article } from 'util/model';
 import { useMutation } from 'react-apollo';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
-import { ID } from 'model/ID';
-import { fade } from '@material-ui/core/styles';
+import { CollisionLink } from '../general/CollisionLink';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
-        padding: '0.5em',
+        padding: theme.spacing(1),
         borderRadius: theme.shape.borderRadius,
         boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
         '&:hover': {
@@ -53,9 +53,23 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
         ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title)
     },
     subtitle: {
+        display: 'flex',
+        alignItems: 'center',
         textTransform: 'uppercase',
-        fontSize: '0.8rem',
+        fontSize: '0.85rem',
         marginBottom: theme.spacing(1)
+    },
+    authorAvatarGroup: {
+        marginLeft: theme.spacing(2),
+        display: 'inline-flex',
+    },
+    authorAvatar: {
+        width: '1em',
+        height: '1em',
+        borderWidth: 1,
+        '@media screen and (-webkit-min-device-pixel-ratio: 2), screen and (min-resolution: 2dppx)': {
+            borderWidth: .5,
+        }
     },
     previewTextLimitedHeight: {
         overflow: 'hidden',
@@ -92,11 +106,26 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
             component={CollisionLink}
             color='inherit'
             underline='none'
-            to={`/article/${article.id}`}
+            to={Article.getPath(article)}
         >
             {content}
         </Link>
     );
+
+    const authorsList = useMemo(() => {
+        if (!article.users) {
+            return null;
+        }
+        return (
+            <AvatarGroup className={styles.authorAvatarGroup}>
+                {article.users.map(user => (
+                    <Tooltip title={User.getNickname(user)} key={user.id}>
+                        <Avatar src={User.getAvatarUrl(user)} className={styles.authorAvatar} />
+                    </Tooltip>
+                ))}
+            </AvatarGroup>
+        )
+    }, [article.users, styles.authorAvatar, styles.authorAvatarGroup]);
 
     return (
         <Card className={styles.root} data-testid={'ArticlePreview'}>
@@ -127,7 +156,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                                     size="small"
                                     className={clsx(styles.editButton, 'edit-button')}
                                     component={CollisionLink}
-                                    to={`/article/${article.id}/edit`}
+                                    to={Article.getPath(article, { edit: true })}
                                 >
                                     <Edit />
                                 </Fab>
@@ -145,8 +174,8 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                         </Typography>
                         <Typography variant={'subtitle1'} className={clsx(styles.subtitle)}>
                             {format(new Date(article.updatedAt), 'PPP', { locale: de }) + ' '}
-                            {article.topic && <> | {article.topic}&nbsp;</>}
-                            {article.users && <> | Autoren: {article.users.map(user => User.getNickname(user)).join(', ')}&nbsp;</>}
+                            {article.topic && <> &#9675; {article.topic}&nbsp;</>}
+                            {article.users && article.users.length > 0 && <> &#9675; {authorsList}&nbsp;</>}
                         </Typography>
                         <Typography variant={'subtitle1'} color="textSecondary" className={clsx({ [styles.previewTextLimitedHeight]: limitedHeight })}>
                             {article.preview}

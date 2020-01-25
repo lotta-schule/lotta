@@ -2,14 +2,15 @@ import React, { MouseEvent as ReactMouseEvent, memo } from 'react';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
+import { get } from 'lodash';
 
 export interface SelectTemplateButtonProps {
-    imageUrl: string;
     title: string;
+    theme: Partial<Theme>;
     onClick?(event: ReactMouseEvent<HTMLButtonElement, MouseEvent>): void;
 };
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
+const useStyles = makeStyles<Theme, { partialTheme: Partial<Theme> }>((theme: Theme) => createStyles({
     root: {
         position: 'relative',
         height: 200,
@@ -20,14 +21,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         },
         '&:hover, &$focusVisible': {
             zIndex: 1,
-            '& $imageBackdrop': {
-                opacity: 0.15,
-            }
         },
     },
     focusVisible: {},
     imageButton: {
-        position: 'absolute',
+        position: 'absolute' as any,
         left: 0,
         right: 0,
         top: 0,
@@ -36,25 +34,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         alignItems: 'center',
         justifyContent: 'center',
         color: theme.palette.common.white,
-    },
-    imageSrc: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 40%',
-    },
-    imageBackdrop: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: theme.palette.common.black,
-        opacity: 0.4,
-        transition: theme.transitions.create('opacity'),
+        background: ({ partialTheme }) => {
+            const primaryColor: string = get(partialTheme, 'palette.primary.main', get(theme, 'palette.primary.main'));
+            const secondaryColor: string = get(partialTheme, 'palette.secondary.main', get(theme, 'palette.secondary.main'));
+            const backgroundColor: string = get(partialTheme, 'palette.background.default', get(theme, 'palette.background.default'));
+            return `linear-gradient(${primaryColor} 33%, ${secondaryColor} 33%, ${secondaryColor} 66%, ${backgroundColor} 66%)`;
+        }
     },
     imageTitle: {
         position: 'relative',
@@ -62,24 +47,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }));
 
-export const SelectTemplateButton = memo<SelectTemplateButtonProps>(({ imageUrl, title, onClick }) => {
-    const classes = useStyles();
+export const SelectTemplateButton = memo<SelectTemplateButtonProps>(({ title, theme: partialTheme, onClick }) => {
+    const classes = useStyles({ partialTheme });
 
     return (
         <ButtonBase
             focusRipple
-            key={imageUrl}
             className={classes.root}
             focusVisibleClassName={classes.focusVisible}
             onClick={onClick}
         >
-            <span
-                className={classes.imageSrc}
-                style={{
-                    backgroundImage: `url(${imageUrl})`,
-                }}
-            />
-            <span className={classes.imageBackdrop} />
             <span className={classes.imageButton}>
                 <Typography
                     component="span"

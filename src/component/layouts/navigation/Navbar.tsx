@@ -9,6 +9,7 @@ import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
 import { useDispatch } from 'react-redux';
 import { fade } from '@material-ui/core/styles';
+import { Category } from 'util/model';
 import clsx from 'clsx';
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -127,7 +128,7 @@ export const Navbar = memo(() => {
                                     variant="text"
                                     key={category.id}
                                     component={CollisionLink}
-                                    to={category.redirect ? category.redirect : `/category/${category.id}`}
+                                    to={category.redirect ? category.redirect : Category.getPath(category)}
                                     size={'medium'}
                                     className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                                 >
@@ -152,7 +153,7 @@ export const Navbar = memo(() => {
                                 variant="text"
                                 key={category.id}
                                 component={CollisionLink}
-                                to={category.redirect ? category.redirect : `/category/${category.id}`}
+                                to={category.redirect ? category.redirect : Category.getPath(category)}
                                 size={'small'}
                                 className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
                             >

@@ -13,6 +13,7 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
+import { Category } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 
@@ -112,7 +113,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                         <b>Wähle ein Banner für diese Kategorie</b>
                     </Typography>
 
-                    <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })}>
+                    <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })} allowDeletion>
                         {category.bannerImageFile ? (
                             <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
                         ) : (<PlaceholderImage width={'100%'} height={75} />)}
@@ -146,7 +147,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                                 <em>Nicht weiterleiten</em>
                             </MenuItem>
                             {categories.map(category => (
-                                <MenuItem key={category.id} value={`/category/${category.id}`}>
+                                <MenuItem key={category.id} value={Category.getPath(category)}>
                                     {category.title}
                                 </MenuItem>
                             ))}

@@ -13,6 +13,9 @@ export interface UserModel {
     email: string;
     class?: string;
     phone?: string;
+    assignedGroups?: UserGroupModel[];
     groups: UserGroupModel[];
     avatarImageFile?: FileModel;
+    isBlocked?: boolean;
+    enrollmentTokens?: string[];
 }

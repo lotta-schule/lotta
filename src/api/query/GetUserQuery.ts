@@ -10,6 +10,8 @@ export const GetUserQuery = gql`
             nickname
             email
             class
+            isBlocked
+            enrollmentTokens
             groups {
                 id
                 name
@@ -17,6 +19,10 @@ export const GetUserQuery = gql`
                 tenant {
                     id
                 }
+            }
+            assignedGroups {
+                id
+                name
             }
             avatarImageFile {
                 remoteLocation

@@ -29,7 +29,7 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
             <SelectFileOverlay
                 label={'Audiodatei auswechseln'}
                 fileFilter={f => f.fileType === FileModelType.Audio}
-                onSelectFile={file => onUpdateModule({ ...contentModule, files: [file] })}
+                onSelectFile={file => onUpdateModule({ ...contentModule, files: file ? [file] : [] })}
             >
                 <AudioAudio contentModule={contentModule} />
             </SelectFileOverlay>

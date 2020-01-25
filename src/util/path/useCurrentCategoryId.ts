@@ -6,8 +6,8 @@ import { GetArticleQuery } from 'api/query/GetArticleQuery';
 
 export const useCurrentCategoryId = (): ID | null => {
     const { location } = useReactRouter();
-    const matchesCategoryUrl = location.pathname.match(/^\/category\/(\d*)/);
-    const matchesArticleUrl = location.pathname.match(/^\/article\/(\d*)/);
+    const matchesCategoryUrl = location.pathname.match(/^\/c(?:ategory)?\/(\d*)/);
+    const matchesArticleUrl = location.pathname.match(/^\/a(?:rticle)?\/(\d*)/);
     const { data } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, {
         variables: matchesArticleUrl ? { id: Number(matchesArticleUrl![1]) } : { id: 0 },
         skip: !matchesArticleUrl || matchesArticleUrl.length < 2

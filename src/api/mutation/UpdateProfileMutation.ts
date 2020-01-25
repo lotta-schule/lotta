@@ -10,6 +10,7 @@ export const UpdateProfileMutation = gql`
             nickname
             email
             class
+            enrollmentTokens
             avatarImageFile {
                 remoteLocation
             }

@@ -11,7 +11,7 @@ export interface ClientModel {
     title: string;
     customTheme?: any;
     groups: UserGroupModel[];
-    logoImageFile?: FileModel;
-    backgroundImageFile?: FileModel;
+    logoImageFile?: FileModel | null;
+    backgroundImageFile?: FileModel | null;
     customDomains: CustomDomainModel[];
 }
