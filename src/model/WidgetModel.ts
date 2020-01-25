@@ -9,13 +9,20 @@ export enum WidgetModelType {
     TagCloud = 'TAGCLOUD',
     Schedule = 'SCHEDULE',
 }
+
+export interface WidgetIconModel {
+    iconName?: string;
+    overlayText?: string;
+    overlayTextColor?: string;
+}
+
 export interface WidgetModel<C = any> {
     id: ID;
     title: string;
     type: WidgetModelType;
     iconImageFile?: FileModel;
     groups: UserGroupModel[];
-    configuration: C;
+    configuration: { icon?: WidgetIconModel } & C;
 }
 
 export interface CalendarWidgetConfig {

@@ -1,6 +1,5 @@
-import React, { createElement, memo, useState, useEffect, useCallback } from 'react';
-import { Button, Divider, TextField, Typography, makeStyles, Grid } from '@material-ui/core';
-import { Lens, Bookmark, CalendarToday, AccountCircle, CheckCircle, Work, ChatBubble, Folder, School, Cloud, MenuBook, Label, SportsSoccer, Attachment, InsertDriveFile, Search, Extension, Favorite } from '@material-ui/icons';
+import React, { memo, useState, useEffect, useCallback } from 'react';
+import { Button, Divider, TextField, Typography, makeStyles } from '@material-ui/core';
 import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from 'react-apollo';
@@ -11,7 +10,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
 import clsx from 'clsx';
-import { theme } from 'theme';
+import { WidgetIconSelection } from './WidgetIconSelection';
 
 const useStyles = makeStyles(theme => ({
     input: {
@@ -27,28 +26,13 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(2),
     },
     divider: {
-        clear: 'both'
+        clear: 'both',
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2)
     },
     deleteButton: {
         backgroundColor: theme.palette.error.main,
         color: theme.palette.error.contrastText
-    },
-    iconScrollbar: {
-        display: 'flex', 
-        overflowX: 'auto', 
-        marginBottom: theme.spacing(2), 
-        height: '4em'
-    },
-    previewIcon: {
-        textAlign: 'center', 
-        position: 'relative', 
-        zIndex: 100,
-    },
-    previewIconText: {
-        textAlign: 'center', 
-        position: 'relative', 
-        zIndex: 1000, 
-        top: '-5.25em',
     }
 }));
 
@@ -115,53 +99,11 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                 onChange={e => setWidget({ ...widget, title: e.target.value })}
             />
 
-            <Grid container>
-                <Grid item xs={12}>
-                    <Typography variant={'h6'}>
-                        Icon wählen
-                    </Typography>
-                    <div className={styles.iconScrollbar}>
-                        {[Lens, Bookmark, CalendarToday, Label, AccountCircle, CheckCircle, Work, ChatBubble, Folder, Cloud, MenuBook, School, SportsSoccer, InsertDriveFile, Search, Extension, Favorite, ].map(IconClass => (
-                            <Button color={'secondary'} size="large">
-                                {createElement(IconClass)}
-                            </Button>
-                        ))}
-                    </div>
-                </Grid>
-                <Grid item xs={12} style={{ display: 'flex' }}>
-                    <Grid container>
-                        <Grid item md={6}>
-                            <Typography variant={'body1'} style={{ marginBottom: theme.spacing(1) }}>
-                                Icon um einen Buchstaben oder eine Zahl ergänzen:
-                            </Typography>
-                            <TextField
-                                style={{ marginBottom: theme.spacing(2), width: '25%' }}
-                                label="X"
-                                variant="outlined"
-                                color="secondary"
-                                inputProps={{
-                                    maxLength: 1
-                                }}
-                            />
-                        </Grid>
-                        <Grid item md={6} style={{ maxHeight: '8.5em' }}>
-                            <Typography variant={'body1'} align={'center'} >
-                                Vorschau:
-                            </Typography>
-                            <div className={styles.previewIcon} >
-                                <Work 
-                                    color={'secondary'} 
-                                    style={{ height: '4em', width: 'auto' }}
-                                />
-                            </div>
-                            <div className={styles.previewIconText}>
-                                <Typography variant={'h3'} style={{ fontWeight: 'bold', color: theme.palette.background.paper }}>A</Typography>
-                            </div>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
-            <Divider />
+            <Divider className={styles.divider} />
+
+            <WidgetIconSelection icon={widget.configuration.icon ?? {}} onSelectIcon={icon => setWidget({ ...widget, configuration: { ...widget.configuration, icon } })} />
+
+            <Divider className={styles.divider} />
 
             <GroupSelect
                 className={styles.input}
