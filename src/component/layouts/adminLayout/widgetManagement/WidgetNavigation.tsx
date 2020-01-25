@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, ExpansionPanel, ExpansionPanelSummary } from '@material-ui/core';
 import { WidgetModel } from 'model';
-import { Widget } from 'util/model';
+import { WidgetIcon } from 'component/widgets/WidgetIcon';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -11,7 +11,11 @@ const useStyles = makeStyles((theme: Theme) => {
             marginBottom: theme.spacing(3),
         },
         expansionSummary: {
-            backgroundColor: theme.palette.divider
+            backgroundColor: theme.palette.divider,
+            '& > div > div': {
+                display: 'flex',
+                alignItems: 'center'
+            }
         },
         selected: {
             fontWeight: 'bolder'
@@ -42,8 +46,9 @@ export const WidgetNavigation = memo<WidgetNavigationProps>(({ widgets, selected
                             className={styles.expansionSummary}
                             onClick={() => onSelectWidget(widget)}
                         >
-                            <Typography variant="body1">
-                                {Widget.getIcon(widget)} &nbsp;
+                            <Typography component={'div'} variant={'body1'}>
+                                <WidgetIcon icon={widget.configuration.icon} size={36} />
+                                &nbsp;
                                 <span className={clsx({ [styles.selected]: selectedWidget && selectedWidget.id === widget.id })}>
                                     {widget.title}
                                 </span>

@@ -10,6 +10,7 @@ import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAnce
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useScrollEvent } from 'util/useScrollEvent';
 import SwipeableViews from 'react-swipeable-views';
+import { WidgetIcon } from 'component/widgets/WidgetIcon';
 
 export interface WidgetsListProps {
     widgets: WidgetModel[];
@@ -130,7 +131,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
                                 key={widget.id}
                                 title={widget.title}
                                 value={i}
-                                icon={WidgetUtil.getIcon(widget)}
+                                icon={<WidgetIcon icon={widget.configuration.icon} size={36} />}
                                 classes={{
                                     root: styles.tabRoot,
                                     wrapper: styles.tabWrapper,
