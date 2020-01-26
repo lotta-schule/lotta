@@ -27,7 +27,7 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                 <MenuItem value={'input'}>Eingabefeld</MenuItem>
                 <MenuItem value={'checkbox'}>Checkbox</MenuItem>
             </Select>
-            {element.element === 'input' && (
+            {element.element === 'input' && !element.multiline && (
                 <Select
                     fullWidth
                     className={styles.configurationProperty}
@@ -56,9 +56,18 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                 fullWidth
                 className={styles.configurationProperty}
                 id={'form-input-label'}
-                label={'Beschriftung'}
+                label={'Aufschrift'}
                 value={element.label ?? ''}
                 onChange={e => updateElement({ label: (e.target.value as string) })}
+            />
+            <TextField
+                fullWidth
+                multiline
+                className={styles.configurationProperty}
+                id={'form-input-description-text'}
+                label={'Beschriftung'}
+                value={element.descriptionText ?? ''}
+                onChange={e => updateElement({ descriptionText: (e.target.value as string) })}
             />
             {/* {element.element === 'input' && (
                 <TextField

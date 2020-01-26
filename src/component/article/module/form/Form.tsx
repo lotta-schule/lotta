@@ -14,6 +14,7 @@ export interface FormElement {
     name?: string;
     type?: string;
     label?: string;
+    descriptionText?: string;
     placeholder?: string;
     checked?: boolean;
     required?: boolean;

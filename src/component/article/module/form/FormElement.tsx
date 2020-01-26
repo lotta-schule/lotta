@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { FormElement as FormElementInterface } from './Form';
-import { Checkbox, FormControlLabel, TextField } from '@material-ui/core';
+import { Checkbox, FormControlLabel, TextField, Typography } from '@material-ui/core';
 
 export interface FormElementProps {
     element: FormElementInterface;
@@ -8,36 +8,48 @@ export interface FormElementProps {
 }
 
 export const FormElement = memo<FormElementProps>(({ element, isEditModeEnabled }) => {
-    if (element.element === 'checkbox') {
+    const formElement = (() => {
+        if (element.element === 'checkbox') {
+            return (
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={element.checked}
+                            name={element.name}
+                            value={'OK'}
+                            color={'primary'}
+                            disabled={isEditModeEnabled}
+                            required={element.required}
+                        />
+                    }
+                    label={element.label}
+                />
+            );
+        }
+        if (element.element === 'input') {
+            return (
+                <TextField
+                    fullWidth
+                    disabled={isEditModeEnabled}
+                    name={element.name}
+                    type={element.type}
+                    label={element.label || undefined}
+                    placeholder={element.placeholder}
+                    required={element.required}
+                    multiline={element.multiline}
+                    rows={element.rows ?? 4}
+                />
+            )
+        }
+    })();
+    if (formElement) {
         return (
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={element.checked}
-                        name={element.name}
-                        value={'OK'}
-                        color={'primary'}
-                        disabled={isEditModeEnabled}
-                        required={element.required}
-                    />
-                }
-                label={element.label}
-            />
-        );
-    }
-    if (element.element === 'input') {
-        return (
-            <TextField
-                fullWidth
-                disabled={isEditModeEnabled}
-                name={element.name}
-                type={element.type}
-                label={element.label || undefined}
-                placeholder={element.placeholder}
-                required={element.required}
-                multiline={element.multiline}
-                rows={element.rows ?? 4}
-            />
+            <section>
+                {element.descriptionText && (
+                    <Typography variant={'body2'}>{element.descriptionText}</Typography>
+                )}
+                {formElement}
+            </section>
         )
     }
     return null;
