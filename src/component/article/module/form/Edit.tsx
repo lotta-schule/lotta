@@ -85,13 +85,13 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                                             </IconButton>
                                         </div>
                                         <Grid container className={styles.inputWrapper}>
-                                            <Grid item xs={8}>
+                                            <Grid item xs={5}>
                                                 <FormElement
                                                     element={element}
                                                     isEditModeEnabled
                                                 />
                                             </Grid>
-                                            <Grid item xs={4} className={styles.inputSettings}>
+                                            <Grid item xs={7} className={styles.inputSettings}>
                                                 <FormElementConfiguration
                                                     element={element}
                                                     updateElement={updatedElementOptions => updateConfiguration({
