@@ -163,10 +163,10 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                                                     {line.lessonName}
                                                 </TableCell>
                                                 <TableCell className={clsx({ [styles.updated]: line.teacherHasChanged })}>
-                                                    {line.teacher === '&nbsp;' ? '-' : line.teacher}
+                                                    {line.teacher === '&nbsp;' ? '---' : line.teacher}
                                                 </TableCell>
                                                 <TableCell className={clsx({ [styles.updated]: line.roomHasChanged })}>
-                                                    {line.room}
+                                                    {line.room === '&nbsp;' ? '---' : line.room}
                                                 </TableCell>
                                             </TableRow>
                                             {line.comment && (
