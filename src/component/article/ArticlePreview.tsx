@@ -174,8 +174,8 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
                         </Typography>
                         <Typography variant={'subtitle1'} className={clsx(styles.subtitle)}>
                             {format(new Date(article.updatedAt), 'PPP', { locale: de }) + ' '}
-                            {article.topic && <> &#9675; {article.topic}&nbsp;</>}
-                            {article.users && article.users.length > 0 && <> &#9675; {authorsList}&nbsp;</>}
+                            {article.topic && <> | {article.topic}&nbsp;</>}
+                            {article.users && article.users.length > 0 && <>&nbsp;{authorsList}&nbsp;</>}
                         </Typography>
                         <Typography variant={'subtitle1'} color="textSecondary" className={clsx({ [styles.previewTextLimitedHeight]: limitedHeight })}>
                             {article.preview}
