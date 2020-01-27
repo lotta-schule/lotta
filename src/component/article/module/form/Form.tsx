@@ -9,17 +9,23 @@ export interface FormProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
+export interface FormElementOption {
+    selected?: boolean;
+    value: string;
+    label?: string;
+}
+
 export interface FormElement {
-    element: 'input' | 'checkbox';
-    name?: string;
+    element: 'input' | 'selection';
+    name: string;
     type?: string;
     label?: string;
     descriptionText?: string;
     placeholder?: string;
-    checked?: boolean;
     required?: boolean;
     multiline?: boolean;
     rows?: number;
+    options?: FormElementOption[];
 }
 
 export interface FormConfiguration {
