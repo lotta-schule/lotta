@@ -114,7 +114,7 @@ defmodule Api.EmailPublisherWorker do
     tenant = article.tenant
     responses_list =
       responses
-      |> Enum.map(fn {key, value} -> "<li><strong>#{key}:</strong> #{value}</li>" end)
+      |> Enum.map(fn {key, value} -> "<li><strong>#{key}:</strong> #{Poison.encode!(value)}</li>" end)
       |> Enum.join("")
       |> (&("<ul>" <> &1 <> "</ul>")).()
 
