@@ -28,9 +28,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         position: 'absolute',
         top: theme.spacing(1),
         right: theme.spacing(1),
-        '&:hover': {
-            backgroundColor: theme.palette.secondary.light,
-        }
     },
     leftButton: {
         position: 'absolute',
