@@ -88,6 +88,7 @@ defmodule ApiWeb.Schema.ContentsTypes do
   end
 
   input_object :content_module_input do
+    field :id, :lotta_id
     field :type, :content_module_type, default_value: "text"
     field :text, :string
     field :files, list_of(:file)
