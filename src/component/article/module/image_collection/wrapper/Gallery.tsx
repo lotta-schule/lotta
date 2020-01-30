@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { uniqBy } from 'lodash';
-import { Grid, makeStyles, IconButton } from '@material-ui/core';
+import { makeStyles, IconButton, GridList, GridListTile } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { ContentModuleModel, FileModel } from 'model';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
@@ -12,8 +12,8 @@ const useStyles = makeStyles(() => ({
     img: {
         '& img': {
             maxWidth: '100%',
-            maxHeight: '100%',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            height: '20vw',
         }
     },
     deleteButton: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
         right: '1.5em',
         top: '.5em',
         zIndex: 5
-    }
+    },
 }));
 
 export interface GalleryProps {
@@ -51,9 +51,9 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
     const sortedFiles = (contentModule.files || []).sort(FileSorter(contentModule, getConfiguration));
     return (
         <>
-            <Grid container>
+            <GridList cols={3}>
                 {sortedFiles.map((file, index) => (
-                    <Grid item xs={6} lg={4} key={file.id} style={{ position: 'relative' }}>
+                    <GridListTile cols={1} key={file.id} style={{ position: 'relative', height: '100%', }}>
                         {isEditModeEnabled && (
                             <IconButton
                                 color={'secondary'}
@@ -101,16 +101,12 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
                                 });
                             }}
                             onSelect={() => setSelectedFileIndex(index)}
-                            size={'350x200'}
-                            width={350}
-                            height={200}
-                            operation={'fit'}
-                            ratio={1.75}
                             className={styles.img}
                         />
-                    </Grid>
+                    </GridListTile>
                 ))}
-            </Grid>
+            </GridList>
+
             {isEditModeEnabled && (
                 <SelectFileButton
                     label={'Bild hinzufügen'}
