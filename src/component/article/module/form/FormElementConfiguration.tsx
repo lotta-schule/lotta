@@ -139,7 +139,7 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
             {element.element === 'selection' && (
                 <div>
                     {element.options?.map((option, i) => (
-                        <section className={styles.option}>
+                        <section key={i} className={styles.option}>
                             <TextField
                                 fullWidth
                                 className={styles.configurationProperty}
