@@ -10,6 +10,7 @@ defmodule Api.Content.ContentModule do
     field :configuration, :map
 
     belongs_to :article, Api.Content.Article
+    has_many :results, Api.Content.ContentModuleResult
     many_to_many(
       :files,
       Api.Accounts.File,

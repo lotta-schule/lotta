@@ -7,7 +7,7 @@ defmodule Api.Content do
   import Ecto.Changeset
   alias Api.Repo
 
-  alias Api.Content.Article
+  alias Api.Content.{Article, ContentModule, ContentModuleResult}
   alias Api.Tenants.{Category,Tenant}
   alias Api.Accounts.{User}
 
@@ -276,6 +276,12 @@ defmodule Api.Content do
   """
   def change_content_module(%ContentModule{} = content_module) do
     ContentModule.changeset(content_module, %{})
+  end
+
+  def save_content_module_result!(%ContentModule{} = content_module, user, result) do
+    content_module
+    |> Ecto.build_assoc(:results, %{ result: result, user_id: user && user.id })
+    |> Repo.insert!()
   end
 
   def toggle_article_pin(article_id) do
