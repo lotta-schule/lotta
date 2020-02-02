@@ -21,4 +21,11 @@ export interface ContentModuleModel<T = any> {
     configuration?: T;
 }
 
+export interface ContentModuleResultModel<T = any> {
+    id: ID;
+    insertedAt: string;
+    updatedAt: string;
+    result: T;
+}
+
 export type ContentModuleInput = Omit<ContentModuleModel, 'id'>;

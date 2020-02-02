@@ -29,7 +29,8 @@ export interface FormElement {
 }
 
 export interface FormConfiguration {
-    destination: string;
+    destination?: string;
+    save_internally?: boolean;
     elements: FormElement[];
 }
 
