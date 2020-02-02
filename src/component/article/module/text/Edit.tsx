@@ -1,8 +1,8 @@
-import React, { KeyboardEvent, memo, useState, useRef, MutableRefObject, MouseEvent, useCallback, useEffect } from 'react';
+import React, { KeyboardEvent, memo, useState, useRef, MouseEvent, useCallback, useEffect, useMemo } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
-import { Editor, EventHook } from 'slate-react';
-import { Value, CommandFunc } from 'slate';
-import { renderBlock, renderMark, plugins, renderInline } from './SlateUtils';
+import { withReact } from 'slate-react';
+import { createEditor, Node } from 'slate';
+import { plugins } from './SlateUtils';
 import { Toolbar, Collapse } from '@material-ui/core';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered, Image, Link } from '@material-ui/icons';
@@ -28,21 +28,21 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
-    const [editorState, setEditorState] = useState<Value>(contentModule.text ? deserialize(contentModule.text) : Value.create());
+    const [editorState, setEditorState] = useState<Node[]>(contentModule.text ? deserialize(contentModule.text) : []);
 
     const styles = useStyles();
 
-    const editorRef = useRef<Editor>() as MutableRefObject<Editor>;
+    const editor = useMemo(() => withReact(createEditor()), []);
 
     const onClickMark = useCallback((e: MouseEvent<HTMLElement>, type: string) => {
         e.preventDefault();
-        editorRef.current.toggleMark(type);
-        editorRef.current.focus();
-    }, [editorRef]);
+        editor.toggleMark(type);
+        editor.focus();
+    }, [editor]);
 
     const onClickBlock = useCallback((e: MouseEvent<HTMLElement>, type: string) => {
         e.preventDefault();
-        const { value } = editorRef.current;
+        const { value } = editor;
         const { document } = editorState;
 
         // Handle the extra wrapping required for list buttons.
@@ -52,16 +52,16 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
         });
 
         if (!isList) {
-            (editorRef.current as any).wrapList({ type });
+            (editor as any).wrapList({ type });
         } else if (isExactType) {
-            (editorRef.current as any)
+            (editor as any)
                 .unwrapList()
                 .wrapList({ type });
         } else {
-            (editorRef.current as any).unwrapList();
+            (editor as any).unwrapList();
         }
-        editorRef.current.focus();
-    }, [editorRef, editorState]);
+        editor.focus();
+    }, [editor, editorState]);
 
     const insertImage: CommandFunc = useCallback((editor, src, target) => {
         if (target) {
@@ -86,25 +86,25 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
     }, []);
 
     const onClickImage = useCallback((file: FileModel) => {
-        editorRef.current.focus();
+        editor.focus();
         const src = file.remoteLocation;
-        editorRef.current.command(insertImage, src);
-    }, [editorRef, insertImage]);
+        editor.command(insertImage, src);
+    }, [editor, insertImage]);
 
     const onClickLink = useCallback((e: MouseEvent) => {
         e.preventDefault();
-        if (!editorRef.current) {
+        if (!editor) {
             return;
         }
 
-        if (editorRef.current.value.inlines.some(inline => Boolean(inline && inline.type === 'link'))) {
-            editorRef.current.command((editor) => editor.unwrapInline('link'));
-        } else if (editorRef.current.value.selection.isExpanded) {
+        if (editor.value.inlines.some(inline => Boolean(inline && inline.type === 'link'))) {
+            editor.command((editor) => editor.unwrapInline('link'));
+        } else if (editor.value.selection.isExpanded) {
             const href = window.prompt('Ziel-URL des Links eingeben:', 'https://lotta.schule');
             if (!href) {
                 return;
             }
-            editorRef.current.command(wrapLink, href)
+            editor.command(wrapLink, href)
         } else {
             const href = window.prompt('Ziel-URL des Links eingeben:', 'https://lotta.schule');
             if (!href) {
@@ -117,8 +117,8 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 .moveFocusBackward(text.length)
                 .command(wrapLink, href)
         }
-        editorRef.current.focus();
-    }, [editorRef, wrapLink]);
+        editor.focus();
+    }, [editor, wrapLink]);
 
     const onKeyDownRef = useRef<EventHook<KeyboardEvent<Element>>>((event, editor, next) => {
         if (!event.metaKey) {
@@ -152,13 +152,13 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
     const activeMarks = editorState.activeMarks.flatMap(mark => mark ? [mark.type] : []);
 
-    const isFocused = editorRef.current?.value.selection.isFocused;
+    const isFocused = editor?.value.selection.isFocused;
 
     useEffect(() => {
         if (isFocused === false) {
             onUpdateModule({
                 ...contentModule,
-                text: serialize(editorRef.current.value)
+                text: serialize(editor.value)
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,61 +166,65 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
     return (
         <>
-            <Collapse in={isFocused}>
-                <Toolbar className={styles.toolbar}>
-                    <ToggleButtonGroup size={'small'} value={activeMarks.toArray()}>
-                        <ToggleButton value={'bold'} onClick={e => onClickMark(e, 'bold')}>
-                            <FormatBold />
-                        </ToggleButton>
-                        <ToggleButton value={'italic'} onClick={e => onClickMark(e, 'italic')}>
-                            <FormatItalic />
-                        </ToggleButton>
-                        <ToggleButton value={'underline'} onClick={e => onClickMark(e, 'underline')}>
-                            <FormatUnderlined />
-                        </ToggleButton>
-                        {/* <ToggleButton disabled value="color">
+            <Slate editor={editor}>
+                <Collapse in={isFocused}>
+                    <Toolbar className={styles.toolbar}>
+                        <ToggleButtonGroup size={'small'} value={activeMarks.toArray()}>
+                            <ToggleButton value={'bold'} onClick={e => onClickMark(e, 'bold')}>
+                                <FormatBold />
+                            </ToggleButton>
+                            <ToggleButton value={'italic'} onClick={e => onClickMark(e, 'italic')}>
+                                <FormatItalic />
+                            </ToggleButton>
+                            <ToggleButton value={'underline'} onClick={e => onClickMark(e, 'underline')}>
+                                <FormatUnderlined />
+                            </ToggleButton>
+                            {/* <ToggleButton disabled value="color">
                             <FormatColorFillIcon />
                             <ArrowDropDownIcon />
                         </ToggleButton> */}
-                    </ToggleButtonGroup>
-                    &nbsp;
+                        </ToggleButtonGroup>
+                        &nbsp;
                     <ToggleButtonGroup size={'small'} value={'none'}>
-                        <ToggleButton
-                            value={'link'}
-                            selected={editorRef.current && editorRef.current.value.inlines.some(inline => Boolean(inline && inline.type === 'link'))}
-                            onClick={e => onClickLink(e)}
-                        >
-                            <Link />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    &nbsp;
+                            <ToggleButton
+                                value={'link'}
+                                selected={editor && editorRef.current.value.inlines.some(inline => Boolean(inline && inline.type === 'link'))}
+                                onClick={e => onClickLink(e)}
+                            >
+                                <Link />
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                        &nbsp;
                     <ToggleButtonGroup size={'small'} value={'none'}>
-                        <ToggleButton
-                            value={'unordered-list'}
-                            selected={editorRef.current && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'unordered-list'))))}
-                            onClick={e => onClickBlock(e, 'unordered-list')}
-                        >
-                            <FormatListBulleted />
-                        </ToggleButton>
-                        <ToggleButton
-                            value={'ordered-list'}
-                            selected={editorRef.current && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'ordered-list'))))}
-                            onClick={e => onClickBlock(e, 'ordered-list')}
-                        >
-                            <FormatListNumbered />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    &nbsp;
+                            <ToggleButton
+                                value={'unordered-list'}
+                                selected={editor && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'unordered-list'))))}
+                                onClick={e => onClickBlock(e, 'unordered-list')}
+                            >
+                                <FormatListBulleted />
+                            </ToggleButton>
+                            <ToggleButton
+                                value={'ordered-list'}
+                                selected={editor && editorRef.current.value.blocks.some(block => Boolean(block && editorRef.current.value.document.getClosest(block.key, parent => Boolean(parent && (parent as any).type === 'ordered-list'))))}
+                                onClick={e => onClickBlock(e, 'ordered-list')}
+                            >
+                                <FormatListNumbered />
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                        &nbsp;
                     <ToggleButtonGroup size={'small'} value={'none'}>
-                        <SelectFileButton
-                            buttonComponent={ToggleButton}
-                            buttonComponentProps={{ size: 'small', value: 'select-file' }}
-                            onSelectFile={onClickImage}
-                            label={<Image />}
-                        />
-                    </ToggleButtonGroup>
-                </Toolbar>
-            </Collapse>
+                            <SelectFileButton
+                                buttonComponent={ToggleButton}
+                                buttonComponentProps={{ size: 'small', value: 'select-file' }}
+                                onSelectFile={onClickImage}
+                                label={<Image />}
+                            />
+                        </ToggleButtonGroup>
+                    </Toolbar>
+                </Collapse>
+
+                <Editable />
+            </Slate>
             <Editor
                 ref={editorRef}
                 value={editorState}
