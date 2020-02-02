@@ -41,7 +41,7 @@ export const renderInline = (props: RenderInlineProps, editor: Editor, next: () 
         case 'link':
             const href = props.node.data.get('href');
             return (
-                <a {...props.attributes} href={href} title={href} target={'_blank'}>{props.children}</a>
+                <a {...props.attributes} href={href} title={href} target={'_blank'} rel="noopener noreferrer">{props.children}</a>
             );
         default:
             return next();
