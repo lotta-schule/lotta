@@ -45,7 +45,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<FormatAlignLeft />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.TEXT,
                                 text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } })),
@@ -60,7 +60,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<TextFormat />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.TITLE,
                                 text: 'Titel',
@@ -75,7 +75,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<Image />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.IMAGE,
                                 text: undefined,
@@ -90,7 +90,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<BurstMode />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.IMAGE_COLLECTION,
                                 text: undefined,
@@ -105,7 +105,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<MovieCreation />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.VIDEO,
                                 text: undefined,
@@ -120,7 +120,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<Audiotrack />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.AUDIO,
                                 text: undefined,
@@ -135,7 +135,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<FileCopyOutlined />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.DOWNLOAD,
                                 text: '[]',
@@ -150,7 +150,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                         icon={<Feedback />}
                         onClick={() => {
                             onAddModule({
-                                id: new Date().getTime() + Math.random() * 1000,
+                                id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.FORM,
                                 configuration: { destination: currentUser!.email, save_internally: true, elements: [] },
