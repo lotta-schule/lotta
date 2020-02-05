@@ -29,6 +29,11 @@ defmodule ApiWeb.Schema.ContentsTypes do
       arg :topic, non_null(:string)
       resolve &Api.ArticleResolver.by_topic/2
     end
+
+    field :content_module_results, list_of(:content_module_result) do
+      arg :content_module_id, non_null(:lotta_id)
+      resolve &Api.ContentModuleResolver.get_responses/2
+    end
   end
 
   object :contents_mutations do
@@ -88,6 +93,7 @@ defmodule ApiWeb.Schema.ContentsTypes do
   end
 
   input_object :content_module_input do
+    field :id, :lotta_id
     field :type, :content_module_type, default_value: "text"
     field :text, :string
     field :files, list_of(:file)
@@ -120,6 +126,14 @@ defmodule ApiWeb.Schema.ContentsTypes do
     field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :sort_key, :integer
     field :configuration, :json
+  end
+
+  object :content_module_result do
+    field :id, :lotta_id
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :result, :json
+    field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end
 
   enum :content_module_type do

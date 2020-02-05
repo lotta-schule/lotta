@@ -7,7 +7,7 @@ defmodule Api.Content do
   import Ecto.Changeset
   alias Api.Repo
 
-  alias Api.Content.Article
+  alias Api.Content.{Article, ContentModule, ContentModuleResult}
   alias Api.Tenants.{Category,Tenant}
   alias Api.Accounts.{User}
 
@@ -47,7 +47,7 @@ defmodule Api.Content do
       select: a.topic)
     |> Repo.all
   end
-    
+
   @doc """
   Returns the list of articles belonging to a topic.
 
@@ -65,7 +65,7 @@ defmodule Api.Content do
     )
     |> Repo.all
   end
-  
+
   @doc """
   Returns the list of unpublished articles belonging to a tenant.
 
@@ -78,7 +78,7 @@ defmodule Api.Content do
   def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
     Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id))
   end
-  
+
   @doc """
   Returns the list of articles for a user (given a tenant's scope).
 
@@ -278,6 +278,12 @@ defmodule Api.Content do
     ContentModule.changeset(content_module, %{})
   end
 
+  def save_content_module_result!(%ContentModule{} = content_module, user, result) do
+    content_module
+    |> Ecto.build_assoc(:results, %{ result: result, user_id: user && user.id })
+    |> Repo.insert!()
+  end
+
   def toggle_article_pin(article_id) do
     article = Repo.get(Article, article_id)
     article
@@ -286,7 +292,7 @@ defmodule Api.Content do
   end
 
   defp list_public_articles(%Tenant{} = tenant, user) do
-    user_group_ids = User.group_ids(user)
+    user_group_ids = User.group_ids(user, tenant)
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,
@@ -301,10 +307,10 @@ defmodule Api.Content do
   defp filter_query(query, filter) do
     query = from q in query, order_by: [desc: :updated_at, desc: :id]
     (filter || %{})
-    |> Enum.reduce(query, fn 
+    |> Enum.reduce(query, fn
       {_, nil}, query ->
         query
-      {:first, limit}, query -> 
+      {:first, limit}, query ->
         from q in query, limit: ^limit
       {:updated_before, updated_before}, query ->
         from q in query, where: q.updated_at < ^updated_before

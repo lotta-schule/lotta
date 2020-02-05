@@ -13,7 +13,7 @@ defmodule Api.Content.Article do
     field :topic, :string
     field :ready_to_publish, :boolean
     field :is_pinned_to_top, :boolean
-    
+
     belongs_to :tenant, Tenant, on_replace: :nilify
     belongs_to :category, Category, on_replace: :nilify
     belongs_to :preview_image_file, File, on_replace: :nilify
@@ -36,7 +36,7 @@ defmodule Api.Content.Article do
     |> Api.Repo.preload(:tenant)
     |> Map.fetch!(:tenant)
     |> Tenant.get_main_url()
-    |> String.replace_suffix("", "/article/#{article.id}")
+    |> String.replace_suffix("", "/a/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}")
   end
 
   @doc false
@@ -82,7 +82,7 @@ defmodule Api.Content.Article do
     |> put_assoc(:preview_image_file, nil)
   end
   defp put_assoc_preview_image_file(changeset, _), do: changeset
-  
+
   defp put_assoc_groups(changeset, %{groups: groups}) do
     changeset
     |> put_assoc(:groups, Repo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))

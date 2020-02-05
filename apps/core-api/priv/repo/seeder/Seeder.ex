@@ -6,7 +6,7 @@ defmodule Api.Repo.Seeder do
     |> Ecto.build_assoc(:custom_domains, %{ host: "lotta.web", is_main_domain: true })
     |> Api.Repo.insert!() # add "lotta.web" as custom domain
     lotta_tenant = Api.Repo.insert!(%Api.Tenants.Tenant{slug: "lotta", title: "Lotta"})
-  
+
     admin_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Administration", is_admin_group: true, sort_key: 1000})
     verwaltung_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Verwaltung", sort_key: 800})
     lehrer_group = Api.Repo.insert!(%Api.Accounts.UserGroup{tenant_id: web_tenant.id, name: "Lehrer", sort_key: 600})
@@ -17,7 +17,7 @@ defmodule Api.Repo.Seeder do
     Ecto.build_assoc(schueler_group, :enrollment_tokens)
     |> Map.put(:token, "Seb034hP2?019")
     |> Api.Repo.insert!
-  
+
     {:ok, alexis} = Api.Accounts.register_user(%{
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
@@ -25,12 +25,13 @@ defmodule Api.Repo.Seeder do
         password: "test123",
         tenant_id: web_tenant.id
     })
-    {:ok, billy} = Api.Accounts.register_user(%{
+    {:ok, _billy} = Api.Accounts.register_user(%{
         name: "Christopher Bill",
         nickname: "Billy",
         email: "billy@einsa.net",
         password: "test123",
-        tenant_id: web_tenant.id
+        tenant_id: web_tenant.id,
+        enrollment_tokens: ["Seb034hP2?019"]
     })
     {:ok, eike} = Api.Accounts.register_user(%{
         name: "Eike Wiewiorra",
@@ -49,11 +50,10 @@ defmodule Api.Repo.Seeder do
     Api.Accounts.register_user(%{name: "Max Mustermann", nickname: "MaXi", email: "maxi@einsa.net", password: "test123", tenant_id: web_tenant.id})
     Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@einsa.net", password: "test123", tenant_id: web_tenant.id})
     Api.Accounts.register_user(%{name: "Marie Curie", nickname: "Polonium", email: "mcurie@lotta.schule", password: "test456", tenant_id: lotta_tenant.id})
-  
+
     Api.Accounts.set_user_groups(alexis, web_tenant, [admin_group])
-    Api.Accounts.set_user_groups(billy, web_tenant, [schueler_group])
     Api.Accounts.set_user_groups(eike, web_tenant, [lehrer_group])
-    
+
     Api.Accounts.set_user_blocked(dr_evil, web_tenant, true)
 
     # public files
@@ -109,7 +109,7 @@ defmodule Api.Repo.Seeder do
       |> Map.put(:tenant_id, web_tenant.id)
       |> Api.Repo.insert!()
     end)
-  
+
     homepage = Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, title: "Start", is_homepage: true})
     profil = Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Profil"})
     gta = Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 20, title: "GTA"})
@@ -122,20 +122,20 @@ defmodule Api.Repo.Seeder do
     assign_groups(gta, [verwaltung_group, lehrer_group, schueler_group])
     assign_groups(faecher, [verwaltung_group, lehrer_group, schueler_group])
     assign_groups(material, [verwaltung_group, lehrer_group])
-  
+
     # Fächer
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Sport", category_id: faecher.id})
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 20, title: "Kunst", category_id: faecher.id})
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 30, title: "Sprache", category_id: faecher.id})
     |> assign_groups([verwaltung_group, lehrer_group])
-  
+
     # Profil
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 10, title: "Podcast", category_id: profil.id})
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 20, title: "Offene Kunst-AG", category_id: profil.id})
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 30, title: "Schülerzeitung", category_id: profil.id})
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 40, title: "Oskar-Reime-Chor", category_id: profil.id})
     Api.Repo.insert!(%Api.Tenants.Category{tenant_id: web_tenant.id, sort_key: 50, title: "Schüler-Radio", category_id: profil.id})
-  
+
     # Kalender-Widgets
     widget1 = Api.Repo.insert!(%Api.Tenants.Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})
     widget2 = Api.Repo.insert!(%Api.Tenants.Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})
@@ -148,9 +148,9 @@ defmodule Api.Repo.Seeder do
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:widgets, [widget1, widget2, widget3])
     |> Api.Repo.update()
-  
+
     # Articles
-    
+
     Api.Repo.insert(%Api.Content.Article{
       tenant_id: web_tenant.id,
       title: "Draft1",
@@ -199,6 +199,33 @@ defmodule Api.Repo.Seeder do
     })
     Api.Repo.insert!(%Api.Content.ContentModule{article_id: oskar_goes_to.id, type: "text", text: "JTdCJTIyb2JqZWN0JTIyJTNBJTIydmFsdWUlMjIlMkMlMjJkb2N1bWVudCUyMiUzQSU3QiUyMm9iamVjdCUyMiUzQSUyMmRvY3VtZW50JTIyJTJDJTIyZGF0YSUyMiUzQSU3QiU3RCUyQyUyMm5vZGVzJTIyJTNBJTVCJTdCJTIyb2JqZWN0JTIyJTNBJTIyYmxvY2slMjIlMkMlMjJ0eXBlJTIyJTNBJTIycGFyYWdyYXBoJTIyJTJDJTIyZGF0YSUyMiUzQSU3QiU3RCUyQyUyMm5vZGVzJTIyJTNBJTVCJTdCJTIyb2JqZWN0JTIyJTNBJTIydGV4dCUyMiUyQyUyMnRleHQlMjIlM0ElMjJMb3JlbSUyMGlwc3VtJTIwZG9sb3IlMjBzaXQlMjBhbWV0JTJDJTIwY29uc2V0ZXR1ciUyMHNhZGlwc2NpbmclMjBlbGl0ciUyQyUyMHNlZCUyMGRpYW0lMjBub251bXklMjBlaXJtb2QlMjB0ZW1wb3IlMjBpbnZpZHVudCUyMHV0JTIwbGFib3JlJTIwZXQlMjBkb2xvcmUlMjBtYWduYSUyMGFsaXF1eWFtJTIwZXJhdCUyQyUyMHNlZCUyMGRpYW0lMjB2b2x1cHR1YS4lMjBBdCUyMHZlcm8lMjBlb3MlMjBldCUyMGFjY3VzYW0lMjBldCUyMGp1c3RvJTIwZHVvJTIwZG9sb3JlcyUyMGV0JTIwZWElMjByZWJ1bS4lMjBTdGV0JTIwY2xpdGElMjBrYXNkJTIwZ3ViZXJncmVuJTJDJTIwbm8lMjBzZWElMjB0YWtpbWF0YSUyMHNhbmN0dXMlMjBlc3QlMjBMb3JlbSUyMGlwc3VtJTIwZG9sb3IlMjBzaXQlMjBhbWV0LiUyMExvcmVtJTIwaXBzdW0lMjBkb2xvciUyMHNpdCUyMGFtZXQlMkMlMjBjb25zZXRldHVyJTIwc2FkaXBzY2luZyUyMGVsaXRyJTJDJTIwc2VkJTIwZGlhbSUyMG5vbnVteSUyMGVpcm1vZCUyMHRlbXBvciUyMGludmlkdW50JTIwdXQlMjBsYWJvcmUlMjBldCUyMGRvbG9yZSUyMG1hZ25hJTIwYWxpcXV5YW0lMjBlcmF0JTJDJTIwc2VkJTIwZGlhbSUyMHZvbHVwdHVhLiUyMEF0JTIwdmVybyUyMGVvcyUyMGV0JTIwYWNjdXNhbSUyMGV0JTIwanVzdG8lMjBkdW8lMjBkb2xvcmVzJTIwZXQlMjBlYSUyMHJlYnVtLiUyMFN0ZXQlMjBjbGl0YSUyMGthc2QlMjBndWJlcmdyZW4lMkMlMjBubyUyMHNlYSUyMHRha2ltYXRhJTIwc2FuY3R1cyUyMGVzdCUyMExvcmVtJTIwaXBzdW0lMjBkb2xvciUyMHNpdCUyMGFtZXQuJTIyJTJDJTIybWFya3MlMjIlM0ElNUIlNUQlN0QlNUQlN0QlNUQlN0QlN0Q="})
     Api.Repo.insert!(%Api.Content.ContentModule{article_id: oskar_goes_to.id, type: "text", text: "JTdCJTIyb2JqZWN0JTIyJTNBJTIydmFsdWUlMjIlMkMlMjJkb2N1bWVudCUyMiUzQSU3QiUyMm9iamVjdCUyMiUzQSUyMmRvY3VtZW50JTIyJTJDJTIyZGF0YSUyMiUzQSU3QiU3RCUyQyUyMm5vZGVzJTIyJTNBJTVCJTdCJTIyb2JqZWN0JTIyJTNBJTIyYmxvY2slMjIlMkMlMjJ0eXBlJTIyJTNBJTIycGFyYWdyYXBoJTIyJTJDJTIyZGF0YSUyMiUzQSU3QiU3RCUyQyUyMm5vZGVzJTIyJTNBJTVCJTdCJTIyb2JqZWN0JTIyJTNBJTIydGV4dCUyMiUyQyUyMnRleHQlMjIlM0ElMjJMb3JlbSUyMGlwc3VtJTIwZG9sb3IlMjBzaXQlMjBhbWV0JTJDJTIwY29uc2V0ZXR1ciUyMHNhZGlwc2NpbmclMjBlbGl0ciUyQyUyMHNlZCUyMGRpYW0lMjBub251bXklMjBlaXJtb2QlMjB0ZW1wb3IlMjBpbnZpZHVudCUyMHV0JTIwbGFib3JlJTIwZXQlMjBkb2xvcmUlMjBtYWduYSUyMGFsaXF1eWFtJTIwZXJhdCUyQyUyMHNlZCUyMGRpYW0lMjB2b2x1cHR1YS4lMjBBdCUyMHZlcm8lMjBlb3MlMjBldCUyMGFjY3VzYW0lMjBldCUyMGp1c3RvJTIwZHVvJTIwZG9sb3JlcyUyMGV0JTIwZWElMjByZWJ1bS4lMjBTdGV0JTIwY2xpdGElMjBrYXNkJTIwZ3ViZXJncmVuJTJDJTIwbm8lMjBzZWElMjB0YWtpbWF0YSUyMHNhbmN0dXMlMjBlc3QlMjBMb3JlbSUyMGlwc3VtJTIwZG9sb3IlMjBzaXQlMjBhbWV0LiUyMExvcmVtJTIwaXBzdW0lMjBkb2xvciUyMHNpdCUyMGFtZXQlMkMlMjBjb25zZXRldHVyJTIwc2FkaXBzY2luZyUyMGVsaXRyJTJDJTIwc2VkJTIwZGlhbSUyMG5vbnVteSUyMGVpcm1vZCUyMHRlbXBvciUyMGludmlkdW50JTIwdXQlMjBsYWJvcmUlMjBldCUyMGRvbG9yZSUyMG1hZ25hJTIwYWxpcXV5YW0lMjBlcmF0JTJDJTIwc2VkJTIwZGlhbSUyMHZvbHVwdHVhLiUyMEF0JTIwdmVybyUyMGVvcyUyMGV0JTIwYWNjdXNhbSUyMGV0JTIwanVzdG8lMjBkdW8lMjBkb2xvcmVzJTIwZXQlMjBlYSUyMHJlYnVtLiUyMFN0ZXQlMjBjbGl0YSUyMGthc2QlMjBndWJlcmdyZW4lMkMlMjBubyUyMHNlYSUyMHRha2ltYXRhJTIwc2FuY3R1cyUyMGVzdCUyMExvcmVtJTIwaXBzdW0lMjBkb2xvciUyMHNpdCUyMGFtZXQuJTIyJTJDJTIybWFya3MlMjIlM0ElNUIlNUQlN0QlNUQlN0QlNUQlN0QlN0Q="})
+    form = Api.Repo.insert!(%Api.Content.ContentModule{
+      article_id: oskar_goes_to.id,
+      type: "text",
+      text: "Pizza Test-Formular",
+      configuration: %{
+        "destination" => "alexis.rinaldoni@einsa.net",
+        "save_internally" => true,
+        "elements" => [
+          %{ "descriptionText" => "Halli, hallo, wir sind da, du bist hier, dadub dadumm.", "element" => "input", "label" => "Name", "name" => "name", "required" => true, "type" => "text" },
+          %{ "descriptionText" => "", "element" => "selection", "label" => "PizzaGröße", "name" => "größe", "required" => true, "type" => "radio", "options" => [ %{ "label" => "klein (22cm Durchmesser)", "selected" => true, "value" => "klein" }, %{ "label" => "groß (28cm Durchmesser)", "selected" => false, "value" => "groß" }, %{ "label" => "Familienpizza (50x60cm)", "selected" => false, "value" => "familie" }] },
+          %{ "descriptionText" => "", "element" => "selection", "label" => "Zutat", "name" => "feld3", "required" => true, "type" => "checkbox", "options" => [ %{ "label" => "zusätzliche Peperoni", "selected" => false, "value" => "peperoni" }, %{ "label" => "Zusätzlicher Käse", "selected" => true, "value" => "käse" }, %{ "label" => "Pilze", "selected" => true, "value" => "pilze" }, %{ "label" => "Gorgonzola", "value" => "gorgonzola" }, %{ "label" => "Ananas (Bestellung wird sofort verworfen)", "value" => "ananas" }] },
+          %{ "descriptionText" => "", "element" => "selection", "label" => "Bei Abholung 10% Rabat", "name" => "transport", "required" => true, "type" => "select", "options" => [ %{ "label" => "Abholung", "selected" => false, "value" => "abholung" }, %{ "label" => "Lieferung", "selected" => true, "value" => "lieferung" } ] },
+          %{ "element" => "input", "label" => "Weitere Informationen", "multiline" => true, "name" => "beschreibung", "type" => "text" }
+        ]
+      }
+    })
+    form
+    |> Ecto.build_assoc(:results, result: %{
+      "responses" => %{
+        "beschreibung" => "",
+        "feld3" => ["käse", "pilze"],
+        "größe" => "klein",
+        "name" => "Test",
+        "transport" => "lieferung"
+      }
+    })
+    |> Api.Repo.insert!()
     landesfinale = Api.Repo.insert!(%Api.Content.Article{
         tenant_id: web_tenant.id,
         category_id: profil.id,
