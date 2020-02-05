@@ -1,20 +1,20 @@
 import { UserModel, ArticleModel } from 'model';
 
 export const User = {
-    getName(user: UserModel) {
-        return user.name;
+    getName(user?: UserModel | null) {
+        return user?.name;
     },
 
-    getNickname(user: UserModel) {
-        return user.nickname || User.getName(user);
+    getNickname(user?: UserModel | null) {
+        return user?.nickname || User.getName(user);
     },
 
-    getAvatarUrl(user: UserModel) {
-        return user.avatarImageFile ? user.avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(user);
+    getAvatarUrl(user?: UserModel | null) {
+        return user?.avatarImageFile ? user?.avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(user);
     },
 
-    getDefaultAvatarUrl(user: UserModel) {
-        return `https://avatars.dicebear.com/v2/avataaars/${encodeURIComponent(User.getNickname(user))}.svg`;
+    getDefaultAvatarUrl(user?: UserModel | null) {
+        return `https://avatars.dicebear.com/v2/avataaars/${encodeURIComponent(User.getNickname(user) ?? '')}.svg`;
     },
 
     isAdmin(user?: UserModel | null) {

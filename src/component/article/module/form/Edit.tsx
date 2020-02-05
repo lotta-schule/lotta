@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Add, DragHandle, Delete } from '@material-ui/icons';
-import { IconButton, Button, Grid, TextField, makeStyles } from '@material-ui/core';
+import { IconButton, Button, Grid, TextField, makeStyles, Checkbox, FormGroup, FormControlLabel, Divider } from '@material-ui/core';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
@@ -37,10 +37,7 @@ export const useStyles = makeStyles(theme => ({
 export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
     const styles = useStyles();
 
-    console.log(contentModule);
-    console.log(contentModule.configuration);
     const configuration: FormConfiguration = { destination: '', elements: [], ...contentModule.configuration };
-    console.log(configuration);
     const updateConfiguration = (partialConfig: Partial<FormConfiguration>) =>
         onUpdateModule({ ...contentModule, configuration: { ...configuration, ...partialConfig } });
 
@@ -85,13 +82,15 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                                             </IconButton>
                                         </div>
                                         <Grid container className={styles.inputWrapper}>
-                                            <Grid item xs={8}>
+                                            <Grid item xs={5}>
                                                 <FormElement
                                                     element={element}
                                                     isEditModeEnabled
+                                                    value={''}
+                                                    onSetValue={() => { }}
                                                 />
                                             </Grid>
-                                            <Grid item xs={4} className={styles.inputSettings}>
+                                            <Grid item xs={7} className={styles.inputSettings}>
                                                 <FormElementConfiguration
                                                     element={element}
                                                     updateElement={updatedElementOptions => updateConfiguration({
@@ -117,17 +116,43 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 </Droppable>
             </DragDropContext>
             <Grid container className={styles.inputWrapper}>
-                <Grid item xs={8}>
+                <Grid item xs={5}>
                     <Button color={'primary'} type={'submit'} disabled>Senden</Button>
                 </Grid>
-                <Grid item xs={4}>
-                    <TextField
-                        fullWidth
-                        id={'form-destination'}
-                        label={'Formular an folgende Email senden'}
-                        value={configuration.destination}
-                        onChange={e => updateConfiguration({ destination: e.target.value })}
-                    />
+                <Grid item xs={7}>
+                    <FormGroup>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={configuration.destination !== undefined}
+                                    onChange={(_e, checked) => updateConfiguration({
+                                        destination: checked ? '' : undefined
+                                    })}
+                                />
+                            }
+                            label={'Formulardaten per Email versenden'}
+                        />
+                        <TextField
+                            fullWidth
+                            id={'form-destination'}
+                            label={'Formular an folgende Email senden:'}
+                            value={configuration.destination ?? ''}
+                            disabled={configuration.destination === undefined}
+                            onChange={e => updateConfiguration({ destination: e.target.value })}
+                        />
+                        <Divider />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={configuration.save_internally === true}
+                                    onChange={(_e, checked) => updateConfiguration({
+                                        save_internally: checked
+                                    })}
+                                />
+                            }
+                            label={'Formulardaten speichern'}
+                        />
+                    </FormGroup>
                 </Grid>
             </Grid>
             <Button

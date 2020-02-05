@@ -204,7 +204,8 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         className={styles.groupKeyInput}
                     />
                     <Typography variant="caption" >
-                        Gib hier den Anmeldeschlüssel ein, um deine Nutzerrechte zu erhalten (Schüler, Lehrer, etc.).
+                        Gib hier einen Anmeldeschlüssel ein, um deine Nutzerrechte zu erhalten (Schüler, Lehrer, etc.).
+                        Du kannst Anmeldeschlüssel auch später in deinem Profil bearbeiten.
                     </Typography>
                 </DialogContent>
                 <DialogActions>

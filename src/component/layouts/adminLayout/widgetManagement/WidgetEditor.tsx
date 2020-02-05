@@ -6,13 +6,11 @@ import { useMutation } from 'react-apollo';
 import { ID } from 'model/ID';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
-import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
-import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
-import Img from 'react-cloudimage-responsive';
 import clsx from 'clsx';
+import { WidgetIconSelection } from './WidgetIconSelection';
 
 const useStyles = makeStyles(theme => ({
     input: {
@@ -28,7 +26,9 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(2),
     },
     divider: {
-        clear: 'both'
+        clear: 'both',
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2)
     },
     deleteButton: {
         backgroundColor: theme.palette.error.main,
@@ -99,11 +99,11 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                 onChange={e => setWidget({ ...widget, title: e.target.value })}
             />
 
-            <SelectFileOverlay label={'Icon ändern'} onSelectFile={iconImageFile => setWidget({ ...widget, iconImageFile })} allowDeletion>
-                {widget.iconImageFile ? (
-                    <Img operation={'cover'} size={'100x100'} src={widget.iconImageFile.remoteLocation} />
-                ) : (<PlaceholderImage width={'100%'} height={100} />)}
-            </SelectFileOverlay>
+            <Divider className={styles.divider} />
+
+            <WidgetIconSelection icon={widget.configuration.icon ?? {}} onSelectIcon={icon => setWidget({ ...widget, configuration: { ...widget.configuration, icon } })} />
+
+            <Divider className={styles.divider} />
 
             <GroupSelect
                 className={styles.input}

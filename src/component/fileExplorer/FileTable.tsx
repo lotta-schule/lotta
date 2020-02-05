@@ -83,6 +83,9 @@ export const FileTable = memo<FileTableProps>(({ files, canEditPublicFiles, onSe
     const [state, dispatch] = useFileExplorerData();
 
     const isMarked = (file: FileModel) => {
+        if (!file) {
+            return false;
+        }
         return state.markedFiles.findIndex(f => f.id === file.id) > -1;
     };
 

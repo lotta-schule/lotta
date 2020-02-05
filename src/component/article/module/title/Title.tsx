@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
-import { CardContent, Typography } from '@material-ui/core';
+import { CardContent } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
@@ -12,13 +12,11 @@ export interface TitleProps {
 
 export const Title: FunctionComponent<TitleProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
     <CardContent style={{ paddingTop: 30, paddingBottom: 0, }}>
-        <Typography variant={'body1'}>
-            {isEditModeEnabled && onUpdateModule && (
-                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-            )}
-            {(!isEditModeEnabled || !onUpdateModule) && (
-                <Show contentModule={contentModule} />
-            )}
-        </Typography>
+        {isEditModeEnabled && onUpdateModule && (
+            <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+        )}
+        {(!isEditModeEnabled || !onUpdateModule) && (
+            <Show contentModule={contentModule} />
+        )}
     </CardContent>
 ));

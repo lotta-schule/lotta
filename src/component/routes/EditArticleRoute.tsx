@@ -12,7 +12,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const id = Number(match.params.id);
+    const id = parseInt(match.params.id);
 
     const { history } = useRouter();
     const { data, error, loading: isLoading } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id } });
@@ -41,8 +41,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
                         variables: {
                             id: article.id,
                             article: {
-                                ...omit(article, ['id']),
-                                contentModules: article.contentModules.map(cm => omit(cm, ['id']))
+                                ...omit(article, ['id'])
                             } as ArticleModelInput
                         },
                     });

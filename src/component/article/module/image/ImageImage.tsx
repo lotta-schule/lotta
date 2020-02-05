@@ -28,7 +28,7 @@ export const ImageImage = memo<ImageImageProps>(({ isEditModeEnabled, file, capt
             <ImageContent onClick={onSelect} file={file} {...otherProps} />
         );
     return (
-        <figure style={{ marginLeft: 0, marginRight: 0, }}>
+        <figure style={{ margin: 0, }}>
             {imageContent}
             <ImageCaption isEditModeEnabled={isEditModeEnabled} value={caption} onUpdate={onUpdateCaption} />
         </figure>

@@ -153,7 +153,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.FORM,
-                                configuration: { destination: currentUser!.email, elements: [] },
+                                configuration: { destination: currentUser!.email, save_internally: true, elements: [] },
                                 text: undefined,
                                 files: [],
                             });

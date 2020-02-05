@@ -13,6 +13,7 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
+import { Category } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 
@@ -146,7 +147,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                                 <em>Nicht weiterleiten</em>
                             </MenuItem>
                             {categories.map(category => (
-                                <MenuItem key={category.id} value={`/category/${category.id}`}>
+                                <MenuItem key={category.id} value={Category.getPath(category)}>
                                     {category.title}
                                 </MenuItem>
                             ))}
