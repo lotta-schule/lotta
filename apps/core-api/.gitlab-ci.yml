@@ -81,11 +81,6 @@ deploy staging:
       --set s3Compat.region=$S3COMPAT_REGION
       --set s3Compat.cdnBaseUrl=$S3COMPAT_CDN_BASE_URL
       --set url=api.staging.lotta.schule
-      --set ingress.enabled=true
-      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="5"
-      --set ingress.hosts[0].host=api.staging.lotta.schule
-      --set ingress.hosts[0].paths[0]=/
-      --set ingress.tls[0].hosts[0]=api.staging.lotta.schule
       --set postgresql.postgresqlDatabase=$POSTGRES_DB
       --set postgresql.postgresqlUsername=$POSTGRES_USER
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
@@ -94,10 +89,14 @@ deploy staging:
       --set redis.password=$REDIS_PASSWORD
       --set redis.cluster.slaveCount=1
       --set redis.metrics.enabled=true
-      --set resources.limits.cpu=300m
-      --set resources.limits.memory=384Mi
-      --set resources.requests.cpu=200m
-      --set resources.requests.memory=256Mi
+      --set resources.limits.cpu=200m
+      --set resources.limits.memory=256Mi
+      --set resources.requests.cpu=100m
+      --set resources.requests.memory=128Mi
+      --set istio.enabled=true
+      --set istio.host=api.staging.lotta.schule
+      --set istio.gatewayUrl=*.staging.lotta.schule
+      --set istio.rabbitmqHost=rabbitmq.intern.lotta.schule
   only:
     refs:
       - develop
@@ -129,14 +128,6 @@ deploy production:
       --set s3Compat.region=$S3COMPAT_REGION
       --set s3Compat.cdnBaseUrl=$S3COMPAT_CDN_BASE_URL
       --set url=api.lotta.schule
-      --set ingress.enabled=true
-      --set-string ingress.annotations."traefik\.ingress\.kubernetes\.io/priority"="5"
-      --set ingress.hosts[0].host=api.lotta.schule
-      --set ingress.hosts[0].paths[0]=/
-      --set ingress.tls[0].hosts[0]=api.lotta.schule
-      --set ingress.hosts[1].host=*.lotta.schule
-      --set ingress.hosts[1].paths[0]=/api
-      --set ingress.tls[1].hosts[0]=*.lotta.schule
       --set postgresql.postgresqlDatabase=$POSTGRES_DB
       --set postgresql.postgresqlUsername=$POSTGRES_USER
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
@@ -153,6 +144,10 @@ deploy production:
       --set resources.limits.memory=1536Mi
       --set resources.requests.cpu=200m
       --set resources.requests.memory=256Mi
+      --set istio.enabled=true
+      --set istio.host=api.staging.lotta.schule
+      --set istio.gatewayUrl=*.staging.lotta.schule
+      --set istio.rabbitmqHost=rabbitmq.intern.lotta.schule
   only:
     refs:
       - master
