@@ -53,6 +53,88 @@ build docker image:
         else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA;
         fi
 
+delete staging db:
+  stage: deploy
+  environment:
+    name: staging
+  image:
+    name: lotta/do-helm-deploy:latest
+  script: 
+    - /user/local/bin/setup.sh
+    - cat <<EOF | kubectl apply -f - 
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: lotta-api-drop-db
+        namespace: lotta-staging
+        labels:
+          job: drop
+      spec:
+        template:
+          spec:
+            restartPolicy: OnFailure
+            containers:
+            - name: lotta-api-dropdb
+              image: "lotta/api:staging"
+              imagePullPolicy: Always
+              args: ["eval", "Api.Release.drop"]
+              env:
+              - name: POSTGRES_PASSWORD
+                value: $POSTGRES_PASSWORD
+              envFrom:
+              - configMapRef:
+                  name: lotta-api-env
+              - secretRef:
+                  name: lotta-api-env
+
+load production backup to staging db:
+  stage: deploy
+  environment:
+    name: staging
+  image:
+    name: lotta/do-helm-deploy:latest
+  script: 
+    - /user/local/bin/setup.sh
+    - cat <<EOF | kubectl apply -f - 
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: lotta-postgres-restore
+        namespace: lotta-staging
+      spec:
+        template:
+          metadata:
+            labels: {}
+            annotations:
+              sidecar.istio.io/inject: "false"
+          spec:
+            restartPolicy: OnFailure
+            containers:
+            - name: lotta-postgres-restore
+              image: lotta/postgres-backup:latest
+              imagePullPolicy: Always
+              args: ["/app/restore.sh", "s3://lotta-backup-data/postgres"]
+              env:
+              - name: AWS_ACCESS_KEY_ID
+                value: $S3COMPAT_ACCESS_KEY_ID
+              - name: AWS_SECRET_ACCESS_KEY
+                value: $S3COMPAT_SECRET_ACCESS_KEY
+              - name: HOSTNAME
+                value: fra1.digitaloceanspaces.com
+              - name: HOST_BUCKET
+                value: "%(bucket)s.fra1.digitaloceanspaces.com"
+              - name: PGHOST
+                value: lotta-api-postgresql-headless
+              - name: PGDATABASE
+                value: $POSTGRES_DB
+              - name: PGUSER
+                value: postgres
+              - name: PGPASSWORD
+                value: $POSTGRES_PASSWORD
+              - name: ARGS
+                value: "--disable-trigers"
+
+
 deploy staging:
   stage: deploy
   environment:
