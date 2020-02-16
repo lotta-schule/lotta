@@ -83,9 +83,10 @@ delete staging db:
                 value: $POSTGRES_PASSWORD
               envFrom:
               - configMapRef:
-                  name: lotta-api-env
+                name: lotta-api-env
               - secretRef:
-                  name: lotta-api-env
+                name: lotta-api-env
+    EOF
 
 load production backup to staging db:
   stage: deploy
@@ -133,7 +134,7 @@ load production backup to staging db:
                 value: $POSTGRES_PASSWORD
               - name: ARGS
                 value: "--disable-trigers"
-
+      EOF
 
 deploy staging:
   stage: deploy
