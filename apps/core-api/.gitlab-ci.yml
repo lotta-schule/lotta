@@ -89,7 +89,7 @@ deploy staging:
       --set postgresql.postgresqlDatabase=$POSTGRES_DB
       --set postgresql.postgresqlUsername=$POSTGRES_USER
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
-      --set postgresql.postgresql.postgresqlPostgresPassword=$POSTGRES_PASSWORD
+      --set postgresql.postgresqlPostgresPassword=$POSTGRES_PASSWORD
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
       --set redis.password=$REDIS_PASSWORD
