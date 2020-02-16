@@ -72,7 +72,7 @@ deploy:staging:
       --set replicaCount=1
       --set ingress.enabled=true
       --set-string ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
-      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\$service_name.\\$namespace.svc.cluster.local:\\$service_port;grpc_set_header l5d-dst-override \\$service_name.\\$namespace.svc.cluster.local:\\$service_port;"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override {{ printf "$" }}service_name.{{ printf "$" }}namespace.svc.cluster.local:{{ printf "$" }}service_port;grpc_set_header l5d-dst-override {{ printf "$" }}service_name.{{ printf "$" }}namespace.svc.cluster.local:{{ printf "$" }}service_port;"
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set ingress.hosts[0].host="*.staging.lotta.schule"
       --set ingress.hosts[0].paths[0]=/
@@ -129,7 +129,7 @@ deploy:production:
       --set replicaCount=2
       --set ingress.enabled=true
       --set-string ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
-      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\$service_name.\\$namespace.svc.cluster.local:\\$service_port;grpc_set_header l5d-dst-override \\$service_name.\\$namespace.svc.cluster.local:\\$service_port;"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override {{ printf "$" }}service_name.{{ printf "$" }}namespace.svc.cluster.local:{{ printf "$" }}service_port;grpc_set_header l5d-dst-override {{ printf "$" }}service_name.{{ printf "$" }}namespace.svc.cluster.local:{{ printf "$" }}service_port;"
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set ingress.hosts[0].host="*.lotta.schule"
       --set ingress.hosts[0].paths[0]=/
@@ -189,7 +189,7 @@ deploy:review:
       --set replicaCount=1
       --set ingress.enabled=true
       --set-string ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
-      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\$service_name.\\$namespace.svc.cluster.local:\\$service_port;grpc_set_header l5d-dst-override \\$service_name.\\$namespace.svc.cluster.local:\\$service_port;"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override {{ printf "$" }}service_name.{{ printf "$" }}namespace.svc.cluster.local:{{ printf "$" }}service_port;grpc_set_header l5d-dst-override {{ printf "$" }}service_name.{{ printf "$" }}namespace.svc.cluster.local:{{ printf "$" }}service_port;"
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set ingress.hosts[0].host="*.$CI_ENVIRONMENT_SLUG.lotta.schule"
       --set ingress.hosts[0].paths[0]=/
