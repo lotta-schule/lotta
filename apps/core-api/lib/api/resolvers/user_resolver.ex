@@ -125,6 +125,9 @@ defmodule Api.UserResolver do
       |> URI.encode()
     with {:ok, user} <- Accounts.request_password_reset_token(email, token) do
       Api.EmailPublisherWorker.send_request_password_reset_email(tenant, user, email, token)
+    else
+      error ->
+        Honeybadger.notify(error, %{tenant: tenant, email: email})
     end
     {:ok, true}
   end
