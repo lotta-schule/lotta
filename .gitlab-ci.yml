@@ -136,7 +136,7 @@ deploy:production:
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/ssl-redirect"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
-      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="1500M"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="5M"
       --set ingress.hosts[0].host="*.lotta.schule"
       --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.lotta.schule"
@@ -199,7 +199,7 @@ deploy:review:
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/ssl-redirect"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
-      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="1500M"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="5M"
       --set ingress.hosts[0].host="*.$CI_ENVIRONMENT_SLUG.lotta.schule"
       --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.$CI_ENVIRONMENT_SLUG.lotta.schule"
