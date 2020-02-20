@@ -165,7 +165,9 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
                 {User.isAdmin(currentUser) && (
                     <SearchUserField
                         className={styles.searchUserField}
-                        onSelectUser={user => onUpdate({ ...article, users: uniqBy(article.users.concat([user]), 'id') })}
+                        onSelectUser={user => {
+                            onUpdate({ ...article, users: uniqBy(article.users.concat([user]), 'id') })
+                        }}
                     />
                 )}
                 <UsersList
