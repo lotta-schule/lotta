@@ -862,10 +862,18 @@ defmodule Api.ArticleResolverTest do
     """
 
     test "updates an article if user is admin", %{admin_jwt: admin_jwt, draft: draft} do
+      file1 = Api.Repo.get_by!(Api.Accounts.File, filename: "ich_schoen.jpg")
+      file2 = Api.Repo.get_by!(Api.Accounts.File, filename: "ich_haesslich.jpg")
+
+      draft
+      |> Api.Content.Article.changeset(%{
+        content_modules: [%{ type: "IMAGE", text: "", sort_key: 0, configuration: "{}", files: [%{id: file1.id}] }]
+      })
+
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
-      |> post("/api", query: @query, variables: %{ id: draft.id, article: %{ title: "ABC" } })
+      |> post("/api", query: @query, variables: %{ id: draft.id, article: %{ title: "ABC", content_modules: [%{ type: "IMAGE", text: "bla", sort_key: 0, configuration: "{}", files: [%{id: file2.id}] }] } })
       |> json_response(200)
   
       assert res == %{
