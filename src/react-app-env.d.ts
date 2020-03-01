@@ -2,6 +2,7 @@
 
 declare namespace NodeJS {
     export interface ProcessEnv {
+        PUBLIC_URL: string;
         REACT_APP_APP_ENVIRONMENT: string;
         REACT_APP_APP_REVISION: string;
         REACT_APP_API_URL: string;
