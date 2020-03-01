@@ -30,7 +30,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                         ownArticles = [...readOwnArticlesResult.articles];
                     }
                 } catch (e) {
-                    console.error(e);
+                    console.debug(e);
                 }
                 cache.writeQuery<{ articles: ArticleModel[] }>({
                     query: GetOwnArticlesQuery,
