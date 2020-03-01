@@ -15,7 +15,6 @@ export class UploadQueueService {
     }
 
     public uploadFile(file: File, path: string, isPublic: boolean): void {
-        console.log(`upload (public: ${isPublic}) file ${file} to ${path}`)
         const upload = new UploadService(file, path, isPublic);
         this.uploads.push(upload);
         upload.startUploading(

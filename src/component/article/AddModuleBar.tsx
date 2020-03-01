@@ -2,11 +2,11 @@ import React, { FunctionComponent, memo } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, Grid } from '@material-ui/core';
 import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined, Feedback } from '@material-ui/icons';
+import { Node } from 'slate';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { AddModuleButton } from './AddModuleButton';
-import { Value } from 'slate';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-const { serialize } = require('slate-base64-serializer').default;
+import { serialize } from './module/text/SlateUtils';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -48,7 +48,10 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: new Date().getTime() + Math.random() * 1000,
                                 sortKey: null!,
                                 type: ContentModuleType.TEXT,
-                                text: serialize(Value.fromJSON({ object: "value", document: { object: "document", data: {}, nodes: [{ object: "block", type: "paragraph", data: {}, nodes: [{ object: 'text', text: "Lorem ipsum...", marks: [] } as any] }] } })),
+                                text: (() => {
+                                    const nodes: Node[] = [{ type: 'paragraph', children: [{ text: 'lorem ipsum ...' }] }];
+                                    return serialize(nodes);
+                                })(),
                                 files: [],
                             });
                         }}
