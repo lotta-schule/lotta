@@ -530,7 +530,7 @@ defmodule Api.Slugifier do
     |> Enum.reduce("", fn ch, acc ->
       string_to_append =
         Map.get(replacements, ch, ch)
-        |> String.replace(~r/[^\w\s$*_+~.()'"!\-:@]/, "", global: true)
+        |> String.replace(~r/[^\w\s$*_+~.()'"!\-:@]/u, "", global: true)
       acc <> string_to_append
     end)
     |> String.trim()

@@ -1,5 +1,7 @@
 defmodule Api.Services.EmailSendRequest do
   alias Api.Tenants.Tenant
+
+  @derive [Poison.Encoder]
   defstruct [:to, :sender_name, :subject, :template, :templatevars]
 
   def get_tenant_info(%Tenant{} = tenant) do
