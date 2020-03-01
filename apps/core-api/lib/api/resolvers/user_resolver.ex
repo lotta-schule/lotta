@@ -127,7 +127,12 @@ defmodule Api.UserResolver do
       Api.EmailPublisherWorker.send_request_password_reset_email(tenant, user, email, token)
     else
       error ->
-        Honeybadger.notify(error, %{tenant: tenant, email: email})
+        try do
+          Honeybadger.notify(error, %{tenant: tenant, email: email})
+        rescue
+          e in RuntimeError ->
+            IO.inspect(e)
+        end
     end
     {:ok, true}
   end

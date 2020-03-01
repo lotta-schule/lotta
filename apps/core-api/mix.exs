@@ -4,7 +4,7 @@ defmodule Api.MixProject do
   def project do
     [
       app: :api,
-      version: "1.5.0",
+      version: "1.5.1",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -45,34 +45,34 @@ defmodule Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.6"},
+      {:phoenix, "~> 1.4.14"},
       {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_ecto, "~> 4.0"},
-      {:ecto_sql, "~> 3.0"},
+      {:phoenix_ecto, "~> 4.1"},
+      {:ecto_sql, "~> 3.3.4"},
       {:absinthe, "~> 1.4.16"},
       {:absinthe_plug, "~> 1.4.7"},
-      {:dataloader, "~> 1.0.0"},
-      {:corsica, "~> 1.1.2"},
+      {:dataloader, "~> 1.0.7"},
+      {:corsica, "~> 1.1.3"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
-      {:comeonin, "~> 5.1.2"},
-      {:bcrypt_elixir, "~> 2.0.3"},
-      {:guardian, "~> 1.2.1"},
-      {:ex_aws, "~> 2.1"},
-      {:ex_aws_s3, "~> 2.0"},
-      {:hackney, "~> 1.12"},
-      {:sweet_xml, "~> 0.6"},
-      {:poison, "~> 4.0"},
-      {:uuid, "~> 1.1"},
-      {:amqp, "~> 1.2"},
+      {:gettext, "~> 0.17.4"},
+      {:jason, "~> 1.1.2"},
+      {:plug_cowboy, "~> 2.1.2"},
+      {:comeonin, "~> 5.2.0"},
+      {:bcrypt_elixir, "~> 2.1.0"},
+      {:guardian, "~> 2.0.0"},
+      {:ex_aws, "~> 2.1.2"},
+      {:ex_aws_s3, "~> 2.0.2"},
+      {:hackney, "~> 1.15"},
+      {:sweet_xml, "~> 0.6.6"},
+      {:poison, "~> 4.0.1"},
+      {:uuid, "~> 1.1.8"},
+      {:amqp, "~> 1.4.1"},
       {:ex_ical, "~> 0.2.0"},
-      {:honeybadger, "~> 0.13.0"},
+      {:honeybadger, "~> 0.13.1"},
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
       #test
-      {:excoveralls, "~> 0.11", only: :test}
+      {:excoveralls, "~> 0.12", only: :test}
     ]
   end
 
