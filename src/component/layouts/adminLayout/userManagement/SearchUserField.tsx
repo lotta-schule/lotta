@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { ChangeEvent, memo, useState, useEffect } from 'react';
 import { CircularProgress, Grid, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { Autocomplete } from '@material-ui/lab';
@@ -55,7 +55,11 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
             open={isOpen}
             onOpen={() => setIsOpen(true)}
             onClose={() => setIsOpen(false)}
-            onChange={(_e, user) => onSelectUser(user)}
+            onChange={(_e: ChangeEvent<{}>, user: UserModel | null) => {
+                if (user) {
+                    onSelectUser(user);
+                }
+            }}
             getOptionLabel={option => option.name}
             options={autocompleteOptions}
             loading={isLoading}

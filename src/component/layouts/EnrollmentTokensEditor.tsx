@@ -10,7 +10,7 @@ export interface EnrollmentTokensEditorProps {
 
 export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(({ disabled, tokens, setTokens }) => {
     return (
-        <Autocomplete
+        <Autocomplete<string>
             multiple
             disabled={disabled}
             id="tags-filled"
