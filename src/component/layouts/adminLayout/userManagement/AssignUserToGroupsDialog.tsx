@@ -61,7 +61,7 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                 <ErrorMessage error={error || setUserGroupsError || setUserBlockedError} />
                 <Grid container justify={'space-evenly'} className={styles.header}>
                     <Grid item xs={3}>
-                        <UserAvatar user={user} />
+                        <UserAvatar user={user} size={200} />
                     </Grid>
                     <Grid item xs={9}>
                         <Typography variant="h6">

@@ -120,7 +120,7 @@ export const ArticlePreview = memo<ArticlePreviewProps>(({ article, disableLink,
             <AvatarGroup className={styles.authorAvatarGroup}>
                 {article.users.map(user => (
                     <Tooltip title={User.getNickname(user)} key={user.id}>
-                        <Avatar src={User.getAvatarUrl(user)} className={styles.authorAvatar} />
+                        <Avatar src={User.getAvatarUrl(user, 40)} className={styles.authorAvatar} />
                     </Tooltip>
                 ))}
             </AvatarGroup>
