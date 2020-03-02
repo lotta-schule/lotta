@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Toolbar, Collapse, createStyles, makeStyles, Theme } from '@material-ui/core';
 import { ToggleButtonGroup } from '@material-ui/lab';
-import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered } from '@material-ui/icons';
+import { FormatBold, FormatItalic, FormatUnderlined, FormatListBulleted, FormatListNumbered, ArrowDropDown } from '@material-ui/icons';
 import { useFocused } from 'slate-react';
 import { EditToolbarMarkButton } from './EditToolbarMarkButton';
 import { EditToolbarLinkButton } from './EditToolbarLinkButton';
@@ -12,9 +12,9 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         toolbar: {
             padding: 0,
-            '& button': {
-                marginRight: theme.spacing(1),
-            }
+        },
+        toolbarButtonGroup: {
+            marginRight: theme.spacing(1),
         },
     })
 );
@@ -27,7 +27,7 @@ export const EditToolbar = memo(() => {
     return (
         <Collapse in={isFocused}>
             <Toolbar className={styles.toolbar}>
-                <ToggleButtonGroup size={'small'} value={false}>
+                <ToggleButtonGroup className={styles.toolbarButtonGroup} size={'small'} value={false}>
                     <EditToolbarMarkButton mark={'bold'}>
                         <FormatBold />
                     </EditToolbarMarkButton>
@@ -39,11 +39,11 @@ export const EditToolbar = memo(() => {
                     </EditToolbarMarkButton>
                 </ToggleButtonGroup>
                 &nbsp;
-                <ToggleButtonGroup size={'small'} value={'none'}>
+                <ToggleButtonGroup className={styles.toolbarButtonGroup} size={'small'} value={'none'}>
                     <EditToolbarLinkButton />
                 </ToggleButtonGroup>
                 &nbsp;
-                <ToggleButtonGroup size={'small'} value={'none'}>
+                <ToggleButtonGroup className={styles.toolbarButtonGroup} size={'small'} value={'none'}>
                     <EditToolbarBlockButton mark={'unordered-list'}>
                         <FormatListBulleted />
                     </EditToolbarBlockButton>
@@ -52,8 +52,14 @@ export const EditToolbar = memo(() => {
                     </EditToolbarBlockButton>
                 </ToggleButtonGroup>
                 &nbsp;
-                <ToggleButtonGroup size={'small'} value={'none'}>
+                <ToggleButtonGroup className={styles.toolbarButtonGroup} size={'small'} value={'none'}>
                     <EditToolbarImageButton />
+                </ToggleButtonGroup>
+                &nbsp;
+                <ToggleButtonGroup className={styles.toolbarButtonGroup} size={'small'} value={'none'}>
+                    <EditToolbarMarkButton mark={'small'}>
+                        <ArrowDropDown />
+                    </EditToolbarMarkButton>
                 </ToggleButtonGroup>
                 &nbsp;
             </Toolbar>
