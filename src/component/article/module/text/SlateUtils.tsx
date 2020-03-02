@@ -5,7 +5,7 @@ import { Editor, Element, Range, Text, Transforms, Node } from 'slate';
 import { SlatePre050Document, SlatePre050Node } from './interface/SlatePre050Document';
 import isUrl from 'is-url';
 
-export type Mark = 'bold' | 'italic' | 'underline' | 'link';
+export type Mark = 'bold' | 'italic' | 'underline' | 'link' | 'small';
 
 export type Block = 'paragraph' | 'unordered-list' | 'ordered-list' | 'list-item' | 'image';
 
@@ -56,6 +56,7 @@ export const renderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
         fontWeight: leaf.bold ? 'bold' : 'normal',
         fontStyle: leaf.italic ? 'italic' : 'normal',
         textDecoration: leaf.underline ? 'underline' : 'none',
+        fontSize: leaf.small ? '.85em' : 'inherit'
     };
     return (
         <span {...attributes} style={customStyles}>
