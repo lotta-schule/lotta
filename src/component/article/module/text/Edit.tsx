@@ -1,6 +1,6 @@
-import React, { memo, useState, useEffect, useMemo } from 'react';
+import React, { memo, useState, useMemo } from 'react';
 import { ContentModuleModel, } from '../../../../model';
-import { Slate, withReact, Editable, useFocused } from 'slate-react';
+import { Slate, withReact, Editable } from 'slate-react';
 import { Node, createEditor } from 'slate';
 import { deserialize, renderElement, renderLeaf, serialize, withImages, withLinks } from './SlateUtils';
 import { EditToolbar } from './EditToolbar';
@@ -16,27 +16,19 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
     const editor = useMemo(() => withImages(withLinks(withReact(createEditor()))), []);
 
-    const isFocused = useFocused();
-
-    useEffect(() => {
-        if (isFocused === false) {
-            onUpdateModule({
-                ...contentModule,
-                text: serialize(editorState)
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isFocused]);
-
     return (
-        <>
-            <Slate editor={editor} value={editorState} onChange={value => setEditorState(value)}>
-                <EditToolbar />
-                <Editable
-                    renderElement={renderElement}
-                    renderLeaf={renderLeaf}
-                />
-            </Slate>
-        </>
+        <Slate editor={editor} value={editorState} onChange={value => setEditorState(value)}>
+            <EditToolbar />
+            <Editable
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
+                onBlur={() => {
+                    onUpdateModule({
+                        ...contentModule,
+                        text: serialize(editorState)
+                    });
+                }}
+            />
+        </Slate>
     );
 });
