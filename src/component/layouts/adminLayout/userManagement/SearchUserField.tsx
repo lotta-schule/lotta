@@ -30,6 +30,14 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
     const debouncedSearchtext = useDebounce(searchtext, 500);
     const [execute, { data, loading: isLoading }] = useLazyQuery<{ users: UserModel[] }, { searchtext: string }>(SearchUsersQuery);
 
+    const selectUser = (user: UserModel | null) => {
+        if (user) {
+            onSelectUser(user);
+        }
+        setSearchtext('');
+        setIsOpen(false);
+    }
+
     useEffect(() => {
         if (debouncedSearchtext && debouncedSearchtext.length > 3) {
             execute({ variables: { searchtext: debouncedSearchtext } })
@@ -55,11 +63,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
             open={isOpen}
             onOpen={() => setIsOpen(true)}
             onClose={() => setIsOpen(false)}
-            onChange={(_e: ChangeEvent<{}>, user: UserModel | null) => {
-                if (user) {
-                    onSelectUser(user);
-                }
-            }}
+            onChange={(_e: ChangeEvent<{}>, user: UserModel | null) => selectUser(user)}
             getOptionLabel={option => option.name}
             options={autocompleteOptions}
             loading={isLoading}

@@ -17,11 +17,11 @@ import { ResetPasswordLayout } from './layouts/ResetPasswordLayout';
 import { RequestPasswordResetLayout } from './layouts/RequestPasswordResetLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Helmet } from 'react-helmet';
 import { useQuery } from 'react-apollo';
 import { theme } from 'theme';
 import { useCategories } from 'util/categories/useCategories';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { AppHead } from './AppHead';
 
 export const App = memo(() => {
     const { data, loading: isLoadingTenant, error, called: calledTenant } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
@@ -58,11 +58,7 @@ export const App = memo(() => {
             return theme;
         }}>
             <BrowserRouter>
-                <Helmet>
-                    <title>{tenant.title}</title>
-                    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-                </Helmet>
+                <AppHead />
                 <BaseLayout>
                     <Switch>
                         <Route exact path={'/'} component={CategoryRoute} />
