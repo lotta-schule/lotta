@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: 0,
         },
         toolbarButtonGroup: {
-            marginRight: theme.spacing(1),
+            marginRight: theme.spacing(.5),
         },
     })
 );
