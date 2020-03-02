@@ -71,7 +71,7 @@ export const UserNavigation = memo(() => {
                 <Grid item xs={6} style={{ display: 'flex' }}>
                     {currentUser && (
                         <div>
-                            <CurrentUserAvatar />
+                            <CurrentUserAvatar size={200} />
                             <Typography variant={'body2'} align={'center'}>
                                 {User.getNickname(currentUser)}
                             </Typography>

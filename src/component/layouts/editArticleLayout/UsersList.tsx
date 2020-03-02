@@ -28,7 +28,7 @@ export const UsersList = memo<UsersListProps>(({ users, onClickRemove }) => {
             {users.map(user => (
                 <ListItem key={user.id} dense>
                     <ListItemAvatar>
-                        <UserAvatar className={styles.avatar} user={user} />
+                        <UserAvatar className={styles.avatar} user={user} size={50} />
                     </ListItemAvatar>
                     <ListItemText>
                         {User.getNickname(user)}

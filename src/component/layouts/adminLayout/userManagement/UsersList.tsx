@@ -62,7 +62,7 @@ export const UsersList = memo(() => {
             !filterText ? true : new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name)
         )?.map(user =>
             ({
-                avatarImage: <UserAvatar className={styles.avatar} user={user} />,
+                avatarImage: <UserAvatar className={styles.avatar} user={user} size={25} />,
                 name: <>{user.isBlocked && <Block color={'error'} />}{user.name}{user.nickname && <> &nbsp; (<strong>{user.nickname}</strong>)</>}</>,
                 groups: user.groups.map(g => g.name).join(', '),
                 user
