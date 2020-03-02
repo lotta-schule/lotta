@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import { CircularProgress, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/react-hooks';
@@ -35,7 +35,11 @@ export const SelectTopicAutocomplete = memo<SelectTopicAutocompleteProps>(({ val
             open={isOpen}
             onOpen={() => setIsOpen(true)}
             onClose={() => setIsOpen(false)}
-            onChange={(_e, value) => onChange(value)}
+            onChange={(_e: ChangeEvent<{}>, value: string | null) => {
+                if (value) {
+                    onChange(value);
+                }
+            }}
             value={value}
             freeSolo
             options={options}
