@@ -1,6 +1,6 @@
 import React, { MouseEvent, memo, useState, useCallback } from 'react';
 import { TableRow, TableCell, Checkbox, IconButton, Menu, MenuItem, Divider } from '@material-ui/core';
-import { MoreVert, FileCopyOutlined, DeleteOutlineOutlined, FolderSharedOutlined, PublicOutlined, CreateOutlined } from '@material-ui/icons';
+import { MoreVert, FileCopyOutlined, DeleteOutlineOutlined, FolderSharedOutlined, PublicOutlined, CreateOutlined, CloudDownloadOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
 import { FileModel, FileModelType } from 'model';
 import { File } from 'util/model/File';
@@ -80,13 +80,21 @@ export const FileTableRow = memo<FileTableRowProps>(({ file, marked, selected, i
                         onClose={() => handleEditMenuClose()}
                     >
                         {[
-                            <MenuItem key={'rename'} onClick={(e) => handleEditMenuClickRename(e)}><CreateOutlined color={'secondary'} />&nbsp;Umbenennen</MenuItem>,
                             ...(!isDirectory ? [
+                                <MenuItem key={'download'} onClick={(e: MouseEvent) => e.stopPropagation()} component={'a'} href={File.getSameOriginUrl(file)} download={file.filename}>
+                                    <CloudDownloadOutlined color={'secondary'} />&nbsp;Herunterladen
+                                </MenuItem>,
+                                <Divider key={'divider-download'} />,
+                            ] : []),
+                            ...((!isPublic || canEditPublicFiles) ? [
+                                <MenuItem key={'rename'} onClick={(e) => handleEditMenuClickRename(e)}><CreateOutlined color={'secondary'} />&nbsp;Umbenennen</MenuItem>,
+                            ] : []),
+                            ...(!isDirectory && (!isPublic || canEditPublicFiles) ? [
                                 <MenuItem key={'del'} onClick={() => onEditMenuDelete()}><DeleteOutlineOutlined color={'secondary'} />&nbsp;Löschen</MenuItem>,
                                 <MenuItem key={'move'} onClick={() => onEditMenuMove()}><FileCopyOutlined color={'secondary'} />&nbsp;Verschieben</MenuItem>
                             ] : []),
                             ...(!isDirectory && canEditPublicFiles ? [
-                                <Divider key={'divider1'} />,
+                                <Divider key={'divider-public'} />,
                                 isPublic ? (
                                     <MenuItem key={'movePrivate'} onClick={() => moveFile({ variables: { id: file.id, isPublic: false } })}>
                                         <FolderSharedOutlined color={'secondary'} />&nbsp;zu eigenen Dateien verschieben
