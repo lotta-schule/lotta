@@ -48,7 +48,8 @@ build docker image:staging:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID .
+      --build-arg MATOMO_SITEID
+      --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:staging
     - docker push lotta/web
   only:
@@ -73,6 +74,7 @@ deploy:staging:
       --set ingress.enabled=true
       --set-string ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;grpc_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/server-snippet"="location ~ /lotta-ugc-staging { proxy_pass https://lotta-ugc-staging.fra1.digitaloceanspaces.com; }"
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/ssl-redirect"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
@@ -108,7 +110,8 @@ build docker image:production:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID .
+      --build-arg MATOMO_SITEID
+      --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:production
     - docker push lotta/web
   only:
@@ -133,6 +136,7 @@ deploy:production:
       --set ingress.enabled=true
       --set-string ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;grpc_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/server-snippet"="location ~ /ugc { proxy_pass https://ugc.fra1.digitaloceanspaces.com; }"
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/ssl-redirect"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
@@ -168,7 +172,8 @@ build docker image:review:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL=""
-      --build-arg MATOMO_SITEID="" .
+      --build-arg MATOMO_SITEID=""
+      --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:$CI_ENVIRONMENT_SLUG
     - docker push lotta/web
   except:
@@ -196,6 +201,7 @@ deploy:review:
       --set ingress.enabled=true
       --set-string ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;grpc_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;"
+      --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/server-snippet"="location ~ /lotta-ugc-staging { proxy_pass https://lotta-ugc-staging.fra1.digitaloceanspaces.com; }"
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/ssl-redirect"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"

@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
+import { File } from 'util/model';
 import { CardContent, Typography, Button, Grid } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { useStyles } from './Download';
@@ -57,7 +58,7 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                     variant={'outlined'}
                                     color={'secondary'}
                                     component={'a'}
-                                    href={file.remoteLocation}
+                                    href={File.getSameOriginUrl(file)}
                                     download={file.filename}
                                     target={'_blank'}>
                                     download
