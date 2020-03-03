@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
         position: 'absolute',
         right: '1.5em',
         top: '.5em',
-        zIndex: 5
+        zIndex: 200
     },
 }));
 
