@@ -48,7 +48,8 @@ build docker image:staging:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID .
+      --build-arg MATOMO_SITEID
+      --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:staging
     - docker push lotta/web
   only:
@@ -109,7 +110,8 @@ build docker image:production:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID .
+      --build-arg MATOMO_SITEID
+      --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:production
     - docker push lotta/web
   only:
@@ -170,7 +172,8 @@ build docker image:review:
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
       --build-arg MATOMO_URL=""
-      --build-arg MATOMO_SITEID="" .
+      --build-arg MATOMO_SITEID=""
+      --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:$CI_ENVIRONMENT_SLUG
     - docker push lotta/web
   except:
