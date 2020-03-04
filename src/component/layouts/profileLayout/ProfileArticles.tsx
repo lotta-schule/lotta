@@ -19,8 +19,12 @@ export const ProfileArticles = memo(() => {
                     <CircularProgress />
                 )}
 
-                {ownArticlesData && ownArticlesData.articles && (
-                    <ArticlesManagement articles={ownArticlesData.articles} />
+                {ownArticlesData?.articles && (
+                    <ArticlesManagement
+                        articles={ownArticlesData.articles.sort((a1, a2) =>
+                            new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime()
+                        )}
+                    />
                 )}
             </CardContent>
         </Card>
