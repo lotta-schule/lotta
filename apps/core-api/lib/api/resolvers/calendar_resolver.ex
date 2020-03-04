@@ -1,6 +1,6 @@
 defmodule Api.CalendarResolver do
 
-  def get(%{url: url}, _info) do
+  def get(%{url: url} = args, _info) do
     result_body =
       ConCache.fetch_or_store(:http_cache, url, fn ->
         case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
@@ -19,7 +19,7 @@ defmodule Api.CalendarResolver do
           |> ExIcal.parse
           |> ExIcal.by_range(
             DateTime.utc_now() |> DateTime.add(-60 * 60 * 24, :second),
-            DateTime.utc_now() |> Timex.shift(days: 90)
+            DateTime.utc_now() |> Timex.shift(days: args[:days] || 90)
           )
         {:ok, ical}
       error ->
