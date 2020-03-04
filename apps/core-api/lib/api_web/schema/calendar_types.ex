@@ -3,7 +3,8 @@ defmodule ApiWeb.Schema.CalendarTypes do
 
   object :calendar_queries do
     field :calendar, list_of(:calendar_event) do
-      arg :url, :string
+      arg :url, non_null(:string)
+      arg :days, :integer
       resolve &Api.CalendarResolver.get/2
     end
   end
