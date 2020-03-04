@@ -33,6 +33,7 @@ export interface CalendarWidgetCalendarConfig {
     url: string;
     color?: string;
     name?: string;
+    days?: number;
     groupId?: ID;
 }
 
