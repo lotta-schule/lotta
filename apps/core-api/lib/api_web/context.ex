@@ -74,9 +74,16 @@ defmodule ApiWeb.Context do
             Tenants.get_tenant_by_slug(slug)
           else
             error ->
-              IO.inspect(error)
-              IO.inspect("tenant not found by slug or host, host is #{host}")
-              nil
+              if System.get_env("APP_ENVIRONMENT") == "staging" do
+                slug = host
+                |> String.split(".")
+                |> Enum.fetch!(0)
+                |> Tenants.get_tenant_by_slug()
+              else
+                IO.inspect(error)
+                IO.inspect("tenant not found by slug or host, host is #{host}")
+                nil
+              end
           end
         tenant ->
           tenant
