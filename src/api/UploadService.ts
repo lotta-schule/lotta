@@ -11,6 +11,8 @@ export class UploadService implements UploadModel {
 
     public isPublic: boolean;
 
+    public error: Error | null;
+
     protected file: File;
 
     public get filename(): string {
@@ -22,6 +24,7 @@ export class UploadService implements UploadModel {
         this.path = path;
         this.isPublic = isPublic;
         this.uploadProgress = 0;
+        this.error = null;
     }
 
     public startUploading(
@@ -53,7 +56,10 @@ export class UploadService implements UploadModel {
                 }
                 return onFinish(data.file);
             })
-            .catch(onError);
+            .catch(error => {
+                this.error = error;
+                onError(error);
+            });
         return this;
     }
 }

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { State } from 'store/State';
 import { UploadModel } from 'model';
 import { useFileExplorerData } from './context/useFileExplorerData';
+import { ErrorOutline } from '@material-ui/icons';
 
 export const ActiveUploadsModal = memo(() => {
     const uploads = (useSelector<State, UploadModel[]>(s => s.userFiles.uploads) || []);
@@ -16,10 +17,18 @@ export const ActiveUploadsModal = memo(() => {
                 {uploads.map(upload => (
                     <ListItem key={upload.id} button>
                         <ListItemAvatar>
-                            <CircularProgress
-                                variant={'static'}
-                                value={upload.uploadProgress}
-                            />
+                            <>
+                                {upload.error && (
+
+                                    <ErrorOutline color={'error'} />
+                                )}
+                                {!upload.error && (
+                                    <CircularProgress
+                                        variant={'static'}
+                                        value={upload.uploadProgress}
+                                    />
+                                )}
+                            </>
                         </ListItemAvatar>
                         <ListItemText
                             style={{
@@ -28,7 +37,7 @@ export const ActiveUploadsModal = memo(() => {
                                 overflow: 'hidden'
                             }}
                             primary={upload.filename}
-                            secondary={upload.path}
+                            secondary={upload.error?.message ?? upload.path}
                         />
                     </ListItem>
                 ))}

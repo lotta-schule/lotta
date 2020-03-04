@@ -6,4 +6,5 @@ export interface UploadModel {
     isPublic: boolean;
     filename: string;
     uploadProgress: number;
+    error: Error | null;
 }
