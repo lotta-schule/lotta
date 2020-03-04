@@ -51,7 +51,9 @@ export const FileToolbar = memo<FileToolbarProps>(({
     const [state, dispatch] = useFileExplorerData();
 
     const uploadLength = uploads.length;
-    const uploadTotalProgress = uploads.map(upload => upload.uploadProgress)
+    const uploadTotalProgress = uploads
+        .filter(upload => !upload.error)
+        .map(upload => upload.uploadProgress)
         .reduce(((prevProgress, currProgress) => prevProgress + currProgress), 0) / uploadLength;
     const rootDescription = state.isPublic ? 'Schulweite Medien' : 'Meine Medien';
 
@@ -117,7 +119,10 @@ export const FileToolbar = memo<FileToolbarProps>(({
                         <>
                             {uploadLength > 0 && (
                                 <Tooltip title={`${uploadLength} Dateien werden hochgeladen`}>
-                                    <Badge color={'primary'} badgeContent={uploadLength}>
+                                    <Badge
+                                        color={uploads.filter(u => u.error).length ? 'error' : 'primary'}
+                                        badgeContent={uploads.filter(u => u.error).length ? <span>!</span> : uploadLength}
+                                    >
                                         <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })}>
                                             <CircularProgress
                                                 size={20}
