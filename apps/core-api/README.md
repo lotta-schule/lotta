@@ -4,7 +4,6 @@ API written for Lotta API Server
 
 Phoenix, Elixir & Absinthe
 
-
 ## Setup
 
 Make sure to have docker installed.
