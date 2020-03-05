@@ -106,6 +106,7 @@ export const FileToolbar = memo<FileToolbarProps>(({
                     <Breadcrumbs maxItems={3} itemsBeforeCollapse={1} itemsAfterCollapse={2} className={styles.breadcrumbs}>
                         {pathLinks.map(pathLink => (
                             <Link
+                                key={pathLink.path}
                                 onClick={(e: any) => {
                                     e.preventDefault();
                                     dispatch({ type: 'setCurrentPath', path: pathLink.path });
