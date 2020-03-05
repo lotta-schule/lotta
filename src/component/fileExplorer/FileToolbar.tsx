@@ -1,6 +1,6 @@
-import React, { memo, Fragment } from 'react';
+import React, { memo } from 'react';
 import { CloudUploadOutlined, CreateNewFolderOutlined, FileCopyOutlined, DeleteOutlineOutlined, FolderSharedOutlined, PublicOutlined } from '@material-ui/icons';
-import { makeStyles, Theme, createStyles, Typography, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Link } from '@material-ui/core';
+import { makeStyles, Theme, createStyles, Breadcrumbs, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Link } from '@material-ui/core';
 import { UploadModel } from 'model';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import { useFileExplorerData } from './context/useFileExplorerData';
@@ -9,25 +9,31 @@ import { State } from 'store/State';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
     createStyles({
-        spacer: {
-            flex: '1 1 100%',
+        publicToggle: {
+            marginLeft: -theme.spacing(2),
+            marginRight: theme.spacing(2),
+            flex: '0 0 auto'
+        },
+        title: {
+            overflow: 'auto',
+            flex: '1 1 auto',
         },
         actions: {
             color: theme.palette.text.secondary,
-            display: 'flex'
-        },
-        publicToggle: {
-            marginLeft: -theme.spacing(2),
-            marginRight: theme.spacing(2)
-        },
-        title: {
-            flex: '0 0 auto',
+            display: 'flex',
+            flex: '0 0 auto'
         },
         uploadButton: {
             position: 'absolute',
             width: '100%',
             height: '100%',
             opacity: 0
+        },
+        breadcrumbs: {
+            '& [role=button]': {
+                pointerEvents: 'none',
+                cursor: 'inherit'
+            }
         }
     }),
 );
@@ -68,7 +74,7 @@ export const FileToolbar = memo<FileToolbarProps>(({
                 name: currentPathComp
             }]);
         }),
-        [{ path: '/', name: `${rootDescription} /` }]
+        [{ path: '/', name: rootDescription }]
     );
 
     return (
@@ -97,21 +103,16 @@ export const FileToolbar = memo<FileToolbarProps>(({
                     </div>
                 )}
                 <div className={styles.title}>
-                    <Typography variant="subtitle1">
-                        {pathLinks.map((pathLink, i) => (
-                            <Fragment key={pathLink.path}>
-                                &nbsp;
-                                <Link
-                                    onClick={(e: any) => {
-                                        e.preventDefault();
-
-                                        dispatch({ type: 'setCurrentPath', path: pathLink.path });
-                                    }}
-                                >{pathLink.name}</Link>
-                                {i !== 0 && <span>&nbsp;/&nbsp;</span>}
-                            </Fragment>
+                    <Breadcrumbs maxItems={3} itemsBeforeCollapse={1} itemsAfterCollapse={2} className={styles.breadcrumbs}>
+                        {pathLinks.map(pathLink => (
+                            <Link
+                                onClick={(e: any) => {
+                                    e.preventDefault();
+                                    dispatch({ type: 'setCurrentPath', path: pathLink.path });
+                                }}
+                            >{pathLink.name}</Link>
                         ))}
-                    </Typography>
+                    </Breadcrumbs>
                 </div>
                 <div className={styles.spacer} />
                 <div className={styles.actions}>
