@@ -1,4 +1,4 @@
-import React, { memo, useState, MouseEvent } from 'react';
+import React, { memo, useState, useRef, MouseEvent } from 'react';
 import {
     Card, CardContent, TextField, Button, makeStyles, Typography, FormControl, FormLabel, FormControlLabel,
     Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem, Divider, DialogTitle, DialogContent, DialogActions
@@ -9,7 +9,7 @@ import { useMutation } from 'react-apollo';
 import { CategorySelect } from './CategorySelect';
 import { GroupSelect } from '../../edit/GroupSelect';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
-import { Save as SaveIcon, ArrowDropDown as ArrowDropDownIcon, Warning } from '@material-ui/icons';
+import { ArrowDropDown as ArrowDropDownIcon, Warning } from '@material-ui/icons';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
 import { ArticleModel, ID } from '../../../model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
@@ -19,6 +19,7 @@ import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScree
 import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
 import { UsersList } from './UsersList';
 import { SelectTopicAutocomplete } from './SelectTopicAutocomplete';
+import { SaveButton } from 'component/general/SaveButton';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
 import useRouter from 'use-react-router';
@@ -56,11 +57,12 @@ const useStyles = makeStyles(theme => ({
 
 interface EditArticleSidebarProps {
     article: ArticleModel;
+    isLoading?: boolean;
     onUpdate(article: ArticleModel): void;
     onSave(additionalProps?: Partial<ArticleModel>): void;
 }
 
-export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUpdate, onSave }) => {
+export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLoading, onUpdate, onSave }) => {
     const styles = useStyles();
     const [currentUser] = useCurrentUser();
     const { history } = useRouter();
@@ -68,7 +70,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
     const [isReadyToPublish, setIsReadyToPublish] = useState(article.readyToPublish || false);
     const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const saveOptionsMenuAnchorRef = React.useRef<HTMLDivElement | null>(null);
+    const saveOptionsMenuAnchorRef = useRef<HTMLDivElement | null>(null);
 
     const [deleteArticle] = useMutation<{ article: ArticleModel }, { id: ID }>(DeleteArticleMutation, {
         variables: {
@@ -201,21 +203,23 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, onUp
             )}
             <CardContent>
                 <ButtonGroup
-                    variant="outlined"
-                    color="secondary"
+                    variant={'outlined'}
+                    color={'secondary'}
+                    disabled={isLoading}
                     size={'small'}
                     aria-label="split button"
                     ref={saveOptionsMenuAnchorRef}
                     className={styles.button}
                     fullWidth
                 >
-                    <Button
+                    <SaveButton
+                        isLoading={isLoading}
                         onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: undefined })}
                         fullWidth
                     >
-                        <SaveIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
+
                         speichern
-                    </Button>
+                    </SaveButton>
                     <Button
                         color={'secondary'}
                         size={'small'}

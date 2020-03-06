@@ -9,9 +9,9 @@ import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
-import clsx from 'clsx';
 import { WidgetIconSelection } from './WidgetIconSelection';
 import { SaveButton } from 'component/general/SaveButton';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
     input: {
