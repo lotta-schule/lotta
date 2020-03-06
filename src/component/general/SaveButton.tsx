@@ -3,7 +3,7 @@ import { Button, makeStyles, Theme, CircularProgress, ButtonProps } from '@mater
 import { DoneOutline } from '@material-ui/icons';
 import clsx from 'clsx';
 
-export interface SaveButtonProps extends Pick<ButtonProps, 'type' | 'style'> {
+export interface SaveButtonProps extends Pick<ButtonProps, 'type' | 'style' | 'fullWidth'> {
     isLoading?: boolean;
     isSuccess?: boolean;
     className?: string;

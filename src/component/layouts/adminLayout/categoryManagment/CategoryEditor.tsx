@@ -5,7 +5,6 @@ import {
 import { Delete } from '@material-ui/icons';
 import { CategoryModel } from 'model';
 import { useMutation } from 'react-apollo';
-import Img from 'react-cloudimage-responsive';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { ID } from 'model/ID';
 import { GroupSelect } from 'component/edit/GroupSelect';
@@ -16,6 +15,8 @@ import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
+import { SaveButton } from 'component/general/SaveButton';
+import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -51,7 +52,13 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
     const [category, setCategory] = useState<CategoryModel | null>(null);
     const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] = useState(false);
 
-    const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation);
+    const [isShowSuccess, setIsShowSuccess] = useState(false);
+    const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+        onCompleted: () => {
+            setIsShowSuccess(true);
+            setTimeout(() => setIsShowSuccess(false), 3000);
+        }
+    });
 
     const updateCategory = useCallback(async () => {
         if (!selectedCategory || !category) {
@@ -166,15 +173,14 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                 setSelectedWidgets={widgets => setCategory({ ...category, widgets })}
             />
             <p>&nbsp;</p>
-            <Button
+            <SaveButton
                 className={styles.saveButton}
-                disabled={isLoading}
-                variant={'contained'}
-                color={'secondary'}
+                isLoading={isLoading}
+                isSuccess={isShowSuccess}
                 onClick={() => updateCategory()}
             >
                 Kategorie speichern
-            </Button>
+            </SaveButton>
 
             {!category.isHomepage && (
                 <>
