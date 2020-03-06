@@ -291,7 +291,7 @@ defmodule Api.Content do
     |> Repo.update()
   end
 
-  defp list_public_articles(%Tenant{} = tenant, user) do
+  def list_public_articles(%Tenant{} = tenant, user) do
     user_group_ids = User.group_ids(user, tenant)
     from(a in Article,
       left_join: aug in "articles_user_groups",

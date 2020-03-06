@@ -28,6 +28,8 @@ defmodule ApiWeb.Router do
     forward "/health", ApiWeb.HealthPlug
   end
 
+  forward "/sitemap.xml", ApiWeb.SitemapPlug
+
   forward "/graphiql", Absinthe.Plug.GraphiQL,
     schema: ApiWeb.Schema
 

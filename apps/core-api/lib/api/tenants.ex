@@ -81,6 +81,40 @@ defmodule Api.Tenants do
   """
   def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, [slug: slug])
 
+  def get_tenant_by_origin(origin) do
+    with %URI{host: host} <- URI.parse(origin),
+        false <- is_nil(host) do
+      case get_tenant_by_custom_domain_host(host) do
+        nil ->
+          IO.inspect("custom domain is not found with #{host}. Trying to recognize lotta slug")
+          base_url_without_port = Regex.replace(~r/:\d*$/, Application.fetch_env!(:api, :base_url), "")
+          with {:ok, regex} <- Regex.compile("^(?<slug>.*)#{Regex.escape(base_url_without_port)}"),
+              %{"slug" => slug} <- Regex.named_captures(regex, host) do
+            get_tenant_by_slug(slug)
+          else
+            error ->
+              if System.get_env("APP_ENVIRONMENT") == "staging" do
+                slug = host
+                |> String.split(".")
+                |> Enum.fetch!(0)
+                |> get_tenant_by_slug()
+              else
+                IO.inspect(error)
+                IO.inspect("tenant not found by slug or host, host is #{host}")
+                nil
+              end
+          end
+        tenant ->
+          tenant
+      end
+    else
+      error ->
+        IO.inspect("could not parse origin header")
+        IO.inspect(error)
+        nil
+    end
+  end
+
   @doc """
   Gets a single tenant by its custom domain's host.
 
