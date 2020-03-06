@@ -8,12 +8,16 @@ defmodule ApiWeb.SitemapPlug do
   def init(opts), do: opts
   def call(conn, _) do
     tenant =
-      case get_req_header(conn, "host") do
-        [host] ->
-          Tenants.get_tenant_by_origin("https://" <> host)
-        _ ->
-          # only for testing
-          Tenants.get_tenant_by_slug("ehrenberg")
+      with ["slug:" <> slug] <- get_req_header(conn, "tenant") do
+        Tenants.get_tenant_by_slug(slug)
+      else
+        _ -> case get_req_header(conn, "host") do
+          [host] ->
+            Tenants.get_tenant_by_origin("https://" <> host)
+          _ ->
+            # only for testing
+            Tenants.get_tenant_by_slug("ehrenberg")
+        end
       end
 
     case tenant do
@@ -25,7 +29,6 @@ defmodule ApiWeb.SitemapPlug do
         query_params = conn
           |> fetch_query_params()
           |> Map.fetch!(:params)
-        IO.inspect(query_params)
         case query_params do
           %{"categories" => nil} ->
             conn
@@ -82,13 +85,12 @@ defmodule ApiWeb.SitemapPlug do
         "\t<url>\n" <>
         "\t\t<loc>https://#{conn.host}/c/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}</loc>\n" <>
         "\t\t<lastmod>#{article.updated_at}</lastmod>\n" <>
-        (case article do
-          %{preview_image_file: %{remote_location: image_location}} ->
+        (with %{preview_image_file: %{remote_location: image_location}} <- article do
             "\t\t<image:image>\n" <>
             "\t\t\t<image:loc>#{image_location}</image:loc>\n" <>
             "\t\t</image:image>\n"
-          nil ->
-            ""
+        else
+          _ -> ""
         end) <>
         "\t</url>\n"
       end)
