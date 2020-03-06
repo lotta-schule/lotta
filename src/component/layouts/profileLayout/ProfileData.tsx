@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import {
-    Avatar, Button, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField,
+    Avatar, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField,
     Typography, IconButton, Badge, Divider, makeStyles, List, ListItemText, ListItem, ListSubheader
 } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
+import { SaveButton } from 'component/general/SaveButton';
 
 export const useStyles = makeStyles(theme => ({
     divider: {
@@ -35,7 +36,13 @@ export const ProfileData = memo(() => {
     const [avatarImageFile, setAvatarImageFile] = useState<FileModel | null | undefined>(currentUser?.avatarImageFile);
     const [enrollmentTokens, setEnrollmentTokens] = useState<string[]>(currentUser?.enrollmentTokens ?? []);
 
-    const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation);
+    const [isShowSuccess, setIsShowSuccess] = useState(false);
+    const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation, {
+        onCompleted: () => {
+            setIsShowSuccess(true);
+            setTimeout(() => setIsShowSuccess(false), 3000);
+        }
+    });
     const getFieldError = useGetFieldError(error);
 
     if (!currentUser) {
@@ -165,12 +172,11 @@ export const ProfileData = memo(() => {
                         <Typography variant="caption" component={'div'}>
                             Nutze Einschreibeschlüssel, um dich selbst in Gruppen einzutragen.
                         </Typography>
-                        <Button
+                        <SaveButton
                             type={'submit'}
-                            color="secondary"
-                            variant="contained"
                             style={{ float: 'right' }}
-                            disabled={isLoading}
+                            isLoading={isLoading}
+                            isSuccess={isShowSuccess}
                             onClick={() => updateProfile({
                                 variables: {
                                     user: {
@@ -186,7 +192,7 @@ export const ProfileData = memo(() => {
                             })}
                         >
                             Speichern
-                        </Button>
+                        </SaveButton>
                     </Grid>
                 </Grid>
             </CardContent>
