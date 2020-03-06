@@ -6,6 +6,7 @@ import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
 import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Article as ArticleUtil } from 'util/model/Article';
 import { omit } from 'lodash';
 import { useMutation } from '@apollo/react-hooks';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
@@ -23,16 +24,16 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
     const [saveArticle, { loading: isLoading }] = useMutation<{ article: ArticleModel }, { id: ID, article: ArticleModelInput }>(UpdateArticleMutation, {
         onCompleted: ({ article }) => {
             if (article) {
-                history.push(`/article/${article.id}`);
+                history.push(ArticleUtil.getPath(article));
             }
         }
     });
 
     useEffect(() => {
         if (!currentUser) {
-            history.push(`/article/${article.id}`);
+            history.push(ArticleUtil.getPath(article));
         }
-    }, [article.id, currentUser, history]);
+    }, [article, currentUser, history]);
 
     return (
         <>

@@ -14,7 +14,7 @@ import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
 import { ArticleModel, ID } from '../../../model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
+import { User, Category } from 'util/model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
 import { UsersList } from './UsersList';
@@ -78,7 +78,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
         },
         onCompleted: () => {
             if (article.category) {
-                history.push(`/category/${article.category.id}`);
+                history.push(Category.getPath(article.category));
             } else {
                 history.push('/');
             }

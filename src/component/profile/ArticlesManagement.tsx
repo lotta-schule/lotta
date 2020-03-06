@@ -6,7 +6,7 @@ import {
 import { Edit } from '@material-ui/icons';
 import { ArticleModel } from 'model';
 import { CollisionLink } from 'component/general/CollisionLink';
-import { User } from 'util/model';
+import { User, Article } from 'util/model';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 
@@ -55,18 +55,11 @@ export const ArticlesManagement = memo<ArticlesManagementProps>(({ articles }) =
                                 className={styles.actionButton}
                                 aria-label={'Beitrag bearbeiten'}
                                 component={CollisionLink}
-                                to={`/article/${article.id}/edit`}
+                                to={Article.getPath(article, { edit: true })}
                             >
                                 <Edit />
                             </IconButton>
                         </TableCell>
-                        {/* <TableCell>
-                            <Tooltip title="Beitrag löschen">
-                                <IconButton className={styles.actionButton} aria-label="Beitrag löschen" onClick={() => { }}>
-                                    <Delete />
-                                </IconButton>
-                            </Tooltip>
-                        </TableCell> */}
                         <TableCell>
                             {format(new Date(article.insertedAt), 'PPP', { locale: de }) + ' '}
                         </TableCell>
