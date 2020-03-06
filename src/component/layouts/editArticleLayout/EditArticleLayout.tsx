@@ -9,14 +9,14 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { omit } from 'lodash';
 import { useMutation } from '@apollo/react-hooks';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
-import useReactRouter from 'use-react-router';
+import useRouter from 'use-react-router';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
 }
 
 export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
-    const { history } = useReactRouter();
+    const { history } = useRouter();
     const [currentUser] = useCurrentUser();
 
     const [editedArticle, setEditedArticle] = useState(article);
