@@ -89,7 +89,7 @@ deploy staging:
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set ingress.hosts[0].host=*.staging.lotta.schule
       --set ingress.hosts[0].paths[0]=/api
-      --set ingress.hosts[0].paths[0]=/sitemap.xml
+      --set ingress.hosts[0].paths[1]=/sitemap.xml
       --set ingress.tls[0].hosts[0]=*.staging.lotta.schule
       --set ingress.tls[0].secretName="lotta-web-staging-certificate"
       --set postgresql.postgresqlDatabase=$POSTGRES_DB
@@ -149,7 +149,7 @@ deploy production:
       --set-string ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
       --set ingress.hosts[0].host=*.lotta.schule
       --set ingress.hosts[0].paths[0]=/api
-      --set ingress.hosts[0].paths[0]=/sitemap.xml
+      --set ingress.hosts[0].paths[1]=/sitemap.xml
       --set ingress.tls[0].hosts[0]=*.lotta.schule
       --set ingress.tls[0].secretName="lotta-web-certificate"
       --set postgresql.postgresqlDatabase=$POSTGRES_DB
