@@ -96,6 +96,11 @@ deploy staging:
       --set postgresql.postgresqlUsername=$POSTGRES_USER
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
       --set postgresql.postgresqlPostgresPassword=$POSTGRES_PASSWORD
+      --set postgresql.replication.enabled=true
+      --set postgresql.replication.slaveReplicas=2
+      --set postgresql.replication.synchronousCommit="on"
+      --set postgresql.replication.numSynchronousReplicas=1
+      --set postgresql.metrics.enabled=true
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
       --set rabbitmq.ingress.enabled=true
