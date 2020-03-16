@@ -98,6 +98,8 @@ deploy staging:
       --set postgresql.postgresqlPostgresPassword=$POSTGRES_PASSWORD
       --set postgresql.persistence.existingClaim=data-lotta-api-postgresql-0
       --set postgresql.replication.enabled=true
+      --set postgresql.replication.user=$POSTGRES_REPLICATION_USER
+      --set postgresql.replication.password=$POSTGRES_REPLICATION_PASSWORD
       --set postgresql.replication.slaveReplicas=2
       --set postgresql.replication.synchronousCommit="on"
       --set postgresql.replication.numSynchronousReplicas=1
