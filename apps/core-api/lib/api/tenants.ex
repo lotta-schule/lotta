@@ -5,12 +5,13 @@ defmodule Api.Tenants do
 
   import Ecto.Query
   alias Api.Repo
+  use Api.ReadRepoAliaser
 
   alias Api.Tenants.{Category,CustomDomain,Tenant,Widget}
   alias Api.Accounts.{User,UserGroup}
 
   def data() do
-    Dataloader.Ecto.new(Api.Repo, query: &query/2)
+    Dataloader.Ecto.new(ReadRepo, query: &query/2)
   end
   def query(queryable, _params) do
     queryable
@@ -31,7 +32,7 @@ defmodule Api.Tenants do
              cw.category_id == ^(category.id),
       distinct: w.id
     )
-    |> Repo.all()
+    |> ReadRepo.all()
     {:ok, widgets}
   end
 
@@ -45,7 +46,7 @@ defmodule Api.Tenants do
 
   """
   def list_tenants do
-    Repo.all from t in Tenant,
+    ReadRepo.all from t in Tenant,
       order_by: :slug
   end
 
@@ -63,7 +64,7 @@ defmodule Api.Tenants do
       ** (Ecto.NoResultsError)
 
   """
-  def get_tenant!(id), do: Repo.get!(Tenant, id)
+  def get_tenant!(id), do: ReadRepo.get!(Tenant, id)
 
   @doc """
   Gets a single tenant by slug.
@@ -79,7 +80,7 @@ defmodule Api.Tenants do
       nil
 
   """
-  def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, [slug: slug])
+  def get_tenant_by_slug(slug), do: ReadRepo.get_by(Tenant, [slug: slug])
 
   def get_tenant_by_origin(origin) do
     with %URI{host: host} <- URI.parse(origin),
@@ -130,7 +131,7 @@ defmodule Api.Tenants do
 
   """
   def get_tenant_by_custom_domain_host(host) when is_binary(host) do
-    with %CustomDomain{tenant_id: tenant_id} <- Repo.get_by(CustomDomain, host: host),
+    with %CustomDomain{tenant_id: tenant_id} <- ReadRepo.get_by(CustomDomain, host: host),
         tenant <- Repo.get(Tenant, tenant_id),
         false <- is_nil(tenant) do
       tenant
@@ -156,7 +157,7 @@ defmodule Api.Tenants do
       ** (Ecto.NoResultsError)
 
   """
-  def get_tenant_by_slug!(slug), do: Repo.get_by!(Tenant, [slug: slug])
+  def get_tenant_by_slug!(slug), do: ReadRepo.get_by!(Tenant, [slug: slug])
 
   @doc """
   Creates a tenant.
@@ -244,7 +245,7 @@ defmodule Api.Tenants do
       order_by: [asc: :sort_key, asc: :category_id],
       distinct: true
     )
-    |> Repo.all
+    |> ReadRepo.all
   end
 
   @doc """
@@ -261,7 +262,7 @@ defmodule Api.Tenants do
       ** (Ecto.NoResultsError)
 
   """
-  def get_category!(id), do: Repo.get!(Category, id)
+  def get_category!(id), do: ReadRepo.get!(Category, id)
 
   @doc """
   Creates a category.
@@ -348,7 +349,7 @@ defmodule Api.Tenants do
              (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
       distinct: w.id
     )
-    |> Repo.all()
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -365,7 +366,7 @@ defmodule Api.Tenants do
       ** (Ecto.NoResultsError)
 
   """
-  def get_widget!(id), do: Repo.get!(Widget, id)
+  def get_widget!(id), do: ReadRepo.get!(Widget, id)
 
   @doc """
   Creates a widget.

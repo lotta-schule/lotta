@@ -1,8 +1,8 @@
 defmodule Api.Accounts.User do
   use Ecto.Schema
+  use Api.ReadRepoAliaser
   import Ecto.Changeset
   import Ecto.Query
-  alias Api.Repo
   alias Api.Accounts.{User,UserGroup}
   alias Api.Content.Article
   alias Api.Tenants.Tenant
@@ -46,17 +46,17 @@ defmodule Api.Accounts.User do
 
   def is_author?(%User{} = user, %Article{} = article) do
     article
-    |> Repo.preload(:users)
+    |> ReadRepo.preload(:users)
     |> Map.get(:users)
     |> Enum.any?(fn u -> u.id == user.id end)
   end
   def is_author?(_, _), do: false
 
   def has_group_for_article?(%User{} = user, %Article{} = article) do
-    user_group_ids = User.group_ids(user, Api.Repo.preload(article, :tenant).tenant)
+    user_group_ids = User.group_ids(user, ReadRepo.preload(article, :tenant).tenant)
     article_group_ids =
       article
-      |> Repo.preload([:groups, :tenant])
+      |> ReadRepo.preload([:groups, :tenant])
       |> Map.fetch!(:groups)
       |> Enum.map(fn group -> group.id end)
 
@@ -65,20 +65,20 @@ defmodule Api.Accounts.User do
 
   def is_blocked?(%User{} = user, %Tenant{} = tenant) do
     user
-      |> Api.Repo.preload(:blocked_tenants)
+      |> ReadRepo.preload(:blocked_tenants)
       |> Map.fetch!(:blocked_tenants)
       |> Enum.any?(fn blocked_tenant -> blocked_tenant.tenant_id == tenant.id end)
   end
 
   def get_assigned_groups(%User{} = user) do
     user
-    |> Repo.preload(:groups)
+    |> ReadRepo.preload(:groups)
     |> Map.fetch!(:groups)
   end
 
   def get_dynamic_groups(%User{} = user, %Tenant{} = tenant) do
     user = user
-    |> Repo.preload(:enrollment_tokens)
+    |> ReadRepo.preload(:enrollment_tokens)
     tokens =
       user
       |> Map.fetch!(:enrollment_tokens)
@@ -107,16 +107,16 @@ defmodule Api.Accounts.User do
   end
 
   def assign_group_changeset(%User{} = user, %{group: newgroup}) do
-    groups = Repo.all(from g in UserGroup, where: g.tenant_id != ^newgroup.tenant_id) ++ [newgroup]
+    groups = ReadRepo.all(from g in UserGroup, where: g.tenant_id != ^newgroup.tenant_id) ++ [newgroup]
     user
-    |> Repo.preload(:groups)
+    |> ReadRepo.preload(:groups)
     |> Ecto.Changeset.change()
     |> put_assoc(:groups, groups)
   end
 
   def update_changeset(%User{} = user, params \\ %{}) do
     user
-    |> Repo.preload([:avatar_image_file, :enrollment_tokens])
+    |> ReadRepo.preload([:avatar_image_file, :enrollment_tokens])
     |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
     |> validate_required([:name, :email])
     |> unique_constraint(:email)
@@ -127,7 +127,7 @@ defmodule Api.Accounts.User do
 
   def registration_changeset(%User{} = user, params \\ %{}) do
     user
-    |> Api.Repo.preload(:enrollment_tokens)
+    |> ReadRepo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
     |> validate_required([:name, :email, :password, :tenant_id])
     |> unique_constraint(:email)
@@ -140,7 +140,7 @@ defmodule Api.Accounts.User do
 
   def update_password_changeset(%User{} = user, password) when is_binary(password) and byte_size(password) > 0 do
     user
-    |> Api.Repo.preload(:enrollment_tokens)
+    |> ReadRepo.preload(:enrollment_tokens)
     |> Ecto.Changeset.change(%{password: password})
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
@@ -172,7 +172,7 @@ defmodule Api.Accounts.User do
 
   defp put_assoc_avatar_image_file(user, %{avatar_image_file: %{id: avatar_image_file_id}}) do
     user
-    |> put_assoc(:avatar_image_file, Api.Repo.get(Api.Accounts.File, avatar_image_file_id))
+    |> put_assoc(:avatar_image_file, ReadRepo.get(Api.Accounts.File, avatar_image_file_id))
   end
   defp put_assoc_avatar_image_file(user, %{avatar_image_file: nil}) do
     user

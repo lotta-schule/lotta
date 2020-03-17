@@ -1,5 +1,6 @@
 defmodule Api.Accounts.File do
   use Ecto.Schema
+  use Api.ReadRepoAliaser
   alias Api.UploadService
   import Ecto.Changeset
 
@@ -40,7 +41,7 @@ defmodule Api.Accounts.File do
 
   def is_author?(%Api.Accounts.File{} = file, %Api.Accounts.User{} = user) do
     file = file
-    |> Api.Repo.preload(:user)
+    |> ReadRepo.preload(:user)
     file.user.id == user.id
   end
 

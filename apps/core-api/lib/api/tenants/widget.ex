@@ -1,8 +1,8 @@
 defmodule Api.Tenants.Widget do
   use Ecto.Schema
+  use Api.ReadRepoAliaser
   import Ecto.Changeset
   import Ecto.Query
-  alias Api.Repo
   alias Api.Accounts.{File,UserGroup}
   alias Api.Tenants.{Category,Tenant}
 
@@ -35,7 +35,7 @@ defmodule Api.Tenants.Widget do
   @doc false
   def changeset(widget, attrs) do
     widget
-    |> Repo.preload([:groups, :icon_image_file])
+    |> ReadRepo.preload([:groups, :icon_image_file])
     |> cast(attrs, [:title, :type, :configuration])
     |> validate_required([:title, :type, :configuration])
     |> put_assoc_icon_image_file(attrs)
@@ -44,13 +44,13 @@ defmodule Api.Tenants.Widget do
 
   defp put_assoc_icon_image_file(changeset, %{icon_image_file: %{id: icon_image_file_id}}) do
     changeset
-    |> put_assoc(:icon_image_file, Repo.get(Api.Accounts.File, icon_image_file_id))
+    |> put_assoc(:icon_image_file, ReadRepo.get(Api.Accounts.File, icon_image_file_id))
   end
   defp put_assoc_icon_image_file(changeset, _args), do: changeset
 
   defp put_assoc_groups(changeset, %{groups: groups}) do
     changeset
-    |> put_assoc(:groups, Repo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))
+    |> put_assoc(:groups, ReadRepo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))
   end
   defp put_assoc_groups(changeset, _args), do: changeset
 end

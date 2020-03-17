@@ -1,6 +1,7 @@
 defmodule ApiWeb.SitemapPlug do
   import Plug.Conn
   import Ecto.Query
+  use Api.ReadRepoAliaser
   alias Api.Tenants
   alias Api.Tenants.Tenant
   alias Api.Content
@@ -67,13 +68,13 @@ defmodule ApiWeb.SitemapPlug do
       a in query,
       where: fragment("?::date", a.inserted_at) == ^date
     )
-    |> Api.Repo.all()
+    |> ReadRepo.all()
 
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <>
     "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n" <>
     (articles
     |> Enum.map(fn article ->
-      article = Api.Repo.preload(article, :preview_image_file)
+      article = ReadRepo.preload(article, :preview_image_file)
       "\t<url>\n" <>
       "\t\t<loc>https://#{conn.host}/c/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}</loc>\n" <>
       "\t\t<lastmod>#{article.updated_at}</lastmod>\n" <>

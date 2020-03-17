@@ -1,4 +1,5 @@
 defmodule Api.ContentModuleResolver do
+  use Api.ReadRepoAliaser
   alias Api.Content
   alias Api.Accounts.User
 
@@ -27,11 +28,11 @@ defmodule Api.ContentModuleResolver do
   def get_responses(%{content_module_id: content_module_id}, %{context: context}) do
     content_module =
       Content.get_content_module!(content_module_id)
-      |> Api.Repo.preload([:results, :article])
+      |> ReadRepo.preload([:results, :article])
     tenant =
       content_module
       |> Map.fetch!(:article)
-      |> Api.Repo.preload(:tenant)
+      |> ReadRepo.preload(:tenant)
       |> Map.fetch!(:tenant)
     unless context[:current_user] && User.is_admin?(context.current_user, tenant) do
       {:error, "Nur Administratoren dürfen Modul-Ergebnisse abrufen."}

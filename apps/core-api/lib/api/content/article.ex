@@ -1,8 +1,8 @@
 defmodule Api.Content.Article do
   use Ecto.Schema
+  use Api.ReadRepoAliaser
   import Ecto.Changeset
   import Ecto.Query
-  alias Api.Repo
   alias Api.Accounts.{File,User,UserGroup}
   alias Api.Content.{Article,ContentModule}
   alias Api.Tenants.{Category,Tenant}
@@ -33,7 +33,7 @@ defmodule Api.Content.Article do
 
   def get_url(%Article{} = article) do
     article
-    |> Api.Repo.preload(:tenant)
+    |> ReadRepo.preload(:tenant)
     |> Map.fetch!(:tenant)
     |> Tenant.get_main_url()
     |> String.replace_suffix("", "/a/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}")
@@ -42,7 +42,7 @@ defmodule Api.Content.Article do
   @doc false
   def create_changeset(article, attrs) do
     article
-    |> Repo.preload([:tenant, :category, :groups, :users, :preview_image_file, :content_modules])
+    |> ReadRepo.preload([:tenant, :category, :groups, :users, :preview_image_file, :content_modules])
     |> cast(attrs, [:title, :inserted_at])
     |> validate_required([:title])
   end
@@ -50,7 +50,7 @@ defmodule Api.Content.Article do
   @doc false
   def changeset(article, attrs) do
     article
-    |> Repo.preload([:tenant, :category, :groups, :users, :preview_image_file, :content_modules])
+    |> ReadRepo.preload([:tenant, :category, :groups, :users, :preview_image_file, :content_modules])
     |> cast(attrs, [:title, :inserted_at, :updated_at, :ready_to_publish, :preview, :topic])
     |> validate_required([:title])
     |> put_assoc_users(attrs)
@@ -63,19 +63,19 @@ defmodule Api.Content.Article do
 
   defp put_assoc_users(changeset, %{users: users}) do
     changeset
-    |> put_assoc(:users, Repo.all(from(u in User, where: u.id in ^(Enum.map(users, &(&1.id))))))
+    |> put_assoc(:users, ReadRepo.all(from(u in User, where: u.id in ^(Enum.map(users, &(&1.id))))))
   end
   defp put_assoc_users(changeset, _), do: changeset
 
   defp put_assoc_category(changeset, %{category: %{id: category_id}}) do
     changeset
-    |> put_assoc(:category, Repo.get(Category, category_id))
+    |> put_assoc(:category, ReadRepo.get(Category, category_id))
   end
   defp put_assoc_category(changeset, _), do: changeset
 
   defp put_assoc_preview_image_file(changeset, %{preview_image_file: %{id: preview_image_file_id}}) do
     changeset
-    |> put_assoc(:preview_image_file, Repo.get(File, preview_image_file_id))
+    |> put_assoc(:preview_image_file, ReadRepo.get(File, preview_image_file_id))
   end
   defp put_assoc_preview_image_file(changeset, %{preview_image_file: nil}) do
     changeset
@@ -85,7 +85,7 @@ defmodule Api.Content.Article do
 
   defp put_assoc_groups(changeset, %{groups: groups}) do
     changeset
-    |> put_assoc(:groups, Repo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))
+    |> put_assoc(:groups, ReadRepo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))
   end
   defp put_assoc_groups(changeset, _), do: changeset
 

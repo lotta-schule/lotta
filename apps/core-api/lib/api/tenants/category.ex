@@ -1,7 +1,7 @@
 defmodule Api.Tenants.Category do
   use Ecto.Schema
   import Ecto.{Changeset,Query}
-  alias Api.Repo
+  use Api.ReadRepoAliaser
   alias Api.Accounts.{File,UserGroup}
   alias Api.Tenants.{Category,Tenant,Widget}
 
@@ -32,7 +32,7 @@ defmodule Api.Tenants.Category do
   @doc false
   def changeset(category, attrs) do
     category
-    |> Api.Repo.preload([:banner_image_file, :groups, :widgets])
+    |> ReadRepo.preload([:banner_image_file, :groups, :widgets])
     |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :is_sidenav, :sort_key])
     |> validate_required([:title])
     |> put_assoc_category(attrs)
@@ -43,7 +43,7 @@ defmodule Api.Tenants.Category do
 
   defp put_assoc_banner_image_file(changeset, %{banner_image_file: %{id: banner_image_file_id}}) do
     changeset
-    |> put_assoc(:banner_image_file, Api.Repo.get(Api.Accounts.File, banner_image_file_id))
+    |> put_assoc(:banner_image_file, ReadRepo.get(Api.Accounts.File, banner_image_file_id))
   end
   defp put_assoc_banner_image_file(changeset, %{banner_image_file: nil}) do
     changeset
@@ -53,18 +53,18 @@ defmodule Api.Tenants.Category do
 
   defp put_assoc_category(changeset, %{category: %{id: category_id}}) do
     changeset
-    |> put_assoc(:category, Api.Repo.get(Api.Tenants.Category, category_id))
+    |> put_assoc(:category, ReadRepo.get(Api.Tenants.Category, category_id))
   end
   defp put_assoc_category(changeset, _args), do: changeset
   
   defp put_assoc_groups(changeset, %{groups: groups}) do
     changeset
-    |> put_assoc(:groups, Repo.all(from ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id)))))
+    |> put_assoc(:groups, ReadRepo.all(from ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id)))))
   end
   defp put_assoc_groups(changeset, _args), do: changeset
 
   defp put_assoc_widgets(changeset, %{widgets: widgets}) do
-    widgets = Repo.all(from w in Widget,
+    widgets = ReadRepo.all(from w in Widget,
       where: w.id in ^(Enum.map(widgets, fn widget -> widget.id end))
     )
     changeset
@@ -74,7 +74,7 @@ defmodule Api.Tenants.Category do
 
   def get_max_sort_key(%Tenant{id: tenant_id}) do
     from(c in Category, where: c.tenant_id == ^tenant_id, select: max(c.sort_key))
-    |> Repo.one
+    |> ReadRepo.one
   end
 
 end

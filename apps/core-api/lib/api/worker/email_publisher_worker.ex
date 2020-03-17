@@ -1,6 +1,7 @@
 defmodule Api.EmailPublisherWorker do
   use GenServer
   use AMQP
+  use Api.ReadRepoAliaser
   alias Api.Services.EmailSendRequest
   alias Api.Tenants.Tenant
 
@@ -85,7 +86,7 @@ defmodule Api.EmailPublisherWorker do
   end
 
   def send_article_is_ready_admin_notification(%Api.Content.Article{} = article) do
-    article = Api.Repo.preload(article, :tenant)
+    article = ReadRepo.preload(article, :tenant)
     tenant = article.tenant
     article_url = Api.Content.Article.get_url(article)
     tenant
@@ -107,10 +108,10 @@ defmodule Api.EmailPublisherWorker do
   end
 
   def send_content_module_form_response(%Api.Content.ContentModule{} = content_module, %{} = responses) do
-    content_module = Api.Repo.preload(content_module, :article)
+    content_module = ReadRepo.preload(content_module, :article)
     article =
       content_module.article
-      |> Api.Repo.preload(:tenant)
+      |> ReadRepo.preload(:tenant)
     tenant = article.tenant
     responses_list =
       responses
