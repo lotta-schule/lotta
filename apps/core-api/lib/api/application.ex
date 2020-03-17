@@ -11,9 +11,9 @@ defmodule Api.Application do
 
     # List all child processes to be supervised
     children =
-    if Application.fetch_env(:api, Api.ReadRepo) != :error do
-      Api.ReadRepo
-    else [] end ++ [
+    (if Application.fetch_env(:api, Api.ReadRepo) != :error do
+      [Api.ReadRepo]
+    else [] end) ++ [
       # Start the Ecto repository
       Api.Repo,
       # Start the endpoint when the application starts
