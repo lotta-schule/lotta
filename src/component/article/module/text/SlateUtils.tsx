@@ -41,8 +41,13 @@ export const renderElement = ({ attributes, children, element }: RenderElementPr
             );
         case 'link':
             const href = element.href;
+            let isSameHost = false;
+            try {
+                const url = new URL(href);
+                isSameHost = window.location.host === url.host;
+            } catch { }
             return (
-                <a {...attributes} href={href} title={href} target={'_blank'} rel="noopener noreferrer">{children}</a>
+                <a {...attributes} href={href} title={href} target={isSameHost ? '_self' : '_blank'} rel="noopener noreferrer">{children}</a>
             );
         default:
             return (
