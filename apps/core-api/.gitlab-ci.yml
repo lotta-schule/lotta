@@ -162,6 +162,12 @@ deploy production:
       --set postgresql.postgresqlDatabase=$POSTGRES_DB
       --set postgresql.postgresqlUsername=$POSTGRES_USER
       --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
+      --set postgresql.replication.enabled=true
+      --set postgresql.replication.user=$POSTGRES_REPLICATION_USER
+      --set postgresql.replication.password=$POSTGRES_REPLICATION_PASSWORD
+      --set postgresql.replication.slaveReplicas=3
+      --set postgresql.replication.synchronousCommit="on"
+      --set postgresql.replication.numSynchronousReplicas=1
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
       --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
       --set rabbitmq.ingress.enabled=true
