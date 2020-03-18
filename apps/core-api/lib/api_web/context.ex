@@ -35,15 +35,22 @@ defmodule ApiWeb.Context do
       current_user =
         Repo.get(Accounts.User, current_user.id)
         |> Repo.preload([:groups, :avatar_image_file])
+      user_group_ids = Accounts.User.group_ids(current_user, tenant)
+      user_is_admin = Accounts.User.is_admin?(current_user, tenant)
       Task.start_link(fn ->
         current_user
         |> Repo.preload(:tenant)
         |> Accounts.see_user()
       end)
-      Map.put(context, :current_user, current_user)
+      context
+      |> Map.put(:current_user, current_user)
+      |> Map.put(:user_group_ids, user_group_ids)
+      |> Map.put(:user_is_admin, user_is_admin)
     else
       _ ->
         context
+        |> Map.put(:user_group_ids, [])
+        |> Map.put(:user_is_admin, false)
     end
   end
 

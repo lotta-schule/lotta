@@ -29,8 +29,8 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(%Tenant{} = tenant, category_id, user, filter) do
-    query = list_public_articles(tenant, user)
+  def list_articles(%Tenant{} = tenant, category_id, user, user_group_ids, user_is_admin, filter) do
+    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
     case category_id do
       nil ->
         from [...,c] in query, where: c.hide_articles_from_homepage != true
@@ -41,8 +41,8 @@ defmodule Api.Content do
     |> ReadRepo.all()
   end
 
-  def get_topics(%Tenant{} = tenant, user) do
-    query = list_public_articles(tenant, user)
+  def get_topics(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
+    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
     Ecto.Query.from([a, ...] in query,
       where: not is_nil(a.topic),
       select: a.topic)
@@ -58,13 +58,13 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles_by_topic(%Tenant{} = tenant, user, topic) do
-    query = list_public_articles(tenant, user)
+  def list_articles_by_topic(%Tenant{} = tenant, user, user_group_ids, user_is_admin, topic) do
+    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
     from(a in query,
       where: a.topic == ^topic,
       order_by: [desc: :updated_at]
     )
-    |> ReadRepo.all
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -293,15 +293,14 @@ defmodule Api.Content do
     |> Repo.update()
   end
 
-  def list_public_articles(%Tenant{} = tenant, user) do
-    user_group_ids = User.group_ids(user, tenant)
+  def list_public_articles(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,
       join: c in Category,
       on: c.id == a.category_id,
       where: a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
-             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^User.is_admin?(user, tenant)),
+             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^user_is_admin),
       distinct: true
     )
   end

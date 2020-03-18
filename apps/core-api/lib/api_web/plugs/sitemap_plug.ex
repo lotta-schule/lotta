@@ -46,7 +46,7 @@ defmodule ApiWeb.SitemapPlug do
 
   defp get_categories_body(conn, %Tenant{} = tenant) do
     categories = tenant
-      |> Tenants.list_categories_by_tenant(nil)
+      |> Tenants.list_categories_by_tenant(nil, [])
 
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <>
     "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n" <>
@@ -63,7 +63,7 @@ defmodule ApiWeb.SitemapPlug do
 
   defp get_articles_body(conn, %Tenant{} = tenant, date) do
     query = tenant
-      |> Content.list_public_articles(nil)
+      |> Content.list_public_articles(nil, [], false)
     articles = from(
       a in query,
       where: fragment("?::date", a.inserted_at) == ^date

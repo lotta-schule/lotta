@@ -26,27 +26,27 @@ defmodule Api.ArticleResolver do
   def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
 
   def get_topics(_args, %{context: %{tenant: tenant} = context}) do
-    {:ok, Content.get_topics(tenant, context[:current_user])}
+    {:ok, Content.get_topics(tenant, context[:current_user], context[:user_group_ids], context[:user_is_admin])}
   end
 
-  def all(%{category_id: category_id} = args, %{context: %{current_user: current_user, tenant: tenant}}) do
-    {:ok, Content.list_articles(tenant, category_id, current_user, args[:filter])}
+  def all(%{category_id: category_id} = args, %{context: %{current_user: current_user, tenant: tenant} = context}) do
+    {:ok, Content.list_articles(tenant, category_id, current_user, context[:user_group_ids], context[:user_is_admin], args[:filter])}
   end
-  def all(args, %{context: %{current_user: current_user, tenant: tenant}}) do
-    {:ok, Content.list_articles(tenant, nil, current_user, args[:filter])}
+  def all(args, %{context: %{current_user: current_user, tenant: tenant} = context}) do
+    {:ok, Content.list_articles(tenant, nil, current_user, context[:user_group_ids], context[:user_is_admin], args[:filter])}
   end
   def all(%{category_id: category_id} = args, %{context: %{tenant: tenant}}) do
-    {:ok, Content.list_articles(tenant, category_id, nil, args[:filter])}
+    {:ok, Content.list_articles(tenant, category_id, nil, [], false, args[:filter])}
   end
   def all(args, %{context: %{tenant: tenant}}) do
-    {:ok, Content.list_articles(tenant, nil, nil, args[:filter])}
+    {:ok, Content.list_articles(tenant, nil, nil, [], false, args[:filter])}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden."}
   end
   
   def all_unpublished(_args, %{context: %{tenant: tenant} = context}) do
-    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    case context[:current_user] && context[:user_is_admin] do
       true ->
         {:ok, Content.list_unpublished_articles(tenant)}
       _ ->
@@ -68,7 +68,7 @@ defmodule Api.ArticleResolver do
   end
 
   def by_topic(%{topic: topic}, %{context: %{tenant: tenant} = context}) do
-    {:ok, Content.list_articles_by_topic(tenant, context[:current_user], topic)}
+    {:ok, Content.list_articles_by_topic(tenant, context[:current_user], context[:user_group_ids], context[:user_is_admin], topic)}
   end
   def by_topic(_args, _info) do
     {:error, "Tenant nicht gefunden."}
@@ -86,7 +86,7 @@ defmodule Api.ArticleResolver do
 
   def update(%{id: id, article: article_input}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if context[:current_user] && (User.is_admin?(context[:current_user], tenant) || User.is_author?(context[:current_user], article)) do
+    if context[:current_user] && (context[:user_is_admin] || User.is_author?(context[:current_user], article)) do
       article
       |> Content.update_article(article_input)
     else
@@ -96,7 +96,7 @@ defmodule Api.ArticleResolver do
   
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if context[:current_user] && (User.is_admin?(context[:current_user], tenant) || User.is_author?(context[:current_user], article)) do
+    if context[:current_user] && (context[:user_is_admin] || User.is_author?(context[:current_user], article)) do
       article
       |> Content.delete_article()
     else
@@ -105,7 +105,7 @@ defmodule Api.ArticleResolver do
   end
 
   def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context[:current_user], tenant) do
+    if context[:current_user] && context[:user_is_admin] do
       Content.toggle_article_pin(article_id)
     else
       {:error, "Nur Administratoren dürfen Beiträge anpinnen."}
