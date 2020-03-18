@@ -96,7 +96,7 @@ defmodule Api.Accounts.User do
     |> User.get_groups(tenant)
     |> Enum.map(fn group -> group.id end)
   end
-  def group_ids(nil, _), do: []
+  def group_ids(_, _), do: []
 
   @doc false
   def changeset(user, attrs) do
