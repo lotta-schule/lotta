@@ -27,7 +27,7 @@ defmodule Api.UserGroupResolver do
 
 
   def get(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && context[:user_is_admin] do
       try do
         {:ok, Accounts.get_user_group!(id)}
       rescue
