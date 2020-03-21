@@ -168,8 +168,10 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
               onClick={() => closeDialog(onSelectFiles)(state.selectedFiles)}
             >
               {state.selectedFiles.length ? (
-                `${state.selectedFiles.length} Bilder auswählen`
-              ) : 'Bilder auswählen'}
+                state.selectedFiles.length === 1 ?
+                  `Datei auswählen` :
+                  `${state.selectedFiles.length} Dateien auswählen`
+              ) : 'Dateien auswählen'}
             </Button>
           </Toolbar>
         )}
