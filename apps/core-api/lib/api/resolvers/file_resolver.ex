@@ -1,4 +1,5 @@
 defmodule Api.FileResolver do
+  use Api.ReadRepoAliaser
   alias Api.Accounts
   alias Api.UploadService
   alias Api.MediaConversionPublisherWorker
@@ -33,7 +34,7 @@ defmodule Api.FileResolver do
   def move(%{id: id} = args, %{context: %{current_user: current_user}}) do
     try do
       file = Accounts.get_file!(id)
-      |> Api.Repo.preload(:tenant)
+      |> ReadRepo.preload(:tenant)
       case Accounts.File.is_author?(file, current_user) || ((file.is_public || args[:is_public] == true) && Accounts.User.is_admin?(current_user, file.tenant)) do
         true ->
           Accounts.move_file(file, args, Accounts.User.is_admin?(current_user, file.tenant))
@@ -60,10 +61,10 @@ defmodule Api.FileResolver do
   def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     try do
       file = Accounts.get_file!(id)
-      |> Api.Repo.preload(:tenant)
+      |> ReadRepo.preload(:tenant)
       case Accounts.File.is_author?(file, current_user) || (file.is_public && Accounts.User.is_admin?(current_user, file.tenant)) do
         true ->
-          file = Api.Repo.preload(file, :file_conversions)
+          file = ReadRepo.preload(file, :file_conversions)
           Enum.map(file.file_conversions, fn file_conversion ->
             Accounts.delete_file_conversion(file_conversion)
             Accounts.File.delete_attachment(file_conversion)

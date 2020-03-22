@@ -5,12 +5,13 @@ defmodule Api.Accounts do
 
   import Ecto.Query
   alias Api.Repo
+  use Api.ReadRepoAliaser
 
   alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,UserEnrollmentToken,File}
   alias Api.Tenants.Tenant
 
   def data() do
-    Dataloader.Ecto.new(Api.Repo, query: &query/2)
+    Dataloader.Ecto.new(ReadRepo, query: &query/2)
   end
 
   def query(queryable, _params) do
@@ -41,7 +42,7 @@ defmodule Api.Accounts do
 
     query = from q in subquery(union(assigned_groups_query, ^dynamic_groups_query)),
       order_by: [q.name, q.email]
-    Repo.all(query)
+    ReadRepo.all(query)
   end
 
   @doc """
@@ -59,7 +60,7 @@ defmodule Api.Accounts do
 
   """
   def get_user!(id) do
-    Repo.get!(User, id)
+    ReadRepo.get!(User, id)
   end
 
   @doc """
@@ -76,7 +77,7 @@ defmodule Api.Accounts do
       query = Ecto.Query.from(u in User,
         where: u.email == ^searchtext or (u.tenant_id == ^tenant_id and (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext)))
       )
-      {:ok, Repo.all(query)}
+      {:ok, ReadRepo.all(query)}
   end
 
   @doc """
@@ -152,7 +153,7 @@ defmodule Api.Accounts do
       where: t.token == ^token and g.tenant_id == ^(tenant.id),
       distinct: true
     )
-    |> Repo.all()
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -166,7 +167,7 @@ defmodule Api.Accounts do
       where: t.token in ^tokens and g.tenant_id == ^(tenant.id),
       distinct: true
     )
-    |> Repo.all()
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -217,7 +218,7 @@ defmodule Api.Accounts do
   end
 
   def request_password_reset_token(email, token) do
-    case Repo.get_by(User, email: email) do
+    case ReadRepo.get_by(User, email: email) do
       nil ->
         {:error, "User not found"}
       user ->
@@ -252,22 +253,22 @@ defmodule Api.Accounts do
   end
 
   def set_user_blocked(%User{} = user, %Tenant{} = tenant, true) do
-    user = Api.Repo.preload(user, :blocked_tenants)
+    user = ReadRepo.preload(user, :blocked_tenants)
     blocked_tenants =
       Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end) ++ [%Api.Accounts.BlockedTenant{user_id: user.id, tenant_id: tenant.id}]
     user
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:blocked_tenants, blocked_tenants)
-    |> Api.Repo.update()
+    |> Repo.update()
   end
   def set_user_blocked(%User{} = user, %Tenant{} = tenant, false) do
-    user = Api.Repo.preload(user, :blocked_tenants)
+    user = ReadRepo.preload(user, :blocked_tenants)
     blocked_tenants =
       Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end)
     user
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:blocked_tenants, blocked_tenants)
-    |> Api.Repo.update()
+    |> Repo.update()
   end
 
   @doc """
@@ -284,7 +285,7 @@ defmodule Api.Accounts do
       where: f.tenant_id == ^tenant_id and (f.user_id == ^user_id or f.is_public == true),
       order_by: [:is_public, :path, :filename]
     )
-    |> Repo.all()
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -301,7 +302,7 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_file!(id), do: Repo.get!(File, id)
+  def get_file!(id), do: ReadRepo.get!(File, id)
 
   @doc """
   Creates a file.
@@ -342,9 +343,9 @@ defmodule Api.Accounts do
       update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
       select: [:id]
     )
-    |> Api.Repo.update_all([])
+    |> Repo.update_all([])
     |> elem(1)
-    files = Api.Repo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
+    files = ReadRepo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
     {:ok, files}
   end
 
@@ -354,9 +355,9 @@ defmodule Api.Accounts do
       update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
       select: [:id]
     )
-    |> Api.Repo.update_all([])
+    |> Repo.update_all([])
     |> elem(1)
-    files = Api.Repo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
+    files = ReadRepo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
     {:ok, files}
   end
 
@@ -401,7 +402,7 @@ defmodule Api.Accounts do
 
   """
   def list_file_conversions do
-    Repo.all(FileConversion)
+    ReadRepo.all(FileConversion)
   end
 
   @doc """
@@ -418,7 +419,7 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_file_conversion!(id), do: Repo.get!(FileConversion, id)
+  def get_file_conversion!(id), do: ReadRepo.get!(FileConversion, id)
 
   @doc """
   Creates a file_conversion.
@@ -500,7 +501,7 @@ defmodule Api.Accounts do
 
   """
   def get_user_group!(id) do
-    Repo.get!(UserGroup, id)
+    ReadRepo.get!(UserGroup, id)
   end
 
   @doc """
@@ -575,7 +576,7 @@ defmodule Api.Accounts do
   def see_user(%User{} = user) do
     user
     |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)})
-    |> Api.Repo.update!()
+    |> Repo.update!()
   end
 
 end

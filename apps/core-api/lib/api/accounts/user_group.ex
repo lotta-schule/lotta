@@ -1,11 +1,11 @@
 defmodule Api.Accounts.UserGroup do
   use Ecto.Schema
+  use Api.ReadRepoAliaser
   import Ecto.Changeset
   import Ecto.Query
 
   alias Api.Accounts.{User, UserGroup}
   alias Api.Tenants.Tenant
-  alias Api.Repo
 
   schema "user_groups" do
     field :name, :string
@@ -27,7 +27,7 @@ defmodule Api.Accounts.UserGroup do
   @doc false
   def changeset(user_group, attrs) do
     user_group
-    |> Repo.preload(:enrollment_tokens)
+    |> ReadRepo.preload(:enrollment_tokens)
     |> cast(attrs, [:name, :sort_key, :is_admin_group])
     |> validate_required([:name, :sort_key])
     |> put_assoc_enrollment_tokens(attrs)
@@ -41,6 +41,6 @@ defmodule Api.Accounts.UserGroup do
 
   def get_max_sort_key(%Tenant{id: tenant_id}) do
     from(c in UserGroup, where: c.tenant_id == ^tenant_id, select: max(c.sort_key))
-    |> Repo.one
+    |> ReadRepo.one
   end
 end

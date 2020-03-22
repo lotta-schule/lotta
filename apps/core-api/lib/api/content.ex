@@ -6,13 +6,14 @@ defmodule Api.Content do
   import Ecto.Query
   import Ecto.Changeset
   alias Api.Repo
+  use Api.ReadRepoAliaser
 
   alias Api.Content.{Article, ContentModule, ContentModuleResult}
   alias Api.Tenants.{Category,Tenant}
   alias Api.Accounts.{User}
 
   def data() do
-    Dataloader.Ecto.new(Api.Repo, query: &query/2)
+    Dataloader.Ecto.new(ReadRepo, query: &query/2)
   end
 
   def query(queryable, _params) do
@@ -28,8 +29,8 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(%Tenant{} = tenant, category_id, user, filter) do
-    query = list_public_articles(tenant, user)
+  def list_articles(%Tenant{} = tenant, category_id, user, user_group_ids, user_is_admin, filter) do
+    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
     case category_id do
       nil ->
         from [...,c] in query, where: c.hide_articles_from_homepage != true
@@ -37,15 +38,15 @@ defmodule Api.Content do
         from a in query, where: a.category_id == ^category_id
     end
     |> filter_query(filter)
-    |> Repo.all()
+    |> ReadRepo.all()
   end
 
-  def get_topics(%Tenant{} = tenant, user) do
-    query = list_public_articles(tenant, user)
+  def get_topics(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
+    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
     Ecto.Query.from([a, ...] in query,
       where: not is_nil(a.topic),
       select: a.topic)
-    |> Repo.all
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -57,13 +58,13 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles_by_topic(%Tenant{} = tenant, user, topic) do
-    query = list_public_articles(tenant, user)
+  def list_articles_by_topic(%Tenant{} = tenant, user, user_group_ids, user_is_admin, topic) do
+    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
     from(a in query,
       where: a.topic == ^topic,
       order_by: [desc: :updated_at]
     )
-    |> Repo.all
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -76,7 +77,8 @@ defmodule Api.Content do
 
   """
   def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
-    Repo.all(Ecto.Query.from a in Article, where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id))
+    Ecto.Query.from(a in Article, where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id))
+    |> ReadRepo.all()
   end
 
   @doc """
@@ -90,7 +92,7 @@ defmodule Api.Content do
   """
   def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
     user_id = user.id
-    Repo.all(Ecto.Query.from a in Article,
+    ReadRepo.all(Ecto.Query.from a in Article,
       where: a.tenant_id == ^tenant.id,
       join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id,
       order_by: :id
@@ -112,7 +114,7 @@ defmodule Api.Content do
 
   """
   def get_article!(id) do
-    Repo.get!(Article, id)
+    ReadRepo.get!(Article, id)
   end
 
   @doc """
@@ -194,7 +196,7 @@ defmodule Api.Content do
 
   """
   def list_content_modules do
-    Repo.all(ContentModule)
+    ReadRepo.all(ContentModule)
   end
 
   @doc """
@@ -211,7 +213,7 @@ defmodule Api.Content do
       ** (Ecto.NoResultsError)
 
   """
-  def get_content_module!(id), do: Repo.get!(ContentModule, id)
+  def get_content_module!(id), do: ReadRepo.get!(ContentModule, id)
 
   @doc """
   Creates a content_module.
@@ -291,15 +293,14 @@ defmodule Api.Content do
     |> Repo.update()
   end
 
-  defp list_public_articles(%Tenant{} = tenant, user) do
-    user_group_ids = User.group_ids(user, tenant)
+  def list_public_articles(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,
       join: c in Category,
       on: c.id == a.category_id,
       where: a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
-             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^User.is_admin?(user, tenant)),
+             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^user_is_admin),
       distinct: true
     )
   end

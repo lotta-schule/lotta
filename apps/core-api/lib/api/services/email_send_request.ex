@@ -1,11 +1,12 @@
 defmodule Api.Services.EmailSendRequest do
+  use Api.ReadRepoAliaser
   alias Api.Tenants.Tenant
 
   @derive [Poison.Encoder]
   defstruct [:to, :sender_name, :subject, :template, :templatevars]
 
   def get_tenant_info(%Tenant{} = tenant) do
-    tenant = Api.Repo.preload(tenant, :logo_image_file)
+    tenant = ReadRepo.preload(tenant, :logo_image_file)
     %{
       id: tenant.id,
       custom_theme: tenant.custom_theme,

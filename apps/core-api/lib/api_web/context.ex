@@ -35,15 +35,22 @@ defmodule ApiWeb.Context do
       current_user =
         Repo.get(Accounts.User, current_user.id)
         |> Repo.preload([:groups, :avatar_image_file])
+      user_group_ids = Accounts.User.group_ids(current_user, tenant)
+      user_is_admin = Accounts.User.is_admin?(current_user, tenant)
       Task.start_link(fn ->
         current_user
         |> Repo.preload(:tenant)
         |> Accounts.see_user()
       end)
-      Map.put(context, :current_user, current_user)
+      context
+      |> Map.put(:current_user, current_user)
+      |> Map.put(:user_group_ids, user_group_ids)
+      |> Map.put(:user_is_admin, user_is_admin)
     else
       _ ->
         context
+        |> Map.put(:user_group_ids, [])
+        |> Map.put(:user_is_admin, false)
     end
   end
 
@@ -62,29 +69,10 @@ defmodule ApiWeb.Context do
   end
   
   defp tenant_by_origin_header(conn) do
-    with [origin] <- get_req_header(conn, "origin"),
-        %URI{host: host} <- URI.parse(origin),
-        false <- is_nil(host) do
-      case Tenants.get_tenant_by_custom_domain_host(host) do
-        nil ->
-          IO.inspect("custom domain is not found with #{host}. Trying to recognize lotta slug")
-          base_url_without_port = Regex.replace(~r/:\d*$/, Application.fetch_env!(:api, :base_url), "")
-          with {:ok, regex} <- Regex.compile("^(?<slug>.*)#{Regex.escape(base_url_without_port)}"),
-              %{"slug" => slug} <- Regex.named_captures(regex, host) do
-            Tenants.get_tenant_by_slug(slug)
-          else
-            error ->
-              IO.inspect(error)
-              IO.inspect("tenant not found by slug or host, host is #{host}")
-              nil
-          end
-        tenant ->
-          tenant
-      end
-    else
-      error ->
-        IO.inspect("could not parse origin header")
-        IO.inspect(error)
+    case get_req_header(conn, "origin") do
+      [origin] ->
+        Tenants.get_tenant_by_origin(origin)
+      _ ->
         nil
     end
   end

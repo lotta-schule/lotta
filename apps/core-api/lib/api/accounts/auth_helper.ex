@@ -2,12 +2,12 @@ defmodule Api.Accounts.AuthHelper do
   @moduledoc false
 
   import Bcrypt
-  alias Api.Repo
+  use Api.ReadRepoAliaser
   alias Api.Accounts.User
   alias Api.Tenants.Tenant
 
   def login_with_username_pass(username, given_pass) do
-    user = Repo.get_by(User, email: String.downcase(username))
+    user = ReadRepo.get_by(User, email: String.downcase(username))
     cond do
       user && verify_pass(given_pass, user.password_hash) -> {:ok, user}
       true -> {:error, "Falsche Zugangsdaten."}

@@ -8,7 +8,8 @@ port = String.to_integer(System.get_env("PORT") || "4000")
 # database
 db_user = System.fetch_env!("POSTGRES_USER")
 db_password = System.fetch_env!("POSTGRES_PASSWORD")
-db_host = System.fetch_env!("POSTGRES_HOST")
+db_read_host = System.fetch_env!("POSTGRES_HOST")
+db_write_host = System.fetch_env!("POSTGRES_MASTER_HOST")
 db_name = System.fetch_env!("POSTGRES_DB")
 # redis
 redis_host = System.fetch_env!("REDIS_HOST")
@@ -36,7 +37,15 @@ config :api, Api.Repo,
   username: db_user,
   password: db_password,
   database: db_name,
-  hostname: db_host,
+  hostname: db_write_host,
+  show_sensitive_data_on_connection_error: false,
+  pool_size: 10
+
+config :api, Api.ReadRepo,
+  username: db_user,
+  password: db_password,
+  database: db_name,
+  hostname: db_read_host,
   show_sensitive_data_on_connection_error: false,
   pool_size: 10
 

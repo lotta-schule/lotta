@@ -2,7 +2,7 @@ defmodule Api.WidgetResolver do
   alias Api.Accounts.User
 
   def all(_args, %{context: %{tenant: tenant} = context}) do
-    {:ok, Api.Tenants.list_widgets_by_tenant(tenant, context[:current_user])}
+    {:ok, Api.Tenants.list_widgets_by_tenant(tenant, context[:current_user], context[:user_group_ids])}
   end
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden"}

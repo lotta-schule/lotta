@@ -13,7 +13,6 @@ defmodule Api.ScheduleResolver do
           date ->
             "#{url}&date=#{Date.to_iso8601(date, :basic)}"
         end
-        IO.inspect(url)
         case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
           {:ok, 200, _headers, clientRef} ->
             :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}])
