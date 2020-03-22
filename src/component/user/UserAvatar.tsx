@@ -8,12 +8,13 @@ import { User } from 'util/model';
 export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
     user: UserModel;
     className?: string;
+    size?: number;
 }
 
-export const UserAvatar = memo<UserAvatarProps>(({ user, ...otherProps }) => {
+export const UserAvatar = memo<UserAvatarProps>(({ user, size, ...otherProps }) => {
     const src = useMemo(() => {
-        return User.getAvatarUrl(user);
-    }, [user]);
+        return User.getAvatarUrl(user, size);
+    }, [size, user]);
     return (
         <Avatar src={src} alt={user.name} {...otherProps} />
     );

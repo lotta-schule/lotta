@@ -57,4 +57,11 @@ export const File = {
                 );
         }
     },
+
+    getSameOriginUrl(file: FileModel) {
+        if (process.env.REACT_APP_FILE_REPLACEMENT_URL) {
+            return file.remoteLocation?.replace(new RegExp(`^${process.env.REACT_APP_FILE_REPLACEMENT_URL}`), '');
+        }
+        return file.remoteLocation;
+    }
 };

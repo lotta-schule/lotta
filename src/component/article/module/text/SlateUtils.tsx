@@ -1,73 +1,34 @@
-import React from 'react';
-import { RenderMarkProps, Plugins, RenderBlockProps, RenderInlineProps } from "slate-react";
+import React, { CSSProperties } from 'react';
 import { Typography } from '@material-ui/core';
-import { Editor } from 'slate';
-import Lists from '@convertkit/slate-lists';
+import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
+import { Editor, Element, Range, Text, Transforms, Node } from 'slate';
+import { SlatePre050Document, SlatePre050Node } from './interface/SlatePre050Document';
+import isUrl from 'is-url';
 
-export const plugins: Plugins = [Lists({
-    blocks: {
-        ordered_list: 'ordered-list',
-        unordered_list: 'unordered-list',
-        list_item: 'list-item',
-    },
-    classNames: {
-        ordered_list: 'ordered-list',
-        unordered_list: 'unordered-list',
-        list_item: 'list-item'
-    }
-})]
+export type Mark = 'bold' | 'italic' | 'underline' | 'link' | 'small';
 
-export const renderMark = (props: RenderMarkProps, editor: Editor, next: () => any): any => {
-    switch (props.mark.type) {
-        case 'bold':
-            return (
-                <strong {...props.attributes}>{props.children}</strong>
-            );
-        case 'italic':
-            return (
-                <span {...props.attributes} style={{ fontStyle: 'italic' }}>{props.children}</span>
-            );
-        case 'underline':
-            return (
-                <span {...props.attributes} style={{ textDecoration: 'underline' }}>{props.children}</span>
-            );
-        default:
-            return next();
-    }
-}
+export type Block = 'paragraph' | 'unordered-list' | 'ordered-list' | 'list-item' | 'image';
 
-export const renderInline = (props: RenderInlineProps, editor: Editor, next: () => any): any => {
-    switch (props.node.type) {
-        case 'link':
-            const href = props.node.data.get('href');
-            return (
-                <a {...props.attributes} href={href} title={href} target={'_blank'} rel="noopener noreferrer">{props.children}</a>
-            );
-        default:
-            return next();
-    }
-}
-
-export const renderBlock = (props: RenderBlockProps, editor: Editor, next: () => any): any => {
-    switch (props.node.type) {
+export const renderElement = ({ attributes, children, element }: RenderElementProps) => {
+    switch (element.type) {
         case 'unordered-list':
             return (
-                <ul {...props.attributes} style={{ listStyle: 'disc', paddingLeft: '1em' }}>{props.children}</ul>
+                <ul {...attributes} style={{ listStyle: 'disc', paddingLeft: '1em' }}>{children}</ul>
             );
         case 'ordered-list':
             return (
-                <ol {...props.attributes} style={{ listStyle: 'decimal', paddingLeft: '1em' }}>{props.children}</ol>
+                <ol {...attributes} style={{ listStyle: 'decimal', paddingLeft: '1em' }}>{children}</ol>
             );
         case 'list-item':
             return (
-                <li {...props.attributes} style={{ paddingLeft: '.5em' }}>{props.children}</li>
+                <li {...attributes} style={{ paddingLeft: '.5em' }}>{children}</li>
             );
         case 'image': {
-            const src = props.node.data.get('src');
+            const src = element.src;
             const imageUrl = `https://afdptjdxen.cloudimg.io/width/400/foil1/${src}`;
             return (
                 <img
-                    {...props.attributes}
+                    {...attributes}
                     src={imageUrl}
                     style={{ float: 'right', maxWidth: '30%' }}
                     alt={src}
@@ -76,9 +37,185 @@ export const renderBlock = (props: RenderBlockProps, editor: Editor, next: () =>
         }
         case 'paragraph':
             return (
-                <Typography variant={'body1'} component={'p'} {...props.attributes}>{props.children}</Typography>
+                <Typography variant={'body1'} component={'p'} {...attributes}>{children}</Typography>
+            );
+        case 'link':
+            const href = element.href;
+            let isSameHost = false;
+            try {
+                const url = new URL(href);
+                isSameHost = window.location.host === url.host;
+            } catch { }
+            return (
+                <a {...attributes} href={href} title={href} target={isSameHost ? '_self' : '_blank'} rel="noopener noreferrer">{children}</a>
             );
         default:
-            return next();
+            return (
+                <div {...attributes}>{children}</div>
+            );
     }
+};
+
+export const renderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
+    const customStyles: CSSProperties = {
+        fontWeight: leaf.bold ? 'bold' : 'normal',
+        fontStyle: leaf.italic ? 'italic' : 'normal',
+        textDecoration: leaf.underline ? 'underline' : 'none',
+        fontSize: leaf.small ? '.85em' : 'inherit'
+    };
+    return (
+        <span {...attributes} style={customStyles}>
+            {children}
+        </span>
+    );
+};
+
+export const isMarkActive = (editor: Editor, mark: Mark): boolean => {
+    return Editor.marks(editor)?.[mark] ?? false;
+};
+
+export const toggleMark = (editor: Editor, mark: Mark) => {
+    const isActive = isMarkActive(editor, mark);
+    Transforms.setNodes(
+        editor,
+        { [mark]: isActive ? null : true },
+        { match: Text.isText, split: true }
+    )
+};
+
+export const isBlockActive = (editor: Editor, block: Block): boolean => {
+    const [match] = Editor.nodes(editor, { match: n => n.type === block });
+    return !!match;
+};
+
+export const toggleBlock = (editor: Editor, block: Block) => {
+    const isActive = isBlockActive(editor, block);
+    const listTypes = ['unordered-list', 'ordered-list'];
+    const isList = listTypes.includes(block);
+
+    Transforms.unwrapNodes(editor, {
+        match: n => listTypes.includes(n.type),
+        split: true
+    });
+
+    Transforms.setNodes(editor, {
+        type: isActive ? 'paragraph' : isList ? 'list-item' : block
+    });
+
+    if (!isActive && isList) {
+        const blockEl = { type: block, children: [] };
+        Transforms.wrapNodes(editor, blockEl);
+    }
+};
+
+export const deserialize = (encoded: string) => {
+    const decoded = JSON.parse(decodeURIComponent(Buffer.from(encoded, 'base64').toString('utf8')));
+    return decoded.document ? migrateFromPreSlate050(decoded.document) : decoded;
+};
+
+export const serialize = (decoded: any) => Buffer.from(JSON.stringify(decoded), 'utf8').toString('base64');
+
+export const migrateFromPreSlate050 = (document: SlatePre050Document): Node[] => {
+    const convertNode = (oldNode: SlatePre050Node): Node => ({
+        ...(oldNode.text !== undefined ? { text: oldNode.text } : {}),
+        ...(oldNode.type !== undefined ? { type: oldNode.type } : {}),
+        ...(oldNode.nodes?.length ? { children: oldNode.nodes.map(convertNode) } : {}),
+        ...oldNode.data,
+        ...oldNode.marks?.reduce((acc, mark) => ({
+            ...acc,
+            [mark.type]: true
+        }), {})
+    } as Node);
+    return document.nodes.map(convertNode);
+};
+
+//
+//  LINKS
+//
+
+export const insertLink = (editor: Editor, url: string, text: string = url) => {
+    if (editor.selection) {
+        wrapLink(editor, url, text);
+    }
+}
+
+export const isLinkActive = (editor: Editor) => {
+    const [link] = Editor.nodes(editor, { match: n => n.type === 'link' });
+    return !!link;
+}
+
+export const unwrapLink = (editor: Editor) => {
+    Transforms.unwrapNodes(editor, { match: n => n.type === 'link' });
+}
+
+export const wrapLink = (editor: Editor, url: string, text: string = url) => {
+    if (isLinkActive(editor)) {
+        unwrapLink(editor);
+    }
+
+    const { selection } = editor;
+    const isCollapsed = selection && Range.isCollapsed(selection);
+    const link = {
+        type: 'link',
+        href: url,
+        children: isCollapsed ? [{ text }] : [],
+    }
+
+    if (isCollapsed) {
+        Transforms.insertNodes(editor, link);
+    } else {
+        Transforms.wrapNodes(editor, link, { split: true });
+        Transforms.collapse(editor, { edge: 'end' });
+    }
+}
+
+export const withLinks = (editor: ReactEditor) => {
+    const { insertData, insertText, isInline } = editor;
+
+    editor.isInline = (element: Element) => {
+        return element.type === 'link' ? true : isInline(element)
+    }
+
+    editor.insertText = (text: string) => {
+        if (text && isUrl(text)) {
+            wrapLink(editor, text);
+        } else {
+            insertText(text);
+        }
+    }
+
+    editor.insertData = (data: DataTransfer) => {
+        const text = data.getData('text/plain')
+
+        if (text && isUrl(text)) {
+            wrapLink(editor, text);
+        } else {
+            insertData(data);
+        }
+    }
+
+    return editor
+}
+
+//
+//  IMAGES
+//
+
+export const insertImage = (editor: Editor, url: string) => {
+    const image = { type: 'image', src: url, children: [{ text: '' }] };
+    Transforms.insertNodes(editor, image);
+}
+
+export const withImages = (editor: ReactEditor) => {
+    const { isVoid, isInline } = editor;
+
+    editor.isInline = (element: Element) => {
+        return element.type === 'image' ? true : isInline(element)
+    }
+
+    editor.isVoid = (element: Element) => {
+        return element.type === 'image' ? true : isVoid(element);
+    }
+
+    return editor;
 }

@@ -9,8 +9,8 @@ import { Widget as WidgetUtil } from 'util/model';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useScrollEvent } from 'util/useScrollEvent';
-import SwipeableViews from 'react-swipeable-views';
 import { WidgetIcon } from 'component/widgets/WidgetIcon';
+import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
     widgets: WidgetModel[];
@@ -43,17 +43,11 @@ const useStyles = makeStyles<Theme, { isSecondNavigationOpen: boolean }>(theme =
     tabRoot: {
         lineHeight: 1,
         textTransform: 'initial',
-        minWidth: 60
-    },
-    tabWrapper: {
-        '& img': {
-            filter: 'grayscale(1)'
-        }
+        minWidth: 60,
+        filter: 'grayscale(.95) opacity(0.8)'
     },
     tabSelected: {
-        '& img': {
-            filter: 'none'
-        }
+        filter: 'none'
     },
     swipeableViewsContainer: {
         flexGrow: 1,

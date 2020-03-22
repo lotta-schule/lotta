@@ -9,8 +9,10 @@ export const User = {
         return user?.nickname || User.getName(user);
     },
 
-    getAvatarUrl(user?: UserModel | null) {
-        return user?.avatarImageFile ? user?.avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(user);
+    getAvatarUrl(user?: UserModel | null, size: number = 100) {
+        return user?.avatarImageFile ?
+            `https://afdptjdxen.cloudimg.io/bound/${size}x${size}/foil1/${user.avatarImageFile.remoteLocation}` :
+            User.getDefaultAvatarUrl(user);
     },
 
     getDefaultAvatarUrl(user?: UserModel | null) {

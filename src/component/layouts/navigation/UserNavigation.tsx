@@ -6,7 +6,7 @@ import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Grid, Typography, Link, makeStyles, Button, Badge } from '@material-ui/core';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Category, User } from 'util/model';
+import { Article, Category, User } from 'util/model';
 import { ArticleModel } from '../../../model';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
@@ -71,7 +71,7 @@ export const UserNavigation = memo(() => {
                 <Grid item xs={6} style={{ display: 'flex' }}>
                     {currentUser && (
                         <div>
-                            <CurrentUserAvatar />
+                            <CurrentUserAvatar size={200} />
                             <Typography variant={'body2'} align={'center'}>
                                 {User.getNickname(currentUser)}
                             </Typography>
@@ -133,7 +133,7 @@ export const UserNavigation = memo(() => {
                         isOpen={createArticleModalIsOpen}
                         onAbort={() => setCreateArticleModalIsOpen(false)}
                         onConfirm={article => {
-                            history.push(`/article/${article.id}/edit`);
+                            history.push(Article.getPath(article, { edit: true }));
                         }}
                     />
                 </>

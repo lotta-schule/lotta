@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { CalendarWidgetConfig } from 'model';
-import { TextField, Button, Divider, makeStyles } from '@material-ui/core';
+import { TextField, Button, Divider, makeStyles, Select, MenuItem } from '@material-ui/core';
 
 export interface CalendarWidgetConfigurationProps {
     configuration: CalendarWidgetConfig;
@@ -40,6 +40,26 @@ export const CalendarWidgetConfiguration = memo<CalendarWidgetConfigurationProps
                             })
                         })}
                     />
+                    <Select
+                        fullWidth
+                        label={'Zeit, für die Termine abgerufen werden'}
+                        value={calendar.days ?? 90}
+                        onChange={e => setConfiguration({
+                            ...configuration,
+                            calendars: configuration.calendars.map((cal, i) => {
+                                return (i === index) ? {
+                                    ...calendar,
+                                    days: e.target.value as number
+                                } : cal;
+                            })
+                        })}
+                    >
+                        <MenuItem value={7}>Termine der nächsten 7 Tage anzeigen</MenuItem>
+                        <MenuItem value={30}>Termine der nächsten 30 Tage anzeigen</MenuItem>
+                        <MenuItem value={90}>Termine der nächsten 3 Monate anzeigen</MenuItem>
+                        <MenuItem value={180}>Termine der nächsten 6 Monate anzeigen</MenuItem>
+                        <MenuItem value={365}>Termine des nächsten Jahres anzeigen</MenuItem>
+                    </Select>
                     {configuration.calendars && configuration.calendars.length > 1 && (
                         <>
                             <TextField

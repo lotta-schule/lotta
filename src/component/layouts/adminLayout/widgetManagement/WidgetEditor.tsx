@@ -9,8 +9,9 @@ import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
-import clsx from 'clsx';
 import { WidgetIconSelection } from './WidgetIconSelection';
+import { SaveButton } from 'component/general/SaveButton';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
     input: {
@@ -49,7 +50,13 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
     const [widget, setWidget] = useState<WidgetModel | null>(null);
     const [isDeleteWidgetDialogOpen, setIsDeleteWidgetDialogOpen] = useState(false);
 
-    const [mutateWidget, { loading: isLoading, error }] = useMutation<{ widget: WidgetModel }, { id: ID, widget: Partial<WidgetModel> }>(UpdateWidgetMutation);
+    const [isShowSuccess, setIsShowSuccess] = useState(false);
+    const [mutateWidget, { loading: isLoading, error }] = useMutation<{ widget: WidgetModel }, { id: ID, widget: Partial<WidgetModel> }>(UpdateWidgetMutation, {
+        onCompleted: () => {
+            setIsShowSuccess(true);
+            setTimeout(() => setIsShowSuccess(false), 3000);
+        }
+    });
 
     const updateWidget = useCallback(async () => {
         if (!selectedWidget || !widget) {
@@ -121,16 +128,15 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                     configuration={widget.configuration || {}}
                     setConfiguration={configuration => setWidget({ ...widget, configuration })} />}
 
-            <Button
+            <SaveButton
                 style={{ float: 'right' }}
-                disabled={isLoading}
-                variant={'contained'}
-                color={'secondary'}
+                isLoading={isLoading}
+                isSuccess={isShowSuccess}
                 className={styles.button}
                 onClick={() => updateWidget()}
             >
                 Marginale speichern
-            </Button>
+            </SaveButton>
             <Divider className={styles.divider} />
             <Button
                 variant={'contained'}

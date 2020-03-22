@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Button, Card, CardContent, Grid, Link, Table, TableBody, TableRow, TableCell, TextField, Typography, makeStyles } from '@material-ui/core';
+import { Card, CardContent, Grid, Link, Table, TableBody, TableRow, TableCell, TextField, Typography, makeStyles } from '@material-ui/core';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -7,6 +7,7 @@ import { useTenant } from 'util/client/useTenant';
 import { Tenant } from 'util/model';
 import { useMutation } from 'react-apollo';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
+import { SaveButton } from 'component/general/SaveButton';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles(theme => ({
@@ -21,7 +22,13 @@ export const BasicSettings = memo(() => {
     const [title, setTitle] = useState(tenant.title);
     const [logo, setLogo] = useState(tenant.logoImageFile);
 
-    const [updateTenant, { loading: isLoading, error }] = useMutation(UpdateTenantMutation);
+    const [isShowSuccess, setIsShowSuccess] = useState(false);
+    const [updateTenant, { loading: isLoading, error }] = useMutation(UpdateTenantMutation, {
+        onCompleted: () => {
+            setIsShowSuccess(true);
+            setTimeout(() => setIsShowSuccess(false), 3000);
+        }
+    });
 
     return (
         <>
@@ -87,15 +94,14 @@ export const BasicSettings = memo(() => {
 
             <Grid container justify={'flex-end'}>
                 <Grid item sm={6} md={4} lg={3}>
-                    <Button
+                    <SaveButton
                         fullWidth
-                        disabled={isLoading}
-                        variant={'outlined'}
-                        color={'secondary'}
+                        isLoading={isLoading}
+                        isSuccess={isShowSuccess}
                         onClick={() => updateTenant({ variables: { tenant: { title, logoImageFile: logo } } })}
                     >
                         speichern
-                    </Button>
+                    </SaveButton>
                 </Grid>
             </Grid>
         </>
