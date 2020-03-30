@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { FileModel } from '../../model';
 import { DialogTitle, Button } from '@material-ui/core';
 import { FileExplorer, FileExplorerProps } from 'component/fileExplorer/FileExplorer';
@@ -12,11 +12,18 @@ interface SelectFileButtonProps {
     fileFilter?(file: FileModel): boolean;
     onSelectFile?(file: FileModel): void;
     onSelectFiles?(file: FileModel[]): void;
+    onChangeFileExplorerVisibility?(isFileExplorerVisible: boolean): void;
 }
 
-export const SelectFileButton = memo<SelectFileButtonProps>(({ label, fileFilter, onSelectFile, onSelectFiles, buttonComponent, buttonComponentProps }) => {
+export const SelectFileButton = memo<SelectFileButtonProps>(({ label, fileFilter, onSelectFile, onSelectFiles, buttonComponent, buttonComponentProps, onChangeFileExplorerVisibility }) => {
     const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(false);
     const fileExplorerOptions: Partial<FileExplorerProps> = {};
+
+    useEffect(() => {
+        onChangeFileExplorerVisibility?.(isSelectFileDialogOpen);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSelectFileDialogOpen]);
+
     if (onSelectFile) {
         fileExplorerOptions.onSelectFile = file => {
             setIsSelectFileDialogOpen(false);

@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
 import { Editor, Element, Range, Text, Transforms, Node } from 'slate';
 import { SlatePre050Document, SlatePre050Node } from './interface/SlatePre050Document';
+import { SlateImage } from './elements/SlateImage';
 import isUrl from 'is-url';
 
 export type Mark = 'bold' | 'italic' | 'underline' | 'link' | 'small';
@@ -24,15 +25,8 @@ export const renderElement = ({ attributes, children, element }: RenderElementPr
                 <li {...attributes} style={{ paddingLeft: '.5em' }}>{children}</li>
             );
         case 'image': {
-            const src = element.src;
-            const imageUrl = `https://afdptjdxen.cloudimg.io/width/400/foil1/${src}`;
             return (
-                <img
-                    {...attributes}
-                    src={imageUrl}
-                    style={{ float: 'right', maxWidth: '30%' }}
-                    alt={src}
-                />
+                <SlateImage element={element} attributes={attributes}>{children}</SlateImage>
             );
         }
         case 'paragraph':
