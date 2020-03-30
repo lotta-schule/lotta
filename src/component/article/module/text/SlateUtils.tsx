@@ -103,7 +103,12 @@ export const toggleBlock = (editor: Editor, block: Block) => {
 };
 
 export const deserialize = (encoded: string) => {
-    const decoded = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+    let decoded: any = {};
+    try {
+        decoded = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+    } catch (e) {
+        decoded = JSON.parse(decodeURIComponent(Buffer.from(encoded, 'base64').toString('utf8')));
+    }
     return decoded.document ? migrateFromPreSlate050(decoded.document) : decoded;
 };
 
