@@ -7,7 +7,11 @@ import { insertImage } from './SlateUtils';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { FileModel } from 'model';
 
-export const EditToolbarImageButton: FC = (() => {
+export interface EditToolbarImageButtonProps {
+    onImageAdded?(): void;
+}
+
+export const EditToolbarImageButton: FC<EditToolbarImageButtonProps> = (({ onImageAdded }) => {
     const editor = useSlate();
     const [lastEditorSelection, setLastEditorSelection] = useState<Range | null>(null);
 
@@ -20,7 +24,10 @@ export const EditToolbarImageButton: FC = (() => {
             });
         }
         insertImage(editor, file.remoteLocation);
-    }, [editor, lastEditorSelection]);
+        setTimeout(() => {
+            onImageAdded?.();
+        }, 100);
+    }, [editor, lastEditorSelection, onImageAdded]);
 
     return (
         <SelectFileButton

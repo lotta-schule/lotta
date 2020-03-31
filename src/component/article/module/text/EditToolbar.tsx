@@ -19,7 +19,11 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-export const EditToolbar = memo(() => {
+export interface EditToolbarProps {
+    onRequestSave?(): void;
+}
+
+export const EditToolbar = memo<EditToolbarProps>(({ onRequestSave }) => {
     const isFocused = useFocused();
 
     const styles = useStyles();
@@ -53,7 +57,7 @@ export const EditToolbar = memo(() => {
                 </ToggleButtonGroup>
                 &nbsp;
                 <ToggleButtonGroup className={styles.toolbarButtonGroup} size={'small'} value={'none'}>
-                    <EditToolbarImageButton />
+                    <EditToolbarImageButton onImageAdded={onRequestSave} />
                 </ToggleButtonGroup>
                 &nbsp;
                 <ToggleButtonGroup className={styles.toolbarButtonGroup} size={'small'} value={'none'}>
