@@ -14,5 +14,6 @@ defmodule Api.Repo.Migrations.ChangeUsersAvatarImageFileReference do
 
     alter table(:users) do
         modify(:avatar_image_file_id, references(:files, on_delete: :nothing))
-    end  end
+    end
+  end
 end

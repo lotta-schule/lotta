@@ -1,81 +1,110 @@
 defmodule Api.FileResolver do
   use Api.ReadRepoAliaser
   alias Api.Accounts
+  alias Api.Accounts.{Directory,User}
+  alias Api.Tenants.Tenant
   alias Api.UploadService
   alias Api.MediaConversionPublisherWorker
   alias Repo
   alias UUID
 
-  def all(%{}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    {:ok, Accounts.list_files(tenant.id, current_user.id)}
+  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user, tenant: tenant}}) when is_integer(parent_directory_id) do
+    parent_directory = Accounts.get_directory!(parent_directory_id)
+    {:ok, Accounts.list_files(parent_directory)}
+  end
+  def files(_, _), do: {:ok, []}
+
+  def upload(%{file: file, parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
+    with directory when not is_nil(directory) <- Accounts.get_directory(parent_directory_id) do
+      directory =
+        directory
+        |> ReadRepo.preload([:user, :tenant])
+      if directory.user.id == current_user.id && directory.tenant.id == tenant.id do
+        upload_file_to_directory(file, directory, current_user, tenant)
+      else
+        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+      end
+    else
+      _ ->
+        {:error, "Der Ordner wurde nicht gefunden."}
+    end
   end
 
-  def upload(%{path: path, file: file} = args, %{context: %{current_user: current_user, tenant: tenant}}) do
+  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
+    try do
+      file =
+        Accounts.get_file!(id)
+        |> ReadRepo.preload([:tenant, :parent_directory])
+      source_directory = file.parent_directory
+      target_directory =
+        with %{parent_directory_id: target_directory_id} <- args do
+          Accounts.get_directory!(target_directory_id)
+        else
+          _ ->
+            source_directory
+        end
+      if User.can_write_directory?(current_user, source_directory) && User.can_write_directory?(current_user, target_directory) do
+        Accounts.update_file(file, Map.take(args, [:filename, :parent_directory_id]))
+      else
+        {:error, "Du darfst diese Datei nicht verschieben."}        
+      end
+    rescue
+      Ecto.NoResultsError ->
+        {:error, "Datei oder Ordner nicht gefunden."}
+    end
+  end
+
+  def delete(%{id: id}, %{context: %{current_user: current_user, tenant: tenant}}) do
+    try do
+      file =
+        Accounts.get_file!(id)
+        |> ReadRepo.preload([:tenant, :parent_directory])
+      if User.can_write_directory?(current_user, tenant, file.parent_directory) do
+        file =
+          file
+          |> ReadRepo.preload(:file_conversions)
+        Enum.map(file.file_conversions, fn file_conversion ->
+          Accounts.delete_file_conversion(file_conversion)
+          Accounts.File.delete_attachment(file_conversion)
+        end)
+        Accounts.delete_file(file)
+        Accounts.File.delete_attachment(file)
+      else
+        {:error, "Du darfst diese Datei nicht löschen."}
+      end
+    rescue
+      Ecto.NoResultsError ->
+        {:error, "Datei nicht gefunden."}
+    end
+  end
+
+  defp upload_file_to_directory(%Plug.Upload{} = file, %Directory{} = directory, %User{} = user, %Tenant{} = tenant) do
     %{filename: filename,content_type: content_type,path: localfilepath} = file
     %{size: filesize} = File.stat! localfilepath
-    oid = current_user.id + DateTime.to_unix(DateTime.utc_now) + :rand.uniform(9999)
+    oid = user.id + DateTime.to_unix(DateTime.utc_now) + :rand.uniform(9999)
     uuid = UUID.uuid5(:dns, "#{oid}.ugc.lotta.schule")
     %{url: remote_location} = UploadService.upload_to_space(%{localfilepath: localfilepath, content_type: content_type, file_name: uuid})
-    {:ok, file} = %{}
-    |> Map.put(:user_id, current_user.id)
-    |> Map.put(:tenant_id, tenant.id)
-    |> Map.put(:is_public, (Accounts.User.is_admin?(current_user, tenant) && args[:is_public]) == true)
-    |> Map.put(:path, path)
-    |> Map.put(:remote_location, remote_location)
-    |> Map.put(:filename, filename)
-    |> Map.put(:filesize, filesize)
-    |> Map.put(:file_type, filetype_from(content_type))
-    |> Map.put(:mime_type, content_type)
-    |> Accounts.create_file(Accounts.User.is_admin?(current_user, tenant))
-    MediaConversionPublisherWorker.send_conversion_request(file)
-    {:ok, file}
-  end
-
-  def move(%{id: id} = args, %{context: %{current_user: current_user}}) do
-    try do
-      file = Accounts.get_file!(id)
-      |> ReadRepo.preload(:tenant)
-      case Accounts.File.is_author?(file, current_user) || ((file.is_public || args[:is_public] == true) && Accounts.User.is_admin?(current_user, file.tenant)) do
-        true ->
-          Accounts.move_file(file, args, Accounts.User.is_admin?(current_user, file.tenant))
-        false ->
-          {:error, "Du darfst diese Datei nicht verschieben."}        
-      end
-    rescue
-      Ecto.NoResultsError -> {:error, "Datei mit der id #{id} nicht gefunden."}
-    end
-  end
-
-  def move_directory(%{path: path, new_path: new_path, is_public: false}, %{context: %{current_user: current_user}}) do
-    Accounts.move_private_directory(current_user, path, new_path)
-  end
-  def move_directory(%{path: path, new_path: new_path, is_public: true}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    case Accounts.User.is_admin?(current_user, tenant) do
-      true ->
-        Accounts.move_public_directory(tenant, path, new_path)
-      false ->
-        {:error, "Du darfst diesen Ordner nicht verschieben."}
-    end
-  end
-
-  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
-    try do
-      file = Accounts.get_file!(id)
-      |> ReadRepo.preload(:tenant)
-      case Accounts.File.is_author?(file, current_user) || (file.is_public && Accounts.User.is_admin?(current_user, file.tenant)) do
-        true ->
-          file = ReadRepo.preload(file, :file_conversions)
-          Enum.map(file.file_conversions, fn file_conversion ->
-            Accounts.delete_file_conversion(file_conversion)
-            Accounts.File.delete_attachment(file_conversion)
-          end)
-          Accounts.delete_file(file)
-          Accounts.File.delete_attachment(file)
-        false ->
-          {:error, "Du darfst diese Datei nicht löschen."}
-      end
-    rescue
-      Ecto.NoResultsError -> {:error, "Datei mit der id #{id} nicht gefunden."}
+    %{
+      user_id: user.id,
+      tenant_id: tenant.id,
+      parent_directory_id: directory.id,
+      remote_location: remote_location,
+      filename: filename,
+      filesize: filesize,
+      file_type: filetype_from(content_type),
+      mime_type: content_type
+    }
+    |> Accounts.create_file()
+    |> case do
+      {:ok, file} ->
+        MediaConversionPublisherWorker.send_conversion_request(file)
+        {:ok, file}
+      {:error, changeset} ->
+        {
+          :error,
+          message: "Upload fehlgeschlagen.",
+          details: error_details(changeset)
+        }
     end
   end
 
@@ -102,4 +131,10 @@ defmodule Api.FileResolver do
       _ -> "misc"
     end
   end
+
+  defp error_details(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
+  end
+
 end

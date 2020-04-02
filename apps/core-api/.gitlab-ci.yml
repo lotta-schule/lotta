@@ -15,30 +15,30 @@ cache:
   paths:
     - deps/
 
-# test:
-#   stage: test
-#   image: elixir:1.9.1
-#   variables:
-#     MIX_ENV: test
-#     POSTGRES_PASSWORD: lotta
-#     POSTGRES_USER: lotta
-#     POSTGRES_DB: api_test
-#     REDIS_PASSWORD: lotta
-#   services:
-#     - name: postgres:latest
-#     - name: rabbitmq:latest
-#     - name: bitnami/redis:latest
-#       alias: redis
-#   before_script:
-#     - mix local.hex --force
-#     - mix local.rebar --force
-#     - mix deps.get --only test
-#   script:
-#     # gitlab k8s-runner has a problem with service hostname exposition
-#     # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
-#     - make tests-ci
-#   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
-# 
+test:
+  stage: test
+  image: elixir:1.9.1
+  variables:
+    MIX_ENV: test
+    POSTGRES_PASSWORD: lotta
+    POSTGRES_USER: lotta
+    POSTGRES_DB: api_test
+    REDIS_PASSWORD: lotta
+  services:
+    - name: postgres:latest
+    - name: rabbitmq:latest
+    - name: bitnami/redis:latest
+      alias: redis
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get --only test
+  script:
+    # gitlab k8s-runner has a problem with service hostname exposition
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
+    - make tests-ci
+  coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
+
 build docker image:
   stage: build
   image:
