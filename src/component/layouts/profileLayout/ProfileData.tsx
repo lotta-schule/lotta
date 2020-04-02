@@ -77,7 +77,7 @@ export const ProfileData = memo(() => {
                             buttonComponentProps={{ color: 'secondary', size: 'small', disabled: isLoading }}
                             fileFilter={f => f.fileType === FileModelType.Image}
                             label={'Profilbild ändern'}
-                            onSelectFile={setAvatarImageFile}
+                            onSelect={(file: FileModel) => setAvatarImageFile(file)}
                         />
                         <Divider className={styles.divider} style={{ width: '80%' }} />
                         <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>}>

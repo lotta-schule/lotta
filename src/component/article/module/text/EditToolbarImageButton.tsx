@@ -34,7 +34,7 @@ export const EditToolbarImageButton: FC<EditToolbarImageButtonProps> = (({ onIma
             label={<Image />}
             buttonComponent={ToggleButton}
             buttonComponentProps={{ size: 'small', value: 'select-file' }}
-            onSelectFile={onClickImage}
+            onSelect={onClickImage}
             onChangeFileExplorerVisibility={visible => {
                 if (visible) {
                     setLastEditorSelection(editor.selection);

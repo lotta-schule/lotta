@@ -109,8 +109,9 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
 
             {isEditModeEnabled && (
                 <SelectFileButton
+                    multiple
                     label={'Bild hinzufügen'}
-                    onSelectFiles={f => {
+                    onSelect={(f: FileModel[]) => {
                         onUpdateModule({
                             ...contentModule,
                             files: uniqBy(contentModule.files.concat(f), file => file.id),

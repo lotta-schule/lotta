@@ -2,8 +2,8 @@
  * @author Alexis Rinaldoni <alexis.rinaldoni@be-terna.com>
  */
 
-import React from 'react';
-import noop from 'lodash/noop';
+import { createContext } from 'react';
 import { UploadQueueService } from '../api/UploadQueueService';
+import noop from 'lodash/noop';
 
-export const UploadQueueContext = React.createContext<UploadQueueService>(new UploadQueueService(noop, noop));
+export const UploadQueueContext = createContext<UploadQueueService>(new UploadQueueService(noop));

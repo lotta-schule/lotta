@@ -9,13 +9,13 @@ interface SelectFileButtonProps {
     label: string | JSX.Element;
     buttonComponent?: any;
     buttonComponentProps?: any;
+    multiple?: boolean;
     fileFilter?(file: FileModel): boolean;
-    onSelectFile?(file: FileModel): void;
-    onSelectFiles?(file: FileModel[]): void;
+    onSelect?(file: FileModel | FileModel[]): void;
     onChangeFileExplorerVisibility?(isFileExplorerVisible: boolean): void;
 }
 
-export const SelectFileButton = memo<SelectFileButtonProps>(({ label, fileFilter, onSelectFile, onSelectFiles, buttonComponent, buttonComponentProps, onChangeFileExplorerVisibility }) => {
+export const SelectFileButton = memo<SelectFileButtonProps>(({ label, fileFilter, multiple, onSelect, buttonComponent, buttonComponentProps, onChangeFileExplorerVisibility }) => {
     const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(false);
     const fileExplorerOptions: Partial<FileExplorerProps> = {};
 
@@ -24,18 +24,6 @@ export const SelectFileButton = memo<SelectFileButtonProps>(({ label, fileFilter
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSelectFileDialogOpen]);
 
-    if (onSelectFile) {
-        fileExplorerOptions.onSelectFile = file => {
-            setIsSelectFileDialogOpen(false);
-            onSelectFile(file);
-        };
-    }
-    if (onSelectFiles) {
-        fileExplorerOptions.onSelectFiles = files => {
-            setIsSelectFileDialogOpen(false);
-            onSelectFiles(files);
-        }
-    }
     return (
         <>
             {React.createElement<ButtonProps>(buttonComponent || Button, {
@@ -50,6 +38,11 @@ export const SelectFileButton = memo<SelectFileButtonProps>(({ label, fileFilter
                 <FileExplorer
                     style={{ padding: '0 .5em' }}
                     fileFilter={fileFilter}
+                    multiple={multiple}
+                    onSelect={result => {
+                        setIsSelectFileDialogOpen(false);
+                        onSelect?.(result);
+                    }}
                     {...fileExplorerOptions}
                 />
             </ResponsiveFullScreenDialog>

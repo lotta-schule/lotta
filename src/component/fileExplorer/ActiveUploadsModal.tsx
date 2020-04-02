@@ -1,14 +1,14 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import { Dialog, DialogTitle, List, ListItem, ListItemAvatar, CircularProgress, ListItemText } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { State } from 'store/State';
 import { UploadModel } from 'model';
-import { useFileExplorerData } from './context/useFileExplorerData';
 import { ErrorOutline } from '@material-ui/icons';
+import fileExplorerContext from './context/FileExplorerContext';
 
 export const ActiveUploadsModal = memo(() => {
     const uploads = (useSelector<State, UploadModel[]>(s => s.userFiles.uploads) || []);
-    const [state, dispatch] = useFileExplorerData();
+    const [state, dispatch] = useContext(fileExplorerContext);
 
     return (
         <Dialog open={state.showActiveUploads && uploads.length > 0} onClose={() => dispatch({ type: 'hideActiveUploads' })}>
@@ -37,7 +37,7 @@ export const ActiveUploadsModal = memo(() => {
                                 overflow: 'hidden'
                             }}
                             primary={upload.filename}
-                            secondary={upload.error?.message ?? upload.path}
+                            secondary={upload.error?.message ?? upload.parentDirectory.name}
                         />
                     </ListItem>
                 ))}

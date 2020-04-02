@@ -1,9 +1,9 @@
 import { ID } from './ID';
+import { DirectoryModel } from './FileModel';
 
 export interface UploadModel {
     id: ID;
-    path: string;
-    isPublic: boolean;
+    parentDirectory: DirectoryModel;
     filename: string;
     uploadProgress: number;
     error: Error | null;
