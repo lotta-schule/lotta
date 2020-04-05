@@ -6,6 +6,8 @@ services:
       MIX_ENV: test
 
   postgres:
+    volumes:
+      - ./_data/postgres-test:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: lotta_api
 
