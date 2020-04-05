@@ -16,6 +16,7 @@ defmodule Api.Accounts.File do
     has_many :file_conversions, Api.Accounts.FileConversion
     belongs_to :user, Api.Accounts.User
     belongs_to :tenant, Api.Tenants.Tenant
+    belongs_to :parent_directory, Api.Accounts.Directory
     many_to_many(
       :content_modules,
       Api.Content.ContentModule,
@@ -26,50 +27,11 @@ defmodule Api.Accounts.File do
     timestamps()
   end
 
-  @spec get_valid_path(String.t()) :: String.t()
-  def get_valid_path(path) do
-    path = String.replace(path, ~r/\/{2,}/, "/")
-    path = case String.starts_with?(path, "/") do
-      true -> path
-      false -> "/#{path}"
-    end
-    case String.length(path) do
-      1 -> path
-      _ -> String.replace_trailing(path, "/", "")
-    end
-  end
-
-  def is_author?(%Api.Accounts.File{} = file, %Api.Accounts.User{} = user) do
-    file = file
-    |> ReadRepo.preload(:user)
-    file.user.id == user.id
-  end
-
   @doc false
-  def changeset(file, attrs, is_admin_user \\ false) do
-    properties = case is_admin_user do
-      true ->
-        [:path, :filename, :is_public, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id]
-      false ->
-        [:path, :filename, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id]
-    end
+  def changeset(file, attrs) do
     file
-    |> cast(attrs, properties)
-    |> update_change(:path, &get_valid_path/1)
-    |> validate_required([:path, :filename, :filesize, :remote_location, :mime_type, :file_type, :user_id, :tenant_id])
-  end
-
-  def move_changeset(file, attrs, can_edit_public_files \\ false) do
-    properties = case can_edit_public_files do
-      true ->
-        [:path, :filename, :is_public]
-      false ->
-        [:path, :filename]
-    end
-    file
-    |> cast(attrs, properties)
-    |> update_change(:path, &get_valid_path/1)
-    |> validate_required([:path, :filename])
+    |> cast(attrs, [:filename, :filesize, :remote_location, :mime_type, :file_type, :parent_directory_id, :user_id, :tenant_id])
+    |> validate_required([:filename, :filesize, :remote_location, :mime_type, :file_type, :parent_directory_id, :user_id, :tenant_id])
   end
 
   @doc false
