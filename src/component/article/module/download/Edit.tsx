@@ -122,8 +122,9 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 </Droppable>
             </DragDropContext>
             <SelectFileButton
+                multiple
                 label={'Datei hinzufügen'}
-                onSelectFiles={files => onUpdateModule({
+                onSelect={(files: FileModel[]) => onUpdateModule({
                     ...contentModule,
                     files: contentModule.files.concat(files),
                     configuration: {

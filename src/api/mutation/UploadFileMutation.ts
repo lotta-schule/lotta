@@ -1,19 +1,20 @@
 import gql from 'graphql-tag';
 
 export const UploadFileMutation = gql`
-    mutation UploadFile($path: String, $file: Upload!, $isPublic: Boolean) {
-        file: uploadFile(path: $path, file: $file, isPublic: $isPublic) {
+    mutation UploadFile($file: Upload!, $parentDirectoryId: ID) {
+        file: uploadFile(file: $file, parentDirectoryId: $parentDirectoryId) {
             id
             insertedAt
             updatedAt
-            path
-            isPublic
             filename
             filesize
             mimeType
             remoteLocation
             fileType
             userId
+            parentDirectory {
+                id
+            }
             fileConversions {
                 id
             }

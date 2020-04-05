@@ -1,6 +1,7 @@
 import './index.scss';
 import Honeybadger from 'honeybadger-js';
-import { ApolloProvider } from 'react-apollo';
+import * as serviceWorker from './serviceWorker';
+import { ApolloProvider } from '@apollo/react-hooks';
 import { App } from './component/App';
 import { client } from 'api/client';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
@@ -9,17 +10,14 @@ import { theme } from './theme';
 import { ThemeProvider } from '@material-ui/styles';
 import { UploadQueueService } from 'api/UploadQueueService';
 import { createSetUploadsAction } from 'store/actions/userFiles';
-import { GetUserFilesQuery } from 'api/query/GetUserFiles';
 import { UploadQueueContext } from 'context/UploadQueueContext';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import * as serviceWorker from './serviceWorker';
+import { de } from 'date-fns/locale';
+import Matomo from 'matomo-ts';
 import React from 'react';
 import DateFnsUtils from '@date-io/date-fns';
 import ReactDOM from 'react-dom';
 import store from './store/Store';
-import { de } from 'date-fns/locale';
-import { FileModel } from 'model';
-import Matomo from 'matomo-ts';
 
 if (process.env.REACT_APP_MATOMO_URL) {
     Matomo.default().init(
@@ -45,15 +43,6 @@ try {
 
 const uploadQueue = new UploadQueueService(
     uploads => store.dispatch(createSetUploadsAction(uploads)),
-    file => {
-        const data = client.readQuery<{ files: FileModel[] }>({ query: GetUserFilesQuery }) || { files: [] };
-        client.writeQuery({
-            query: GetUserFilesQuery,
-            data: {
-                files: [...data.files, file]
-            }
-        });
-    }
 );
 
 ReactDOM.render(

@@ -1,7 +1,7 @@
-import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createLink } from 'apollo-absinthe-upload-link';
 import { ApolloLink, concat } from 'apollo-link';
+import { ApolloClient } from 'apollo-client';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const customFetch = (url: string, options: any) => {

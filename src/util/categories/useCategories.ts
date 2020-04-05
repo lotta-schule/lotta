@@ -1,7 +1,7 @@
 import { CategoryModel } from 'model';
 import { useQuery } from '@apollo/react-hooks';
+import { QueryResult } from '@apollo/react-common';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
-import { QueryResult } from 'react-apollo';
 
 export const useCategories = (): [CategoryModel[], QueryResult<{ categories: CategoryModel[] }>] => {
     const queryResult = useQuery<{ categories: CategoryModel[] }>(GetCategoriesQuery);

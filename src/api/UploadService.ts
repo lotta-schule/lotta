@@ -1,15 +1,14 @@
 import { client } from './client';
-import { UploadModel, FileModel } from '../model';
+import { UploadModel, FileModel, DirectoryModel } from '../model';
 import { UploadFileMutation } from './mutation/UploadFileMutation';
+import { GetDirectoriesAndFilesQuery } from './query/GetDirectoriesAndFiles';
 
 export class UploadService implements UploadModel {
     public id = new Date().getTime() + Math.random() * 1000;
 
-    public path: string;
+    public parentDirectory: DirectoryModel;
 
     public uploadProgress: number;
-
-    public isPublic: boolean;
 
     public error: Error | null;
 
@@ -19,10 +18,9 @@ export class UploadService implements UploadModel {
         return this.file.name;
     }
 
-    public constructor(file: File, path: string, isPublic: boolean) {
+    public constructor(file: File, parentDirectory: DirectoryModel) {
         this.file = file;
-        this.path = path;
-        this.isPublic = isPublic;
+        this.parentDirectory = parentDirectory;
         this.uploadProgress = 0;
         this.error = null;
     }
@@ -32,23 +30,36 @@ export class UploadService implements UploadModel {
         onFinish: (file: FileModel) => void,
         onError: (error: Error) => void
     ): UploadService {
-        client.mutate<{ file: FileModel }>({
-            mutation: UploadFileMutation,
-            variables: {
-                path: this.path,
-                isPublic: this.isPublic,
-                file: this.file
-            },
-            errorPolicy: 'all',
-            context: {
-                fetchOptions: {
-                    onUploadProgress: (progress: ProgressEvent) => {
-                        this.uploadProgress = (progress.loaded / progress.total) * 100;
-                        onProgress(this.uploadProgress);
+        client
+            .mutate<{ file: FileModel }>({
+                mutation: UploadFileMutation,
+                variables: {
+                    parentDirectoryId: this.parentDirectory.id,
+                    file: this.file
+                },
+                update: (client, { data }) => {
+                    const cache = client.readQuery<{ files: FileModel[], directories: DirectoryModel[] }>({
+                        query: GetDirectoriesAndFilesQuery,
+                        variables: { parentDirectoryId: data?.file.parentDirectory?.id }
+                    });
+                    client.writeQuery({
+                        query: GetDirectoriesAndFilesQuery,
+                        variables: { parentDirectoryId: data?.file.parentDirectory?.id },
+                        data: {
+                            files: [...(cache?.files ?? []), data?.file],
+                            directories: [...(cache?.directories ?? [])]
+                        }
+                    })
+                },
+                context: {
+                    fetchOptions: {
+                        onUploadProgress: (progress: ProgressEvent) => {
+                            this.uploadProgress = (progress.loaded / progress.total) * 100;
+                            onProgress(this.uploadProgress);
+                        }
                     }
                 }
-            }
-        })
+            })
             .then(({ data }) => {
                 this.uploadProgress = 100;
                 if (!data) {

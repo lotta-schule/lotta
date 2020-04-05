@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useState } from 'react';
 import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles } from '@material-ui/core';
 import { AssignUserToGroupsDialog } from './AssignUserToGroupsDialog';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { UserModel, UserGroupModel } from 'model';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
 import { useCurrentUser } from 'util/user/useCurrentUser';

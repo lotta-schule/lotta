@@ -25,7 +25,7 @@ export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo
                 <FileExplorer
                     style={{ padding: '0 .5em' }}
                     fileFilter={fileFilter}
-                    onSelectFile={file => {
+                    onSelect={(file: FileModel) => {
                         setIsSelectFileDialogOpen(false);
                         onSelectFile(file);
                     }}

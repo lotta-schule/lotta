@@ -1,5 +1,5 @@
 import { UploadService } from './UploadService';
-import { UploadModel, FileModel } from 'model';
+import { UploadModel, DirectoryModel } from 'model';
 import { Waiter } from 'util/Waiter';
 
 export class UploadQueueService {
@@ -7,26 +7,22 @@ export class UploadQueueService {
 
     protected updateAction: (updates: UploadModel[]) => void;
 
-    protected addFileAction: (file: FileModel) => void;
-
-    public constructor(updateAction: (updates: UploadModel[]) => void, addFileAction: (file: FileModel) => void) {
+    public constructor(updateAction: (updates: UploadModel[]) => void) {
         this.updateAction = updateAction;
-        this.addFileAction = addFileAction;
     }
 
-    public uploadFile(file: File, path: string, isPublic: boolean): void {
-        const upload = new UploadService(file, path, isPublic);
+    public uploadFile(file: File, parentDirectory: DirectoryModel): void {
+        const upload = new UploadService(file, parentDirectory);
         this.uploads.push(upload);
         upload.startUploading(
             this.update.bind(this),
-            async uploadFile => {
+            async () => {
                 this.update();
                 await Waiter.wait(250);
                 if (this.uploads.filter(u => u.uploadProgress < 100).length === 0) {
                     this.uploads = [];
                     this.update();
                 }
-                this.addFileAction(uploadFile);
             },
             this.update.bind(this)
         );
@@ -42,8 +38,7 @@ export class UploadQueueService {
         this.updateAction(
             this.uploads.map(upload => ({
                 id: upload.id,
-                path: upload.path,
-                isPublic: upload.isPublic,
+                parentDirectory: upload.parentDirectory,
                 filename: upload.filename,
                 uploadProgress: upload.uploadProgress,
                 error: upload.error

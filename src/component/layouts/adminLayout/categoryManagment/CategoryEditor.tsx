@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { CategoryModel } from 'model';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { ID } from 'model/ID';
 import { GroupSelect } from 'component/edit/GroupSelect';

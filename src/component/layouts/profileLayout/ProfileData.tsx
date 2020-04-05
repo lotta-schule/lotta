@@ -4,7 +4,7 @@ import {
     Typography, IconButton, Badge, Divider, makeStyles, List, ListItemText, ListItem, ListSubheader
 } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { Clear } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { User } from 'util/model';
@@ -77,7 +77,7 @@ export const ProfileData = memo(() => {
                             buttonComponentProps={{ color: 'secondary', size: 'small', disabled: isLoading }}
                             fileFilter={f => f.fileType === FileModelType.Image}
                             label={'Profilbild ändern'}
-                            onSelectFile={setAvatarImageFile}
+                            onSelect={(file: FileModel) => setAvatarImageFile(file)}
                         />
                         <Divider className={styles.divider} style={{ width: '80%' }} />
                         <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>}>

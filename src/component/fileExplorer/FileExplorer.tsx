@@ -1,22 +1,16 @@
-import React, { Reducer, memo, useCallback, useContext, useEffect, useReducer } from 'react';
+import React, { Reducer, memo, useCallback, useContext, useReducer } from 'react';
 import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
 import { fade } from '@material-ui/core/styles';
-import { uniq } from 'lodash';
 import { useDropzone } from 'react-dropzone';
-import { FileModel, FileModelType } from 'model';
-import { GetUserFilesQuery } from 'api/query/GetUserFiles';
+import { DirectoryModel, FileModel } from 'model';
 import { UploadQueueContext } from 'context/UploadQueueContext';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
-import { CreateNewFolderDialog } from './CreateNewFolderDialog';
+import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DeleteFilesDialog } from './DeleteFilesDialog';
 import { FileTable } from './FileTable';
 import { FileToolbar } from './FileToolbar';
-import { SelectDirectoryTreeDialog } from './SelectDirectoryTreeDialog';
-import { Provider, defaultState } from './context/FileExplorerContext';
+import { MoveFilesDialog } from './MoveFilesDialog';
+import { Provider, defaultState, FileExplorerMode } from './context/FileExplorerContext';
 import { Action, reducer } from './context/reducer';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
@@ -44,89 +38,33 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 export interface FileExplorerProps {
   style?: React.CSSProperties;
   className?: string;
+  multiple?: boolean;
   fileFilter?(file: FileModel): boolean;
-  onSelectFile?(file: FileModel): void;
-  onSelectFiles?(files: FileModel[]): void;
+  onSelect?(file: FileModel[] | FileModel): void;
 }
 
-export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFilter, onSelectFile, onSelectFiles }) => {
+export const FileExplorer = memo<FileExplorerProps>(({ style, className, multiple, fileFilter, onSelect }) => {
   const styles = useStyles();
 
-  const [state, dispatch] = useReducer<Reducer<typeof defaultState, Action>>(reducer, defaultState);
-
-  const { data, error, loading: isLoading } = useQuery<{ files: FileModel[] }>(GetUserFilesQuery);
-  useEffect(() => {
-    if (data) {
-      dispatch({ type: 'setFiles', files: data.files });
-    }
-  }, [data])
+  const [state, dispatch] = useReducer<Reducer<typeof defaultState, Action>>(reducer, {
+    ...defaultState,
+    mode: onSelect ? (multiple ? FileExplorerMode.SelectMultiple : FileExplorerMode.Select) : FileExplorerMode.ViewAndEdit
+  });
 
   const uploadQueue = useContext(UploadQueueContext);
-  const [currentUser] = useCurrentUser();
-
-  const isWriteable = !state.isPublic || User.isAdmin(currentUser);
-
-  const closeDialog = useCallback(<T extends Function>(callback: T): T => {
-    dispatch({ type: 'resetSelectedFiles' });
-    dispatch({ type: 'hideActiveUploads' });
-    return callback;
-  }, [])
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, state.currentPath, state.isPublic));
+    if (state.currentPath.length > 1 && acceptedFiles.length > 0) {
+      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, state.currentPath[state.currentPath.length - 1] as DirectoryModel));
     }
-  }, [state.currentPath, state.isPublic, uploadQueue]);
+  }, [state.currentPath, uploadQueue]);
   const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles } = useDropzone({
     onDrop,
-    disabled: !isWriteable,
+    disabled: state.currentPath.length < 2,
     multiple: true,
     preventDropOnDocument: true,
     noClick: true
   });
-
-  if (error) {
-    return (
-      <ErrorMessage error={error} />
-    );
-  }
-
-  if (!data || isLoading) {
-    return (
-      <span>Dateien werden geladen ...</span>
-    );
-  }
-
-  const files = state.files
-    .filter(f => Boolean(f.isPublic) === state.isPublic);
-
-  const dirFiles = uniq(
-    (files || [])
-      .map(file => file.path)
-      .filter((path) => new RegExp(`^${state.currentPath}`).test(path))
-      .map(path => path.replace(new RegExp(`^${state.currentPath}`), ''))
-      .map(path => path.replace(/^\//, ''))
-      .filter(path => Boolean(path))
-      .map(path => path.split('/')[0])
-  )
-    .map(path => ({
-      id: [state.currentPath, path].join('/').replace(/^\/\//, '/') as any,
-      isPublic: state.isPublic,
-      fileType: FileModelType.Directory,
-      filename: path,
-      filesize: 0,
-      insertedAt: new Date().toString(),
-      updatedAt: new Date().toString(),
-      mimeType: 'application/medienportal-keep-dir',
-      path: [state.currentPath, path].join('/').replace(/^\/\//, '/'),
-      remoteLocation: '',
-      fileConversions: [],
-      userId: currentUser!.id
-    } as FileModel));
-
-  const currentFiles = (files || [])
-    .filter(f => f.filename !== '.lotta-keep' && f.path === state.currentPath && (fileFilter ? fileFilter(f) : true))
-    .sort();
 
   return (
     <Provider value={[state, dispatch]}>
@@ -138,34 +76,30 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, fileFil
           </div>
         )}
         <ActiveUploadsModal />
-        <CreateNewFolderDialog
+        <CreateNewDirectoryDialog
           open={state.showCreateNewFolder}
           basePath={state.currentPath}
-          isPublic={state.isPublic}
           onClose={() => dispatch({ type: 'hideCreateNewFolder' })}
         />
-        <SelectDirectoryTreeDialog />
+        <MoveFilesDialog />
         <DeleteFilesDialog />
 
         <FileToolbar
-          publicModeAvailable
-          showFileCreateButtons={isWriteable}
-          showFileEditingButtons={isWriteable && state.markedFiles.length > 0}
+          showFileCreateButtons={true} /* TODO: Check if can create a file */
           onSelectFilesToUpload={onDrop}
         />
 
-        <FileTable
-          canEditPublicFiles={User.isAdmin(currentUser)}
-          files={[...dirFiles, ...currentFiles]}
-          onSelectFile={onSelectFile ? (file => closeDialog(onSelectFile)(file)) : undefined}
-          onSelectFiles={onSelectFiles ? (files => dispatch({ type: 'setSelectedFiles', files })) : undefined}
-        />
+        <FileTable />
 
-        {onSelectFiles && (
+        {state.mode !== FileExplorerMode.ViewAndEdit && (
           <Toolbar className={styles.bottomToolbar}>
             <Button
               disabled={state.selectedFiles.length < 1}
-              onClick={() => closeDialog(onSelectFiles)(state.selectedFiles)}
+              onClick={() => {
+                onSelect?.(state.mode === FileExplorerMode.Select ? state.selectedFiles[0] : state.selectedFiles);
+                dispatch({ type: 'resetSelectedFiles' });
+                dispatch({ type: 'hideActiveUploads' });
+              }}
             >
               {state.selectedFiles.length ? (
                 state.selectedFiles.length === 1 ?

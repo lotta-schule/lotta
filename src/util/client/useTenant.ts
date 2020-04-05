@@ -1,5 +1,5 @@
 import { ClientModel } from 'model';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 
 export const useTenant = (): ClientModel => {

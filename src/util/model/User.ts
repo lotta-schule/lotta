@@ -6,7 +6,7 @@ export const User = {
     },
 
     getNickname(user?: UserModel | null) {
-        return user?.nickname || User.getName(user);
+        return (user?.nickname || User.getName(user)) ?? '';
     },
 
     getAvatarUrl(user?: UserModel | null, size: number = 100) {

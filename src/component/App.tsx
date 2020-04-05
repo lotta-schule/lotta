@@ -17,7 +17,7 @@ import { ResetPasswordLayout } from './layouts/ResetPasswordLayout';
 import { RequestPasswordResetLayout } from './layouts/RequestPasswordResetLayout';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { theme } from 'theme';
 import { useCategories } from 'util/categories/useCategories';
 import { ErrorMessage } from 'component/general/ErrorMessage';
