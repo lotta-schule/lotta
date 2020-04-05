@@ -53,11 +53,11 @@ defmodule Api.DirectoryResolverTest do
       assert res == %{
         "data" => %{
           "directories" => [
-            %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
             %{"name" => "irgendwas", "user" => %{"id" => admin_account.id}, "parentDirectory" => nil},
             %{"name" => "logos", "user" => %{"id" => admin_account.id}, "parentDirectory" => nil},
-            %{"name" => "logos", "user" => nil, "parentDirectory" => nil},
-            %{"name" => "podcast", "user" => %{"id" => admin_account.id}, "parentDirectory" => nil}
+            %{"name" => "podcast", "user" => %{"id" => admin_account.id}, "parentDirectory" => nil},
+            %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
+            %{"name" => "logos", "user" => nil, "parentDirectory" => nil}
           ]
         }
       }
@@ -75,9 +75,9 @@ defmodule Api.DirectoryResolverTest do
           "directories" => [
             %{"name" => "avatar", "user" => %{"id" => user2_account.id}, "parentDirectory" => nil},
             %{"name" => "ehrenberg-on-air", "user" => %{"id" => user2_account.id}, "parentDirectory" => nil},
+            %{"name" => "podcast", "user" => %{"id" => user2_account.id}, "parentDirectory" => nil},
             %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
             %{"name" => "logos", "user" => nil, "parentDirectory" => nil},
-            %{"name" => "podcast", "user" => %{"id" => user2_account.id}, "parentDirectory" => nil}
           ]
         }
       }
