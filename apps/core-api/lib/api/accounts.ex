@@ -278,7 +278,7 @@ defmodule Api.Accounts do
   def list_root_directories(%Tenant{} = tenant, %User{} = user) do
     from(d in Directory,
       where: d.tenant_id == ^tenant.id and is_nil(d.parent_directory_id) and (d.user_id == ^user.id or is_nil(d.user_id)),
-      order_by: [:name]
+      order_by: [fragment("? DESC NULLS LAST", d.user_id), :name]
     )
     |> ReadRepo.all()
   end
