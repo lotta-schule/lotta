@@ -58,7 +58,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
 
     return (
         <Autocomplete
-            disableOpenOnFocus
+            blurOnSelect
             autoHighlight
             open={isOpen}
             onOpen={() => setIsOpen(true)}
