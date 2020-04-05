@@ -8,9 +8,14 @@ defmodule Api.FileResolver do
   alias Repo
   alias UUID
 
-  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user, tenant: tenant}}) when is_integer(parent_directory_id) do
+  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) when is_integer(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
-    {:ok, Accounts.list_files(parent_directory)}
+    case User.can_read_directory?(current_user, parent_directory) do
+      true ->
+        {:ok, Accounts.list_files(parent_directory)}
+      _ ->
+        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+    end
   end
   def files(_, _), do: {:ok, []}
 
@@ -19,7 +24,7 @@ defmodule Api.FileResolver do
       directory =
         directory
         |> ReadRepo.preload([:user, :tenant])
-      if directory.user.id == current_user.id && directory.tenant.id == tenant.id do
+      if User.can_write_directory?(current_user, directory) do
         upload_file_to_directory(file, directory, current_user, tenant)
       else
         {:error, "Du darfst diesen Ordner hier nicht erstellen."}
@@ -46,7 +51,7 @@ defmodule Api.FileResolver do
       if User.can_write_directory?(current_user, source_directory) && User.can_write_directory?(current_user, target_directory) do
         Accounts.update_file(file, Map.take(args, [:filename, :parent_directory_id]))
       else
-        {:error, "Du darfst diese Datei nicht verschieben."}        
+        {:error, "Du darfst diese Datei nicht bearbeiten."}        
       end
     rescue
       Ecto.NoResultsError ->
@@ -54,12 +59,12 @@ defmodule Api.FileResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %{current_user: current_user, tenant: tenant}}) do
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     try do
       file =
         Accounts.get_file!(id)
-        |> ReadRepo.preload([:tenant, :parent_directory])
-      if User.can_write_directory?(current_user, tenant, file.parent_directory) do
+        |> ReadRepo.preload([:parent_directory])
+      if User.can_write_directory?(current_user, file.parent_directory) do
         file =
           file
           |> ReadRepo.preload(:file_conversions)

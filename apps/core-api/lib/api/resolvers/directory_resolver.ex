@@ -1,48 +1,62 @@
 defmodule Api.DirectoryResolver do
   use Api.ReadRepoAliaser
   alias Api.Accounts
-  alias Api.Accounts.{Directory,User}
-  alias Api.Tenants.Tenant
-  alias Api.UploadService
-  alias Api.MediaConversionPublisherWorker
+  alias Api.Accounts.User
   alias Repo
   alias UUID
 
-  def list(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user, tenant: tenant}}) when is_integer(parent_directory_id) do
+  def list(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) when is_integer(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
-    {:ok, Accounts.list_directories(parent_directory)}
+    if User.can_read_directory?(current_user, parent_directory) do
+      {:ok, Accounts.list_directories(parent_directory)}
+    else
+      {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+    end
   end
   def list(_, %{context: %{current_user: current_user, tenant: tenant}}) do
     {:ok, Accounts.list_root_directories(tenant, current_user)}
   end
 
-  def get(%{id: id}, %{context: %{context: %{current_user: current_user, tenant: tenant}}}) when is_integer(id) do
-    directory =
-      Accounts.get_directory(id)
-      |> ReadRepo.preload([:user, :tenant])
-    if directory.user != nil && directory.user.id == current_user.id do
-      directory
-    else
-      {:error, "Du darfst diesen Ordner nicht abrufen."}
+  def get(%{id: id}, %{context: %{current_user: current_user}}) when is_integer(id) do
+    directory = Accounts.get_directory(id)
+    cond do
+      is_nil(directory) ->
+        {:error, "Ordner nicht gefunden."}
+      !User.can_read_directory?(current_user, directory) ->
+        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+      true ->
+        {:ok, directory}
     end
   end
 
-  def create(%{name: name, parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user, tenant: tenant}}) when is_binary(name) and is_integer(parent_directory_id) do
-    case Accounts.get_directory(parent_directory_id) do
-      nil ->
-        {:error, "Ordner wurde nicht gefunden."}
-      directory ->
-        directory = ReadRepo.preload(directory, [:user, :tenant])
-        if directory.user.id != current_user.id || directory.tenant.id != tenant.id do
-          {:error, "Du darfst diesen Ordner hier nicht erstellen."}
-        else
-          Accounts.create_directory(%{
-            name: name,
-            parent_directory_id: directory.id,
-            user_id: current_user.id,
-            tenant_id: tenant.id
-          })
-        end
+  def create(%{name: name, parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) when is_binary(name) and is_integer(parent_directory_id) do
+    parent_directory = Accounts.get_directory(parent_directory_id)
+    cond do
+      is_nil(parent_directory) ->
+        {:error, "Ordner nicht gefunden."}
+      !User.can_write_directory?(current_user, parent_directory) ->
+        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+      true ->
+        Accounts.create_directory(%{
+          name: name,
+          parent_directory_id: parent_directory.id,
+          user_id: parent_directory.user_id,
+          tenant_id: parent_directory.tenant_id
+        })
+        |> output_create_result()
+    end
+  end
+  def create(%{name: name, is_public: true}, %{context: %{current_user: current_user, tenant: tenant}}) when is_binary(name) do
+    cond do
+      !User.is_admin?(current_user, tenant) ->
+        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+      true ->
+        Accounts.create_directory(%{
+          name: name,
+          user_id: nil,
+          tenant_id: tenant.id
+        })
+        |> output_create_result()
     end
   end
   def create(%{name: name}, %{context: %{current_user: current_user, tenant: tenant}}) when is_binary(name) do
@@ -51,9 +65,33 @@ defmodule Api.DirectoryResolver do
       user_id: current_user.id,
       tenant_id: tenant.id
     })
+    |> output_create_result()
   end
   def create(_, %{context: %{current_user: _, tenant: _}}), do: {:error, "Der Name für den neuen Ordner ist ungültig."}
   def create(_, _), do: {:error, "Nur angemeldete Nutzer dürfen Ordner erstellen."}
+
+  defp output_create_result({:error, changeset}), do: {:error, message: "Fehler beim Erstellen des Ordners", details: error_details(changeset)}
+  defp output_create_result(result), do: result
+
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) when is_integer(id) do
+    directory = Accounts.get_directory(id)
+    cond do
+      is_nil(directory) ->
+        {:error, "Ordner nicht gefunden."}
+      !User.can_write_directory?(current_user, directory) ->
+        {:error, "Du darfst diesen Ordner nicht löschen."}
+      directory
+      |> ReadRepo.preload([:directories, :files])
+      |> Map.take([:directories, :files])
+      |> Map.values()
+      |> List.flatten()
+      |> Kernel.length() > 0 ->
+        {:error, "Es dürfen nur leere Ordner gelöscht werden."}
+      true ->
+        directory
+        |> Accounts.delete_directory()
+    end
+  end
 
   def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     try do
@@ -70,8 +108,18 @@ defmodule Api.DirectoryResolver do
         end
       if User.can_write_directory?(current_user, source_directory || directory) && User.can_write_directory?(current_user, target_directory || directory) do
         Accounts.update_directory(directory, Map.take(args, [:name, :parent_directory_id]))
+        |> case do
+          {:error, changeset} ->
+            {
+              :error,
+              message: "Fehler beim Speichern des Ordners",
+              details: error_details(changeset)
+            }
+          result ->
+            result
+        end
       else
-        {:error, "Du darfst diesen Ordner nicht verschieben."}        
+        {:error, "Du darfst diesen Ordner nicht bearbeiten."}        
       end
     rescue
       Ecto.NoResultsError ->

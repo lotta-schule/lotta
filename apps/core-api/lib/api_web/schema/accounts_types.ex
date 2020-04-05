@@ -123,6 +123,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :create_directory, type: :directory do
       arg :name, non_null(:string)
       arg :parent_directory_id, :lotta_id
+      arg :is_public, :boolean
 
       resolve &Api.DirectoryResolver.create/2
     end
@@ -130,9 +131,15 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :update_directory, type: :directory do
       arg :id, non_null(:lotta_id)
       arg :name, :string
-      arg :parent_directory_id, :string
+      arg :parent_directory_id, :lotta_id
 
       resolve &Api.DirectoryResolver.update/2
+    end
+
+    field :delete_directory, type: :directory do
+      arg :id, non_null(:lotta_id)
+
+      resolve &Api.DirectoryResolver.delete/2
     end
 
     field :upload_file, type: :file do
@@ -228,6 +235,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :parent_directory, :directory, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end
 

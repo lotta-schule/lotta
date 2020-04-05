@@ -277,7 +277,8 @@ defmodule Api.Accounts do
   """
   def list_root_directories(%Tenant{} = tenant, %User{} = user) do
     from(d in Directory,
-      where: d.tenant_id == ^tenant.id and is_nil(d.parent_directory_id) and (d.user_id == ^user.id or is_nil(d.user_id))
+      where: d.tenant_id == ^tenant.id and is_nil(d.parent_directory_id) and (d.user_id == ^user.id or is_nil(d.user_id)),
+      order_by: [:name]
     )
     |> ReadRepo.all()
   end
@@ -288,7 +289,8 @@ defmodule Api.Accounts do
   """
   def list_directories(%Directory{} = directory) do
     from(d in Directory,
-      where: d.parent_directory_id == ^directory.id
+      where: d.parent_directory_id == ^directory.id,
+      order_by: [:name]
     )
     |> ReadRepo.all()
   end
@@ -357,6 +359,23 @@ defmodule Api.Accounts do
     |> Directory.changeset(attrs)
     |> Repo.update()
   end
+
+  @doc """
+  Deletes a Directory.
+
+  ## Examples
+
+      iex> delete_directory(directory)
+      {:ok, %Directory{}}
+
+      iex> delete_directory(directory)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_directory(%Directory{} = directory) do
+    Repo.delete(directory)
+  end
+
 
   @doc """
   Returns the list of files.

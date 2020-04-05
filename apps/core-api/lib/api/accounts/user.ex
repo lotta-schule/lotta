@@ -65,28 +65,20 @@ defmodule Api.Accounts.User do
   def is_author?(_, _), do: false
 
   def can_write_directory?(%User{} = user, %Directory{} = directory) do
-    directory = ReadRepo.preload(directory, [:tenant])
-    tenant = directory.tenant
-    User.is_author?(user, directory) || if User.is_admin?(user, tenant) do
-      directory = ReadRepo.preload(directory, [:user, :tenant])
-      is_nil(directory.user) && directory.tenant == tenant.id
+    directory = ReadRepo.preload(directory, [:tenant, :user])
+    User.is_author?(user, directory) || if User.is_admin?(user, directory.tenant) do
+      is_nil(directory.user)
     else
       false
     end
   end
-  def can_write_directory?(_, _, _), do: false
+  def can_write_directory?(_, _), do: false
 
   def can_read_directory?(%User{} = user, %Directory{} = directory) do
-    directory = ReadRepo.preload(directory, [:tenant])
-    tenant = directory.tenant
-    User.is_author?(user, directory) || if User.is_admin?(user, tenant) do
-      directory = ReadRepo.preload(directory, [:user, :tenant])
-      is_nil(directory.user) && directory.tenant == tenant.id
-    else
-      false
-    end
+    directory = ReadRepo.preload(directory, [:user])
+    User.is_author?(user, directory) || is_nil(directory.user)
   end
-  def can_read_directory?(_, _, _), do: false
+  def can_read_directory?(_, _), do: false
 
   def has_group_for_article?(%User{} = user, %Article{} = article) do
     user_group_ids = User.group_ids(user, ReadRepo.preload(article, :tenant).tenant)

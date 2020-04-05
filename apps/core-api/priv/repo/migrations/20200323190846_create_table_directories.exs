@@ -7,8 +7,8 @@ defmodule Api.Repo.Migrations.CreateTableDirectories do
       add :parent_directory_id, references(:directories, on_delete: :delete_all)
       add :name, :string
       add :user_id, references(:users, on_delete: :nothing)
-      add :tenant_id, references(:users, on_delete: :nothing)
-      add :group_id, references(:users, on_delete: :nothing)
+      add :tenant_id, references(:tenants, on_delete: :nothing)
+      add :group_id, references(:user_groups, on_delete: :nothing)
 
       timestamps()
     end

@@ -69,10 +69,10 @@ defmodule Api.Repo.Seeder do
       %Api.Accounts.File{parent_directory_id: public_logos_podcast.id, filename: "podcast1.png", remote_location: "http://a.de/podcast1.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
       %Api.Accounts.File{parent_directory_id: public_logos_podcast.id, filename: "podcast2.png", remote_location: "http://a.de/podcast2.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
       %Api.Accounts.File{parent_directory_id: public_logos_chamaeleon.id, filename: "chamaeleon.png", remote_location: "http://a.de/chamaeleon.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{parent_directory_id: public_hintergrund, filename: "hg_dunkel.jpg", remote_location: "http://a.de/hg_dunkel.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{parent_directory_id: public_hintergrund, filename: "hg_hell.jpg", remote_location: "http://a.de/hg_hell.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{parent_directory_id: public_hintergrund, filename: "hg_comic.png", remote_location: "http://a.de/hg_comic.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{parent_directory_id: public_hintergrund, filename: "hg_grafik.png", remote_location: "http://a.de/hg_grafik.png", filesize: 12288, file_type: "image", mime_type: "image/png"}
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_dunkel.jpg", remote_location: "http://a.de/hg_dunkel.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_hell.jpg", remote_location: "http://a.de/hg_hell.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_comic.png", remote_location: "http://a.de/hg_comic.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_grafik.png", remote_location: "http://a.de/hg_grafik.png", filesize: 12288, file_type: "image", mime_type: "image/png"}
     ]
     |> Enum.each(fn file ->
       file
