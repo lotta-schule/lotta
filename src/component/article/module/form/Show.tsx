@@ -3,7 +3,7 @@ import { Button, makeStyles } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { SendFormResponseMutation } from 'api/mutation/SendFormResponseMutation';
 import { SuccessMessage } from 'component/general/SuccessMessage';
 

@@ -1,7 +1,7 @@
 import './index.scss';
 import Honeybadger from 'honeybadger-js';
 import * as serviceWorker from './serviceWorker';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/react-hooks';
 import { App } from './component/App';
 import { client } from 'api/client';
 import { CloudimageProvider } from 'react-cloudimage-responsive';

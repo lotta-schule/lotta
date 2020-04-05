@@ -4,7 +4,7 @@ import { Button, Card, CardHeader, Checkbox, Divider, Grid, List, ListItem, List
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

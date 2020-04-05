@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { ArticleModel } from 'model';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { GetTopicQuery } from 'api/query/GetTopicQuery';
 import { ArticlePreview } from './ArticlePreview';
 import { Typography, makeStyles } from '@material-ui/core';

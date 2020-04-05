@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { ArticleModel } from 'model';
 import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ArticlesManagement } from 'component/profile/ArticlesManagement';

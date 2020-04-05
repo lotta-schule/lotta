@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Typography, makeStyles } from '@material-ui/core';
 import { AddCircle, ExpandMore, DragHandle } from '@material-ui/icons';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';

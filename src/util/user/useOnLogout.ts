@@ -2,7 +2,7 @@ import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { UserModel } from 'model';
 import { createCloseDrawerAction } from 'store/actions/layout';
 import { LogoutMutation } from 'api/mutation/LogoutMutation';
-import { useApolloClient, useMutation } from 'react-apollo';
+import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import { useDispatch } from 'react-redux';
 import Matomo from 'matomo-ts';
 
