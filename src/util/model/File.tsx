@@ -92,6 +92,6 @@ export const File = {
     },
 
     canEditDirectory(directory: DirectoryModel, user: UserModel | null) {
-        return user && (directory.user?.id === user!.id || User.isAdmin(user));
+        return user && (directory.user?.id === user.id || User.isAdmin(user));
     }
 };

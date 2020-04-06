@@ -29,7 +29,7 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
 
     return (
         <CardContent>
-            {contentModule.files.sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey).map(file => (
+            {[...contentModule.files].sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey).map(file => (
                 <div key={file.id} className={styles.downloadItemWrapper}>
                     <div className={styles.downloadWrapperHeader}>
                         <Grid

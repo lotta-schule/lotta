@@ -1,18 +1,43 @@
 import React, { MouseEvent, memo, useContext } from 'react';
 import { some, every, uniqBy, range } from 'lodash';
-import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, CircularProgress, IconButton } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, CircularProgress, IconButton, fade, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { FileModel, FileModelType, DirectoryModel } from 'model';
 import { useQuery } from '@apollo/react-hooks';
+import { ArrowBackRounded } from '@material-ui/icons';
+import { useDropzone } from 'react-dropzone';
+import { FileModel, FileModelType, DirectoryModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { DirectoryTableRow } from './DirectoryTableRow';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { FileTableRow } from './FileTableRow';
 import { FileTableFooter } from './FileTableFooter';
-import { ArrowBackRounded } from '@material-ui/icons';
+import { useCreateUpload } from './context/UploadQueueContext';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
+import clsx from 'clsx';
 
 const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme) => ({
+    root: {
+        position: 'relative',
+        borderColor: '2px solid transparent',
+        transition: 'ease-out 250ms all',
+        border: '2px dashed transparent',
+        outline: 'none'
+    },
+    isDragActive: {
+        backgroundColor: fade(theme.palette.secondary.main, .075),
+        border: '2px dashed',
+        borderColor: theme.palette.secondary.main,
+    },
+    dragHelpText: {
+        display: 'block',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        color: '#333',
+        fontSize: '1.2rem',
+        textShadow: '1px 1px 4px #f523'
+    },
     table: {
         display: 'flex',
         flexDirection: 'column',
@@ -93,6 +118,17 @@ export const FileTable = memo(() => {
     });
     const files = data?.files ?? [];
 
+    const uploadFile = useCreateUpload();
+    const { getRootProps, draggedFiles, isDragAccept, isDragActive } = useDropzone({
+        onDrop: files => {
+            files.forEach(f => uploadFile(f, state.currentPath[state.currentPath.length - 1] as DirectoryModel));
+        },
+        disabled: state.currentPath.length < 2,
+        multiple: true,
+        preventDropOnDocument: true,
+        noClick: true
+    });
+
     const isMarked = (file: FileModel) => {
         if (!file) {
             return false;
@@ -109,7 +145,7 @@ export const FileTable = memo(() => {
         }, null) as number;
     }
 
-    const toggleFileMarked = (file: FileModel) => (e: MouseEvent) => {
+    const toggleFileMarked = (e: MouseEvent, file: FileModel) => {
         e.preventDefault();
         if (isMarked(file)) {
             if (e.metaKey) {
@@ -136,7 +172,17 @@ export const FileTable = memo(() => {
     };
 
     return (
-        <div>
+        <div {...getRootProps()} className={clsx(styles.root, { [styles.isDragActive]: isDragActive, [styles.isDragAccept]: isDragAccept })}>
+            {!isDragAccept && isDragActive && (
+                <Typography variant={'caption'} className={styles.dragHelpText}>
+                    Dateien hierher ziehen
+                </Typography>
+            )}
+            {isDragAccept && (
+                <Typography variant={'caption'} className={styles.dragHelpText}>
+                    Loslassen, um {draggedFiles.length} Dateien hochzuladen
+                </Typography>
+            )}
             <ErrorMessage error={error} />
             <Table size={'small'} className={styles.table}>
                 <TableHead>
@@ -182,23 +228,23 @@ export const FileTable = memo(() => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data?.directories.sort((d1, d2) => d1.name.localeCompare(d2.name)).map(directory => (
+                    {[...(data?.directories ?? [])].sort((d1, d2) => d1.name.localeCompare(d2.name)).map(directory => (
                         <DirectoryTableRow
                             key={`dir-${directory.id}`}
                             directory={directory}
                         />
                     ))}
-                    {data?.files.sort((f1, f2) => f1.filename.localeCompare(f2.filename)).map(file => (
+                    {[...(data?.files ?? [])].sort((f1, f2) => f1.filename.localeCompare(f2.filename)).map(file => (
                         <FileTableRow
                             key={`file-${file.id}`}
                             file={file}
-                            onMark={() => {
+                            onMark={e => {
                                 if (state.mode === FileExplorerMode.Select) {
                                     dispatch({ type: 'setSelectedFiles', files: [file] });
                                 } else if (state.mode === FileExplorerMode.SelectMultiple) {
                                     dispatch({ type: 'setSelectedFiles', files: uniqBy([...state.selectedFiles, file], 'id') });
                                 } else {
-                                    toggleFileMarked(file);
+                                    toggleFileMarked(e, file);
                                 }
                             }}
                         />

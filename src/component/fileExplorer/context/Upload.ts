@@ -1,9 +1,9 @@
-import { client } from './client';
-import { UploadModel, FileModel, DirectoryModel } from '../model';
-import { UploadFileMutation } from './mutation/UploadFileMutation';
-import { GetDirectoriesAndFilesQuery } from './query/GetDirectoriesAndFiles';
+import { client } from 'api/client';
+import { UploadFileMutation } from 'api/mutation/UploadFileMutation';
+import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
+import { UploadModel, FileModel, DirectoryModel } from 'model';
 
-export class UploadService implements UploadModel {
+export class Upload implements UploadModel {
     public id = new Date().getTime() + Math.random() * 1000;
 
     public parentDirectory: DirectoryModel;
@@ -25,11 +25,7 @@ export class UploadService implements UploadModel {
         this.error = null;
     }
 
-    public startUploading(
-        onProgress: (event: number) => void,
-        onFinish: (file: FileModel) => void,
-        onError: (error: Error) => void
-    ): UploadService {
+    public startUploading(onProgress: (event: number) => void, onFinish: (file: FileModel) => void, onError: (error: Error) => void): Upload {
         client
             .mutate<{ file: FileModel }>({
                 mutation: UploadFileMutation,

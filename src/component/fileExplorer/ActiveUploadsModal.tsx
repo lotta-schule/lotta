@@ -1,14 +1,12 @@
 import React, { memo, useContext } from 'react';
 import { Dialog, DialogTitle, List, ListItem, ListItemAvatar, CircularProgress, ListItemText } from '@material-ui/core';
-import { useSelector } from 'react-redux';
-import { State } from 'store/State';
-import { UploadModel } from 'model';
 import { ErrorOutline } from '@material-ui/icons';
+import { useUploads } from './context/UploadQueueContext';
 import fileExplorerContext from './context/FileExplorerContext';
 
 export const ActiveUploadsModal = memo(() => {
-    const uploads = (useSelector<State, UploadModel[]>(s => s.userFiles.uploads) || []);
     const [state, dispatch] = useContext(fileExplorerContext);
+    const uploads = useUploads();
 
     return (
         <Dialog open={state.showActiveUploads && uploads.length > 0} onClose={() => dispatch({ type: 'hideActiveUploads' })}>
@@ -19,7 +17,6 @@ export const ActiveUploadsModal = memo(() => {
                         <ListItemAvatar>
                             <>
                                 {upload.error && (
-
                                     <ErrorOutline color={'error'} />
                                 )}
                                 {!upload.error && (

@@ -105,7 +105,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                     </figcaption>
                 )}
                 <List dense className={styles.list}>
-                    {events.sort((ev1, ev2) => new Date(ev1.start).getTime() - new Date(ev2.start).getTime()).map((event, i) => (
+                    {[...events].sort((ev1, ev2) => new Date(ev1.start).getTime() - new Date(ev2.start).getTime()).map((event, i) => (
                         <React.Fragment key={i}>
                             <ListItem className={styles.tableline}>
                                 <ListItemText className={styles.listItemTextDate}>

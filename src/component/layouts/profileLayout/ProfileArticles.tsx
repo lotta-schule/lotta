@@ -21,7 +21,7 @@ export const ProfileArticles = memo(() => {
 
                 {ownArticlesData?.articles && (
                     <ArticlesManagement
-                        articles={ownArticlesData.articles.sort((a1, a2) =>
+                        articles={[...ownArticlesData.articles].sort((a1, a2) =>
                             new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime()
                         )}
                     />

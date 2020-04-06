@@ -17,7 +17,7 @@ export const DirectoryTree = memo<DirectoryTreeProps>(({ defaultExpandedDirector
     useEffect(() => {
         setExpandedDirectoryIds(defaultExpandedDirectoryIds);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [defaultExpandedDirectoryIds.sort().join('')]);
+    }, [[...defaultExpandedDirectoryIds].sort().join('')]);
     return (
         <SelectedDirectoryContext.Provider value={[selectedDirectory, onSelectDirectory]}>
             <TreeView

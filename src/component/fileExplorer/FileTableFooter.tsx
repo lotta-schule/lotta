@@ -9,7 +9,8 @@ const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
         borderTop: `1px solid ${theme.palette.secondary.main}`,
-        padding: theme.spacing(.5),
+        paddingTop: theme.spacing(.5),
+        paddingBottom: theme.spacing(.5),
         textAlign: 'center'
     }
 }));

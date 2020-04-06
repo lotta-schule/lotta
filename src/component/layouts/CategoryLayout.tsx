@@ -84,7 +84,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                     </Grid>
                 )}
                 {articles && articles.length > 1 && (
-                    articles
+                    [...articles]
                         .sort((a1, a2) => {
                             if (!category.isHomepage && a1.isPinnedToTop !== a2.isPinnedToTop) {
                                 if (a1.isPinnedToTop) { return -1; }
