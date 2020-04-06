@@ -5,19 +5,15 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { App } from './component/App';
 import { client } from 'api/client';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
-import { Provider } from 'react-redux';
 import { theme } from './theme';
 import { ThemeProvider } from '@material-ui/styles';
-import { UploadQueueService } from 'api/UploadQueueService';
-import { createSetUploadsAction } from 'store/actions/userFiles';
-import { UploadQueueContext } from 'context/UploadQueueContext';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
 import { de } from 'date-fns/locale';
 import Matomo from 'matomo-ts';
 import React from 'react';
 import DateFnsUtils from '@date-io/date-fns';
 import ReactDOM from 'react-dom';
-import store from './store/Store';
 
 if (process.env.REACT_APP_MATOMO_URL) {
     Matomo.default().init(
@@ -41,21 +37,15 @@ try {
 }
 
 
-const uploadQueue = new UploadQueueService(
-    uploads => store.dispatch(createSetUploadsAction(uploads)),
-);
-
 ReactDOM.render(
     (
         <ThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
                 <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
                     <ApolloProvider client={client}>
-                        <Provider store={store}>
-                            <UploadQueueContext.Provider value={uploadQueue}>
-                                <App />
-                            </UploadQueueContext.Provider>
-                        </Provider >
+                        <UploadQueueProvider>
+                            <App />
+                        </UploadQueueProvider>
                     </ApolloProvider >
                 </CloudimageProvider>
             </MuiPickersUtilsProvider>

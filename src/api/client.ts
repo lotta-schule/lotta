@@ -43,7 +43,7 @@ const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
     return obj;
 };
 
-export const client = new ApolloClient({
+const apolloClient = new ApolloClient({
     link: concat(
         new ApolloLink((operation, forward) => {
             if (operation.variables) {
@@ -58,5 +58,19 @@ export const client = new ApolloClient({
             fetch: customFetch,
         })
     ),
-    cache: new InMemoryCache()
+    resolvers: {},
+    cache: new InMemoryCache({
+        freezeResults: true
+    })
 });
+
+const initialData = {
+    isMobileDrawerOpen: false
+}
+
+apolloClient.writeData({ data: initialData });
+apolloClient.onResetStore(async () => {
+    apolloClient.writeData({ data: initialData })
+});
+
+export const client = apolloClient;

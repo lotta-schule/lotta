@@ -147,7 +147,7 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
                     <>
                         <Table size={'small'}>
                             <TableBody>
-                                {data.schedule.body.schedule
+                                {[...data.schedule.body.schedule]
                                     .sort((l1, l2) => l1.lessonIndex - l2.lessonIndex)
                                     .filter(line => {
                                         if (selectedCourses !== null && ['11', '12'].indexOf(currentUser.class!) > -1) {

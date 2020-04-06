@@ -1,16 +1,16 @@
 import React, { memo, useCallback } from 'react';
 import { AppBar, Toolbar, Button, Theme, Grid, IconButton } from '@material-ui/core';
 import { CollisionLink } from 'component/general/CollisionLink';
-import { createOpenDrawerAction } from 'store/actions/layout';
 import { makeStyles } from '@material-ui/styles';
 import { Menu } from '@material-ui/icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
-import { useDispatch } from 'react-redux';
 import { fade } from '@material-ui/core/styles';
 import { Category } from 'util/model';
+import { useApolloClient } from '@apollo/react-hooks';
 import clsx from 'clsx';
+import gql from 'graphql-tag';
 
 const useStyles = makeStyles<Theme>(theme => ({
     root: {
@@ -88,15 +88,19 @@ const useStyles = makeStyles<Theme>(theme => ({
 }));
 
 export const Navbar = memo(() => {
-
     const styles = useStyles();
 
+    const apolloClient = useApolloClient();
     const [categories] = useCategories();
     const currentCategoryId = useCurrentCategoryId();
     const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || 0);
 
-    const dispatch = useDispatch();
-    const openDrawer = useCallback(() => { dispatch(createOpenDrawerAction()); }, [dispatch]);
+    const openDrawer = useCallback(() => {
+        apolloClient.writeQuery({
+            query: gql`{ isMobileDrawerOpen }`,
+            data: { isMobileDrawerOpen: true }
+        });
+    }, [apolloClient]);
 
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 

@@ -1,5 +1,5 @@
 import React, { MouseEvent, memo, useState, useCallback, useContext } from 'react';
-import { TableRow, TableCell, IconButton, Menu, MenuItem } from '@material-ui/core';
+import { TableRow, TableCell, IconButton, Menu, MenuItem, makeStyles, fade } from '@material-ui/core';
 import { MoreVert, CreateOutlined } from '@material-ui/icons';
 import { DirectoryModel } from 'model';
 import { File } from 'util/model/File';
@@ -7,16 +7,48 @@ import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
 import clsx from 'clsx';
+import { useCreateUpload } from './context/UploadQueueContext';
+import { useDropzone } from 'react-dropzone';
 
 export interface FileTableRowProps {
     directory: DirectoryModel;
 }
 
+const useStyles = makeStyles(theme => ({
+    root: {
+    },
+    isDragActive: {
+        backgroundColor: fade(theme.palette.secondary.main, .075),
+    },
+    dragHelpText: {
+        display: 'block',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        color: '#333',
+        fontSize: '1.2rem',
+        textShadow: '1px 1px 4px #f523'
+    }
+}));
+
 export const DirectoryTableRow = memo<FileTableRowProps>(({ directory }) => {
+    const styles = useStyles();
     const [state, dispatch] = useContext(fileExplorerContext);
     const [currentUser] = useCurrentUser();
     const [editMenuAnchorEl, setEditMenuAnchorEl] = useState<null | HTMLElement>(null);
     const [isRenamingFile, setIsRenamingFile] = useState(false);
+
+    const uploadFile = useCreateUpload();
+    const { getRootProps, isDragActive } = useDropzone({
+        onDrop: files => {
+            files.forEach(f => uploadFile(f, directory));
+        },
+        multiple: true,
+        preventDropOnDocument: true,
+        noClick: true,
+        noDragEventsBubbling: true
+    });
 
     const handleEditMenuClose = () => {
         setEditMenuAnchorEl(null);
@@ -36,7 +68,7 @@ export const DirectoryTableRow = memo<FileTableRowProps>(({ directory }) => {
     const isMarked = state.currentPath[state.currentPath.length - 1].id === directory.id;
 
     return (
-        <TableRow hover className={clsx({ selected: isMarked })}>
+        <TableRow hover={!isDragActive} className={clsx({ selected: !isDragActive && isMarked, [styles.isDragActive]: isDragActive })} {...getRootProps()}>
             <TableCell>
                 {/* checkbox column */}
             </TableCell>

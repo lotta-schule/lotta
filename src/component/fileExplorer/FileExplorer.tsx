@@ -1,9 +1,6 @@
-import React, { Reducer, memo, useCallback, useContext, useReducer } from 'react';
+import React, { Reducer, memo, useReducer } from 'react';
 import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
-import { fade } from '@material-ui/core/styles';
-import { useDropzone } from 'react-dropzone';
-import { DirectoryModel, FileModel } from 'model';
-import { UploadQueueContext } from 'context/UploadQueueContext';
+import { FileModel } from 'model';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DeleteFilesDialog } from './DeleteFilesDialog';
@@ -14,21 +11,6 @@ import { Provider, defaultState, FileExplorerMode } from './context/FileExplorer
 import { Action, reducer } from './context/reducer';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
-  overlayDropzoneActive: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: fade(theme.palette.grey[400], .67),
-    zIndex: 10000,
-    border: '1px solid',
-    borderColor: theme.palette.grey[700],
-    borderRadius: 10,
-  },
   bottomToolbar: {
     display: 'flex',
     justifyContent: 'flex-end'
@@ -51,30 +33,9 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
     mode: onSelect ? (multiple ? FileExplorerMode.SelectMultiple : FileExplorerMode.Select) : FileExplorerMode.ViewAndEdit
   });
 
-  const uploadQueue = useContext(UploadQueueContext);
-
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (state.currentPath.length > 1 && acceptedFiles.length > 0) {
-      acceptedFiles.forEach(file => uploadQueue.uploadFile(file, state.currentPath[state.currentPath.length - 1] as DirectoryModel));
-    }
-  }, [state.currentPath, uploadQueue]);
-  const { getRootProps, getInputProps, isDragActive, isDragAccept, draggedFiles } = useDropzone({
-    onDrop,
-    disabled: state.currentPath.length < 2,
-    multiple: true,
-    preventDropOnDocument: true,
-    noClick: true
-  });
-
   return (
     <Provider value={[state, dispatch]}>
-      <Paper style={{ position: 'relative', outline: 'none', ...style }} className={className} {...getRootProps()}>
-        <input {...getInputProps()} />
-        {(isDragActive || isDragAccept) && (
-          <div className={styles.overlayDropzoneActive}>
-            {isDragActive && <span>Loslassen, um {draggedFiles.length} Dateien hochzuladen</span>}
-          </div>
-        )}
+      <Paper style={{ position: 'relative', outline: 'none', ...style }} className={className}>
         <ActiveUploadsModal />
         <CreateNewDirectoryDialog
           open={state.showCreateNewFolder}
@@ -84,11 +45,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
         <MoveFilesDialog />
         <DeleteFilesDialog />
 
-        <FileToolbar
-          showFileCreateButtons={true} /* TODO: Check if can create a file */
-          onSelectFilesToUpload={onDrop}
-        />
-
+        <FileToolbar />
         <FileTable />
 
         {state.mode !== FileExplorerMode.ViewAndEdit && (

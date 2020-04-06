@@ -1,11 +1,10 @@
 import React, { memo } from 'react';
-import { Grid, Container, Theme, makeStyles } from '@material-ui/core';
+import { Grid, Container, Theme, Typography, makeStyles } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { useIsMobile } from 'util/useIsMobile';
 import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
 import { useTenant } from 'util/client/useTenant';
 import { ClientModel } from 'model';
-import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
     '@global': {

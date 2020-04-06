@@ -1,9 +1,10 @@
 import React, { memo, useContext } from 'react';
 import { CloudUploadOutlined, CreateNewFolderOutlined, FileCopyOutlined, DeleteOutlineOutlined, HomeOutlined } from '@material-ui/icons';
 import { makeStyles, Theme, createStyles, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Zoom, Breadcrumbs, Link } from '@material-ui/core';
-import { UploadModel } from 'model';
-import { useSelector } from 'react-redux';
-import { State } from 'store/State';
+import { useUploads, useCreateUpload } from './context/UploadQueueContext';
+import { DirectoryModel } from 'model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { File } from 'util/model';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
@@ -35,15 +36,12 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
     }),
 );
 
-export interface FileToolbarProps {
-    showFileCreateButtons: boolean;
-    onSelectFilesToUpload(files: File[]): void;
-}
-
-export const FileToolbar = memo<FileToolbarProps>(({ showFileCreateButtons, onSelectFilesToUpload }) => {
+export const FileToolbar = memo(() => {
     const styles = useStyles();
 
-    const uploads = (useSelector<State, UploadModel[]>(s => s.userFiles.uploads) || []);
+    const [currentUser] = useCurrentUser();
+    const uploads = useUploads();
+    const createUpload = useCreateUpload();
     const [state, dispatch] = useContext(fileExplorerContext);
 
     const uploadLength = uploads.length;
@@ -77,24 +75,24 @@ export const FileToolbar = memo<FileToolbarProps>(({ showFileCreateButtons, onSe
                 </div>
                 <div className={styles.spacer} />
                 <div className={styles.actions}>
-                    {showFileCreateButtons && (
+                    <Zoom in={uploadLength > 0}>
+                        <Tooltip title={`${uploadLength} Dateien werden hochgeladen`}>
+                            <Badge
+                                color={uploads.filter(u => u.error).length ? 'error' : 'primary'}
+                                badgeContent={uploads.filter(u => u.error).length ? <span>!</span> : uploadLength}
+                            >
+                                <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })}>
+                                    <CircularProgress
+                                        size={20}
+                                        variant={'static'}
+                                        value={uploadTotalProgress}
+                                    />
+                                </IconButton>
+                            </Badge>
+                        </Tooltip>
+                    </Zoom>
+                    {File.canEditDirectory(state.currentPath.slice(-1)[0] as DirectoryModel, currentUser!) && (
                         <>
-                            <Zoom in={uploadLength > 0}>
-                                <Tooltip title={`${uploadLength} Dateien werden hochgeladen`}>
-                                    <Badge
-                                        color={uploads.filter(u => u.error).length ? 'error' : 'primary'}
-                                        badgeContent={uploads.filter(u => u.error).length ? <span>!</span> : uploadLength}
-                                    >
-                                        <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })}>
-                                            <CircularProgress
-                                                size={20}
-                                                variant={'static'}
-                                                value={uploadTotalProgress}
-                                            />
-                                        </IconButton>
-                                    </Badge>
-                                </Tooltip>
-                            </Zoom>
                             <Zoom in={showFileEditingButtons}>
                                 <Tooltip title="Dateien verschieben">
                                     <IconButton aria-label="Dateien verschieben" onClick={() => dispatch({ type: 'showMoveFiles' })}>
@@ -123,7 +121,7 @@ export const FileToolbar = memo<FileToolbarProps>(({ showFileCreateButtons, onSe
                                             className={styles.uploadButton}
                                             onChange={e => {
                                                 if (e.target.files) {
-                                                    onSelectFilesToUpload(Array.from(e.target.files))
+                                                    Array.from(e.target.files).forEach(file => createUpload(file, state.currentPath.slice(-1)[0] as DirectoryModel));
                                                 }
                                             }}
                                         />

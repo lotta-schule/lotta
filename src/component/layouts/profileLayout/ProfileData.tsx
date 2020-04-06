@@ -81,7 +81,7 @@ export const ProfileData = memo(() => {
                         />
                         <Divider className={styles.divider} style={{ width: '80%' }} />
                         <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>}>
-                            {currentUser.groups.sort((g1, g2) => g2.sortKey - g1.sortKey).map(group => (
+                            {[...currentUser.groups].sort((g1, g2) => g2.sortKey - g1.sortKey).map(group => (
                                 <ListItem key={group.id}>
                                     <ListItemText>{group.name}</ListItemText>
                                 </ListItem>

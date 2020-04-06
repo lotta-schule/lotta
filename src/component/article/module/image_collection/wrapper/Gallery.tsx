@@ -48,7 +48,7 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
             };
         }
     }
-    const sortedFiles = (contentModule.files || []).sort(FileSorter(contentModule, getConfiguration));
+    const sortedFiles = [...(contentModule.files || [])].sort(FileSorter(contentModule, getConfiguration));
     return (
         <>
             <GridList cols={3}>
