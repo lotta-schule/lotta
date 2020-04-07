@@ -148,7 +148,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
         if (file.fileType === FileModelType.Image) {
             previewImageUrl = file.remoteLocation;
         } else {
-            const imageConversionFile = file.fileConversions?.find(fc => /^storyboard/.test(fc.format));
+            const imageConversionFile = file.fileConversions?.find(fc => /^gif/.test(fc.format));
             if (imageConversionFile) {
                 previewImageUrl = imageConversionFile.remoteLocation;
             }
