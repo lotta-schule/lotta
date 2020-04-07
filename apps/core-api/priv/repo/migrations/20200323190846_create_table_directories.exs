@@ -33,9 +33,10 @@ defmodule Api.Repo.Migrations.CreateTableDirectories do
       |> Enum.map(fn user -> Enum.map(tenants, fn tenant ->
         Enum.map([
           %Api.Accounts.Directory{name: "Mein Profil", user_id: user.id, tenant_id: tenant.id},
+          %Api.Accounts.Directory{name: "Meine Bilder", user_id: user.id, tenant_id: tenant.id},
           %Api.Accounts.Directory{name: "Meine Dokumente", user_id: user.id, tenant_id: tenant.id},
-          %Api.Accounts.Directory{name: "Meine Medien", user_id: user.id, tenant_id: tenant.id},
-          %Api.Accounts.Directory{name: "Meine Bilder", user_id: user.id, tenant_id: tenant.id}
+          %Api.Accounts.Directory{name: "Meine Videos", user_id: user.id, tenant_id: tenant.id},
+          %Api.Accounts.Directory{name: "Meine Tondokumente", user_id: user.id, tenant_id: tenant.id}
         ], &Api.Repo.insert!/1)
       end) end)
     
@@ -52,9 +53,9 @@ defmodule Api.Repo.Migrations.CreateTableDirectories do
           "image" ->
             "Meine Bilder"
           "video" ->
-            "Meine Medien"
+            "Meine Videos"
           "audio" ->
-            "Meine Medien"
+            "Meine Tondokumente"
           _ ->
             "Meine Dokumente"
         end
