@@ -9,6 +9,7 @@ import { FileToolbar } from './FileToolbar';
 import { MoveFilesDialog } from './MoveFilesDialog';
 import { Provider, defaultState, FileExplorerMode } from './context/FileExplorerContext';
 import { Action, reducer } from './context/reducer';
+import { MoveDirectoryDialog } from './MoveDirectoryDialog';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
   bottomToolbar: {
@@ -42,7 +43,10 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
           basePath={state.currentPath}
           onClose={() => dispatch({ type: 'hideCreateNewFolder' })}
         />
-        <MoveFilesDialog />
+        {state.markedFiles.length > 0 && (
+          <MoveFilesDialog />
+        )}
+        <MoveDirectoryDialog />
         <DeleteFilesDialog />
 
         <FileToolbar />

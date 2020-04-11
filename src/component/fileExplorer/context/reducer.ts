@@ -1,5 +1,5 @@
 import { defaultState } from './FileExplorerContext';
-import { FileModel } from '../../../model';
+import { FileModel, DirectoryModel } from '../../../model';
 
 export type Action =
     | { type: 'setMode', mode: typeof defaultState.mode }
@@ -8,10 +8,14 @@ export type Action =
     | { type: 'setMarkedFiles', files: FileModel[] }
     | { type: 'resetMarkedFiles' }
     | { type: 'markSingleFile', file: FileModel }
+    | { type: 'setMarkedDirectories', directories: DirectoryModel[] }
+    | { type: 'resetMarkedDirectories' }
+    | { type: 'markSingleDirectory', directory: DirectoryModel }
     | { type: 'setPath', path: ({ id: null } | { id: number; name: string })[] }
     | { type: 'showActiveUploads' } | { type: 'hideActiveUploads' }
     | { type: 'showCreateNewFolder' } | { type: 'hideCreateNewFolder' }
     | { type: 'showMoveFiles' } | { type: 'hideMoveFiles' }
+    | { type: 'showMoveDirectory' } | { type: 'hideMoveDirectory' }
     | { type: 'showDeleteFiles' } | { type: 'hideDeleteFiles' }
 
 export const reducer = (state: typeof defaultState, action: Action): typeof defaultState => {
@@ -46,6 +50,21 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
                 ...state,
                 markedFiles: [action.file]
             }
+        case 'setMarkedDirectories':
+            return {
+                ...state,
+                markedDirectories: action.directories
+            };
+        case 'resetMarkedDirectories':
+            return {
+                ...state,
+                markedDirectories: []
+            };
+        case 'markSingleDirectory':
+            return {
+                ...state,
+                markedDirectories: [action.directory]
+            }
         case 'setPath':
             return {
                 ...state,
@@ -68,6 +87,11 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
                 ...state,
                 showMoveFiles: true
             }
+        case 'showMoveDirectory':
+            return {
+                ...state,
+                showMoveDirectory: true
+            }
         case 'showDeleteFiles':
             return {
                 ...state,
@@ -87,6 +111,11 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
             return {
                 ...state,
                 showMoveFiles: false
+            }
+        case 'hideMoveDirectory':
+            return {
+                ...state,
+                showMoveDirectory: false
             }
         case 'hideDeleteFiles':
             return {

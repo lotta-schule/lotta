@@ -1,14 +1,14 @@
 import React, { MouseEvent, memo, useState, useCallback, useContext } from 'react';
 import { TableRow, TableCell, IconButton, Menu, MenuItem, makeStyles, fade } from '@material-ui/core';
-import { MoreVert, CreateOutlined } from '@material-ui/icons';
+import { MoreVert, CreateOutlined, FileCopyOutlined } from '@material-ui/icons';
 import { DirectoryModel } from 'model';
 import { File } from 'util/model/File';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
-import clsx from 'clsx';
 import { useCreateUpload } from './context/UploadQueueContext';
 import { useDropzone } from 'react-dropzone';
+import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
+import clsx from 'clsx';
 
 export interface FileTableRowProps {
     directory: DirectoryModel;
@@ -64,8 +64,14 @@ export const DirectoryTableRow = memo<FileTableRowProps>(({ directory }) => {
         setEditMenuAnchorEl(null);
         setIsRenamingFile(true);
     }, []);
+    const handleEditMenuClickMove = useCallback((event: MouseEvent<HTMLElement>) => {
+        event.stopPropagation();
+        setEditMenuAnchorEl(null);
+        dispatch({ type: 'showMoveDirectory' });
+        dispatch({ type: 'setMarkedDirectories', directories: [directory] });
+    }, [directory, dispatch]);
 
-    const isMarked = state.currentPath[state.currentPath.length - 1].id === directory.id;
+    const isMarked = state.markedDirectories.find(d => d.id === directory.id) !== undefined;
 
     return (
         <TableRow hover={!isDragActive} className={clsx({ selected: !isDragActive && isMarked, [styles.isDragActive]: isDragActive })} {...getRootProps()}>
@@ -94,7 +100,8 @@ export const DirectoryTableRow = memo<FileTableRowProps>(({ directory }) => {
                                 open={Boolean(editMenuAnchorEl)}
                                 onClose={() => handleEditMenuClose()}
                             >
-                                <MenuItem key={'rename'} onClick={(e) => handleEditMenuClickRename(e)}><CreateOutlined color={'secondary'} />&nbsp;Umbenennen</MenuItem>
+                                <MenuItem key={'rename'} onClick={(e) => handleEditMenuClickRename(e)}><CreateOutlined color={'secondary'} />&nbsp;Umbenennen</MenuItem>,
+                                <MenuItem key={'move'} onClick={(e) => handleEditMenuClickMove(e)}><FileCopyOutlined color={'secondary'} />&nbsp;Verschieben</MenuItem>
                             </Menu>
                         </>
                     )}

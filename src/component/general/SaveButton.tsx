@@ -6,6 +6,7 @@ import clsx from 'clsx';
 export interface SaveButtonProps extends Pick<ButtonProps, 'type' | 'style' | 'fullWidth'> {
     isLoading?: boolean;
     isSuccess?: boolean;
+    disabled?: boolean;
     className?: string;
     onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
     children?: ReactNode | ReactNodeArray;
@@ -25,7 +26,7 @@ export const useStyles = makeStyles<Theme, { isSuccess?: boolean }>(theme => ({
     }
 }));
 
-export const SaveButton = memo<SaveButtonProps>(({ children, className, isSuccess, isLoading, ...buttonProps }) => {
+export const SaveButton = memo<SaveButtonProps>(({ children, className, isSuccess, isLoading, disabled, ...buttonProps }) => {
     const styles = useStyles({ isSuccess });
     const icon = (() => {
         if (isLoading) {
@@ -41,7 +42,7 @@ export const SaveButton = memo<SaveButtonProps>(({ children, className, isSucces
             className={clsx(styles.root, className)}
             color={'secondary'}
             variant={'outlined'}
-            disabled={isLoading}
+            disabled={disabled || isLoading}
             startIcon={icon}
             {...buttonProps}
         >
