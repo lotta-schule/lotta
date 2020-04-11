@@ -1,5 +1,6 @@
 defmodule Api.UserResolverTest do
   use ApiWeb.ConnCase
+  import Ecto.Query
 
   setup do
     Api.Repo.Seeder.seed()
@@ -343,13 +344,21 @@ defmodule Api.UserResolverTest do
     }
     """
 
-    test "register the user if data is entered correctly" do
+    test "register the user if data is entered correctly - user should have default directories", %{web_tenant: web_tenant} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123" }})
       |> json_response(200)
-
+       
       assert String.valid?(res["data"]["register"]["token"])
+
+      token = res["data"]["register"]["token"]
+      {:ok, %{"id" => id}} = Api.Guardian.decode_and_verify(token)
+      directories =
+        from(d in Api.Accounts.Directory, where: d.user_id == ^id and d.tenant_id == ^web_tenant.id)
+        |> Api.Repo.all()
+
+      assert length(directories) == 5
     end
 
     test "register the user and put him into groupkey's group" do
