@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
-import { DialogTitle, DialogContent, DialogContentText, TextField, Button, DialogActions } from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogContentText, TextField, Button, DialogActions, FormControlLabel, Checkbox } from '@material-ui/core';
 import { DirectoryModel, FileModel } from 'model';
 import { useMutation } from '@apollo/react-hooks';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
@@ -7,6 +7,8 @@ import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { CreateDirectoryMutation } from 'api/mutation/CreateDirectoryMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SaveButton } from 'component/general/SaveButton';
+import { User } from 'util/model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export interface CreateNewFolderDialogProps {
     basePath?: ({ id: null } | { id: number; name: string })[];
@@ -16,15 +18,18 @@ export interface CreateNewFolderDialogProps {
 
 export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogProps> = memo(({ basePath, open, onClose }) => {
     const parentDirectoryId = basePath?.[basePath.length - 1].id ?? null;
+    const [currentUser] = useCurrentUser();
     const [name, setName] = useState('');
+    const [isPublic, setIsPublic] = useState(false);
     const [isShowSuccess, setIsShowSuccess] = useState(false);
     useEffect(() => {
         if (open) {
             setIsShowSuccess(false);
+            setIsPublic(false);
         }
     }, [open]);
     const [createDirectory, { error, loading: isLoading }] = useMutation<{ directory: DirectoryModel }>(CreateDirectoryMutation, {
-        variables: { name, parentDirectoryId },
+        variables: { name, parentDirectoryId, isPublic },
         update: (cache, { data }) => {
             const cached = cache.readQuery<{ directories: DirectoryModel[], files: FileModel[] }>({ query: GetDirectoriesAndFilesQuery, variables: { parentDirectoryId } });
             cache.writeQuery({
@@ -56,6 +61,12 @@ export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogPr
                         onChange={e => setName(e.target.value)}
                         fullWidth
                     />
+                    {User.isAdmin(currentUser) && basePath?.slice(-1)[0].id === null && (
+                        <FormControlLabel
+                            control={<Checkbox checked={isPublic} onChange={(e, checked) => setIsPublic(checked)} />}
+                            label={'Diesen Ordner für alle registrierten Nutzer sichtbar machen. Administratoren dürfen öffentliche Ordner bearbeiten.'}
+                        />
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button color="primary" onClick={e => onClose(e, 'auto')}>

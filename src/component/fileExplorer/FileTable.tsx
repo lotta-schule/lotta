@@ -12,6 +12,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { FileTableRow } from './FileTableRow';
 import { FileTableFooter } from './FileTableFooter';
 import { useCreateUpload } from './context/UploadQueueContext';
+import { EmptyDirectoryTableRow } from './EmptyDirectoryTableRow';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
 import clsx from 'clsx';
 
@@ -250,12 +251,7 @@ export const FileTable = memo(() => {
                         />
                     ))}
                     {state.currentPath.length > 1 && data?.files.length === 0 && data?.directories.length === 0 && (
-                        <TableRow>
-                            <TableCell colSpan={state.mode === FileExplorerMode.ViewAndEdit ? 5 : 4} style={{ textAlign: 'center', display: 'table-cell', width: '100%', whiteSpace: 'normal' }}>
-                                <p><em>In diesem Ordner liegen keine Dateien oder Ordner.</em></p>
-                                <p><em>Du kannst Dateien hochladen, indem du sie mit der Maus aus deiner Dateiverwaltung in dieses Feld ziehst.</em></p>
-                            </TableCell>
-                        </TableRow>
+                        <EmptyDirectoryTableRow />
                     )}
                 </TableBody>
             </Table>

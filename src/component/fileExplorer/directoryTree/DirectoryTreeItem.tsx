@@ -40,9 +40,7 @@ export const DirectoryTreeItem = memo<DirectoryTreeItemProps>(({ directory, show
             label={label}
             onClick={e => {
                 e.preventDefault();
-                if (directory !== null) {
-                    selectDirectory(directory);
-                }
+                selectDirectory(directory);
             }}
         >
             {data?.directories.filter(directoryFilter).map(directory => (

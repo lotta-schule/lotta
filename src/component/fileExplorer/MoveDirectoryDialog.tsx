@@ -2,28 +2,28 @@ import React, { memo, useState, useContext, useEffect } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions, Tooltip, IconButton } from '@material-ui/core';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
-import { DirectoryModel, FileModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SaveButton } from 'component/general/SaveButton';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
+import { DirectoryModel } from 'model';
+import { UpdateDirectoryMutation } from 'api/mutation/UpdateDirectoryMutation';
 import fileExplorerContext from './context/FileExplorerContext';
 
-export const MoveFilesDialog = memo(() => {
+export const MoveDirectoryDialog = memo(() => {
     const [state, dispatch] = useContext(fileExplorerContext);
     const [selectedDirectory, setSelectedDirectory] = useState(state.currentPath[state.currentPath.length - 1].id === null ? null : state.currentPath[state.currentPath.length - 1] as DirectoryModel);
     const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] = useState(false);
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
 
-    const [moveFile, { error, loading: isLoading }] = useMutation(UpdateFileMutation, {
+    const [moveDirectory, { error, loading: isLoading }] = useMutation<{ directory: DirectoryModel }>(UpdateDirectoryMutation, {
         update: (client, { data }) => {
-            if (data?.file) {
+            if (data?.directory) {
                 const fromDirId = state.currentPath[state.currentPath.length - 1].id;
-                const cacheFrom = client.readQuery<{ files: FileModel[], directories: DirectoryModel[] }>({
+                const cacheFrom = client.readQuery<{ files: DirectoryModel[], directories: DirectoryModel[] }>({
                     query: GetDirectoriesAndFilesQuery,
                     variables: { parentDirectoryId: fromDirId }
                 });
@@ -31,23 +31,23 @@ export const MoveFilesDialog = memo(() => {
                     query: GetDirectoriesAndFilesQuery,
                     variables: { parentDirectoryId: fromDirId },
                     data: {
-                        files: cacheFrom?.files?.filter(f => f.id !== data.file.id),
-                        directories: [...(cacheFrom?.directories ?? [])]
+                        files: ([...cacheFrom?.files ?? []]),
+                        directories: cacheFrom?.directories?.filter(d => d.id !== data.directory.id),
                     }
                 });
-                const cacheTo = client.readQuery<{ files: FileModel[], directories: DirectoryModel[] }>({
+                const cacheTo = client.readQuery<{ files: DirectoryModel[], directories: DirectoryModel[] }>({
                     query: GetDirectoriesAndFilesQuery,
-                    variables: { parentDirectoryId: data.file.parentDirectory.id }
+                    variables: { parentDirectoryId: data.directory.parentDirectory?.id ?? null }
                 });
                 client.writeQuery({
                     query: GetDirectoriesAndFilesQuery,
-                    variables: { parentDirectoryId: data.file.parentDirectory.id },
+                    variables: { parentDirectoryId: data.directory.parentDirectory?.id ?? null },
                     data: {
-                        files: [...(cacheTo?.files ?? []), {
-                            ...state.markedFiles.find(f => f.id === data.file.id),
-                            ...data.file
-                        }],
-                        directories: [...(cacheTo?.directories ?? [])]
+                        files: ([...cacheFrom?.files ?? []]),
+                        directories: [...(cacheTo?.directories ?? []), {
+                            ...state.markedDirectories.find(d => d.id === data.directory.id),
+                            ...data.directory
+                        }]
                     }
                 });
             }
@@ -55,20 +55,20 @@ export const MoveFilesDialog = memo(() => {
     });
 
     useEffect(() => {
-        if (state.showMoveFiles) {
+        if (state.showMoveDirectory) {
             setIsShowSuccess(false);
         }
-    }, [state.showMoveFiles]);
+    }, [state.showMoveDirectory]);
 
     return (
         <ResponsiveFullScreenDialog
             fullWidth
             maxWidth={'sm'}
-            open={state.showMoveFiles}
-            aria-labelledby={'select-directory-tree-dialog'}
-            onClose={() => dispatch({ type: 'hideMoveFiles' })}
+            open={state.showMoveDirectory}
+            aria-labelledby={'select-directories-tree-dialog'}
+            onClose={() => dispatch({ type: 'hideMoveDirectory' })}
         >
-            <DialogTitle id={'select-directory-tree-dialog-title'}>Dateien verschieben</DialogTitle>
+            <DialogTitle id={'select-directories-tree-dialog-title'}>Ordner verschieben</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Wähle ein Zielort
@@ -92,32 +92,31 @@ export const MoveFilesDialog = memo(() => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button color={'primary'} onClick={() => dispatch({ type: 'hideMoveFiles' })}>
+                <Button color={'primary'} onClick={() => dispatch({ type: 'hideMoveDirectory' })}>
                     Abbrechen
                 </Button>
                 <SaveButton
                     isLoading={isLoading}
                     isSuccess={isShowSuccess}
-                    disabled={selectedDirectory === null}
+                    disabled={selectedDirectory?.id === state.markedDirectories[0]?.id}
                     onClick={async () => {
                         try {
-                            await Promise.all(state.markedFiles.map(async file => {
-                                const { data } = await moveFile({ variables: { id: file.id, parentDirectoryId: selectedDirectory!.id } });
+                            await Promise.all(state.markedDirectories.map(async directory => {
+                                const { data } = await moveDirectory({ variables: { id: directory.id, parentDirectoryId: selectedDirectory?.id ?? null } });
                                 if (data) {
                                     dispatch({
-                                        type: 'setMarkedFiles',
-                                        files: state.markedFiles.filter(f => f.id !== file.id)
+                                        type: 'resetMarkedDirectories'
                                     });
                                 }
                             }));
                             setIsShowSuccess(true);
-                            dispatch({ type: 'hideMoveFiles' });
+                            dispatch({ type: 'hideMoveDirectory' });
                         } catch (e) {
                             console.error(`error deleting one or more files: `, e);
                         }
                     }}
                 >
-                    Dateien verschieben
+                    Ordner verschieben
                 </SaveButton>
             </DialogActions>
         </ResponsiveFullScreenDialog>
