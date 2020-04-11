@@ -55,6 +55,11 @@ defmodule Api.DirectoryResolverTest do
           "directories" => [
             %{"name" => "irgendwas", "user" => %{"id" => admin_account.id}, "parentDirectory" => nil},
             %{"name" => "logos", "user" => %{"id" => admin_account.id}, "parentDirectory" => nil},
+            %{"name" => "Meine Bilder", "parentDirectory" => nil, "user" => %{"id" => admin_account.id}},
+            %{"name" => "Meine Dokumente", "parentDirectory" => nil, "user" => %{"id" => admin_account.id}},
+            %{"name" => "Meine Tondokumente", "parentDirectory" => nil, "user" => %{"id" => admin_account.id}},
+            %{"name" => "Meine Videos", "parentDirectory" => nil, "user" => %{"id" => admin_account.id}},
+            %{"name" => "Mein Profil", "parentDirectory" => nil, "user" => %{"id" => admin_account.id}},
             %{"name" => "podcast", "user" => %{"id" => admin_account.id}, "parentDirectory" => nil},
             %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
             %{"name" => "logos", "user" => nil, "parentDirectory" => nil}
@@ -75,6 +80,11 @@ defmodule Api.DirectoryResolverTest do
           "directories" => [
             %{"name" => "avatar", "user" => %{"id" => user2_account.id}, "parentDirectory" => nil},
             %{"name" => "ehrenberg-on-air", "user" => %{"id" => user2_account.id}, "parentDirectory" => nil},
+            %{"name" => "Meine Bilder", "parentDirectory" => nil, "user" => %{"id" => user2_account.id}},
+            %{"name" => "Meine Dokumente", "parentDirectory" => nil, "user" => %{"id" => user2_account.id}},
+            %{"name" => "Meine Tondokumente", "parentDirectory" => nil, "user" => %{"id" => user2_account.id}},
+            %{"name" => "Meine Videos", "parentDirectory" => nil, "user" => %{"id" => user2_account.id}},
+            %{"name" => "Mein Profil", "parentDirectory" => nil, "user" => %{"id" => user2_account.id}},
             %{"name" => "podcast", "user" => %{"id" => user2_account.id}, "parentDirectory" => nil},
             %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
             %{"name" => "logos", "user" => nil, "parentDirectory" => nil},
@@ -83,7 +93,7 @@ defmodule Api.DirectoryResolverTest do
       }
     end
 
-    test "returns only public root directories for user with no own directories", %{user_jwt: user_jwt} do
+    test "returns only public root directories for user with no own directories", %{user_jwt: user_jwt, user_account: user_account} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{user_jwt}")
@@ -93,6 +103,11 @@ defmodule Api.DirectoryResolverTest do
       assert res == %{
         "data" => %{
           "directories" => [
+            %{"name" => "Meine Bilder", "parentDirectory" => nil, "user" => %{"id" => user_account.id}},
+            %{"name" => "Meine Dokumente", "parentDirectory" => nil, "user" => %{"id" => user_account.id}},
+            %{"name" => "Meine Tondokumente", "parentDirectory" => nil, "user" => %{"id" => user_account.id}},
+            %{"name" => "Meine Videos", "parentDirectory" => nil, "user" => %{"id" => user_account.id}},
+            %{"name" => "Mein Profil", "parentDirectory" => nil, "user" => %{"id" => user_account.id}},
             %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
             %{"name" => "logos", "user" => nil, "parentDirectory" => nil}
           ]
@@ -405,6 +420,26 @@ defmodule Api.DirectoryResolverTest do
       }
     end
 
+    test "move a user's own directory to root", %{user2_directory: user2_directory, user2_jwt: user2_jwt, user2_account: user2_account} do
+      dir = Api.Repo.insert!(%Api.Accounts.Directory{
+        user_id: user2_account.id,
+        name: "directory",
+        tenant_id: user2_directory.tenant_id,
+        parent_directory_id: user2_directory.id
+      })
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user2_jwt}")
+      |> post("/api", query: @query, variables: %{id: dir.id, parentDirectoryId: nil})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{
+          "updateDirectory" => %{"name" => "directory", "parentDirectory" => nil}
+        }
+      }
+    end
+
     test "returns error when user is not owner of private source directory and user is not admin", %{user2_directory: user2_directory, user_jwt: user_jwt} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -464,6 +499,21 @@ defmodule Api.DirectoryResolverTest do
       }
     end
     
+    test "returns error when trying to move a directory into itslef", %{user2_directory: user2_directory, user2_jwt: user2_jwt} do
+      res = build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> put_req_header("authorization", "Bearer #{user2_jwt}")
+      |> post("/api", query: @query, variables: %{id: user2_directory.id, parentDirectoryId: user2_directory.id})
+      |> json_response(200)
+
+      assert res == %{
+        "data" => %{"updateDirectory" => nil},
+        "errors" => [
+          %{"locations" => [%{"column" => 0, "line" => 2}], "message" => "Du kannst diesen Ordner nicht hierher verschieben.", "path" => ["updateDirectory"]}
+        ]
+      }
+    end
+
     test "returns error when trying to move a directory from public directory as non-admin", %{public_directory: public_directory, user2_jwt: user2_jwt, user2_account: user2_account} do
       target_dir = Api.Repo.get_by!(Api.Accounts.Directory, [name: "podcast", user_id: user2_account.id])
       res = build_conn()

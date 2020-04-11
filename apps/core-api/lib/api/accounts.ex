@@ -183,9 +183,17 @@ defmodule Api.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
+    changeset =
+      %User{}
+      |> User.registration_changeset(attrs)
+    with {:ok, user} <- Repo.insert(changeset) do
+      user
+      |> create_new_user_directories()
+      {:ok, user}
+    else
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -343,6 +351,24 @@ defmodule Api.Accounts do
     %Directory{}
     |> Directory.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_new_user_directories(%User{} = user) do
+    Api.Tenants.list_tenants()
+    |> Enum.map(fn tenant ->
+      create_user_default_directories(user, tenant)
+    end)
+  end
+
+  def create_user_default_directories(%User{} = user, %Tenant{} = tenant) do
+    ["Mein Profil", "Meine Bilder", "Meine Dokumente", "Meine Videos", "Meine Tondokumente"]
+    |> Enum.map(fn name ->
+      create_directory(%{
+        name: name,
+        user_id: user.id,
+        tenant_id: tenant.id
+      })
+    end)
   end
   
   @doc """

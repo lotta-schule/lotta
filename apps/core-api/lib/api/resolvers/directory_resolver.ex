@@ -93,6 +93,9 @@ defmodule Api.DirectoryResolver do
     end
   end
 
+  def update(%{id: id, parent_directory_id: parent_directory_id}, _) when is_integer(id) and is_integer(parent_directory_id) and id == parent_directory_id do
+    {:error, "Du kannst diesen Ordner nicht hierher verschieben."}
+  end
   def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     try do
       directory =
@@ -101,7 +104,7 @@ defmodule Api.DirectoryResolver do
       source_directory = directory.parent_directory
       target_directory =
         with %{parent_directory_id: target_directory_id} <- args do
-          Accounts.get_directory!(target_directory_id)
+          if is_nil(target_directory_id), do: nil, else: Accounts.get_directory!(target_directory_id)
         else
           _ ->
             source_directory
