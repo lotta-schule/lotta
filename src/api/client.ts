@@ -26,19 +26,32 @@ const customFetch = (url: string, options: any) => {
 };
 
 const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
-    for (const property in obj) {
-        if (property === 'configuration' && typeof obj[property] === 'object') {
-            delete obj.property;
-            obj[property] = JSON.stringify(obj[property]);
-        } else if (typeof obj[property] === 'object' && !(obj[property] instanceof File)) {
-            delete obj.property;
-            const newData = mutateVariableInputObject(obj[property], propToDelete);
-            obj[property] = newData;
-        } else {
-            if (property === propToDelete) {
-                delete obj[property];
+    if (obj instanceof Array) {
+        return [...obj.map(o => mutateVariableInputObject(o, propToDelete))];
+    } else if (obj !== null && obj !== undefined && typeof obj === 'object') {
+        return Object.keys(obj).reduce((newObj, key) => {
+            if (key === 'configuration' && typeof obj[key] === 'object') {
+                return {
+                    ...newObj,
+                    [key]: JSON.stringify(obj[key])
+                };
             }
-        }
+            if (typeof obj[key] === 'object' && !(obj[key] instanceof File)) {
+                return {
+                    ...newObj,
+                    [key]: mutateVariableInputObject(obj[key], propToDelete)
+                };
+            }
+            if (key !== propToDelete) {
+                return {
+                    ...newObj,
+                    [key]: obj[key]
+                };
+            }
+            return {
+                ...newObj
+            };
+        }, {});
     }
     return obj;
 };

@@ -37,6 +37,7 @@ export const App = memo(() => {
     }
 
     if (calledTenant && (!data || !data.tenant)) {
+        console.log(error);
         return (
             <ErrorMessage error={new Error('Adresse ungültig')} />
         );

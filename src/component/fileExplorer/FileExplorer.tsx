@@ -50,7 +50,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
         <DeleteFilesDialog />
 
         <FileToolbar />
-        <FileTable />
+        <FileTable fileFilter={fileFilter} />
 
         {state.mode !== FileExplorerMode.ViewAndEdit && (
           <Toolbar className={styles.bottomToolbar}>

@@ -12,6 +12,7 @@ export type Action =
     | { type: 'resetMarkedDirectories' }
     | { type: 'markSingleDirectory', directory: DirectoryModel }
     | { type: 'setPath', path: ({ id: null } | { id: number; name: string })[] }
+    | { type: 'setSearchFilter', searchtext: string }
     | { type: 'showActiveUploads' } | { type: 'hideActiveUploads' }
     | { type: 'showCreateNewFolder' } | { type: 'hideCreateNewFolder' }
     | { type: 'showMoveFiles' } | { type: 'hideMoveFiles' }
@@ -70,8 +71,14 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
                 ...state,
                 markedFiles: [],
                 selectedFiles: [],
-                currentPath: [...action.path]
+                currentPath: [...action.path],
+                searchtext: '',
             };
+        case 'setSearchFilter':
+            return {
+                ...state,
+                searchtext: action.searchtext
+            }
         case 'showActiveUploads':
             return {
                 ...state,
