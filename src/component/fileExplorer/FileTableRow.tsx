@@ -49,12 +49,13 @@ export const FileTableRow = memo<FileTableRowProps>(({ file, onMark }) => {
     }, [dispatch, file]);
 
     const isMarked = state.markedFiles.find(f => f.id === file.id) !== undefined;
+    const isSelected = state.selectedFiles.find(f => f.id === file.id) !== undefined;
 
     const filesAreEditable =
         state.mode === FileExplorerMode.ViewAndEdit && File.canEditDirectory(state.currentPath[state.currentPath.length - 1] as DirectoryModel, currentUser);
 
     return (
-        <TableRow hover className={clsx({ selected: isMarked })} onClick={onMark}>
+        <TableRow hover className={clsx({ selected: isMarked || isSelected })} onClick={onMark}>
             <TableCell>
                 {(state.mode === FileExplorerMode.SelectMultiple) && (
                     <Checkbox

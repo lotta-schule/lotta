@@ -1,24 +1,23 @@
 import React, { memo, useContext } from 'react';
-import { makeStyles, useTheme, CircularProgress, Typography } from '@material-ui/core';
+import { makeStyles, CircularProgress, Typography, Theme, TextField } from '@material-ui/core';
 import { useQuery } from '@apollo/react-hooks';
 import { FileModel, DirectoryModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import fileExplorerContext from './context/FileExplorerContext';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { error: boolean }>(theme => ({
     root: {
         width: '100%',
-        borderTop: `1px solid ${theme.palette.secondary.main}`,
+        borderTop: ({ error }) => `1px solid ${error ? theme.palette.error.main : theme.palette.secondary.main}`,
         paddingTop: theme.spacing(.5),
         paddingBottom: theme.spacing(.5),
-        textAlign: 'center'
+        display: 'flex',
+        justifyContent: 'space-between'
     }
 }));
 
 export const FileTableFooter = memo(() => {
-    const styles = useStyles();
-    const theme = useTheme();
-    const [state] = useContext(fileExplorerContext);
+    const [state, dispatch] = useContext(fileExplorerContext);
 
     const { data, error, loading: isLoading } = useQuery<{ files: FileModel[], directories: DirectoryModel[]; }>(GetDirectoriesAndFilesQuery, {
         variables: {
@@ -26,8 +25,9 @@ export const FileTableFooter = memo(() => {
         },
         skip: state.currentPath.length < 2
     });
+    const styles = useStyles({ error: !!error });
 
-    const content = (() => {
+    const mainContent = (() => {
         if (state.currentPath.length < 2) {
             return (
                 <span>&nbsp;</span>
@@ -54,8 +54,18 @@ export const FileTableFooter = memo(() => {
     })();
 
     return (
-        <Typography component={'div'} variant={'body2'} className={styles.root} style={{ borderColor: theme.palette.error.main }}>
-            {content}
-        </Typography>
+        <section className={styles.root}>
+            <Typography component={'div'} variant={'body2'}>
+                {mainContent}
+            </Typography>
+            <div>
+                <TextField
+                    type={'search'}
+                    placeholder={'im Ordner suchen'}
+                    value={state.searchtext}
+                    onChange={e => dispatch({ type: 'setSearchFilter', searchtext: e.currentTarget.value })}
+                />
+            </div>
+        </section>
     );
 });

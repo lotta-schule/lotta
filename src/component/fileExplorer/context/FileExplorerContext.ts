@@ -16,6 +16,7 @@ export const defaultState = {
     currentPath: [
         { id: null } as any
     ] as ({ id: null } | { id: number; name: string; })[],
+    searchtext: '',
     showActiveUploads: false,
     showCreateNewFolder: false,
     showMoveFiles: false,

@@ -16,6 +16,10 @@ import { EmptyDirectoryTableRow } from './EmptyDirectoryTableRow';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
 import clsx from 'clsx';
 
+export interface FileTableProps {
+    fileFilter?(file: FileModel): boolean;
+}
+
 const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme) => ({
     root: {
         position: 'relative',
@@ -108,7 +112,7 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
     }
 }));
 
-export const FileTable = memo(() => {
+export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
     const [state, dispatch] = useContext(fileExplorerContext);
     const styles = useStyles({ filesAreEditable: state.mode === FileExplorerMode.ViewAndEdit });
 
@@ -171,6 +175,16 @@ export const FileTable = memo(() => {
             }
         }
     };
+
+    const filteredFiles = data?.files
+        .filter(file => {
+            const byFileFilter = !fileFilter || fileFilter(file);
+            let bySearchFilter = true;
+            try {
+                bySearchFilter = !state.searchtext || new RegExp(state.searchtext, 'i').test(file.filename);
+            } catch { }
+            return byFileFilter && bySearchFilter;
+        }) ?? [];
 
     return (
         <div {...getRootProps()} className={clsx(styles.root, { [styles.isDragActive]: isDragActive, [styles.isDragAccept]: isDragAccept })}>
@@ -235,7 +249,7 @@ export const FileTable = memo(() => {
                             directory={directory}
                         />
                     ))}
-                    {[...(data?.files ?? [])].sort((f1, f2) => f1.filename.localeCompare(f2.filename)).map(file => (
+                    {filteredFiles.sort((f1, f2) => f1.filename.localeCompare(f2.filename)).map(file => (
                         <FileTableRow
                             key={`file-${file.id}`}
                             file={file}
