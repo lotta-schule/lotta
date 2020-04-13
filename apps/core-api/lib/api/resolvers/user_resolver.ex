@@ -66,7 +66,7 @@ defmodule Api.UserResolver do
     cond do
       !context[:current_user] || !User.is_admin?(context.current_user, tenant) ->
         {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
-      String.length(searchtext) < 2 ->
+      String.length(searchtext) >= 2 ->
         Accounts.search_user(searchtext, tenant)
       true ->
         {:ok, []}
