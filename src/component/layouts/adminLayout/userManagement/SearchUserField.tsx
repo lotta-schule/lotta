@@ -39,7 +39,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
     }
 
     useEffect(() => {
-        if (debouncedSearchtext && debouncedSearchtext.length > 3) {
+        if (debouncedSearchtext && debouncedSearchtext.length >= 2) {
             execute({ variables: { searchtext: debouncedSearchtext } })
         }
     }, [debouncedSearchtext, execute]);
