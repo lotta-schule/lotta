@@ -196,11 +196,11 @@ defmodule Api.UserResolverTest do
       }
     end
 
-    test "should return an empty results array if there is a two-characters input", %{admin_jwt: admin_jwt} do
+    test "should return an empty results array if there is a one-characters input", %{admin_jwt: admin_jwt} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
-      |> get("/api", query: @query, variables: %{searchtext: "De"})
+      |> get("/api", query: @query, variables: %{searchtext: "D"})
       |> json_response(200)
 
       assert res == %{

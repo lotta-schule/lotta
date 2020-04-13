@@ -63,14 +63,13 @@ defmodule Api.UserResolver do
   end
 
   def search(%{searchtext: searchtext}, %{context: %{tenant: tenant} = context}) do
-    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    cond do
+      !context[:current_user] !! !User.is_admin?(context.current_user, tenant) ->
+        {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+      String.length(searchtext) < 2 ->
+        Accounts.search_user(searchtext, tenant)
       true ->
-        if String.length(searchtext) > 2 do
-          Accounts.search_user(searchtext, tenant)
-        else
-          {:ok, []}
-        end
-      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+        {:ok, []}
     end
   end
 
