@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { ArticleModel } from '../../model';
-import { ArticlePreview } from './ArticlePreview';
+import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { makeStyles } from '@material-ui/core';
@@ -25,7 +25,7 @@ export const Article = memo<ArticleProps>(({ article, isEditModeEnabled, onUpdat
     const styles = useStyles();
     return (
         <article className={styles.root} data-testid={'Article'}>
-            <ArticlePreview
+            <ArticlePreviewStandardLayout
                 article={article}
                 disableLink={isEditModeEnabled}
                 disableEdit={isEditModeEnabled}

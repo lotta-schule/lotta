@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { ArticleModel } from 'model';
 import { useQuery } from '@apollo/react-hooks';
 import { GetTopicQuery } from 'api/query/GetTopicQuery';
-import { ArticlePreview } from './ArticlePreview';
+import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
 import { Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -35,7 +35,7 @@ export const RelatedArticlesList = memo<RelatedArticlesListProps>(({ article }) 
         <>
             <Typography variant={'h6'} className={styles.root}>Weitere Beiträge zum Thema <strong>{article.topic!}</strong></Typography>
             {relatedArticles.map(relatedArticle => (
-                <ArticlePreview key={relatedArticle.id} article={relatedArticle} limitedHeight />
+                <ArticlePreviewStandardLayout key={relatedArticle.id} article={relatedArticle} limitedHeight />
             ))}
         </>
     );

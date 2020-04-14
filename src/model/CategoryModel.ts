@@ -11,6 +11,7 @@ export interface CategoryModel {
     isHomepage?: boolean;
     redirect?: string | null;
     hideArticlesFromHomepage?: boolean;
+    layoutName?: 'standard' | 'densed' | '2-columns' | null;
     groups: UserGroupModel[];
     bannerImageFile?: FileModel | null;
     category?: CategoryModel | null;

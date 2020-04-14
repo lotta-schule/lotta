@@ -10,6 +10,7 @@ export const CreateCategoryMutation = gql`
             isHomepage
             hideArticlesFromHomepage
             redirect
+            layoutName
             bannerImageFile {
                 id
                 remoteLocation
