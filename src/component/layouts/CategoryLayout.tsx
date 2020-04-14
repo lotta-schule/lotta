@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { CategoryModel, ArticleModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
-import { Grid, Typography, makeStyles } from '@material-ui/core';
+import { Grid, Typography, makeStyles, Theme } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
@@ -10,7 +10,7 @@ import { WidgetsList } from './WidgetsList';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model/User';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
     subheaderContainer: {
         height: '120px',
         border: '0.5em solid',
@@ -37,6 +37,15 @@ const useStyles = makeStyles(theme => ({
         textShadow: '1px 1px 15px #fff',
         padding: '0.6em',
         color: theme.palette.primary.dark,
+    },
+    gridItem: {
+        display: 'flex',
+        '&:nth-child(2n)': {
+            paddingLeft: ({ twoColumns }) => twoColumns ? theme.spacing(.5) : 'initial'
+        },
+        '&:nth-child(2n+1)': {
+            paddingRight: ({ twoColumns }) => twoColumns ? theme.spacing(.5) : 'initial'
+        }
     }
 }));
 
@@ -46,7 +55,7 @@ export interface CategoryLayoutProps {
 }
 
 export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles }) => {
-    const styles = useStyles();
+    const styles = useStyles({ twoColumns: category.layoutName === '2-columns' });
     const [user] = useCurrentUser();
 
     if (articles && articles.length === 1 && articles[0].id) {
@@ -70,6 +79,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                     <Grid className={styles.subheaderContainer}>
                         <Grid
                             item
+                            xs={12}
                             className={styles.subheader}
                             style={{
                                 background: category.bannerImageFile ?
@@ -83,19 +93,23 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                         </Grid>
                     </Grid>
                 )}
-                {articles && articles.length > 1 && (
-                    [...articles]
-                        .sort((a1, a2) => {
-                            if (!category.isHomepage && a1.isPinnedToTop !== a2.isPinnedToTop) {
-                                if (a1.isPinnedToTop) { return -1; }
-                                if (a2.isPinnedToTop) { return 1; }
-                            }
-                            return new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime();
-                        })
-                        .map(article => (
-                            <ArticlePreview key={article.id} article={article} limitedHeight />
-                        ))
-                )}
+                <Grid container wrap={'wrap'}>
+                    {articles && articles.length > 1 && (
+                        [...articles]
+                            .sort((a1, a2) => {
+                                if (!category.isHomepage && a1.isPinnedToTop !== a2.isPinnedToTop) {
+                                    if (a1.isPinnedToTop) { return -1; }
+                                    if (a2.isPinnedToTop) { return 1; }
+                                }
+                                return new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime();
+                            })
+                            .map(article => (
+                                <Grid item xs={category.layoutName === '2-columns' ? 6 : 12} className={styles.gridItem}>
+                                    <ArticlePreview key={article.id} article={article} limitedHeight layout={category.layoutName ?? 'standard'} />
+                                </Grid>
+                            ))
+                    )}
+                </Grid>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <WidgetsList widgets={widgets} />

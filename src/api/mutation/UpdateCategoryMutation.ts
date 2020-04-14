@@ -8,6 +8,7 @@ export const UpdateCategoryMutation = gql`
             sortKey
             redirect
             hideArticlesFromHomepage
+            layoutName
             bannerImageFile {
                 id
                 remoteLocation
