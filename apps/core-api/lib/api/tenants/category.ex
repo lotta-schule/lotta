@@ -10,6 +10,7 @@ defmodule Api.Tenants.Category do
     field :sort_key, :integer
     field :is_sidenav, :boolean
     field :is_homepage, :boolean
+    field :layout_name, :string
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
 
@@ -33,7 +34,7 @@ defmodule Api.Tenants.Category do
   def changeset(category, attrs) do
     category
     |> ReadRepo.preload([:banner_image_file, :groups, :widgets])
-    |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :is_sidenav, :sort_key])
+    |> cast(attrs, [:title, :redirect, :hide_articles_from_homepage, :is_sidenav, :layout_name, :sort_key])
     |> validate_required([:title])
     |> put_assoc_category(attrs)
     |> put_assoc_banner_image_file(attrs)

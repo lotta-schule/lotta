@@ -80,6 +80,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :banner_image_file, :file
     field :category, :category
     field :redirect, :string
+    field :layout_name, :string
     field :hide_articles_from_homepage, :boolean
     field :groups, list_of(:user_group)
     field :widgets, list_of(:widget), default_value: []
@@ -111,6 +112,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :title, :string
     field :is_sidenav, :boolean
     field :is_homepage, :boolean
+    field :layout_name, :string
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
     field :sort_key, :integer
