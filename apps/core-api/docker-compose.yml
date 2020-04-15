@@ -14,7 +14,7 @@ volumes:
 services:
 
   app:
-    image: elixir:1.9.2
+    image: elixir:1.10.2
     volumes:
       - .:/usr/src/svc
       - elixir-mix:/root/.mix
