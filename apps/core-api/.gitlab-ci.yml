@@ -17,7 +17,7 @@ cache:
 
 test:
   stage: test
-  image: elixir:1.9.1
+  image: elixir:1.10.2
   variables:
     MIX_ENV: test
     POSTGRES_PASSWORD: lotta
