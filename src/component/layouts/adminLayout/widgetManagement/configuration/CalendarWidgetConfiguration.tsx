@@ -95,6 +95,9 @@ export const CalendarWidgetConfiguration = memo<CalendarWidgetConfigurationProps
                                     })
                                 })}
                             />
+                            <Button onClick={() => setConfiguration({ ...configuration, calendars: configuration.calendars.filter((_c, i) => i !== index) })}>
+                                Kalender-URL entfernen
+                            </Button>
                         </>
                     )}
                     {index < (configuration.calendars || []).length - 1 && (
