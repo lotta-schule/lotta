@@ -5,6 +5,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/react-hooks';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -40,6 +41,7 @@ const intersection = (a: WidgetModel[], b: WidgetModel[]): WidgetModel[] => a.fi
 const union = (a: WidgetModel[], b: WidgetModel[]): WidgetModel[] => [...a, ...not(b, a)];
 
 export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selectedWidgets, setSelectedWidgets }) => {
+    const { t } = useTranslation();
     const styles = useStyles();
 
     const [checkedWidgets, setCheckedWidgets] = React.useState<WidgetModel[]>([]);
@@ -98,7 +100,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                     />
                 }
                 title={title}
-                subheader={`${numberOfChecked(widgets)}/${widgets.length} selected`}
+                subheader={t('widgets.markedWidgets', { count: numberOfChecked(widgets), total: widgets.length })}
             />
             <Divider />
             <List className={styles.list} dense component="div" role="list">
@@ -122,7 +124,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                 <ListItem />
             </List>
         </Card>
-    ), [checkedWidgets, handleToggle, handleToggleAll, numberOfChecked, styles.cardHeader, styles.list]);
+    ), [checkedWidgets, handleToggle, handleToggleAll, numberOfChecked, styles.cardHeader, styles.list, t]);
 
     return (
         <>

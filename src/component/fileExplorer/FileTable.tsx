@@ -13,6 +13,7 @@ import { FileTableRow } from './FileTableRow';
 import { FileTableFooter } from './FileTableFooter';
 import { useCreateUpload } from './context/UploadQueueContext';
 import { EmptyDirectoryTableRow } from './EmptyDirectoryTableRow';
+import { useTranslation } from 'react-i18next';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
 import clsx from 'clsx';
 
@@ -113,6 +114,7 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
 }));
 
 export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
+    const { t } = useTranslation();
     const [state, dispatch] = useContext(fileExplorerContext);
     const styles = useStyles({ filesAreEditable: state.mode === FileExplorerMode.ViewAndEdit });
 
@@ -195,7 +197,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
             )}
             {isDragAccept && (
                 <Typography variant={'caption'} className={styles.dragHelpText}>
-                    Loslassen, um {draggedFiles.length} Dateien hochzuladen
+                    {t('files.explorer.dropFilesToUpload', { count: draggedFiles.length })}
                 </Typography>
             )}
             <ErrorMessage error={error} />

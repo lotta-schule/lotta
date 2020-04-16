@@ -1,6 +1,7 @@
 import React, { Reducer, memo, useReducer } from 'react';
 import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
 import { FileModel } from 'model';
+import { useTranslation } from 'react-i18next';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DeleteFilesDialog } from './DeleteFilesDialog';
@@ -27,6 +28,7 @@ export interface FileExplorerProps {
 }
 
 export const FileExplorer = memo<FileExplorerProps>(({ style, className, multiple, fileFilter, onSelect }) => {
+  const { t } = useTranslation();
   const styles = useStyles();
 
   const [state, dispatch] = useReducer<Reducer<typeof defaultState, Action>>(reducer, {
@@ -62,11 +64,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
                 dispatch({ type: 'hideActiveUploads' });
               }}
             >
-              {state.selectedFiles.length ? (
-                state.selectedFiles.length === 1 ?
-                  `Datei auswählen` :
-                  `${state.selectedFiles.length} Dateien auswählen`
-              ) : 'Dateien auswählen'}
+              {t('files.explorer.selectFiles', { count: state.selectedFiles.length })}
             </Button>
           </Toolbar>
         )}

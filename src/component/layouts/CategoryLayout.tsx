@@ -104,8 +104,8 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                                 return new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime();
                             })
                             .map(article => (
-                                <Grid item xs={category.layoutName === '2-columns' ? 6 : 12} className={styles.gridItem}>
-                                    <ArticlePreview key={article.id} article={article} limitedHeight layout={category.layoutName ?? 'standard'} />
+                                <Grid item xs={category.layoutName === '2-columns' ? 6 : 12} className={styles.gridItem} key={article.id}>
+                                    <ArticlePreview article={article} limitedHeight layout={category.layoutName ?? 'standard'} />
                                 </Grid>
                             ))
                     )}
