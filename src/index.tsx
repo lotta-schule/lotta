@@ -1,5 +1,10 @@
 import './index.scss';
+import './i18n';
 import Honeybadger from 'honeybadger-js';
+import Matomo from 'matomo-ts';
+import React from 'react';
+import DateFnsUtils from '@date-io/date-fns';
+import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { App } from './component/App';
@@ -10,10 +15,8 @@ import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
 import { de } from 'date-fns/locale';
-import Matomo from 'matomo-ts';
-import React from 'react';
-import DateFnsUtils from '@date-io/date-fns';
-import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
+import { i18n } from './i18n';
 
 if (process.env.REACT_APP_MATOMO_URL) {
     Matomo.default().init(
@@ -39,17 +42,20 @@ try {
 
 ReactDOM.render(
     (
-        <ThemeProvider theme={theme}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
-                <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
-                    <ApolloProvider client={client}>
-                        <UploadQueueProvider>
-                            <App />
-                        </UploadQueueProvider>
-                    </ApolloProvider >
-                </CloudimageProvider>
-            </MuiPickersUtilsProvider>
-        </ThemeProvider >
+
+        <I18nextProvider i18n={i18n}>
+            <ThemeProvider theme={theme}>
+                <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
+                    <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
+                        <ApolloProvider client={client}>
+                            <UploadQueueProvider>
+                                <App />
+                            </UploadQueueProvider>
+                        </ApolloProvider >
+                    </CloudimageProvider>
+                </MuiPickersUtilsProvider>
+            </ThemeProvider>
+        </I18nextProvider>
     ),
     document.getElementById('root')
 );

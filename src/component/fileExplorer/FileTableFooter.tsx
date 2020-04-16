@@ -1,6 +1,7 @@
 import React, { memo, useContext } from 'react';
 import { makeStyles, CircularProgress, Typography, Theme, TextField } from '@material-ui/core';
 import { useQuery } from '@apollo/react-hooks';
+import { useTranslation } from 'react-i18next';
 import { FileModel, DirectoryModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import fileExplorerContext from './context/FileExplorerContext';
@@ -17,6 +18,7 @@ const useStyles = makeStyles<Theme, { error: boolean }>(theme => ({
 }));
 
 export const FileTableFooter = memo(() => {
+    const { t } = useTranslation();
     const [state, dispatch] = useContext(fileExplorerContext);
 
     const { data, error, loading: isLoading } = useQuery<{ files: FileModel[], directories: DirectoryModel[]; }>(GetDirectoriesAndFilesQuery, {
@@ -45,11 +47,11 @@ export const FileTableFooter = memo(() => {
         }
         if (state.markedFiles.length) {
             return (
-                <span>{state.markedFiles.length} von {data?.files.length} Dateien ausgewählt</span>
+                <span>{t('files.explorer.markedFiles', { count: state.markedFiles.length, total: data?.files.length })}</span>
             );
         }
         return (
-            <span>{data?.files.length} Dateien im Ordner</span>
+            <span>{t('files.explorer.totalFiles', { count: data?.files.length })}</span>
         )
     })();
 
