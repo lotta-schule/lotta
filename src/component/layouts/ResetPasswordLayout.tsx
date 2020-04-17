@@ -141,3 +141,4 @@ export const ResetPasswordLayout = memo(() => {
         </BaseLayoutMainContent >
     );
 });
+export default ResetPasswordLayout;
