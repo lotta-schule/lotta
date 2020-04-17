@@ -28,3 +28,4 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
     }
     return null;
 });
+export default EditArticleRoute;

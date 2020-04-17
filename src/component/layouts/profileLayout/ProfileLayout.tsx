@@ -41,3 +41,4 @@ export const ProfileLayout = memo(() => {
         </>
     );
 });
+export default ProfileLayout;

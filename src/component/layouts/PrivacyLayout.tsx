@@ -442,3 +442,4 @@ export const PrivacyLayout = memo(() => {
         </>
     );
 });
+export default PrivacyLayout;

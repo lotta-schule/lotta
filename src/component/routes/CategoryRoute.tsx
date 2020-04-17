@@ -89,3 +89,4 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
         <p>Keine Beiträge in dieser Kategorie.</p>
     );
 });
+export default CategoryRoute;
