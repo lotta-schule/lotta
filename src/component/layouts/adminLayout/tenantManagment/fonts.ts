@@ -1,4 +1,5 @@
 export const headerFonts = [
+    { name: 'Schoolbell', url: 'https://fonts.googleapis.com/css2?family=Schoolbell&display=block' },
     { name: 'DM Serif Display', url: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=block' },
     { name: 'Roboto Slab', url: 'https://fonts.googleapis.com/css2?family=Roboto+Slab&display=block' },
     { name: 'Ubuntu Condensed', url: 'https://fonts.googleapis.com/css2?family=Ubuntu+Condensed&display=block' },
