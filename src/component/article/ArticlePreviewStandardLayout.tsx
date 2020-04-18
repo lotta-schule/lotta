@@ -16,7 +16,6 @@ import Img from 'react-cloudimage-responsive';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(theme => ({
     root: {
-        width: '100%',
         padding: theme.spacing(1),
         borderRadius: theme.shape.borderRadius,
         boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,

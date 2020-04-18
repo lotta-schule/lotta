@@ -45,6 +45,9 @@ const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
         },
         '&:nth-child(2n+1)': {
             paddingRight: ({ twoColumns }) => twoColumns ? theme.spacing(.5) : 'initial'
+        },
+        '& > *': {
+            width: '100%'
         }
     }
 }));
