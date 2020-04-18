@@ -1,5 +1,4 @@
 import React, { memo, Suspense, lazy } from 'react';
-import { merge } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deDE } from '@material-ui/core/locale';
@@ -15,6 +14,7 @@ import { AppHead } from './AppHead';
 import { EmptyLoadingLayout } from './layouts/EmptyLoadingLayout';
 import { BaseLayout } from './layouts/BaseLayout';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
+import merge from 'lodash/merge';
 
 const AdminLayout = lazy(() => import('./layouts/adminLayout/AdminLayout'));
 const ArticleRoute = lazy(() => import('./routes/ArticleRoute'));

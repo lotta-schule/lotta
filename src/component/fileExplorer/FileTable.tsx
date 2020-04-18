@@ -1,5 +1,4 @@
 import React, { MouseEvent, memo, useContext } from 'react';
-import { some, every, uniqBy, range } from 'lodash';
 import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, CircularProgress, IconButton, fade, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useQuery } from '@apollo/react-hooks';
@@ -15,6 +14,10 @@ import { useCreateUpload } from './context/UploadQueueContext';
 import { EmptyDirectoryTableRow } from './EmptyDirectoryTableRow';
 import { useTranslation } from 'react-i18next';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
+import some from 'lodash/some';
+import every from 'lodash/every';
+import uniqBy from 'lodash/uniqBy';
+import range from 'lodash/range';
 import clsx from 'clsx';
 
 export interface FileTableProps {

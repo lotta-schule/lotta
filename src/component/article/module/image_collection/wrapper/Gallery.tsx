@@ -1,5 +1,4 @@
 import React, { memo, useState } from 'react';
-import { uniqBy } from 'lodash';
 import { makeStyles, IconButton, GridList, GridListTile } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
@@ -7,6 +6,7 @@ import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { FileSorter } from '../Config';
 import { ImageImage } from '../../image/ImageImage';
 import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
+import uniqBy from 'lodash/uniqBy';
 
 const useStyles = makeStyles(() => ({
     img: {

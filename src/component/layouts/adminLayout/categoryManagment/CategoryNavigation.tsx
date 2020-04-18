@@ -5,7 +5,7 @@ import { Theme, Typography, ExpansionPanel, ExpansionPanelSummary, ExpansionPane
 import { useCategories } from 'util/categories/useCategories';
 import { MoreVert } from '@material-ui/icons';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { findIndex } from 'lodash';
+import findIndex from 'lodash/findIndex';
 import { ID } from 'model/ID';
 import { useMutation } from '@apollo/react-hooks';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';

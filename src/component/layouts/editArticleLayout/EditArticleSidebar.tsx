@@ -4,7 +4,7 @@ import {
     Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem, Divider, DialogTitle, DialogContent, DialogActions
 } from '@material-ui/core';
 import { DateTimePicker } from '@material-ui/pickers';
-import { uniqBy } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 import { useMutation } from '@apollo/react-hooks';
 import { CategorySelect } from './CategorySelect';
 import { GroupSelect } from '../../edit/GroupSelect';

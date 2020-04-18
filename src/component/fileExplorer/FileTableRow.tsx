@@ -8,7 +8,7 @@ import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
 import clsx from 'clsx';
-import { uniqBy } from 'lodash';
+import uniqBy from 'lodash/uniqBy';
 
 export interface FileTableRowProps {
     file: FileModel;

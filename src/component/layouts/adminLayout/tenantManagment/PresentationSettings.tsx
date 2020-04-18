@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useState } from 'react';
-import { get, merge } from 'lodash';
 import { Button, Card, CardContent, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
 import { useMutation } from '@apollo/react-hooks';
 import { useTenant } from 'util/client/useTenant';
@@ -9,6 +8,8 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ColorSettingRow } from './ColorSettingRow';
 import { SelectTemplateButton } from './SelectTemplateButton';
+import get from 'lodash/get';
+import merge from 'lodash/merge';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles(theme => ({

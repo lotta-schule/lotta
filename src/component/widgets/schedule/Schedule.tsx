@@ -1,6 +1,6 @@
 /* eslint-disable no-loop-func */
 import React, { memo, useState, useEffect } from 'react';
-import { uniq } from 'lodash';
+import uniq from 'lodash/uniq';
 import { addBusinessDays, isSameDay, parse, subBusinessDays, format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {

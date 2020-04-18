@@ -3,8 +3,8 @@ import { CardContent } from '@material-ui/core';
 import { Carousel } from './wrapper/Carousel';
 import { ContentModuleModel } from '../../../../model';
 import { Gallery } from './wrapper/Gallery';
-import { get } from 'lodash';
 import { ImageStyle } from './Config';
+import get from 'lodash/get';
 
 export interface ImageProps {
     contentModule: ContentModuleModel;
