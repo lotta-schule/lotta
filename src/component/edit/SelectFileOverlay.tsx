@@ -1,9 +1,10 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { FunctionComponent, memo, useState, lazy, Suspense } from 'react';
 import { FileModel } from '../../model';
 import { EditOverlay } from './EditOverlay';
-import { DialogTitle } from '@material-ui/core';
-import { FileExplorer } from 'component/fileExplorer/FileExplorer';
+import { DialogTitle, CircularProgress } from '@material-ui/core';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+
+const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
 
 interface SelectFileOverlayProps {
     label: string;
@@ -21,15 +22,17 @@ export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo
                 {children}
             </EditOverlay>
             <ResponsiveFullScreenDialog open={isSelectFileDialogOpen} onClose={() => setIsSelectFileDialogOpen(false)} fullWidth>
-                <DialogTitle>Datei auswählen</DialogTitle>
-                <FileExplorer
-                    style={{ padding: '0 .5em' }}
-                    fileFilter={fileFilter}
-                    onSelect={(file: FileModel) => {
-                        setIsSelectFileDialogOpen(false);
-                        onSelectFile(file);
-                    }}
-                />
+                <Suspense fallback={<CircularProgress />}>
+                    <DialogTitle>Datei auswählen</DialogTitle>
+                    <FileExplorer
+                        style={{ padding: '0 .5em' }}
+                        fileFilter={fileFilter}
+                        onSelect={(file: FileModel) => {
+                            setIsSelectFileDialogOpen(false);
+                            onSelectFile(file);
+                        }}
+                    />
+                </Suspense>
             </ResponsiveFullScreenDialog>
         </>
     );

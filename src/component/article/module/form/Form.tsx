@@ -1,7 +1,8 @@
-import React, { memo } from 'react';
+import React, { memo, lazy } from 'react';
 import { ContentModuleModel } from 'model';
-import { Edit } from './Edit';
 import { Show } from './Show';
+
+const Edit = lazy(() => import('./Edit'));
 
 export interface FormProps {
     contentModule: ContentModuleModel;

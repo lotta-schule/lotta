@@ -72,3 +72,4 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
     </Provider>
   );
 });
+export default FileExplorer;

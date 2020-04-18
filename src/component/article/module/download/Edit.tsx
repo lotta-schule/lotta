@@ -144,3 +144,4 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
         </CardContent>
     )
 });
+export default Edit;

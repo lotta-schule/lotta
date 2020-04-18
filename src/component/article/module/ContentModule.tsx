@@ -1,6 +1,5 @@
-import React, { memo, useMemo } from 'react';
-import { Draggable, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
-import { Card, makeStyles, Theme, createStyles, IconButton, Popover, Box, Divider, Button } from '@material-ui/core';
+import React, { memo, useMemo, HTMLAttributes, Suspense } from 'react';
+import { Card, makeStyles, Theme, createStyles, IconButton, Popover, Box, Divider, Button, CardProps, StyledComponentProps, CircularProgress } from '@material-ui/core';
 import { MoreVert, Delete } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
@@ -75,11 +74,14 @@ interface ContentModuleProps {
     contentModule: ContentModuleModel;
     index: number;
     isEditModeEnabled?: boolean;
+    isDragging?: boolean;
+    cardProps?: Omit<CardProps, 'className' | 'component' | 'innerRef'> & Pick<StyledComponentProps, 'innerRef'>;
+    dragbarProps?: Omit<HTMLAttributes<HTMLDivElement>, 'className'>;
     onUpdateModule(contentModule: ContentModuleModel): void;
     onRemoveContentModule(): void;
 }
 
-export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, contentModule, index, onUpdateModule, onRemoveContentModule }) => {
+export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, contentModule, isDragging, cardProps, dragbarProps, onUpdateModule, onRemoveContentModule }) => {
 
     const styles = useStyles({ isEditModeEnabled: isEditModeEnabled ?? false });
 
@@ -108,96 +110,90 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
         }
     }, [contentModule, onUpdateModule, popupState]);
 
-    const card = (draggableProvided?: DraggableProvided, snapshot?: DraggableStateSnapshot) => (
+    return (
         <Card
-            className={clsx(styles.card, { active: popupState.isOpen, dragging: snapshot?.isDragging })}
+            className={clsx(styles.card, { active: popupState.isOpen, dragging: isDragging })}
             component={'section'}
-            innerRef={draggableProvided?.innerRef}
-            {...draggableProvided?.draggableProps}
+            {...cardProps}
         >
-            {isEditModeEnabled && (
-                <div {...draggableProvided?.dragHandleProps} className={styles.dragbar}>
-                    <span>
-                        <IconButton
-                            classes={{ root: styles.dragbarButton }}
-                            style={{ position: 'absolute', top: 0, right: 0 }}
-                            aria-label="Settings"
-                            {...bindTrigger(popupState)}
-                        >
-                            <MoreVert className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: popupState.isOpen })} />
-                        </IconButton>
-                        <Popover
-                            {...bindPopover(popupState)}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                        >
-                            <Box py={1} px={2} style={{ overflow: 'auto' }}>
-                                {config && (
-                                    <>
-                                        {config}
-                                        <Divider />
-                                    </>
-                                )}
-                                <Button
-                                    color={'primary'}
-                                    startIcon={<Delete className={clsx(styles.buttonIcon)} />}
-                                    aria-label={'Delete'}
-                                    style={{ float: 'right' }}
-                                    onClick={() => onRemoveContentModule()}
-                                >
-                                    Modul löschen
+            <Suspense fallback={<CircularProgress />}>
+                {isEditModeEnabled && (
+                    <div {...dragbarProps} className={styles.dragbar}>
+                        <span>
+                            <IconButton
+                                classes={{ root: styles.dragbarButton }}
+                                style={{ position: 'absolute', top: 0, right: 0 }}
+                                aria-label="Settings"
+                                {...bindTrigger(popupState)}
+                            >
+                                <MoreVert className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: popupState.isOpen })} />
+                            </IconButton>
+                            <Popover
+                                {...bindPopover(popupState)}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                            >
+                                <Box py={1} px={2} style={{ overflow: 'auto' }}>
+                                    {config && (
+                                        <>
+                                            {config}
+                                            <Divider />
+                                        </>
+                                    )}
+                                    <Button
+                                        color={'primary'}
+                                        startIcon={<Delete className={clsx(styles.buttonIcon)} />}
+                                        aria-label={'Delete'}
+                                        style={{ float: 'right' }}
+                                        onClick={() => onRemoveContentModule()}
+                                    >
+                                        Modul löschen
                                 </Button>
-                            </Box>
-                        </Popover>
-                    </span>
-                </div>
-            )
-            }
-            {contentModule.type === ContentModuleType.TITLE && (
-                <Title
-                    contentModule={contentModule}
-                    isEditModeEnabled={isEditModeEnabled}
-                    onUpdateModule={onUpdateModule}
-                />
-            )}
-            {contentModule.type === ContentModuleType.TEXT && (
-                <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
-            )}
-            {contentModule.type === ContentModuleType.IMAGE && (
-                <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
-            )}
-            {contentModule.type === ContentModuleType.IMAGE_COLLECTION && (
-                <ImageCollection
-                    contentModule={contentModule}
-                    isEditModeEnabled={isEditModeEnabled}
-                    onUpdateModule={onUpdateModule}
-                />
-            )}
-            {contentModule.type === ContentModuleType.VIDEO && (
-                <Video contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
-            )}
-            {contentModule.type === ContentModuleType.AUDIO && (
-                <Audio contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
-            )}
-            {contentModule.type === ContentModuleType.DOWNLOAD && (
-                <Download contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
-            )}
-            {contentModule.type === ContentModuleType.FORM && (
-                <Form contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
-            )}
+                                </Box>
+                            </Popover>
+                        </span>
+                    </div>
+                )
+                }
+                {contentModule.type === ContentModuleType.TITLE && (
+                    <Title
+                        contentModule={contentModule}
+                        isEditModeEnabled={isEditModeEnabled}
+                        onUpdateModule={onUpdateModule}
+                    />
+                )}
+                {contentModule.type === ContentModuleType.TEXT && (
+                    <Text contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                )}
+                {contentModule.type === ContentModuleType.IMAGE && (
+                    <Image contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                )}
+                {contentModule.type === ContentModuleType.IMAGE_COLLECTION && (
+                    <ImageCollection
+                        contentModule={contentModule}
+                        isEditModeEnabled={isEditModeEnabled}
+                        onUpdateModule={onUpdateModule}
+                    />
+                )}
+                {contentModule.type === ContentModuleType.VIDEO && (
+                    <Video contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                )}
+                {contentModule.type === ContentModuleType.AUDIO && (
+                    <Audio contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                )}
+                {contentModule.type === ContentModuleType.DOWNLOAD && (
+                    <Download contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                )}
+                {contentModule.type === ContentModuleType.FORM && (
+                    <Form contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                )}
+            </Suspense>
         </Card>
     );
-
-    return isEditModeEnabled ?
-        (
-            <Draggable draggableId={String(contentModule.id)} index={index}>
-                {card}
-            </Draggable>
-        ) : card();
 });
