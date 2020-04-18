@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Card, CardContent, Grid, Typography, makeStyles, Theme, useTheme } from '@material-ui/core';
+import { Button, Card, CardContent, Grid, Typography, makeStyles, Theme, useTheme, FormControl, InputLabel, Select, MenuItem, Divider } from '@material-ui/core';
 import { useMutation } from '@apollo/react-hooks';
 import { useTenant } from 'util/client/useTenant';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
@@ -8,9 +8,12 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ColorSettingRow } from './ColorSettingRow';
 import { SelectTemplateButton } from './SelectTemplateButton';
+import { Helmet } from 'react-helmet';
+import { textFonts, headerFonts } from './fonts';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import Img from 'react-cloudimage-responsive';
+import createTypography from '@material-ui/core/styles/createTypography';
 
 const useStyles = makeStyles(theme => ({
     section: {
@@ -148,7 +151,76 @@ export const PresentationSettings = memo(() => {
                         </Typography>
                     </Grid>
                 </Grid>
+            </section>
 
+            <section className={styles.section}>
+                <Typography variant={'h6'}>
+                    Schriften
+                </Typography>
+                <Grid container>
+                    <Grid item sm={6}>
+                        <FormControl fullWidth>
+                            <InputLabel id="presentation-font-text-label">Schriftart Überschriften</InputLabel>
+                            <Select
+                                labelId="presentation-font-text-label"
+                                id="presentation-font-text"
+                                value={getFromTheme('overrides.LottaArticlePreview.title.fontFamily')}
+                                onChange={e =>
+                                    setCustomTheme(merge({}, customTheme, {
+                                        overrides: { LottaArticlePreview: { title: { fontFamily: e.target.value } } }
+                                    }))
+                                }
+                            >
+                                {headerFonts.map(({ name, url }) => (
+                                    <MenuItem value={name} key={name}>
+                                        <span style={{ fontFamily: name }}>{name}</span>
+                                        <Helmet>
+                                            <link rel={'stylesheet'} href={url} />
+                                        </Helmet>
+                                    </MenuItem>
+                                ))}
+                                <Divider />
+                                {
+                                    textFonts.map(({ name, url }) => (
+                                        <MenuItem value={name} key={name}>
+                                            <span style={{ fontFamily: name }}>{name}</span>
+                                            <Helmet>
+                                                <link rel={'stylesheet'} href={url} />
+                                            </Helmet>
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item sm={6}>
+                        <FormControl fullWidth>
+                            <InputLabel id="presentation-font-text-label">Schriftart Fließtext</InputLabel>
+                            <Select
+                                labelId="presentation-font-text-label"
+                                id="presentation-font-text"
+                                value={getFromTheme('typography.fontFamily')}
+                                onChange={e => setCustomTheme(merge({}, customTheme, {
+                                    typography: createTypography(getFromTheme('palette'), {
+                                        fontFamily: e.target.value as string
+                                    })
+                                }))}
+                            >
+                                {textFonts.map(({ name, url }) => (
+                                    <MenuItem value={name} key={name}>
+                                        <span style={{ fontFamily: name }}>{name}</span>
+                                        <Helmet>
+                                            <link rel={'stylesheet'} href={url} />
+                                        </Helmet>
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </section>
+
+            <section>
                 <Grid container justify={'flex-end'}>
                     <Grid item sm={6} md={4} lg={3}>
                         <Button

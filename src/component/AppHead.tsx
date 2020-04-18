@@ -2,10 +2,14 @@ import React, { memo } from 'react';
 import { useTenant } from 'util/client/useTenant';
 import { useTheme } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
+import { textFonts, headerFonts } from './layouts/adminLayout/tenantManagment/fonts';
 
 export const AppHead = memo(() => {
     const tenant = useTenant();
     const theme = useTheme();
+
+    const allFonts = [...textFonts, ...headerFonts];
+
     return (
         <Helmet>
             <title>{tenant.title}</title>
@@ -15,6 +19,16 @@ export const AppHead = memo(() => {
             <meta name="theme-color" content={theme.palette.primary.main} />
             <meta name="apple-mobile-web-app-title" content={tenant.title} />
             <meta name="application-name" content={tenant.title} />
+
+            {[theme.typography.fontFamily, (theme.overrides as any).LottaArticlePreview.title.fontFamily].map((fontName, i) => {
+                const foundFont = allFonts.find(font => font.name === fontName);
+                if (foundFont) {
+                    return (
+                        <link key={i} rel={'stylesheet'} href={foundFont.url} />
+                    );
+                }
+                return null;
+            })}
         </Helmet>
     );
 });
