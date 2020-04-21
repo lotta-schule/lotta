@@ -7,9 +7,11 @@ defmodule ApiWeb.Schema.TenantsTypes do
     end
 
     field :tenant, :tenant do
-      resolve &Api.TenantResolver.current/2
+      arg :id, :lotta_id
+      arg :slug, :string
+      resolve &Api.TenantResolver.get/2
     end
-    
+
     field :categories, list_of(:category) do
       resolve &Api.CategoryResolver.all/2
     end
@@ -20,48 +22,57 @@ defmodule ApiWeb.Schema.TenantsTypes do
   end
 
   object :tenants_mutations do
+    field :create_tenant, type: :tenant do
+      arg :title, non_null(:string)
+      arg :slug, non_null(:string)
+      arg :email, non_null(:string)
+      arg :name, non_null(:string)
+
+      resolve &Api.TenantResolver.create/2
+    end
+
     field :update_tenant, type: :tenant do
       arg :tenant, non_null(:tenant_input)
-  
+
       resolve &Api.TenantResolver.update/2
     end
 
     field :create_category, type: :category do
       arg :category, non_null(:category_input)
-  
+
       resolve &Api.CategoryResolver.create/2
     end
 
     field :update_category, type: :category do
       arg :id, non_null(:lotta_id)
       arg :category, non_null(:category_input)
-  
+
       resolve &Api.CategoryResolver.update/2
     end
-    
+
     field :delete_category, type: :category do
       arg :id, non_null(:lotta_id)
-  
+
       resolve &Api.CategoryResolver.delete/2
     end
-    
+
     field :create_widget, type: :widget do
       arg :title, non_null(:string)
       arg :type, non_null(:widget_type)
-  
+
       resolve &Api.WidgetResolver.create/2
     end
 
     field :update_widget, type: :widget do
       arg :id, non_null(:lotta_id)
       arg :widget, non_null(:widget_input)
-  
+
       resolve &Api.WidgetResolver.update/2
     end
-    
+
     field :delete_widget, type: :widget do
       arg :id, non_null(:lotta_id)
-  
+
       resolve &Api.WidgetResolver.delete/2
     end
   end
@@ -98,6 +109,7 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :title, :string
     field :slug, :string
     field :custom_theme, :json
+    field :inserted_at, :naive_datetime
     field :logo_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :background_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)

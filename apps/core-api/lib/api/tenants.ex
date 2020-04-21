@@ -169,9 +169,38 @@ defmodule Api.Tenants do
 
   """
   def create_tenant(attrs \\ %{}) do
-    %Tenant{}
-    |> Tenant.changeset(attrs)
+    {:ok, tenant} =
+      %Tenant{}
+      |> Tenant.create_changeset(attrs)
+      |> Repo.insert()
+
+    %Category{
+      title: "Startseite",
+      sort_key: 0,
+      is_sidenav: false,
+      is_homepage: true,
+      tenant_id: tenant.id
+    }
     |> Repo.insert()
+
+    {:ok, admin_group} = %UserGroup{
+      name: "Administrator",
+      sort_key: 0,
+      is_admin_group: true,
+      tenant_id: tenant.id
+    }
+    |> Repo.insert()
+
+    ["Lehrer", "Schüler"]
+    |> Enum.with_index()
+    |> Enum.each(fn ({name, i}) ->
+      %UserGroup{
+        name: name,
+        sort_key: 10 + i * 10
+      }
+    end)
+
+    {:ok, tenant, admin_group}
   end
 
   @doc """

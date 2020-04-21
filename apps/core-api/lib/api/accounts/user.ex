@@ -37,6 +37,17 @@ defmodule Api.Accounts.User do
     timestamps()
   end
 
+  def is_lotta_admin?(%User{} = user) do
+    [
+      "alexis.rinaldoni@einsa.net",
+      "eike.wiewiorra@einsa.net",
+      "billy@einsa.net"
+    ]
+    |> Enum.any?(fn email ->
+      user.email == email
+    end)
+  end
+
   def is_admin?(%User{} = user, %Tenant{} = tenant) do
     user
     |> get_groups(tenant)
@@ -154,6 +165,9 @@ defmodule Api.Accounts.User do
   end
 
   def registration_changeset(%User{} = user, params \\ %{}) do
+    IO.inspect("REGISTRATION CHANGESET:")
+    IO.inspect(user)
+    IO.inspect(params)
     user
     |> ReadRepo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
