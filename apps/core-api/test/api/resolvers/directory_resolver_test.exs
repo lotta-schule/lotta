@@ -6,9 +6,9 @@ defmodule Api.DirectoryResolverTest do
     Api.Repo.Seeder.seed()
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
-    user2 = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@einsa.net"])
-    user = Api.Repo.get_by!(Api.Accounts.User, [email: "billy@einsa.net"])
+    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
+    user2 = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@lotta.schule"])
+    user = Api.Repo.get_by!(Api.Accounts.User, [email: "billy@lotta.schule"])
     {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
     {:ok, user2_jwt, _} = Api.Guardian.encode_and_sign(user2, %{email: user2.email, name: user2.name})
     {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})

@@ -42,8 +42,10 @@ defmodule Api.TenantResolver do
       end
 
       Accounts.set_user_groups(user, tenant, [admin_group])
+
+      {:ok, tenant}
     else
-      {:error, "Nur Lotta-Administaren dürfen das"}
+      {:error, "Nur Lotta-Administratoren dürfen das."}
     end
   end
 

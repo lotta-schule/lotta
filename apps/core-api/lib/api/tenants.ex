@@ -169,38 +169,40 @@ defmodule Api.Tenants do
 
   """
   def create_tenant(attrs \\ %{}) do
-    {:ok, tenant} =
-      %Tenant{}
-      |> Tenant.create_changeset(attrs)
+    with {:ok, tenant} <- %Tenant{} |> Tenant.create_changeset(attrs) |> Repo.insert() do
+      %Category{
+        title: "Startseite",
+        sort_key: 0,
+        is_sidenav: false,
+        is_homepage: true,
+        tenant_id: tenant.id
+      }
       |> Repo.insert()
 
-    %Category{
-      title: "Startseite",
-      sort_key: 0,
-      is_sidenav: false,
-      is_homepage: true,
-      tenant_id: tenant.id
-    }
-    |> Repo.insert()
-
-    {:ok, admin_group} = %UserGroup{
-      name: "Administrator",
-      sort_key: 0,
-      is_admin_group: true,
-      tenant_id: tenant.id
-    }
-    |> Repo.insert()
-
-    ["Lehrer", "Schüler"]
-    |> Enum.with_index()
-    |> Enum.each(fn ({name, i}) ->
-      %UserGroup{
-        name: name,
-        sort_key: 10 + i * 10
+      {:ok, admin_group} = %UserGroup{
+        name: "Administrator",
+        sort_key: 0,
+        is_admin_group: true,
+        tenant_id: tenant.id
       }
-    end)
+      |> Repo.insert()
 
-    {:ok, tenant, admin_group}
+      ["Lehrer", "Schüler"]
+      |> Enum.with_index()
+      |> Enum.each(fn ({name, i}) ->
+        %UserGroup{
+          name: name,
+          sort_key: 10 + i * 10,
+          tenant_id: tenant.id
+        }
+        |> Repo.insert()
+      end)
+
+      {:ok, tenant, admin_group}
+    else
+      result ->
+        result
+    end
   end
 
   @doc """

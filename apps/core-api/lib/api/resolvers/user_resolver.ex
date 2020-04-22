@@ -106,15 +106,15 @@ defmodule Api.UserResolver do
     end
   end
 
-  def login(%{username: username, password: password}, %{context: _context}) do
+  def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
+        :ok <- AuthHelper.check_if_blocked(user, tenant),
         {:ok, jwt} <- User.get_signed_jwt(user) do
       {:ok, %{token: jwt}}
     end
   end
-  def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
+  def login(%{username: username, password: password}, %{context: _context}) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-        :ok <- AuthHelper.check_if_blocked(user, tenant),
         {:ok, jwt} <- User.get_signed_jwt(user) do
       {:ok, %{token: jwt}}
     end

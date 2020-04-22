@@ -27,6 +27,7 @@ defmodule Api.Tenants.Tenant do
     tenant
     |> cast(attrs, [:title, :slug])
     |> validate_required([:title, :slug])
+    |> unique_constraint(:slug)
   end
 
   @doc false

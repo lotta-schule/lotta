@@ -165,9 +165,6 @@ defmodule Api.Accounts.User do
   end
 
   def registration_changeset(%User{} = user, params \\ %{}) do
-    IO.inspect("REGISTRATION CHANGESET:")
-    IO.inspect(user)
-    IO.inspect(params)
     user
     |> ReadRepo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
