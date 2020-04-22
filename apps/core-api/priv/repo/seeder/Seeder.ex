@@ -18,17 +18,24 @@ defmodule Api.Repo.Seeder do
     |> Map.put(:token, "Seb034hP2?019")
     |> Api.Repo.insert!
 
+    {:ok, lotta_admin} = Api.Accounts.register_user(%{
+      name: "Alexis Rinaldoni",
+      email: "alexis.rinaldoni@einsa.net",
+      password: "test123",
+      tenant_id: web_tenant.id
+    })
+
     {:ok, alexis} = Api.Accounts.register_user(%{
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
-        email: "alexis.rinaldoni@einsa.net",
+        email: "alexis.rinaldoni@lotta.schule",
         password: "test123",
         tenant_id: web_tenant.id
     })
     {:ok, _billy} = Api.Accounts.register_user(%{
         name: "Christopher Bill",
         nickname: "Billy",
-        email: "billy@einsa.net",
+        email: "billy@lotta.schule",
         password: "test123",
         tenant_id: web_tenant.id,
         enrollment_tokens: ["Seb034hP2?019"]
@@ -36,7 +43,7 @@ defmodule Api.Repo.Seeder do
     {:ok, eike} = Api.Accounts.register_user(%{
         name: "Eike Wiewiorra",
         nickname: "Chef",
-        email: "eike.wiewiorra@einsa.net",
+        email: "eike.wiewiorra@lotta.schule",
         password: "test123",
         tenant_id: web_tenant.id
     })
@@ -47,8 +54,8 @@ defmodule Api.Repo.Seeder do
         password: "test123",
         tenant_id: web_tenant.id
     })
-    Api.Accounts.register_user(%{name: "Max Mustermann", nickname: "MaXi", email: "maxi@einsa.net", password: "test123", tenant_id: web_tenant.id})
-    Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@einsa.net", password: "test123", tenant_id: web_tenant.id})
+    Api.Accounts.register_user(%{name: "Max Mustermann", nickname: "MaXi", email: "maxi@lotta.schule", password: "test123", tenant_id: web_tenant.id})
+    Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@lotta.schule", password: "test123", tenant_id: web_tenant.id})
     Api.Accounts.register_user(%{name: "Marie Curie", nickname: "Polonium", email: "mcurie@lotta.schule", password: "test456", tenant_id: lotta_tenant.id})
 
     Api.Accounts.set_user_groups(alexis, web_tenant, [admin_group])
@@ -213,7 +220,7 @@ defmodule Api.Repo.Seeder do
       type: "text",
       text: "Pizza Test-Formular",
       configuration: %{
-        "destination" => "alexis.rinaldoni@einsa.net",
+        "destination" => "alexis.rinaldoni@lotta.schule",
         "save_internally" => true,
         "elements" => [
           %{ "descriptionText" => "Halli, hallo, wir sind da, du bist hier, dadub dadumm.", "element" => "input", "label" => "Name", "name" => "name", "required" => true, "type" => "text" },

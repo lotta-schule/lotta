@@ -64,6 +64,25 @@ defmodule Api.Accounts do
   end
 
   @doc """
+  Gets a single user by email.
+
+  returns nil if the User does not exist.
+
+  ## Examples
+
+      iex> get_user_by_email("test@test.de")
+      %User{}
+
+      iex> get_user_by_email("test@no.de")
+      nil
+
+  """
+  def get_user_by_email(email) do
+    ReadRepo.get_by(User, email: email)
+  end
+
+
+  @doc """
   Searches users by text. The user is searched by *exact match* of email, or, in the same tenant, by name or nickname
 
   ## Examples
@@ -370,7 +389,7 @@ defmodule Api.Accounts do
       })
     end)
   end
-  
+
   @doc """
   Updates a directory.
 

@@ -7,7 +7,7 @@ defmodule Api.CategoryResolverTest do
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
     faecher_category = Api.Repo.get_by!(Api.Tenants.Category, title: "Fächer")
     emails = [
-      "alexis.rinaldoni@einsa.net", "eike.wiewiorra@einsa.net", "billy@einsa.net", "maxi@einsa.net"
+      "alexis.rinaldoni@lotta.schule", "eike.wiewiorra@lotta.schule", "billy@lotta.schule", "maxi@lotta.schule"
     ]
     [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] = Enum.map(emails, fn email ->
       user = Api.Repo.get_by!(Api.Accounts.User, [email: email])

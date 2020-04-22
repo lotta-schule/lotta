@@ -15,7 +15,7 @@ defmodule Api.UserResolver do
         {:ok, nil}
     end
   end
-  
+
   def resolve_email(user, _args, %{context: context}) do
     cond do
       context[:current_user] && context.current_user.id == user.id ->
@@ -26,7 +26,7 @@ defmodule Api.UserResolver do
         {:error, "Die Email des Nutzers ist geheim."}
     end
   end
-  
+
   def resolve_is_blocked(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.is_blocked?(user, tenant)}
   end
@@ -42,7 +42,7 @@ defmodule Api.UserResolver do
   def resolve_groups(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.get_groups(user, tenant)}
   end
-  
+
   def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.get_assigned_groups(user)}
   end
@@ -105,7 +105,7 @@ defmodule Api.UserResolver do
         }
     end
   end
-  
+
   def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
         :ok <- AuthHelper.check_if_blocked(user, tenant),
@@ -113,7 +113,13 @@ defmodule Api.UserResolver do
       {:ok, %{token: jwt}}
     end
   end
-  
+  def login(%{username: username, password: password}, %{context: _context}) do
+    with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
+        {:ok, jwt} <- User.get_signed_jwt(user) do
+      {:ok, %{token: jwt}}
+    end
+  end
+
   def logout(_args, _info) do
     {:ok, nil}
   end
