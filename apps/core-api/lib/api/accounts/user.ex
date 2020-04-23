@@ -49,7 +49,7 @@ defmodule Api.Accounts.User do
   end
 
   def is_admin?(%User{} = user, %Tenant{} = tenant) do
-    user
+    is_lotta_admin?(user) || user
     |> get_groups(tenant)
     |> Enum.any?(fn group -> group.tenant_id == tenant.id && group.is_admin_group end)
   end
