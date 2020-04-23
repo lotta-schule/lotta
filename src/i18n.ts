@@ -22,6 +22,12 @@ const resources = {
                 widget: 'Marginale',
                 widgets: '{{count}} Marginale',
                 markedWidgets: '{{count}} / $t(widgets.widgets, {"count": {{total}}})',
+            },
+            administration: {
+                result: 'Ergebnis',
+                results: '{{count}} Ergebnis',
+                results_plural: '{{count}} Ergebnisse',
+                results_0: '0 Ergebnisse',
             }
         }
     }
