@@ -240,7 +240,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                             )}
                         </TableCell>
                         <TableCell>
-                            {!isLoading && state.currentPath.length < 2 && <strong>Wähle einen Ordner</strong>}
+                            {!isLoading && state.currentPath.length < 2 && <strong>Wähle einen Ordner um Dateien hochzuladen.</strong>}
                             {state.currentPath.length > 1 && 'Dateiname'}
                         </TableCell>
                         <TableCell>{state.currentPath.length > 1 && 'Dateigröße'}</TableCell>
