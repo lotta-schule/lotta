@@ -164,28 +164,28 @@ defmodule Api.TenantResolverTest do
         }
     end
 
-    #
-    # TODO: make slug unique
-    #
-    # test "should return an error if slug is taken", %{lotta_admin_jwt: admin_jwt} do
-    #   res = build_conn()
-    #   |> put_req_header("authorization", "Bearer #{admin_jwt}")
-    #   |> post("/api", query: @query, variables: %{title: "Neu", slug: "web", email: "neuernutzer@lotta.schule", name: "Neuer Nutzer"})
-    #   |> json_response(200)
+    test "should return an error if slug is taken", %{lotta_admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{title: "Neu", slug: "web", email: "neuernutzer@lotta.schule", name: "Neuer Nutzer"})
+      |> json_response(200)
 
-    #   assert res == %{
-    #       "data" => %{
-    #         "createTenant" => nil
-    #       },
-    #       "errors" => [
-    #         %{
-    #           "locations" => [%{"column" => 0, "line" => 2}],
-    #           "message" => "Das Kürzel ist schon belegt.",
-    #           "path" => ["createTenant"]
-    #         }
-    #       ]
-    #     }
-    # end
+      assert res == %{
+          "data" => %{
+            "createTenant" => nil
+          },
+          "errors" => [
+            %{
+              "locations" => [%{"column" => 0, "line" => 2}],
+              "message" => "Erstellen des Tenant fehlgeschlagen.",
+              "path" => ["createTenant"],
+              "details" => %{
+                "slug" => ["ist schon belegt"]
+              }
+            }
+          ]
+        }
+    end
 
     test "should create a tenant for a new admin", %{lotta_admin_jwt: admin_jwt} do
       res = build_conn()
