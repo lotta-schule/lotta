@@ -17,6 +17,8 @@ defmodule ApiWeb.Schema.TenantsTypes do
     end
 
     field :widgets, list_of(:widget) do
+      arg :category_id, :lotta_id
+
       resolve &Api.WidgetResolver.all/2
     end
   end
