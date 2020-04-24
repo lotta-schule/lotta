@@ -60,6 +60,7 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
             width: '100%',
             overflowY: 'scroll',
             height: 600,
+            maxHeight: '50vh',
             '& tr': {
                 cursor: 'pointer'
             }
