@@ -25,21 +25,6 @@ export const GetCategoriesQuery = gql`
                 title
                 hideArticlesFromHomepage
             }
-            widgets {
-                id
-                title
-                type
-                configuration
-                iconImageFile {
-                    id
-                    remoteLocation
-                }
-                groups {
-                    id
-                    sortKey
-                    name
-                }
-            }
         }
     }
 `;
