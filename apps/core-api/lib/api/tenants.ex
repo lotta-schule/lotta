@@ -368,14 +368,50 @@ defmodule Api.Tenants do
 
   """
   def list_widgets_by_tenant(%Tenant{} = tenant, user, user_group_ids) do
-    from(w in Widget,
-      left_join: wug in "widgets_user_groups",
-      on: wug.widget_id == w.id,
-      where: w.tenant_id == ^tenant.id and
-             (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
-      distinct: w.id
-    )
-    |> ReadRepo.all()
+    {
+      :ok,
+      from(w in Widget,
+        left_join: wug in "widgets_user_groups",
+        on: wug.widget_id == w.id,
+        where: w.tenant_id == ^tenant.id and
+              (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
+        distinct: w.id
+      )
+      |> ReadRepo.all()
+    }
+  end
+
+  @doc """
+  Returns the list of widgets for a given category id.
+
+  ## Examples
+
+      iex> list_widgets_by_tenant_and_category_id()
+      [%Category{}, ...]
+
+  """
+  def list_widgets_by_tenant_and_category_id(%Tenant{} = tenant, category_id, user, user_group_ids) do
+    category = get_category!(category_id)
+    cond do
+      category == nil ->
+        {:error, "Die Kategorie existiert nicht."}
+      category.tenant_id != tenant.id ->
+        {:error, "Die Kategorie ist nicht gültig."}
+      true ->
+        {
+          :ok,
+          from(w in Widget,
+            left_join: wug in "widgets_user_groups",
+            on: wug.widget_id == w.id,
+            join: cw in "categories_widgets",
+            on: cw.widget_id == w.id,
+            where: cw.category_id == ^category_id and
+                  (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
+            distinct: w.id
+          )
+          |> ReadRepo.all()
+        }
+    end
   end
 
   @doc """
