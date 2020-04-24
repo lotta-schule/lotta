@@ -74,14 +74,6 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
         );
     }
 
-    const widgets = ((category && category.widgets) || [])
-        .filter(category => {
-            if (User.isAdmin(user)) {
-                return !!user!.groups.find(g => category.groups.length < 1 || !!category.groups.find(cg => cg.id === g.id));
-            }
-            return true;
-        });
-
     return (
         <>
             <BaseLayoutMainContent>
