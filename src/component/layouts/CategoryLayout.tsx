@@ -9,6 +9,9 @@ import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model/User';
+import { useQuery } from '@apollo/react-hooks';
+import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 
 const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
     subheaderContainer: {
@@ -60,6 +63,10 @@ export interface CategoryLayoutProps {
 export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles }) => {
     const styles = useStyles({ twoColumns: category.layoutName === '2-columns' });
     const [user] = useCurrentUser();
+
+    const { data: widgetsData, error: widgetsError } = useQuery(GetCategoryWidgetsQuery, {
+        variables: { categoryId: category.id }
+    });
 
     if (articles && articles.length === 1 && articles[0].id) {
         return (
@@ -115,7 +122,10 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 </Grid>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
-                <WidgetsList widgets={widgets} />
+                {widgetsError && (
+                    <ErrorMessage error={widgetsError} />
+                )}
+                <WidgetsList widgets={widgetsData?.widgets ?? []} />
             </BaseLayoutSidebar>
         </>
     );
