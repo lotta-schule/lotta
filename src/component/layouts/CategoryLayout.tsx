@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { CategoryModel, ArticleModel } from '../../model';
+import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles, Theme } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
@@ -10,6 +10,8 @@ import { WidgetsList } from './WidgetsList';
 import { useQuery } from '@apollo/react-hooks';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { User } from 'util/model';
 
 const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
     subheaderContainer: {
@@ -60,9 +62,16 @@ export interface CategoryLayoutProps {
 
 export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles }) => {
     const styles = useStyles({ twoColumns: category.layoutName === '2-columns' });
+    const [user] = useCurrentUser();
 
     const { data: widgetsData, error: widgetsError } = useQuery(GetCategoryWidgetsQuery, {
         variables: { categoryId: category.id }
+    });
+    const widgets = (widgetsData?.widgets ?? []).filter((widget: WidgetModel) => {
+        if (User.isAdmin(user)) {
+            return !!user!.groups.find(g => widget.groups.length < 1 || !!widget.groups.find(cg => cg.id === g.id));
+        }
+        return true;
     });
 
     if (articles && articles.length === 1 && articles[0].id) {
@@ -114,7 +123,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                 {widgetsError && (
                     <ErrorMessage error={widgetsError} />
                 )}
-                <WidgetsList widgets={widgetsData?.widgets ?? []} />
+                <WidgetsList widgets={widgets} />
             </BaseLayoutSidebar>
         </>
     );

@@ -11,6 +11,9 @@ export const GetCategoryWidgetsQuery = gql`
                 id
                 remoteLocation
             }
+            groups {
+                id
+            }
         }
     }
 `;
