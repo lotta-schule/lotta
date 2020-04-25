@@ -13,6 +13,7 @@ import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
+import { useIsMobile } from 'util/useIsMobile';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
@@ -36,7 +37,10 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
         paddingBottom: '0 !important'
     },
     previewText: {
-        fontSize: '.85em'
+        fontSize: '.85em',
+        [theme.breakpoints.down('sm')]: {
+            lineHeight: 1.1
+        }
     },
     meta: {
         display: 'flex',
@@ -51,12 +55,20 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'space-around'
+        justifyContent: 'space-between'
     },
     subtitle: {
         textTransform: 'uppercase',
         fontSize: '0.85rem',
-        marginBottom: 0
+        marginBottom: 0,
+        [theme.breakpoints.down('sm')]: {
+            lineHeight: 1.3
+        },
+        [theme.breakpoints.down('xs')]: {
+            display: 'flex',
+            lineHeight: 1.15
+        }
+
     },
     editButton: {
         float: 'right',
@@ -91,7 +103,12 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
         backgroundPosition: '0 0'
     },
     articleTitle: {
-        ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title)
+        ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title),
+        fontSize: '1em',
+        fontWeight: 'bolder',
+        [theme.breakpoints.down('sm')]: {
+            lineHeight: 1
+        }
     },
     previewTextLimitedHeight: {
         overflow: 'hidden',
@@ -117,6 +134,7 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
 
     const [currentUser] = useCurrentUser();
 
+    const isMobile = useIsMobile();
     const styles = useStyle({ isEmbedded });
 
     const [toggleArticlePin] = useMutation<{ article: ArticleModel }, { id: ID }>(ToggleArticlePinMutation, {
@@ -136,7 +154,7 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
 
     return (
         <Card className={styles.root} data-testid={'ArticlePreview'}>
-            <Grid container style={{ display: 'flex' }}>
+            <Grid container style={{ display: 'flex', minHeight: 60 }}>
                 {article.previewImageFile && (
                     <Grid item xs={2}>
                         {maybeLinked(
@@ -174,29 +192,31 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
                         {article.users && article.users.length > 0 && <>&nbsp;<AuthorAvatarsList users={article.users} />&nbsp;</>}
                     </Typography>
                 </Grid>
-                <Grid item xs={1} className={styles.editSection}>
-                    {!disableEdit && User.canEditArticle(currentUser, article) && (
-                        <Fab
-                            aria-label="Edit"
-                            size="small"
-                            className={clsx(styles.editButton, 'edit-button')}
-                            component={CollisionLink}
-                            to={Article.getPath(article, { edit: true })}
-                        >
-                            <Edit />
-                        </Fab>
-                    )}
-                    {!disablePin && User.isAdmin(currentUser) && (
-                        <Fab
-                            aria-label="Pin"
-                            size="small"
-                            className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
-                            onClick={() => toggleArticlePin()}
-                        >
-                            <Place />
-                        </Fab>
-                    )}
-                </Grid>
+                {!isMobile && ((!disableEdit && User.canEditArticle(currentUser, article)) || (!disablePin && User.isAdmin(currentUser))) && (
+                    <Grid item xs={1} className={styles.editSection}>
+                        {!disableEdit && User.canEditArticle(currentUser, article) && (
+                            <Fab
+                                aria-label="Edit"
+                                size="small"
+                                className={clsx(styles.editButton, 'edit-button')}
+                                component={CollisionLink}
+                                to={Article.getPath(article, { edit: true })}
+                            >
+                                <Edit />
+                            </Fab>
+                        )}
+                        {!disablePin && User.isAdmin(currentUser) && (
+                            <Fab
+                                aria-label="Pin"
+                                size="small"
+                                className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
+                                onClick={() => toggleArticlePin()}
+                            >
+                                <Place />
+                            </Fab>
+                        )}
+                    </Grid>
+                )}
             </Grid>
         </Card>
     );
