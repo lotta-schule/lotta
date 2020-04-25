@@ -1,6 +1,7 @@
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createLink } from 'apollo-absinthe-upload-link';
-import { ApolloLink, concat } from 'apollo-link';
+import { onError } from 'apollo-link-error';
+import { ApolloLink } from 'apollo-link';
 import { ApolloClient } from 'apollo-client';
 import axios, { AxiosRequestConfig } from 'axios';
 
@@ -57,24 +58,35 @@ const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
 };
 
 const apolloClient = new ApolloClient({
-    link: concat(
+    link: ApolloLink.from([
+        onError(({ graphQLErrors, networkError }) => {
+            if (graphQLErrors) {
+                graphQLErrors.forEach(({ message, locations, path }) => {
+                    console.error(
+                        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+                    );
+                });
+            }
+            if (networkError) {
+                console.error(`[Network error]: ${networkError}`);
+            }
+        }),
         new ApolloLink((operation, forward) => {
             if (operation.variables) {
                 operation.variables = mutateVariableInputObject(operation.variables, '__typename');
                 return forward ? forward(operation) : null;
             }
             return forward ? forward(operation) : null;
-        },
-        ),
+        }),
         createLink({
             uri: process.env.REACT_APP_API_URL,
             fetch: customFetch,
         })
-    ),
+    ]),
     resolvers: {},
     cache: new InMemoryCache({
         freezeResults: true
-    })
+    }),
 });
 
 const initialData = {
