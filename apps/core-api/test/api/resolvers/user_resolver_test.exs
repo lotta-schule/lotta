@@ -141,14 +141,13 @@ defmodule Api.UserResolverTest do
       |> get("/api", query: @query, variables: %{searchtext: "alexis"})
       |> json_response(200)
 
-      assert res == %{
-        "data" => %{
-          "searchUsers" => [
-              %{"email" => "alexis.rinaldoni@einsa.net", "name" => "Alexis Rinaldoni", "nickname" => nil},
-              %{"email" => "alexis.rinaldoni@lotta.schule", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"},
-          ]
-        }
-      }
+      assert res["data"]["searchUsers"]
+      assert Enum.find(res["data"]["searchUsers"], false, fn foundUser ->
+        foundUser == %{"email" => "alexis.rinaldoni@einsa.net", "name" => "Alexis Rinaldoni", "nickname" => nil}
+      end)
+      assert Enum.find(res["data"]["searchUsers"], false, fn foundUser ->
+        foundUser == %{"email" => "alexis.rinaldoni@lotta.schule", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"}
+      end)
     end
 
     test "should find users of same tenant by nickname is user is admin", %{admin_jwt: admin_jwt} do
