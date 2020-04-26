@@ -7,7 +7,7 @@ defmodule Api.Accounts do
   alias Api.Repo
   use Api.ReadRepoAliaser
 
-  alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,UserEnrollmentToken,File}
+  alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,UserEnrollmentToken,Directory,File}
   alias Api.Tenants.Tenant
 
   def data() do
@@ -62,6 +62,25 @@ defmodule Api.Accounts do
   def get_user!(id) do
     ReadRepo.get!(User, id)
   end
+
+  @doc """
+  Gets a single user by email.
+
+  returns nil if the User does not exist.
+
+  ## Examples
+
+      iex> get_user_by_email("test@test.de")
+      %User{}
+
+      iex> get_user_by_email("test@no.de")
+      nil
+
+  """
+  def get_user_by_email(email) do
+    ReadRepo.get_by(User, email: email)
+  end
+
 
   @doc """
   Searches users by text. The user is searched by *exact match* of email, or, in the same tenant, by name or nickname
@@ -183,9 +202,17 @@ defmodule Api.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
+    changeset =
+      %User{}
+      |> User.registration_changeset(attrs)
+    with {:ok, user} <- Repo.insert(changeset) do
+      user
+      |> create_new_user_directories()
+      {:ok, user}
+    else
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -272,6 +299,130 @@ defmodule Api.Accounts do
   end
 
   @doc """
+  List root directories for a user and tenant
+
+  """
+  def list_root_directories(%Tenant{} = tenant, %User{} = user) do
+    from(d in Directory,
+      where: d.tenant_id == ^tenant.id and is_nil(d.parent_directory_id) and (d.user_id == ^user.id or is_nil(d.user_id)),
+      order_by: [fragment("? DESC NULLS LAST", d.user_id), :name]
+    )
+    |> ReadRepo.all()
+  end
+
+    @doc """
+  List root directories for a user and tenant
+
+  """
+  def list_directories(%Directory{} = directory) do
+    from(d in Directory,
+      where: d.parent_directory_id == ^directory.id,
+      order_by: [:name]
+    )
+    |> ReadRepo.all()
+  end
+
+  @doc """
+  Gets a single directory.
+
+  returns nil if the Directory does not exist
+
+  ## Examples
+
+      iex> get_directory(123)
+      %File{}
+
+      iex> get_directory(456)
+      nil
+
+  """
+  def get_directory(id), do: ReadRepo.get(Directory, id)
+
+  @doc """
+  Gets a single file.
+
+  Raises `Ecto.NoResultsError` if the File does not exist.
+
+  ## Examples
+
+      iex> get_directory!(123)
+      %File{}
+
+      iex> get_directory!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_directory!(id), do: ReadRepo.get!(Directory, id)
+
+  @doc """
+  Creates a Directory.
+
+  ## Examples
+
+      iex> create_directory(%{field: value})
+      {:ok, %Directory{}}
+
+      iex> create_directory(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_directory(attrs) do
+    %Directory{}
+    |> Directory.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_new_user_directories(%User{} = user) do
+    Api.Tenants.list_tenants()
+    |> Enum.map(fn tenant ->
+      create_user_default_directories(user, tenant)
+    end)
+  end
+
+  def create_user_default_directories(%User{} = user, %Tenant{} = tenant) do
+    ["Mein Profil", "Meine Bilder", "Meine Dokumente", "Meine Videos", "Meine Tondokumente"]
+    |> Enum.map(fn name ->
+      create_directory(%{
+        name: name,
+        user_id: user.id,
+        tenant_id: tenant.id
+      })
+    end)
+  end
+
+  @doc """
+  Updates a directory.
+
+  ## Examples
+
+      iex> update_directory(directory, path)
+      {:ok, %Directory{}}
+
+  """
+  def update_directory(%Directory{} = directory, attrs) do
+    directory
+    |> Directory.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Directory.
+
+  ## Examples
+
+      iex> delete_directory(directory)
+      {:ok, %Directory{}}
+
+      iex> delete_directory(directory)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_directory(%Directory{} = directory) do
+    Repo.delete(directory)
+  end
+
+
+  @doc """
   Returns the list of files.
 
   ## Examples
@@ -280,10 +431,10 @@ defmodule Api.Accounts do
       [%File{}, ...]
 
   """
-  def list_files(tenant_id, user_id) do
+  def list_files(%Directory{} = parent_directory) do
     Ecto.Query.from(f in File,
-      where: f.tenant_id == ^tenant_id and (f.user_id == ^user_id or f.is_public == true),
-      order_by: [:is_public, :path, :filename]
+      where: f.parent_directory_id == ^parent_directory.id,
+      order_by: [:filename]
     )
     |> ReadRepo.all()
   end
@@ -316,9 +467,9 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_file(attrs, is_admin_user \\ false) do
+  def create_file(attrs) do
     %File{}
-    |> File.changeset(attrs, is_admin_user)
+    |> File.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -327,38 +478,14 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> move_file(file, path)
+      iex> update_file(file, path)
       {:ok, %File{}}
 
   """
-  def move_file(%File{} = file, attrs, can_edit_public_files \\ false) do
+  def update_file(%File{} = file, attrs) do
     file
-    |> File.move_changeset(attrs, can_edit_public_files)
+    |> File.changeset(attrs)
     |> Repo.update()
-  end
-
-  def move_public_directory(%Tenant{} = tenant, path, new_path) do
-    files = from(f in File,
-      where: f.is_public == true and f.tenant_id == ^(tenant.id) and like(f.path, ^"#{path}%"),
-      update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
-      select: [:id]
-    )
-    |> Repo.update_all([])
-    |> elem(1)
-    files = ReadRepo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
-    {:ok, files}
-  end
-
-  def move_private_directory(%User{} = user, path, new_path) do
-    files = from(f in File,
-      where: f.is_public == false and f.user_id == ^(user.id) and like(f.path, ^"#{path}%"),
-      update: [set: [path: fragment("regexp_replace(path, ?, ?)", ^"^#{path}", ^new_path)]],
-      select: [:id]
-    )
-    |> Repo.update_all([])
-    |> elem(1)
-    files = ReadRepo.all(from(f in File, where: f.id in ^(Enum.map(files, &(&1.id))), order_by: [:is_public, :path, :filename]))
-    {:ok, files}
   end
 
   @doc """

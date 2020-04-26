@@ -15,30 +15,30 @@ cache:
   paths:
     - deps/
 
-# test:
-#   stage: test
-#   image: elixir:1.9.1
-#   variables:
-#     MIX_ENV: test
-#     POSTGRES_PASSWORD: lotta
-#     POSTGRES_USER: lotta
-#     POSTGRES_DB: api_test
-#     REDIS_PASSWORD: lotta
-#   services:
-#     - name: postgres:latest
-#     - name: rabbitmq:latest
-#     - name: bitnami/redis:latest
-#       alias: redis
-#   before_script:
-#     - mix local.hex --force
-#     - mix local.rebar --force
-#     - mix deps.get --only test
-#   script:
-#     # gitlab k8s-runner has a problem with service hostname exposition
-#     # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
-#     - make tests-ci
-#   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
-# 
+test:
+  stage: test
+  image: elixir:1.10.2
+  variables:
+    MIX_ENV: test
+    POSTGRES_PASSWORD: lotta
+    POSTGRES_USER: lotta
+    POSTGRES_DB: api_test
+    REDIS_PASSWORD: lotta
+  services:
+    - name: postgres:latest
+    - name: rabbitmq:latest
+    - name: bitnami/redis:latest
+      alias: redis
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get --only test
+  script:
+    # gitlab k8s-runner has a problem with service hostname exposition
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
+    - make tests-ci
+  coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
+
 build docker image:
   stage: build
   image:
@@ -99,7 +99,7 @@ deploy staging:
       --set postgresql.replication.enabled=true
       --set postgresql.replication.user=$POSTGRES_REPLICATION_USER
       --set postgresql.replication.password=$POSTGRES_REPLICATION_PASSWORD
-      --set postgresql.replication.slaveReplicas=2
+      --set postgresql.replication.slaveReplicas=1
       --set postgresql.replication.synchronousCommit="on"
       --set postgresql.replication.numSynchronousReplicas=1
       --set postgresql.metrics.enabled=true
@@ -114,10 +114,10 @@ deploy staging:
       --set redis.password=$REDIS_PASSWORD
       --set redis.cluster.slaveCount=1
       --set redis.metrics.enabled=true
-      --set resources.limits.cpu=200m
-      --set resources.limits.memory=512Mi
-      --set resources.requests.cpu=200m
-      --set resources.requests.memory=256Mi
+      --set resources.limits.cpu=150m
+      --set resources.limits.memory=200Mi
+      --set resources.requests.cpu=150m
+      --set resources.requests.memory=128Mi
   only:
     refs:
       - develop

@@ -1,12 +1,13 @@
 defmodule Api.UserResolverTest do
   use ApiWeb.ConnCase
+  import Ecto.Query
 
   setup do
     Api.Repo.Seeder.seed()
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
-    user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@einsa.net"])
+    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
+    user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@lotta.schule"])
     user2 = Api.Repo.get_by!(Api.Accounts.User, [email: "mcurie@lotta.schule"])
     evil_user = Api.Repo.get_by!(Api.Accounts.User, [email: "drevil@lotta.schule"])
     {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
@@ -49,7 +50,7 @@ defmodule Api.UserResolverTest do
         "data" => %{
           "currentUser" => %{
               "id" => admin.id,
-              "email" => "alexis.rinaldoni@einsa.net",
+              "email" => "alexis.rinaldoni@lotta.schule",
               "name" => "Alexis Rinaldoni",
               "nickname" => "Der Meister"
           }
@@ -91,9 +92,9 @@ defmodule Api.UserResolverTest do
       assert res == %{
         "data" => %{
           "users" => [
-              %{"email" => "alexis.rinaldoni@einsa.net", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"},
-              %{"email" => "billy@einsa.net", "name" => "Christopher Bill", "nickname" => "Billy"},
-              %{"email" => "eike.wiewiorra@einsa.net", "name" => "Eike Wiewiorra", "nickname" => "Chef"}
+              %{"email" => "alexis.rinaldoni@lotta.schule", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"},
+              %{"email" => "billy@lotta.schule", "name" => "Christopher Bill", "nickname" => "Billy"},
+              %{"email" => "eike.wiewiorra@lotta.schule", "name" => "Eike Wiewiorra", "nickname" => "Chef"}
           ]
         }
       }
@@ -140,13 +141,13 @@ defmodule Api.UserResolverTest do
       |> get("/api", query: @query, variables: %{searchtext: "alexis"})
       |> json_response(200)
 
-      assert res == %{
-        "data" => %{
-          "searchUsers" => [
-              %{"email" => "alexis.rinaldoni@einsa.net", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"},
-          ]
-        }
-      }
+      assert res["data"]["searchUsers"]
+      assert Enum.find(res["data"]["searchUsers"], false, fn foundUser ->
+        foundUser == %{"email" => "alexis.rinaldoni@einsa.net", "name" => "Alexis Rinaldoni", "nickname" => nil}
+      end)
+      assert Enum.find(res["data"]["searchUsers"], false, fn foundUser ->
+        foundUser == %{"email" => "alexis.rinaldoni@lotta.schule", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"}
+      end)
     end
 
     test "should find users of same tenant by nickname is user is admin", %{admin_jwt: admin_jwt} do
@@ -159,7 +160,7 @@ defmodule Api.UserResolverTest do
       assert res == %{
         "data" => %{
           "searchUsers" => [
-              %{"email" => "alexis.rinaldoni@einsa.net", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"},
+              %{"email" => "alexis.rinaldoni@lotta.schule", "name" => "Alexis Rinaldoni", "nickname" => "Der Meister"},
           ]
         }
       }
@@ -195,11 +196,11 @@ defmodule Api.UserResolverTest do
       }
     end
 
-    test "should return an empty results array if there is a two-characters input", %{admin_jwt: admin_jwt} do
+    test "should return an empty results array if there is a one-characters input", %{admin_jwt: admin_jwt} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
-      |> get("/api", query: @query, variables: %{searchtext: "De"})
+      |> get("/api", query: @query, variables: %{searchtext: "D"})
       |> json_response(200)
 
       assert res == %{
@@ -272,7 +273,7 @@ defmodule Api.UserResolverTest do
 
       assert res == %{
         "data" => %{
-          "user" => %{"email" => "eike.wiewiorra@einsa.net", "name" => "Eike Wiewiorra", "nickname" => "Chef"}
+          "user" => %{"email" => "eike.wiewiorra@lotta.schule", "name" => "Eike Wiewiorra", "nickname" => "Chef"}
         }
       }
     end
@@ -343,13 +344,21 @@ defmodule Api.UserResolverTest do
     }
     """
 
-    test "register the user if data is entered correctly" do
+    test "register the user if data is entered correctly - user should have default directories", %{web_tenant: web_tenant} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123" }})
       |> json_response(200)
 
       assert String.valid?(res["data"]["register"]["token"])
+
+      token = res["data"]["register"]["token"]
+      {:ok, %{"id" => id}} = Api.Guardian.decode_and_verify(token)
+      directories =
+        from(d in Api.Accounts.Directory, where: d.user_id == ^id and d.tenant_id == ^web_tenant.id)
+        |> Api.Repo.all()
+
+      assert length(directories) == 5
     end
 
     test "register the user and put him into groupkey's group" do
@@ -368,7 +377,7 @@ defmodule Api.UserResolverTest do
     test "returns error when email is already taken" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "alexis.rinaldoni@einsa.net", password: "test123" }, groupKey: "LEb0815Hp!1969"})
+      |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "alexis.rinaldoni@lotta.schule", password: "test123" }, groupKey: "LEb0815Hp!1969"})
       |> json_response(200)
 
       assert res == %{
@@ -389,7 +398,7 @@ defmodule Api.UserResolverTest do
     test "returns error when no password is given" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "alexis.rinaldoni@einsa.net", password: "" }, groupKey: "LEb0815Hp!1969"})
+      |> post("/api", query: @query, variables: %{user: %{ name: "Neuer Nutzer", email: "alexis.rinaldoni@lotta.schule", password: "" }, groupKey: "LEb0815Hp!1969"})
       |> json_response(200)
 
       assert res == %{
@@ -410,7 +419,7 @@ defmodule Api.UserResolverTest do
     test "returns error when no name is given" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{user: %{ name: "", email: "alexis.rinaldoni@einsa.net", password: "test123" }, groupKey: "LEb0815Hp!1969"})
+      |> post("/api", query: @query, variables: %{user: %{ name: "", email: "alexis.rinaldoni@lotta.schule", password: "test123" }, groupKey: "LEb0815Hp!1969"})
       |> json_response(200)
 
       assert res == %{
@@ -463,7 +472,7 @@ defmodule Api.UserResolverTest do
     test "returns the user if data is entered correctly" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{username: "alexis.rinaldoni@einsa.net", password: "test123"})
+      |> post("/api", query: @query, variables: %{username: "alexis.rinaldoni@lotta.schule", password: "test123"})
       |> json_response(200)
 
       assert String.valid?(res["data"]["login"]["token"])
@@ -492,7 +501,7 @@ defmodule Api.UserResolverTest do
     test "returns an error if the password is wrong" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{username: "alexis.rinaldoni@einsa.net", password: "abcdef999"})
+      |> post("/api", query: @query, variables: %{username: "alexis.rinaldoni@lotta.schule", password: "abcdef999"})
       |> json_response(200)
 
       assert res == %{
@@ -540,7 +549,7 @@ defmodule Api.UserResolverTest do
     test "returns true if the user exists" do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@einsa.net"})
+      |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule"})
       |> json_response(200)
 
       assert res == %{
@@ -548,7 +557,7 @@ defmodule Api.UserResolverTest do
           "requestPasswordReset" => true
         }
       }
-      assert {:ok, 1} = Redix.command(:redix, ["EXISTS", "user-email-verify-token-alexis.rinaldoni@einsa.net"])
+      assert {:ok, 1} = Redix.command(:redix, ["EXISTS", "user-email-verify-token-alexis.rinaldoni@lotta.schule"])
       Redix.command(:redix, ["FLUSHALL"])
     end
 
@@ -579,13 +588,13 @@ defmodule Api.UserResolverTest do
 
     test "returns an auth token if given user info is correct" do
       token = "abcdef123"
-      Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token])
+      Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@lotta.schule", token])
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@einsa.net", token: token, password: "abcdef"})
+      |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"})
       |> json_response(200)
 
-      user = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
+      user = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
 
       assert String.valid?(res["data"]["resetPassword"]["token"])
       assert true = Bcrypt.verify_pass("abcdef", user.password_hash)
@@ -594,10 +603,10 @@ defmodule Api.UserResolverTest do
 
     test "returns an error if given token is not correct" do
       token = "abcdef123"
-      Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token <> "blub"])
+      Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@lotta.schule", token <> "blub"])
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
-      |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@einsa.net", token: token, password: "abcdef"})
+      |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"})
       |> json_response(200)
 
       assert res == %{
@@ -617,7 +626,7 @@ defmodule Api.UserResolverTest do
 
     test "returns an error if given email is not correct" do
       token = "abcdef123"
-      Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@einsa.net", token])
+      Redix.command(:redix, ["SET", "user-email-verify-token-alexis.rinaldoni@lotta.schule", token])
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@blub.einsa.net", token: token, password: "abcdef"})

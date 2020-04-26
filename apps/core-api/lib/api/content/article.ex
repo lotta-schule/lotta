@@ -93,7 +93,7 @@ defmodule Api.Content.Article do
     if changeset.valid? && get_change(changeset, :ready_to_publish) do
       case apply_action(changeset, :update) do
         {:ok, article} ->
-          Api.EmailPublisherWorker.send_article_is_ready_admin_notification(article)
+          Api.Queue.EmailPublisher.send_article_is_ready_admin_notification(article)
         {:error, _} ->
           nil
       end

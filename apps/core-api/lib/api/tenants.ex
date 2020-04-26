@@ -169,9 +169,40 @@ defmodule Api.Tenants do
 
   """
   def create_tenant(attrs \\ %{}) do
-    %Tenant{}
-    |> Tenant.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, tenant} <- %Tenant{} |> Tenant.create_changeset(attrs) |> Repo.insert() do
+      %Category{
+        title: "Startseite",
+        sort_key: 0,
+        is_sidenav: false,
+        is_homepage: true,
+        tenant_id: tenant.id
+      }
+      |> Repo.insert()
+
+      {:ok, admin_group} = %UserGroup{
+        name: "Administrator",
+        sort_key: 0,
+        is_admin_group: true,
+        tenant_id: tenant.id
+      }
+      |> Repo.insert()
+
+      ["Lehrer", "Schüler"]
+      |> Enum.with_index()
+      |> Enum.each(fn ({name, i}) ->
+        %UserGroup{
+          name: name,
+          sort_key: 10 + i * 10,
+          tenant_id: tenant.id
+        }
+        |> Repo.insert()
+      end)
+
+      {:ok, tenant, admin_group}
+    else
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -337,14 +368,50 @@ defmodule Api.Tenants do
 
   """
   def list_widgets_by_tenant(%Tenant{} = tenant, user, user_group_ids) do
-    from(w in Widget,
-      left_join: wug in "widgets_user_groups",
-      on: wug.widget_id == w.id,
-      where: w.tenant_id == ^tenant.id and
-             (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
-      distinct: w.id
-    )
-    |> ReadRepo.all()
+    {
+      :ok,
+      from(w in Widget,
+        left_join: wug in "widgets_user_groups",
+        on: wug.widget_id == w.id,
+        where: w.tenant_id == ^tenant.id and
+              (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
+        distinct: w.id
+      )
+      |> ReadRepo.all()
+    }
+  end
+
+  @doc """
+  Returns the list of widgets for a given category id.
+
+  ## Examples
+
+      iex> list_widgets_by_tenant_and_category_id()
+      [%Category{}, ...]
+
+  """
+  def list_widgets_by_tenant_and_category_id(%Tenant{} = tenant, category_id, user, user_group_ids) do
+    category = get_category!(category_id)
+    cond do
+      category == nil ->
+        {:error, "Die Kategorie existiert nicht."}
+      category.tenant_id != tenant.id ->
+        {:error, "Die Kategorie ist nicht gültig."}
+      true ->
+        {
+          :ok,
+          from(w in Widget,
+            left_join: wug in "widgets_user_groups",
+            on: wug.widget_id == w.id,
+            join: cw in "categories_widgets",
+            on: cw.widget_id == w.id,
+            where: cw.category_id == ^category_id and
+                  (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
+            distinct: w.id
+          )
+          |> ReadRepo.all()
+        }
+    end
   end
 
   @doc """

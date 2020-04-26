@@ -3,7 +3,7 @@ defmodule Api.Tenants.Tenant do
   import Ecto.Changeset
   import Ecto.Query
   use Api.ReadRepoAliaser
-  alias Api.Tenants.{Category, CustomDomain}
+  alias Api.Tenants.{Category, CustomDomain, Tenant}
   alias Api.Accounts
   alias Api.Accounts.{File,User,UserGroup}
 
@@ -11,7 +11,7 @@ defmodule Api.Tenants.Tenant do
     field :slug, :string
     field :title, :string
     field :custom_theme, :map
-  
+
     has_many :categories, Category
     has_many :groups, UserGroup
     has_many :users, User
@@ -20,6 +20,14 @@ defmodule Api.Tenants.Tenant do
     belongs_to :background_image_file, File, on_replace: :nilify
 
     timestamps()
+  end
+
+  @doc false
+  def create_changeset(%Tenant{} = tenant, attrs) do
+    tenant
+    |> cast(attrs, [:title, :slug])
+    |> validate_required([:title, :slug])
+    |> unique_constraint(:slug)
   end
 
   @doc false
@@ -44,7 +52,7 @@ defmodule Api.Tenants.Tenant do
         get_lotta_url(tenant)
     end
   end
-  
+
   def get_lotta_url(%Api.Tenants.Tenant{slug: slug}) do
     base_url = Application.fetch_env!(:api, :base_url)
     "https://" <> slug  <> base_url
@@ -68,7 +76,7 @@ defmodule Api.Tenants.Tenant do
     |> put_assoc(:logo_image_file, nil)
   end
   defp put_assoc_logo_image_file(changeset, _args), do: changeset
-  
+
   defp put_assoc_background_image_file(changeset, %{background_image_file: %{id: background_image_file_id}}) do
     changeset
     |> put_assoc(:background_image_file, ReadRepo.get(Api.Accounts.File, background_image_file_id))

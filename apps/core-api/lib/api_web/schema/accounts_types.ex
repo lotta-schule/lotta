@@ -25,8 +25,19 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve &Api.UserGroupResolver.get/2
     end
 
+    field :directory, :directory do
+      arg :id, :lotta_id
+      resolve &Api.DirectoryResolver.get/2
+    end
+
+    field :directories, list_of(:directory) do
+      arg :parent_directory_id, :lotta_id
+      resolve &Api.DirectoryResolver.list/2
+    end
+
     field :files, list_of(:file) do
-      resolve &Api.FileResolver.all/2
+      arg :parent_directory_id, :lotta_id
+      resolve &Api.FileResolver.files/2
     end
   end
 
@@ -109,36 +120,49 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve &Api.UserResolver.set_user_groups/2
     end
 
-    field :upload_file, type: :file do
-      arg :path, :string, default_value: "/"
-      arg :file, non_null(:upload)
+    field :create_directory, type: :directory do
+      arg :name, non_null(:string)
+      arg :parent_directory_id, :lotta_id
       arg :is_public, :boolean
+
+      resolve &Api.DirectoryResolver.create/2
+    end
+
+    field :update_directory, type: :directory do
+      arg :id, non_null(:lotta_id)
+      arg :name, :string
+      arg :parent_directory_id, :lotta_id
+
+      resolve &Api.DirectoryResolver.update/2
+    end
+
+    field :delete_directory, type: :directory do
+      arg :id, non_null(:lotta_id)
+
+      resolve &Api.DirectoryResolver.delete/2
+    end
+
+    field :upload_file, type: :file do
+      arg :file, non_null(:upload)
+      arg :parent_directory_id, non_null(:lotta_id)
 
       resolve &Api.FileResolver.upload/2
     end
 
-    field :move_file, type: :file do
-      arg :id, non_null(:lotta_id)
-      arg :path, :string
-      arg :filename, :string
-      arg :is_public, :boolean
-
-      resolve &Api.FileResolver.move/2
-    end
-    
-    field :move_directory, type: list_of(:file) do
-      arg :path, non_null(:string)
-      arg :is_public, non_null(:boolean)
-      arg :new_path, non_null(:string)
-
-      resolve &Api.FileResolver.move_directory/2
-    end
-    
     field :delete_file, type: :file do
       arg :id, non_null(:lotta_id)
 
       resolve &Api.FileResolver.delete/2
     end
+
+    field :update_file, type: :file do
+      arg :id, non_null(:lotta_id)
+      arg :parent_directory_id, :lotta_id
+      arg :filename, :string
+
+      resolve &Api.FileResolver.update/2
+    end
+    
   end
 
   input_object :register_user_params do
@@ -205,6 +229,16 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :token, :string
   end
 
+  object :directory do
+    field :id, :lotta_id
+    field :name, :string
+    field :inserted_at, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :parent_directory, :directory, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+  end
+
   object :file do
     field :id, :lotta_id
     field :inserted_at, :naive_datetime
@@ -218,6 +252,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :file_type, :file_type
     field :user_id, :lotta_id
     field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :parent_directory, :directory, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end
 
   object :file_conversion do

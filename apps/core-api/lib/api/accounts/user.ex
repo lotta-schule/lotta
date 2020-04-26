@@ -3,7 +3,7 @@ defmodule Api.Accounts.User do
   use Api.ReadRepoAliaser
   import Ecto.Changeset
   import Ecto.Query
-  alias Api.Accounts.{User,UserGroup}
+  alias Api.Accounts.{Directory,File,User,UserGroup}
   alias Api.Content.Article
   alias Api.Tenants.Tenant
 
@@ -37,8 +37,19 @@ defmodule Api.Accounts.User do
     timestamps()
   end
 
+  def is_lotta_admin?(%User{} = user) do
+    [
+      "alexis.rinaldoni@einsa.net",
+      "eike.wiewiorra@einsa.net",
+      "billy@einsa.net"
+    ]
+    |> Enum.any?(fn email ->
+      user.email == email
+    end)
+  end
+
   def is_admin?(%User{} = user, %Tenant{} = tenant) do
-    user
+    is_lotta_admin?(user) || user
     |> get_groups(tenant)
     |> Enum.any?(fn group -> group.tenant_id == tenant.id && group.is_admin_group end)
   end
@@ -50,7 +61,35 @@ defmodule Api.Accounts.User do
     |> Map.get(:users)
     |> Enum.any?(fn u -> u.id == user.id end)
   end
+  def is_author?(%User{id: userId}, %Directory{} = directory) do
+    case ReadRepo.preload(directory, :user) do
+      %{user: %{id: id}} -> id == userId
+      _ -> false
+    end
+  end
+  def is_author?(%User{id: userId}, %File{} = file) do
+    case ReadRepo.preload(file, :user) do
+      %{user: %{id: id}} -> id == userId
+      _ -> false
+    end
+  end
   def is_author?(_, _), do: false
+
+  def can_write_directory?(%User{} = user, %Directory{} = directory) do
+    directory = ReadRepo.preload(directory, [:tenant, :user])
+    User.is_author?(user, directory) || if User.is_admin?(user, directory.tenant) do
+      is_nil(directory.user)
+    else
+      false
+    end
+  end
+  def can_write_directory?(_, _), do: false
+
+  def can_read_directory?(%User{} = user, %Directory{} = directory) do
+    directory = ReadRepo.preload(directory, [:user])
+    User.is_author?(user, directory) || is_nil(directory.user)
+  end
+  def can_read_directory?(_, _), do: false
 
   def has_group_for_article?(%User{} = user, %Article{} = article) do
     user_group_ids = User.group_ids(user, ReadRepo.preload(article, :tenant).tenant)

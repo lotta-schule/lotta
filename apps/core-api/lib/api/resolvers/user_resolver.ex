@@ -15,7 +15,7 @@ defmodule Api.UserResolver do
         {:ok, nil}
     end
   end
-  
+
   def resolve_email(user, _args, %{context: context}) do
     cond do
       context[:current_user] && context.current_user.id == user.id ->
@@ -26,7 +26,7 @@ defmodule Api.UserResolver do
         {:error, "Die Email des Nutzers ist geheim."}
     end
   end
-  
+
   def resolve_is_blocked(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.is_blocked?(user, tenant)}
   end
@@ -42,7 +42,7 @@ defmodule Api.UserResolver do
   def resolve_groups(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.get_groups(user, tenant)}
   end
-  
+
   def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.get_assigned_groups(user)}
   end
@@ -63,14 +63,13 @@ defmodule Api.UserResolver do
   end
 
   def search(%{searchtext: searchtext}, %{context: %{tenant: tenant} = context}) do
-    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    cond do
+      !context[:current_user] || !User.is_admin?(context.current_user, tenant) ->
+        {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+      String.length(searchtext) >= 2 ->
+        Accounts.search_user(searchtext, tenant)
       true ->
-        if String.length(searchtext) > 2 do
-          Accounts.search_user(searchtext, tenant)
-        else
-          {:ok, []}
-        end
-      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+        {:ok, []}
     end
   end
 
@@ -96,7 +95,7 @@ defmodule Api.UserResolver do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
         {:ok, jwt} = User.get_signed_jwt(user)
-        Api.EmailPublisherWorker.send_registration_email(tenant, user)
+        Api.Queue.EmailPublisher.send_registration_email(tenant, user)
         {:ok, %{token: jwt}}
       {:error, changeset} ->
         {
@@ -106,7 +105,7 @@ defmodule Api.UserResolver do
         }
     end
   end
-  
+
   def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
         :ok <- AuthHelper.check_if_blocked(user, tenant),
@@ -114,7 +113,13 @@ defmodule Api.UserResolver do
       {:ok, %{token: jwt}}
     end
   end
-  
+  def login(%{username: username, password: password}, %{context: _context}) do
+    with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
+        {:ok, jwt} <- User.get_signed_jwt(user) do
+      {:ok, %{token: jwt}}
+    end
+  end
+
   def logout(_args, _info) do
     {:ok, nil}
   end
@@ -125,7 +130,7 @@ defmodule Api.UserResolver do
       |> Base.url_encode64(padding: false)
       |> URI.encode()
     with {:ok, user} <- Accounts.request_password_reset_token(email, token) do
-      Api.EmailPublisherWorker.send_request_password_reset_email(tenant, user, email, token)
+      Api.Queue.EmailPublisher.send_request_password_reset_email(tenant, user, email, token)
     else
       error ->
         try do
@@ -142,7 +147,7 @@ defmodule Api.UserResolver do
     with {:ok, user} <-  Accounts.find_user_by_reset_token(email, token),
         {:ok, user} <- Accounts.update_password(user, password),
         {:ok, jwt} <- User.get_signed_jwt(user) do
-          Api.EmailPublisherWorker.send_password_changed_email(tenant, user)
+          Api.Queue.EmailPublisher.send_password_changed_email(tenant, user)
           {:ok, %{ token: jwt }}
     else
       error ->

@@ -18,17 +18,24 @@ defmodule Api.Repo.Seeder do
     |> Map.put(:token, "Seb034hP2?019")
     |> Api.Repo.insert!
 
+    {:ok, lotta_admin} = Api.Accounts.register_user(%{
+      name: "Alexis Rinaldoni",
+      email: "alexis.rinaldoni@einsa.net",
+      password: "test123",
+      tenant_id: web_tenant.id
+    })
+
     {:ok, alexis} = Api.Accounts.register_user(%{
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
-        email: "alexis.rinaldoni@einsa.net",
+        email: "alexis.rinaldoni@lotta.schule",
         password: "test123",
         tenant_id: web_tenant.id
     })
     {:ok, _billy} = Api.Accounts.register_user(%{
         name: "Christopher Bill",
         nickname: "Billy",
-        email: "billy@einsa.net",
+        email: "billy@lotta.schule",
         password: "test123",
         tenant_id: web_tenant.id,
         enrollment_tokens: ["Seb034hP2?019"]
@@ -36,7 +43,7 @@ defmodule Api.Repo.Seeder do
     {:ok, eike} = Api.Accounts.register_user(%{
         name: "Eike Wiewiorra",
         nickname: "Chef",
-        email: "eike.wiewiorra@einsa.net",
+        email: "eike.wiewiorra@lotta.schule",
         password: "test123",
         tenant_id: web_tenant.id
     })
@@ -47,8 +54,8 @@ defmodule Api.Repo.Seeder do
         password: "test123",
         tenant_id: web_tenant.id
     })
-    Api.Accounts.register_user(%{name: "Max Mustermann", nickname: "MaXi", email: "maxi@einsa.net", password: "test123", tenant_id: web_tenant.id})
-    Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@einsa.net", password: "test123", tenant_id: web_tenant.id})
+    Api.Accounts.register_user(%{name: "Max Mustermann", nickname: "MaXi", email: "maxi@lotta.schule", password: "test123", tenant_id: web_tenant.id})
+    Api.Accounts.register_user(%{name: "Dorothea Musterfrau", nickname: "Doro", email: "doro@lotta.schule", password: "test123", tenant_id: web_tenant.id})
     Api.Accounts.register_user(%{name: "Marie Curie", nickname: "Polonium", email: "mcurie@lotta.schule", password: "test456", tenant_id: lotta_tenant.id})
 
     Api.Accounts.set_user_groups(alexis, web_tenant, [admin_group])
@@ -57,35 +64,41 @@ defmodule Api.Repo.Seeder do
     Api.Accounts.set_user_blocked(dr_evil, web_tenant, true)
 
     # public files
+    public_logos = %Api.Accounts.Directory{name: "logos", tenant_id: web_tenant.id} |> Api.Repo.insert!()
+    public_logos_podcast = %Api.Accounts.Directory{name: "podcast", tenant_id: web_tenant.id, parent_directory_id: public_logos.id} |> Api.Repo.insert!()
+    public_logos_chamaeleon = %Api.Accounts.Directory{name: "chamaeleon", tenant_id: web_tenant.id, parent_directory_id: public_logos.id} |> Api.Repo.insert!()
+    public_hintergrund = %Api.Accounts.Directory{name: "hintergrund", tenant_id: web_tenant.id} |> Api.Repo.insert!()
     [
-      %Api.Accounts.File{path: "/logos", filename: "logo1.jpg", remote_location: "http://a.de/logo1.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/logos", filename: "logo2.jpg", remote_location: "http://a.de/logo2.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/logos", filename: "logo3.png", remote_location: "http://a.de/logo3.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/logos", filename: "logo4.png", remote_location: "http://a.de/logo4.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/logos/podcast", filename: "podcast1.png", remote_location: "http://a.de/podcast1.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/logos/podcast", filename: "podcast2.png", remote_location: "http://a.de/podcast2.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/logos/chamaeleon", filename: "chamaeleon.png", remote_location: "http://a.de/chamaeleon.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/hintergrund", filename: "hg_dunkel.jpg", remote_location: "http://a.de/hg_dunkel.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/hintergrund", filename: "hg_hell.jpg", remote_location: "http://a.de/hg_hell.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/hintergrund", filename: "hg_comic.png", remote_location: "http://a.de/hg_comic.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/hintergrund", filename: "hg_grafik.png", remote_location: "http://a.de/hg_grafik.png", filesize: 12288, file_type: "image", mime_type: "image/png"}
+      %Api.Accounts.File{parent_directory_id: public_logos.id, filename: "logo1.jpg", remote_location: "http://a.de/logo1.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: public_logos.id, filename: "logo2.jpg", remote_location: "http://a.de/logo2.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: public_logos.id, filename: "logo3.png", remote_location: "http://a.de/logo3.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: public_logos.id, filename: "logo4.png", remote_location: "http://a.de/logo4.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: public_logos_podcast.id, filename: "podcast1.png", remote_location: "http://a.de/podcast1.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: public_logos_podcast.id, filename: "podcast2.png", remote_location: "http://a.de/podcast2.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: public_logos_chamaeleon.id, filename: "chamaeleon.png", remote_location: "http://a.de/chamaeleon.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_dunkel.jpg", remote_location: "http://a.de/hg_dunkel.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_hell.jpg", remote_location: "http://a.de/hg_hell.jpg", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_comic.png", remote_location: "http://a.de/hg_comic.png", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: public_hintergrund.id, filename: "hg_grafik.png", remote_location: "http://a.de/hg_grafik.png", filesize: 12288, file_type: "image", mime_type: "image/png"}
     ]
     |> Enum.each(fn file ->
       file
       |> Map.put(:user_id, alexis.id)
       |> Map.put(:tenant_id, web_tenant.id)
-      |> Map.put(:is_public, true)
       |> Api.Repo.insert()
     end)
     # alexis' files
+    avatar_directory = %Api.Accounts.Directory{name: "logos", tenant_id: web_tenant.id, user_id: alexis.id} |> Api.Repo.insert!()
+    irgendwas_directory = %Api.Accounts.Directory{name: "irgendwas", tenant_id: web_tenant.id, user_id: alexis.id} |> Api.Repo.insert!()
+    podcast_directory = %Api.Accounts.Directory{name: "podcast", tenant_id: web_tenant.id, user_id: alexis.id} |> Api.Repo.insert!()
     [
-      %Api.Accounts.File{path: "/avatar", filename: "ich_schoen.jpg", remote_location: "http://a.de/0801801", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/avatar", filename: "ich_haesslich.jpg", remote_location: "http://a.de/828382383", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/", filename: "irgendwas.png", remote_location: "http://a.de/08234980239", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/", filename: "wasanderes.png", remote_location: "http://a.de/28374892374", filesize: 12288, file_type: "image", mime_type: "image/png"},
-      %Api.Accounts.File{path: "/podcast", filename: "podcast1.mp4", remote_location: "http://a.de/82734897238497", filesize: 12288, file_type: "video", mime_type: "video/mp4"},
-      %Api.Accounts.File{path: "/podcast", filename: "podcast2.mov", remote_location: "http://a.de/82734897238498", filesize: 12288, file_type: "video", mime_type: "video/mov"},
-      %Api.Accounts.File{path: "/podcast", filename: "pc3.m4v", remote_location: "http://a.de/82734897238499", filesize: 12288, file_type: "video", mime_type: "video/m4v"},
+      %Api.Accounts.File{parent_directory_id: avatar_directory.id, filename: "ich_schoen.jpg", remote_location: "http://a.de/0801801", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: avatar_directory.id, filename: "ich_haesslich.jpg", remote_location: "http://a.de/828382383", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: irgendwas_directory.id, filename: "irgendwas.png", remote_location: "http://a.de/08234980239", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: irgendwas_directory.id, filename: "wasanderes.png", remote_location: "http://a.de/28374892374", filesize: 12288, file_type: "image", mime_type: "image/png"},
+      %Api.Accounts.File{parent_directory_id: podcast_directory.id, filename: "podcast1.mp4", remote_location: "http://a.de/82734897238497", filesize: 12288, file_type: "video", mime_type: "video/mp4"},
+      %Api.Accounts.File{parent_directory_id: podcast_directory.id, filename: "podcast2.mov", remote_location: "http://a.de/82734897238498", filesize: 12288, file_type: "video", mime_type: "video/mov"},
+      %Api.Accounts.File{parent_directory_id: podcast_directory.id, filename: "pc3.m4v", remote_location: "http://a.de/82734897238499", filesize: 12288, file_type: "video", mime_type: "video/m4v"},
     ]
     |> Enum.each(fn file ->
       file
@@ -94,14 +107,17 @@ defmodule Api.Repo.Seeder do
       |> Api.Repo.insert!()
     end)
     # Eike' files
+    avatar_directory = %Api.Accounts.Directory{name: "avatar", tenant_id: web_tenant.id, user_id: eike.id} |> Api.Repo.insert!()
+    eoa_directory = %Api.Accounts.Directory{name: "ehrenberg-on-air", tenant_id: web_tenant.id, user_id: eike.id} |> Api.Repo.insert!()
+    podcast_directory = %Api.Accounts.Directory{name: "podcast", tenant_id: web_tenant.id, user_id: eike.id} |> Api.Repo.insert!()
     [
-      %Api.Accounts.File{path: "/avatar", filename: "wieartig1.jpg", remote_location: "http://a.de/0801345801", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/avatar", filename: "wieartig2.jpg", remote_location: "http://a.de/828382123383", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
-      %Api.Accounts.File{path: "/ehrenberg-on-air", filename: "eoa1.mp3", remote_location: "http://a.de/08234980234239", filesize: 12288, file_type: "audio", mime_type: "audio/mp3"},
-      %Api.Accounts.File{path: "/ehrenberg-on-air", filename: "eoa2.mp3", remote_location: "http://a.de/28374234892374", filesize: 12288, file_type: "audio", mime_type: "audio/mp3"},
-      %Api.Accounts.File{path: "/podcast", filename: "podcast5.mp4", remote_location: "http://a.de/7238497", filesize: 12288, file_type: "video", mime_type: "video/mp4"},
-      %Api.Accounts.File{path: "/podcast", filename: "podcast6.mov", remote_location: "http://a.de/97238498", filesize: 12288, file_type: "video", mime_type: "video/mov"},
-      %Api.Accounts.File{path: "/podcast", filename: "pocst7.m4v", remote_location: "http://a.de/8238499", filesize: 12288, file_type: "video", mime_type: "video/m4v"},
+      %Api.Accounts.File{parent_directory_id: avatar_directory.id, filename: "wieartig1.jpg", remote_location: "http://a.de/0801345801", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: avatar_directory.id, filename: "wieartig2.jpg", remote_location: "http://a.de/828382123383", filesize: 12288, file_type: "image", mime_type: "image/jpg"},
+      %Api.Accounts.File{parent_directory_id: eoa_directory.id, filename: "eoa2.mp3", remote_location: "http://a.de/08234980234239", filesize: 12288, file_type: "audio", mime_type: "audio/mp3"},
+      %Api.Accounts.File{parent_directory_id: eoa_directory.id, filename: "eoa3.mp3", remote_location: "http://a.de/28374234892374", filesize: 12288, file_type: "audio", mime_type: "audio/mp3"},
+      %Api.Accounts.File{parent_directory_id: podcast_directory.id, filename: "podcast5.mp4", remote_location: "http://a.de/7238497", filesize: 12288, file_type: "video", mime_type: "video/mp4"},
+      %Api.Accounts.File{parent_directory_id: podcast_directory.id, filename: "podcast6.mov", remote_location: "http://a.de/97238498", filesize: 12288, file_type: "video", mime_type: "video/mov"},
+      %Api.Accounts.File{parent_directory_id: podcast_directory.id, filename: "pocst7.m4v", remote_location: "http://a.de/8238499", filesize: 12288, file_type: "video", mime_type: "video/m4v"},
     ]
     |> Enum.each(fn file ->
       file
@@ -204,7 +220,7 @@ defmodule Api.Repo.Seeder do
       type: "text",
       text: "Pizza Test-Formular",
       configuration: %{
-        "destination" => "alexis.rinaldoni@einsa.net",
+        "destination" => "alexis.rinaldoni@lotta.schule",
         "save_internally" => true,
         "elements" => [
           %{ "descriptionText" => "Halli, hallo, wir sind da, du bist hier, dadub dadumm.", "element" => "input", "label" => "Name", "name" => "name", "required" => true, "type" => "text" },

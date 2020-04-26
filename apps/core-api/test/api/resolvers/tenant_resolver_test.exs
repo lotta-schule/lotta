@@ -1,17 +1,21 @@
 defmodule Api.TenantResolverTest do
   use ApiWeb.ConnCase
-  
+
   setup do
     Api.Repo.Seeder.seed()
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
-    user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@einsa.net"])
+    lotta_admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@einsa.net"])
+    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
+    user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@lotta.schule"])
+    {:ok, lotta_admin_jwt, _} = Api.Guardian.encode_and_sign(lotta_admin, %{ email: lotta_admin.email, name: lotta_admin.name })
     {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
     {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
 
     {:ok, %{
       web_tenant: web_tenant,
+      lotta_admin_account: lotta_admin,
+      lotta_admin_jwt: lotta_admin_jwt,
       admin_account: admin,
       admin_jwt: admin_jwt,
       user_account: user,
@@ -19,7 +23,7 @@ defmodule Api.TenantResolverTest do
     }}
   end
 
-  
+
   describe "tenant query" do
     @query """
     {
@@ -42,7 +46,7 @@ defmodule Api.TenantResolverTest do
         }
       }
     end
-    
+
     test "returns nil if slug tenant header and origin is not a known domain" do
       res = build_conn()
       |> put_req_header("origin", "unknown.com")
@@ -106,7 +110,7 @@ defmodule Api.TenantResolverTest do
       res = build_conn()
       |> get("/api", query: @query)
       |> json_response(200)
-  
+
       assert res == %{
         "data" => %{
           "tenants" => [
@@ -124,6 +128,91 @@ defmodule Api.TenantResolverTest do
     end
   end
 
+  describe "createTenant mutation" do
+    @query """
+    mutation CreateTenant($title: String!, $slug: String!, $email: String!, $name: String!) {
+      createTenant(title: $title, slug: $slug, email: $email, name: $name) {
+        slug
+        title
+        categories {
+          title
+        }
+        groups {
+          name
+        }
+      }
+    }
+    """
+
+    test "should return an error if user is not lotta-Admin", %{user_jwt: user_jwt} do
+      res = build_conn()
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api", query: @query, variables: %{title: "Neu", slug: "neu", email: "neuernutzer@lotta.schule", name: "Neuer Nutzer"})
+      |> json_response(200)
+
+      assert res == %{
+          "data" => %{
+            "createTenant" => nil
+          },
+          "errors" => [
+            %{
+              "locations" => [%{"column" => 0, "line" => 2}],
+              "message" => "Nur Lotta-Administratoren dürfen das.",
+              "path" => ["createTenant"]
+            }
+          ]
+        }
+    end
+
+    test "should return an error if slug is taken", %{lotta_admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{title: "Neu", slug: "web", email: "neuernutzer@lotta.schule", name: "Neuer Nutzer"})
+      |> json_response(200)
+
+      assert res == %{
+          "data" => %{
+            "createTenant" => nil
+          },
+          "errors" => [
+            %{
+              "locations" => [%{"column" => 0, "line" => 2}],
+              "message" => "Erstellen des Tenant fehlgeschlagen.",
+              "path" => ["createTenant"],
+              "details" => %{
+                "slug" => ["ist schon belegt"]
+              }
+            }
+          ]
+        }
+    end
+
+    test "should create a tenant for a new admin", %{lotta_admin_jwt: admin_jwt} do
+      res = build_conn()
+      |> put_req_header("authorization", "Bearer #{admin_jwt}")
+      |> post("/api", query: @query, variables: %{title: "Neu", slug: "neu", email: "neuernutzer@lotta.schule", name: "Neuer Nutzer"})
+      |> json_response(200)
+
+      assert res["data"]["createTenant"]["slug"] == "neu"
+      assert res["data"]["createTenant"]["title"] == "Neu"
+      assert res["data"]["createTenant"]["categories"] == [%{"title" => "Startseite"}]
+      res["data"]["createTenant"]["groups"]
+      |> Enum.all?(fn group ->
+        Enum.find(["Administrator", "Lehrer", "Schüler"], fn name ->
+          group["name"] == name
+        end) != nil
+      end)
+
+      tenant = Api.Tenants.get_tenant_by_slug("neu")
+      user = Api.Accounts.get_user_by_email("neuernutzer@lotta.schule")
+
+      assert tenant != nil
+      assert user != nil
+
+      assert Api.Accounts.User.is_admin?(user, tenant)
+    end
+
+  end
 
   describe "updateTenant mutation" do
     @query """
@@ -145,7 +234,7 @@ defmodule Api.TenantResolverTest do
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
       |> post("/api", query: @query, variables: %{tenant: tenant})
       |> json_response(200)
-  
+
       assert res == %{
         "data" => %{
           "updateTenant" => %{
@@ -156,7 +245,7 @@ defmodule Api.TenantResolverTest do
         }
       }
     end
-  
+
     test "returns error if user is not admin", %{user_jwt: user_jwt} do
       tenant = %{
         title: "Web Beispiel Neu"
@@ -166,7 +255,7 @@ defmodule Api.TenantResolverTest do
       |> put_req_header("authorization", "Bearer #{user_jwt}")
       |> post("/api", query: @query, variables: %{tenant: tenant})
       |> json_response(200)
-  
+
       assert res == %{
         "data" => %{
           "updateTenant" => nil
@@ -180,7 +269,7 @@ defmodule Api.TenantResolverTest do
         ]
       }
     end
-  
+
     test "returns error if user is not logged in" do
       tenant = %{
         title: "Web Beispiel Neu"
@@ -189,7 +278,7 @@ defmodule Api.TenantResolverTest do
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{tenant: tenant})
       |> json_response(200)
-  
+
       assert res == %{
         "data" => %{
           "updateTenant" => nil
