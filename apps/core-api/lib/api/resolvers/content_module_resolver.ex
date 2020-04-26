@@ -13,7 +13,7 @@ defmodule Api.ContentModuleResolver do
           Map.put(acc, element["name"], response[element["name"]] || "(LEER)")
         end)
       if !is_nil(configuration["destination"]) do
-          Api.EmailPublisherWorker.send_content_module_form_response(content_module, responses)
+          Api.Queue.EmailPublisher.send_content_module_form_response(content_module, responses)
       end
       if !is_nil(configuration["save_internally"]) do
         Content.save_content_module_result!(content_module, context[:current_user], %{responses: responses})

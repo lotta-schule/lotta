@@ -4,7 +4,7 @@ defmodule Api.FileResolver do
   alias Api.Accounts.{Directory,User}
   alias Api.Tenants.Tenant
   alias Api.UploadService
-  alias Api.MediaConversionPublisherWorker
+  alias Api.Queue.MediaConversionRequestPublisher
   alias Repo
   alias UUID
 
@@ -102,7 +102,7 @@ defmodule Api.FileResolver do
     |> Accounts.create_file()
     |> case do
       {:ok, file} ->
-        MediaConversionPublisherWorker.send_conversion_request(file)
+        MediaConversionRequestPublisher.send_conversion_request(file)
         {:ok, file}
       {:error, changeset} ->
         {

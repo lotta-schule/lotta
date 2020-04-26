@@ -1,43 +1,40 @@
-defmodule Api.EmailPublisherWorker do
+defmodule Api.Queue.EmailPublisher do
   use GenServer
-  use AMQP
-  use Api.ReadRepoAliaser
+  @behaviour GenRMQ.Publisher
   alias Api.Services.EmailSendRequest
   alias Api.Tenants.Tenant
+  use Api.ReadRepoAliaser
 
-  def start_link(_args) do
-    GenServer.start_link(__MODULE__, [], name: :email_publisher)
-  end
+  require Logger
 
   @exchange    "email"
   @queue       "email-out-queue"
 
-  def init(_opts) do
-    {:ok, conn} = open_connection()
-    {:ok, chan} = Channel.open(conn)
-    setup_queue(chan)
+  def init(arg) do
+    {:ok, arg}
+  end
+  def init do
+    create_rmq_resources()
 
-    {:ok, chan}
+    [
+      uri: rmq_uri(),
+      exchange: {:fanout, @exchange},
+      queue: @queue
+    ]
   end
 
-  defp open_connection() do
-    config = Application.fetch_env!(:api, :rabbitmq_connection)
-    Connection.open(
-      username: Keyword.get(config, :username),
-      password: Keyword.get(config, :password),
-      host: Keyword.get(config, :host)
-    )
+  def start_link(_args) do
+    GenRMQ.Publisher.start_link(__MODULE__, name: __MODULE__)
   end
 
-  def send_email(%EmailSendRequest{} = email_send_request) do
-    IO.inspect(email_send_request)
+   def send_email(%EmailSendRequest{} = email_send_request) do
     {:ok, email_send_request} = Poison.encode(email_send_request)
-    publish(email_send_request)
+    GenRMQ.Publisher.publish(Api.Queue.EmailPublisher, email_send_request)
     email_send_request
   end
 
   def send_registration_email(%Tenant{} = tenant, %Api.Accounts.User{} = user) do
-    Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+    send_email(%EmailSendRequest{
       to: user.email,
       subject: "Deine Registrierung bei #{tenant.title}",
       template: "default",
@@ -56,7 +53,7 @@ defmodule Api.EmailPublisherWorker do
       |> URI.encode_query
       |> String.replace_prefix("", "#{Tenant.get_main_url(tenant)}/password/reset?")
 
-    Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+    send_email(%EmailSendRequest{
       to: email,
       sender_name: tenant.title,
       subject: "Passwort zurücksetzen",
@@ -72,7 +69,7 @@ defmodule Api.EmailPublisherWorker do
   end
 
   def send_password_changed_email(%Tenant{} = tenant, %Api.Accounts.User{} = user) do
-    Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+    send_email(%EmailSendRequest{
       to: user.email,
       sender_name: tenant.title,
       subject: "Dein Passwort wurde geändert",
@@ -92,7 +89,7 @@ defmodule Api.EmailPublisherWorker do
     tenant
     |> Tenant.get_admin_users
     |> Enum.map(fn admin ->
-      Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+      send_email(%EmailSendRequest{
         to: admin.email,
         sender_name: tenant.title,
         subject: "Ein Artikel wurde fertig gestellt",
@@ -119,7 +116,7 @@ defmodule Api.EmailPublisherWorker do
       |> Enum.join("")
       |> (&("<ul>" <> &1 <> "</ul>")).()
 
-    Api.EmailPublisherWorker.send_email(%EmailSendRequest{
+    send_email(%EmailSendRequest{
       to: content_module.configuration["destination"],
       sender_name: tenant.title,
       subject: "Formular im Beitrag \"#{article.title}\" wurde versendet",
@@ -133,24 +130,32 @@ defmodule Api.EmailPublisherWorker do
           responses_list
       }
     })
-
   end
 
-  def publish(message) do
-    GenServer.cast(:email_publisher, {:publish, message})
+  defp rmq_uri do
+    config = Application.fetch_env!(:api, :rabbitmq_connection)
+    username = Keyword.get(config, :username)
+    password = Keyword.get(config, :password)
+    host = Keyword.get(config, :host)
+
+    "amqp://#{username}:#{password}@#{host}"
   end
 
-   def handle_cast({:publish, message}, channel) do
-    IO.inspect(channel)
-    AMQP.Basic.publish(channel, @exchange, @queue, message, persistent: true)
-    {:noreply, channel}
-  end
+  defp create_rmq_resources do
+    # Setup RabbitMQ connection
+    {:ok, connection} = AMQP.Connection.open(rmq_uri())
+    {:ok, channel} = AMQP.Channel.open(connection)
 
-  defp setup_queue(chan) do
-    # Messages that cannot be delivered to any consumer in the main queue will be routed to the error queue
-    {:ok, _} = Queue.declare(chan, @queue, durable: true)
-    :ok = Exchange.fanout(chan, @exchange, durable: true)
-    :ok = Queue.bind(chan, @queue, @exchange)
-  end
+    # Create exchange
+    AMQP.Exchange.declare(channel, @exchange, :fanout, durable: true)
 
+    # Create queues
+    AMQP.Queue.declare(channel, @queue, durable: true)
+
+    AMQP.Queue.bind(channel, @queue, @exchange, routing_key: @queue)
+
+    # Close the channel as it is no longer needed
+    # GenRMQ will manage its own channel
+    AMQP.Channel.close(channel)
+  end
 end
