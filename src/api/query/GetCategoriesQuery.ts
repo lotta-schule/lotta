@@ -10,6 +10,7 @@ export const GetCategoriesQuery = gql`
             isHomepage
             hideArticlesFromHomepage
             redirect
+            layoutName
             bannerImageFile {
                 id
                 remoteLocation
@@ -23,21 +24,6 @@ export const GetCategoriesQuery = gql`
                 id
                 title
                 hideArticlesFromHomepage
-            }
-            widgets {
-                id
-                title
-                type
-                configuration
-                iconImageFile {
-                    id
-                    remoteLocation
-                }
-                groups {
-                    id
-                    sortKey
-                    name
-                }
             }
         }
     }

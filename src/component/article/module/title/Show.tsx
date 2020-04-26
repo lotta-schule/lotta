@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { Typography } from '@material-ui/core';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 interface ShowProps {
     contentModule: ContentModuleModel;

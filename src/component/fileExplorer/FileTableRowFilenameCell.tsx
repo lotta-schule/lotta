@@ -1,13 +1,15 @@
-import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { FileModel, FileModelType } from 'model';
+import React, { memo, useEffect, useLayoutEffect, useRef, useState, useContext } from 'react';
+import { DirectoryModel, FileModel, FileModelType } from 'model';
 import { IconButton, InputAdornment, TableCell, TextField, Tooltip, makeStyles, CircularProgress } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
-import { MoveFileMutation } from 'api/mutation/MoveFileMutation';
-import { MoveDirectoryMutation } from 'api/mutation/MoveDirectoryMutation';
+import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';
+import { UpdateDirectoryMutation } from 'api/mutation/UpdateDirectoryMutation';
+import fileExplorerContext from './context/FileExplorerContext';
 
 export interface FileTableRowFilenameCellProps {
-    file: FileModel;
+    file?: FileModel;
+    directory?: DirectoryModel;
     isRenaming: boolean;
     onCompleteRenaming(): void;
     onSelect(): void;
@@ -19,9 +21,10 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ file, isRenaming, onCompleteRenaming, onSelect }) => {
+export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ file, directory, isRenaming, onCompleteRenaming, onSelect }) => {
     const styles = useStyles();
-    const [newFilename, setNewFilename] = useState(file.filename);
+    const [{ currentPath }] = useContext(fileExplorerContext);
+    const [newFilename, setNewFilename] = useState(file?.filename ?? directory!.name);
 
     const renamingInputRef = useRef<HTMLInputElement>();
     useLayoutEffect(() => {
@@ -35,12 +38,12 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
     }, [renamingInputRef.current]);
 
     useEffect(() => {
-        setNewFilename(file.filename);
-    }, [file.filename, isRenaming]);
+        setNewFilename(file?.filename ?? directory!.name);
+    }, [directory, file, isRenaming]);
 
-    const [moveFile, { loading: isLoadingMoveFile }] = useMutation(MoveFileMutation, {
+    const [updateFile, { loading: isLoadingUpdateFile }] = useMutation(UpdateFileMutation, {
         variables: {
-            id: file.id,
+            id: file?.id,
             filename: newFilename
         },
         optimisticResponse: ({ id, filename }) => {
@@ -50,7 +53,12 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
                 file: {
                     __typename: 'File',
                     id,
-                    filename: filename
+                    filename,
+                    parentDirectory: {
+                        __typename: 'Directory',
+                        id: currentPath[currentPath.length - 1]!.id
+                    },
+                    updatedAt: new Date().toISOString()
                 }
             } as any;
         },
@@ -59,11 +67,26 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
             renamingInputRef.current?.blur();
         }
     });
-    const [moveDirectory, { loading: isLoadingMoveDirectory }] = useMutation(MoveDirectoryMutation, {
+    const [updateDirectory, { loading: isLoadingUpdateDirectory }] = useMutation(UpdateDirectoryMutation, {
         variables: {
-            path: file.path,
-            isPublic: file.isPublic,
-            newPath: file.path.replace(/\/[^/]*$/, `/${newFilename}`)
+            id: directory?.id,
+            name: newFilename
+        },
+        optimisticResponse: ({ id, name }) => {
+            renamingInputRef.current?.blur();
+            return {
+                __typename: 'Mutation',
+                directory: {
+                    __typename: 'Directory',
+                    id,
+                    name,
+                    parentDirectory: {
+                        __typename: 'Directory',
+                        id: currentPath[currentPath.length - 1]!.id
+                    },
+                    updatedAt: new Date().toISOString()
+                }
+            } as any;
         },
         onCompleted: () => {
             onCompleteRenaming();
@@ -72,16 +95,16 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
     });
 
     const move = () => {
-        if (file.fileType === FileModelType.Directory) {
-            moveDirectory();
-        } else {
-            moveFile();
+        if (file) {
+            updateFile();
+        } else if (directory) {
+            updateDirectory();
         }
     };
 
     if (isRenaming) {
         return (
-            <TableCell scope="row" padding="none" onClick={() => onSelect()}>
+            <TableCell scope="row" padding="none">
                 <form style={{ width: '100%' }} onSubmit={e => {
                     e.preventDefault();
                     if (newFilename.length > 0) {
@@ -94,7 +117,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
                         value={newFilename}
                         onChange={e => setNewFilename(e.target.value)}
                         InputProps={{
-                            endAdornment: (isLoadingMoveFile || isLoadingMoveDirectory) ? (
+                            endAdornment: (isLoadingUpdateFile || isLoadingUpdateDirectory) ? (
                                 <InputAdornment position={'end'}>
                                     <CircularProgress style={{ width: '1em', height: '1em' }} />
                                 </InputAdornment>
@@ -121,12 +144,14 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
     }
 
     let previewImageUrl: string | null = null;
-    if (file.fileType === FileModelType.Image) {
-        previewImageUrl = file.remoteLocation;
-    } else {
-        const imageConversionFile = file.fileConversions?.find(fc => /^storyboard/.test(fc.format));
-        if (imageConversionFile) {
-            previewImageUrl = imageConversionFile.remoteLocation;
+    if (file) {
+        if (file.fileType === FileModelType.Image) {
+            previewImageUrl = file.remoteLocation;
+        } else {
+            const imageConversionFile = file.fileConversions?.find(fc => /^gif/.test(fc.format));
+            if (imageConversionFile) {
+                previewImageUrl = imageConversionFile.remoteLocation;
+            }
         }
     }
 
@@ -135,7 +160,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
             e.preventDefault();
             onSelect?.();
         }}>
-            {file.filename}
+            {file?.filename ?? directory!.name}
         </TableCell>
     );
 
@@ -144,7 +169,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
             <Tooltip className={styles.tooltip} title={(
                 <img
                     src={`https://afdptjdxen.cloudimg.io/bound/200x200/foil1/${previewImageUrl}`}
-                    alt={file.filename}
+                    alt={file!.filename}
                 />
             )}>
                 {tableCell}

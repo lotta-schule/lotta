@@ -1,16 +1,19 @@
 import React, { memo } from 'react';
-import { CategoryModel, ArticleModel } from '../../model';
+import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
-import { Grid, Typography, makeStyles } from '@material-ui/core';
+import { Grid, Typography, makeStyles, Theme } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
+import { useQuery } from '@apollo/react-hooks';
+import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model/User';
+import { User } from 'util/model';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
     subheaderContainer: {
         height: '120px',
         border: '0.5em solid',
@@ -37,6 +40,18 @@ const useStyles = makeStyles(theme => ({
         textShadow: '1px 1px 15px #fff',
         padding: '0.6em',
         color: theme.palette.primary.dark,
+    },
+    gridItem: {
+        display: 'flex',
+        '&:nth-child(2n)': {
+            paddingLeft: ({ twoColumns }) => twoColumns ? theme.spacing(.5) : 'initial'
+        },
+        '&:nth-child(2n+1)': {
+            paddingRight: ({ twoColumns }) => twoColumns ? theme.spacing(.5) : 'initial'
+        },
+        '& > *': {
+            width: '100%'
+        }
     }
 }));
 
@@ -46,22 +61,24 @@ export interface CategoryLayoutProps {
 }
 
 export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles }) => {
-    const styles = useStyles();
+    const styles = useStyles({ twoColumns: category.layoutName === '2-columns' });
     const [user] = useCurrentUser();
+
+    const { data: widgetsData, error: widgetsError } = useQuery(GetCategoryWidgetsQuery, {
+        variables: { categoryId: category.id }
+    });
+    const widgets = (widgetsData?.widgets ?? []).filter((widget: WidgetModel) => {
+        if (User.isAdmin(user)) {
+            return !!user!.groups.find(g => widget.groups.length < 1 || !!widget.groups.find(cg => cg.id === g.id));
+        }
+        return true;
+    });
 
     if (articles && articles.length === 1 && articles[0].id) {
         return (
             <ArticleLayout articleId={articles[0].id} />
         );
     }
-
-    const widgets = ((category && category.widgets) || [])
-        .filter(category => {
-            if (User.isAdmin(user)) {
-                return !!user!.groups.find(g => category.groups.length < 1 || !!category.groups.find(cg => cg.id === g.id));
-            }
-            return true;
-        });
 
     return (
         <>
@@ -70,6 +87,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                     <Grid className={styles.subheaderContainer}>
                         <Grid
                             item
+                            xs={12}
                             className={styles.subheader}
                             style={{
                                 background: category.bannerImageFile ?
@@ -83,21 +101,28 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                         </Grid>
                     </Grid>
                 )}
-                {articles && articles.length > 1 && (
-                    articles
-                        .sort((a1, a2) => {
-                            if (!category.isHomepage && a1.isPinnedToTop !== a2.isPinnedToTop) {
-                                if (a1.isPinnedToTop) { return -1; }
-                                if (a2.isPinnedToTop) { return 1; }
-                            }
-                            return new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime();
-                        })
-                        .map(article => (
-                            <ArticlePreview key={article.id} article={article} limitedHeight />
-                        ))
-                )}
+                <Grid container wrap={'wrap'}>
+                    {articles && articles.length > 1 && (
+                        [...articles]
+                            .sort((a1, a2) => {
+                                if (!category.isHomepage && a1.isPinnedToTop !== a2.isPinnedToTop) {
+                                    if (a1.isPinnedToTop) { return -1; }
+                                    if (a2.isPinnedToTop) { return 1; }
+                                }
+                                return new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime();
+                            })
+                            .map(article => (
+                                <Grid item xs={category.layoutName === '2-columns' ? 6 : 12} className={styles.gridItem} key={article.id}>
+                                    <ArticlePreview article={article} limitedHeight layout={category.layoutName ?? 'standard'} />
+                                </Grid>
+                            ))
+                    )}
+                </Grid>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
+                {widgetsError && (
+                    <ErrorMessage error={widgetsError} />
+                )}
                 <WidgetsList widgets={widgets} />
             </BaseLayoutSidebar>
         </>

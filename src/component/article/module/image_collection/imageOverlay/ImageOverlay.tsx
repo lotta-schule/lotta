@@ -45,14 +45,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export interface ImageOverlayProps {
-    selectedFile: FileModel | null;
+    selectedUrl?: string | null;
+    selectedFile?: FileModel | null;
     caption?: string;
     onPrevious?(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
     onNext?(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
     onClose(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
 }
 
-export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ selectedFile, caption, onPrevious, onNext, onClose }) => {
+export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ selectedFile, selectedUrl, caption, onPrevious, onNext, onClose }) => {
     useLockBodyScroll();
     const styles = useStyles();
     const { innerHeight, innerWidth } = useWindowSize();
@@ -77,10 +78,10 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ select
 
     }, [onKeyDown]);
 
-    if (!selectedFile) {
+    if (!selectedFile && !selectedUrl) {
         return null;
     }
-    const imgUrl = `https://afdptjdxen.cloudimg.io/bound/${width}x${height}/foil1/${selectedFile.remoteLocation}`;
+    const imgUrl = `https://afdptjdxen.cloudimg.io/bound/${width}x${height}/foil1/${selectedFile?.remoteLocation ?? selectedUrl}`;
     return (
         <div className={styles.root}>
             <IconButton size="medium" color={'secondary'} className={styles.closeButton} onClick={onClose}>

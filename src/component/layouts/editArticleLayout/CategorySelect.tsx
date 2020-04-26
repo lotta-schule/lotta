@@ -2,7 +2,7 @@ import React, { FunctionComponent, memo, useCallback } from 'react';
 import { useCategories } from 'util/categories/useCategories';
 import { CategoryModel } from 'model';
 import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@material-ui/core';
-import { find } from 'lodash';
+import find from 'lodash/find';
 
 export interface CategorySelectProps {
     disabled?: boolean;

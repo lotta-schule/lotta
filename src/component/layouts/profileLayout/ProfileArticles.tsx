@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { ArticleModel } from 'model';
 import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ArticlesManagement } from 'component/profile/ArticlesManagement';
@@ -21,7 +21,7 @@ export const ProfileArticles = memo(() => {
 
                 {ownArticlesData?.articles && (
                     <ArticlesManagement
-                        articles={ownArticlesData.articles.sort((a1, a2) =>
+                        articles={[...ownArticlesData.articles].sort((a1, a2) =>
                             new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime()
                         )}
                     />

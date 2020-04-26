@@ -47,7 +47,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 }
 
                 const filesConfiguration = (contentModule.configuration && contentModule.configuration.files) || {};
-                const sortedFileIds = contentModule.files
+                const sortedFileIds = [...contentModule.files]
                     .sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey)
                     .map(f => f.id);
                 const sourceId = sortedFileIds[source.index];
@@ -73,7 +73,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 <Droppable droppableId={String(contentModule.id)}>
                     {provided => (
                         <section {...provided.droppableProps} ref={provided.innerRef}>
-                            {contentModule.files.sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey).map((file, index) => (
+                            {[...contentModule.files].sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey).map((file, index) => (
                                 <Draggable key={file.id} draggableId={String(file.id)} index={index}>{draggableProvided => (
                                     <div
                                         className={styles.downloadItemWrapper}
@@ -122,8 +122,9 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 </Droppable>
             </DragDropContext>
             <SelectFileButton
+                multiple
                 label={'Datei hinzufügen'}
-                onSelectFiles={files => onUpdateModule({
+                onSelect={(files: FileModel[]) => onUpdateModule({
                     ...contentModule,
                     files: contentModule.files.concat(files),
                     configuration: {
@@ -143,3 +144,4 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
         </CardContent>
     )
 });
+export default Edit;

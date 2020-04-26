@@ -1,9 +1,7 @@
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { UserModel } from 'model';
-import { createCloseDrawerAction } from 'store/actions/layout';
 import { LogoutMutation } from 'api/mutation/LogoutMutation';
-import { useApolloClient, useMutation } from 'react-apollo';
-import { useDispatch } from 'react-redux';
+import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import Matomo from 'matomo-ts';
 
 export const useOnLogout = () => {
@@ -21,10 +19,8 @@ export const useOnLogout = () => {
                     currentUser: null
                 }
             });
-            dispatch(createCloseDrawerAction());
         }
     });
-    const dispatch = useDispatch();
 
     return logout;
 };

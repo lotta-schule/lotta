@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 
 export const useScrollEvent = (callback: (e: Event) => void, throttleThreshold: number = 250, dependencies: unknown[] = []) => {
 

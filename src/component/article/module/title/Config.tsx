@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { FormControl, Select, InputLabel, MenuItem } from '@material-ui/core';
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

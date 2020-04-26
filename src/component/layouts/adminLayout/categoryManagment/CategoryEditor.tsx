@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { CategoryModel } from 'model';
-import { useMutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { ID } from 'model/ID';
 import { GroupSelect } from 'component/edit/GroupSelect';
@@ -73,6 +73,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                     bannerImageFile: category.bannerImageFile,
                     groups: category.groups,
                     redirect: category.redirect === 'null' ? null : category.redirect,
+                    layoutName: category.layoutName,
                     hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
                     widgets: category.widgets ? category.widgets.map(w => ({ ...w, configuration: JSON.stringify(w.configuration) })) : []
                 }
@@ -137,6 +138,29 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                             }
                             label={'Beiträge dieser Kategorie auf der Startseite verstecken'}
                         />
+                    </FormControl>
+
+                    <FormControl className={styles.input}>
+                        <InputLabel htmlFor={'category-redirect'}>Layout für die Kategorie wählen</InputLabel>
+                        <Select
+                            value={category.layoutName ?? 'standard'}
+                            onChange={({ target }) => setCategory({ ...category, layoutName: target.value as any })}
+                            inputProps={{
+                                id: 'category-layout'
+                            }}
+                            displayEmpty
+                            fullWidth
+                        >
+                            <MenuItem value={'standard'}>
+                                Standardlayout
+                            </MenuItem>
+                            <MenuItem value={'densed'}>
+                                Kompaktlayout
+                            </MenuItem>
+                            <MenuItem value={'2-columns'}>
+                                Zweispaltenlayout
+                            </MenuItem>
+                        </Select>
                     </FormControl>
 
                     <FormControl className={styles.input}>

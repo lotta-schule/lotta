@@ -48,7 +48,7 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
     const styles = useStyles();
     const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
-    const filesConfiguration: { [id: number]: { caption: string; sortKey: number } } = contentModule.configuration ?.files ?? {};
+    const filesConfiguration: { [id: number]: { caption: string; sortKey: number } } = contentModule.configuration?.files ?? {};
     const maxSteps = contentModule.files.length;
 
     const handleNext = useCallback(() => {
@@ -77,7 +77,7 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
             };
         }
     }
-    const sortedFiles = (contentModule.files || []).sort(FileSorter(contentModule, getConfiguration));
+    const sortedFiles = [...(contentModule.files || [])].sort(FileSorter(contentModule, getConfiguration));
 
     return (
         <div className={styles.root}>

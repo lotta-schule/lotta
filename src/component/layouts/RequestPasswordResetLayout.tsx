@@ -85,3 +85,4 @@ export const RequestPasswordResetLayout = memo(() => {
         </BaseLayoutMainContent>
     );
 });
+export default RequestPasswordResetLayout;

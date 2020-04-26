@@ -1,8 +1,9 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { FunctionComponent, memo, lazy } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { CardContent } from '@material-ui/core';
-import { Edit } from './Edit';
 import { Show } from './Show';
+
+const Edit = lazy(() => import('./Edit'));
 
 export interface AudioProps {
     contentModule: ContentModuleModel;

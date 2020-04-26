@@ -1,10 +1,9 @@
 import React, { FunctionComponent, memo, useCallback, useEffect } from 'react';
 import { Grid, makeStyles, Theme, Drawer } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
-import { useSelector, useDispatch } from 'react-redux';
-import { createCloseDrawerAction } from 'store/actions/layout';
-import { State } from 'store/State';
+import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import useRouter from 'use-react-router';
+import gql from 'graphql-tag';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -19,10 +18,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
     const styles = useStyles();
 
-    const dispatch = useDispatch();
     const isMobile = useIsMobile();
-    const isMobileDrawerOpen = useSelector<State, boolean>(s => s.layout.isDrawerOpen);
-    const closeDrawer = useCallback(() => { dispatch(createCloseDrawerAction()); }, [dispatch]);
+    const client = useApolloClient();
+    const { data } = useQuery<{ isMobileDrawerOpen: boolean }>(gql`{ isMobileDrawerOpen @client }`);
+    const isMobileDrawerOpen = !!data?.isMobileDrawerOpen;
+    const closeDrawer = useCallback(() => {
+        client.writeQuery({
+            query: gql`{ isMobileDrawerOpen }`,
+            data: { isMobileDrawerOpen: false }
+        });
+    }, [client]);
 
     const { location: { pathname } } = useRouter();
 

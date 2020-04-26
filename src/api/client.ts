@@ -1,7 +1,8 @@
-import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createLink } from 'apollo-absinthe-upload-link';
-import { ApolloLink, concat } from 'apollo-link';
+import { onError } from 'apollo-link-error';
+import { ApolloLink } from 'apollo-link';
+import { ApolloClient } from 'apollo-client';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const customFetch = (url: string, options: any) => {
@@ -26,37 +27,75 @@ const customFetch = (url: string, options: any) => {
 };
 
 const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
-    for (const property in obj) {
-        if (property === 'configuration' && typeof obj[property] === 'object') {
-            delete obj.property;
-            obj[property] = JSON.stringify(obj[property]);
-        } else if (typeof obj[property] === 'object' && !(obj[property] instanceof File)) {
-            delete obj.property;
-            const newData = mutateVariableInputObject(obj[property], propToDelete);
-            obj[property] = newData;
-        } else {
-            if (property === propToDelete) {
-                delete obj[property];
+    if (obj instanceof Array) {
+        return [...obj.map(o => mutateVariableInputObject(o, propToDelete))];
+    } else if (obj !== null && obj !== undefined && typeof obj === 'object') {
+        return Object.keys(obj).reduce((newObj, key) => {
+            if (key === 'configuration' && typeof obj[key] === 'object') {
+                return {
+                    ...newObj,
+                    [key]: JSON.stringify(obj[key])
+                };
             }
-        }
+            if (typeof obj[key] === 'object' && !(obj[key] instanceof File)) {
+                return {
+                    ...newObj,
+                    [key]: mutateVariableInputObject(obj[key], propToDelete)
+                };
+            }
+            if (key !== propToDelete) {
+                return {
+                    ...newObj,
+                    [key]: obj[key]
+                };
+            }
+            return {
+                ...newObj
+            };
+        }, {});
     }
     return obj;
 };
 
-export const client = new ApolloClient({
-    link: concat(
+const apolloClient = new ApolloClient({
+    link: ApolloLink.from([
+        onError(({ graphQLErrors, networkError }) => {
+            if (graphQLErrors) {
+                graphQLErrors.forEach(({ message, locations, path }) => {
+                    console.error(
+                        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+                    );
+                });
+            }
+            if (networkError) {
+                console.error(`[Network error]: ${networkError}`);
+            }
+        }),
         new ApolloLink((operation, forward) => {
             if (operation.variables) {
                 operation.variables = mutateVariableInputObject(operation.variables, '__typename');
                 return forward ? forward(operation) : null;
             }
             return forward ? forward(operation) : null;
-        },
-        ),
+        }),
         createLink({
             uri: process.env.REACT_APP_API_URL,
             fetch: customFetch,
         })
-    ),
-    cache: new InMemoryCache()
+    ]),
+    resolvers: {},
+    cache: new InMemoryCache({
+        freezeResults: true
+    }),
 });
+
+const initialData = {
+    isMobileDrawerOpen: false
+}
+
+apolloClient.writeData({ data: initialData });
+apolloClient.onResetStore(async () => {
+    apolloClient.writeData({ data: initialData })
+});
+
+export const client = apolloClient;

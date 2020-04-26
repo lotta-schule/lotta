@@ -1,6 +1,7 @@
-import React, { memo } from 'react';
+import React, { memo, lazy } from 'react';
 import { Card, CardContent, Typography } from '@material-ui/core';
-import { FileExplorer } from 'component/fileExplorer/FileExplorer';
+
+const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
 
 export const ProfileMediaFiles = memo(() => {
 

@@ -44,3 +44,4 @@ export const AdminLayout = memo(() => {
         </>
     );
 });
+export default AdminLayout;

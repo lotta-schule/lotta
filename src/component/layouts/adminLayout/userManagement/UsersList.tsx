@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useState } from 'react';
-import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles } from '@material-ui/core';
+import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
 import { AssignUserToGroupsDialog } from './AssignUserToGroupsDialog';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { UserModel, UserGroupModel } from 'model';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -12,6 +12,7 @@ import { VirtualizedTable } from 'component/general/VirtualizedTable';
 import { SearchUserField } from './SearchUserField';
 import { Block } from '@material-ui/icons';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme: Theme) => ({
     avatar: {
@@ -30,6 +31,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     inputField: {
         maxWidth: 400
     },
+    resultsGridItem: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end'
+    },
     searchUserField: {
         maxWidth: 400,
         backgroundColor: theme.palette.grey[200]
@@ -45,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export const UsersList = memo(() => {
+    const { t } = useTranslation();
     const [currentUser] = useCurrentUser();
     const groups = useUserGroups();
 
@@ -92,15 +99,24 @@ export const UsersList = memo(() => {
                     selectedGroups={selectedGroupsFilter}
                     onSelectGroups={setSelectedGroupsFilter}
                 />
-                <TextField
-                    fullWidth
-                    className={styles.inputField}
-                    margin={'dense'}
-                    value={filterText}
-                    onChange={e => setFilterText(e.target.value)}
-                    placeholder={'Tabelle nach Name filtern'}
-                    helperText={'"*"-Zeichen ersetzt beliebige Zeichen'}
-                />
+                <Grid container>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            fullWidth
+                            className={styles.inputField}
+                            margin={'dense'}
+                            value={filterText}
+                            onChange={e => setFilterText(e.target.value)}
+                            placeholder={'Tabelle nach Name filtern'}
+                            helperText={'"*"-Zeichen ersetzt beliebige Zeichen'}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} className={styles.resultsGridItem}>
+                        <Typography variant={'body1'}>
+                            {t('administration.results', { count: rows.length })}
+                        </Typography>
+                    </Grid>
+                </Grid>
                 <VirtualizedTable
                     className={styles.virtualizedTable}
                     rowCount={rows.length}

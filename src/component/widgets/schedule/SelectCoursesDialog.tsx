@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { chunk } from 'lodash';
+import chunk from 'lodash/chunk';
 import { DialogTitle, DialogContent, DialogActions, Button, FormGroup, FormControlLabel, Checkbox, makeStyles } from '@material-ui/core';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { LOCALSTORAGE_KEY } from './Schedule';

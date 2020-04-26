@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { ArticleModel, ArticleFilter } from 'model';
 import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
 import { CategoryLayout } from 'component/layouts/CategoryLayout';
@@ -30,7 +30,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
     useScrollEvent(() => {
         if (window.innerHeight + Math.max(window.pageYOffset, document.documentElement.scrollTop) > document.documentElement.offsetHeight - FETCH_MORE_OFFSET) {
             if (data && data.articles && data.articles.length > FETCH_COUNT - 1 && !isLoading) {
-                const lastDate = data && data.articles
+                const lastDate = [...(data?.articles ?? [])]
                     .sort((a1, a2) => new Date(a1.updatedAt).getTime() - new Date(a2.updatedAt).getTime())[0].updatedAt;
                 if (lastFetchedElementDate !== lastDate) {
                     try {
@@ -49,7 +49,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
                             },
 
                         });
-                    } catch {}
+                    } catch { }
                 }
             }
         }
@@ -89,3 +89,4 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
         <p>Keine Beiträge in dieser Kategorie.</p>
     );
 });
+export default CategoryRoute;

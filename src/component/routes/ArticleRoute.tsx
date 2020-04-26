@@ -19,3 +19,4 @@ export const ArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }
         />
     );
 });
+export default ArticleRoute;

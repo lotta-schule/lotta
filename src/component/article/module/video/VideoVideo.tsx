@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { Player, ControlBar } from 'video-react';
-import { find } from 'lodash';
+import find from 'lodash/find';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 
 interface VideoVideoProps {

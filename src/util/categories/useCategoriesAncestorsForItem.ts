@@ -1,6 +1,6 @@
 import { CategoryModel } from 'model';
 import { useCategories } from './useCategories';
-import { find } from 'lodash';
+import find from 'lodash/find';
 import { ID } from 'model/ID';
 
 export const useCategoriesAncestorsForItem = (categoryId: ID): ID[] => {

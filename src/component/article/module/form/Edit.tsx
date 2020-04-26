@@ -167,3 +167,4 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
         </>
     );
 });
+export default Edit;

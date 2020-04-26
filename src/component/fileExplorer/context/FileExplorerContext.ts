@@ -1,22 +1,26 @@
 import { createContext, Dispatch } from 'react';
-import { FileModel } from 'model';
+import { FileModel, DirectoryModel } from 'model';
 import { Action } from './reducer';
 
+export enum FileExplorerMode {
+    ViewAndEdit = 0,
+    Select = 10,
+    SelectMultiple = 20
+}
+
 export const defaultState = {
-    files: [] as FileModel[],
+    mode: FileExplorerMode.ViewAndEdit,
     selectedFiles: [] as FileModel[],
     markedFiles: [] as FileModel[],
-    currentPath: (() => {
-        try {
-            return window.localStorage.getItem('lastSelectedFileExplorerPath') || '/';
-        } catch {
-            return '/';
-        }
-    })(),
-    isPublic: false,
+    markedDirectories: [] as DirectoryModel[],
+    currentPath: [
+        { id: null } as any
+    ] as ({ id: null } | { id: number; name: string; })[],
+    searchtext: '',
     showActiveUploads: false,
     showCreateNewFolder: false,
     showMoveFiles: false,
+    showMoveDirectory: false,
     showDeleteFiles: false,
 }
 

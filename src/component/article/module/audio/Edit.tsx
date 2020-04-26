@@ -51,3 +51,4 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
         </figure>
     );
 });
+export default Edit;

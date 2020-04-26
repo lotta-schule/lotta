@@ -1,13 +1,13 @@
 import React, { memo, useState, useEffect } from 'react';
 import { ArticleModel, ID, ArticleModelInput } from '../../../model';
-import { Article } from '../../article/Article';
+import { ArticleEditable as Article } from '../../article/ArticleEditable';
 import { EditArticleSidebar } from './EditArticleSidebar';
 import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
 import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { useMutation } from '@apollo/react-hooks';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import useRouter from 'use-react-router';

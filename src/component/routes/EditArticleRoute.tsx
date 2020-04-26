@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { ArticleModel } from 'model';
 import { CircularProgress } from '@material-ui/core';
 import { RouteComponentProps } from 'react-router-dom';
-import { useQuery } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { EditArticleLayout } from 'component/layouts/editArticleLayout/EditArticleLayout';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -28,3 +28,4 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
     }
     return null;
 });
+export default EditArticleRoute;

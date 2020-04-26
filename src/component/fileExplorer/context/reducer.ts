@@ -1,28 +1,30 @@
 import { defaultState } from './FileExplorerContext';
-import { FileModel } from '../../../model';
+import { FileModel, DirectoryModel } from '../../../model';
 
 export type Action =
-    { type: 'setFiles', files: FileModel[] }
+    | { type: 'setMode', mode: typeof defaultState.mode }
     | { type: 'setSelectedFiles', files: FileModel[] }
     | { type: 'resetSelectedFiles' }
     | { type: 'setMarkedFiles', files: FileModel[] }
     | { type: 'resetMarkedFiles' }
     | { type: 'markSingleFile', file: FileModel }
-    | { type: 'setCurrentPath', path: string }
-    | { type: 'selectDirectory', directory: string }
-    | { type: 'enableIsPublic' }
-    | { type: 'disableIsPublic' }
+    | { type: 'setMarkedDirectories', directories: DirectoryModel[] }
+    | { type: 'resetMarkedDirectories' }
+    | { type: 'markSingleDirectory', directory: DirectoryModel }
+    | { type: 'setPath', path: ({ id: null } | { id: number; name: string })[] }
+    | { type: 'setSearchFilter', searchtext: string }
     | { type: 'showActiveUploads' } | { type: 'hideActiveUploads' }
     | { type: 'showCreateNewFolder' } | { type: 'hideCreateNewFolder' }
     | { type: 'showMoveFiles' } | { type: 'hideMoveFiles' }
+    | { type: 'showMoveDirectory' } | { type: 'hideMoveDirectory' }
     | { type: 'showDeleteFiles' } | { type: 'hideDeleteFiles' }
 
 export const reducer = (state: typeof defaultState, action: Action): typeof defaultState => {
     switch (action.type) {
-        case 'setFiles':
+        case 'setMode':
             return {
                 ...state,
-                files: action.files
+                mode: action.mode
             };
         case 'setSelectedFiles':
             return {
@@ -49,36 +51,33 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
                 ...state,
                 markedFiles: [action.file]
             }
-        case 'setCurrentPath': {
+        case 'setMarkedDirectories':
             return {
                 ...state,
-                markedFiles: [],
-                selectedFiles: [],
-                currentPath: action.path
+                markedDirectories: action.directories
             };
-        }
-        case 'selectDirectory':
+        case 'resetMarkedDirectories':
             return {
                 ...state,
-                markedFiles: [],
-                selectedFiles: [],
-                currentPath: [state.currentPath, action.directory].join('/').replace(/^\/\//, '/')
+                markedDirectories: []
             };
-        case 'enableIsPublic':
+        case 'markSingleDirectory':
             return {
                 ...state,
-                markedFiles: [],
-                selectedFiles: [],
-                currentPath: '/',
-                isPublic: true
+                markedDirectories: [action.directory]
             }
-        case 'disableIsPublic':
+        case 'setPath':
             return {
                 ...state,
                 markedFiles: [],
                 selectedFiles: [],
-                currentPath: '/',
-                isPublic: false
+                currentPath: [...action.path],
+                searchtext: '',
+            };
+        case 'setSearchFilter':
+            return {
+                ...state,
+                searchtext: action.searchtext
             }
         case 'showActiveUploads':
             return {
@@ -94,6 +93,11 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
             return {
                 ...state,
                 showMoveFiles: true
+            }
+        case 'showMoveDirectory':
+            return {
+                ...state,
+                showMoveDirectory: true
             }
         case 'showDeleteFiles':
             return {
@@ -114,6 +118,11 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
             return {
                 ...state,
                 showMoveFiles: false
+            }
+        case 'hideMoveDirectory':
+            return {
+                ...state,
+                showMoveDirectory: false
             }
         case 'hideDeleteFiles':
             return {

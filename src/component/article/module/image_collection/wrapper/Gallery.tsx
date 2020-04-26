@@ -1,12 +1,12 @@
 import React, { memo, useState } from 'react';
-import { uniqBy } from 'lodash';
 import { makeStyles, IconButton, GridList, GridListTile } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
-import { ContentModuleModel, FileModel } from 'model';
+import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { FileSorter } from '../Config';
 import { ImageImage } from '../../image/ImageImage';
 import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
+import uniqBy from 'lodash/uniqBy';
 
 const useStyles = makeStyles(() => ({
     img: {
@@ -48,7 +48,7 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
             };
         }
     }
-    const sortedFiles = (contentModule.files || []).sort(FileSorter(contentModule, getConfiguration));
+    const sortedFiles = [...(contentModule.files || [])].sort(FileSorter(contentModule, getConfiguration));
     return (
         <>
             <GridList cols={3}>
@@ -109,8 +109,10 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
 
             {isEditModeEnabled && (
                 <SelectFileButton
+                    multiple
                     label={'Bild hinzufügen'}
-                    onSelectFiles={f => {
+                    fileFilter={f => f.fileType === FileModelType.Image}
+                    onSelect={(f: FileModel[]) => {
                         onUpdateModule({
                             ...contentModule,
                             files: uniqBy(contentModule.files.concat(f), file => file.id),
@@ -139,10 +141,10 @@ export const Gallery = memo<GalleryProps>(({ contentModule, isEditModeEnabled, o
                 if (selectedFileIndex > 0) {
                     prevNextProps.onPrevious = () => setSelectedFileIndex(selectedFileIndex - 1);
                 }
-                if (selectedFileIndex < contentModule.files.length - 1) {
+                if (selectedFileIndex < sortedFiles.length - 1) {
                     prevNextProps.onNext = () => setSelectedFileIndex(selectedFileIndex + 1);
                 }
-                const selectedFile = contentModule.files[selectedFileIndex];
+                const selectedFile = sortedFiles[selectedFileIndex];
                 return (
                     <ImageOverlay
                         selectedFile={selectedFile}
