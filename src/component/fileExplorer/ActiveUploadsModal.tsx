@@ -12,7 +12,7 @@ export const ActiveUploadsModal = memo(() => {
 
     return (
         <Dialog open={state.showActiveUploads && uploads.length > 0} onClose={() => dispatch({ type: 'hideActiveUploads' })}>
-            <DialogTitle>{t('files.explorer', { count: uploads.length })}</DialogTitle>
+            <DialogTitle>{t('files.explorer.filesAreBeingUploaded', { count: uploads.length })}</DialogTitle>
             <List>
                 {
                     uploads.map(upload => (
