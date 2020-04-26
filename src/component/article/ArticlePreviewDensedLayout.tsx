@@ -11,9 +11,9 @@ import { useMutation } from '@apollo/react-hooks';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
+import { useIsMobile } from 'util/useIsMobile';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
-import { useIsMobile } from 'util/useIsMobile';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
@@ -104,9 +104,9 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     },
     articleTitle: {
         ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title),
-        fontSize: '1em',
-        fontWeight: 'bolder',
         [theme.breakpoints.down('sm')]: {
+            fontSize: '1em',
+            fontWeight: 'bolder',
             lineHeight: 1
         }
     },
