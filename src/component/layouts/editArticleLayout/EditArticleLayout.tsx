@@ -7,9 +7,9 @@ import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
-import omit from 'lodash/omit';
 import { useMutation } from '@apollo/react-hooks';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
+import omit from 'lodash/omit';
 import useRouter from 'use-react-router';
 
 export interface ArticleLayoutProps {
@@ -38,7 +38,13 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
     return (
         <>
             <BaseLayoutMainContent>
-                <Article article={editedArticle} isEditModeEnabled onUpdateArticle={article => { setEditedArticle(article); }} />
+                <Article
+                    isEditModeEnabled
+                    article={editedArticle}
+                    onUpdateArticle={article => {
+                        setEditedArticle(article);
+                    }}
+                />
                 <AddModuleBar onAddModule={async contentModule => {
                     setEditedArticle({
                         ...editedArticle,

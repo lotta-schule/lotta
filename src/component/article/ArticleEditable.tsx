@@ -32,7 +32,7 @@ export const ArticleEditable = memo<ArticleEditableProps>(({ article, isEditMode
                 isEmbedded
             />
             <Suspense fallback={<CircularProgress />}>
-                <DragDropContext onDragEnd={({ destination, source }) => {
+                <DragDropContext onDragEnd={({ draggableId, destination, source }) => {
                     if (!destination) {
                         return;
                     }
@@ -45,15 +45,24 @@ export const ArticleEditable = memo<ArticleEditableProps>(({ article, isEditMode
                     }
 
                     if (onUpdateArticle) {
-                        const newModulesArray = Array.from(article.contentModules);
-                        newModulesArray.splice(source.index, 1);
-                        newModulesArray.splice(destination.index, 0, article.contentModules[source.index]);
                         onUpdateArticle({
                             ...article,
-                            contentModules: newModulesArray.map((cm, i) => ({
-                                ...cm,
-                                sortKey: i * 10
-                            }))
+                            contentModules: Array.from(article.contentModules)
+                                .map(contentModule => {
+                                    if (contentModule.id.toString() === draggableId) {
+                                        return {
+                                            ...contentModule,
+                                            sortKey: destination.index * 10 - 1
+                                        };
+                                    } else {
+                                        return contentModule;
+                                    }
+                                })
+                                .sort((cm1, cm2) => cm1.sortKey - cm2.sortKey)
+                                .map((cm, i) => ({
+                                    ...cm,
+                                    sortKey: i * 10
+                                }))
                         });
                     }
                 }}>
