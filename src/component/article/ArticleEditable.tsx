@@ -52,7 +52,7 @@ export const ArticleEditable = memo<ArticleEditableProps>(({ article, isEditMode
                                     if (contentModule.id.toString() === draggableId) {
                                         return {
                                             ...contentModule,
-                                            sortKey: destination.index * 10 - 1
+                                            sortKey: destination.index * 10 + (destination.index > source.index ? 1 : -1)
                                         };
                                     } else {
                                         return contentModule;
