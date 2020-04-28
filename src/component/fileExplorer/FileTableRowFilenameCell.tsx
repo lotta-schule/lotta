@@ -2,7 +2,7 @@ import React, { memo, useEffect, useLayoutEffect, useRef, useState, useContext }
 import { DirectoryModel, FileModel, FileModelType } from 'model';
 import { IconButton, InputAdornment, TableCell, TextField, Tooltip, makeStyles, CircularProgress } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';
 import { UpdateDirectoryMutation } from 'api/mutation/UpdateDirectoryMutation';
 import fileExplorerContext from './context/FileExplorerContext';

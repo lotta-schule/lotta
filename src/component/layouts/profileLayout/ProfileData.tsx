@@ -4,7 +4,7 @@ import {
     Typography, IconButton, Badge, Divider, makeStyles, List, ListItemText, ListItem, ListSubheader
 } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { Clear } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { User } from 'util/model';

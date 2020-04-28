@@ -1,7 +1,7 @@
 import React, { memo, useState, useContext, useEffect } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions, Tooltip, IconButton } from '@material-ui/core';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';

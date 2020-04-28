@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Card, CardContent, Grid, Typography, makeStyles, Theme, useTheme, FormControl, InputLabel, Select, MenuItem, Divider } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { useTenant } from 'util/client/useTenant';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';

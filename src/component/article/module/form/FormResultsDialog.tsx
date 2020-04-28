@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback } from 'react';
 import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DialogTitle, DialogContent, CircularProgress, Button, Typography } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
 import { FormConfiguration } from './Form';
 import { ErrorMessage } from 'component/general/ErrorMessage';

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { CircularProgress, DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
 import { ArticleModel, CategoryModel, ID } from 'model';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';

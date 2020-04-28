@@ -1,5 +1,5 @@
 import { CategoryModel } from 'model';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { QueryResult } from '@apollo/react-common';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 

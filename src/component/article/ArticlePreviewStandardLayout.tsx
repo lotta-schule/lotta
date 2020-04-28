@@ -7,7 +7,7 @@ import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User, Article } from 'util/model';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';

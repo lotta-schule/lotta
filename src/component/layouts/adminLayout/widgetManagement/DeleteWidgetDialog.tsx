@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
 import { WidgetModel, ID } from 'model';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { DeleteWidgetMutation } from 'api/mutation/DeleteWidgetMutation';

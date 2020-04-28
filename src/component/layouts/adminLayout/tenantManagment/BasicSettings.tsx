@@ -5,7 +5,7 @@ import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useTenant } from 'util/client/useTenant';
 import { Tenant } from 'util/model';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { SaveButton } from 'component/general/SaveButton';
 import Img from 'react-cloudimage-responsive';

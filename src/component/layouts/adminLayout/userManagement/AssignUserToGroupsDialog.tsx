@@ -5,7 +5,7 @@ import {
 import { ID, UserModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { GetUserQuery } from 'api/query/GetUserQuery';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { SetUserGroupsMutation } from 'api/mutation/SetUserGroupsMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';

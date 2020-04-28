@@ -7,7 +7,7 @@ import { MoreVert } from '@material-ui/icons';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import findIndex from 'lodash/findIndex';
 import { ID } from 'model/ID';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 
 const useStyles = makeStyles((theme: Theme) => {

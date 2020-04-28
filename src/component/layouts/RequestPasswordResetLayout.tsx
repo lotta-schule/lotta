@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { Button, Card, CardContent, Grid, TextField, Typography, makeStyles } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import useRouter from 'use-react-router';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { RequestPasswordResetMutation } from 'api/mutation/RequestPasswordResetMutation';

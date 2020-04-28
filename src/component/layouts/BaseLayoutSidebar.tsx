@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, useCallback, useEffect } from 'react';
 import { Grid, makeStyles, Theme, Drawer } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useQuery, useApolloClient } from '@apollo/client';
 import useRouter from 'use-react-router';
 import gql from 'graphql-tag';
 

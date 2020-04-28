@@ -6,7 +6,7 @@ import { CircularProgress } from '@material-ui/core';
 import { ClientModel } from 'model';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { theme } from 'theme';
 import { useCategories } from 'util/categories/useCategories';
 import { ErrorMessage } from 'component/general/ErrorMessage';

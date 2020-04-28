@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { WidgetModel, WidgetModelType } from 'model';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { CreateWidgetMutation } from 'api/mutation/CreateWidgetMutation';
 import { Widget } from 'util/model';

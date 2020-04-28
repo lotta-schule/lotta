@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect, useCallback } from 'react';
 import { Button, Divider, TextField, Typography, makeStyles } from '@material-ui/core';
 import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { ID } from 'model/ID';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';

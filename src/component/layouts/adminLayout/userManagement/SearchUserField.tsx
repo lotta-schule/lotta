@@ -2,7 +2,7 @@ import React, { ChangeEvent, memo, useState, useEffect } from 'react';
 import { CircularProgress, Grid, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { Autocomplete } from '@material-ui/lab';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/client';
 import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
 import { useDebounce } from 'util/useDebounce';
 import { UserAvatar } from 'component/user/UserAvatar';

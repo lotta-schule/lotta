@@ -6,7 +6,7 @@ import { de } from 'date-fns/locale';
 import {
     makeStyles, CircularProgress, Table, TableBody, TableRow, TableCell, Typography, Link, IconButton, Tooltip
 } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { darken } from '@material-ui/core/styles';
 import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
 import { GetScheduleQuery } from 'api/query/GetScheduleQuery';

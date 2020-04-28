@@ -1,7 +1,7 @@
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { UserModel } from 'model';
 import { LogoutMutation } from 'api/mutation/LogoutMutation';
-import { useApolloClient, useMutation } from '@apollo/react-hooks';
+import { useApolloClient, useMutation } from '@apollo/client';
 import Matomo from 'matomo-ts';
 
 export const useOnLogout = () => {

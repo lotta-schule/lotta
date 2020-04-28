@@ -1,4 +1,4 @@
-import { useApolloClient, useMutation, MutationTuple } from '@apollo/react-hooks';
+import { useApolloClient, useMutation, MutationTuple } from '@apollo/client';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { ResetPasswordMutation } from 'api/mutation/ResetPasswordMutation';
