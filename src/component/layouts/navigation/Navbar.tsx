@@ -8,7 +8,7 @@ import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
 import { fade } from '@material-ui/core/styles';
 import { Category } from 'util/model';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/client';
 import clsx from 'clsx';
 import gql from 'graphql-tag';
 

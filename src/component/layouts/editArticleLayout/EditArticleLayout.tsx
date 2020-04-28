@@ -7,7 +7,7 @@ import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import omit from 'lodash/omit';
 import useRouter from 'use-react-router';

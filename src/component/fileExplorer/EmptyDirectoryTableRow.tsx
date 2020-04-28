@@ -1,6 +1,6 @@
 import React, { memo, useContext } from 'react';
 import { TableRow, TableCell, Link, makeStyles, Theme } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { DeleteDirectoryMutation } from 'api/mutation/DeleteDirectoryMutation';
 import { DirectoryModel, FileModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';

@@ -1,6 +1,6 @@
 import { ArticleModel } from 'model';
 import { ID } from 'model/ID';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import useRouter from 'use-react-router';
 

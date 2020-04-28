@@ -7,7 +7,7 @@ import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';

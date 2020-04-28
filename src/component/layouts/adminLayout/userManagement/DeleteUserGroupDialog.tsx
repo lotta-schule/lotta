@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
 import { ClientModel, UserGroupModel, ID } from 'model';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { DeleteUserGroupMutation } from 'api/mutation/DeleteUserGroupMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';

@@ -8,7 +8,7 @@ export const AdminGroup: UserGroupModel = {
     sortKey: 1000,
     isAdminGroup: true,
     tenant: null!,
-    enrollmentTokens: []
+    enrollmentTokens: [],
 }
 
 export const TestTenant: ClientModel = {
@@ -18,7 +18,9 @@ export const TestTenant: ClientModel = {
     createdAt: new Date(2015, 0, 1).toISOString(),
     updatedAt: new Date(2015, 0, 1).toISOString(),
     groups: [AdminGroup],
-    customDomains: []
+    customDomains: [],
+    logoImageFile: null,
+    backgroundImageFile: null
 };
 
 export const StartseiteCategory: CategoryModel = {

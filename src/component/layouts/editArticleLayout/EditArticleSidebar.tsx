@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 import { DateTimePicker } from '@material-ui/pickers';
 import uniqBy from 'lodash/uniqBy';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { CategorySelect } from './CategorySelect';
 import { GroupSelect } from '../../edit/GroupSelect';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';

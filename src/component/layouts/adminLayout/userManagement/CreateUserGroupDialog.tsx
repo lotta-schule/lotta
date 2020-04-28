@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { ClientModel, UserGroupModel } from 'model';
 import { CreateUserGroupMutation } from 'api/mutation/CreateUserGroupMutation';
 import { GetTenantQuery } from 'api/query/GetTenantQuery';

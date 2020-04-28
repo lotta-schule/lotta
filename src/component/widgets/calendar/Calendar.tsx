@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, makeStyles, Divider, CircularProgress, Tooltip, Typography } from '@material-ui/core';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/client';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { FiberManualRecord } from '@material-ui/icons';

@@ -10,7 +10,7 @@ import { Article, Category, User } from 'util/model';
 import { ArticleModel } from '../../../model';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/client';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useCategories } from 'util/categories/useCategories';
 import clsx from 'clsx';

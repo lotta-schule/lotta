@@ -1,7 +1,7 @@
 import React, { MouseEvent, memo, useContext } from 'react';
 import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, CircularProgress, IconButton, fade, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { ArrowBackRounded } from '@material-ui/icons';
 import { useDropzone } from 'react-dropzone';
 import { FileModel, FileModelType, DirectoryModel } from 'model';

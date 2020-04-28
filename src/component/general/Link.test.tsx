@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-    render,
-    cleanup
-} from 'test/util';
+import { cleanup, render } from 'test/util';
 import { CollisionLink } from './CollisionLink';
 
 afterEach(cleanup);

@@ -1,7 +1,7 @@
 import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import { CircularProgress, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/client';
 import { GetTopicsQuery } from 'api/query/GetTopicsQuery';
 
 export interface SelectTopicAutocompleteProps {

@@ -1,6 +1,6 @@
 import { UserModel } from 'model';
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { QueryResult } from '@apollo/react-common';
 
 export const useCurrentUser = (): [UserModel | null, Omit<QueryResult, 'data'>] => {

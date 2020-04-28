@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
 import { CircularProgress, Typography, makeStyles, Theme } from '@material-ui/core';
