@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const DeleteCategoryMutation = gql`
     mutation DeleteCategory($id: ID!) {

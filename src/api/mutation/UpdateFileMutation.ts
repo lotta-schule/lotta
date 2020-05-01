@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const UpdateFileMutation = gql`
     mutation UpdateFile($id: ID!, $filename: String, $parentDirectoryId: ID) {

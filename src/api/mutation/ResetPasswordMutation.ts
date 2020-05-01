@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const ResetPasswordMutation = gql`
     mutation ResetPassword($email: String!, $password: String!, $token: String!) {

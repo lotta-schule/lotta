@@ -12,12 +12,13 @@ export const useOnLogin = (fn: 'login' | 'register' | 'resetPassword', options?:
     const [login, { error, loading, called }] = useMutation(mutation, {
         errorPolicy: 'all',
         onCompleted: data => {
-            apolloClient.resetStore();
-            options?.onCompleted?.(data);
-            if (options?.redirect) {
-                history.push(options.redirect);
+            if (data.login) {
+                apolloClient.resetStore();
+                options?.onCompleted?.(data);
+                if (options?.redirect) {
+                    history.push(options.redirect);
+                }
             }
-
         }
     });
     return [login, { error, loading, called }];
