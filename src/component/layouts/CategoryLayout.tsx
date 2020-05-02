@@ -42,7 +42,7 @@ const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
             top: 0,
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(to right, transparent 80%, #fff 90%, #fff)'
+            background: 'linear-gradient(to right, transparent 90%, #fff 99%, #fff)'
         }
     },
     bannerheading: {

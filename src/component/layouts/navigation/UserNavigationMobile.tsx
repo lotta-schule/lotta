@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { makeStyles, ButtonBase, Badge } from '@material-ui/core';
+import { makeStyles, ButtonBase, Badge, Button } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ExitToAppOutlined, AddCircleOutlineOutlined, SecurityOutlined, FolderOutlined, AssignmentOutlined, PersonOutlineOutlined } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
@@ -9,6 +9,8 @@ import { ArticleModel } from 'model';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { User, Article } from 'util/model';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
+import { LoginDialog } from 'component/dialog/LoginDialog';
+import { RegisterDialog } from 'component/dialog/RegisterDialog';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -45,6 +47,8 @@ export const UserNavigationMobile = memo(() => {
     });
     const unpublishedBadgeNumber = unpublishedArticlesData?.articles.filter(article => !article.readyToPublish || !article.category).length;
 
+    const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
+    const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
     const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(false);
 
     if (currentUser) {
@@ -96,6 +100,18 @@ export const UserNavigationMobile = memo(() => {
         );
     }
     return (
-        <div>Anmelden / Abmelden</div>
+        <div>
+            <Button fullWidth onClick={() => setLoginModalIsOpen(true)}>Anmelden</Button>
+            <Button fullWidth onClick={() => setRegisterModalIsOpen(true)}>Registrieren</Button>
+            <LoginDialog
+                isOpen={loginModalIsOpen}
+                onRequestClose={() => { setLoginModalIsOpen(false); }}
+            />
+            <RegisterDialog
+                isOpen={registerModalIsOpen}
+                onRequestClose={() => { setRegisterModalIsOpen(false); }}
+            />
+
+        </div>
     );
 });
