@@ -36,12 +36,4 @@ describe('component/article/CategoryLayout', () => {
         });
     });
 
-    describe('Standard Category', () => {
-        it('should not render the category title if it\'s the homepage', () => {
-            const { container } = render(<CategoryLayout category={StartseiteCategory} articles={[]} />);
-            const title = container.querySelector('h2');
-            expect(title).toBeNull();
-        });
-    });
-
 });
