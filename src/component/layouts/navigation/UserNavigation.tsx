@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined } from '@material-ui/icons';
+import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined, SecurityOutlined } from '@material-ui/icons';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Grid, Link, makeStyles, Button, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
@@ -15,7 +15,8 @@ import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        flexShrink: 0
+        flexShrink: 0,
+        height: '100%'
     },
     nav: {
         display: 'flex',
@@ -80,7 +81,7 @@ export const UserNavigation = memo(() => {
                 <Grid item xs={7} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                     <Button startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
                 </Grid>
-                <Grid item xs={5} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Grid item xs={5} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
                     <CurrentUserAvatar size={100} style={{ width: 75, height: 75 }} />
                     <Link className={styles.profileMenuLink} onClick={(e: any) => {
                         e.preventDefault();
@@ -112,6 +113,8 @@ export const UserNavigation = memo(() => {
                             ...(User.isAdmin(currentUser) ? [
                                 <Divider key={'admin-divider'} />,
                                 <MenuItem key={'administration'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/tenant/general'); }}>
+                                    <SecurityOutlined />
+                                    &nbsp;
                                     Seite administrieren
                                 </MenuItem>,
                                 <MenuItem key={'open-articles'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/unpublished'); }}>
@@ -124,7 +127,8 @@ export const UserNavigation = memo(() => {
                             ] : []),
                             <Divider key={'logout-divider'} />,
                             <MenuItem key={'logout'} onClick={() => { setProfileMenuAnchorEl(null); onLogout(); }}>
-                                <ExitToAppOutlined />&nbsp;
+                                <ExitToAppOutlined />
+                                    &nbsp;
                                     Abmelden
                                 </MenuItem>
                         ]}

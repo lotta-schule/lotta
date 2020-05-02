@@ -3,6 +3,7 @@ import { WidgetModel, WidgetModelType } from 'model';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { Calendar } from './calendar/Calendar';
 import { Schedule } from './schedule/Schedule';
+import { UserNavigationMobile } from 'component/layouts/navigation/UserNavigationMobile';
 
 export interface WidgetProps {
     widget: WidgetModel;
@@ -25,8 +26,10 @@ const useStyles = makeStyles(theme => ({
 
 export const Widget = memo<WidgetProps>(({ widget }) => {
     const styles = useStyles();
-    if (widget.type === WidgetModelType.UserNavigation) {
-        return (<span>UserNavigationMobile</span>);
+    if (widget.type === WidgetModelType.UserNavigationMobile) {
+        return (
+            <UserNavigationMobile />
+        );
     }
     return (
         <Paper className={styles.root}>

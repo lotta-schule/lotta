@@ -1,5 +1,5 @@
 import React, { memo, useLayoutEffect, useRef } from 'react';
-import { WidgetModel } from 'model';
+import { WidgetModel, WidgetModelType } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
 import { useLocalStorage } from 'util/useLocalStorage';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -10,6 +10,8 @@ import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAnce
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useScrollEvent } from 'util/useScrollEvent';
 import { WidgetIcon } from 'component/widgets/WidgetIcon';
+import { CurrentUserAvatar } from 'component/user/UserAvatar';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import SwipeableViews from 'react-swipeable-views';
 
 export interface WidgetsListProps {
@@ -63,6 +65,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     const isMobile = useIsMobile();
     const wrapperRef = useRef<HTMLDivElement | null>(null);
 
+    const [currentUser] = useCurrentUser();
     const currentCategoryId = useCurrentCategoryId();
     const isSecondNavigationOpen = useCategoriesAncestorsForItem(currentCategoryId || 0).length > 0;
 
@@ -102,9 +105,6 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
 
     return (
         <div className={styles.root} data-testid={'WidgetsList'} ref={wrapperRef}>
-            {!isMobile && (
-                <Widget widget={WidgetUtil.getProfileWidget()} />
-            )}
             {shownWidgets && shownWidgets.length > 1 && (
                 <>
                     <Tabs
@@ -125,7 +125,11 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
                                 key={widget.id}
                                 title={widget.title}
                                 value={i}
-                                icon={<WidgetIcon icon={widget.configuration.icon} size={36} />}
+                                icon={
+                                    widget.type === WidgetModelType.UserNavigationMobile && currentUser ?
+                                        <CurrentUserAvatar style={{ width: 36, height: 36 }} /> :
+                                        <WidgetIcon icon={widget.configuration.icon} size={36} />
+                                }
                                 classes={{
                                     root: styles.tabRoot,
                                     wrapper: styles.tabWrapper,
