@@ -31,6 +31,9 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(t
     },
     cardContent: {
         [theme.breakpoints.down('sm')]: {
+            padding: theme.spacing(0, 1)
+        },
+        [theme.breakpoints.down('xs')]: {
             padding: theme.spacing(1, 0)
         },
     },
