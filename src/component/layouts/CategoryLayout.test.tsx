@@ -6,7 +6,7 @@ import {
 } from 'test/util';
 import { UeberSuedamerika, VivaLaRevolucion } from 'test/fixtures/Article';
 import { CategoryLayout } from './CategoryLayout';
-import { SuedAmerikaCategory, StartseiteCategory } from 'test/fixtures/Tenant';
+import { SuedAmerikaCategory } from 'test/fixtures/Tenant';
 
 afterEach(cleanup);
 
