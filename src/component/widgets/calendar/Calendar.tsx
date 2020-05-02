@@ -72,7 +72,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                 .map(calendar => {
                     return apolloClient
                         .query<{ calendar: CalendarEventModel[] }>({ query: GetCalendarQuery, variables: { url: calendar.url, days: calendar.days } })
-                        .then(({ data: { calendar: events } }) => events.map(event => ({ ...event, calendar })));
+                        .then(({ data }) => data?.calendar.map(event => ({ ...event, calendar })));
                 })
         ).then((eventsArr: any[]) => {
             setEvents(eventsArr.flat());

@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { useTheme } from '@material-ui/core';
-import { ApolloError } from 'apollo-client';
+import { ApolloError } from '@apollo/client';
 import { Message } from './Message';
 
 export interface ErrorMessageProps {

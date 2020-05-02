@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const SetUserBlockedMutation = gql`
     mutation SetUserBlocked($id: ID!, $isBlocked: Boolean!) {

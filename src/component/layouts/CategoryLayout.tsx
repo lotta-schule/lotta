@@ -12,6 +12,7 @@ import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
+import { UserNavigation } from './navigation/UserNavigation';
 
 const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
     subheaderContainer: {
@@ -30,8 +31,19 @@ const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
         maxHeight: 120,
         width: '100%',
         height: '100%',
-        flexShrink: 0,
-        flexGrow: 0
+        flexShrink: 1,
+        flexGrow: 1,
+        position: 'relative',
+        '&::after': {
+            position: 'absolute',
+            display: 'block',
+            content: `''`,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(to right, transparent 90%, #fff 99%, #fff)'
+        }
     },
     bannerheading: {
         textTransform: 'uppercase',
@@ -51,6 +63,11 @@ const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
         },
         '& > *': {
             width: '100%'
+        }
+    },
+    userNavigationGridItem: {
+        [theme.breakpoints.down('sm')]: {
+            display: 'none'
         }
     }
 }));
@@ -83,24 +100,25 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
     return (
         <>
             <BaseLayoutMainContent>
-                {!category.isHomepage && (
-                    <Grid className={styles.subheaderContainer}>
-                        <Grid
-                            item
-                            xs={12}
-                            className={styles.subheader}
-                            style={{
-                                background: category.bannerImageFile ?
-                                    `url(https://afdptjdxen.cloudimg.io/cover/900x150/foil1/${category.bannerImageFile.remoteLocation})` :
-                                    'transparent'
-                            }}
-                        >
-                            <Typography variant={'h2'} className={styles.bannerheading}>
-                                {category.title}
-                            </Typography>
-                        </Grid>
+                <Grid container className={styles.subheaderContainer}>
+                    <Grid
+                        item
+                        xs
+                        className={styles.subheader}
+                        style={{
+                            background: category.bannerImageFile ?
+                                `url(https://afdptjdxen.cloudimg.io/cover/900x150/foil1/${category.bannerImageFile.remoteLocation})` :
+                                'transparent'
+                        }}
+                    >
+                        <Typography variant={'h2'} className={styles.bannerheading}>
+                            {category.title}
+                        </Typography>
                     </Grid>
-                )}
+                    <Grid item xs={false} sm={4} xl={3} className={styles.userNavigationGridItem}>
+                        <UserNavigation />
+                    </Grid>
+                </Grid>
                 <Grid container wrap={'wrap'}>
                     {articles && articles.length > 1 && (
                         [...articles]

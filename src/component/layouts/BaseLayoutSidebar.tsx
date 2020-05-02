@@ -3,10 +3,12 @@ import { Grid, makeStyles, Theme, Drawer } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
 import useRouter from 'use-react-router';
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
+import { Footer } from './navigation/Footer';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
+        position: 'relative',
         [theme.breakpoints.down('md')]: {
             paddingLeft: 0,
         },
@@ -14,7 +16,11 @@ const useStyles = makeStyles((theme: Theme) => ({
             paddingLeft: '0.5em',
         },
     },
+    drawer: {
+        padding: 0
+    }
 }));
+
 export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
     const styles = useStyles();
 
@@ -37,14 +43,16 @@ export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
 
     if (isMobile) {
         return (
-            <Drawer anchor={'right'} open={isMobileDrawerOpen} onClose={() => closeDrawer()}>
+            <Drawer classes={{ paper: styles.drawer }} anchor={'right'} open={isMobileDrawerOpen} onClose={() => closeDrawer()}>
                 {children}
+                <Footer />
             </Drawer>
         );
     } else {
         return (
             <Grid className={styles.root} item component={'aside'} xs={12} md={3} xl={3}>
                 {children}
+                <Footer />
             </Grid>
         );
     }

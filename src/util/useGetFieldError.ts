@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ApolloError } from 'apollo-client';
+import { ApolloError } from '@apollo/client';
 
 export const useGetFieldError = (error?: ApolloError) => {
     return useCallback((fieldName: string): string | false => {
