@@ -130,13 +130,17 @@ defmodule Api.UserResolver do
       |> Base.url_encode64(padding: false)
       |> URI.encode()
     with {:ok, user} <- Accounts.request_password_reset_token(email, token) do
+      IO.inspect("user request password request - send mail to #{email}")
       Api.Queue.EmailPublisher.send_request_password_reset_email(tenant, user, email, token)
     else
       error ->
         try do
           Honeybadger.notify(error, %{tenant: tenant, email: email})
+          IO.inspect("Error setting request password reset token")
+          IO.inspect(error)
         rescue
           e in RuntimeError ->
+            IO.inspect("runtime error with honeybadger notifying")
             IO.inspect(e)
         end
     end
