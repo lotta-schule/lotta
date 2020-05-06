@@ -38,7 +38,7 @@ export const FileSorter = (contendModule: ContentModuleModel, getConfiguration: 
         case Sorting.FILE_UPLOAD_DATE_ASC:
             return new Date(file1.insertedAt).getTime() - new Date(file2.insertedAt).getTime();
         case Sorting.FILE_UPLOAD_DATE_DESC:
-            return new Date(file1.insertedAt).getTime() - new Date(file2.insertedAt).getTime();
+            return new Date(file2.insertedAt).getTime() - new Date(file1.insertedAt).getTime();
         default:
             return getConfiguration(file1).sortKey - getConfiguration(file2).sortKey;
     }
