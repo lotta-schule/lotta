@@ -45,6 +45,7 @@ build docker image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
+    - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
     - if [ $CI_COMMIT_REF_NAME == "develop" ];
         then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:staging;
