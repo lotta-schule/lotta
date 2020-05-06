@@ -27,7 +27,7 @@ ENV MIX_ENV=prod
 COPY mix.exs mix.lock ./
 COPY config config
 RUN mix deps.get --only prod
-RUN REBAR_DEBUG=1 mix deps.compile
+RUN mix deps.compile
 
 # build project
 COPY priv priv
