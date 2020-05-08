@@ -22,12 +22,10 @@ defmodule ApiWeb.Router do
     plug :basic_auth, username: "admin", password: "d2jm8oj23ndhng3"
   end
 
-  if Mix.env() == :dev do
-    scope "/" do
-      # pipe_through :browser
-      live_dashboard "/dashboard",
-        metrics: ApiWeb.Telemetry
-    end
+  scope "/" do
+    # pipe_through :browser
+    live_dashboard "/dashboard",
+      metrics: ApiWeb.Telemetry
   end
 
   scope "/api" do
