@@ -16,6 +16,9 @@ defmodule Api.Application do
     else [] end) ++ [
       # Start the Ecto repository
       Api.Repo,
+      # Start the PubSub Server
+      {Phoenix.PubSub, name: Api.PubSub},
+      ApiWeb.Telemetry,
       # Start the endpoint when the application starts
       ApiWeb.Endpoint,
       # Starts a worker by calling: Api.Worker.start_link(arg)

@@ -32,7 +32,7 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:honeybadger, :lager, :logger, :runtime_tools, :amqp, :ssl, :inets, :con_cache]
+      extra_applications: [:honeybadger, :lager, :logger, :runtime_tools, :amqp, :ssl, :inets, :con_cache, :os_mon]
     ]
   end
 
@@ -71,6 +71,10 @@ defmodule Api.MixProject do
       {:honeybadger, "~> 0.14.0"},
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
+      # live dashboard
+      {:telemetry_poller, "~> 0.4"},
+      {:telemetry_metrics, "~> 0.4"},
+      {:phoenix_live_dashboard, "~> 0.1"},
       #test
       {:excoveralls, "~> 0.12", only: :test}
     ]
