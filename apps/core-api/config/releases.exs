@@ -33,6 +33,11 @@ schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 sentry_dsn = System.fetch_env("SENTRY_DSN")
 sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || "prod"
 
+host = case System.get_env("APP_ENVIRONMENT") do
+  "staging" -> "api.staging.lotta.schule"
+  _ -> "api.lotta.schule"
+end
+
 config :api, Api.Repo,
   username: db_user,
   password: db_password,
@@ -65,6 +70,7 @@ config :api, :schedule_provider_url,
   schedule_provider_url
 
 config :api, ApiWeb.Endpoint,
+  url: [host: host],
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base,
   live_view: [signing_salt: secret_key_base]  
