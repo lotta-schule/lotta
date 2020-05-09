@@ -4,16 +4,11 @@ import { AudioAudio } from './AudioAudio';
 import { Typography } from '@material-ui/core';
 
 interface ShowProps {
-    contentModule: ContentModuleModel;
+    contentModule: ContentModuleModel<{ captions: string[] }>;
 }
 
 export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
-    let captions: string[];
-    try {
-        captions = JSON.parse(contentModule.text || '[]');
-    } catch (e) {
-        captions = [];
-    }
+    const captions: string[] = contentModule.content?.captions ?? [];
     return (
         <figure>
             <AudioAudio contentModule={contentModule} />

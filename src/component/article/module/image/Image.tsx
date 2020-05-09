@@ -3,26 +3,20 @@ import { ContentModuleModel } from 'model';
 import { ImageImage } from './ImageImage';
 
 export interface ImageProps {
-    contentModule: ContentModuleModel;
+    contentModule: ContentModuleModel<{ caption: string }>;
     isEditModeEnabled?: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule(contentModule: ContentModuleModel<{ caption: string }>): void;
 }
 
 export const Image: FunctionComponent<ImageProps> = memo(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
-    let imageCaption;
-    try {
-        const parsedText = JSON.parse(contentModule.text!);
-        imageCaption = parsedText[0];
-    } catch {
-        imageCaption = contentModule.text;
-    }
+    let imageCaption = contentModule.content?.caption;
     return (
         <ImageImage
             isEditModeEnabled={isEditModeEnabled || false}
-            caption={imageCaption}
+            caption={imageCaption ?? ''}
             file={contentModule.files ? contentModule.files[0] : null}
             onUpdateFile={newFile => onUpdateModule({ ...contentModule, files: [newFile] })}
-            onUpdateCaption={caption => onUpdateModule({ ...contentModule, text: JSON.stringify([caption]) })}
+            onUpdateCaption={caption => onUpdateModule({ ...contentModule, content: { caption: caption } })}
         />
     );
 });

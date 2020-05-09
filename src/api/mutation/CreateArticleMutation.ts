@@ -22,7 +22,7 @@ export const CreateArticleMutation = gql`
             contentModules {
                 id
                 type
-                text
+                content
                 sortKey
             }
             category {

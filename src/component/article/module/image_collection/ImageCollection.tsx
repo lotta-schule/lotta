@@ -7,9 +7,9 @@ import { ImageStyle } from './Config';
 import get from 'lodash/get';
 
 export interface ImageProps {
-    contentModule: ContentModuleModel;
+    contentModule: ContentModuleModel<{ captions: string[] }>;
     isEditModeEnabled?: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule(contentModule: ContentModuleModel<{ captions: string[] }>): void;
 }
 
 export const ImageCollection: FunctionComponent<ImageProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
@@ -17,14 +17,14 @@ export const ImageCollection: FunctionComponent<ImageProps> = memo(({ isEditMode
     let shownContentModule = { ...contentModule };
 
     let oldImageCaptions: (string | null)[] = [];
-    if (contentModule.text) {
+    if (contentModule.content) {
         // TODO: this is migration data and could probably be removed someday
         try {
-            oldImageCaptions = JSON.parse(contentModule.text);
+            oldImageCaptions = contentModule.content?.captions;
             if (oldImageCaptions instanceof Array) {
                 shownContentModule = {
                     ...contentModule,
-                    text: '',
+                    content: null,
                     configuration: {
                         ...contentModule.configuration,
                         files: (contentModule.files || []).reduce((prev, file, i) => ({

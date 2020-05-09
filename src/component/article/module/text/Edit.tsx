@@ -2,17 +2,17 @@ import React, { memo, useState, useMemo, useEffect } from 'react';
 import { ContentModuleModel, } from '../../../../model';
 import { Slate, withReact, Editable } from 'slate-react';
 import { Node, createEditor } from 'slate';
-import { deserialize, renderElement, renderLeaf, serialize, withImages, withLinks } from './SlateUtils';
+import { renderElement, renderLeaf, withImages, withLinks, getNormalizedSlateState } from './SlateUtils';
 import { EditToolbar } from './EditToolbar';
 
 interface EditProps {
-    contentModule: ContentModuleModel;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    contentModule: ContentModuleModel<{ nodes: Node[] }>;
+    onUpdateModule(contentModule: ContentModuleModel<{ nodes: Node[] }>): void;
 }
 
 export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
 
-    const [editorState, setEditorState] = useState<Node[]>(contentModule.text ? deserialize(contentModule.text) : []);
+    const [editorState, setEditorState] = useState<Node[]>(getNormalizedSlateState(contentModule.content?.nodes ?? []));
     const [isSaveRequested, setIsSaveRequested] = useState(false);
 
     const editor = useMemo(() => withImages(withLinks(withReact(createEditor()))), []);
@@ -28,7 +28,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
     const saveStateToContentModule = () => {
         onUpdateModule({
             ...contentModule,
-            text: serialize(editorState)
+            content: { nodes: editorState }
         });
     };
 

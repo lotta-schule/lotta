@@ -4,8 +4,8 @@ import { Typography } from '@material-ui/core';
 import get from 'lodash/get';
 
 interface EditProps {
-    contentModule: ContentModuleModel;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    contentModule: ContentModuleModel<{ title: string }>;
+    onUpdateModule(contentModule: ContentModuleModel<{ title: string }>): void;
 }
 
 export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdateModule }) => {
@@ -18,12 +18,12 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
             component={'input'}
             variant={variant}
             gutterBottom
-            defaultValue={contentModule.text}
+            defaultValue={contentModule.content?.title}
             style={{ width: '100%', outline: 'none', border: 0 }}
             onChange={(e: FormEvent<HTMLInputElement>) => {
                 onUpdateModule({
                     ...contentModule,
-                    text: (e.target as HTMLInputElement).value
+                    content: { title: (e.target as HTMLInputElement).value }
                 });
             }}
         />

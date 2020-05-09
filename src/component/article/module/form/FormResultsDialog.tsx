@@ -13,7 +13,7 @@ import { saveAs } from 'file-saver';
 export interface FormResultsDialogProps {
     isOpen: boolean;
     onRequestClose(): void;
-    contentModule: ContentModuleModel<FormConfiguration>;
+    contentModule: ContentModuleModel<{}, FormConfiguration>;
 }
 
 export const FormResultsDialog = memo<FormResultsDialogProps>(({ isOpen, onRequestClose, contentModule }) => {

@@ -4,16 +4,11 @@ import { Typography } from '@material-ui/core';
 import { VideoVideo } from './VideoVideo';
 
 interface ShowProps {
-    contentModule: ContentModuleModel;
+    contentModule: ContentModuleModel<{ captions: string[] }>;
 }
 
 export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {
-    let captions: string[];
-    try {
-        captions = JSON.parse(contentModule.text || '[]');
-    } catch (e) {
-        captions = [];
-    }
+    const captions: string[] = contentModule.content?.captions ?? [];
     return (
         <figure style={{ margin: 0, }}>
             <VideoVideo contentModule={contentModule} />
