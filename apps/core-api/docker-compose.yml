@@ -3,6 +3,8 @@ version: "3.7"
 networks:
   api:
     driver: bridge
+  es-test_elastic:
+    external: true
   postgres:
   redis:
   rabbitmq:
@@ -31,6 +33,7 @@ services:
       - postgres
       - rabbitmq
       - redis
+      - es-test_elastic
     environment:
       MIX_ENV: dev
     env_file:

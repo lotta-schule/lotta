@@ -26,6 +26,7 @@ defmodule Api.Application do
       Api.Queue.MediaConversionConsumer,
       Api.Queue.EmailPublisher,
       {Redix, redis_config},
+      Api.Elasticsearch.Cluster,
       {ConCache, name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
     ]
 

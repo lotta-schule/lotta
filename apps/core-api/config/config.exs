@@ -16,7 +16,28 @@ config :api, ApiWeb.Endpoint,
   secret_key_base: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B",
   render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json)],
   pubsub_server: [name: Api.PubSub],
-  live_view: [signing_salt: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B"]  
+  live_view: [signing_salt: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B"]
+
+config :api, Api.Elasticsearch.Cluster, %{
+  url: "http://es01:9200",
+  api: Elasticsearch.API.HTTP,
+  json_library: Poison,
+  indexes: %{
+    articles: %{
+      settings: "priv/elasticsearch/articles.json",
+      store: Api.Elasticsearch.Store,
+      sources: [Api.Content.Article],
+      bulk_page_size: 500,
+      bulk_wait_interval: 10_000
+    }
+  },
+  default_options: [
+    timeout: 10_000,
+    recv_timeout: 5_000,
+    hackney: [pool: :elasticsearch_pool]
+  ]
+}
+
 
 # Configures Elixir's Logger
 config :logger, :console,
