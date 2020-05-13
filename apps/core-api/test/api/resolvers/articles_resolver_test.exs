@@ -1,5 +1,5 @@
 defmodule Api.ArticleResolverTest do
-  use ApiWeb.ConnCase
+  use ApiWeb.ConnCase, async: true
   
   setup do
     Api.Repo.Seeder.seed()
@@ -49,7 +49,6 @@ defmodule Api.ArticleResolverTest do
       }
     }
     """
-
     test "returns an article", %{oskar: oskar} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")

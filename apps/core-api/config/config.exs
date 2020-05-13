@@ -18,7 +18,7 @@ config :api, ApiWeb.Endpoint,
   pubsub_server: [name: Api.PubSub],
   live_view: [signing_salt: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B"]
 
-config :api, Api.Elasticsearch.Cluster, %{
+config :api, Api.Elasticsearch.Cluster,
   url: "http://es01:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
@@ -36,8 +36,6 @@ config :api, Api.Elasticsearch.Cluster, %{
     recv_timeout: 5_000,
     hackney: [pool: :elasticsearch_pool]
   ]
-}
-
 
 # Configures Elixir's Logger
 config :logger, :console,

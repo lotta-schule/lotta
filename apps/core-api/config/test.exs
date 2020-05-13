@@ -37,6 +37,9 @@ config :api, Api.Guardian,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 
+config :api, Api.Elasticsearch.Cluster,
+  url: "http://elasticsearch:9200",
+
 config :api, :base_url,
   ".medienportal.lvh.me:3000"
 

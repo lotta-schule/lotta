@@ -130,11 +130,18 @@ defmodule Api.Content do
 
   """
   def create_article(attrs \\ %{}, tenant, user) do
-    %Article{}
-    |> Article.create_changeset(attrs)
-    |> put_assoc(:tenant, tenant)
-    |> put_assoc(:users, [user])
-    |> Repo.insert()
+    changeset =
+      %Article{}
+      |> Article.create_changeset(attrs)
+      |> put_assoc(:tenant, tenant)
+      |> put_assoc(:users, [user])
+    case Repo.insert(changeset) do
+      {:ok, article} ->
+        Elasticsearch.put_document(Api.Elasticsearch.Cluster, article, "articles")
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -150,9 +157,16 @@ defmodule Api.Content do
 
   """
   def update_article(%Article{} = article, attrs) do
-    article
-    |> Article.changeset(attrs)
-    |> Repo.update()
+    changeset =
+      article
+      |> Article.changeset(attrs)
+    case Repo.update(changeset) do
+      {:ok, article} ->
+        Elasticsearch.put_document(Api.Elasticsearch.Cluster, article, "articles")
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -168,7 +182,13 @@ defmodule Api.Content do
 
   """
   def delete_article(%Article{} = article) do
-    Repo.delete(article)
+    case Repo.delete(article) do
+      {:ok, article} ->
+        Elasticsearch.delete_document(Api.Elasticsearch.Cluster, article, "articles")
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """

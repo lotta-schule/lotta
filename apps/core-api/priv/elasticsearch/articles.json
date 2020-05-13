@@ -1,6 +1,12 @@
 {
     "mappings": {
         "properties": {
+            "tenant_id": {
+                "type": "keyword"
+            },
+            "category_id": {
+                "type": "keyword"
+            },
             "title": {
                 "type": "text",
                 "analyzer": "german",

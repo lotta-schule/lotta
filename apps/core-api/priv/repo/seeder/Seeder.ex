@@ -218,7 +218,7 @@ defmodule Api.Repo.Seeder do
     form = Api.Repo.insert!(%Api.Content.ContentModule{
       article_id: oskar_goes_to.id,
       type: "text",
-      content: "Pizza Test-Formular",
+      content: %{"value" => "test"},
       configuration: %{
         "destination" => "alexis.rinaldoni@lotta.schule",
         "save_internally" => true,

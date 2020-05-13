@@ -9,6 +9,8 @@ defimpl Elasticsearch.Document, for: Api.Content.Article do
       article
       |> ReadRepo.preload([:content_modules, :users])
     %{
+      tenant_id: article.tenant_id,
+      category_id: article.category_id,
       title: article.title,
       preview: article.preview,
       topic: article.topic,
@@ -43,10 +45,31 @@ defimpl Elasticsearch.Document, for: Api.Content.Article do
         Enum.join(content["captions"] || [], " || ")
       "image_collection" ->
         Enum.join(content["captions"] || [], " || ")
+      "text" ->
+        find_text_from_slate_node(content)
       "image" ->
         content["caption"]
       _ ->
         nil
     end
   end
+
+  def find_text_from_slate_node(%{"nodes" => nodes}) when is_list(nodes) do
+    nodes
+    |> Enum.map(&find_text_from_slate_node/1)
+    |> Enum.join()
+  end
+  def find_text_from_slate_node(%{"nodes" => node}) when is_map(node) do
+    find_text_from_slate_node(node)
+  end
+  def find_text_from_slate_node(%{"document" => document}) do
+    find_text_from_slate_node(document)
+  end
+  def find_text_from_slate_node(%{"text" => text}) do
+    text
+  end
+  def find_text_from_slate_node(_node) do
+    ""
+  end
+
 end

@@ -7,7 +7,7 @@ defmodule Api.Repo.Migrations.AddContentToContentModule do
 
   def up do
     alter table(:content_modules) do
-      add :content, :json, default: "{}"
+      add :content, :jsonb, default: "{}"
     end
 
     flush()

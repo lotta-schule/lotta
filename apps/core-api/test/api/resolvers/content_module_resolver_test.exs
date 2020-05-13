@@ -1,5 +1,5 @@
 defmodule Api.ContentModuleResolverTest do
-  use ApiWeb.ConnCase
+  use ApiWeb.ConnCase, async: true
 
   setup do
     Api.Repo.Seeder.seed()
