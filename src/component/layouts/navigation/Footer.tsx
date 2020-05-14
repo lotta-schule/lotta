@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { makeStyles, Link } from '@material-ui/core';
+import { makeStyles, Link, Typography } from '@material-ui/core';
 import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { CollisionLink } from 'component/general/CollisionLink';
@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
             transform: 'rotate(270deg)',
             transformOrigin: 'right',
         }
+    },
+    font: {
+        fontSize: '0.8rem',
     }
 }));
 
@@ -29,6 +32,7 @@ export const Footer = memo(() => {
     const categories = useCategories()[0].filter(category => category.isSidenav);
     return (
         <div className={styles.root}>
+            <Typography className={styles.font}>
             {categories.map(category => (
                 <>
                     <Link
@@ -41,6 +45,7 @@ export const Footer = memo(() => {
                 </>
             ))}
             <Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link>
+            </Typography>
         </div>
     )
 });
