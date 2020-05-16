@@ -18,7 +18,7 @@ defmodule Api.Repo.Seeder do
     |> Map.put(:token, "Seb034hP2?019")
     |> Api.Repo.insert!
 
-    {:ok, lotta_admin} = Api.Accounts.register_user(%{
+    {:ok, _lotta_admin} = Api.Accounts.register_user(%{
       name: "Alexis Rinaldoni",
       email: "alexis.rinaldoni@einsa.net",
       password: "test123",
@@ -218,7 +218,7 @@ defmodule Api.Repo.Seeder do
     form = Api.Repo.insert!(%Api.Content.ContentModule{
       article_id: oskar_goes_to.id,
       type: "text",
-      content: %{"value" => "test"},
+      content: %{"value" => "Pizza Test-Formular"},
       configuration: %{
         "destination" => "alexis.rinaldoni@lotta.schule",
         "save_internally" => true,

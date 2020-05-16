@@ -28,7 +28,6 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
 
   def send_conversion_request(%File{} = file) do
     {:ok, encoded_file} = Poison.encode(file)
-    IO.inspect("Publish file " <> encoded_file)
     GenRMQ.Publisher.publish(Api.Queue.MediaConversionRequestPublisher, encoded_file)
     file
   end

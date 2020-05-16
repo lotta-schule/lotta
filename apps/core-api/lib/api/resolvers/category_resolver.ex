@@ -1,5 +1,4 @@
 defmodule Api.CategoryResolver do
-  alias Api.Accounts.User
 
   def all(_args, %{context: %{current_user: current_user, user_group_ids: user_group_ids, tenant: tenant} = context}) do
     {:ok, Api.Tenants.list_categories_by_tenant(tenant, current_user, user_group_ids, context[:user_is_admin])}
@@ -51,7 +50,7 @@ defmodule Api.CategoryResolver do
     end
   end
   
-  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
+  def delete(%{id: id}, %{context: context}) do
     if context[:current_user] && context[:user_is_admin] do
       try do
         category = Api.Tenants.get_category!(id)

@@ -1,8 +1,7 @@
 defmodule Api.Fixtures do
   alias Api.Repo
-  alias Api.Accounts
   alias Api.Tenants.{Tenant, Category}
-  alias Api.Accounts.{User, UserGroup, File}
+  alias Api.Accounts.{User, File}
   alias Api.Content.{Article}
 
   # Tenant

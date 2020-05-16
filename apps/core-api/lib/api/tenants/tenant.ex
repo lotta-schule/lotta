@@ -4,7 +4,6 @@ defmodule Api.Tenants.Tenant do
   import Ecto.Query
   use Api.ReadRepoAliaser
   alias Api.Tenants.{Category, CustomDomain, Tenant}
-  alias Api.Accounts
   alias Api.Accounts.{File,User,UserGroup}
 
   schema "tenants" do

@@ -1,8 +1,6 @@
 defmodule Api.Elasticsearch.Store do
   @behaviour Elasticsearch.Store
 
-  import Ecto.Query
-
   alias Api.Repo
 
   @impl true

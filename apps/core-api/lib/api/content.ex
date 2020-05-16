@@ -8,9 +8,8 @@ defmodule Api.Content do
   alias Api.Repo
   use Api.ReadRepoAliaser
 
-  alias Api.Content.{Article, ContentModule, ContentModuleResult}
+  alias Api.Content.{Article, ContentModule}
   alias Api.Tenants.{Category,Tenant}
-  alias Api.Accounts.{User}
 
   def data() do
     Dataloader.Ecto.new(ReadRepo, query: &query/2)
@@ -137,7 +136,6 @@ defmodule Api.Content do
       |> put_assoc(:users, [user])
     case Repo.insert(changeset) do
       {:ok, article} ->
-        Elasticsearch.put_document(Api.Elasticsearch.Cluster, article, "articles")
         {:ok, article}
       result ->
         result
@@ -313,7 +311,7 @@ defmodule Api.Content do
     |> Repo.update()
   end
 
-  def list_public_articles(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
+  def list_public_articles(%Tenant{} = tenant, _user, user_group_ids, user_is_admin) do
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,

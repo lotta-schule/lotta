@@ -1,9 +1,10 @@
 defmodule Api.SearchResolverTest do
   use ApiWeb.ConnCase
+  alias Api.Content
   
   setup do
     Api.Repo.Seeder.seed()
-    Mix.Tasks.Elasticsearch.Build.run(["articles", "--cluster", "Api.Elasticsearch.Cluster"])
+    Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
     admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
@@ -12,7 +13,6 @@ defmodule Api.SearchResolverTest do
     {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
     {:ok, lehrer_jwt, _} = Api.Guardian.encode_and_sign(lehrer, %{ email: lehrer.email, name: lehrer.name })
     {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
-    web_tenant_id = web_tenant.id
 
     {:ok, %{
       web_tenant: web_tenant,
@@ -95,6 +95,26 @@ defmodule Api.SearchResolverTest do
           ]
         }
       }
+    end
+
+    test "updated article should be indexed" do
+      {:ok, article} =
+        Api.Content.Article
+        |> Api.Repo.get_by!(title: "Beitrag Projekt 1")
+        |> Content.update_article(%{title: "Neuer Artikel nur für die Suche"})
+      {:ok, %{"_source" => %{"title" => title}}} = Elasticsearch.get(Api.Elasticsearch.Cluster, "/articles/_doc/#{article.id}")
+
+      assert title == "Neuer Artikel nur für die Suche"
+    end
+
+    test "deleted article should be deleted from index"  do
+      {:ok, %{id: id}} =
+        Api.Content.Article
+        |> Api.Repo.get_by!(title: "Beitrag Projekt 1")
+        |> Content.delete_article()
+      {result, _} = Elasticsearch.get(Api.Elasticsearch.Cluster, "/articles/_doc/#{id}")
+
+      assert result == :error
     end
   end
 end

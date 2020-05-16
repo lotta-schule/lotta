@@ -296,7 +296,7 @@ defmodule Api.CategoryResolverTest do
     }
     """
 
-    test "creates new category", %{admin_jwt: admin_jwt, faecher_category: faecher_category} do
+    test "creates new category", %{admin_jwt: admin_jwt} do
       category = %{
         title: "Brandneu"
       }
@@ -315,7 +315,7 @@ defmodule Api.CategoryResolverTest do
       }
     end
 
-    test "returns error if user is not admin", %{user_jwt: user_jwt, faecher_category: faecher_category} do
+    test "returns error if user is not admin", %{user_jwt: user_jwt} do
       category = %{
         title: "Neue Fächer"
       }
@@ -339,7 +339,7 @@ defmodule Api.CategoryResolverTest do
       }
     end
 
-    test "returns error if user is not logged in", %{faecher_category: faecher_category} do
+    test "returns error if user is not logged in" do
       category = %{
         title: "Neue Fächer"
       }
@@ -374,9 +374,6 @@ defmodule Api.CategoryResolverTest do
     """
 
     test "deletes new category", %{admin_jwt: admin_jwt, faecher_category: faecher_category} do
-      category = %{
-        title: "Brandneu"
-      }
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
@@ -393,9 +390,6 @@ defmodule Api.CategoryResolverTest do
     end
 
     test "returns error if category does not exist", %{admin_jwt: admin_jwt} do
-      category = %{
-        title: "Neue Fächer"
-      }
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
@@ -417,9 +411,6 @@ defmodule Api.CategoryResolverTest do
     end
 
     test "returns error if user is not admin", %{user_jwt: user_jwt, faecher_category: faecher_category} do
-      category = %{
-        title: "Neue Fächer"
-      }
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{user_jwt}")
@@ -441,9 +432,6 @@ defmodule Api.CategoryResolverTest do
     end
 
     test "returns error if user is not logged in", %{faecher_category: faecher_category} do
-      category = %{
-        title: "Neue Fächer"
-      }
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{id: faecher_category.id})

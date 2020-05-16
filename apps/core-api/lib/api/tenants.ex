@@ -17,7 +17,7 @@ defmodule Api.Tenants do
     queryable
   end
 
-  def resolve_widgets(_args, %{context: %{tenant: tenant} = context, source: category}) do
+  def resolve_widgets(_args, %{context: context, source: category}) do
     user_group_ids = context[:user_group_ids] || []
     user_is_admin = context[:user_is_admin]
     widgets = from(w in Widget,
@@ -92,7 +92,7 @@ defmodule Api.Tenants do
           else
             error ->
               if System.get_env("APP_ENVIRONMENT") == "staging" do
-                slug = host
+                host
                 |> String.split(".")
                 |> Enum.fetch!(0)
                 |> get_tenant_by_slug()
@@ -263,7 +263,7 @@ defmodule Api.Tenants do
       [%Category{}, ...]
 
   """
-  def list_categories_by_tenant(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
+  def list_categories_by_tenant(%Tenant{} = tenant, _user, user_group_ids, user_is_admin) do
     from(c in Category,
       left_join: cug in "categories_user_groups",
       on: cug.category_id == c.id,

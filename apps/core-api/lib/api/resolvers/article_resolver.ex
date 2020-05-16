@@ -84,7 +84,7 @@ defmodule Api.ArticleResolver do
     end
   end
 
-  def update(%{id: id, article: article_input}, %{context: %{tenant: tenant} = context}) do
+  def update(%{id: id, article: article_input}, %{context: context}) do
     article = Content.get_article!(id)
     if context[:current_user] && (context[:user_is_admin] || User.is_author?(context[:current_user], article)) do
       article
@@ -94,7 +94,7 @@ defmodule Api.ArticleResolver do
     end
   end
   
-  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
+  def delete(%{id: id}, %{context: context}) do
     article = Content.get_article!(id)
     if context[:current_user] && (context[:user_is_admin] || User.is_author?(context[:current_user], article)) do
       article
@@ -104,7 +104,7 @@ defmodule Api.ArticleResolver do
     end
   end
 
-  def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant} = context}) do
+  def toggle_pin(%{id: article_id}, %{context: context}) do
     if context[:current_user] && context[:user_is_admin] do
       Content.toggle_article_pin(article_id)
     else

@@ -1,6 +1,5 @@
 defmodule Api.Elasticsearch.Search do
   alias Api.Tenants.Tenant
-  alias Api.Content.Article
   import Ecto.Query
   use Api.ReadRepoAliaser
 
@@ -21,19 +20,28 @@ defmodule Api.Elasticsearch.Search do
       "/articles/_doc/_search",
       %{
         "query" => %{
-          "multi_match" => %{
-            "query" => searchtext,
-            "fields" => [
-              "title^3",
-              "title.keyword^4",
-              "preview",
-              "topic^2",
-              "authors.email",
-              "authors.name",
-              "authors.email",
-              "content_module.content"
-            ],
-            "fuzziness" => "auto"
+          "bool" => %{
+            "must" => %{
+              "multi_match" => %{
+                "query" => searchtext,
+                "fields" => [
+                  "title^3",
+                  "title.keyword^4",
+                  "preview",
+                  "topic^2",
+                  "authors.email",
+                  "authors.name",
+                  "authors.email",
+                  "content_module.content"
+                ],
+                "fuzziness" => "auto"
+              }
+            },
+            "filter" => %{
+              "term" => %{
+                "tenant_id" => tenant.id
+              }
+            }
           }
         }
       }
