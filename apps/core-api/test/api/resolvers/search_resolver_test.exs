@@ -4,6 +4,8 @@ defmodule Api.SearchResolverTest do
   
   setup do
     Api.Repo.Seeder.seed()
+    Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
+    |> IO.inspect()
     Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
     |> IO.inspect()
 
