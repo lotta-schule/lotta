@@ -17,6 +17,10 @@ elasticsearch_host = case System.get_env("CI") do
   nil -> "elasticsearch"
   _ -> "127.0.0.1"
 end
+db_host = "127.0.0.1"
+rabbitmq_host = "127.0.0.1"
+redis_host = "127.0.0.1"
+elasticsearch_host = "127.0.0.1"
 
 # Configure your database
 config :api, Api.Repo,
