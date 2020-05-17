@@ -29,7 +29,7 @@ test:
     - name: rabbitmq:latest
     - name: bitnami/redis:latest
       alias: redis
-    - name: elasticsearch:7.7.0
+    - name: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
       alias: elasticsearch
       command:
         - "bin/elasticsearch"
