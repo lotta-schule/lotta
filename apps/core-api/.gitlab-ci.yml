@@ -30,6 +30,7 @@ test:
     - name: bitnami/redis:latest
       alias: redis
     - name: lotta/elasticsearch-single-node:7.7.0
+      alias: elasticsearch
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
