@@ -31,8 +31,8 @@ test:
       alias: redis
     - name: elasticsearch:7.7.0
       command:
-        - "xpack.security.enabled=false"
-        - discovery.type=single-nod"]
+        - "-Expack.security.enabled=false"
+        - "-Ediscovery.type=single-node"
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
