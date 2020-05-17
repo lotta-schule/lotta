@@ -5,15 +5,27 @@ stages:
 
 variables:
   # set docker host to connect to docker in kubernetes
-  DOCKER_HOST: tcp://localhost:2375/
-  DOCKER_DRIVER: overlay2
+  # DOCKER_HOST: tcp://localhost:2375/
+  # DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
-  DOCKER_TLS_CERTDIR: ""
+  DOCKER_TLS_CERTDIR: "/certs"
 
 cache:
   key: "lotta-api-deps"
   paths:
     - deps/
+
+services:
+  - name: postgres:latest
+  - name: rabbitmq:latest
+  - name: bitnami/redis:latest
+    alias: redis
+  - name: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    alias: elasticsearch
+    command:
+      - "bin/elasticsearch"
+      - "-Ediscovery.type=single-node"
+      - "-Expack.security.enabled=false"
 
 test:
   stage: test
@@ -24,11 +36,6 @@ test:
     POSTGRES_USER: lotta
     POSTGRES_DB: api_test
     REDIS_PASSWORD: lotta
-  services:
-    - name: postgres:latest
-    - name: rabbitmq:latest
-    - name: bitnami/redis:latest
-      alias: redis
   before_script:
     - mix local.hex --force
     - mix local.rebar --force

@@ -34,6 +34,7 @@ config :api, :redis_connection,
   password: "lotta",
   name: :redix
 
+
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
   access_key_id: ugc_s3_compat_access_key_id,

@@ -1,0 +1,66 @@
+{
+    "mappings": {
+        "properties": {
+            "tenant_id": {
+                "type": "keyword"
+            },
+            "category_id": {
+                "type": "keyword"
+            },
+            "title": {
+                "type": "text",
+                "analyzer": "german",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "preview": {
+                "type": "text",
+                "analyzer": "german"
+            },
+            "topic": {
+                "type": "keyword"
+            },
+            "updated_at": {
+                "type": "date"
+            },
+            "inserted_at": {
+                "type": "date"
+            },
+            "users": {
+                "type": "nested",
+                "properties": {
+                    "name": {
+                        "type": "keyword"
+                    },
+                    "nickname": {
+                        "type": "keyword"
+                    },
+                    "email": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "content_modules": {
+                "type": "nested",
+                "properties": {
+                    "type": {
+                        "type": "keyword"
+                    },
+                    "updated_at": {
+                        "type": "date"
+                    },
+                    "inserted_at": {
+                        "type": "date"
+                    },
+                    "content": {
+                        "type": "text",
+                        "analyzer": "german"
+                    }
+                }
+            }
+        }
+    }
+}

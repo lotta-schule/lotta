@@ -1,10 +1,12 @@
 defmodule Api.ContentModuleResolverTest do
   use ApiWeb.ConnCase
+  import Ecto.Query
 
   setup do
     Api.Repo.Seeder.seed()
 
-    test_formular = Api.Repo.get_by!(Api.Content.ContentModule, text: "Pizza Test-Formular")
+    query = from cm in Api.Content.ContentModule, where: fragment("?->>? = ?", cm.content, "value", "Pizza Test-Formular")
+    test_formular = Api.Repo.one!(query)
     admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
     user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@lotta.schule"])
     {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
@@ -95,7 +97,7 @@ defmodule Api.ContentModuleResolverTest do
       }
     end
 
-    test "sends form response and save sent user", %{admin_jwt: admin_jwt, admin: admin, test_formular: test_formular} do
+    test "sends form response and save sent user", %{admin_jwt: admin_jwt, test_formular: test_formular} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")

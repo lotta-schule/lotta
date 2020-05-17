@@ -5,6 +5,8 @@ networks:
     driver: bridge
   postgres:
   redis:
+  elasticsearch:
+    driver: bridge
   rabbitmq:
     driver: bridge
 
@@ -26,11 +28,13 @@ services:
       - rabbitmq
       - postgres
       - redis
+      - elasticsearch
     networks:
       - api
       - postgres
       - rabbitmq
       - redis
+      - elasticsearch
     environment:
       MIX_ENV: dev
     env_file:
@@ -67,3 +71,33 @@ services:
       - rabbitmq
     expose:
       - "15672"
+
+
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.7.0
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    networks:
+      - elasticsearch

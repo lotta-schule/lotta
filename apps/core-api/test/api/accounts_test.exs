@@ -66,8 +66,6 @@ defmodule Api.AccountsTest do
   end
 
   describe "files" do
-    alias Api.Accounts.File
-
     test "delete_file/1 should delete file" do
       user = Fixtures.fixture(:registered_user)
       file = Fixtures.fixture(:file, user)

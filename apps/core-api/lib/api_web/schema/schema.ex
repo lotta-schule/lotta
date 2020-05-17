@@ -9,14 +9,15 @@ defmodule ApiWeb.Schema do
   import_types __MODULE__.ContentsTypes
   import_types __MODULE__.ScheduleTypes
   import_types __MODULE__.CalendarTypes
+  import_types __MODULE__.SearchTypes
 
   query do
-
     import_fields :accounts_queries
     import_fields :tenants_queries
     import_fields :contents_queries
     import_fields :schedule_queries
     import_fields :calendar_queries
+    import_fields :search_queries
   end
 
   mutation do

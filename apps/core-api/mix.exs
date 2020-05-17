@@ -71,6 +71,7 @@ defmodule Api.MixProject do
       {:honeybadger, "~> 0.14.0"},
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
+      {:elasticsearch, "~> 1.0.0"},
       # live dashboard
       {:telemetry_poller, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},

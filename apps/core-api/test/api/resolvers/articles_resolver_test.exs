@@ -1,5 +1,5 @@
 defmodule Api.ArticleResolverTest do
-  use ApiWeb.ConnCase
+  use ApiWeb.ConnCase, async: true
   
   setup do
     Api.Repo.Seeder.seed()
@@ -49,7 +49,6 @@ defmodule Api.ArticleResolverTest do
       }
     }
     """
-
     test "returns an article", %{oskar: oskar} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -867,13 +866,13 @@ defmodule Api.ArticleResolverTest do
 
       draft
       |> Api.Content.Article.changeset(%{
-        content_modules: [%{ type: "IMAGE", text: "", sort_key: 0, configuration: "{}", files: [%{id: file1.id}] }]
+        content_modules: [%{ type: "IMAGE", content: "{\"text\": \"\"}", sort_key: 0, configuration: "{}", files: [%{id: file1.id}] }]
       })
 
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
-      |> post("/api", query: @query, variables: %{ id: draft.id, article: %{ title: "ABC", content_modules: [%{ type: "IMAGE", text: "bla", sort_key: 0, configuration: "{}", files: [%{id: file2.id}] }] } })
+      |> post("/api", query: @query, variables: %{ id: draft.id, article: %{ title: "ABC", content_modules: [%{ type: "IMAGE", content: "{\"text\": \"bla\"}", sort_key: 0, configuration: "{}", files: [%{id: file2.id}] }] } })
       |> json_response(200)
   
       assert res == %{

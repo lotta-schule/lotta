@@ -8,9 +8,8 @@ defmodule Api.Content do
   alias Api.Repo
   use Api.ReadRepoAliaser
 
-  alias Api.Content.{Article, ContentModule, ContentModuleResult}
+  alias Api.Content.{Article, ContentModule}
   alias Api.Tenants.{Category,Tenant}
-  alias Api.Accounts.{User}
 
   def data() do
     Dataloader.Ecto.new(ReadRepo, query: &query/2)
@@ -130,11 +129,17 @@ defmodule Api.Content do
 
   """
   def create_article(attrs \\ %{}, tenant, user) do
-    %Article{}
-    |> Article.create_changeset(attrs)
-    |> put_assoc(:tenant, tenant)
-    |> put_assoc(:users, [user])
-    |> Repo.insert()
+    changeset =
+      %Article{}
+      |> Article.create_changeset(attrs)
+      |> put_assoc(:tenant, tenant)
+      |> put_assoc(:users, [user])
+    case Repo.insert(changeset) do
+      {:ok, article} ->
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -150,9 +155,16 @@ defmodule Api.Content do
 
   """
   def update_article(%Article{} = article, attrs) do
-    article
-    |> Article.changeset(attrs)
-    |> Repo.update()
+    changeset =
+      article
+      |> Article.changeset(attrs)
+    case Repo.update(changeset) do
+      {:ok, article} ->
+        Elasticsearch.put_document(Api.Elasticsearch.Cluster, article, "articles")
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -168,7 +180,13 @@ defmodule Api.Content do
 
   """
   def delete_article(%Article{} = article) do
-    Repo.delete(article)
+    case Repo.delete(article) do
+      {:ok, article} ->
+        Elasticsearch.delete_document(Api.Elasticsearch.Cluster, article, "articles")
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -293,7 +311,7 @@ defmodule Api.Content do
     |> Repo.update()
   end
 
-  def list_public_articles(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
+  def list_public_articles(%Tenant{} = tenant, _user, user_group_ids, user_is_admin) do
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,

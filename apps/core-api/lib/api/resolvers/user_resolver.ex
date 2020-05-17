@@ -30,7 +30,7 @@ defmodule Api.UserResolver do
   def resolve_is_blocked(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.is_blocked?(user, tenant)}
   end
-  def resolve_is_blocked(user, _args, _context), do: {:ok, false}
+  def resolve_is_blocked(_user, _args, _context), do: {:ok, false}
 
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
@@ -43,11 +43,11 @@ defmodule Api.UserResolver do
     {:ok, User.get_groups(user, tenant)}
   end
 
-  def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
+  def resolve_assigned_groups(user, _args, _info) do
     {:ok, User.get_assigned_groups(user)}
   end
 
-  def resolve_enrollment_tokens(user, _args, %{context: %{tenant: tenant}}) do
+  def resolve_enrollment_tokens(user, _args, _info) do
     user = ReadRepo.preload(user, :enrollment_tokens)
     tokens =
       user.enrollment_tokens
