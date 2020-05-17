@@ -29,6 +29,10 @@ test:
     - name: rabbitmq:latest
     - name: bitnami/redis:latest
       alias: redis
+    - name: elasticsearch:7.7.0
+      command:
+        - "xpack.security.enabled=false"
+        - discovery.type=single-nod"]
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
