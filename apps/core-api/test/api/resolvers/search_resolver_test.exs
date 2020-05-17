@@ -5,9 +5,7 @@ defmodule Api.SearchResolverTest do
   setup do
     Api.Repo.Seeder.seed()
     Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
-    |> IO.inspect()
     Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
-    |> IO.inspect()
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
     admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])

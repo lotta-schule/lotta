@@ -10,7 +10,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :api, ApiWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "localhost"]
 
 # Do not print debug messages in production
 config :logger, level: :info
