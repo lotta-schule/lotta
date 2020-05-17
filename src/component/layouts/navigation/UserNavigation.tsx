@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined, SecurityOutlined, AccountCircle } from '@material-ui/icons';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
-import { Grid, Link, makeStyles, Button, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
+import { Grid, makeStyles, Button, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
@@ -35,14 +35,6 @@ const useStyles = makeStyles(theme => ({
     badge: {
         left: '-2.5em',
         transform: 'scale(1) translate(0%, 0%)'
-    },
-    profileMenuLink: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        marginRight: '-1.1em',
-        textAlign: 'center'
     },
     menu: {
         boxShadow: '4px 4px 10px #ccc6',
