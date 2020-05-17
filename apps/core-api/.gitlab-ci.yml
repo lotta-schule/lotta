@@ -15,6 +15,18 @@ cache:
   paths:
     - deps/
 
+services:
+  - name: postgres:latest
+  - name: rabbitmq:latest
+  - name: bitnami/redis:latest
+    alias: redis
+  - name: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    alias: elasticsearch
+    command:
+      - "bin/elasticsearch"
+      - "-Ediscovery.type=single-node"
+      - "-Expack.security.enabled=false"
+
 test:
   stage: test
   image: elixir:1.10.2
@@ -24,17 +36,6 @@ test:
     POSTGRES_USER: lotta
     POSTGRES_DB: api_test
     REDIS_PASSWORD: lotta
-  services:
-    - name: postgres:latest
-    - name: rabbitmq:latest
-    - name: bitnami/redis:latest
-      alias: redis
-    - name: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-      alias: elasticsearch
-      command:
-        - "bin/elasticsearch"
-        - "-Ediscovery.type=single-node"
-        - "-Expack.security.enabled=false"
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
