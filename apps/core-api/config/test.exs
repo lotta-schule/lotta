@@ -13,6 +13,10 @@ redis_host = case System.get_env("CI") do
   nil -> "redis"
   _ -> "127.0.0.1"
 end
+elasticsearch_host = case System.get_env("CI") do
+  nil -> "elasticsearch"
+  _ -> "127.0.0.1"
+end
 
 # Configure your database
 config :api, Api.Repo,
@@ -38,7 +42,7 @@ config :api, Api.Guardian,
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 
 config :api, Api.Elasticsearch.Cluster,
-  url: "http://elasticsearch:9200"
+  url: "http://#{elasticsearch_host}:9200"
 
 config :api, :base_url,
   ".medienportal.lvh.me:3000"
