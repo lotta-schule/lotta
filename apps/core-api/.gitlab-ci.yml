@@ -29,8 +29,12 @@ test:
     - name: rabbitmq:latest
     - name: bitnami/redis:latest
       alias: redis
-    - name: lotta/elasticsearch-single-node:7.7.0
+    - name: elasticsearch:7.7.0
       alias: elasticsearch
+      command:
+        - "bin/elasticsearch"
+        - "-Ediscovery.type=single-node"
+        - "-Expack.security.enabled=false"
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
