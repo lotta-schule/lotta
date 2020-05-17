@@ -18,6 +18,8 @@ redis_password = System.fetch_env!("REDIS_PASSWORD")
 rabbitmq_username = System.fetch_env!("RABBITMQ_USERNAME")
 rabbitmq_password = System.fetch_env!("RABBITMQ_PASSWORD")
 rabbitmq_host = System.fetch_env!("RABBITMQ_HOST")
+# elasticsearch
+elasticsearch_host = System.fetch_env!("ELASTICSEARCH_HOST")
 # S3-compatible block storage for User Generated Content
 ugc_s3_compat_endpoint = System.fetch_env!("UGC_S3_COMPAT_ENDPOINT")
 ugc_s3_compat_access_key_id = System.fetch_env!("UGC_S3_COMPAT_ACCESS_KEY_ID")
@@ -69,6 +71,9 @@ config :api, :base_url,
 config :api, :schedule_provider_url,
   schedule_provider_url
 
+config :api, Api.Elasticsearch.Cluster,
+  url: elasticsearch_host
+
 config :api, ApiWeb.Endpoint,
   url: [host: host],
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
@@ -80,7 +85,8 @@ config :api, ApiWeb.Endpoint,
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-config :api, ApiWeb.Endpoint, server: true
+config :api, ApiWeb.Endpoint,
+  server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
