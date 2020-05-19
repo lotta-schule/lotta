@@ -1,6 +1,9 @@
 defmodule Api.Release do
   @app :api
 
+  @elasticsearch_clusters [Api.Elasticsearch.Cluster]
+  @elasticsearch_indexes [:articles]
+
   def migrate do
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
@@ -15,6 +18,14 @@ defmodule Api.Release do
 
   def rollback(repo, version) do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+  end
+
+  def build_elasticsearch_indexes do
+    Application.load(@app)
+    IO.puts("Building indexes...")
+    Enum.each @elasticsearch_clusters, fn cluster ->
+      Enum.each(@elasticsearch_indexes, &Elasticsearch.Index.hot_swap(cluster, &1))
+    end
   end
 
   defp repos do
