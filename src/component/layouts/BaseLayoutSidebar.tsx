@@ -1,10 +1,11 @@
-import React, { FunctionComponent, memo, useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { Grid, makeStyles, Theme, Drawer } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
-import useRouter from 'use-react-router';
 import { gql } from '@apollo/client';
 import { Footer } from './navigation/Footer';
+import { WidgetsList } from './WidgetsList';
+import useRouter from 'use-react-router';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -21,11 +22,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
+export interface BaseLayoutSidebarProps {
+    isEmpty?: boolean;
+    children?: any;
+}
+
+export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(({ children, isEmpty }) => {
     const styles = useStyles();
 
     const isMobile = useIsMobile();
     const client = useApolloClient();
+
     const { data } = useQuery<{ isMobileDrawerOpen: boolean }>(gql`{ isMobileDrawerOpen @client }`);
     const isMobileDrawerOpen = !!data?.isMobileDrawerOpen;
     const closeDrawer = useCallback(() => {
@@ -44,9 +51,16 @@ export const BaseLayoutSidebar: FunctionComponent = memo(({ children }) => {
     if (isMobile) {
         return (
             <Drawer classes={{ paper: styles.drawer }} anchor={'right'} open={isMobileDrawerOpen} onClose={() => closeDrawer()}>
-                {children}
+                {isEmpty ? <WidgetsList widgets={[]} /> : children}
                 <Footer />
             </Drawer>
+        );
+    } else if (isEmpty) {
+        // there must be a relative container for footer positioning
+        return (
+            <div style={{ position: 'relative', width: 0 }}>
+                <Footer />
+            </div>
         );
     } else {
         return (
