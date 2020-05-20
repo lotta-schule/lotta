@@ -319,7 +319,7 @@ defmodule Api.Content do
       on: c.id == a.category_id,
       where: a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
              (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^user_is_admin),
-      distinct: true
+      distinct: a.id
     )
   end
 

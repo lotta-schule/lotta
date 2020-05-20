@@ -5,10 +5,16 @@ defmodule Api.Elasticsearch.Search do
 
   def search_query_filter(query, searchtext, %Tenant{} = tenant) do
     with {:ok, result} <- execute_search(searchtext, tenant) do
+      query =
+        query
+        |> exclude(:order_by)
+        |> exclude(:distinct)
       ids =
         result["hits"]["hits"]
-        |> Enum.map(&(&1["_id"]))
-      from(a in query, where: a.id in ^ids)
+        |> Enum.map(&String.to_integer(&1["_id"]))
+      from a in query,
+        where: a.id in ^ids,
+        order_by: fragment("array_position(?, ?)", ^ids, a.id)
     else
       error ->
         error
