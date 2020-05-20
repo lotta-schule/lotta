@@ -19,7 +19,7 @@ config :api, ApiWeb.Endpoint,
   live_view: [signing_salt: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B"]
 
 config :api, Api.Elasticsearch.Cluster,
-  url: "http://es01:9200",
+  url: "http://elasticsearch:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
   indexes: %{
