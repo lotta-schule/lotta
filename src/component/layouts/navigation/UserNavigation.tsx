@@ -1,8 +1,8 @@
 import React, { memo, useState } from 'react';
-import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined, SecurityOutlined } from '@material-ui/icons';
+import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined, SecurityOutlined, AccountCircle } from '@material-ui/icons';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
-import { Grid, Link, makeStyles, Button, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
+import { Grid, makeStyles, Button, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
@@ -36,16 +36,11 @@ const useStyles = makeStyles(theme => ({
         left: '-2.5em',
         transform: 'scale(1) translate(0%, 0%)'
     },
-    profileMenuLink: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        marginRight: '-1.1em',
-        textAlign: 'center'
-    },
     menu: {
         boxShadow: '4px 4px 10px #ccc6',
+        border: '1px solid',
+        borderColor: '#bdbdbd',
+        marginTop: '2.5em',
         '& ul': {
             padding: 0,
         },
@@ -79,17 +74,14 @@ export const UserNavigation = memo(() => {
         return (
             <Grid container justify={'space-evenly'} className={styles.root}>
                 <Grid item xs={7} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                    <Button startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
-                </Grid>
-                <Grid item xs={5} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <CurrentUserAvatar size={100} style={{ width: 75, height: 75 }} />
-                    <Link className={styles.profileMenuLink} onClick={(e: any) => {
+                    <Button size="small" startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
+                    <Button size="small" startIcon={<AccountCircle color={'secondary'} />} onClick={(e: any) => {
                         e.preventDefault();
                         setProfileMenuAnchorEl(e.currentTarget);
-                    }}>
-                        Mein Profil
-                        <KeyboardArrowDown />
-                    </Link>
+                         }}> 
+                         Mein Profil 
+                         <KeyboardArrowDown color={'secondary'} />
+                    </Button>
                     <Menu
                         id={'profile-menu'}
                         anchorEl={profileMenuAnchorEl}
@@ -99,27 +91,27 @@ export const UserNavigation = memo(() => {
                     >
                         {[
                             <MenuItem key={'profile'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/profile'); }}>
-                                <PersonOutlineOutlined />&nbsp;
-                                    Mein Profil
+                                <PersonOutlineOutlined color={'secondary'} />&nbsp;
+                                    Meine Daten
                                 </MenuItem>,
                             <MenuItem key={'files'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/profile/files'); }}>
-                                <FolderOutlined />&nbsp;
+                                <FolderOutlined color={'secondary'} />&nbsp;
                                     Meine Dateien und Medien
                                 </MenuItem>,
                             <MenuItem key={'ownArticles'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/profile/articles'); }}>
-                                <AssignmentOutlined />&nbsp;
+                                <AssignmentOutlined color={'secondary'} />&nbsp;
                                 Meine Beiträge
                             </MenuItem>,
                             ...(User.isAdmin(currentUser) ? [
                                 <Divider key={'admin-divider'} />,
                                 <MenuItem key={'administration'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/tenant/general'); }}>
-                                    <SecurityOutlined />
+                                    <SecurityOutlined color={'secondary'} />
                                     &nbsp;
                                     Seite administrieren
                                 </MenuItem>,
                                 <MenuItem key={'open-articles'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/unpublished'); }}>
                                     <Badge badgeContent={unpublishedBadgeNumber} color={'secondary'}>
-                                        <AssignmentOutlined />
+                                        <AssignmentOutlined color={'secondary'} />
                                     </Badge>
                                     &nbsp;
                                     freizugebende Beiträge
@@ -127,7 +119,7 @@ export const UserNavigation = memo(() => {
                             ] : []),
                             <Divider key={'logout-divider'} />,
                             <MenuItem key={'logout'} onClick={() => { setProfileMenuAnchorEl(null); onLogout(); }}>
-                                <ExitToAppOutlined />
+                                <ExitToAppOutlined color={'secondary'} />
                                     &nbsp;
                                     Abmelden
                                 </MenuItem>
@@ -140,6 +132,9 @@ export const UserNavigation = memo(() => {
                             history.push(Article.getPath(article, { edit: true }));
                         }}
                     />
+                </Grid>
+                <Grid item xs={5} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <CurrentUserAvatar size={100} style={{ width: 105, height: 105 }} />
                 </Grid>
             </Grid>
         );
