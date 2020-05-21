@@ -51,8 +51,6 @@ const SearchLayout = memo(() => {
 
     const { data, loading: isLoading } = useQuery(SearchQuery, { variables: { searchText: debouncedSearchtext }, skip: !debouncedSearchtext });
 
-    console.log(data?.results);
-
     return (
         <>
             <BaseLayoutMainContent>
@@ -76,7 +74,7 @@ const SearchLayout = memo(() => {
                 </section>
                 <section>
                     {data?.results.map((article: ArticleModel) =>
-                        <ArticlePreviewDensedLayout article={article} disableEdit disablePin />
+                        <ArticlePreviewDensedLayout key={article.id} article={article} disableEdit disablePin />
                     )}
                 </section>
             </BaseLayoutMainContent>

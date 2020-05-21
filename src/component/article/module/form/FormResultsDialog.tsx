@@ -39,7 +39,6 @@ export const FormResultsDialog = memo<FormResultsDialogProps>(({ isOpen, onReque
                 ].join(',')
             )) ?? []
         ];
-        console.log(rows);
         const csv = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8' });
         saveAs(csv, 'formulardaten.csv');
     }, [data]);
