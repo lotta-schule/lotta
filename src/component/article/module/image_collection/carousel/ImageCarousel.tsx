@@ -66,8 +66,10 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
     const getConfiguration = (file: FileModel) => {
         if (filesConfiguration[file.id]) {
             return {
-                caption: ('' as any),
-                sortKey: (0 as any),
+                // @ts-ignore
+                caption: '',
+                // @ts-ignore
+                sortKey: 0,
                 ...filesConfiguration[file.id]
             };
         } else {
