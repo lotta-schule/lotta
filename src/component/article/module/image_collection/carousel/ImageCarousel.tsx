@@ -66,8 +66,8 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
     const getConfiguration = (file: FileModel) => {
         if (filesConfiguration[file.id]) {
             return {
-                caption: '',
-                sortKey: 0,
+                caption: ('' as any),
+                sortKey: (0 as any),
                 ...filesConfiguration[file.id]
             };
         } else {
