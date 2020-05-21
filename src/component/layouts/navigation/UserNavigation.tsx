@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined, SecurityOutlined, AccountCircle } from '@material-ui/icons';
+import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined, SecurityOutlined, AccountCircle, SearchRounded } from '@material-ui/icons';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Grid, makeStyles, Button, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
@@ -23,8 +23,8 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column'
     },
     button: {
-        marginBottom: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
+        width: '100%',
+        justifyContent: 'left'
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -74,13 +74,14 @@ export const UserNavigation = memo(() => {
         return (
             <Grid container justify={'space-evenly'} className={styles.root}>
                 <Grid item xs={7} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                    <Button size="small" startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
-                    <Button size="small" startIcon={<AccountCircle color={'secondary'} />} onClick={(e: any) => {
+                    <Button className={styles.button} size="small" startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
+                    <Button className={styles.button} size="small" startIcon={<SearchRounded color={'secondary'} />} onClick={() => history.push('/search')}>Suche</Button>
+                    <Button className={styles.button} size="small" startIcon={<AccountCircle color={'secondary'} />} onClick={(e: any) => {
                         e.preventDefault();
                         setProfileMenuAnchorEl(e.currentTarget);
-                         }}> 
-                         Mein Profil 
-                         <KeyboardArrowDown color={'secondary'} />
+                    }}>
+                        <span style={{ width: '100%', textAlign: 'left' }}>Mein Profil</span>
+                        <KeyboardArrowDown color={'secondary'} />
                     </Button>
                     <Menu
                         id={'profile-menu'}

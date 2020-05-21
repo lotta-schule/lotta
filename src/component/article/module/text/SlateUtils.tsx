@@ -102,18 +102,13 @@ export const toggleBlock = (editor: Editor, block: Block) => {
     }
 };
 
-export const deserialize = (encoded: string) => {
-    let decoded: any = {};
-    try {
-        decoded = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
-    } catch (e) {
-        decoded = JSON.parse(decodeURIComponent(Buffer.from(encoded, 'base64').toString('utf8')));
+export const getNormalizedSlateState = (state: any): Node[] => {
+    if (state.document) {
+        return migrateFromPreSlate050(state.document);
+    } else {
+        return state;
     }
-    return decoded.document ? migrateFromPreSlate050(decoded.document) : decoded;
-};
-
-export const serialize = (decoded: any) => Buffer.from(JSON.stringify(decoded), 'utf8').toString('base64');
-
+}
 export const migrateFromPreSlate050 = (document: SlatePre050Document): Node[] => {
     const convertNode = (oldNode: SlatePre050Node): Node => ({
         ...(oldNode.text !== undefined ? { text: oldNode.text } : {}),

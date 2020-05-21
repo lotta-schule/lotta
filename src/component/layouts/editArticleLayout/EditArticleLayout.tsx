@@ -72,6 +72,7 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
                             ...additionalProps,
                             contentModules: editedArticle.contentModules.map(cm => ({
                                 ...cm,
+                                content: cm.content ? JSON.stringify(cm.content) : cm.content,
                                 configuration: JSON.stringify(cm.configuration || {})
                             }))
                         };

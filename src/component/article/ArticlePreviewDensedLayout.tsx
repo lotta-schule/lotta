@@ -186,9 +186,6 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
                         {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
                     </Typography>
                     <Typography component={'span'} variant={'subtitle1'} className={clsx(styles.subtitle)}>
-                        {article.topic && <> | {article.topic}&nbsp;</>}
-                    </Typography>
-                    <Typography component={'span'} variant={'subtitle1'} className={clsx(styles.subtitle)}>
                         {article.users && article.users.length > 0 && <>&nbsp;<AuthorAvatarsList users={article.users} />&nbsp;</>}
                     </Typography>
                 </Grid>

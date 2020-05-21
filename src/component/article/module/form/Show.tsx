@@ -8,7 +8,7 @@ import { SendFormResponseMutation } from 'api/mutation/SendFormResponseMutation'
 import { SuccessMessage } from 'component/general/SuccessMessage';
 
 export interface ShowProps {
-    contentModule: ContentModuleModel<FormConfiguration>;
+    contentModule: ContentModuleModel<{}, FormConfiguration>;
 }
 
 const useStyles = makeStyles(theme => ({

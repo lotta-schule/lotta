@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const CreateArticleMutation = gql`
-    mutation CreateArticle($article: ArticleInput) {
-        article: createArticle(article: $article) {
+export const SearchQuery = gql`
+    query SearchQuery($searchText: String!, $options: SearchOptions) {
+        results: search(searchText: $searchText, options: $options) {
             id
             insertedAt
             updatedAt
@@ -14,30 +14,21 @@ export const CreateArticleMutation = gql`
             previewImageFile {
                 id
                 remoteLocation
-                mimeType
-                fileType
-                filename
-                filesize
-            }
-            contentModules {
-                id
-                type
-                content
-                sortKey
             }
             category {
                 id
-                title
+                hideArticlesFromHomepage
             }
             groups {
                 id
-                sortKey
-                name
             }
             users {
                 id
                 nickname
                 name
+                avatarImageFile {
+                    remoteLocation
+                }
             }
         }
     }

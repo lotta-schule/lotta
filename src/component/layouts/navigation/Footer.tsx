@@ -13,7 +13,11 @@ const useStyles = makeStyles(theme => ({
             width: '100%',
             textAlign: 'center'
         },
+        [theme.breakpoints.up('md')]: {
+            display: 'none'
+        },
         [theme.breakpoints.up('lg')]: {
+            display: 'block',
             top: '30vh',
             right: '-1em',
             position: 'absolute',
@@ -33,18 +37,15 @@ export const Footer = memo(() => {
     return (
         <div className={styles.root}>
             <Typography className={styles.font}>
-            {categories.map(category => (
-                <>
-                    <Link
-                        component={CollisionLink}
-                        to={category.redirect ? category.redirect : Category.getPath(category)}
-                    >
-                        {category.title}
-                    </Link>
-                    &nbsp;|&nbsp;
-                </>
-            ))}
-            <Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link>
+                {categories.map(category => (
+                    <React.Fragment key={category.id}>
+                        <Link component={CollisionLink} to={category.redirect ? category.redirect : Category.getPath(category)}>
+                            {category.title}
+                        </Link>
+                        &nbsp;|&nbsp;
+                    </React.Fragment>
+                ))}
+                <Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link>
             </Typography>
         </div>
     )

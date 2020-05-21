@@ -22,7 +22,7 @@ export const ToggleArticlePinMutation = gql`
             contentModules {
                 id
                 type
-                text
+                content
                 sortKey
                 configuration
                 files {

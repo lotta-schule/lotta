@@ -1,11 +1,11 @@
 import React, { memo, useState, useMemo, useEffect } from 'react';
 import { Node, createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
-import { deserialize, renderElement, renderLeaf, withImages, withLinks } from './SlateUtils';
+import { renderElement, renderLeaf, withImages, withLinks, getNormalizedSlateState } from './SlateUtils';
 import { ContentModuleModel } from '../../../../model';
 
 interface ShowProps {
-    contentModule: ContentModuleModel;
+    contentModule: ContentModuleModel<{ nodes: Node[] }>;
 }
 
 export const Show = memo<ShowProps>(({ contentModule }) => {
@@ -13,8 +13,8 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
     const [editorState, setEditorState] = useState<Node[]>([]);
 
     useEffect(() => {
-        setEditorState(contentModule.text ? deserialize(contentModule.text) : []);
-    }, [contentModule.text]);
+        setEditorState(getNormalizedSlateState(contentModule.content?.nodes ?? []));
+    }, [contentModule.content]);
 
     const editor = useMemo(() => withImages(withLinks(withReact(createEditor()))), []);
 

@@ -11,7 +11,6 @@ import { useTenant } from 'util/client/useTenant';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
-import { WidgetsList } from './WidgetsList';
 
 const useStyle = makeStyles((theme: Theme) => ({
     siteTitle: {
@@ -81,9 +80,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
             <BaseLayoutMainContent>
                 {mainContent}
             </BaseLayoutMainContent>
-            <BaseLayoutSidebar>
-                <WidgetsList widgets={[]} />
-            </BaseLayoutSidebar>
+            <BaseLayoutSidebar isEmpty />
         </>
     );
 });

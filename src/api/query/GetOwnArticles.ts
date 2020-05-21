@@ -18,7 +18,7 @@ export const GetOwnArticlesQuery = gql`
             contentModules {
                 id
                 type
-                text
+                content
                 sortKey
                 configuration
                 files {

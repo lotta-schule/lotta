@@ -81,7 +81,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
     const styles = useStyles({ twoColumns: category.layoutName === '2-columns' });
     const [user] = useCurrentUser();
 
-    const { data: widgetsData, error: widgetsError } = useQuery(GetCategoryWidgetsQuery, {
+    const { data: widgetsData, error: widgetsError, loading: isWidgetsLoading } = useQuery(GetCategoryWidgetsQuery, {
         variables: { categoryId: category.id }
     });
     const widgets = (widgetsData?.widgets ?? []).filter((widget: WidgetModel) => {
@@ -137,7 +137,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                     )}
                 </Grid>
             </BaseLayoutMainContent>
-            <BaseLayoutSidebar>
+            <BaseLayoutSidebar isEmpty={!widgetsError && !isWidgetsLoading && widgets.length < 1}>
                 {widgetsError && (
                     <ErrorMessage error={widgetsError} />
                 )}
