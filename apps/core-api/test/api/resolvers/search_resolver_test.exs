@@ -5,6 +5,7 @@ defmodule Api.SearchResolverTest do
   setup do
     Api.Repo.Seeder.seed()
     Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
+    :timer.sleep(200)
     Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
