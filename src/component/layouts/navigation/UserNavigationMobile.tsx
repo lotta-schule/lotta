@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { makeStyles, ButtonBase, Badge, Button } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ExitToAppOutlined, AddCircleOutlineOutlined, SecurityOutlined, FolderOutlined, AssignmentOutlined, PersonOutlineOutlined } from '@material-ui/icons';
+import { ExitToAppOutlined, AddCircleOutlineOutlined, SecurityOutlined, FolderOutlined, AssignmentOutlined, PersonOutlineOutlined, SearchOutlined } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useQuery } from '@apollo/client';
@@ -57,35 +57,38 @@ export const UserNavigationMobile = memo(() => {
                 <nav className={styles.root}>
                     <ButtonBase className={styles.button} onClick={() => { onLogout(); }}>
                         <ExitToAppOutlined color={'secondary'} />
-                    Abmelden
-                </ButtonBase>
+                        Abmelden
+                    </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { setCreateArticleModalIsOpen(true); }}>
                         <AddCircleOutlineOutlined color={'secondary'} />
-                    Beitrag
-                </ButtonBase>
-                    <div />
+                        Beitrag
+                    </ButtonBase>
+                    <ButtonBase className={styles.button} onClick={() => { history.push('/search'); }}>
+                        <SearchOutlined color={'secondary'} />
+                        Profil
+                    </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/profile'); }}>
                         <PersonOutlineOutlined color={'secondary'} />
-                    Profil
-                </ButtonBase>
+                        Profil
+                    </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/profile/files'); }}>
                         <FolderOutlined color={'secondary'} />
-                    Dateien
-                </ButtonBase>
+                        Dateien
+                    </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/profile/articles'); }}>
                         <AssignmentOutlined color={'secondary'} />
-                    Meine Beiträge
-                </ButtonBase>
+                        Meine Beiträge
+                    </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }}>
                         <SecurityOutlined color={'secondary'} />
-                    Admin
-                </ButtonBase>
+                        Admin
+                    </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/admin/unpublished'); }}>
                         <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'}>
                             <AssignmentOutlined color={'secondary'} />
                         </Badge>
-                    freizugebene Beiträge
-                </ButtonBase>
+                        freizugebene Beiträge
+                    </ButtonBase>
                     <div />
                     <div />
                 </nav>
