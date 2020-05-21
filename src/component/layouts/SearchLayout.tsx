@@ -65,7 +65,16 @@ const SearchLayout = memo(() => {
                     </Grid>
                 </Grid>
                 <section style={{ backgroundColor: '#fff', marginBottom: '1em', padding: '8px' }}>
-                    <TextField fullWidth variant={'outlined'} id={'searchfield'} label={'Suchbegriff'} type={'search'} value={searchText} onChange={e => setSearchText(e.target.value)} />
+                    <TextField
+                        fullWidth
+                        autoFocus
+                        variant={'outlined'}
+                        id={'searchfield'}
+                        label={'Suchbegriff'}
+                        type={'search'}
+                        value={searchText}
+                        onChange={e => setSearchText(e.target.value)}
+                    />
                     <Typography variant={'body1'}>
                         {isLoading && <span><CircularProgress style={{ height: '1em', width: '1em' }} /> Beiträge werden gesucht ...</span>}
                         {!isLoading && data && <span>Es wurden {data.results.length} Beiträge gefunden</span>}
