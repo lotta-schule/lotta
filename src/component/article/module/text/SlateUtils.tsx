@@ -34,7 +34,7 @@ export const renderElement = ({ attributes, children, element }: RenderElementPr
                 <Typography variant={'body1'} component={'p'} {...attributes}>{children}</Typography>
             );
         case 'link':
-            const href = element.href;
+            const href = element.href as string;
             let isSameHost = false;
             try {
                 const url = new URL(href);
@@ -88,7 +88,7 @@ export const toggleBlock = (editor: Editor, block: Block) => {
     const isList = listTypes.includes(block);
 
     Transforms.unwrapNodes(editor, {
-        match: n => listTypes.includes(n.type),
+        match: n => listTypes.includes(n.type as string),
         split: true
     });
 
