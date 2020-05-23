@@ -24,6 +24,8 @@ defmodule Api.Elasticsearch.Search do
     Elasticsearch.post(Api.Elasticsearch.Cluster,
       "/articles/_doc/_search",
       %{
+        "from" => 0,
+        "size" => 15,
         "query" => %{
           "bool" => %{
             "should" => [
