@@ -75,7 +75,7 @@ const SearchLayout = memo(() => {
                         value={searchText}
                         onChange={e => setSearchText(e.target.value)}
                     />
-                    <Typography variant={'body1'}>
+                    <Typography variant={'body1'} component={'div'}>
                         {isLoading && <span><CircularProgress style={{ height: '1em', width: '1em' }} /> Beiträge werden gesucht ...</span>}
                         {!isLoading && data && <span>Es wurden {data.results.length} Beiträge gefunden</span>}
                         {!isLoading && !data && <span>&nbsp;</span>}
