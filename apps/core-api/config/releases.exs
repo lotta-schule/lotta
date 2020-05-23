@@ -45,7 +45,7 @@ config :api, Api.Repo,
   database: db_name,
   hostname: db_host,
   show_sensitive_data_on_connection_error: false,
-  pool_size: 10
+  pool_size: 25
 
 config :api, :rabbitmq_connection,
   username: rabbitmq_username,

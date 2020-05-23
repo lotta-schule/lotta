@@ -1,6 +1,5 @@
 defmodule Api.Accounts.File do
   use Ecto.Schema
-  alias Api.Repo
   alias Api.UploadService
   import Ecto.Changeset
 
