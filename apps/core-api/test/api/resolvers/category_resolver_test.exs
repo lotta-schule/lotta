@@ -1,16 +1,22 @@
 defmodule Api.CategoryResolverTest do
   use ApiWeb.ConnCase
+  import Ecto.Query
+  alias Api.Repo
+  alias Api.Tenants
+  alias Api.Accounts.User
+  alias Api.Tenants.Category
+  alias Api.Content.Article
   
   setup do
-    Api.Repo.Seeder.seed()
+    Repo.Seeder.seed()
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    faecher_category = Api.Repo.get_by!(Api.Tenants.Category, title: "Fächer")
+    web_tenant = Tenants.get_tenant_by_slug!("web")
+    faecher_category = Repo.get_by!(Category, title: "Fächer")
     emails = [
       "alexis.rinaldoni@lotta.schule", "eike.wiewiorra@lotta.schule", "billy@lotta.schule", "maxi@lotta.schule"
     ]
     [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] = Enum.map(emails, fn email ->
-      user = Api.Repo.get_by!(Api.Accounts.User, [email: email])
+      user = Repo.get_by!(User, [email: email])
       {:ok, jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
       {user, jwt}
     end)
@@ -373,7 +379,14 @@ defmodule Api.CategoryResolverTest do
     }
     """
 
-    test "deletes new category", %{admin_jwt: admin_jwt, faecher_category: faecher_category} do
+    test "deletes faecher category with articles, make subcategories main categories", %{admin_jwt: admin_jwt, faecher_category: faecher_category, web_tenant: web_tenant} do
+      article_ids =
+        from(a in Article,
+          where: a.category_id == ^faecher_category.id,
+          select: a.id
+        )
+        |> Repo.all()
+
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
@@ -387,6 +400,31 @@ defmodule Api.CategoryResolverTest do
           }
         }
       }
+      refetched_article_ids =
+        from(a in Article, where: a.id in ^article_ids)
+        |> Repo.all()
+
+      assert refetched_article_ids == []
+
+      refetched_main_categories =
+        from(c in Category,
+          where: is_nil(c.category_id) and c.tenant_id == ^web_tenant.id,
+          order_by: [:sort_key, :title]
+        )
+        |> Repo.all()
+        |> Enum.map(&(&1.title))
+      assert refetched_main_categories == [
+        "Start",
+        "Profil",
+        "Sport",
+        "GTA",
+        "Kunst",
+        "Projekt",
+        "Sprache",
+        "Material",
+        "Galerien",
+        "Impressum"
+      ]
     end
 
     test "returns error if category does not exist", %{admin_jwt: admin_jwt} do

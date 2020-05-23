@@ -922,7 +922,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel bearbeiten.",
+            "message" => "Nur Administratoren oder Autoren dürfen Beiträge bearbeiten.",
             "path" => ["updateArticle"]
           }
         ]
@@ -942,7 +942,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel bearbeiten.",
+            "message" => "Du musst angemeldet sein um Beiträge zu bearbeiten.",
             "path" => ["updateArticle"]
           }
         ]
@@ -1006,7 +1006,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel löschen.",
+            "message" => "Nur Administratoren oder Autoren dürfen Beiträge löschen.",
             "path" => ["deleteArticle"]
           }
         ]
@@ -1026,7 +1026,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel löschen.",
+            "message" => "Du musst angemeldet sein um Beiträge zu löschen.",
             "path" => ["deleteArticle"]
           }
         ]
