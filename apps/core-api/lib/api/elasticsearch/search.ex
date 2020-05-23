@@ -26,22 +26,56 @@ defmodule Api.Elasticsearch.Search do
       %{
         "query" => %{
           "bool" => %{
-            "must" => %{
-              "multi_match" => %{
-                "query" => searchtext,
-                "fields" => [
-                  "title^3",
-                  "title.keyword^4",
-                  "preview",
-                  "topic^2",
-                  "authors.email",
-                  "authors.name",
-                  "authors.email",
-                  "content_module.content"
-                ],
-                "fuzziness" => "auto"
+            "should" => [
+              %{
+                "match" => %{
+                  "title" => %{
+                    "query" => searchtext,
+                    "boost" => 3,
+                    "fuzziness" => "auto"
+                  }
+                }
+              },
+              %{
+                "match" => %{
+                  "title.keyword" => %{
+                    "query" => searchtext,
+                    "boost" => 4,
+                    "fuzziness" => "auto"
+                  }
+                }
+              },
+              %{
+                "match" => %{
+                  "preview" => %{
+                    "query" => searchtext,
+                    "fuzziness" => "auto"
+                  }
+                }
+              },
+              %{
+                "match" => %{
+                  "topic" => %{
+                    "query" => searchtext,
+                    "boost" => 2,
+                    "fuzziness" => "auto"
+                  }
+                }
+              },
+              %{
+                "nested" => %{
+                  "path" => "content_modules",
+                  "query" => %{
+                    "match" => %{
+                      "content_modules.content" => %{
+                        "query" => searchtext,
+                        "fuzziness" => "auto"
+                      }
+                    }
+                  }
+                }
               }
-            },
+            ],
             "filter" => %{
               "term" => %{
                 "tenant_id" => tenant.id

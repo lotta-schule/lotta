@@ -27,7 +27,7 @@ config :api, Api.Elasticsearch.Cluster,
       settings: "priv/elasticsearch/articles.json",
       store: Api.Elasticsearch.Store,
       sources: [Api.Content.Article],
-      bulk_page_size: 50,
+      bulk_page_size: 150,
       bulk_wait_interval: 20_000
     }
   },
