@@ -3,7 +3,7 @@ defmodule Api.Queue.EmailPublisher do
   @behaviour GenRMQ.Publisher
   alias Api.Services.EmailSendRequest
   alias Api.Tenants.Tenant
-  use Api.ReadRepoAliaser
+  alias Api.Repo
 
   require Logger
 
@@ -83,7 +83,7 @@ defmodule Api.Queue.EmailPublisher do
   end
 
   def send_article_is_ready_admin_notification(%Api.Content.Article{} = article) do
-    article = ReadRepo.preload(article, :tenant)
+    article = Repo.preload(article, :tenant)
     tenant = article.tenant
     article_url = Api.Content.Article.get_url(article)
     tenant
@@ -105,10 +105,10 @@ defmodule Api.Queue.EmailPublisher do
   end
 
   def send_content_module_form_response(%Api.Content.ContentModule{} = content_module, %{} = responses) do
-    content_module = ReadRepo.preload(content_module, :article)
+    content_module = Repo.preload(content_module, :article)
     article =
       content_module.article
-      |> ReadRepo.preload(:tenant)
+      |> Repo.preload(:tenant)
     tenant = article.tenant
     responses_list =
       responses

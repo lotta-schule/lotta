@@ -1,5 +1,5 @@
 defmodule Api.UserResolver do
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper,User}
 
@@ -48,7 +48,7 @@ defmodule Api.UserResolver do
   end
 
   def resolve_enrollment_tokens(user, _args, _info) do
-    user = ReadRepo.preload(user, :enrollment_tokens)
+    user = Repo.preload(user, :enrollment_tokens)
     tokens =
       user.enrollment_tokens
       |> Enum.map(&(&1.enrollment_token))

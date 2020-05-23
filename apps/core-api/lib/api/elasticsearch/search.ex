@@ -1,7 +1,6 @@
 defmodule Api.Elasticsearch.Search do
   alias Api.Tenants.Tenant
   import Ecto.Query
-  use Api.ReadRepoAliaser
 
   def search_query_filter(query, searchtext, %Tenant{} = tenant) do
     with {:ok, result} <- execute_search(searchtext, tenant) do

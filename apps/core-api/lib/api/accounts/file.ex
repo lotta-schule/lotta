@@ -1,6 +1,6 @@
 defmodule Api.Accounts.File do
   use Ecto.Schema
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   alias Api.UploadService
   import Ecto.Changeset
 

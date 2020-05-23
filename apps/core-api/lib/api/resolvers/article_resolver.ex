@@ -1,10 +1,10 @@
 defmodule Api.ArticleResolver do
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   alias Api.Content
   alias Api.Accounts.User
 
   def get(%{id: id}, %{context: %{tenant: tenant, current_user: current_user}}) do
-    article = ReadRepo.preload(Content.get_article!(id), :tenant)
+    article = Repo.preload(Content.get_article!(id), :tenant)
     if User.is_author?(current_user, article) || User.is_admin?(current_user, tenant) do
       {:ok, article}
     else
@@ -15,7 +15,7 @@ defmodule Api.ArticleResolver do
     end
   end
   def get(%{id: id}, _info) do
-    article = ReadRepo.preload(Content.get_article!(id), :groups)
+    article = Repo.preload(Content.get_article!(id), :groups)
     case article.groups do
       [] ->
         {:ok, article}

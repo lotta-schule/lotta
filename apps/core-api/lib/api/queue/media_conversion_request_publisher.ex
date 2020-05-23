@@ -2,7 +2,7 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
   use GenServer
   @behaviour GenRMQ.Publisher
   alias Api.Accounts.File
-  use Api.ReadRepoAliaser
+  alias Api.Repo
 
   require Logger
 

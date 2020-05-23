@@ -1,13 +1,13 @@
 defimpl Elasticsearch.Document, for: Api.Content.Article do
   alias Api.Content.ContentModule
-  use Api.ReadRepoAliaser
+  alias Api.Repo
 
   def id(article), do: article.id
   def routing(_), do: false
   def encode(article) do
     article =
       article
-      |> ReadRepo.preload([:content_modules, :users])
+      |> Repo.preload([:content_modules, :users])
     %{
       tenant_id: article.tenant_id,
       category_id: article.category_id,
