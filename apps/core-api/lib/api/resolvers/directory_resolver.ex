@@ -1,8 +1,7 @@
 defmodule Api.DirectoryResolver do
-  use Api.ReadRepoAliaser
   alias Api.Accounts
   alias Api.Accounts.User
-  alias Repo
+  alias Api.Repo
   alias UUID
 
   def list(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) when is_integer(parent_directory_id) do
@@ -81,7 +80,7 @@ defmodule Api.DirectoryResolver do
       !User.can_write_directory?(current_user, directory) ->
         {:error, "Du darfst diesen Ordner nicht löschen."}
       directory
-      |> ReadRepo.preload([:directories, :files])
+      |> Repo.preload([:directories, :files])
       |> Map.take([:directories, :files])
       |> Map.values()
       |> List.flatten()
@@ -100,7 +99,7 @@ defmodule Api.DirectoryResolver do
     try do
       directory =
         Accounts.get_directory!(id)
-        |> ReadRepo.preload([:tenant, :parent_directory])
+        |> Repo.preload([:tenant, :parent_directory])
       source_directory = directory.parent_directory
       target_directory =
         with %{parent_directory_id: target_directory_id} <- args do

@@ -1,11 +1,10 @@
 defmodule Api.FileResolver do
-  use Api.ReadRepoAliaser
   alias Api.Accounts
   alias Api.Accounts.{Directory,User}
   alias Api.Tenants.Tenant
   alias Api.UploadService
   alias Api.Queue.MediaConversionRequestPublisher
-  alias Repo
+  alias Api.Repo
   alias UUID
 
   def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) when is_integer(parent_directory_id) do
@@ -23,7 +22,7 @@ defmodule Api.FileResolver do
     with directory when not is_nil(directory) <- Accounts.get_directory(parent_directory_id) do
       directory =
         directory
-        |> ReadRepo.preload([:user, :tenant])
+        |> Repo.preload([:user, :tenant])
       if User.can_write_directory?(current_user, directory) do
         upload_file_to_directory(file, directory, current_user, tenant)
       else
@@ -39,7 +38,7 @@ defmodule Api.FileResolver do
     try do
       file =
         Accounts.get_file!(id)
-        |> ReadRepo.preload([:tenant, :parent_directory])
+        |> Repo.preload([:tenant, :parent_directory])
       source_directory = file.parent_directory
       target_directory =
         with %{parent_directory_id: target_directory_id} <- args do
@@ -63,11 +62,11 @@ defmodule Api.FileResolver do
     try do
       file =
         Accounts.get_file!(id)
-        |> ReadRepo.preload([:parent_directory])
+        |> Repo.preload([:parent_directory])
       if User.can_write_directory?(current_user, file.parent_directory) do
         file =
           file
-          |> ReadRepo.preload(:file_conversions)
+          |> Repo.preload(:file_conversions)
         Enum.map(file.file_conversions, fn file_conversion ->
           Accounts.delete_file_conversion(file_conversion)
           Accounts.File.delete_attachment(file_conversion)

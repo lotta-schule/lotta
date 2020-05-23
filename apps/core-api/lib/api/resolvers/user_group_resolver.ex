@@ -1,12 +1,12 @@
 defmodule Api.UserGroupResolver do
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.User
 
   def resolve_model_groups(_args, %{source: model}) do
     groups =
       model
-      |> ReadRepo.preload(:groups)
+      |> Repo.preload(:groups)
       |> Map.fetch!(:groups)
       |> Enum.sort_by(&(&1.sort_key))
       |> Enum.reverse()
@@ -14,11 +14,11 @@ defmodule Api.UserGroupResolver do
   end
 
   def resolve_enrollment_tokens(user_group, _args, %{context: %{current_user: current_user}}) do
-    tenant = user_group |> ReadRepo.preload(:tenant) |> Map.fetch!(:tenant)
+    tenant = user_group |> Repo.preload(:tenant) |> Map.fetch!(:tenant)
     case User.is_admin?(current_user, tenant) do
       true ->
         {:ok, user_group
-        |> ReadRepo.preload(:enrollment_tokens)
+        |> Repo.preload(:enrollment_tokens)
         |> Map.fetch!(:enrollment_tokens)}
       _ ->
         {:ok, []}
@@ -58,7 +58,7 @@ defmodule Api.UserGroupResolver do
   def update(%{id: id, group: group_input}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
-        group = Accounts.get_user_group!(id) |> ReadRepo.preload(:tenant)
+        group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
         if group.tenant.id == tenant.id do
           Accounts.update_user_group(group, group_input)
         else
@@ -75,7 +75,7 @@ defmodule Api.UserGroupResolver do
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
-        group = Accounts.get_user_group!(id) |> ReadRepo.preload(:tenant)
+        group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
         if group.tenant.id == tenant.id do
           Accounts.delete_user_group(group)
         else

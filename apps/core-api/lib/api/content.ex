@@ -6,13 +6,12 @@ defmodule Api.Content do
   import Ecto.Query
   import Ecto.Changeset
   alias Api.Repo
-  use Api.ReadRepoAliaser
 
   alias Api.Content.{Article, ContentModule}
   alias Api.Tenants.{Category,Tenant}
 
   def data() do
-    Dataloader.Ecto.new(ReadRepo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
   def query(queryable, _params) do
@@ -37,7 +36,7 @@ defmodule Api.Content do
         from a in query, where: a.category_id == ^category_id
     end
     |> filter_query(filter)
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   def get_topics(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
@@ -45,7 +44,7 @@ defmodule Api.Content do
     Ecto.Query.from([a, ...] in query,
       where: not is_nil(a.topic),
       select: a.topic)
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -63,7 +62,7 @@ defmodule Api.Content do
       where: a.topic == ^topic,
       order_by: [desc: :updated_at]
     )
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -77,7 +76,7 @@ defmodule Api.Content do
   """
   def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
     Ecto.Query.from(a in Article, where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id))
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -91,7 +90,7 @@ defmodule Api.Content do
   """
   def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
     user_id = user.id
-    ReadRepo.all(Ecto.Query.from a in Article,
+    Repo.all(Ecto.Query.from a in Article,
       where: a.tenant_id == ^tenant.id,
       join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id,
       order_by: :id
@@ -113,7 +112,7 @@ defmodule Api.Content do
 
   """
   def get_article!(id) do
-    ReadRepo.get!(Article, id)
+    Repo.get!(Article, id)
   end
 
   @doc """
@@ -214,7 +213,7 @@ defmodule Api.Content do
 
   """
   def list_content_modules do
-    ReadRepo.all(ContentModule)
+    Repo.all(ContentModule)
   end
 
   @doc """
@@ -231,7 +230,7 @@ defmodule Api.Content do
       ** (Ecto.NoResultsError)
 
   """
-  def get_content_module!(id), do: ReadRepo.get!(ContentModule, id)
+  def get_content_module!(id), do: Repo.get!(ContentModule, id)
 
   @doc """
   Creates a content_module.

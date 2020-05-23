@@ -2,7 +2,7 @@ defmodule Api.Tenants.Tenant do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   alias Api.Tenants.{Category, CustomDomain, Tenant}
   alias Api.Accounts.{File,User,UserGroup}
 
@@ -32,7 +32,7 @@ defmodule Api.Tenants.Tenant do
   @doc false
   def changeset(tenant, attrs) do
     tenant
-    |> ReadRepo.preload([:logo_image_file, :background_image_file])
+    |> Repo.preload([:logo_image_file, :background_image_file])
     |> cast(attrs, [:title, :custom_theme])
     |> validate_required([:slug, :title])
     |> put_assoc_logo_image_file(attrs)
@@ -41,7 +41,7 @@ defmodule Api.Tenants.Tenant do
 
   def get_main_url(%Api.Tenants.Tenant{} = tenant) do
     main_domain = tenant
-    |> ReadRepo.preload(:custom_domains)
+    |> Repo.preload(:custom_domains)
     |> Map.fetch!(:custom_domains)
     |> Enum.find(&(&1.is_main_domain === true))
     case main_domain do
@@ -63,12 +63,12 @@ defmodule Api.Tenants.Tenant do
       where: g.tenant_id == ^(tenant.id) and g.is_admin_group == true,
       order_by: [u.name, u.email],
       distinct: true)
-    |> ReadRepo.all
+    |> Repo.all
   end
 
   defp put_assoc_logo_image_file(changeset, %{logo_image_file: %{id: logo_image_file_id}}) do
     changeset
-    |> put_assoc(:logo_image_file, ReadRepo.get(Api.Accounts.File, logo_image_file_id))
+    |> put_assoc(:logo_image_file, Repo.get(Api.Accounts.File, logo_image_file_id))
   end
   defp put_assoc_logo_image_file(changeset, %{logo_image_file: nil}) do
     changeset
@@ -78,7 +78,7 @@ defmodule Api.Tenants.Tenant do
 
   defp put_assoc_background_image_file(changeset, %{background_image_file: %{id: background_image_file_id}}) do
     changeset
-    |> put_assoc(:background_image_file, ReadRepo.get(Api.Accounts.File, background_image_file_id))
+    |> put_assoc(:background_image_file, Repo.get(Api.Accounts.File, background_image_file_id))
   end
   defp put_assoc_background_image_file(changeset, %{background_image_file: nil}) do
     changeset

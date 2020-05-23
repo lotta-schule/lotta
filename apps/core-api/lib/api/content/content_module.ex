@@ -1,6 +1,6 @@
 defmodule Api.Content.ContentModule do
   use Ecto.Schema
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   import Ecto.Changeset
 
   schema "content_modules" do
@@ -23,14 +23,14 @@ defmodule Api.Content.ContentModule do
   @doc false
   def changeset(content_module, attrs) do
     content_module
-    |> ReadRepo.preload(:files)
+    |> Repo.preload(:files)
     |> cast(attrs, [:type, :content, :sort_key, :configuration])
     |> validate_required([:type, :sort_key])
     |> put_assoc_files(attrs)
   end
 
   defp put_assoc_files(content_module, %{files: files}) do
-    files = Enum.map(files, fn file -> ReadRepo.get!(Api.Accounts.File, file.id) end)
+    files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, file.id) end)
     content_module
     |> put_assoc(:files, files)
   end
