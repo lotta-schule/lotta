@@ -37,7 +37,7 @@ defmodule Api.SearchResolverTest do
     }
     """
 
-    test "search for a public article should return it"  do
+    test "search for public articles should return them"  do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> get("/api", query: @query, variables: %{searchText: "Nipple Jesus"})
@@ -46,13 +46,18 @@ defmodule Api.SearchResolverTest do
       assert res == %{
         "data" => %{
           "search" => [
-            %{"preview" => "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.", "title" => "„Nipple Jesus“- eine extreme Erfahrung"}
+            %{"preview" => "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.", "title" => "„Nipple Jesus“- eine extreme Erfahrung"},
+            %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
+            %{"preview" => "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...", "title" => "Landesfinale Volleyball WK IV"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"}
           ]
         }
       }
     end
 
-    test "search for a restricted article should be not returned when user is not in the right grouped", %{user_jwt: user_jwt}  do
+    test "search for restricted articles should not returne them when user is not in the right group", %{user_jwt: user_jwt}  do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{user_jwt}")
@@ -62,12 +67,18 @@ defmodule Api.SearchResolverTest do
       assert res == %{
         "data" => %{
           "search" => [
+            %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
+            %{"preview" => "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...", "title" => "Landesfinale Volleyball WK IV"},
+            %{"preview" => "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.", "title" => "„Nipple Jesus“- eine extreme Erfahrung"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"}
           ]
         }
       }
     end
 
-    test "search for a restricted article should be returned when user is in the right grouped", %{lehrer_jwt: lehrer_jwt}  do
+    test "search for a restricted article should be returned when user is in the right groupe", %{lehrer_jwt: lehrer_jwt}  do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
@@ -77,7 +88,18 @@ defmodule Api.SearchResolverTest do
       assert res == %{
         "data" => %{
           "search" => [
-            %{"preview" => "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.", "title" => "Der Podcast zum WB 2"}
+            %{"preview" => "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.", "title" => "Der Podcast zum WB 2"},
+            %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
+            %{"preview" => "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...", "title" => "Landesfinale Volleyball WK IV"},
+            %{"preview" => "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.", "title" => "Der Vorausscheid"},
+            %{"preview" => "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.", "title" => "„Nipple Jesus“- eine extreme Erfahrung"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 4 - nur für Lehrer"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 4 - nur für Schüler"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 5 - nur für Lehrer"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 5 - nur für Schüler"}
           ]
         }
       }
@@ -93,7 +115,18 @@ defmodule Api.SearchResolverTest do
       assert res == %{
         "data" => %{
           "search" => [
-            %{"preview" => "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.", "title" => "Der Podcast zum WB 2"}
+            %{"preview" => "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.", "title" => "Der Podcast zum WB 2"},
+            %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
+            %{"preview" => "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...", "title" => "Landesfinale Volleyball WK IV"},
+            %{"preview" => "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.", "title" => "Der Vorausscheid"},
+            %{"preview" => "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.", "title" => "„Nipple Jesus“- eine extreme Erfahrung"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 4 - nur für Lehrer"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 4 - nur für Schüler"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 5 - nur für Lehrer"},
+            %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 5 - nur für Schüler"}
           ]
         }
       }
