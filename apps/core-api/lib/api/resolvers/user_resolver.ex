@@ -43,8 +43,8 @@ defmodule Api.UserResolver do
     {:ok, User.get_groups(user, tenant)}
   end
 
-  def resolve_assigned_groups(user, _args, _info) do
-    {:ok, User.get_assigned_groups(user)}
+  def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
+    {:ok, User.get_assigned_groups(user, tenant)}
   end
 
   def resolve_enrollment_tokens(user, _args, _info) do
