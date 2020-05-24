@@ -109,10 +109,11 @@ defmodule Api.Accounts.User do
       |> Enum.any?(fn blocked_tenant -> blocked_tenant.tenant_id == tenant.id end)
   end
 
-  def get_assigned_groups(%User{} = user) do
+  def get_assigned_groups(%User{} = user, %Tenant{} = tenant) do
     user
     |> Repo.preload(:groups)
     |> Map.fetch!(:groups)
+    |> Enum.filter(&(&1.tenant_id == tenant.id))
   end
 
   def get_dynamic_groups(%User{} = user, %Tenant{} = tenant) do
@@ -127,7 +128,7 @@ defmodule Api.Accounts.User do
   end
 
   def get_groups(%User{} = user, %Tenant{} = tenant) do
-    get_assigned_groups(user) ++ get_dynamic_groups(user, tenant)
+    get_assigned_groups(user, tenant) ++ get_dynamic_groups(user, tenant)
   end
 
   def group_ids(%User{} = user, %Tenant{} = tenant) do
