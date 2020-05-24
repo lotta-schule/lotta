@@ -82,7 +82,10 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
                                 article: {
                                     ...omit(article, ['id']),
                                     contentModules: article.contentModules.map(cm =>
-                                        cm.id < 0 ? omit(cm, ['id']) : cm
+                                        ({
+                                            ...(cm.id < 0 ? omit(cm, ['id']) : cm),
+                                            content: cm.content || null
+                                        })
                                     )
                                 } as ArticleModelInput
                             },

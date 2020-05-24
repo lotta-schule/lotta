@@ -1,9 +1,10 @@
 import React, { memo } from 'react';
-import { ContentModuleModel, FileModel } from '../../../../model';
+import { ContentModuleModel, FileModel, FileModelType, FileConversion } from '../../../../model';
 import { File } from 'util/model';
 import { CardContent, Typography, Button, Grid } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { useStyles } from './Download';
+import { BackgroundImg } from 'react-cloudimage-responsive';
 
 export interface ShowProps {
     contentModule: ContentModuleModel;
@@ -27,6 +28,17 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
         }
     };
 
+    const hasPreviewImage = (file: FileModel) => {
+        if (file.fileType === FileModelType.Image) {
+            return true;
+        }
+        return false;
+    };
+
+    const previewFile = (file: FileModel): FileModel | FileConversion => {
+        return file;
+    };
+
     return (
         <CardContent>
             {[...contentModule.files].sort((f1, f2) => getConfiguration(f1).sortKey - getConfiguration(f2).sortKey).map(file => (
@@ -36,9 +48,20 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                             container
                             direction={'row'}
                             justify={'flex-start'}
-                            alignItems={'flex-start'}
-                            spacing={1}>
-                            <Grid item xs={12} sm={8} md={10}>
+                            alignItems={'stretch'}
+                            spacing={1}
+                            style={{ position: 'relative' }}
+                        >
+                            {hasPreviewImage(file) && (
+                                <Grid item xs={2} style={{ position: 'relative' }}>
+                                    <BackgroundImg
+                                        style={{ width: '100%', height: '100%', background: 'transparent 50% 50% / cover no-repeat' }}
+                                        src={previewFile(file).remoteLocation}
+                                        params="func=crop&gravity=auto"
+                                    />
+                                </Grid>
+                            )}
+                            <Grid item xs>
                                 <div>
                                     {getConfiguration(file).description && (
                                         <Typography className={styles.downloadDescription}>
