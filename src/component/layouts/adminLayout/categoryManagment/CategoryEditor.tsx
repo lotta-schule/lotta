@@ -110,23 +110,25 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
             />
 
             {!category.isHomepage && (
+                <GroupSelect
+                    className={styles.input}
+                    selectedGroups={category.groups || []}
+                    onSelectGroups={groups => setCategory({ ...category, groups })}
+                />
+            )}
+
+            <Typography className={styles.input}>
+                <b>Wähle ein Banner für diese Kategorie</b>
+            </Typography>
+
+            <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })} allowDeletion>
+                {category.bannerImageFile ? (
+                    <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
+                ) : (<PlaceholderImage width={'100%'} height={75} />)}
+            </SelectFileOverlay>
+
+            {!category.isHomepage && (
                 <>
-                    <GroupSelect
-                        className={styles.input}
-                        selectedGroups={category.groups || []}
-                        onSelectGroups={groups => setCategory({ ...category, groups })}
-                    />
-
-                    <Typography className={styles.input}>
-                        <b>Wähle ein Banner für diese Kategorie</b>
-                    </Typography>
-
-                    <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })} allowDeletion>
-                        {category.bannerImageFile ? (
-                            <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
-                        ) : (<PlaceholderImage width={'100%'} height={75} />)}
-                    </SelectFileOverlay>
-
                     <FormControl className={styles.input}>
                         <FormControlLabel
                             control={
