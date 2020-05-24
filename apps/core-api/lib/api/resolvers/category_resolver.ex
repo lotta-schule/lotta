@@ -53,7 +53,7 @@ defmodule Api.CategoryResolver do
   end
   
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(current_user, tenant) do
+    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
         category = Tenants.get_category!(id)
         case Tenants.delete_category(category) do
