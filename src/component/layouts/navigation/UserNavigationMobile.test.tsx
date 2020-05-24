@@ -21,7 +21,7 @@ describe('component/layouts/UserNavigationMobile', () => {
             );
             await new Promise(resolve => setTimeout(resolve));
             const buttons = container.querySelectorAll('button');
-            expect(buttons.length).toEqual(2);
+            expect(buttons.length).toEqual(3);
             done();
         });
     });
