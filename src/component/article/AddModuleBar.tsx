@@ -47,7 +47,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 sortKey: null!,
                                 type: ContentModuleType.TEXT,
                                 content: (() => {
-                                    return [{ type: 'paragraph', children: [{ text: 'lorem ipsum ...' }] }];
+                                    return { nodes: [{ type: 'paragraph', children: [{ text: 'lorem ipsum ...' }] }] };
                                 })(),
                                 files: [],
                             });
@@ -138,7 +138,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.DOWNLOAD,
-                                content: [],
+                                content: null,
                                 files: [],
                             });
                         }}
