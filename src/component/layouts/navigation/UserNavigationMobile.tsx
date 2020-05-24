@@ -65,7 +65,7 @@ export const UserNavigationMobile = memo(() => {
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/search'); }}>
                         <SearchOutlined color={'secondary'} />
-                        Profil
+                        Suche
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/profile'); }}>
                         <PersonOutlineOutlined color={'secondary'} />
@@ -106,6 +106,7 @@ export const UserNavigationMobile = memo(() => {
         <div>
             <Button fullWidth onClick={() => setLoginModalIsOpen(true)}>Anmelden</Button>
             <Button fullWidth onClick={() => setRegisterModalIsOpen(true)}>Registrieren</Button>
+            <Button fullWidth onClick={() => { history.push('/search'); }}>Suche</Button>
             <LoginDialog
                 isOpen={loginModalIsOpen}
                 onRequestClose={() => { setLoginModalIsOpen(false); }}

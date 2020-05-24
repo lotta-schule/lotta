@@ -144,6 +144,7 @@ export const UserNavigation = memo(() => {
             <Grid container justify={'flex-end'}>
                 <Button onClick={() => setLoginModalIsOpen(true)}>Anmelden</Button>
                 <Button onClick={() => setRegisterModalIsOpen(true)}>Registrieren</Button>
+                <Button onClick={() => history.push('/search')}>Suche</Button>
                 <LoginDialog
                     isOpen={loginModalIsOpen}
                     onRequestClose={() => { setLoginModalIsOpen(false); }}
