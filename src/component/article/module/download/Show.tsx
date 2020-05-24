@@ -52,7 +52,7 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                             spacing={1}
                             style={{ position: 'relative' }}
                         >
-                            {hasPreviewImage(file) && (
+                            {!contentModule.configuration?.hidePreviews && hasPreviewImage(file) && (
                                 <Grid item xs={2} style={{ position: 'relative' }}>
                                     <BackgroundImg
                                         style={{ width: '100%', height: '100%', background: 'transparent 50% 50% / cover no-repeat' }}

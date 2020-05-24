@@ -6,6 +6,7 @@ import { Text } from './text/Text';
 import { Title } from './title/Title';
 import { Config as TitleConfig } from './title/Config';
 import { Config as FormConfig } from './form/Config';
+import { Config as DownloadConfig } from './download/Config';
 import { Image } from './image/Image';
 import { ImageCollection } from './image_collection/ImageCollection';
 import { Config as ImageCollectionConfig } from './image_collection/Config';
@@ -103,6 +104,12 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                 />;
             case ContentModuleType.FORM:
                 return <FormConfig
+                    contentModule={contentModule}
+                    onUpdateModule={onUpdateModule}
+                    onRequestClose={popupState.close}
+                />;
+            case ContentModuleType.DOWNLOAD:
+                return <DownloadConfig
                     contentModule={contentModule}
                     onUpdateModule={onUpdateModule}
                     onRequestClose={popupState.close}
