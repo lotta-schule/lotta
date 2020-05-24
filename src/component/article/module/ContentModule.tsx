@@ -1,6 +1,6 @@
 import React, { memo, useMemo, HTMLAttributes, Suspense } from 'react';
 import { Card, makeStyles, Theme, createStyles, IconButton, Popover, Box, Divider, Button, CardProps, StyledComponentProps, CircularProgress } from '@material-ui/core';
-import { MoreVert, Delete } from '@material-ui/icons';
+import { MoreVert, Delete, DragHandle } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
@@ -118,7 +118,8 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
         >
             <Suspense fallback={<CircularProgress />}>
                 {isEditModeEnabled && (
-                    <div {...dragbarProps} className={styles.dragbar}>
+                    <div {...dragbarProps} className={styles.dragbar} title={'Klicken und Ziehen zum verschieben'}>
+                        <DragHandle />
                         <span>
                             <IconButton
                                 classes={{ root: styles.dragbarButton }}
