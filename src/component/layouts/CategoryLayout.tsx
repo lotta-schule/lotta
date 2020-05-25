@@ -42,7 +42,7 @@ const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
             top: 0,
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(to right, transparent 90%, #fff 99%, #fff)'
+            background: 'linear-gradient(to right, transparent 75%, #fff 98%, #fff)'
         }
     },
     bannerheading: {
@@ -107,7 +107,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                         className={styles.subheader}
                         style={{
                             background: category.bannerImageFile ?
-                                `url(https://afdptjdxen.cloudimg.io/cover/900x150/foil1/${category.bannerImageFile.remoteLocation})` :
+                                `url(https://afdptjdxen.cloudimg.io/cover/950x104/foil1/${category.bannerImageFile.remoteLocation})` :
                                 'transparent'
                         }}
                     >
