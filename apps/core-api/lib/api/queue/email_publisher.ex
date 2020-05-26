@@ -33,6 +33,19 @@ defmodule Api.Queue.EmailPublisher do
     email_send_request
   end
 
+  def send_feedback_email(content) do
+    send_email(%EmailSendRequest{
+      to: "kontakt@einsa.net",
+      subject: "Kontaktanfrage für lotta",
+      template: "default",
+      templatevars: %{
+        tenant: nil,
+        heading: "Kontaktanfrage für lotta",
+        content: content
+      }
+    })
+  end
+
   def send_registration_email(%Tenant{} = tenant, %Api.Accounts.User{} = user) do
     send_email(%EmailSendRequest{
       to: user.email,
