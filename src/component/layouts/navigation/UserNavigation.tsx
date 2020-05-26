@@ -141,7 +141,7 @@ export const UserNavigation = memo(() => {
         );
     } else {
         return (
-            <Grid container justify={'flex-end'} style={{ display:'grid', height: '100%' }}>
+            <Grid container style={{ flexDirection: 'column', justifyContent: 'space-evenly', height: '100%', alignItems: 'end' }}>
                 <Button size="small" onClick={() => setLoginModalIsOpen(true)}>Anmelden</Button>
                 <Button size="small" onClick={() => setRegisterModalIsOpen(true)}>Registrieren</Button>
                 <Button size="small" onClick={() => history.push('/search')}>Suche</Button>
