@@ -59,6 +59,36 @@ defmodule Api.Queue.EmailPublisher do
       }
     })
   end
+  def send_registration_email(%Api.Accounts.User{} = user) do
+    send_email(%EmailSendRequest{
+      to: user.email,
+      subject: "Ihre Registrierung bei lotta",
+      template: "default",
+      templatevars: %{
+        tenant: nil,
+        heading: "Ihre Registrierung bei lotta",
+        content: "Hallo #{user.name},<br />Sie wurden erfolgreich registriert.<br /><br />"
+      }
+    })
+  end
+
+  def send_tenant_creation_email(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
+    send_email(%EmailSendRequest{
+      to: user.email,
+      subject: "Ihr Lotta",
+      template: "default",
+      templatevars: %{
+        tenant: nil,
+        heading: "Ihr Lotta",
+        content: "Hallo #{user.name},<br />Vielen Dank für Ihr Interessa an lotta.<br />" <>
+        "Ihr System steht nun zum Ausprobieren unter #{Tenant.get_main_url(tenant)} zur Verfügung. <br />" <>
+        "Sie können sich dort mit der Email-Adresse #{user.email} und Ihrem selbst gewählten Passwort anmelden.<br /><br />" <>
+        "Sollten Sie Hilfe brauchen, finden Sie auf https://info.lotta.schule viele Informationen und Anleitungen.<br /><br />" <>
+        "Sollten Sie dort nicht fündig werden, schreiben Sie uns doch eine Email an: kontakt@einsa.net<br /><br />" <>
+        "Viel Spaß!<br /><br />"
+      }
+    })
+  end
 
   def send_request_password_reset_email(%Tenant{} = tenant, %Api.Accounts.User{} = user, email, token) do
     url =

@@ -27,6 +27,8 @@ defmodule Api.Tenants.Tenant do
     |> cast(attrs, [:title, :slug])
     |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
+    |> validate_format(:slug, ~r/[a-z0-9-_]/)
+    |> validate_slug(:slug)
   end
 
   @doc false
@@ -50,6 +52,17 @@ defmodule Api.Tenants.Tenant do
       _ ->
         get_lotta_url(tenant)
     end
+  end
+
+  defp validate_slug(changeset, field) when is_atom(field) do
+    validate_change(changeset, field, fn (current_field, val) ->
+      cond do
+        val == "intern" ->
+          [current_field: "cannot be 'intern'"]
+        true ->
+          []
+      end
+    end)
   end
 
   def get_lotta_url(%Api.Tenants.Tenant{slug: slug}) do

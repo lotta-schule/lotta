@@ -115,6 +115,11 @@ defmodule Api.Accounts.User do
     |> Map.fetch!(:groups)
     |> Enum.filter(&(&1.tenant_id == tenant.id))
   end
+  def get_assigned_groups(%User{} = user) do
+    user
+    |> Repo.preload(:groups)
+    |> Map.fetch!(:groups)
+  end
 
   def get_dynamic_groups(%User{} = user, %Tenant{} = tenant) do
     user = user
@@ -129,6 +134,10 @@ defmodule Api.Accounts.User do
 
   def get_groups(%User{} = user, %Tenant{} = tenant) do
     get_assigned_groups(user, tenant) ++ get_dynamic_groups(user, tenant)
+  end
+  def get_groups(%User{} = user) do
+    user
+    |> get_assigned_groups()
   end
 
   def group_ids(%User{} = user, %Tenant{} = tenant) do
@@ -169,7 +178,7 @@ defmodule Api.Accounts.User do
     user
     |> Repo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
-    |> validate_required([:name, :email, :password, :tenant_id])
+    |> validate_required([:name, :email, :password])
     |> unique_constraint(:email)
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
