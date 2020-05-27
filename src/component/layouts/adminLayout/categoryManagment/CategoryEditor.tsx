@@ -53,7 +53,11 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
     const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] = useState(false);
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
+    const [selectedWidgets, setSelectedWidgets] = useState<WidgetModel[]>([]);
     const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+      refetchQueries: [
+          { query: GetCategoryWidgetsQuery, variables: { categoryId: category?.id ?? null } }
+      ],
         onCompleted: () => {
             setIsShowSuccess(true);
             setTimeout(() => setIsShowSuccess(false), 3000);
@@ -63,6 +67,11 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
         variables: { categoryId: category?.id ?? null },
         skip: !category?.id
     });
+    useEffect(() => {
+        if (currentWidgetsData) {
+            setSelectedWidgets(currentWidgetsData.widgets);
+        }
+    }, [currentWidgetsData]);
 
     const updateCategory = useCallback(async () => {
         if (!selectedCategory || !category) {
@@ -79,11 +88,11 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                     redirect: category.redirect === 'null' ? null : category.redirect,
                     layoutName: category.layoutName,
                     hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
-                    widgets: currentWidgetsData?.widgets?.map((w: WidgetModel) => ({ ...w, configuration: JSON.stringify(w.configuration) })) ?? []
+                    widgets: selectedWidgets.map((w: WidgetModel) => ({ ...w, configuration: JSON.stringify(w.configuration) })) ?? []
                 }
             }
         });
-    }, [category, currentWidgetsData, mutateCategory, selectedCategory]);
+    }, [category, mutateCategory, selectedCategory, selectedWidgets]);
 
     useEffect(() => {
         if (selectedCategory === null && category !== null) {
@@ -199,8 +208,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                 <b>Wähle die marginalen Module für diese Kategorie</b>
             </Typography>
             <CategoryWidgetSelector
-                selectedWidgets={currentWidgetsData?.widgets ?? []}
-                setSelectedWidgets={widgets => setCategory({ ...category, widgets })}
+                selectedWidgets={selectedWidgets}
+                setSelectedWidgets={widgets => setSelectedWidgets(widgets)}
             />
             <p>&nbsp;</p>
             <SaveButton
