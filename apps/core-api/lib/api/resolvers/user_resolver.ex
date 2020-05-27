@@ -1,5 +1,5 @@
 defmodule Api.UserResolver do
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper,User}
 
@@ -30,7 +30,7 @@ defmodule Api.UserResolver do
   def resolve_is_blocked(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.is_blocked?(user, tenant)}
   end
-  def resolve_is_blocked(user, _args, _context), do: {:ok, false}
+  def resolve_is_blocked(_user, _args, _context), do: {:ok, false}
 
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
@@ -42,13 +42,14 @@ defmodule Api.UserResolver do
   def resolve_groups(user, _args, %{context: %{tenant: tenant}}) do
     {:ok, User.get_groups(user, tenant)}
   end
+  def resolve_groups(user, _args, _context), do: {:ok, User.get_groups(user)}
 
   def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
-    {:ok, User.get_assigned_groups(user)}
+    {:ok, User.get_assigned_groups(user, tenant)}
   end
 
-  def resolve_enrollment_tokens(user, _args, %{context: %{tenant: tenant}}) do
-    user = ReadRepo.preload(user, :enrollment_tokens)
+  def resolve_enrollment_tokens(user, _args, _info) do
+    user = Repo.preload(user, :enrollment_tokens)
     tokens =
       user.enrollment_tokens
       |> Enum.map(&(&1.enrollment_token))
@@ -85,17 +86,28 @@ defmodule Api.UserResolver do
     end
   end
 
-  def register(%{user: user_params} = args, %{context: %{tenant: tenant}}) do
-    user_params = user_params
-    |> Map.put(:tenant_id, tenant.id)
-    |> Map.put(:enrollment_tokens, case args do
-      %{group_key: group_key} -> [group_key]
-      _ -> []
-    end)
+  def register(%{user: user_params} = args, %{context: context}) do
+    user_params =
+      case context do
+        %{tenant: tenant} ->
+          user_params
+            |> Map.put(:tenant_id, tenant.id)
+            |> Map.put(:enrollment_tokens, case args do
+              %{group_key: group_key} -> [group_key]
+              _ -> []
+            end)
+        _ ->
+          user_params
+      end
     case Accounts.register_user(user_params) do
       {:ok, user} ->
         {:ok, jwt} = User.get_signed_jwt(user)
-        Api.Queue.EmailPublisher.send_registration_email(tenant, user)
+        case context do
+          %{tenant: tenant} ->
+            Api.Queue.EmailPublisher.send_registration_email(tenant, user)
+          _ ->
+            Api.Queue.EmailPublisher.send_registration_email(user)
+        end
         {:ok, %{token: jwt}}
       {:error, changeset} ->
         {

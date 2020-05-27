@@ -5,13 +5,12 @@ defmodule Api.Accounts do
 
   import Ecto.Query
   alias Api.Repo
-  use Api.ReadRepoAliaser
 
   alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,UserEnrollmentToken,Directory,File}
   alias Api.Tenants.Tenant
 
   def data() do
-    Dataloader.Ecto.new(ReadRepo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
   def query(queryable, _params) do
@@ -42,7 +41,7 @@ defmodule Api.Accounts do
 
     query = from q in subquery(union(assigned_groups_query, ^dynamic_groups_query)),
       order_by: [q.name, q.email]
-    ReadRepo.all(query)
+    Repo.all(query)
   end
 
   @doc """
@@ -60,7 +59,7 @@ defmodule Api.Accounts do
 
   """
   def get_user!(id) do
-    ReadRepo.get!(User, id)
+    Repo.get!(User, id)
   end
 
   @doc """
@@ -78,7 +77,7 @@ defmodule Api.Accounts do
 
   """
   def get_user_by_email(email) do
-    ReadRepo.get_by(User, email: email)
+    Repo.get_by(User, email: email)
   end
 
 
@@ -96,7 +95,7 @@ defmodule Api.Accounts do
       query = Ecto.Query.from(u in User,
         where: u.email == ^searchtext or (u.tenant_id == ^tenant_id and (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext)))
       )
-      {:ok, ReadRepo.all(query)}
+      {:ok, Repo.all(query)}
   end
 
   @doc """
@@ -172,7 +171,7 @@ defmodule Api.Accounts do
       where: t.token == ^token and g.tenant_id == ^(tenant.id),
       distinct: true
     )
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -186,7 +185,7 @@ defmodule Api.Accounts do
       where: t.token in ^tokens and g.tenant_id == ^(tenant.id),
       distinct: true
     )
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -245,7 +244,7 @@ defmodule Api.Accounts do
   end
 
   def request_password_reset_token(email, token) do
-    case ReadRepo.get_by(User, email: email) do
+    case Repo.get_by(User, email: email) do
       nil ->
         {:error, "User not found"}
       user ->
@@ -280,7 +279,7 @@ defmodule Api.Accounts do
   end
 
   def set_user_blocked(%User{} = user, %Tenant{} = tenant, true) do
-    user = ReadRepo.preload(user, :blocked_tenants)
+    user = Repo.preload(user, :blocked_tenants)
     blocked_tenants =
       Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end) ++ [%Api.Accounts.BlockedTenant{user_id: user.id, tenant_id: tenant.id}]
     user
@@ -289,7 +288,7 @@ defmodule Api.Accounts do
     |> Repo.update()
   end
   def set_user_blocked(%User{} = user, %Tenant{} = tenant, false) do
-    user = ReadRepo.preload(user, :blocked_tenants)
+    user = Repo.preload(user, :blocked_tenants)
     blocked_tenants =
       Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end)
     user
@@ -307,7 +306,7 @@ defmodule Api.Accounts do
       where: d.tenant_id == ^tenant.id and is_nil(d.parent_directory_id) and (d.user_id == ^user.id or is_nil(d.user_id)),
       order_by: [fragment("? DESC NULLS LAST", d.user_id), :name]
     )
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
     @doc """
@@ -319,7 +318,7 @@ defmodule Api.Accounts do
       where: d.parent_directory_id == ^directory.id,
       order_by: [:name]
     )
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -336,7 +335,7 @@ defmodule Api.Accounts do
       nil
 
   """
-  def get_directory(id), do: ReadRepo.get(Directory, id)
+  def get_directory(id), do: Repo.get(Directory, id)
 
   @doc """
   Gets a single file.
@@ -352,7 +351,7 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_directory!(id), do: ReadRepo.get!(Directory, id)
+  def get_directory!(id), do: Repo.get!(Directory, id)
 
   @doc """
   Creates a Directory.
@@ -436,7 +435,7 @@ defmodule Api.Accounts do
       where: f.parent_directory_id == ^parent_directory.id,
       order_by: [:filename]
     )
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -453,7 +452,7 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_file!(id), do: ReadRepo.get!(File, id)
+  def get_file!(id), do: Repo.get!(File, id)
 
   @doc """
   Creates a file.
@@ -529,7 +528,7 @@ defmodule Api.Accounts do
 
   """
   def list_file_conversions do
-    ReadRepo.all(FileConversion)
+    Repo.all(FileConversion)
   end
 
   @doc """
@@ -546,7 +545,7 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_file_conversion!(id), do: ReadRepo.get!(FileConversion, id)
+  def get_file_conversion!(id), do: Repo.get!(FileConversion, id)
 
   @doc """
   Creates a file_conversion.
@@ -628,7 +627,7 @@ defmodule Api.Accounts do
 
   """
   def get_user_group!(id) do
-    ReadRepo.get!(UserGroup, id)
+    Repo.get!(UserGroup, id)
   end
 
   @doc """

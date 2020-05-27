@@ -6,7 +6,7 @@ defmodule Api.Accounts.UserEnrollmentToken do
   schema "users_enrollment_tokens" do
     field :enrollment_token, :string
 
-    belongs_to :user, Api.Accounts.User
+    belongs_to :user, User
     
     timestamps()
   end

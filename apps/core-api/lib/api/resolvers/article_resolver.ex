@@ -1,10 +1,10 @@
 defmodule Api.ArticleResolver do
-  use Api.ReadRepoAliaser
+  alias Api.Repo
   alias Api.Content
   alias Api.Accounts.User
 
   def get(%{id: id}, %{context: %{tenant: tenant, current_user: current_user}}) do
-    article = ReadRepo.preload(Content.get_article!(id), :tenant)
+    article = Repo.preload(Content.get_article!(id), :tenant)
     if User.is_author?(current_user, article) || User.is_admin?(current_user, tenant) do
       {:ok, article}
     else
@@ -15,7 +15,7 @@ defmodule Api.ArticleResolver do
     end
   end
   def get(%{id: id}, _info) do
-    article = ReadRepo.preload(Content.get_article!(id), :groups)
+    article = Repo.preload(Content.get_article!(id), :groups)
     case article.groups do
       [] ->
         {:ok, article}
@@ -23,7 +23,7 @@ defmodule Api.ArticleResolver do
         {:error, "Du hast keine Rechte diesen Beitrag anzusehen."}
     end
   end
-  def get(_args, _info), do: {:error, "Artikel nicht gefunden."}
+  def get(_args, _info), do: {:error, "Beitrag nicht gefunden."}
 
   def get_topics(_args, %{context: %{tenant: tenant} = context}) do
     {:ok, Content.get_topics(tenant, context[:current_user], context[:user_group_ids], context[:user_is_admin])}
@@ -86,29 +86,37 @@ defmodule Api.ArticleResolver do
 
   def update(%{id: id, article: article_input}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if context[:current_user] && (context[:user_is_admin] || User.is_author?(context[:current_user], article)) do
-      article
-      |> Content.update_article(article_input)
-    else
-      {:error, "Nur Administratoren oder Autoren dürfen Artikel bearbeiten."}
+    cond do
+      is_nil(context[:current_user]) ->
+        {:error, "Du musst angemeldet sein um Beiträge zu bearbeiten."}
+      !User.is_admin?(context.current_user, tenant) && !User.is_author?(context.current_user, article) ->
+        {:error, "Nur Administratoren oder Autoren dürfen Beiträge bearbeiten."}
+      true ->
+        article
+        |> Content.update_article(article_input)
     end
   end
   
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
     article = Content.get_article!(id)
-    if context[:current_user] && (context[:user_is_admin] || User.is_author?(context[:current_user], article)) do
-      article
-      |> Content.delete_article()
-    else
-      {:error, "Nur Administratoren oder Autoren dürfen Artikel löschen."}
+    cond do
+      is_nil(context[:current_user]) ->
+        {:error, "Du musst angemeldet sein um Beiträge zu löschen."}
+      !User.is_admin?(context.current_user, tenant) && !User.is_author?(context.current_user, article) ->
+        {:error, "Nur Administratoren oder Autoren dürfen Beiträge löschen."}
+      true ->
+        article
+        |> Content.delete_article()
     end
   end
 
-  def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && context[:user_is_admin] do
-      Content.toggle_article_pin(article_id)
-    else
-      {:error, "Nur Administratoren dürfen Beiträge anpinnen."}
+  def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant, current_user: current_user}}) do
+    case User.is_admin?(current_user, tenant) do
+      true ->
+        Content.toggle_article_pin(article_id)
+      false ->
+        {:error, "Nur Administratoren dürfen Beiträge anpinnen."}
     end
   end
+  def toggle_pin(_info, _args), do: {:error, "Nur Administratoren dürfen Beiträge anpinnen."}
 end

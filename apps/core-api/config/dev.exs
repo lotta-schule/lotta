@@ -16,14 +16,6 @@ config :api, Api.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :api, Api.ReadRepo,
-  username: "lotta",
-  password: "lotta",
-  database: "lotta",
-  hostname: "postgres",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
 config :api, :rabbitmq_connection,
   username: "guest",
   password: "guest",
@@ -33,6 +25,7 @@ config :api, :redis_connection,
   host: "redis",
   password: "lotta",
   name: :redix
+
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,

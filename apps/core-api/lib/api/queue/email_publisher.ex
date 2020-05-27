@@ -3,7 +3,7 @@ defmodule Api.Queue.EmailPublisher do
   @behaviour GenRMQ.Publisher
   alias Api.Services.EmailSendRequest
   alias Api.Tenants.Tenant
-  use Api.ReadRepoAliaser
+  alias Api.Repo
 
   require Logger
 
@@ -33,6 +33,19 @@ defmodule Api.Queue.EmailPublisher do
     email_send_request
   end
 
+  def send_feedback_email(content) do
+    send_email(%EmailSendRequest{
+      to: "kontakt@einsa.net",
+      subject: "Kontaktanfrage für lotta",
+      template: "default",
+      templatevars: %{
+        tenant: nil,
+        heading: "Kontaktanfrage für lotta",
+        content: content
+      }
+    })
+  end
+
   def send_registration_email(%Tenant{} = tenant, %Api.Accounts.User{} = user) do
     send_email(%EmailSendRequest{
       to: user.email,
@@ -43,6 +56,36 @@ defmodule Api.Queue.EmailPublisher do
         heading: "Deine Registrierung bei #{tenant.title}",
         content: "Hallo #{user.name},<br />Du wurdest erfolgreich registriert.<br />" <>
           "Du kannst nun Beiträge erstellen.<br /> <br />"
+      }
+    })
+  end
+  def send_registration_email(%Api.Accounts.User{} = user) do
+    send_email(%EmailSendRequest{
+      to: user.email,
+      subject: "Ihre Registrierung bei lotta",
+      template: "default",
+      templatevars: %{
+        tenant: nil,
+        heading: "Ihre Registrierung bei lotta",
+        content: "Hallo #{user.name},<br />Sie wurden erfolgreich registriert.<br /><br />"
+      }
+    })
+  end
+
+  def send_tenant_creation_email(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
+    send_email(%EmailSendRequest{
+      to: user.email,
+      subject: "Ihr Lotta",
+      template: "default",
+      templatevars: %{
+        tenant: nil,
+        heading: "Ihr Lotta",
+        content: "Hallo #{user.name},<br />Vielen Dank für Ihr Interessa an lotta.<br />" <>
+        "Ihr System steht nun zum Ausprobieren unter #{Tenant.get_main_url(tenant)} zur Verfügung. <br />" <>
+        "Sie können sich dort mit der Email-Adresse #{user.email} und Ihrem selbst gewählten Passwort anmelden.<br /><br />" <>
+        "Sollten Sie Hilfe brauchen, finden Sie auf https://info.lotta.schule viele Informationen und Anleitungen.<br /><br />" <>
+        "Sollten Sie dort nicht fündig werden, schreiben Sie uns doch eine Email an: kontakt@einsa.net<br /><br />" <>
+        "Viel Spaß!<br /><br />"
       }
     })
   end
@@ -83,7 +126,7 @@ defmodule Api.Queue.EmailPublisher do
   end
 
   def send_article_is_ready_admin_notification(%Api.Content.Article{} = article) do
-    article = ReadRepo.preload(article, :tenant)
+    article = Repo.preload(article, :tenant)
     tenant = article.tenant
     article_url = Api.Content.Article.get_url(article)
     tenant
@@ -105,10 +148,10 @@ defmodule Api.Queue.EmailPublisher do
   end
 
   def send_content_module_form_response(%Api.Content.ContentModule{} = content_module, %{} = responses) do
-    content_module = ReadRepo.preload(content_module, :article)
+    content_module = Repo.preload(content_module, :article)
     article =
       content_module.article
-      |> ReadRepo.preload(:tenant)
+      |> Repo.preload(:tenant)
     tenant = article.tenant
     responses_list =
       responses

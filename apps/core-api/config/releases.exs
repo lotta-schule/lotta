@@ -8,8 +8,7 @@ port = String.to_integer(System.get_env("PORT") || "4000")
 # database
 db_user = System.fetch_env!("POSTGRES_USER")
 db_password = System.fetch_env!("POSTGRES_PASSWORD")
-db_read_host = System.fetch_env!("POSTGRES_HOST")
-db_write_host = System.fetch_env!("POSTGRES_MASTER_HOST")
+db_host = System.fetch_env!("POSTGRES_HOST")
 db_name = System.fetch_env!("POSTGRES_DB")
 # redis
 redis_host = System.fetch_env!("REDIS_HOST")
@@ -18,6 +17,8 @@ redis_password = System.fetch_env!("REDIS_PASSWORD")
 rabbitmq_username = System.fetch_env!("RABBITMQ_USERNAME")
 rabbitmq_password = System.fetch_env!("RABBITMQ_PASSWORD")
 rabbitmq_host = System.fetch_env!("RABBITMQ_HOST")
+# elasticsearch
+elasticsearch_host = System.fetch_env!("ELASTICSEARCH_HOST")
 # S3-compatible block storage for User Generated Content
 ugc_s3_compat_endpoint = System.fetch_env!("UGC_S3_COMPAT_ENDPOINT")
 ugc_s3_compat_access_key_id = System.fetch_env!("UGC_S3_COMPAT_ACCESS_KEY_ID")
@@ -33,21 +34,18 @@ schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 sentry_dsn = System.fetch_env("SENTRY_DSN")
 sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || "prod"
 
+host = case System.get_env("APP_ENVIRONMENT") do
+  "staging" -> "api.staging.lotta.schule"
+  _ -> "api.lotta.schule"
+end
+
 config :api, Api.Repo,
   username: db_user,
   password: db_password,
   database: db_name,
-  hostname: db_write_host,
+  hostname: db_host,
   show_sensitive_data_on_connection_error: false,
-  pool_size: 10
-
-config :api, Api.ReadRepo,
-  username: db_user,
-  password: db_password,
-  database: db_name,
-  hostname: db_read_host,
-  show_sensitive_data_on_connection_error: false,
-  pool_size: 10
+  pool_size: 25
 
 config :api, :rabbitmq_connection,
   username: rabbitmq_username,
@@ -64,16 +62,22 @@ config :api, :base_url,
 config :api, :schedule_provider_url,
   schedule_provider_url
 
+config :api, Api.Elasticsearch.Cluster,
+  url: elasticsearch_host
+
 config :api, ApiWeb.Endpoint,
+  url: [host: host],
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
-  secret_key_base: secret_key_base
+  secret_key_base: secret_key_base,
+  live_view: [signing_salt: secret_key_base]  
 
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-config :api, ApiWeb.Endpoint, server: true
+config :api, ApiWeb.Endpoint,
+  server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.

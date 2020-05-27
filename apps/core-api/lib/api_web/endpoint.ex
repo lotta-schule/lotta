@@ -1,6 +1,7 @@
 defmodule ApiWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :api
 
+
   socket "/socket", ApiWeb.UserSocket,
     websocket: true,
     longpoll: false
@@ -21,6 +22,9 @@ defmodule ApiWeb.Endpoint do
     plug Phoenix.CodeReloader
   end
 
+  plug Phoenix.LiveDashboard.RequestLogger,
+    param_key: "request_logger",
+    cookie_key: "request_logger"
   plug Plug.RequestId
   plug Plug.Logger
 
@@ -62,4 +66,6 @@ defmodule ApiWeb.Endpoint do
     signing_salt: "sPyTc4VZ"
 
   plug ApiWeb.Router
+
+  socket "/live", Phoenix.LiveView.Socket
 end

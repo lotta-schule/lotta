@@ -6,14 +6,12 @@ defmodule Api.Content do
   import Ecto.Query
   import Ecto.Changeset
   alias Api.Repo
-  use Api.ReadRepoAliaser
 
-  alias Api.Content.{Article, ContentModule, ContentModuleResult}
+  alias Api.Content.{Article, ContentModule}
   alias Api.Tenants.{Category,Tenant}
-  alias Api.Accounts.{User}
 
   def data() do
-    Dataloader.Ecto.new(ReadRepo, query: &query/2)
+    Dataloader.Ecto.new(Repo, query: &query/2)
   end
 
   def query(queryable, _params) do
@@ -38,7 +36,7 @@ defmodule Api.Content do
         from a in query, where: a.category_id == ^category_id
     end
     |> filter_query(filter)
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   def get_topics(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
@@ -46,7 +44,7 @@ defmodule Api.Content do
     Ecto.Query.from([a, ...] in query,
       where: not is_nil(a.topic),
       select: a.topic)
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -64,7 +62,7 @@ defmodule Api.Content do
       where: a.topic == ^topic,
       order_by: [desc: :updated_at]
     )
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -78,7 +76,7 @@ defmodule Api.Content do
   """
   def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
     Ecto.Query.from(a in Article, where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id))
-    |> ReadRepo.all()
+    |> Repo.all()
   end
 
   @doc """
@@ -92,7 +90,7 @@ defmodule Api.Content do
   """
   def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
     user_id = user.id
-    ReadRepo.all(Ecto.Query.from a in Article,
+    Repo.all(Ecto.Query.from a in Article,
       where: a.tenant_id == ^tenant.id,
       join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id,
       order_by: :id
@@ -114,7 +112,7 @@ defmodule Api.Content do
 
   """
   def get_article!(id) do
-    ReadRepo.get!(Article, id)
+    Repo.get!(Article, id)
   end
 
   @doc """
@@ -130,11 +128,17 @@ defmodule Api.Content do
 
   """
   def create_article(attrs \\ %{}, tenant, user) do
-    %Article{}
-    |> Article.create_changeset(attrs)
-    |> put_assoc(:tenant, tenant)
-    |> put_assoc(:users, [user])
-    |> Repo.insert()
+    changeset =
+      %Article{}
+      |> Article.create_changeset(attrs)
+      |> put_assoc(:tenant, tenant)
+      |> put_assoc(:users, [user])
+    case Repo.insert(changeset) do
+      {:ok, article} ->
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -150,9 +154,16 @@ defmodule Api.Content do
 
   """
   def update_article(%Article{} = article, attrs) do
-    article
-    |> Article.changeset(attrs)
-    |> Repo.update()
+    changeset =
+      article
+      |> Article.changeset(attrs)
+    case Repo.update(changeset) do
+      {:ok, article} ->
+        Elasticsearch.put_document(Api.Elasticsearch.Cluster, article, "articles")
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -168,7 +179,13 @@ defmodule Api.Content do
 
   """
   def delete_article(%Article{} = article) do
-    Repo.delete(article)
+    case Repo.delete(article) do
+      {:ok, article} ->
+        Elasticsearch.delete_document(Api.Elasticsearch.Cluster, article, "articles")
+        {:ok, article}
+      result ->
+        result
+    end
   end
 
   @doc """
@@ -196,7 +213,7 @@ defmodule Api.Content do
 
   """
   def list_content_modules do
-    ReadRepo.all(ContentModule)
+    Repo.all(ContentModule)
   end
 
   @doc """
@@ -213,7 +230,7 @@ defmodule Api.Content do
       ** (Ecto.NoResultsError)
 
   """
-  def get_content_module!(id), do: ReadRepo.get!(ContentModule, id)
+  def get_content_module!(id), do: Repo.get!(ContentModule, id)
 
   @doc """
   Creates a content_module.
@@ -293,7 +310,7 @@ defmodule Api.Content do
     |> Repo.update()
   end
 
-  def list_public_articles(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
+  def list_public_articles(%Tenant{} = tenant, _user, user_group_ids, user_is_admin) do
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,

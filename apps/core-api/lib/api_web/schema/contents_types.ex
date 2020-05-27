@@ -95,7 +95,7 @@ defmodule ApiWeb.Schema.ContentsTypes do
   input_object :content_module_input do
     field :id, :lotta_id
     field :type, :content_module_type, default_value: "text"
-    field :text, :string
+    field :content, :json
     field :files, list_of(:file)
     field :sort_key, :integer
     field :configuration, :json
@@ -122,7 +122,7 @@ defmodule ApiWeb.Schema.ContentsTypes do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :type, :content_module_type
-    field :text, :string
+    field :content, :json
     field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :sort_key, :integer
     field :configuration, :json

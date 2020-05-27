@@ -57,6 +57,24 @@ defmodule Api.TenantResolver do
       {:error, "Nur Lotta-Administratoren dürfen das."}
     end
   end
+  def create(%{title: title, slug: slug}, %{context: %{current_user: current_user}}) do
+    slug =
+      slug
+      |> String.downcase()
+      |> Api.Slugifier.slugify_string()
+    with {:ok, tenant, admin_group} <- Tenants.create_tenant(%{title: title, slug: slug}) do
+        Accounts.set_user_groups(current_user, tenant, [admin_group])
+        Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
+        {:ok, tenant}
+    else
+        {:error, changeset} ->
+          {
+            :error,
+            message: "Erstellen fehlgeschlagen.",
+            details: error_details(changeset)
+          }
+    end
+  end
 
   def update(%{tenant: tenant_input}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do

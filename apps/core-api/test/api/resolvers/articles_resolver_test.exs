@@ -1,5 +1,5 @@
 defmodule Api.ArticleResolverTest do
-  use ApiWeb.ConnCase
+  use ApiWeb.ConnCase, async: true
   
   setup do
     Api.Repo.Seeder.seed()
@@ -49,7 +49,6 @@ defmodule Api.ArticleResolverTest do
       }
     }
     """
-
     test "returns an article", %{oskar: oskar} do
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
@@ -867,13 +866,13 @@ defmodule Api.ArticleResolverTest do
 
       draft
       |> Api.Content.Article.changeset(%{
-        content_modules: [%{ type: "IMAGE", text: "", sort_key: 0, configuration: "{}", files: [%{id: file1.id}] }]
+        content_modules: [%{ type: "IMAGE", content: "{\"text\": \"\"}", sort_key: 0, configuration: "{}", files: [%{id: file1.id}] }]
       })
 
       res = build_conn()
       |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
-      |> post("/api", query: @query, variables: %{ id: draft.id, article: %{ title: "ABC", content_modules: [%{ type: "IMAGE", text: "bla", sort_key: 0, configuration: "{}", files: [%{id: file2.id}] }] } })
+      |> post("/api", query: @query, variables: %{ id: draft.id, article: %{ title: "ABC", content_modules: [%{ type: "IMAGE", content: "{\"text\": \"bla\"}", sort_key: 0, configuration: "{}", files: [%{id: file2.id}] }] } })
       |> json_response(200)
   
       assert res == %{
@@ -923,7 +922,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel bearbeiten.",
+            "message" => "Nur Administratoren oder Autoren dürfen Beiträge bearbeiten.",
             "path" => ["updateArticle"]
           }
         ]
@@ -943,7 +942,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel bearbeiten.",
+            "message" => "Du musst angemeldet sein um Beiträge zu bearbeiten.",
             "path" => ["updateArticle"]
           }
         ]
@@ -1007,7 +1006,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel löschen.",
+            "message" => "Nur Administratoren oder Autoren dürfen Beiträge löschen.",
             "path" => ["deleteArticle"]
           }
         ]
@@ -1027,7 +1026,7 @@ defmodule Api.ArticleResolverTest do
         "errors" => [
           %{
             "locations" => [%{"column" => 0, "line" => 2}],
-            "message" => "Nur Administratoren oder Autoren dürfen Artikel löschen.",
+            "message" => "Du musst angemeldet sein um Beiträge zu löschen.",
             "path" => ["deleteArticle"]
           }
         ]
