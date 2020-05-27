@@ -7,13 +7,13 @@ import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User, Article } from 'util/model';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
+import { BackgroundImg } from 'react-cloudimage-responsive';
 import clsx from 'clsx';
-import Img from 'react-cloudimage-responsive';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     root: {
@@ -97,10 +97,8 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     },
     articlePreviewImage: {
         width: '100%',
-        height: 'auto',
-        flexShrink: 0,
-        flexGrow: 0,
-        backgroundPosition: '0 0'
+        height: '100%',
+        background: 'transparent 50% 50% / cover no-repeat'
     },
     articleTitle: {
         ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title),
@@ -154,18 +152,14 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
 
     return (
         <Card className={styles.root} data-testid={'ArticlePreview'}>
-            <Grid container style={{ display: 'flex', minHeight: 60 }}>
+            <Grid container style={{ position: 'relative', display: 'flex', minHeight: 60 }}>
                 {article.previewImageFile && (
-                    <Grid item xs={2}>
-                        {maybeLinked(
-                            <Img
-                                operation={'cover'}
-                                size={'300x200'}
-                                src={article.previewImageFile.remoteLocation}
-                                className={styles.articlePreviewImage}
-                                alt={`Vorschaubild zu ${article.title}`}
-                            />
-                        )}
+                    <Grid item xs={2} style={{ position: 'relative' }}>
+                        <BackgroundImg
+                            src={article.previewImageFile.remoteLocation} 
+                            className={styles.articlePreviewImage}
+                            params="func=crop&gravity=auto"
+                        />
                     </Grid>
                 )}
                 <Grid item xs>
@@ -184,9 +178,6 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
                 <Grid item xs={2} className={styles.meta}>
                     <Typography component={'span'} variant={'subtitle1'} className={clsx(styles.subtitle)}>
                         {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
-                    </Typography>
-                    <Typography component={'span'} variant={'subtitle1'} className={clsx(styles.subtitle)}>
-                        {article.topic && <> | {article.topic}&nbsp;</>}
                     </Typography>
                     <Typography component={'span'} variant={'subtitle1'} className={clsx(styles.subtitle)}>
                         {article.users && article.users.length > 0 && <>&nbsp;<AuthorAvatarsList users={article.users} />&nbsp;</>}

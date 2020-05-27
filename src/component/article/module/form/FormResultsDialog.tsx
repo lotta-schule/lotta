@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback } from 'react';
 import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DialogTitle, DialogContent, CircularProgress, Button, Typography } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
 import { FormConfiguration } from './Form';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -13,7 +13,7 @@ import { saveAs } from 'file-saver';
 export interface FormResultsDialogProps {
     isOpen: boolean;
     onRequestClose(): void;
-    contentModule: ContentModuleModel<FormConfiguration>;
+    contentModule: ContentModuleModel<{}, FormConfiguration>;
 }
 
 export const FormResultsDialog = memo<FormResultsDialogProps>(({ isOpen, onRequestClose, contentModule }) => {
@@ -39,7 +39,6 @@ export const FormResultsDialog = memo<FormResultsDialogProps>(({ isOpen, onReque
                 ].join(',')
             )) ?? []
         ];
-        console.log(rows);
         const csv = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8' });
         saveAs(csv, 'formulardaten.csv');
     }, [data]);

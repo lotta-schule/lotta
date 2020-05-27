@@ -1,6 +1,6 @@
 import React, { memo, useContext, useState, useEffect } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, Button, DialogActions, Typography } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { FileModel, DirectoryModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteFileMutation } from 'api/mutation/DeleteFileMutation';

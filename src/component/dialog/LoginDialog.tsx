@@ -26,7 +26,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
 }) => {
     const styles = useStyles();
     const [login, { error, loading: isLoading }] = useOnLogin('login', {
-        onCompleted: onRequestClose
+        onCompleted: onRequestClose,
     });
 
     const [email, setEmail] = useState('');
@@ -71,7 +71,7 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(({
                         type="password"
                         fullWidth
                     />
-                    <Typography variant="body1" color="secondary"> 
+                    <Typography variant="body1" color="secondary">
                         <Link
                             component={CollisionLink}
                             color='inherit'

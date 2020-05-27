@@ -17,6 +17,7 @@ declare module 'react-cloudimage-responsive' {
         alt?: string;
         className?: string;
         operation?: 'width' | 'height' | 'crop' | 'fit' | 'cover';
+        params?: string;
         size?: string;
         filters?: string;
         ratio?: number;
@@ -25,6 +26,8 @@ declare module 'react-cloudimage-responsive' {
     export const CloudimageProvider: ComponentType<{ config: CloudimageProviderConfig }>;
 
     const Img: ComponentType<ImgProps>;
+
+    export const BackgroundImg: ComponentType<ImgProps>;
 
     export default Img;
 };

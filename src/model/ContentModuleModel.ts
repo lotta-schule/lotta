@@ -12,11 +12,11 @@ export enum ContentModuleType {
     FORM = 'FORM',
 }
 
-export interface ContentModuleModel<T = any> {
+export interface ContentModuleModel<C = any, T = any> {
     id: ID;
     type: ContentModuleType;
     sortKey: number;
-    text?: string;
+    content?: C | null;
     files: FileModel[];
     configuration?: T;
 }

@@ -8,6 +8,9 @@ import { ClientModel } from 'model';
 
 const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
     '@global': {
+        '*': {
+            boxSizing: 'border-box'
+        },
         body: {
             '&:after': {
                 // taken from https://stackoverflow.com/questions/24154666/background-size-cover-not-working-on-ios/31445503#31445503

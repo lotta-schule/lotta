@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { render, RenderOptions } from '@testing-library/react'
-import { MockedProvider } from '@apollo/react-testing';
+import { MockedProvider } from '@apollo/client/testing';
 import { apolloMocks } from './mocks/apollo';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';

@@ -1,8 +1,6 @@
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { createLink } from 'apollo-absinthe-upload-link';
-import { onError } from 'apollo-link-error';
-import { ApolloLink } from 'apollo-link';
-import { ApolloClient } from 'apollo-client';
+import { createLink } from 'apollo-v3-absinthe-upload-link';
+import { onError } from '@apollo/link-error';
+import { ApolloClient, ApolloLink, InMemoryCache, gql } from '@apollo/client';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const customFetch = (url: string, options: any) => {
@@ -84,18 +82,18 @@ const apolloClient = new ApolloClient({
         })
     ]),
     resolvers: {},
-    cache: new InMemoryCache({
-        freezeResults: true
-    }),
+    cache: new InMemoryCache(),
 });
 
-const initialData = {
-    isMobileDrawerOpen: false
-}
-
-apolloClient.writeData({ data: initialData });
+apolloClient.writeQuery({
+    query: gql`{ isMobileDrawerOpen }`,
+    data: { isMobileDrawerOpen: false }
+});
 apolloClient.onResetStore(async () => {
-    apolloClient.writeData({ data: initialData })
+    apolloClient.writeQuery({
+        query: gql`{ isMobileDrawerOpen }`,
+        data: { isMobileDrawerOpen: false }
+    });
 });
 
 export const client = apolloClient;

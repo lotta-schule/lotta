@@ -2,7 +2,7 @@ import React, { FunctionComponent, memo, useState } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField } from '@material-ui/core';
 import { ArticleModel, ArticleModelInput } from '../../model';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';

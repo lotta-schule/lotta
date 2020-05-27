@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const CreateDirectoryMutation = gql`
     mutation CreateDirectory($name: String!, $parentDirectoryId: ID, $isPublic: Boolean) {

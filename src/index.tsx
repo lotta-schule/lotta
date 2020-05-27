@@ -6,7 +6,7 @@ import React from 'react';
 import DateFnsUtils from '@date-io/date-fns';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 import { App } from './component/App';
 import { client } from 'api/client';
 import { CloudimageProvider } from 'react-cloudimage-responsive';

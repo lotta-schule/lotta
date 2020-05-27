@@ -3,10 +3,9 @@ import {
     Divider, Typography, makeStyles, Theme, TextField, FormControl, InputLabel, Select, MenuItem, Button, Checkbox, FormControlLabel
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
-import { CategoryModel } from 'model';
-import { useMutation } from '@apollo/react-hooks';
+import { CategoryModel, WidgetModel, ID } from 'model';
+import { useMutation, useQuery } from '@apollo/client';
 import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
-import { ID } from 'model/ID';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
@@ -16,6 +15,7 @@ import { Category } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { SaveButton } from 'component/general/SaveButton';
+import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -53,12 +53,25 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
     const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] = useState(false);
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
+    const [selectedWidgets, setSelectedWidgets] = useState<WidgetModel[]>([]);
     const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+      refetchQueries: [
+          { query: GetCategoryWidgetsQuery, variables: { categoryId: category?.id ?? null } }
+      ],
         onCompleted: () => {
             setIsShowSuccess(true);
             setTimeout(() => setIsShowSuccess(false), 3000);
         }
     });
+    const { data: currentWidgetsData, error: currentWidgetsError } = useQuery(GetCategoryWidgetsQuery, {
+        variables: { categoryId: category?.id ?? null },
+        skip: !category?.id
+    });
+    useEffect(() => {
+        if (currentWidgetsData) {
+            setSelectedWidgets(currentWidgetsData.widgets);
+        }
+    }, [currentWidgetsData]);
 
     const updateCategory = useCallback(async () => {
         if (!selectedCategory || !category) {
@@ -75,11 +88,11 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                     redirect: category.redirect === 'null' ? null : category.redirect,
                     layoutName: category.layoutName,
                     hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
-                    widgets: category.widgets ? category.widgets.map(w => ({ ...w, configuration: JSON.stringify(w.configuration) })) : []
+                    widgets: selectedWidgets.map((w: WidgetModel) => ({ ...w, configuration: JSON.stringify(w.configuration) })) ?? []
                 }
             }
         });
-    }, [category, mutateCategory, selectedCategory]);
+    }, [category, mutateCategory, selectedCategory, selectedWidgets]);
 
     useEffect(() => {
         if (selectedCategory === null && category !== null) {
@@ -100,7 +113,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
             <Typography variant="h5">
                 {selectedCategory ? selectedCategory.title : category && category.title}
             </Typography>
-            <ErrorMessage error={error} />
+            <ErrorMessage error={error || currentWidgetsError} />
             <TextField
                 className={styles.input}
                 fullWidth
@@ -110,23 +123,25 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
             />
 
             {!category.isHomepage && (
+                <GroupSelect
+                    className={styles.input}
+                    selectedGroups={category.groups || []}
+                    onSelectGroups={groups => setCategory({ ...category, groups })}
+                />
+            )}
+
+            <Typography className={styles.input}>
+                <b>Wähle ein Banner für diese Kategorie</b>
+            </Typography>
+
+            <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })} allowDeletion>
+                {category.bannerImageFile ? (
+                    <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
+                ) : (<PlaceholderImage width={'100%'} height={75} />)}
+            </SelectFileOverlay>
+
+            {!category.isHomepage && (
                 <>
-                    <GroupSelect
-                        className={styles.input}
-                        selectedGroups={category.groups || []}
-                        onSelectGroups={groups => setCategory({ ...category, groups })}
-                    />
-
-                    <Typography className={styles.input}>
-                        <b>Wähle ein Banner für diese Kategorie</b>
-                    </Typography>
-
-                    <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })} allowDeletion>
-                        {category.bannerImageFile ? (
-                            <Img operation={'cover'} size={'900x150'} src={category.bannerImageFile.remoteLocation} />
-                        ) : (<PlaceholderImage width={'100%'} height={75} />)}
-                    </SelectFileOverlay>
-
                     <FormControl className={styles.input}>
                         <FormControlLabel
                             control={
@@ -193,8 +208,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                 <b>Wähle die marginalen Module für diese Kategorie</b>
             </Typography>
             <CategoryWidgetSelector
-                selectedWidgets={category.widgets || []}
-                setSelectedWidgets={widgets => setCategory({ ...category, widgets })}
+                selectedWidgets={selectedWidgets}
+                setSelectedWidgets={widgets => setSelectedWidgets(widgets)}
             />
             <p>&nbsp;</p>
             <SaveButton

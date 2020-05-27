@@ -1,6 +1,6 @@
 import React, { memo, useContext } from 'react';
 import { makeStyles, CircularProgress, Typography, Theme, TextField } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, DirectoryModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';

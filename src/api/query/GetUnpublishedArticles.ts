@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const GetUnpublishedArticlesQuery = gql`
     query GetUnpublishedArticles {
@@ -22,7 +22,7 @@ export const GetUnpublishedArticlesQuery = gql`
             contentModules {
                 id
                 type
-                text
+                content
                 sortKey
                 configuration
                 files {

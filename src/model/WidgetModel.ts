@@ -3,7 +3,7 @@ import { FileModel } from './FileModel';
 import { UserGroupModel } from './UserGroupModel';
 
 export enum WidgetModelType {
-    UserNavigation = '{0}',
+    UserNavigationMobile = '{0}',
     Calendar = 'CALENDAR',
     VPlan = 'VPLAN',
     TagCloud = 'TAGCLOUD',

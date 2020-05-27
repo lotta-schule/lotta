@@ -1,4 +1,4 @@
-declare module 'apollo-absinthe-upload-link' {
+declare module 'apollo-v3-absinthe-upload-link' {
 
     import { ApolloLink } from 'apollo-link';
 

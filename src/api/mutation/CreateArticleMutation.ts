@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const CreateArticleMutation = gql`
     mutation CreateArticle($article: ArticleInput) {
@@ -22,7 +22,7 @@ export const CreateArticleMutation = gql`
             contentModules {
                 id
                 type
-                text
+                content
                 sortKey
             }
             category {

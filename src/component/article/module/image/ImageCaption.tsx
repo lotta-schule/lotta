@@ -3,6 +3,9 @@ import { Typography, makeStyles, Theme } from '@material-ui/core';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
+    root: {
+        padding: theme.spacing(0, 1),
+    },
     figcaption: {
         borderBottom: `1px solid ${theme.palette.secondary.main}`,
         borderTop: 'none',
@@ -22,7 +25,7 @@ export const ImageCaption: FunctionComponent<ImageCaptionProps> = memo(({ isEdit
     const styles = useStyles();
 
     return (
-        <figcaption>
+        <figcaption className={styles.root}>
             <Typography
                 variant={'subtitle2'}
                 placeholder={isEditModeEnabled ? 'Bildbeschreibung' : undefined}

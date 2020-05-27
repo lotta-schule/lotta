@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const ToggleArticlePinMutation = gql`
     mutation ToggleArticlePin($id: ID!) {
@@ -22,7 +22,7 @@ export const ToggleArticlePinMutation = gql`
             contentModules {
                 id
                 type
-                text
+                content
                 sortKey
                 configuration
                 files {

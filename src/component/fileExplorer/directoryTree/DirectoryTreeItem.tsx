@@ -2,7 +2,7 @@ import React, { memo, useCallback, useContext } from 'react';
 import { TreeItem } from '@material-ui/lab';
 import { DirectoryModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { CircularProgress } from '@material-ui/core';
 import { HomeOutlined } from '@material-ui/icons';
 import { File } from 'util/model';

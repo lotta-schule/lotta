@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, TextField, Button, DialogActions, FormControlLabel, Checkbox } from '@material-ui/core';
 import { DirectoryModel, FileModel } from 'model';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { CreateDirectoryMutation } from 'api/mutation/CreateDirectoryMutation';

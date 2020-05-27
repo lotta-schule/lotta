@@ -35,7 +35,7 @@ export const Widget = {
         return {
             id: 0,
             title: 'Profil',
-            type: WidgetModelType.UserNavigation,
+            type: WidgetModelType.UserNavigationMobile,
             configuration: {
                 icon: {
                     iconName: 'accountcircle'

@@ -1,4 +1,4 @@
-import { useApolloClient, useMutation, MutationTuple } from '@apollo/react-hooks';
+import { useApolloClient, useMutation, MutationTuple } from '@apollo/client';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { ResetPasswordMutation } from 'api/mutation/ResetPasswordMutation';
@@ -12,12 +12,13 @@ export const useOnLogin = (fn: 'login' | 'register' | 'resetPassword', options?:
     const [login, { error, loading, called }] = useMutation(mutation, {
         errorPolicy: 'all',
         onCompleted: data => {
-            apolloClient.resetStore();
-            options?.onCompleted?.(data);
-            if (options?.redirect) {
-                history.push(options.redirect);
+            if (data[fn]) {
+                apolloClient.resetStore();
+                options?.onCompleted?.(data);
+                if (options?.redirect) {
+                    history.push(options.redirect);
+                }
             }
-
         }
     });
     return [login, { error, loading, called }];

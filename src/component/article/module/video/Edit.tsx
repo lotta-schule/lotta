@@ -5,8 +5,8 @@ import { Typography, makeStyles, Theme } from '@material-ui/core';
 import { VideoVideo } from './VideoVideo';
 
 interface EditProps {
-    contentModule: ContentModuleModel;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    contentModule: ContentModuleModel<{ captions: string[] }>;
+    onUpdateModule(contentModule: ContentModuleModel<{ captions: string[] }>): void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -18,12 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdateModule }) => {
     const styles = useStyles();
-    let captions: string[];
-    try {
-        captions = JSON.parse(contentModule.text || '[]');
-    } catch (e) {
-        captions = [];
-    }
+    const captions: string[] = contentModule.content?.captions ?? [] as string[];
     return (
         <figure>
             <SelectFileOverlay
@@ -43,7 +38,7 @@ export const Edit: FunctionComponent<EditProps> = memo(({ contentModule, onUpdat
                     onChange={(e: FormEvent<HTMLInputElement>) => {
                         onUpdateModule({
                             ...contentModule,
-                            text: JSON.stringify([(e.target as HTMLInputElement).value])
+                            content: { captions: [(e.target as HTMLInputElement).value] }
                         });
                     }}
                 />

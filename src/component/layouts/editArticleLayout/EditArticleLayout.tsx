@@ -7,7 +7,7 @@ import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import omit from 'lodash/omit';
 import useRouter from 'use-react-router';
@@ -72,6 +72,7 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
                             ...additionalProps,
                             contentModules: editedArticle.contentModules.map(cm => ({
                                 ...cm,
+                                content: cm.content ? JSON.stringify(cm.content) : cm.content,
                                 configuration: JSON.stringify(cm.configuration || {})
                             }))
                         };
@@ -81,7 +82,10 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
                                 article: {
                                     ...omit(article, ['id']),
                                     contentModules: article.contentModules.map(cm =>
-                                        cm.id < 0 ? omit(cm, ['id']) : cm
+                                        ({
+                                            ...(cm.id < 0 ? omit(cm, ['id']) : cm),
+                                            content: cm.content || null
+                                        })
                                     )
                                 } as ArticleModelInput
                             },

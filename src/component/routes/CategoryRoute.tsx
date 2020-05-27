@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { ArticleModel, ArticleFilter } from 'model';
 import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
 import { CategoryLayout } from 'component/layouts/CategoryLayout';

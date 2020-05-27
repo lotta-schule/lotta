@@ -46,7 +46,7 @@ export const SlateImage = memo<SlateImageProps>(({ element, attributes, children
     const styles = useStyles({ isEditing, isSelected, ...element });
     const [showOverlay, setShowOverlay] = useState(false);
 
-    const src = element.src;
+    const src = element.src as string;
     const imageUrl = `https://afdptjdxen.cloudimg.io/width/400/foil1/${src}`;
 
     const setElementOptions = useCallback((options: { alignment?: string; size?: string }) => {

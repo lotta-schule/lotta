@@ -6,7 +6,7 @@ import {
 } from 'test/util';
 import { UeberSuedamerika, VivaLaRevolucion } from 'test/fixtures/Article';
 import { CategoryLayout } from './CategoryLayout';
-import { SuedAmerikaCategory, StartseiteCategory } from 'test/fixtures/Tenant';
+import { SuedAmerikaCategory } from 'test/fixtures/Tenant';
 
 afterEach(cleanup);
 
@@ -33,14 +33,6 @@ describe('component/article/CategoryLayout', () => {
             await new Promise(resolve => setTimeout(resolve));
             getAllByTestId('ArticlePreview');
             done();
-        });
-    });
-
-    describe('Standard Category', () => {
-        it('should not render the category title if it\'s the homepage', () => {
-            const { container } = render(<CategoryLayout category={StartseiteCategory} articles={[]} />);
-            const title = container.querySelector('h2');
-            expect(title).toBeNull();
         });
     });
 

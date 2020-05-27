@@ -15,13 +15,13 @@ cache:
   paths:
     - node_modules/
 
-# test:
-#   stage: test
-#   image: node:12
-#   script:
-#     - npm install
-#     - npm run test -- --coverage
-#   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+test:
+  stage: test
+  image: node:12
+  script:
+    - npm install
+    - npm run test -- --coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 lint:
   stage: test

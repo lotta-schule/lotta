@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { CategoryModel } from 'model';
 import { CreateCategoryMutation } from 'api/mutation/CreateCategoryMutation';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';

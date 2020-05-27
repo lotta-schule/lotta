@@ -4,7 +4,7 @@ import { useUserGroups } from 'util/client/useUserGroups';
 import {
     CircularProgress, Checkbox, FormControl, Input, InputLabel, FormHelperText, FormControlLabel, Button, Typography, makeStyles
 } from '@material-ui/core';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/client';
 import { GetGroupQuery } from 'api/query/GetGroupQuery';
 import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';

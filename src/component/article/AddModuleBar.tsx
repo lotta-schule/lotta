@@ -2,11 +2,9 @@ import React, { FunctionComponent, memo } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, Grid } from '@material-ui/core';
 import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined, Feedback } from '@material-ui/icons';
-import { Node } from 'slate';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { AddModuleButton } from './AddModuleButton';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { serialize } from './module/text/SlateUtils';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -48,9 +46,8 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.TEXT,
-                                text: (() => {
-                                    const nodes: Node[] = [{ type: 'paragraph', children: [{ text: 'lorem ipsum ...' }] }];
-                                    return serialize(nodes);
+                                content: (() => {
+                                    return { nodes: [{ type: 'paragraph', children: [{ text: 'lorem ipsum ...' }] }] };
                                 })(),
                                 files: [],
                             });
@@ -66,7 +63,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.TITLE,
-                                text: 'Titel',
+                                content: { text: 'Titel' },
                                 files: [],
                             });
                         }}
@@ -81,7 +78,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.IMAGE,
-                                text: undefined,
+                                content: null,
                                 files: [],
                             });
                         }}
@@ -96,7 +93,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.IMAGE_COLLECTION,
-                                text: undefined,
+                                content: null,
                                 files: [],
                             });
                         }}
@@ -111,7 +108,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.VIDEO,
-                                text: undefined,
+                                content: null,
                                 files: [],
                             });
                         }}
@@ -126,7 +123,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.AUDIO,
-                                text: undefined,
+                                content: null,
                                 files: [],
                             });
                         }}
@@ -141,7 +138,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: -(new Date().getTime() + Math.random() * 1000),
                                 sortKey: null!,
                                 type: ContentModuleType.DOWNLOAD,
-                                text: '[]',
+                                content: null,
                                 files: [],
                             });
                         }}
@@ -157,7 +154,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 sortKey: null!,
                                 type: ContentModuleType.FORM,
                                 configuration: { destination: currentUser!.email, save_internally: true, elements: [] },
-                                text: undefined,
+                                content: null,
                                 files: [],
                             });
                         }}
