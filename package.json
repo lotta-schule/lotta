@@ -53,7 +53,7 @@
     "matomo-ts": "^1.0.1",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
-    "react-cloudimage-responsive": "^3.3.0",
+    "react-cloudimage-responsive": "^1.6.10",
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.0.1",
     "react-helmet": "^6.0.0",
