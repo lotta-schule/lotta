@@ -27,8 +27,8 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :create_tenant, type: :tenant do
       arg :title, non_null(:string)
       arg :slug, non_null(:string)
-      arg :email, non_null(:string)
-      arg :name, non_null(:string)
+      arg :email, :string
+      arg :name, :string
 
       resolve &Api.TenantResolver.create/2
     end
