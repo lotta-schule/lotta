@@ -68,7 +68,8 @@ const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
     userNavigationGridItem: {
         [theme.breakpoints.down('sm')]: {
             display: 'none'
-        }
+        },
+        maxWidth: '35%',
     }
 }));
 
@@ -115,7 +116,7 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
                             {category.title}
                         </Typography>
                     </Grid>
-                    <Grid item xs={false} sm={4} xl={3} className={styles.userNavigationGridItem}>
+                    <Grid item xs={false} className={styles.userNavigationGridItem}>
                         <UserNavigation />
                     </Grid>
                 </Grid>
