@@ -58,21 +58,29 @@ defmodule Api.TenantResolver do
     end
   end
   def create(%{title: title, slug: slug}, %{context: %{current_user: current_user}}) do
+    current_user_has_admin_groups =
+      current_user
+      |> User.get_groups()
+      |> Enum.any?(&(&1.is_admin_group))
     slug =
       slug
       |> String.downcase()
       |> Api.Slugifier.slugify_string()
-    with {:ok, tenant, admin_group} <- Tenants.create_tenant(%{title: title, slug: slug}) do
-        Accounts.set_user_groups(current_user, tenant, [admin_group])
-        Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
-        {:ok, tenant}
+    if current_user_has_admin_groups do
+      {:error, "Der Nutzer ist schon Administrator bei lotta."}
     else
-        {:error, changeset} ->
-          {
-            :error,
-            message: "Erstellen fehlgeschlagen.",
-            details: error_details(changeset)
-          }
+      with {:ok, tenant, admin_group} <- Tenants.create_tenant(%{title: title, slug: slug}) do
+          Accounts.set_user_groups(current_user, tenant, [admin_group])
+          Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
+          {:ok, tenant}
+      else
+          {:error, changeset} ->
+            {
+              :error,
+              message: "Erstellen des Tenant fehlgeschlagen.",
+              details: error_details(changeset)
+            }
+      end
     end
   end
 
