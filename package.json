@@ -5,7 +5,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --roots \"${PWD}/src\"",
+    "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src .",
     "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx src . --fix",
     "apollo:schema:download": "apollo client:download-schema src/api/schema.json",
@@ -88,6 +88,7 @@
     "@types/react-virtualized": "^9.21.10",
     "@types/slate-base64-serializer": "^0.2.2",
     "@types/user-event": "^4.1.0",
+    "jest-environment-jsdom-fifteen": "^1.0.2",
     "node-sass": "^4.14.1",
     "typescript": "^3.8.3"
   }
