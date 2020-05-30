@@ -103,7 +103,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                 subheader={t('widgets.markedWidgets', { count: numberOfChecked(widgets), total: widgets.length })}
             />
             <Divider />
-            <List className={styles.list} dense component="div" role="list">
+            <List className={styles.list} dense component="div" role="list" data-testid="WidgetsSelectionList">
                 {widgets.map((widget: WidgetModel) => {
                     const labelId = `transfer-list-all-item-${widget.id}-label`;
 
