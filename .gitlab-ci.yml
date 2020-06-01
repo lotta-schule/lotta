@@ -77,7 +77,6 @@ deploy:staging:
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="1500M"
       --set ingress.hosts[0].host="*.staging.lotta.schule"
-      --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.staging.lotta.schule"
       --set ingress.tls[0].secretName="lotta-web-staging-certificate"
       --set resources.limits.cpu=50m
@@ -136,7 +135,6 @@ deploy:production:
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="5M"
       --set ingress.hosts[0].host="*.lotta.schule"
-      --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.lotta.schule"
       --set ingress.tls[0].secretName="lotta-web-certificate"
       --set resources.limits.cpu=100m
