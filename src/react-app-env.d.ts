@@ -7,10 +7,7 @@ declare namespace NodeJS {
         REACT_APP_APP_REVISION: string;
         REACT_APP_API_URL: string;
         REACT_APP_APP_BASE_DOMAIN: string;
-        REACT_APP_AUTHENTICATION_TOKEN_NAME: string;
         REACT_APP_HONEYBADGER_API_KEY: string;
-        REACT_APP_MATOMO_URL: string;
-        REACT_APP_MATOMO_SITEID: string;
         REACT_APP_FILE_REPLACEMENT_URL: string;
     }
 }
