@@ -1,16 +1,21 @@
 defmodule Api.Queue.MediaConversionRequestPublisher do
+  @moduledoc """
+    Outgoing queue for dispatching uploaded files, in order for them to have the possibility to be processed
+  """
+
   use GenServer
   @behaviour GenRMQ.Publisher
   alias Api.Accounts.File
 
   require Logger
 
-  @exchange    "media-conversion"
-  @queue       "media-conversion-tasks"
+  @exchange "media-conversion"
+  @queue "media-conversion-tasks"
 
   def init(arg) do
     {:ok, arg}
   end
+
   def init do
     create_rmq_resources()
 

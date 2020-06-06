@@ -1,4 +1,8 @@
 defmodule Api.Guardian do
+  @moduledoc """
+  Guardian callbacks for Authorization
+  """
+
   use Guardian, otp_app: :api
   alias Api.Accounts
 
@@ -16,7 +20,7 @@ defmodule Api.Guardian do
     # Here we'll look up our resource from the claims, the subject can be
     # found in the `"sub"` key. In `above subject_for_token/2` we returned
     # the resource id so here wel'll rely on that to look it up
-    user = claims["sub"] |> Accounts.get_user!
+    user = claims["sub"] |> Accounts.get_user!()
     {:ok, user}
   end
 end

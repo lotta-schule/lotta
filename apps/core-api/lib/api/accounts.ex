@@ -3,10 +3,23 @@ defmodule Api.Accounts do
   The Accounts context.
   """
 
+  require Logger
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Accounts.{User,UserGroup,GroupEnrollmentToken,UserEnrollmentToken,Directory,File}
+  alias Api.Tenants
+
+  alias Api.Accounts.{
+    BlockedTenant,
+    User,
+    UserGroup,
+    GroupEnrollmentToken,
+    UserEnrollmentToken,
+    Directory,
+    File,
+    FileConversion
+  }
+
   alias Api.Tenants.Tenant
 
   def data() do
@@ -27,20 +40,25 @@ defmodule Api.Accounts do
 
   """
   def list_users_with_groups(tenant_id) do
-    assigned_groups_query = from u in User,
-      join: g in assoc(u, :groups),
-      where: g.tenant_id == ^tenant_id,
-      distinct: true
-    dynamic_groups_query = from u in User,
-      join: g in UserGroup,
-      join: ut in UserEnrollmentToken,
-      on: ut.user_id == u.id,
-      join: t in GroupEnrollmentToken,
-      on: g.id == t.group_id and t.token == ut.enrollment_token,
-      distinct: true
+    assigned_groups_query =
+      from u in User,
+        join: g in assoc(u, :groups),
+        where: g.tenant_id == ^tenant_id,
+        distinct: true
 
-    query = from q in subquery(union(assigned_groups_query, ^dynamic_groups_query)),
-      order_by: [q.name, q.email]
+    dynamic_groups_query =
+      from u in User,
+        join: g in UserGroup,
+        join: ut in UserEnrollmentToken,
+        on: ut.user_id == u.id,
+        join: t in GroupEnrollmentToken,
+        on: g.id == t.group_id and t.token == ut.enrollment_token,
+        distinct: true
+
+    query =
+      from q in subquery(union(assigned_groups_query, ^dynamic_groups_query)),
+        order_by: [q.name, q.email]
+
     Repo.all(query)
   end
 
@@ -80,7 +98,6 @@ defmodule Api.Accounts do
     Repo.get_by(User, email: email)
   end
 
-
   @doc """
   Searches users by text. The user is searched by *exact match* of email, or, in the same tenant, by name or nickname
 
@@ -92,10 +109,16 @@ defmodule Api.Accounts do
   def search_user(searchtext, tenant) do
     tenant_id = tenant.id
     matching_searchtext = "%#{searchtext}%"
-      query = Ecto.Query.from(u in User,
-        where: u.email == ^searchtext or (u.tenant_id == ^tenant_id and (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext)))
+
+    query =
+      Ecto.Query.from(u in User,
+        where:
+          u.email == ^searchtext or
+            (u.tenant_id == ^tenant_id and
+               (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext)))
       )
-      {:ok, Repo.all(query)}
+
+    {:ok, Repo.all(query)}
   end
 
   @doc """
@@ -147,11 +170,12 @@ defmodule Api.Accounts do
 
   """
   def set_user_groups(%User{} = user, %Tenant{} = tenant, groups) do
-    groups = user
-    |> Repo.preload(:groups)
-    |> Map.fetch!(:groups)
-    |> Enum.filter(fn group -> group.tenant_id !== tenant.id end)
-    |> Enum.concat(groups)
+    groups =
+      user
+      |> Repo.preload(:groups)
+      |> Map.fetch!(:groups)
+      |> Enum.filter(fn group -> group.tenant_id !== tenant.id end)
+      |> Enum.concat(groups)
 
     user
     |> Repo.preload(:groups)
@@ -168,7 +192,7 @@ defmodule Api.Accounts do
     from(g in UserGroup,
       join: t in GroupEnrollmentToken,
       on: g.id == t.group_id,
-      where: t.token == ^token and g.tenant_id == ^(tenant.id),
+      where: t.token == ^token and g.tenant_id == ^tenant.id,
       distinct: true
     )
     |> Repo.all()
@@ -182,7 +206,7 @@ defmodule Api.Accounts do
     from(g in UserGroup,
       join: t in GroupEnrollmentToken,
       on: g.id == t.group_id,
-      where: t.token in ^tokens and g.tenant_id == ^(tenant.id),
+      where: t.token in ^tokens and g.tenant_id == ^tenant.id,
       distinct: true
     )
     |> Repo.all()
@@ -204,11 +228,14 @@ defmodule Api.Accounts do
     changeset =
       %User{}
       |> User.registration_changeset(attrs)
-    with {:ok, user} <- Repo.insert(changeset) do
-      user
-      |> create_new_user_directories()
-      {:ok, user}
-    else
+
+    case Repo.insert(changeset) do
+      {:ok, user} ->
+        user
+        |> create_new_user_directories()
+
+        {:ok, user}
+
       result ->
         result
     end
@@ -247,10 +274,18 @@ defmodule Api.Accounts do
     case Repo.get_by(User, email: email) do
       nil ->
         {:error, "User not found"}
+
       user ->
-        case Redix.command(:redix, ["SET", "user-email-verify-token-#{email}", token, "EX", 6 * 60 * 60]) do
+        case Redix.command(:redix, [
+               "SET",
+               "user-email-verify-token-#{email}",
+               token,
+               "EX",
+               6 * 60 * 60
+             ]) do
           {:ok, _} ->
             {:ok, user}
+
           error ->
             error
         end
@@ -259,20 +294,21 @@ defmodule Api.Accounts do
 
   def find_user_by_reset_token(email, token) do
     with {:ok, reset_token} <- Redix.command(:redix, ["GET", "user-email-verify-token-#{email}"]),
-        false <- is_nil(token),
-        true <- token == reset_token,
-        user <- Repo.get_by(User, email: email),
-        false <- is_nil(user) do
+         false <- is_nil(token),
+         true <- token == reset_token,
+         user <- Repo.get_by(User, email: email),
+         false <- is_nil(user) do
       Redix.command(:redix, ["DEL", "user-email-verify-token-#{email}"])
       {:ok, user}
     else
       error ->
-        IO.inspect(error)
+        Logger.error(inspect(error))
         {:error, :invalid_token}
     end
   end
 
-  def update_password(%User{} = user, password) when is_binary(password) and byte_size(password) > 0 do
+  def update_password(%User{} = user, password)
+      when is_binary(password) and byte_size(password) > 0 do
     user
     |> User.update_password_changeset(password)
     |> Repo.update()
@@ -280,17 +316,26 @@ defmodule Api.Accounts do
 
   def set_user_blocked(%User{} = user, %Tenant{} = tenant, true) do
     user = Repo.preload(user, :blocked_tenants)
+
     blocked_tenants =
-      Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end) ++ [%Api.Accounts.BlockedTenant{user_id: user.id, tenant_id: tenant.id}]
+      Enum.filter(user.blocked_tenants, fn blocked_tenant ->
+        blocked_tenant.tenant_id != tenant.id
+      end) ++ [%BlockedTenant{user_id: user.id, tenant_id: tenant.id}]
+
     user
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:blocked_tenants, blocked_tenants)
     |> Repo.update()
   end
+
   def set_user_blocked(%User{} = user, %Tenant{} = tenant, false) do
     user = Repo.preload(user, :blocked_tenants)
+
     blocked_tenants =
-      Enum.filter(user.blocked_tenants, fn blocked_tenant -> blocked_tenant.tenant_id != tenant.id end)
+      Enum.filter(user.blocked_tenants, fn blocked_tenant ->
+        blocked_tenant.tenant_id != tenant.id
+      end)
+
     user
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:blocked_tenants, blocked_tenants)
@@ -303,13 +348,15 @@ defmodule Api.Accounts do
   """
   def list_root_directories(%Tenant{} = tenant, %User{} = user) do
     from(d in Directory,
-      where: d.tenant_id == ^tenant.id and is_nil(d.parent_directory_id) and (d.user_id == ^user.id or is_nil(d.user_id)),
+      where:
+        d.tenant_id == ^tenant.id and is_nil(d.parent_directory_id) and
+          (d.user_id == ^user.id or is_nil(d.user_id)),
       order_by: [fragment("? DESC NULLS LAST", d.user_id), :name]
     )
     |> Repo.all()
   end
 
-    @doc """
+  @doc """
   List root directories for a user and tenant
 
   """
@@ -372,7 +419,7 @@ defmodule Api.Accounts do
   end
 
   def create_new_user_directories(%User{} = user) do
-    Api.Tenants.list_tenants()
+    Tenants.list_tenants()
     |> Enum.map(fn tenant ->
       create_user_default_directories(user, tenant)
     end)
@@ -419,7 +466,6 @@ defmodule Api.Accounts do
   def delete_directory(%Directory{} = directory) do
     Repo.delete(directory)
   end
-
 
   @doc """
   Returns the list of files.
@@ -515,8 +561,6 @@ defmodule Api.Accounts do
   def change_file(%File{} = file) do
     File.changeset(file, %{})
   end
-
-  alias Api.Accounts.FileConversion
 
   @doc """
   Returns the list of file_conversions.
@@ -643,13 +687,16 @@ defmodule Api.Accounts do
 
   """
   def create_user_group(%Tenant{} = tenant, attrs) do
-    attrs = case attrs do
-      %{ sort_key: _ } ->
-        attrs
-      attrs ->
-        attrs
-        |> Map.put(:sort_key, UserGroup.get_max_sort_key(tenant) + 10)
-    end
+    attrs =
+      case attrs do
+        %{sort_key: _} ->
+          attrs
+
+        attrs ->
+          attrs
+          |> Map.put(:sort_key, UserGroup.get_max_sort_key(tenant) + 10)
+      end
+
     tenant
     |> Ecto.build_assoc(:groups)
     |> UserGroup.changeset(attrs)
@@ -701,8 +748,9 @@ defmodule Api.Accounts do
   """
   def see_user(%User{} = user) do
     user
-    |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)})
+    |> Ecto.Changeset.change(%{
+      last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)
+    })
     |> Repo.update!()
   end
-
 end

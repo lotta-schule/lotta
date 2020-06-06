@@ -1,4 +1,8 @@
 defmodule Api.Content.ContentModule do
+  @moduledoc """
+    Ecto Schema for content modules
+  """
+
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Changeset
@@ -12,10 +16,11 @@ defmodule Api.Content.ContentModule do
 
     belongs_to :article, Api.Content.Article
     has_many :results, Api.Content.ContentModuleResult
+
     many_to_many :files,
-      Api.Accounts.File,
-      join_through: "content_module_file",
-      on_replace: :delete
+                 Api.Accounts.File,
+                 join_through: "content_module_file",
+                 on_replace: :delete
 
     timestamps()
   end
@@ -31,9 +36,11 @@ defmodule Api.Content.ContentModule do
 
   defp put_assoc_files(content_module, %{files: files}) do
     files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, file.id) end)
+
     content_module
     |> put_assoc(:files, files)
   end
+
   defp put_assoc_files(content_module, _attrs) do
     content_module
   end

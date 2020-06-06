@@ -3,15 +3,17 @@ defmodule Api.Tenants do
   The Tenants context.
   """
 
+  require Logger
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Tenants.{Category,CustomDomain,Tenant,Widget}
-  alias Api.Accounts.{User,UserGroup}
+  alias Api.Tenants.{Category, CustomDomain, Tenant, Widget}
+  alias Api.Accounts.{User, UserGroup}
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
+
   def query(queryable, _params) do
     queryable
   end
@@ -19,16 +21,20 @@ defmodule Api.Tenants do
   def resolve_widgets(_args, %{context: context, source: category}) do
     user_group_ids = context[:user_group_ids] || []
     user_is_admin = context[:user_is_admin]
-    widgets = from(w in Widget,
-      left_join: wug in "widgets_user_groups",
-      on: wug.widget_id == w.id,
-      join: cw in "categories_widgets",
-      on: w.id == cw.widget_id,
-      where: (^user_is_admin or (wug.group_id in ^user_group_ids) or is_nil(wug.group_id)) and
-             cw.category_id == ^(category.id),
-      distinct: w.id
-    )
-    |> Repo.all()
+
+    widgets =
+      from(w in Widget,
+        left_join: wug in "widgets_user_groups",
+        on: wug.widget_id == w.id,
+        join: cw in "categories_widgets",
+        on: w.id == cw.widget_id,
+        where:
+          (^user_is_admin or wug.group_id in ^user_group_ids or is_nil(wug.group_id)) and
+            cw.category_id == ^category.id,
+        distinct: w.id
+      )
+      |> Repo.all()
+
     {:ok, widgets}
   end
 
@@ -42,8 +48,10 @@ defmodule Api.Tenants do
 
   """
   def list_tenants do
-    Repo.all from t in Tenant,
-      order_by: :slug
+    Repo.all(
+      from t in Tenant,
+        order_by: :slug
+    )
   end
 
   @doc """
@@ -76,17 +84,21 @@ defmodule Api.Tenants do
       nil
 
   """
-  def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, [slug: slug])
+  def get_tenant_by_slug(slug), do: Repo.get_by(Tenant, slug: slug)
 
   def get_tenant_by_origin(origin) do
     with %URI{host: host} <- URI.parse(origin),
-        false <- is_nil(host) do
+         false <- is_nil(host) do
       case get_tenant_by_custom_domain_host(host) do
         nil ->
-          IO.inspect("custom domain is not found with #{host}. Trying to recognize lotta slug")
-          base_url_without_port = Regex.replace(~r/:\d*$/, Application.fetch_env!(:api, :base_url), "")
-          with {:ok, regex} <- Regex.compile("^(?<slug>.*)#{Regex.escape(base_url_without_port)}"),
-              %{"slug" => slug} <- Regex.named_captures(regex, host) do
+          Logger.info("custom domain is not found with #{host}. Trying to recognize lotta slug")
+
+          base_url_without_port =
+            Regex.replace(~r/:\d*$/, Application.fetch_env!(:api, :base_url), "")
+
+          with {:ok, regex} <-
+                 Regex.compile("^(?<slug>.*)#{Regex.escape(base_url_without_port)}"),
+               %{"slug" => slug} <- Regex.named_captures(regex, host) do
             get_tenant_by_slug(slug)
           else
             error ->
@@ -96,18 +108,19 @@ defmodule Api.Tenants do
                 |> Enum.fetch!(0)
                 |> get_tenant_by_slug()
               else
-                IO.inspect(error)
-                IO.inspect("tenant not found by slug or host, host is #{host}")
+                if error, do: Logger.warn(error)
+                Logger.warn("tenant not found by slug or host, host is #{host}")
                 nil
               end
           end
+
         tenant ->
           tenant
       end
     else
       error ->
-        IO.inspect("could not parse origin header")
-        IO.inspect(error)
+        Logger.warn("could not parse origin header")
+        if error, do: Logger.warn(inspect(error))
         nil
     end
   end
@@ -128,15 +141,16 @@ defmodule Api.Tenants do
   """
   def get_tenant_by_custom_domain_host(host) when is_binary(host) do
     with %CustomDomain{tenant_id: tenant_id} <- Repo.get_by(CustomDomain, host: host),
-        tenant <- Repo.get(Tenant, tenant_id),
-        false <- is_nil(tenant) do
+         tenant <- Repo.get(Tenant, tenant_id),
+         false <- is_nil(tenant) do
       tenant
     else
-      error ->
-        IO.inspect(error)
+      _ ->
+        Logger.warn("Tenant not found for #{host}")
         nil
     end
   end
+
   def get_tenant_by_custom_domain_host(nil), do: nil
 
   @doc """
@@ -153,7 +167,7 @@ defmodule Api.Tenants do
       ** (Ecto.NoResultsError)
 
   """
-  def get_tenant_by_slug!(slug), do: Repo.get_by!(Tenant, [slug: slug])
+  def get_tenant_by_slug!(slug), do: Repo.get_by!(Tenant, slug: slug)
 
   @doc """
   Creates a tenant.
@@ -168,37 +182,43 @@ defmodule Api.Tenants do
 
   """
   def create_tenant(attrs \\ %{}) do
-    with {:ok, tenant} <- %Tenant{} |> Tenant.create_changeset(attrs) |> Repo.insert() do
-      %Category{
-        title: "Startseite",
-        sort_key: 0,
-        is_sidenav: false,
-        is_homepage: true,
-        tenant_id: tenant.id
-      }
-      |> Repo.insert()
+    tenant =
+      %Tenant{}
+      |> Tenant.create_changeset(attrs)
 
-      {:ok, admin_group} = %UserGroup{
-        name: "Administrator",
-        sort_key: 0,
-        is_admin_group: true,
-        tenant_id: tenant.id
-      }
-      |> Repo.insert()
-
-      ["Lehrer", "Schüler"]
-      |> Enum.with_index()
-      |> Enum.each(fn ({name, i}) ->
-        %UserGroup{
-          name: name,
-          sort_key: 10 + i * 10,
+    case Repo.insert(tenant) do
+      {:ok, tenant} ->
+        %Category{
+          title: "Startseite",
+          sort_key: 0,
+          is_sidenav: false,
+          is_homepage: true,
           tenant_id: tenant.id
         }
         |> Repo.insert()
-      end)
 
-      {:ok, tenant, admin_group}
-    else
+        {:ok, admin_group} =
+          %UserGroup{
+            name: "Administrator",
+            sort_key: 0,
+            is_admin_group: true,
+            tenant_id: tenant.id
+          }
+          |> Repo.insert()
+
+        ["Lehrer", "Schüler"]
+        |> Enum.with_index()
+        |> Enum.each(fn {name, i} ->
+          %UserGroup{
+            name: name,
+            sort_key: 10 + i * 10,
+            tenant_id: tenant.id
+          }
+          |> Repo.insert()
+        end)
+
+        {:ok, tenant, admin_group}
+
       result ->
         result
     end
@@ -251,8 +271,6 @@ defmodule Api.Tenants do
     Tenant.changeset(tenant, %{})
   end
 
-  alias Api.Tenants.Category
-
   @doc """
   Returns the list of categories.
 
@@ -266,12 +284,13 @@ defmodule Api.Tenants do
     from(c in Category,
       left_join: cug in "categories_user_groups",
       on: cug.category_id == c.id,
-      where: c.tenant_id == ^tenant.id and
-             ((cug.group_id in ^user_group_ids) or is_nil(cug.group_id) or ^user_is_admin),
+      where:
+        c.tenant_id == ^tenant.id and
+          (cug.group_id in ^user_group_ids or is_nil(cug.group_id) or ^user_is_admin),
       order_by: [asc: :sort_key, asc: :category_id],
       distinct: true
     )
-    |> Repo.all
+    |> Repo.all()
   end
 
   @doc """
@@ -303,7 +322,7 @@ defmodule Api.Tenants do
 
   """
   def create_category(%Tenant{} = tenant, attrs \\ %{}) do
-    %Category{ tenant_id: tenant.id, sort_key: Category.get_max_sort_key(tenant) + 10 }
+    %Category{tenant_id: tenant.id, sort_key: Category.get_max_sort_key(tenant) + 10}
     |> Category.changeset(attrs)
     |> Repo.insert()
   end
@@ -323,7 +342,7 @@ defmodule Api.Tenants do
   def update_category(%Category{} = category, attrs) do
     category
     |> Category.changeset(attrs)
-    |> Repo.update
+    |> Repo.update()
   end
 
   @doc """
@@ -355,8 +374,6 @@ defmodule Api.Tenants do
     Category.changeset(category, %{})
   end
 
-  alias Api.Tenants.Widget
-
   @doc """
   Returns the list of widgets.
 
@@ -372,8 +389,10 @@ defmodule Api.Tenants do
       from(w in Widget,
         left_join: wug in "widgets_user_groups",
         on: wug.widget_id == w.id,
-        where: w.tenant_id == ^tenant.id and
-              (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
+        where:
+          w.tenant_id == ^tenant.id and
+            (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or
+               ^User.is_admin?(user, tenant)),
         distinct: w.id
       )
       |> Repo.all()
@@ -389,13 +408,21 @@ defmodule Api.Tenants do
       [%Category{}, ...]
 
   """
-  def list_widgets_by_tenant_and_category_id(%Tenant{} = tenant, category_id, user, user_group_ids) do
+  def list_widgets_by_tenant_and_category_id(
+        %Tenant{} = tenant,
+        category_id,
+        user,
+        user_group_ids
+      ) do
     category = get_category!(category_id)
+
     cond do
       category == nil ->
         {:error, "Die Kategorie existiert nicht."}
+
       category.tenant_id != tenant.id ->
         {:error, "Die Kategorie ist nicht gültig."}
+
       true ->
         {
           :ok,
@@ -404,8 +431,10 @@ defmodule Api.Tenants do
             on: wug.widget_id == w.id,
             join: cw in "categories_widgets",
             on: cw.widget_id == w.id,
-            where: cw.category_id == ^category_id and
-                  (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^User.is_admin?(user, tenant)),
+            where:
+              cw.category_id == ^category_id and
+                (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or
+                   ^User.is_admin?(user, tenant)),
             distinct: w.id
           )
           |> Repo.all()

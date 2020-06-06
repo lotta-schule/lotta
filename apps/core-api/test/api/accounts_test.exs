@@ -1,10 +1,13 @@
 defmodule Api.AccountsTest do
+  @moduledoc """
+    Test Module for Accounts functionality
+  """
+
   use Api.DataCase
   alias Api.Fixtures
   alias Api.Accounts
   alias Api.Accounts.UserGroup
 
-  
   describe "users" do
     alias Api.Accounts.User
 
@@ -12,15 +15,21 @@ defmodule Api.AccountsTest do
       user_group =
         Fixtures.fixture(:user_group)
         |> Repo.preload(:tenant)
-      groups = Repo.all(from g in UserGroup, where: g.tenant_id != ^user_group.tenant_id) ++ [user_group]
-      user = Fixtures.fixture(:registered_user)
-      user = user
-      |> Repo.preload(:groups)
-      |> Ecto.Changeset.change
-      |> put_assoc(:groups, groups)
-      |> Repo.update!
 
-      assert Enum.map(Accounts.list_users_with_groups(user_group.tenant.id), fn u -> u.id end) == [user.id]
+      groups =
+        Repo.all(from g in UserGroup, where: g.tenant_id != ^user_group.tenant_id) ++ [user_group]
+
+      user = Fixtures.fixture(:registered_user)
+
+      user =
+        user
+        |> Repo.preload(:groups)
+        |> Ecto.Changeset.change()
+        |> put_assoc(:groups, groups)
+        |> Repo.update!()
+
+      assert Enum.map(Accounts.list_users_with_groups(user_group.tenant.id), fn u -> u.id end) ==
+               [user.id]
     end
 
     test "get_user!/1 returns the user with given id" do
@@ -35,21 +44,28 @@ defmodule Api.AccountsTest do
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(Fixtures.fixture(:invalid_user_attrs))
+      assert {:error, %Ecto.Changeset{}} =
+               Accounts.create_user(Fixtures.fixture(:invalid_user_attrs))
     end
 
     test "update_user/2 with valid data updates the user" do
       user =
         Fixtures.fixture(:registered_user)
         |> Repo.preload(:avatar_image_file)
-      assert {:ok, %User{} = user} = Accounts.update_user(user, Fixtures.fixture(:updated_user_attrs))
+
+      assert {:ok, %User{} = user} =
+               Accounts.update_user(user, Fixtures.fixture(:updated_user_attrs))
+
       assert user.name == "Alberta Smithers"
       assert user.nickname == "TheNewNick"
     end
 
     test "update_user/2 with invalid data returns error changeset" do
       user = Fixtures.fixture(:registered_user)
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, Fixtures.fixture(:invalid_user_attrs))
+
+      assert {:error, %Ecto.Changeset{}} =
+               Accounts.update_user(user, Fixtures.fixture(:invalid_user_attrs))
+
       assert user == Accounts.get_user!(user.id)
     end
 
@@ -69,7 +85,7 @@ defmodule Api.AccountsTest do
     test "delete_file/1 should delete file" do
       user = Fixtures.fixture(:registered_user)
       file = Fixtures.fixture(:file, user)
-      
+
       Accounts.delete_file(file)
 
       assert_raise Ecto.NoResultsError, fn ->

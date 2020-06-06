@@ -1,4 +1,8 @@
 defmodule Api.Accounts.FileConversion do
+  @moduledoc """
+    Ecto Schema for file conversions
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

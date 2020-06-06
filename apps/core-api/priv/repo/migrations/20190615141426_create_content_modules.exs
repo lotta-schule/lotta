@@ -11,6 +11,5 @@ defmodule Api.Repo.Migrations.CreateContentModules do
     end
 
     create index(:content_modules, [:article_id])
-
   end
 end

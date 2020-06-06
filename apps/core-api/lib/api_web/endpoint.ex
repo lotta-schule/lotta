@@ -1,6 +1,9 @@
 defmodule ApiWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :api
+  @moduledoc """
+  Phoenix endpoint configuration
+  """
 
+  use Phoenix.Endpoint, otp_app: :api
 
   socket "/socket", ApiWeb.UserSocket,
     websocket: true,
@@ -25,13 +28,15 @@ defmodule ApiWeb.Endpoint do
   plug Phoenix.LiveDashboard.RequestLogger,
     param_key: "request_logger",
     cookie_key: "request_logger"
+
   plug Plug.RequestId
   plug Plug.Logger
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    length: 1.5 * 1024 * 1024 * 1024, # 1.5 GB
+    # 1.5 GB
+    length: 1.5 * 1024 * 1024 * 1024,
     json_decoder: Poison
 
   plug Plug.MethodOverride

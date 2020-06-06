@@ -3,6 +3,7 @@ defmodule ApiWeb.Schema.Types.JSON do
   The Json scalar type allows arbitrary JSON values to be passed in and out.
   Requires `{:jason, "~> 1.1"}` package: https://github.com/michalmuskala/jason
   """
+
   use Absinthe.Schema.Notation
 
   scalar :json, name: "Json" do
@@ -35,4 +36,3 @@ defmodule ApiWeb.Schema.Types.JSON do
 
   defp encode(value), do: value
 end
-

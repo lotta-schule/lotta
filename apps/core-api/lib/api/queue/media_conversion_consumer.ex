@@ -1,19 +1,23 @@
 defmodule Api.Queue.MediaConversionConsumer do
+  @moduledoc """
+  Incoming Queue for processing media conversions
+  """
+
   use GenServer
   alias GenRMQ.Message
   alias Api.Accounts
-  alias Api.Repo
 
   require Logger
 
   @behaviour GenRMQ.Consumer
 
-  @exchange    "media-conversion"
-  @queue       "media-conversion-results"
+  @exchange "media-conversion"
+  @queue "media-conversion-results"
 
   def init(arg) do
     {:ok, arg}
   end
+
   def init do
     create_rmq_resources()
 
@@ -33,7 +37,9 @@ defmodule Api.Queue.MediaConversionConsumer do
     file_id = decoded["parentFileId"]
     outputs = decoded["outputs"]
 
-    IO.inspect(outputs)
+    Logger.info("MediaConversionConsumer received incoming message")
+    Logger.info(inspect(outputs))
+
     if outputs do
       for output <- outputs do
         conversion = %{
@@ -43,9 +49,11 @@ defmodule Api.Queue.MediaConversionConsumer do
           :file_type => output["fileType"],
           :file_id => file_id
         }
+
         Accounts.create_file_conversion(conversion)
       end
     end
+
     ack(message)
   rescue
     exception ->

@@ -1,4 +1,8 @@
 defmodule Api.Accounts.File do
+  @moduledoc """
+    Ecto Schema for user files
+  """
+
   use Ecto.Schema
   alias Api.UploadService
   import Ecto.Changeset
@@ -16,6 +20,7 @@ defmodule Api.Accounts.File do
     belongs_to :user, Api.Accounts.User
     belongs_to :tenant, Api.Tenants.Tenant
     belongs_to :parent_directory, Api.Accounts.Directory
+
     many_to_many(
       :content_modules,
       Api.Content.ContentModule,
@@ -29,14 +34,33 @@ defmodule Api.Accounts.File do
   @doc false
   def changeset(file, attrs) do
     file
-    |> cast(attrs, [:filename, :filesize, :remote_location, :mime_type, :file_type, :parent_directory_id, :user_id, :tenant_id])
-    |> validate_required([:filename, :filesize, :remote_location, :mime_type, :file_type, :parent_directory_id, :user_id, :tenant_id])
+    |> cast(attrs, [
+      :filename,
+      :filesize,
+      :remote_location,
+      :mime_type,
+      :file_type,
+      :parent_directory_id,
+      :user_id,
+      :tenant_id
+    ])
+    |> validate_required([
+      :filename,
+      :filesize,
+      :remote_location,
+      :mime_type,
+      :file_type,
+      :parent_directory_id,
+      :user_id,
+      :tenant_id
+    ])
   end
 
   @doc false
   def delete_attachment(file) do
     cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL") || " "
-    case String.starts_with?(file.remote_location, cdn_base_url) do 
+
+    case String.starts_with?(file.remote_location, cdn_base_url) do
       true ->
         file.remote_location
         |> String.replace_leading(cdn_base_url, "")
@@ -44,7 +68,9 @@ defmodule Api.Accounts.File do
         |> String.split("/", parts: 2)
         |> List.last()
         |> UploadService.delete_from_space()
+
         {:ok, file}
+
       _ ->
         {:ok, file}
     end

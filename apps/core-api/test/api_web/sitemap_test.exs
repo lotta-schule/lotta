@@ -1,34 +1,40 @@
 defmodule Api.SitemapTest do
   use ApiWeb.ConnCase
-  
+
   setup do
     Api.Repo.Seeder.seed()
   end
 
   describe "sitemaps" do
     test "returns an 404 if not found" do
-      res = build_conn()
-      |> get("/sitemap.xml")
-      |> text_response(404)
+      res =
+        build_conn()
+        |> get("/sitemap.xml")
+        |> text_response(404)
 
       assert res == "Not Found"
     end
 
     test "returns an index sitemap" do
-      res = build_conn()
-      |> put_req_header("tenant", "slug:web")
-      |> get("/sitemap.xml")
-      |> response(200)
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> get("/sitemap.xml")
+        |> response(200)
 
-      assert res =~ "<?xml version=\"1.0\" encoding=\"UTF-8\"?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">"
-      assert res =~ "<loc>\n\t\t\thttps://www.example.com/sitemap.xml?categories\n\t\t</loc>\n\t\t<loc>https://www.example.com/sitemap.xml?articles&amp;date=2019-08-01</loc>"
+      assert res =~
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">"
+
+      assert res =~
+               "<loc>\n\t\t\thttps://www.example.com/sitemap.xml?categories\n\t\t</loc>\n\t\t<loc>https://www.example.com/sitemap.xml?articles&amp;date=2019-08-01</loc>"
     end
 
     test "returns categories sitemap" do
-      res = build_conn()
-      |> put_req_header("tenant", "slug:web")
-      |> get("/sitemap.xml?categories")
-      |> response(200)
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> get("/sitemap.xml?categories")
+        |> response(200)
 
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Start<\/loc>/
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Podcast<\/loc>/
@@ -41,21 +47,29 @@ defmodule Api.SitemapTest do
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Schuler-Radio<\/loc>/
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Galerien<\/loc>/
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Impressum<\/loc>/
-    end 
+    end
 
     test "returns articles sitemap" do
-      res = build_conn()
-      |> put_req_header("tenant", "slug:web")
-      |> get("/sitemap.xml?articles&date=#{Date.to_iso8601(~D[2019-09-01])}")
-      |> response(200)
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> get("/sitemap.xml?articles&date=#{Date.to_iso8601(~D[2019-09-01])}")
+        |> response(200)
 
-      assert res =~ "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">"
+      assert res =~
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">"
+
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-And-the-oskar-goes-to-...<\/loc>/
-      assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Landesfinale-Volleyball-WK-IV<\/loc>/
-      assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Nipple-Jesus\"-eine-extreme-Erfahrung<\/loc>/
+
+      assert res =~
+               ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Landesfinale-Volleyball-WK-IV<\/loc>/
+
+      assert res =~
+               ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Nipple-Jesus\"-eine-extreme-Erfahrung<\/loc>/
+
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Beitrag-Projekt-1<\/loc>/
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Beitrag-Projekt-2<\/loc>/
       assert res =~ ~r/<loc>https:\/\/www\.example\.com\/c\/\d+-Beitrag-Projekt-3<\/loc>/
-    end 
+    end
   end
 end

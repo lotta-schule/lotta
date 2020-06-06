@@ -1,4 +1,8 @@
 defmodule Api.Elasticsearch.Store do
+  @moduledoc """
+    Elasticsearch Store Module
+  """
+
   @behaviour Elasticsearch.Store
 
   alias Api.Repo

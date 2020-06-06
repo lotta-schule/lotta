@@ -22,7 +22,7 @@ defmodule Api.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
-      ],
+      ]
     ]
   end
 
@@ -32,7 +32,17 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:honeybadger, :lager, :logger, :runtime_tools, :amqp, :ssl, :inets, :con_cache, :os_mon]
+      extra_applications: [
+        :honeybadger,
+        :lager,
+        :logger,
+        :runtime_tools,
+        :amqp,
+        :ssl,
+        :inets,
+        :con_cache,
+        :os_mon
+      ]
     ]
   end
 
@@ -45,6 +55,7 @@ defmodule Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.5.1"},
       {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.1"},
@@ -76,7 +87,7 @@ defmodule Api.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:phoenix_live_dashboard, "~> 0.1"},
-      #test
+      # test
       {:excoveralls, "~> 0.12", only: :test}
     ]
   end
