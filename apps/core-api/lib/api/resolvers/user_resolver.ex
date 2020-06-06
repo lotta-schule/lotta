@@ -1,13 +1,16 @@
 defmodule Api.UserResolver do
   @moduledoc """
-    GraphQL Resolver Module for finding, updating and deleting users.
-    Takes care of login and registration, as well as password recovery functionality.
+  GraphQL Resolver Module for finding, updating and deleting users.
+  Takes care of login and registration, as well as password recovery functionality.
   """
 
+  require Logger
   alias Api.Repo
+  alias Ecto.{Changeset, NoResultsError}
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper, User}
   alias Api.Queue.EmailPublisher
+  alias ApiWeb.ErrorHelpers
 
   def resolve_name(user, _args, %{context: context}) do
     cond do
@@ -99,7 +102,7 @@ defmodule Api.UserResolver do
       try do
         {:ok, Accounts.get_user!(id)}
       rescue
-        Ecto.NoResultsError -> {:ok, nil}
+        NoResultsError -> {:ok, nil}
       end
     else
       {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
@@ -216,7 +219,7 @@ defmodule Api.UserResolver do
             try do
               Accounts.get_user_group!(group_id)
             rescue
-              Ecto.NoResultsError -> nil
+              NoResultsError -> nil
             end
           end)
           |> Enum.filter(fn group -> !is_nil(group) && group.tenant_id == tenant.id end)
@@ -225,7 +228,7 @@ defmodule Api.UserResolver do
           Accounts.get_user!(id)
           |> Accounts.set_user_groups(tenant, groups)
         rescue
-          Ecto.NoResultsError ->
+          NoResultsError ->
             {:error, "Nutzer mit der id #{id} nicht gefunden."}
         end
 
@@ -254,7 +257,7 @@ defmodule Api.UserResolver do
           Accounts.get_user!(id)
           |> Accounts.set_user_blocked(tenant, is_blocked)
         rescue
-          Ecto.NoResultsError ->
+          NoResultsError ->
             {:error, "Nutzer mit der id #{id} nicht gefunden."}
         end
 
@@ -263,8 +266,8 @@ defmodule Api.UserResolver do
     end
   end
 
-  defp error_details(%Ecto.Changeset{} = changeset) do
+  defp error_details(%Changeset{} = changeset) do
     changeset
-    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
+    |> Changeset.traverse_errors(&ErrorHelpers.translate_error/1)
   end
 end

@@ -3,10 +3,12 @@ defmodule Api.Accounts do
   The Accounts context.
   """
 
+  require Logger
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Accounts.{User, UserGroup, GroupEnrollmentToken, UserEnrollmentToken, Directory, File}
+  alias Api.Tenants
+  alias Api.Accounts.{BlockedTenant, User, UserGroup, GroupEnrollmentToken, UserEnrollmentToken, Directory, File, FileConversion}
   alias Api.Tenants.Tenant
 
   def data() do
@@ -307,7 +309,7 @@ defmodule Api.Accounts do
     blocked_tenants =
       Enum.filter(user.blocked_tenants, fn blocked_tenant ->
         blocked_tenant.tenant_id != tenant.id
-      end) ++ [%Api.Accounts.BlockedTenant{user_id: user.id, tenant_id: tenant.id}]
+      end) ++ [%BlockedTenant{user_id: user.id, tenant_id: tenant.id}]
 
     user
     |> Ecto.Changeset.change()
@@ -406,7 +408,7 @@ defmodule Api.Accounts do
   end
 
   def create_new_user_directories(%User{} = user) do
-    Api.Tenants.list_tenants()
+    Tenants.list_tenants()
     |> Enum.map(fn tenant ->
       create_user_default_directories(user, tenant)
     end)
@@ -548,8 +550,6 @@ defmodule Api.Accounts do
   def change_file(%File{} = file) do
     File.changeset(file, %{})
   end
-
-  alias Api.Accounts.FileConversion
 
   @doc """
   Returns the list of file_conversions.

@@ -3,13 +3,16 @@ defmodule Api.Queue.EmailPublisher do
     Outgoing queue for sending emails
   """
 
-  use GenServer
-  @behaviour GenRMQ.Publisher
-  alias Api.Services.EmailSendRequest
-  alias Api.Tenants.Tenant
-  alias Api.Repo
-
   require Logger
+
+  use GenServer
+  alias Api.Repo
+  alias Api.Tenants.Tenant
+  alias Api.Accounts.User
+  alias Api.Content.{Article, ContentModule}
+  alias Api.Services.EmailSendRequest
+
+  @behaviour GenRMQ.Publisher
 
   @exchange "email"
   @queue "email-out-queue"
@@ -51,7 +54,7 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_registration_email(%Tenant{} = tenant, %Api.Accounts.User{} = user) do
+  def send_registration_email(%Tenant{} = tenant, %User{} = user) do
     send_email(%EmailSendRequest{
       to: user.email,
       subject: "Deine Registrierung bei #{tenant.title}",
@@ -66,7 +69,7 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_registration_email(%Api.Accounts.User{} = user) do
+  def send_registration_email(%User{} = user) do
     send_email(%EmailSendRequest{
       to: user.email,
       subject: "Ihre Registrierung bei lotta",
@@ -79,7 +82,7 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_tenant_creation_email(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
+  def send_tenant_creation_email(%Tenant{} = tenant, %User{} = user) do
     send_email(%EmailSendRequest{
       to: user.email,
       subject: "Ihr Lotta",
@@ -100,7 +103,7 @@ defmodule Api.Queue.EmailPublisher do
 
   def send_request_password_reset_email(
         %Tenant{} = tenant,
-        %Api.Accounts.User{} = user,
+        %User{} = user,
         email,
         token
       ) do
@@ -125,7 +128,7 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_password_changed_email(%Tenant{} = tenant, %Api.Accounts.User{} = user) do
+  def send_password_changed_email(%Tenant{} = tenant, %User{} = user) do
     send_email(%EmailSendRequest{
       to: user.email,
       sender_name: tenant.title,
@@ -142,10 +145,10 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_article_is_ready_admin_notification(%Api.Content.Article{} = article) do
+  def send_article_is_ready_admin_notification(%Article{} = article) do
     article = Repo.preload(article, :tenant)
     tenant = article.tenant
-    article_url = Api.Content.Article.get_url(article)
+    article_url = Article.get_url(article)
 
     tenant
     |> Tenant.get_admin_users()
@@ -169,7 +172,7 @@ defmodule Api.Queue.EmailPublisher do
   end
 
   def send_content_module_form_response(
-        %Api.Content.ContentModule{} = content_module,
+        %ContentModule{} = content_module,
         %{} = responses
       ) do
     content_module = Repo.preload(content_module, :article)

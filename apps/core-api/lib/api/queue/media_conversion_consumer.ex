@@ -1,6 +1,6 @@
 defmodule Api.Queue.MediaConversionConsumer do
   @moduledoc """
-    Incoming Queue for processing media conversions
+  Incoming Queue for processing media conversions
   """
 
   use GenServer

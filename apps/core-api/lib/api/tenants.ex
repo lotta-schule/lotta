@@ -3,6 +3,7 @@ defmodule Api.Tenants do
   The Tenants context.
   """
 
+  require Logger
   import Ecto.Query
   alias Api.Repo
 
@@ -270,7 +271,6 @@ defmodule Api.Tenants do
     Tenant.changeset(tenant, %{})
   end
 
-  alias Api.Tenants.Category
 
   @doc """
   Returns the list of categories.
@@ -375,7 +375,6 @@ defmodule Api.Tenants do
     Category.changeset(category, %{})
   end
 
-  alias Api.Tenants.Widget
 
   @doc """
   Returns the list of widgets.
