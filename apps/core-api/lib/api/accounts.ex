@@ -8,7 +8,18 @@ defmodule Api.Accounts do
   alias Api.Repo
 
   alias Api.Tenants
-  alias Api.Accounts.{BlockedTenant, User, UserGroup, GroupEnrollmentToken, UserEnrollmentToken, Directory, File, FileConversion}
+
+  alias Api.Accounts.{
+    BlockedTenant,
+    User,
+    UserGroup,
+    GroupEnrollmentToken,
+    UserEnrollmentToken,
+    Directory,
+    File,
+    FileConversion
+  }
+
   alias Api.Tenants.Tenant
 
   def data() do
@@ -291,7 +302,7 @@ defmodule Api.Accounts do
       {:ok, user}
     else
       error ->
-        Logger.error(error)
+        Logger.error(inspect(error))
         {:error, :invalid_token}
     end
   end

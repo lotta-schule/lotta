@@ -183,10 +183,10 @@ defmodule Api.UserResolver do
         try do
           Honeybadger.notify(error, %{tenant: tenant, email: email})
           Logger.error("Error setting request password reset token")
-          Logger.error(error)
+          Logger.error(inspect(error))
         rescue
           e in RuntimeError ->
-            Logger.error(e)
+            Logger.error(inspect(e))
         end
     end
 
@@ -203,7 +203,7 @@ defmodule Api.UserResolver do
       {:ok, %{token: jwt}}
     else
       error ->
-        Logger.error(error)
+        if error, do: Logger.warn(inspect(error))
         {:error, "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut."}
     end
   end

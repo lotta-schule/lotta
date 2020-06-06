@@ -38,7 +38,7 @@ defmodule Api.Queue.MediaConversionConsumer do
     outputs = decoded["outputs"]
 
     Logger.info("MediaConversionConsumer received incoming message")
-    Logger.info(outputs)
+    Logger.info(inspect(outputs))
 
     if outputs do
       for output <- outputs do

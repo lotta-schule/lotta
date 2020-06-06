@@ -1,11 +1,11 @@
 import Config
 
-ugc_s3_compat_endpoint = System.fetch_env!("UGC_S3_COMPAT_ENDPOINT")
-ugc_s3_compat_access_key_id = System.fetch_env!("UGC_S3_COMPAT_ACCESS_KEY_ID")
-ugc_s3_compat_secret_access_key = System.fetch_env!("UGC_S3_COMPAT_SECRET_ACCESS_KEY")
-ugc_s3_compat_bucket = System.fetch_env!("UGC_S3_COMPAT_BUCKET")
-ugc_s3_compat_region = System.fetch_env!("UGC_S3_COMPAT_REGION")
-ugc_s3_compat_cdn_base_url = System.fetch_env!("UGC_S3_COMPAT_CDN_BASE_URL")
+ugc_s3_compat_endpoint = System.get_env("UGC_S3_COMPAT_ENDPOINT", "")
+ugc_s3_compat_access_key_id = System.get_env("UGC_S3_COMPAT_ACCESS_KEY_ID", "")
+ugc_s3_compat_secret_access_key = System.get_env("UGC_S3_COMPAT_SECRET_ACCESS_KEY", "")
+ugc_s3_compat_bucket = System.get_env("UGC_S3_COMPAT_BUCKET", "")
+ugc_s3_compat_region = System.get_env("UGC_S3_COMPAT_REGION", "")
+ugc_s3_compat_cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL", "")
 
 # Configure your database
 config :api, Api.Repo,

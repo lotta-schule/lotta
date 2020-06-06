@@ -13,7 +13,7 @@ defmodule Api.FileResolver do
   alias Api.Repo
   alias UUID
 
-  def resolve_file_usage(%{parent_directory_id: parent_directory_id, id: id} = file, _args, %{
+  def resolve_file_usage(%{parent_directory_id: parent_directory_id, id: id}, _args, %{
         context: %{current_user: current_user}
       })
       when is_integer(id) do

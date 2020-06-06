@@ -5,6 +5,7 @@ defmodule Api.UserGroupResolverTest do
 
   use ApiWeb.ConnCase
   alias Ecto.NoResultsError
+  alias Api.Repo
   alias Api.Repo.Seeder
   alias Api.Guardian
   alias Api.Accounts

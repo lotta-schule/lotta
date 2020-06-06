@@ -108,7 +108,7 @@ defmodule Api.Tenants do
                 |> Enum.fetch!(0)
                 |> get_tenant_by_slug()
               else
-                Logger.warn(error)
+                if error, do: Logger.warn(error)
                 Logger.warn("tenant not found by slug or host, host is #{host}")
                 nil
               end
@@ -120,7 +120,7 @@ defmodule Api.Tenants do
     else
       error ->
         Logger.warn("could not parse origin header")
-        Logger.warn(error)
+        if error, do: Logger.warn(inspect(error))
         nil
     end
   end
@@ -145,8 +145,8 @@ defmodule Api.Tenants do
          false <- is_nil(tenant) do
       tenant
     else
-      error ->
-        Logger.warn(error)
+      _ ->
+        Logger.warn("Tenant not found for #{host}")
         nil
     end
   end
@@ -271,7 +271,6 @@ defmodule Api.Tenants do
     Tenant.changeset(tenant, %{})
   end
 
-
   @doc """
   Returns the list of categories.
 
@@ -374,7 +373,6 @@ defmodule Api.Tenants do
   def change_category(%Category{} = category) do
     Category.changeset(category, %{})
   end
-
 
   @doc """
   Returns the list of widgets.

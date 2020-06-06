@@ -8,7 +8,7 @@ defmodule Api.CategoryResolver do
 
   def all(_args, %{
         context:
-          %{current_user: current_user, user_group_ids: user_group_ids, tenant: tenant} = context
+          %{current_user: current_user, user_group_ids: user_group_ids, tenant: tenant}
       }) do
     {:ok,
      Tenants.list_categories_by_tenant(
