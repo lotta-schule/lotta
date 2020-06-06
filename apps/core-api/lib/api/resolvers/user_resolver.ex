@@ -2,6 +2,7 @@ defmodule Api.UserResolver do
   alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper,User}
+  alias Api.Queue.EmailPublisher
 
   def resolve_name(user, _args, %{context: context}) do
     cond do
@@ -104,9 +105,9 @@ defmodule Api.UserResolver do
         {:ok, jwt} = User.get_signed_jwt(user)
         case context do
           %{tenant: tenant} ->
-            Api.Queue.EmailPublisher.send_registration_email(tenant, user)
+            EmailPublisher.send_registration_email(tenant, user)
           _ ->
-            Api.Queue.EmailPublisher.send_registration_email(user)
+            EmailPublisher.send_registration_email(user)
         end
         {:ok, %{token: jwt}}
       {:error, changeset} ->
@@ -143,7 +144,7 @@ defmodule Api.UserResolver do
       |> URI.encode()
     with {:ok, user} <- Accounts.request_password_reset_token(email, token) do
       IO.inspect("user request password request - send mail to #{email}")
-      Api.Queue.EmailPublisher.send_request_password_reset_email(tenant, user, email, token)
+      EmailPublisher.send_request_password_reset_email(tenant, user, email, token)
     else
       error ->
         try do
@@ -163,7 +164,7 @@ defmodule Api.UserResolver do
     with {:ok, user} <-  Accounts.find_user_by_reset_token(email, token),
         {:ok, user} <- Accounts.update_password(user, password),
         {:ok, jwt} <- User.get_signed_jwt(user) do
-          Api.Queue.EmailPublisher.send_password_changed_email(tenant, user)
+          EmailPublisher.send_password_changed_email(tenant, user)
           {:ok, %{ token: jwt }}
     else
       error ->

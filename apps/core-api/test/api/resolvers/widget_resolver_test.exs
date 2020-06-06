@@ -1,21 +1,27 @@
 defmodule Api.WidgetResolverTest do
   use ApiWeb.ConnCase
   import Ecto.Query
+  alias Api.Repo.Seeder
+  alias Api.Guardian
+  alias Api.Repo
+  alias Api.Tenants
+  alias Api.Tenants.{Category,Widget}
+  alias Api.Accounts.{User}
   
   setup do
-    Api.Repo.Seeder.seed()
+    Seeder.seed()
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
-    user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@lotta.schule"])
-    {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
+    web_tenant = Tenants.get_tenant_by_slug!("web")
+    admin = Repo.get_by!(User, [email: "alexis.rinaldoni@lotta.schule"])
+    user = Repo.get_by!(User, [email: "eike.wiewiorra@lotta.schule"])
+    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
+    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
     web_tenant_id = web_tenant.id
-    widget = Api.Repo.one!(from w in Api.Tenants.Widget,
+    widget = Repo.one!(from w in Widget,
       where: w.tenant_id == ^web_tenant_id,
       limit: 1
     )
-    homepage = Api.Repo.one!(from c in Api.Tenants.Category,
+    homepage = Repo.one!(from c in Category,
       where: c.tenant_id == ^web_tenant_id and c.title == "Start" and c.is_homepage == true,
       limit: 1
     )

@@ -1,19 +1,25 @@
 defmodule Api.UserResolverTest do
   use ApiWeb.ConnCase
   import Ecto.Query
+  alias Api.Guardian
+  alias Api.Repo
+  alias Api.Repo.Seeder
+  alias Api.Tenants
+  alias Api.Tenants.{Tenant}
+  alias Api.Accounts.{Directory,User,UserGroup}
 
   setup do
-    Api.Repo.Seeder.seed()
+    Seeder.seed()
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
-    user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@lotta.schule"])
-    user2 = Api.Repo.get_by!(Api.Accounts.User, [email: "mcurie@lotta.schule"])
-    evil_user = Api.Repo.get_by!(Api.Accounts.User, [email: "drevil@lotta.schule"])
-    {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
-    schueler_group = Api.Repo.get_by!(Api.Accounts.UserGroup, name: "Schüler")
-    lehrer_group = Api.Repo.get_by!(Api.Accounts.UserGroup, name: "Lehrer")
+    web_tenant = Tenants.get_tenant_by_slug!("web")
+    admin = Repo.get_by!(User, [email: "alexis.rinaldoni@lotta.schule"])
+    user = Repo.get_by!(User, [email: "eike.wiewiorra@lotta.schule"])
+    user2 = Repo.get_by!(User, [email: "mcurie@lotta.schule"])
+    evil_user = Repo.get_by!(User, [email: "drevil@lotta.schule"])
+    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
+    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
+    schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
+    lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
 
     {:ok, %{
       web_tenant: web_tenant,
@@ -353,10 +359,10 @@ defmodule Api.UserResolverTest do
       assert String.valid?(res["data"]["register"]["token"])
 
       token = res["data"]["register"]["token"]
-      {:ok, %{"id" => id}} = Api.Guardian.decode_and_verify(token)
+      {:ok, %{"id" => id}} = Guardian.decode_and_verify(token)
       directories =
-        from(d in Api.Accounts.Directory, where: d.user_id == ^id and d.tenant_id == ^web_tenant.id)
-        |> Api.Repo.all()
+        from(d in Directory, where: d.user_id == ^id and d.tenant_id == ^web_tenant.id)
+        |> Repo.all()
 
       assert length(directories) == 5
     end
@@ -369,7 +375,7 @@ defmodule Api.UserResolverTest do
 
       assert String.valid?(res["data"]["register"]["token"])
       user_groups =
-        Api.Accounts.User.get_groups(Api.Repo.get_by!(Api.Accounts.User, email: "neuernutzer@example.com"), Api.Repo.get_by!(Api.Tenants.Tenant, slug: "web"))
+        User.get_groups(Repo.get_by!(User, email: "neuernutzer@example.com"), Repo.get_by!(Tenant, slug: "web"))
       [%{name: group_name}] = user_groups
       assert group_name == "Lehrer"
     end
@@ -594,7 +600,7 @@ defmodule Api.UserResolverTest do
       |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"})
       |> json_response(200)
 
-      user = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
+      user = Repo.get_by!(User, [email: "alexis.rinaldoni@lotta.schule"])
 
       assert String.valid?(res["data"]["resetPassword"]["token"])
       assert true = Bcrypt.verify_pass("abcdef", user.password_hash)

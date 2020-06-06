@@ -1,17 +1,24 @@
 defmodule Api.UserGroupResolverTest do
   use ApiWeb.ConnCase
+  alias Ecto.NoResultsError
+  alias Api.Repo.Seeder
+  alias Api.Guardian
+  alias Api.Accounts
+  alias Api.Tenants
+  alias Api.Accounts.{User,UserGroup}
+
   
   setup do
-    Api.Repo.Seeder.seed()
+    Seeder.seed()
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, [email: "alexis.rinaldoni@lotta.schule"])
-    user = Api.Repo.get_by!(Api.Accounts.User, [email: "eike.wiewiorra@lotta.schule"])
-    user2 = Api.Repo.get_by!(Api.Accounts.User, [email: "mcurie@lotta.schule"])
-    {:ok, admin_jwt, _} = Api.Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
-    schueler_group = Api.Repo.get_by!(Api.Accounts.UserGroup, name: "Schüler")
-    lehrer_group = Api.Repo.get_by!(Api.Accounts.UserGroup, name: "Lehrer")
+    web_tenant = Tenants.get_tenant_by_slug!("web")
+    admin = Repo.get_by!(User, [email: "alexis.rinaldoni@lotta.schule"])
+    user = Repo.get_by!(User, [email: "eike.wiewiorra@lotta.schule"])
+    user2 = Repo.get_by!(User, [email: "mcurie@lotta.schule"])
+    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{ email: admin.email, name: admin.name })
+    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{ email: user.email, name: user.name })
+    schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
+    lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
 
     {:ok, %{
       web_tenant: web_tenant,
@@ -217,8 +224,8 @@ describe "group query" do
           "deleteUserGroup" => %{"name" => "Lehrer"}
         }
       }
-      assert_raise Ecto.NoResultsError, fn ->
-        Api.Accounts.get_user_group!(lehrer_group.id)
+      assert_raise NoResultsError, fn ->
+        Accounts.get_user_group!(lehrer_group.id)
       end
     end
 

@@ -1,4 +1,5 @@
 defmodule Api.UserGroupResolver do
+  alias Ecto.{Changeset,NoResultsError}
   alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.User
@@ -31,7 +32,7 @@ defmodule Api.UserGroupResolver do
       try do
         {:ok, Accounts.get_user_group!(id)}
       rescue
-        Ecto.NoResultsError -> {:ok, nil}
+        NoResultsError -> {:ok, nil}
       end
     else
       {:error, "Nur Administratoren dürfen Gruppen anzeigen."}
@@ -65,7 +66,7 @@ defmodule Api.UserGroupResolver do
           {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
         end
       rescue
-        Ecto.NoResultsError -> {:error, "Gruppe existiert nicht."}
+        NoResultsError -> {:error, "Gruppe existiert nicht."}
       end
     else
       {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
@@ -82,15 +83,15 @@ defmodule Api.UserGroupResolver do
           {:error, "Nur Administratoren dürfen Gruppen löschen."}
         end
       rescue
-        Ecto.NoResultsError -> {:error, "Gruppe existiert nicht."}
+        NoResultsError -> {:error, "Gruppe existiert nicht."}
       end
     else
       {:error, "Nur Administratoren dürfen Gruppen löschen."}
     end
   end
 
-  defp error_details(%Ecto.Changeset{} = changeset) do
+  defp error_details(%Changeset{} = changeset) do
     changeset
-    |> Ecto.Changeset.traverse_errors(fn {msg, _} -> msg end)
+    |> Changeset.traverse_errors(fn {msg, _} -> msg end)
   end
 end
