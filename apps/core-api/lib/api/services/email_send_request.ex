@@ -1,4 +1,8 @@
 defmodule Api.Services.EmailSendRequest do
+  @moduledoc """
+    struct representing an email which is requested to be sent
+  """
+
   alias Api.Repo
   alias Api.Tenants.Tenant
 

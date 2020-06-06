@@ -1,4 +1,8 @@
 defmodule Api.DirectoryResolverTest do
+  @moduledoc """
+    Test Module for DirectoryResolver
+  """
+
   use ApiWeb.ConnCase
   import Ecto.Query
 

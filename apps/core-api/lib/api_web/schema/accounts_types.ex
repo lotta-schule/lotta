@@ -1,4 +1,6 @@
 defmodule ApiWeb.Schema.AccountsTypes do
+  @moduledoc false
+
   use Absinthe.Schema.Notation
 
   object :accounts_queries do

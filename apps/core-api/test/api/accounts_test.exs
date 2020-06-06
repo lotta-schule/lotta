@@ -1,4 +1,8 @@
 defmodule Api.AccountsTest do
+  @moduledoc """
+    Test Module for Accounts functionality
+  """
+
   use Api.DataCase
   alias Api.Fixtures
   alias Api.Accounts

@@ -1,4 +1,8 @@
 defmodule Api.Accounts.User do
+  @moduledoc """
+    Ecto Schema for users
+  """
+
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Changeset
@@ -63,16 +67,16 @@ defmodule Api.Accounts.User do
     |> Enum.any?(fn u -> u.id == user.id end)
   end
 
-  def is_author?(%User{id: userId}, %Directory{} = directory) do
+  def is_author?(%User{id: user_id}, %Directory{} = directory) do
     case Repo.preload(directory, :user) do
-      %{user: %{id: id}} -> id == userId
+      %{user: %{id: id}} -> id == user_id
       _ -> false
     end
   end
 
-  def is_author?(%User{id: userId}, %File{} = file) do
+  def is_author?(%User{id: user_id}, %File{} = file) do
     case Repo.preload(file, :user) do
-      %{user: %{id: id}} -> id == userId
+      %{user: %{id: id}} -> id == user_id
       _ -> false
     end
   end

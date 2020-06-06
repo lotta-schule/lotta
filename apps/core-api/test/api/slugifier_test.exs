@@ -1,4 +1,8 @@
 defmodule Api.SlugifierTest do
+  @moduledoc """
+    Test Module for the Slugifier Module
+  """
+
   use Api.DataCase
   alias Api.Slugifier
 

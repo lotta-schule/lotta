@@ -1,4 +1,8 @@
 defmodule Api.ContentModuleResolverTest do
+  @moduledoc """
+    Test Module for ContentModuleResolver
+  """
+
   use ApiWeb.ConnCase
   import Ecto.Query
 

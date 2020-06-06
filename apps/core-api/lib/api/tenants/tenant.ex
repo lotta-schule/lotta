@@ -1,4 +1,8 @@
 defmodule Api.Tenants.Tenant do
+  @moduledoc """
+    Ecto Schema for a tenant
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
@@ -59,13 +63,7 @@ defmodule Api.Tenants.Tenant do
 
   defp validate_slug(changeset, field) when is_atom(field) do
     validate_change(changeset, field, fn current_field, val ->
-      cond do
-        val == "intern" ->
-          [current_field: "cannot be 'intern'"]
-
-        true ->
-          []
-      end
+      if val == "intern", do: [current_field: "cannot be 'intern'"], else: []
     end)
   end
 

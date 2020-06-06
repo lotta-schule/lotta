@@ -1,4 +1,8 @@
 defmodule Api.FileResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting files
+  """
+
   import Ecto.Query
   alias Api.Accounts
   alias Api.Accounts.{Directory, User}
@@ -91,17 +95,16 @@ defmodule Api.FileResolver do
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
         context: %{current_user: current_user, tenant: tenant}
       }) do
-    with directory when not is_nil(directory) <- Accounts.get_directory(parent_directory_id) do
-      directory =
-        directory
-        |> Repo.preload([:user, :tenant])
+    case Accounts.get_directory(parent_directory_id) do
+      directory when not is_nil(directory) ->
+        directory = Repo.preload(directory, [:user, :tenant])
 
-      if User.can_write_directory?(current_user, directory) do
-        upload_file_to_directory(file, directory, current_user, tenant)
-      else
-        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
-      end
-    else
+        if User.can_write_directory?(current_user, directory) do
+          upload_file_to_directory(file, directory, current_user, tenant)
+        else
+          {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+        end
+
       _ ->
         {:error, "Der Ordner wurde nicht gefunden."}
     end
@@ -116,9 +119,10 @@ defmodule Api.FileResolver do
       source_directory = file.parent_directory
 
       target_directory =
-        with %{parent_directory_id: target_directory_id} <- args do
-          Accounts.get_directory!(target_directory_id)
-        else
+        case args do
+          %{parent_directory_id: target_directory_id} ->
+            Accounts.get_directory!(target_directory_id)
+
           _ ->
             source_directory
         end
@@ -146,7 +150,7 @@ defmodule Api.FileResolver do
           file
           |> Repo.preload(:file_conversions)
 
-        Enum.map(file.file_conversions, fn file_conversion ->
+        Enum.each(file.file_conversions, fn file_conversion ->
           Accounts.delete_file_conversion(file_conversion)
           Accounts.File.delete_attachment(file_conversion)
         end)

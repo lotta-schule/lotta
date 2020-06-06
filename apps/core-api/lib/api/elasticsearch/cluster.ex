@@ -1,4 +1,8 @@
 defmodule Api.Elasticsearch.Cluster do
+  @moduledoc """
+    Elasticsearch Cluster module
+  """
+
   use Elasticsearch.Cluster, otp_app: :api
 
   def init(config) do

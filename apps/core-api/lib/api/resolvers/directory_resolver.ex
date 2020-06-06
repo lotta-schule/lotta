@@ -1,4 +1,8 @@
 defmodule Api.DirectoryResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting directories
+  """
+
   alias Api.Accounts
   alias Api.Accounts.User
   alias Api.Repo
@@ -62,17 +66,15 @@ defmodule Api.DirectoryResolver do
         context: %{current_user: current_user, tenant: tenant}
       })
       when is_binary(name) do
-    cond do
-      !User.is_admin?(current_user, tenant) ->
-        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
-
-      true ->
-        Accounts.create_directory(%{
-          name: name,
-          user_id: nil,
-          tenant_id: tenant.id
-        })
-        |> output_create_result()
+    if User.is_admin?(current_user, tenant) do
+      Accounts.create_directory(%{
+        name: name,
+        user_id: nil,
+        tenant_id: tenant.id
+      })
+      |> output_create_result()
+    else
+      {:error, "Du darfst diesen Ordner hier nicht erstellen."}
     end
   end
 
@@ -134,11 +136,13 @@ defmodule Api.DirectoryResolver do
       source_directory = directory.parent_directory
 
       target_directory =
-        with %{parent_directory_id: target_directory_id} <- args do
-          if is_nil(target_directory_id),
-            do: nil,
-            else: Accounts.get_directory!(target_directory_id)
-        else
+        case args do
+          %{parent_directory_id: target_directory_id} when is_nil(target_directory_id) ->
+            nil
+
+          %{parent_directory_id: target_directory_id} ->
+            Accounts.get_directory!(target_directory_id)
+
           _ ->
             source_directory
         end
@@ -148,10 +152,8 @@ defmodule Api.DirectoryResolver do
         Accounts.update_directory(directory, Map.take(args, [:name, :parent_directory_id]))
         |> case do
           {:error, changeset} ->
-            {
-              :error,
-              message: "Fehler beim Speichern des Ordners", details: error_details(changeset)
-            }
+            {:error,
+             message: "Fehler beim Speichern des Ordners", details: error_details(changeset)}
 
           result ->
             result

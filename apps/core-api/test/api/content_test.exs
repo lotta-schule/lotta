@@ -1,4 +1,8 @@
 defmodule Api.ContentTest do
+  @moduledoc """
+    Test Module for Content functionality
+  """
+
   use Api.DataCase
   alias Api.Fixtures
   alias Api.{Content}

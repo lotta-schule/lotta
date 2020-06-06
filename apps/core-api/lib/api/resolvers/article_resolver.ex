@@ -1,4 +1,8 @@
 defmodule Api.ArticleResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting articles
+  """
+
   alias Api.Repo
   alias Api.Content
   alias Api.Accounts.User

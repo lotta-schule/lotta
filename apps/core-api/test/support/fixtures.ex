@@ -1,4 +1,5 @@
 defmodule Api.Fixtures do
+  @moduledoc false
   alias Api.Repo
   alias Api.Tenants.{Tenant, Category}
   alias Api.Accounts.{User, File}

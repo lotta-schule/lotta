@@ -1,4 +1,8 @@
 defmodule Api.ContentModuleResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting content modules
+  """
+
   alias Api.Repo
   alias Api.Content
   alias Api.Accounts.User
@@ -45,7 +49,7 @@ defmodule Api.ContentModuleResolver do
       |> Repo.preload(:tenant)
       |> Map.fetch!(:tenant)
 
-    unless context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if !context[:current_user] || !User.is_admin?(context.current_user, tenant) do
       {:error, "Nur Administratoren dürfen Modul-Ergebnisse abrufen."}
     else
       {:ok, content_module.results}

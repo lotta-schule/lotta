@@ -1,4 +1,8 @@
 defmodule Api.TenantResolverTest do
+  @moduledoc """
+    Test Module for TenantResolver
+  """
+
   use ApiWeb.ConnCase
 
   setup do

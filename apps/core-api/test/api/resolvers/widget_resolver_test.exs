@@ -1,4 +1,8 @@
 defmodule Api.WidgetResolverTest do
+  @moduledoc """
+    Test Module for WidgetResolver
+  """
+
   use ApiWeb.ConnCase
   import Ecto.Query
   alias Api.Repo.Seeder

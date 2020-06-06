@@ -1,4 +1,8 @@
 defmodule Api.Accounts.File do
+  @moduledoc """
+    Ecto Schema for user files
+  """
+
   use Ecto.Schema
   alias Api.UploadService
   import Ecto.Changeset

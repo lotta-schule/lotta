@@ -1,4 +1,8 @@
 defmodule Api.FileResolverTest do
+  @moduledoc """
+    Test Module for FileResolver
+  """
+
   use ApiWeb.ConnCase
   import Ecto.Query
   alias Api.Repo

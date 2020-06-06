@@ -1,4 +1,8 @@
 defmodule Api.Guardian.AuthErrorHandler do
+  @moduledoc """
+    Authentication error handler for Guardian
+  """
+
   @behaviour Guardian.Plug.ErrorHandler
   @impl Guardian.Plug.ErrorHandler
 

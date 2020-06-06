@@ -1,4 +1,8 @@
 defmodule Api.TenantsTest do
+  @moduledoc """
+    Test Module for Tenants Module
+  """
+
   use Api.DataCase
   alias Api.Fixtures
   alias Api.Tenants

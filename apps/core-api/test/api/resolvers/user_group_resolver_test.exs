@@ -1,4 +1,8 @@
 defmodule Api.UserGroupResolverTest do
+  @moduledoc """
+    Test Module for UserGroupResolver
+  """
+
   use ApiWeb.ConnCase
   alias Ecto.NoResultsError
   alias Api.Repo.Seeder

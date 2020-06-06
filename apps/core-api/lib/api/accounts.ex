@@ -216,12 +216,13 @@ defmodule Api.Accounts do
       %User{}
       |> User.registration_changeset(attrs)
 
-    with {:ok, user} <- Repo.insert(changeset) do
-      user
-      |> create_new_user_directories()
+    case Repo.insert(changeset) do
+      {:ok, user} ->
+        user
+        |> create_new_user_directories()
 
-      {:ok, user}
-    else
+        {:ok, user}
+
       result ->
         result
     end
@@ -288,7 +289,7 @@ defmodule Api.Accounts do
       {:ok, user}
     else
       error ->
-        IO.inspect(error)
+        Logger.error(error)
         {:error, :invalid_token}
     end
   end

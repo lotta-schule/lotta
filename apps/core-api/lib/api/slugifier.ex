@@ -1,4 +1,8 @@
 defmodule Api.Slugifier do
+  @moduledoc """
+    Creates slug from a string. Strips out and replaces all inconvenient characters.
+  """
+
   def slugify_string(string) when is_binary(string) do
     replacements = %{
       "$" => "dollar",

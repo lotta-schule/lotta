@@ -1,4 +1,8 @@
 defmodule Api.TenantResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting tenants
+  """
+
   alias Api.Tenants
   alias Api.Accounts
   alias Api.Accounts.User
@@ -27,8 +31,8 @@ defmodule Api.TenantResolver do
         context: %{current_user: current_user}
       }) do
     if User.is_lotta_admin?(current_user) do
-      with {:ok, tenant, admin_group} <- Tenants.create_tenant(%{title: title, slug: slug}) do
-        user =
+      case Tenants.create_tenant(%{title: title, slug: slug}) do
+        {:ok, tenant, admin_group} ->
           case Accounts.get_user_by_email(email) do
             nil ->
               password =
@@ -49,15 +53,13 @@ defmodule Api.TenantResolver do
             user ->
               user
           end
+          |> Accounts.set_user_groups(tenant, [admin_group])
 
-        Accounts.set_user_groups(user, tenant, [admin_group])
-        {:ok, tenant}
-      else
+          {:ok, tenant}
+
         {:error, changeset} ->
-          {
-            :error,
-            message: "Erstellen des Tenant fehlgeschlagen.", details: error_details(changeset)
-          }
+          {:error,
+           message: "Erstellen des Tenant fehlgeschlagen.", details: error_details(changeset)}
 
         result ->
           result
@@ -81,11 +83,12 @@ defmodule Api.TenantResolver do
     if current_user_has_admin_groups do
       {:error, "Der Nutzer ist schon Administrator bei lotta."}
     else
-      with {:ok, tenant, admin_group} <- Tenants.create_tenant(%{title: title, slug: slug}) do
-        Accounts.set_user_groups(current_user, tenant, [admin_group])
-        Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
-        {:ok, tenant}
-      else
+      case Tenants.create_tenant(%{title: title, slug: slug}) do
+        {:ok, tenant, admin_group} ->
+          Accounts.set_user_groups(current_user, tenant, [admin_group])
+          Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
+          {:ok, tenant}
+
         {:error, changeset} ->
           {
             :error,

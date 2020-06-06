@@ -1,4 +1,8 @@
 defmodule Api.Queue.MediaConversionRequestPublisher do
+  @moduledoc """
+    Outgoing queue for dispatching uploaded files, in order for them to have the possibility to be processed
+  """
+
   use GenServer
   @behaviour GenRMQ.Publisher
   alias Api.Accounts.File

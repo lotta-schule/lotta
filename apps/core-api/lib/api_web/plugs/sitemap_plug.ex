@@ -1,4 +1,8 @@
 defmodule ApiWeb.SitemapPlug do
+  @moduledoc """
+    Phoenix Plug which returns a valid XML sitemap for a given tenant
+  """
+
   import Plug.Conn
   import Ecto.Query
   alias Api.Repo
@@ -10,9 +14,10 @@ defmodule ApiWeb.SitemapPlug do
 
   def call(conn, _) do
     tenant =
-      with ["slug:" <> slug] <- get_req_header(conn, "tenant") do
-        Tenants.get_tenant_by_slug(slug)
-      else
+      case get_req_header(conn, "tenant") do
+        ["slug:" <> slug] ->
+          Tenants.get_tenant_by_slug(slug)
+
         _ ->
           case get_req_header(conn, "host") do
             [host] ->
@@ -97,12 +102,14 @@ defmodule ApiWeb.SitemapPlug do
              Api.Slugifier.slugify_string(article.title)
            }</loc>\n" <>
            "\t\t<lastmod>#{article.updated_at}</lastmod>\n" <>
-           with %{preview_image_file: %{remote_location: image_location}} <- article do
-             "\t\t<image:image>\n" <>
-               "\t\t\t<image:loc>#{image_location}</image:loc>\n" <>
-               "\t\t</image:image>\n"
-           else
-             _ -> ""
+           case article do
+             %{preview_image_file: %{remote_location: image_location}} ->
+               "\t\t<image:image>\n" <>
+                 "\t\t\t<image:loc>#{image_location}</image:loc>\n" <>
+                 "\t\t</image:image>\n"
+
+             _ ->
+               ""
            end <>
            "\t</url>\n"
        end)

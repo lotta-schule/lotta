@@ -1,4 +1,8 @@
 defmodule Api.Tenants.Widget do
+  @moduledoc """
+    Ecto Schema for widgets
+  """
+
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Changeset

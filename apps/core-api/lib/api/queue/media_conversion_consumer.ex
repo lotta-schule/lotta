@@ -1,4 +1,8 @@
 defmodule Api.Queue.MediaConversionConsumer do
+  @moduledoc """
+    Incoming Queue for processing media conversions
+  """
+
   use GenServer
   alias GenRMQ.Message
   alias Api.Accounts
@@ -34,7 +38,8 @@ defmodule Api.Queue.MediaConversionConsumer do
     file_id = decoded["parentFileId"]
     outputs = decoded["outputs"]
 
-    IO.inspect(outputs)
+    Logger.info("MediaConversionConsumer received incoming message")
+    Logger.info(outputs)
 
     if outputs do
       for output <- outputs do

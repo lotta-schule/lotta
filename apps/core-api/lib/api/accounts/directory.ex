@@ -1,4 +1,8 @@
 defmodule Api.Accounts.Directory do
+  @moduledoc """
+    Ecto Schema for user file directories
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

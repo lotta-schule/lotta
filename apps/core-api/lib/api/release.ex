@@ -1,4 +1,8 @@
 defmodule Api.Release do
+  @moduledoc """
+    Release tasks like database migrations
+  """
+
   @app :api
 
   @elasticsearch_clusters [Api.Elasticsearch.Cluster]

@@ -1,4 +1,8 @@
 defmodule Api.UserResolverTest do
+  @moduledoc """
+    Test Module for UserResolver
+  """
+
   use ApiWeb.ConnCase
   import Ecto.Query
   alias Api.Guardian
@@ -166,16 +170,16 @@ defmodule Api.UserResolverTest do
 
       assert res["data"]["searchUsers"]
 
-      assert Enum.find(res["data"]["searchUsers"], false, fn foundUser ->
-               foundUser == %{
+      assert Enum.find(res["data"]["searchUsers"], false, fn found_user ->
+               found_user == %{
                  "email" => "alexis.rinaldoni@einsa.net",
                  "name" => "Alexis Rinaldoni",
                  "nickname" => nil
                }
              end)
 
-      assert Enum.find(res["data"]["searchUsers"], false, fn foundUser ->
-               foundUser == %{
+      assert Enum.find(res["data"]["searchUsers"], false, fn found_user ->
+               found_user == %{
                  "email" => "alexis.rinaldoni@lotta.schule",
                  "name" => "Alexis Rinaldoni",
                  "nickname" => "Der Meister"

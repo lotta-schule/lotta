@@ -1,4 +1,6 @@
 defmodule ApiWeb.Schema.SearchTypes do
+  @moduledoc false
+
   use Absinthe.Schema.Notation
 
   object :search_queries do

@@ -1,4 +1,6 @@
 defmodule ApiWeb.Schema do
+  @moduledoc false
+
   use Absinthe.Schema
   import_types(Absinthe.Plug.Types)
   import_types(ApiWeb.Schema.Types.JSON)

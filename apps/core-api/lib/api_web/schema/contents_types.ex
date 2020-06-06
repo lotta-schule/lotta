@@ -1,4 +1,6 @@
 defmodule ApiWeb.Schema.ContentsTypes do
+  @moduledoc false
+
   use Absinthe.Schema.Notation
 
   object :contents_queries do

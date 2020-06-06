@@ -1,4 +1,8 @@
 defmodule Api.SearchResolver do
+  @moduledoc """
+    GraphQL Resolver Module for search requests.
+  """
+
   alias Api.Elasticsearch.Search
   alias Api.Content
   alias Api.Repo

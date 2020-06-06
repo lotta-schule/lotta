@@ -1,4 +1,8 @@
 defimpl Elasticsearch.Document, for: Api.Content.Article do
+  @moduledoc """
+    Elasticsearch representation of an Article
+  """
+
   alias Api.Content.ContentModule
   alias Api.Repo
 

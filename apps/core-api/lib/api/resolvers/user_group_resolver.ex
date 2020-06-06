@@ -1,4 +1,8 @@
 defmodule Api.UserGroupResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting user groups
+  """
+
   alias Ecto.{Changeset, NoResultsError}
   alias Api.Repo
   alias Api.Accounts

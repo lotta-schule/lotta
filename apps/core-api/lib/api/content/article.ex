@@ -1,4 +1,8 @@
 defmodule Api.Content.Article do
+  @moduledoc """
+    Ecto Schema for articles
+  """
+
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Changeset

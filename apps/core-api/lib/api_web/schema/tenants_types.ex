@@ -1,4 +1,6 @@
 defmodule ApiWeb.Schema.TenantsTypes do
+  @moduledoc false
+
   use Absinthe.Schema.Notation
 
   object :tenants_queries do

@@ -1,4 +1,8 @@
 defmodule Api.Queue.EmailPublisher do
+  @moduledoc """
+    Outgoing queue for sending emails
+  """
+
   use GenServer
   @behaviour GenRMQ.Publisher
   alias Api.Services.EmailSendRequest

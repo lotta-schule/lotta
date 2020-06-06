@@ -1,4 +1,8 @@
 defmodule ApiWeb.AbsintheHooks do
+  @moduledoc """
+  Hooks in Absinthe Lifecycle. Turns absinthe token into cookie.
+  """
+
   import Plug.Conn
 
   def before_send(conn, %Absinthe.Blueprint{execution: %{context: %{auth_token: nil}}}) do

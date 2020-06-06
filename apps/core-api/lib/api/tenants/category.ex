@@ -1,4 +1,8 @@
 defmodule Api.Tenants.Category do
+  @moduledoc """
+    Ecto Schema for categories
+  """
+
   use Ecto.Schema
   import Ecto.{Changeset, Query}
   alias Api.Repo

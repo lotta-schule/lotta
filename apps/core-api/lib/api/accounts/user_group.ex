@@ -1,4 +1,8 @@
 defmodule Api.Accounts.UserGroup do
+  @moduledoc """
+    Ecto Schema for user groups.
+  """
+
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Changeset

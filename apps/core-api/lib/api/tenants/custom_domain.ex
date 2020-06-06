@@ -1,4 +1,8 @@
 defmodule Api.Tenants.CustomDomain do
+  @moduledoc """
+    Ecto Schema for custom Domains
+  """
+
   use Ecto.Schema
   alias Api.Tenants.Tenant
 

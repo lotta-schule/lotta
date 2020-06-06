@@ -1,4 +1,9 @@
 defmodule Api.Accounts.GroupEnrollmentToken do
+  @moduledoc """
+    Ecto Schema for user group enrollment tokens.
+    A GroupEnrollmentToken is a token which will grant permission to a UserGroup
+  """
+
   use Ecto.Schema
 
   alias Api.Accounts.UserGroup

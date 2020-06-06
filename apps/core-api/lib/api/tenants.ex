@@ -90,7 +90,7 @@ defmodule Api.Tenants do
          false <- is_nil(host) do
       case get_tenant_by_custom_domain_host(host) do
         nil ->
-          IO.inspect("custom domain is not found with #{host}. Trying to recognize lotta slug")
+          Logger.info("custom domain is not found with #{host}. Trying to recognize lotta slug")
 
           base_url_without_port =
             Regex.replace(~r/:\d*$/, Application.fetch_env!(:api, :base_url), "")
@@ -107,8 +107,8 @@ defmodule Api.Tenants do
                 |> Enum.fetch!(0)
                 |> get_tenant_by_slug()
               else
-                IO.inspect(error)
-                IO.inspect("tenant not found by slug or host, host is #{host}")
+                Logger.warn(error)
+                Logger.warn("tenant not found by slug or host, host is #{host}")
                 nil
               end
           end
@@ -118,8 +118,8 @@ defmodule Api.Tenants do
       end
     else
       error ->
-        IO.inspect("could not parse origin header")
-        IO.inspect(error)
+        Logger.warn("could not parse origin header")
+        Logger.warn(error)
         nil
     end
   end
@@ -145,7 +145,7 @@ defmodule Api.Tenants do
       tenant
     else
       error ->
-        IO.inspect(error)
+        Logger.warn(error)
         nil
     end
   end
@@ -181,38 +181,43 @@ defmodule Api.Tenants do
 
   """
   def create_tenant(attrs \\ %{}) do
-    with {:ok, tenant} <- %Tenant{} |> Tenant.create_changeset(attrs) |> Repo.insert() do
-      %Category{
-        title: "Startseite",
-        sort_key: 0,
-        is_sidenav: false,
-        is_homepage: true,
-        tenant_id: tenant.id
-      }
-      |> Repo.insert()
+    tenant =
+      %Tenant{}
+      |> Tenant.create_changeset(attrs)
 
-      {:ok, admin_group} =
-        %UserGroup{
-          name: "Administrator",
+    case Repo.insert(tenant) do
+      {:ok, tenant} ->
+        %Category{
+          title: "Startseite",
           sort_key: 0,
-          is_admin_group: true,
+          is_sidenav: false,
+          is_homepage: true,
           tenant_id: tenant.id
         }
         |> Repo.insert()
 
-      ["Lehrer", "Schüler"]
-      |> Enum.with_index()
-      |> Enum.each(fn {name, i} ->
-        %UserGroup{
-          name: name,
-          sort_key: 10 + i * 10,
-          tenant_id: tenant.id
-        }
-        |> Repo.insert()
-      end)
+        {:ok, admin_group} =
+          %UserGroup{
+            name: "Administrator",
+            sort_key: 0,
+            is_admin_group: true,
+            tenant_id: tenant.id
+          }
+          |> Repo.insert()
 
-      {:ok, tenant, admin_group}
-    else
+        ["Lehrer", "Schüler"]
+        |> Enum.with_index()
+        |> Enum.each(fn {name, i} ->
+          %UserGroup{
+            name: name,
+            sort_key: 10 + i * 10,
+            tenant_id: tenant.id
+          }
+          |> Repo.insert()
+        end)
+
+        {:ok, tenant, admin_group}
+
       result ->
         result
     end

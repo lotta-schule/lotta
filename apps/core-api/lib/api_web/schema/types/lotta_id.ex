@@ -2,6 +2,7 @@ defmodule ApiWeb.Schema.Types.LottaId do
   @moduledoc """
   The LottaId scalar type allows integer ID values
   """
+
   use Absinthe.Schema.Notation
 
   scalar :lotta_id do

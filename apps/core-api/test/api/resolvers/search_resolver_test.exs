@@ -1,4 +1,8 @@
 defmodule Api.SearchResolverTest do
+  @moduledoc """
+    Test Module for SearchResolver
+  """
+
   use ApiWeb.ConnCase
   alias Api.Content
 

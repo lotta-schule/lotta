@@ -1,4 +1,6 @@
 defmodule ApiWeb.Schema.ScheduleTypes do
+  @moduledoc false
+
   use Absinthe.Schema.Notation
 
   object :schedule_queries do

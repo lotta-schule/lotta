@@ -1,4 +1,8 @@
 defmodule Api.Guardian do
+  @moduledoc """
+  Guardian callbacks for Authorization
+  """
+
   use Guardian, otp_app: :api
   alias Api.Accounts
 

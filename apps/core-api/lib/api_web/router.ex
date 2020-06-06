@@ -1,4 +1,8 @@
 defmodule ApiWeb.Router do
+  @moduledoc """
+  Phoenix router
+  """
+
   use ApiWeb, :router
   import Plug.BasicAuth
   import Phoenix.LiveDashboard.Router

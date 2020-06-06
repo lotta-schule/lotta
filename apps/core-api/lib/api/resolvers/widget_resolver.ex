@@ -1,4 +1,8 @@
 defmodule Api.WidgetResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting widgets
+  """
+
   alias Ecto.NoResultsError
   alias Api.Tenants
   alias Api.Accounts.User

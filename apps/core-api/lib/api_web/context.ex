@@ -1,4 +1,9 @@
 defmodule ApiWeb.Context do
+  @moduledoc """
+    Plug which builds a context for connections into the app.
+    Will provide tenant and user account information
+  """
+
   @behaviour Plug
 
   import Plug.Conn
@@ -26,9 +31,10 @@ defmodule ApiWeb.Context do
     authorization_header = get_req_header(conn, "authorization")
 
     authorization_token =
-      with ["Bearer " <> token] <- authorization_header do
-        token
-      else
+      case authorization_header do
+        ["Bearer " <> token] ->
+          token
+
         _ ->
           conn.cookies["LottaAuth"]
       end
@@ -65,13 +71,19 @@ defmodule ApiWeb.Context do
 
   defp put_tenant(context, conn) do
     tenant = tenant_by_slug_header(conn) || tenant_by_origin_header(conn)
-    if !is_nil(tenant), do: Map.put(context, :tenant, tenant), else: context
+
+    if is_nil(tenant) do
+      context
+    else
+      Map.put(context, :tenant, tenant)
+    end
   end
 
   defp tenant_by_slug_header(conn) do
-    with ["slug:" <> slug] <- get_req_header(conn, "tenant") do
-      Tenants.get_tenant_by_slug(slug)
-    else
+    case get_req_header(conn, "tenant") do
+      ["slug:" <> slug] ->
+        Tenants.get_tenant_by_slug(slug)
+
       _ ->
         nil
     end

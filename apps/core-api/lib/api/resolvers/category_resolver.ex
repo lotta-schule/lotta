@@ -1,4 +1,8 @@
 defmodule Api.CategoryResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting categories
+  """
+
   alias Api.Tenants
   alias Api.Accounts.User
 

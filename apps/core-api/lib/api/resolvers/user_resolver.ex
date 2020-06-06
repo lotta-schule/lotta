@@ -1,4 +1,9 @@
 defmodule Api.UserResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, updating and deleting users.
+    Takes care of login and registration, as well as password recovery functionality.
+  """
+
   alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper, User}
@@ -166,19 +171,19 @@ defmodule Api.UserResolver do
       |> Base.url_encode64(padding: false)
       |> URI.encode()
 
-    with {:ok, user} <- Accounts.request_password_reset_token(email, token) do
-      IO.inspect("user request password request - send mail to #{email}")
-      EmailPublisher.send_request_password_reset_email(tenant, user, email, token)
-    else
+    case Accounts.request_password_reset_token(email, token) do
+      {:ok, user} ->
+        Logger.info("user request password request - send mail to #{email}")
+        EmailPublisher.send_request_password_reset_email(tenant, user, email, token)
+
       error ->
         try do
           Honeybadger.notify(error, %{tenant: tenant, email: email})
-          IO.inspect("Error setting request password reset token")
-          IO.inspect(error)
+          Logger.error("Error setting request password reset token")
+          Logger.error(error)
         rescue
           e in RuntimeError ->
-            IO.inspect("runtime error with honeybadger notifying")
-            IO.inspect(e)
+            Logger.error(e)
         end
     end
 
@@ -195,7 +200,7 @@ defmodule Api.UserResolver do
       {:ok, %{token: jwt}}
     else
       error ->
-        IO.inspect(error)
+        Logger.error(error)
         {:error, "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut."}
     end
   end

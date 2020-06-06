@@ -1,4 +1,6 @@
 defmodule ApiWeb.Schema.CalendarTypes do
+  @moduledoc false
+
   use Absinthe.Schema.Notation
 
   object :calendar_queries do

@@ -1,4 +1,9 @@
 defmodule Api.ScheduleResolver do
+  @moduledoc """
+    GraphQL Resolver for requesting parsed schedule and timeline data for a given class.
+    Is routed to schedule-provider microservice.
+  """
+
   alias Api.Tenants
 
   def get(%{widget_id: widget_id} = args, %{context: %{current_user: %{class: class}}}) do
@@ -6,9 +11,9 @@ defmodule Api.ScheduleResolver do
     base_url = Application.fetch_env!(:api, :schedule_provider_url)
 
     case widget.configuration do
-      %{"username" => username, "password" => password, "schoolId" => schoolId, "type" => type} ->
+      %{"username" => username, "password" => password, "schoolId" => school_id, "type" => type} ->
         url =
-          "#{base_url}/schedule.json?class=#{class}&source=#{type}&schoolId=#{schoolId}&username=#{
+          "#{base_url}/schedule.json?class=#{class}&source=#{type}&schoolId=#{school_id}&username=#{
             username
           }&password=#{password}"
 
@@ -22,12 +27,12 @@ defmodule Api.ScheduleResolver do
           end
 
         case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
-          {:ok, 200, _headers, clientRef} ->
+          {:ok, 200, _headers, client_ref} ->
             :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}])
-            {:ok, body} = :hackney.body(clientRef)
+            {:ok, body} = :hackney.body(client_ref)
             {:ok, Poison.decode!(body)}
 
-          {:ok, 400, _headers, _clientRef} ->
+          {:ok, 400, _headers, _client_ref} ->
             {:error, "Ungültige Daten"}
 
           error ->

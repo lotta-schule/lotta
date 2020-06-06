@@ -1,4 +1,8 @@
 defmodule ApiWeb.Endpoint do
+  @moduledoc """
+  Phoenix endpoint configuration
+  """
+
   use Phoenix.Endpoint, otp_app: :api
 
   socket "/socket", ApiWeb.UserSocket,

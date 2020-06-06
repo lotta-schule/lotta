@@ -1,4 +1,8 @@
 defmodule Api.UploadService do
+  @moduledoc """
+    Service module for uploading user file binaries to or deleting user file binaries from s3-compatible storage
+  """
+
   def upload_to_space(%{
         localfilepath: localfilepath,
         content_type: content_type,

@@ -1,4 +1,8 @@
 defmodule Api.CategoryResolverTest do
+  @moduledoc """
+    Test Module for CategoryResolver
+  """
+
   use ApiWeb.ConnCase
   import Ecto.Query
   alias Api.Repo
