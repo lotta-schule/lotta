@@ -19,7 +19,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
       arg :id, non_null(:lotta_id)
       resolve &Api.UserResolver.get/2
     end
-    
+
     field :group, type: :user_group do
       arg :id, non_null(:lotta_id)
       resolve &Api.UserGroupResolver.get/2
@@ -33,6 +33,11 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :directories, list_of(:directory) do
       arg :parent_directory_id, :lotta_id
       resolve &Api.DirectoryResolver.list/2
+    end
+
+    field :file, :file do
+      arg :id, :lotta_id
+      resolve &Api.FileResolver.file/2
     end
 
     field :files, list_of(:file) do
@@ -76,7 +81,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :set_user_blocked, type: :user do
       arg :id, non_null(:lotta_id)
       arg :is_blocked, non_null(:boolean)
-      
+
       resolve &Api.UserResolver.set_user_blocked/2
     end
 
@@ -98,7 +103,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
       resolve &Api.UserGroupResolver.delete/2
     end
-    
+
     field :request_password_reset, type: :boolean do
       arg :email, non_null(:string)
 
@@ -162,7 +167,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
       resolve &Api.FileResolver.update/2
     end
-    
+
   end
 
   input_object :register_user_params do
@@ -172,7 +177,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :email, :string
     field :password, :string
   end
-  
+
   input_object :update_user_params do
     field :name, :string
     field :email, :string
@@ -182,7 +187,7 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :avatar_image_file, :file
     field :enrollment_tokens, list_of(:string)
   end
-  
+
   input_object :user_group_input do
     field :name, :string
     field :sort_key, :integer
@@ -251,8 +256,10 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :remote_location, :string
     field :file_type, :file_type
     field :user_id, :lotta_id
+    field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :parent_directory, :directory, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :usage, list_of(:file_usage_location), resolve: &Api.FileResolver.resolve_file_usage/3
   end
 
   object :file_conversion do
@@ -271,5 +278,45 @@ defmodule ApiWeb.Schema.AccountsTypes do
     value :pdf, as: "pdf"
     value :misc, as: "misc"
   end
-  
+
+  union :file_usage_location do
+    types [
+      :file_category_usage_location,
+      :file_article_usage_location,
+      :file_content_module_usage_location,
+      :file_user_usage_location,
+      :file_tenant_usage_location
+    ]
+    resolve_type fn (map, _) ->
+      case map do
+        %{category: _} -> :file_category_usage_location
+        %{article: _} -> :file_article_usage_location
+        %{content_module: _} -> :file_content_module_usage_location
+        %{tenant: _} -> :file_tenant_usage_location
+        %{user: _} -> :file_user_usage_location
+      end
+    end
+  end
+  object :file_category_usage_location do
+    field :usage, :string
+    field :category, :category
+  end
+  object :file_article_usage_location do
+    field :usage, :string
+    field :article, :article
+  end
+  object :file_content_module_usage_location do
+    field :usage, :string
+    field :content_module, :content_module
+    field :article, :article
+  end
+  object :file_user_usage_location do
+    field :usage, :string
+    field :user, :user
+  end
+  object :file_tenant_usage_location do
+    field :usage, :string
+    field :tenant, :tenant
+  end
+
 end
