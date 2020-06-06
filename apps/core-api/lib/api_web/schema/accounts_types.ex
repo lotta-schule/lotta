@@ -3,68 +3,69 @@ defmodule ApiWeb.Schema.AccountsTypes do
 
   object :accounts_queries do
     field :current_user, :user do
-      resolve &Api.UserResolver.get_current/2
+      resolve(&Api.UserResolver.get_current/2)
     end
 
     field :users, list_of(:user) do
-      resolve &Api.UserResolver.all_with_groups/2
+      resolve(&Api.UserResolver.all_with_groups/2)
     end
 
     field :search_users, list_of(:user) do
-      arg :searchtext, non_null(:string)
-      resolve &Api.UserResolver.search/2
+      arg(:searchtext, non_null(:string))
+      resolve(&Api.UserResolver.search/2)
     end
 
     field :user, type: :user do
-      arg :id, non_null(:lotta_id)
-      resolve &Api.UserResolver.get/2
+      arg(:id, non_null(:lotta_id))
+      resolve(&Api.UserResolver.get/2)
     end
 
     field :group, type: :user_group do
-      arg :id, non_null(:lotta_id)
-      resolve &Api.UserGroupResolver.get/2
+      arg(:id, non_null(:lotta_id))
+      resolve(&Api.UserGroupResolver.get/2)
     end
 
     field :directory, :directory do
-      arg :id, :lotta_id
-      resolve &Api.DirectoryResolver.get/2
+      arg(:id, :lotta_id)
+      resolve(&Api.DirectoryResolver.get/2)
     end
 
     field :directories, list_of(:directory) do
-      arg :parent_directory_id, :lotta_id
-      resolve &Api.DirectoryResolver.list/2
+      arg(:parent_directory_id, :lotta_id)
+      resolve(&Api.DirectoryResolver.list/2)
     end
 
     field :file, :file do
-      arg :id, :lotta_id
-      resolve &Api.FileResolver.file/2
+      arg(:id, :lotta_id)
+      resolve(&Api.FileResolver.file/2)
     end
 
     field :files, list_of(:file) do
-      arg :parent_directory_id, :lotta_id
-      resolve &Api.FileResolver.files/2
+      arg(:parent_directory_id, :lotta_id)
+      resolve(&Api.FileResolver.files/2)
     end
   end
 
   object :accounts_mutations do
     field :register, type: :authresult do
-      arg :user, non_null(:register_user_params)
-      arg :group_key, :string
+      arg(:user, non_null(:register_user_params))
+      arg(:group_key, :string)
 
-      resolve &Api.UserResolver.register/2
-      middleware &Api.AbsintheMiddlewares.set_user_token/2
+      resolve(&Api.UserResolver.register/2)
+      middleware(&Api.AbsintheMiddlewares.set_user_token/2)
     end
 
     field :login, type: :authresult do
-      arg :username, :string
-      arg :password, :string
+      arg(:username, :string)
+      arg(:password, :string)
 
-      resolve &Api.UserResolver.login/2
-      middleware &Api.AbsintheMiddlewares.set_user_token/2
+      resolve(&Api.UserResolver.login/2)
+      middleware(&Api.AbsintheMiddlewares.set_user_token/2)
     end
 
     field :logout, type: :boolean do
-      resolve fn (_args, _info) -> {:ok, true} end
+      resolve(fn _args, _info -> {:ok, true} end)
+
       middleware(fn resolution, _ ->
         Map.update!(resolution, :context, fn ctx ->
           Map.put(ctx, :auth_token, nil)
@@ -73,101 +74,100 @@ defmodule ApiWeb.Schema.AccountsTypes do
     end
 
     field :update_profile, type: :user do
-      arg :user, non_null(:update_user_params)
+      arg(:user, non_null(:update_user_params))
 
-      resolve &Api.UserResolver.update_profile/2
+      resolve(&Api.UserResolver.update_profile/2)
     end
 
     field :set_user_blocked, type: :user do
-      arg :id, non_null(:lotta_id)
-      arg :is_blocked, non_null(:boolean)
+      arg(:id, non_null(:lotta_id))
+      arg(:is_blocked, non_null(:boolean))
 
-      resolve &Api.UserResolver.set_user_blocked/2
+      resolve(&Api.UserResolver.set_user_blocked/2)
     end
 
     field :create_user_group, type: :user_group do
-      arg :group, non_null(:user_group_input)
+      arg(:group, non_null(:user_group_input))
 
-      resolve &Api.UserGroupResolver.create/2
+      resolve(&Api.UserGroupResolver.create/2)
     end
 
     field :update_user_group, type: :user_group do
-      arg :id, non_null(:lotta_id)
-      arg :group, non_null(:user_group_input)
+      arg(:id, non_null(:lotta_id))
+      arg(:group, non_null(:user_group_input))
 
-      resolve &Api.UserGroupResolver.update/2
+      resolve(&Api.UserGroupResolver.update/2)
     end
 
     field :delete_user_group, type: :user_group do
-      arg :id, non_null(:lotta_id)
+      arg(:id, non_null(:lotta_id))
 
-      resolve &Api.UserGroupResolver.delete/2
+      resolve(&Api.UserGroupResolver.delete/2)
     end
 
     field :request_password_reset, type: :boolean do
-      arg :email, non_null(:string)
+      arg(:email, non_null(:string))
 
-      resolve &Api.UserResolver.request_password_reset/2
+      resolve(&Api.UserResolver.request_password_reset/2)
     end
 
     field :reset_password, type: :authresult do
-      arg :email, non_null(:string)
-      arg :token, non_null(:string)
-      arg :password, non_null(:string)
+      arg(:email, non_null(:string))
+      arg(:token, non_null(:string))
+      arg(:password, non_null(:string))
 
-      resolve &Api.UserResolver.reset_password/2
-      middleware &Api.AbsintheMiddlewares.set_user_token/2
+      resolve(&Api.UserResolver.reset_password/2)
+      middleware(&Api.AbsintheMiddlewares.set_user_token/2)
     end
 
     field :set_user_groups, type: :user do
-      arg :id, non_null(:lotta_id)
-      arg :group_ids, non_null(list_of(:lotta_id))
-      resolve &Api.UserResolver.set_user_groups/2
+      arg(:id, non_null(:lotta_id))
+      arg(:group_ids, non_null(list_of(:lotta_id)))
+      resolve(&Api.UserResolver.set_user_groups/2)
     end
 
     field :create_directory, type: :directory do
-      arg :name, non_null(:string)
-      arg :parent_directory_id, :lotta_id
-      arg :is_public, :boolean
+      arg(:name, non_null(:string))
+      arg(:parent_directory_id, :lotta_id)
+      arg(:is_public, :boolean)
 
-      resolve &Api.DirectoryResolver.create/2
+      resolve(&Api.DirectoryResolver.create/2)
     end
 
     field :update_directory, type: :directory do
-      arg :id, non_null(:lotta_id)
-      arg :name, :string
-      arg :parent_directory_id, :lotta_id
+      arg(:id, non_null(:lotta_id))
+      arg(:name, :string)
+      arg(:parent_directory_id, :lotta_id)
 
-      resolve &Api.DirectoryResolver.update/2
+      resolve(&Api.DirectoryResolver.update/2)
     end
 
     field :delete_directory, type: :directory do
-      arg :id, non_null(:lotta_id)
+      arg(:id, non_null(:lotta_id))
 
-      resolve &Api.DirectoryResolver.delete/2
+      resolve(&Api.DirectoryResolver.delete/2)
     end
 
     field :upload_file, type: :file do
-      arg :file, non_null(:upload)
-      arg :parent_directory_id, non_null(:lotta_id)
+      arg(:file, non_null(:upload))
+      arg(:parent_directory_id, non_null(:lotta_id))
 
-      resolve &Api.FileResolver.upload/2
+      resolve(&Api.FileResolver.upload/2)
     end
 
     field :delete_file, type: :file do
-      arg :id, non_null(:lotta_id)
+      arg(:id, non_null(:lotta_id))
 
-      resolve &Api.FileResolver.delete/2
+      resolve(&Api.FileResolver.delete/2)
     end
 
     field :update_file, type: :file do
-      arg :id, non_null(:lotta_id)
-      arg :parent_directory_id, :lotta_id
-      arg :filename, :string
+      arg(:id, non_null(:lotta_id))
+      arg(:parent_directory_id, :lotta_id)
+      arg(:filename, :string)
 
-      resolve &Api.FileResolver.update/2
+      resolve(&Api.FileResolver.update/2)
     end
-
   end
 
   input_object :register_user_params do
@@ -211,10 +211,18 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :hide_full_name, :boolean
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
     field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :articles, list_of(:article), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+
+    field :articles, list_of(:article),
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
+
     field :groups, list_of(:user_group), resolve: &Api.UserResolver.resolve_groups/3
-    field :assigned_groups, list_of(:user_group), resolve: &Api.UserResolver.resolve_assigned_groups/3
-    field :enrollment_tokens, list_of(:string), resolve: &Api.UserResolver.resolve_enrollment_tokens/3
+
+    field :assigned_groups, list_of(:user_group),
+      resolve: &Api.UserResolver.resolve_assigned_groups/3
+
+    field :enrollment_tokens, list_of(:string),
+      resolve: &Api.UserResolver.resolve_enrollment_tokens/3
+
     field :is_blocked, :boolean, resolve: &Api.UserResolver.resolve_is_blocked/3
   end
 
@@ -226,7 +234,9 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :sort_key, :integer
     field :is_admin_group, :boolean
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
-    field :enrollment_tokens, list_of(:group_enrollment_token), resolve: &Api.UserGroupResolver.resolve_enrollment_tokens/3
+
+    field :enrollment_tokens, list_of(:group_enrollment_token),
+      resolve: &Api.UserGroupResolver.resolve_enrollment_tokens/3
   end
 
   object :group_enrollment_token do
@@ -241,7 +251,9 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :updated_at, :naive_datetime
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
-    field :parent_directory, :directory, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+
+    field :parent_directory, :directory,
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end
 
   object :file do
@@ -257,8 +269,13 @@ defmodule ApiWeb.Schema.AccountsTypes do
     field :file_type, :file_type
     field :user_id, :lotta_id
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :file_conversions, list_of(:file_conversion), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :parent_directory, :directory, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+
+    field :file_conversions, list_of(:file_conversion),
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+
+    field :parent_directory, :directory,
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+
     field :usage, list_of(:file_usage_location), resolve: &Api.FileResolver.resolve_file_usage/3
   end
 
@@ -272,22 +289,23 @@ defmodule ApiWeb.Schema.AccountsTypes do
   end
 
   enum :file_type do
-    value :image, as: "image"
-    value :audio, as: "audio"
-    value :video, as: "video"
-    value :pdf, as: "pdf"
-    value :misc, as: "misc"
+    value(:image, as: "image")
+    value(:audio, as: "audio")
+    value(:video, as: "video")
+    value(:pdf, as: "pdf")
+    value(:misc, as: "misc")
   end
 
   union :file_usage_location do
-    types [
+    types([
       :file_category_usage_location,
       :file_article_usage_location,
       :file_content_module_usage_location,
       :file_user_usage_location,
       :file_tenant_usage_location
-    ]
-    resolve_type fn (map, _) ->
+    ])
+
+    resolve_type(fn map, _ ->
       case map do
         %{category: _} -> :file_category_usage_location
         %{article: _} -> :file_article_usage_location
@@ -295,28 +313,32 @@ defmodule ApiWeb.Schema.AccountsTypes do
         %{tenant: _} -> :file_tenant_usage_location
         %{user: _} -> :file_user_usage_location
       end
-    end
+    end)
   end
+
   object :file_category_usage_location do
     field :usage, :string
     field :category, :category
   end
+
   object :file_article_usage_location do
     field :usage, :string
     field :article, :article
   end
+
   object :file_content_module_usage_location do
     field :usage, :string
     field :content_module, :content_module
     field :article, :article
   end
+
   object :file_user_usage_location do
     field :usage, :string
     field :user, :user
   end
+
   object :file_tenant_usage_location do
     field :usage, :string
     field :tenant, :tenant
   end
-
 end

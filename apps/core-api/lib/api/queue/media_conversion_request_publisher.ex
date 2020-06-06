@@ -5,12 +5,13 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
 
   require Logger
 
-  @exchange    "media-conversion"
-  @queue       "media-conversion-tasks"
+  @exchange "media-conversion"
+  @queue "media-conversion-tasks"
 
   def init(arg) do
     {:ok, arg}
   end
+
   def init do
     create_rmq_resources()
 

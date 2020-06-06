@@ -5,7 +5,7 @@ defmodule Api.Tenants.CustomDomain do
   schema "custom_domains" do
     field :host, :string
     field :is_main_domain, :boolean
-  
+
     belongs_to :tenant, Tenant
 
     timestamps()

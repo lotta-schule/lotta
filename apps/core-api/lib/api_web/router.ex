@@ -42,5 +42,4 @@ defmodule ApiWeb.Router do
   end
 
   forward "/sitemap.xml", ApiWeb.SitemapPlug
-
 end

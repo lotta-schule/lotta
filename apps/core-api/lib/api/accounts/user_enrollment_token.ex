@@ -7,7 +7,7 @@ defmodule Api.Accounts.UserEnrollmentToken do
     field :enrollment_token, :string
 
     belongs_to :user, User
-    
+
     timestamps()
   end
 end

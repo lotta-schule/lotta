@@ -8,7 +8,7 @@ defmodule Api.Content do
   alias Api.Repo
 
   alias Api.Content.{Article, ContentModule}
-  alias Api.Tenants.{Category,Tenant}
+  alias Api.Tenants.{Category, Tenant}
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -29,9 +29,11 @@ defmodule Api.Content do
   """
   def list_articles(%Tenant{} = tenant, category_id, user, user_group_ids, user_is_admin, filter) do
     query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
+
     case category_id do
       nil ->
-        from [...,c] in query, where: c.hide_articles_from_homepage != true
+        from [..., c] in query, where: c.hide_articles_from_homepage != true
+
       category_id ->
         from a in query, where: a.category_id == ^category_id
     end
@@ -41,9 +43,11 @@ defmodule Api.Content do
 
   def get_topics(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
     query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
+
     Ecto.Query.from([a, ...] in query,
       where: not is_nil(a.topic),
-      select: a.topic)
+      select: a.topic
+    )
     |> Repo.all()
   end
 
@@ -58,6 +62,7 @@ defmodule Api.Content do
   """
   def list_articles_by_topic(%Tenant{} = tenant, user, user_group_ids, user_is_admin, topic) do
     query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
+
     from(a in query,
       where: a.topic == ^topic,
       order_by: [desc: :updated_at]
@@ -75,7 +80,9 @@ defmodule Api.Content do
 
   """
   def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
-    Ecto.Query.from(a in Article, where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id))
+    Ecto.Query.from(a in Article,
+      where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id)
+    )
     |> Repo.all()
   end
 
@@ -90,10 +97,14 @@ defmodule Api.Content do
   """
   def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
     user_id = user.id
-    Repo.all(Ecto.Query.from a in Article,
-      where: a.tenant_id == ^tenant.id,
-      join: au in "article_users", where: au.article_id == a.id and au.user_id == ^user_id,
-      order_by: :id
+
+    Repo.all(
+      Ecto.Query.from(a in Article,
+        where: a.tenant_id == ^tenant.id,
+        join: au in "article_users",
+        where: au.article_id == a.id and au.user_id == ^user_id,
+        order_by: :id
+      )
     )
   end
 
@@ -133,9 +144,11 @@ defmodule Api.Content do
       |> Article.create_changeset(attrs)
       |> put_assoc(:tenant, tenant)
       |> put_assoc(:users, [user])
+
     case Repo.insert(changeset) do
       {:ok, article} ->
         {:ok, article}
+
       result ->
         result
     end
@@ -157,10 +170,12 @@ defmodule Api.Content do
     changeset =
       article
       |> Article.changeset(attrs)
+
     case Repo.update(changeset) do
       {:ok, article} ->
         Elasticsearch.put_document(Api.Elasticsearch.Cluster, article, "articles")
         {:ok, article}
+
       result ->
         result
     end
@@ -183,6 +198,7 @@ defmodule Api.Content do
       {:ok, article} ->
         Elasticsearch.delete_document(Api.Elasticsearch.Cluster, article, "articles")
         {:ok, article}
+
       result ->
         result
     end
@@ -246,7 +262,7 @@ defmodule Api.Content do
   """
   def create_content_module(article_id, attrs \\ %{}) do
     %ContentModule{}
-    |> ContentModule.changeset(Map.put(attrs, :article_id, article_id ))
+    |> ContentModule.changeset(Map.put(attrs, :article_id, article_id))
     |> Repo.insert()
   end
 
@@ -299,12 +315,13 @@ defmodule Api.Content do
 
   def save_content_module_result!(%ContentModule{} = content_module, user, result) do
     content_module
-    |> Ecto.build_assoc(:results, %{ result: result, user_id: user && user.id })
+    |> Ecto.build_assoc(:results, %{result: result, user_id: user && user.id})
     |> Repo.insert!()
   end
 
   def toggle_article_pin(article_id) do
     article = Repo.get(Article, article_id)
+
     article
     |> Ecto.Changeset.cast(%{is_pinned_to_top: !article.is_pinned_to_top}, [:is_pinned_to_top])
     |> Repo.update()
@@ -316,22 +333,26 @@ defmodule Api.Content do
       on: aug.article_id == a.id,
       join: c in Category,
       on: c.id == a.category_id,
-      where: a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
-             (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^user_is_admin),
+      where:
+        a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
+          (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^user_is_admin),
       distinct: true
     )
   end
 
   defp filter_query(query, filter) do
     query = from q in query, order_by: [desc: :updated_at, desc: :id]
+
     (filter || %{})
     |> Enum.reduce(query, fn
       {_, nil}, query ->
         query
+
       {:first, limit}, query ->
         from q in query, limit: ^limit
+
       {:updated_before, updated_before}, query ->
         from q in query, where: q.updated_at < ^updated_before
-      end)
+    end)
   end
 end

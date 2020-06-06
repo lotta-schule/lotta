@@ -9,5 +9,4 @@ defmodule Api.Accounts.BlockedTenant do
 
     timestamps()
   end
-
 end

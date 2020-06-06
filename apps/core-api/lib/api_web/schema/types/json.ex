@@ -35,4 +35,3 @@ defmodule ApiWeb.Schema.Types.JSON do
 
   defp encode(value), do: value
 end
-

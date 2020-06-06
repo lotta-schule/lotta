@@ -19,29 +19,38 @@ defmodule ApiWeb.Context do
   end
 
   defp put_user(context, conn) do
-    conn = conn
+    conn =
+      conn
       |> Plug.Conn.fetch_cookies()
+
     authorization_header = get_req_header(conn, "authorization")
-    authorization_token = with ["Bearer " <> token] <- authorization_header do
-      token
-    else
-      _ ->
-        conn.cookies["LottaAuth"]
-    end
+
+    authorization_token =
+      with ["Bearer " <> token] <- authorization_header do
+        token
+      else
+        _ ->
+          conn.cookies["LottaAuth"]
+      end
+
     tenant = context[:tenant]
+
     with false <- is_nil(authorization_token),
-        {:ok, current_user, _claims} <- Guardian.resource_from_token(authorization_token),
-        true <- !tenant || !Accounts.User.is_blocked?(current_user, tenant) do
+         {:ok, current_user, _claims} <- Guardian.resource_from_token(authorization_token),
+         true <- !tenant || !Accounts.User.is_blocked?(current_user, tenant) do
       current_user =
         Repo.get(Accounts.User, current_user.id)
         |> Repo.preload([:groups, :avatar_image_file])
+
       user_group_ids = Accounts.User.group_ids(current_user, tenant)
       user_is_admin = Accounts.User.is_admin?(current_user, tenant)
+
       Task.start_link(fn ->
         current_user
         |> Repo.preload(:tenant)
         |> Accounts.see_user()
       end)
+
       context
       |> Map.put(:current_user, current_user)
       |> Map.put(:user_group_ids, user_group_ids)
@@ -67,11 +76,12 @@ defmodule ApiWeb.Context do
         nil
     end
   end
-  
+
   defp tenant_by_origin_header(conn) do
     case get_req_header(conn, "origin") do
       [origin] ->
         Tenants.get_tenant_by_origin(origin)
+
       _ ->
         nil
     end

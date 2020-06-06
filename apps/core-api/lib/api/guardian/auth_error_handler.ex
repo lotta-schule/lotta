@@ -3,6 +3,6 @@ defmodule Api.Guardian.AuthErrorHandler do
   @impl Guardian.Plug.ErrorHandler
 
   def auth_error(_conn, {_type, reason}, _opts) do
-    throw reason
+    throw(reason)
   end
 end

@@ -13,7 +13,7 @@ defmodule Api.Repo.Migrations.ChangeUsersAvatarImageFileReference do
     drop(constraint(:users, "users_avatar_image_file_id_fkey"))
 
     alter table(:users) do
-        modify(:avatar_image_file_id, references(:files, on_delete: :nothing))
+      modify(:avatar_image_file_id, references(:files, on_delete: :nothing))
     end
   end
 end

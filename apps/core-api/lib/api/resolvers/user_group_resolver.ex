@@ -1,5 +1,5 @@
 defmodule Api.UserGroupResolver do
-  alias Ecto.{Changeset,NoResultsError}
+  alias Ecto.{Changeset, NoResultsError}
   alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.User
@@ -9,23 +9,26 @@ defmodule Api.UserGroupResolver do
       model
       |> Repo.preload(:groups)
       |> Map.fetch!(:groups)
-      |> Enum.sort_by(&(&1.sort_key))
+      |> Enum.sort_by(& &1.sort_key)
       |> Enum.reverse()
+
     {:ok, groups}
   end
 
   def resolve_enrollment_tokens(user_group, _args, %{context: %{current_user: current_user}}) do
     tenant = user_group |> Repo.preload(:tenant) |> Map.fetch!(:tenant)
+
     case User.is_admin?(current_user, tenant) do
       true ->
-        {:ok, user_group
-        |> Repo.preload(:enrollment_tokens)
-        |> Map.fetch!(:enrollment_tokens)}
+        {:ok,
+         user_group
+         |> Repo.preload(:enrollment_tokens)
+         |> Map.fetch!(:enrollment_tokens)}
+
       _ ->
         {:ok, []}
     end
   end
-
 
   def get(%{id: id}, %{context: context}) do
     if context[:current_user] && context[:user_is_admin] do
@@ -45,9 +48,9 @@ defmodule Api.UserGroupResolver do
         {:error, changeset} ->
           {
             :error,
-            message: "Fehler beim Erstellen der Gruppe.",
-            details: error_details(changeset)
+            message: "Fehler beim Erstellen der Gruppe.", details: error_details(changeset)
           }
+
         success ->
           success
       end
@@ -60,6 +63,7 @@ defmodule Api.UserGroupResolver do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
         group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
+
         if group.tenant.id == tenant.id do
           Accounts.update_user_group(group, group_input)
         else
@@ -77,6 +81,7 @@ defmodule Api.UserGroupResolver do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
         group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
+
         if group.tenant.id == tenant.id do
           Accounts.delete_user_group(group)
         else

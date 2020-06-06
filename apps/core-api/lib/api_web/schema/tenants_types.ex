@@ -3,79 +3,79 @@ defmodule ApiWeb.Schema.TenantsTypes do
 
   object :tenants_queries do
     field :tenants, list_of(:tenant) do
-      resolve &Api.TenantResolver.all/2
+      resolve(&Api.TenantResolver.all/2)
     end
 
     field :tenant, :tenant do
-      arg :id, :lotta_id
-      arg :slug, :string
-      resolve &Api.TenantResolver.get/2
+      arg(:id, :lotta_id)
+      arg(:slug, :string)
+      resolve(&Api.TenantResolver.get/2)
     end
 
     field :categories, list_of(:category) do
-      resolve &Api.CategoryResolver.all/2
+      resolve(&Api.CategoryResolver.all/2)
     end
 
     field :widgets, list_of(:widget) do
-      arg :category_id, :lotta_id
+      arg(:category_id, :lotta_id)
 
-      resolve &Api.WidgetResolver.all/2
+      resolve(&Api.WidgetResolver.all/2)
     end
   end
 
   object :tenants_mutations do
     field :create_tenant, type: :tenant do
-      arg :title, non_null(:string)
-      arg :slug, non_null(:string)
-      arg :email, :string
-      arg :name, :string
+      arg(:title, non_null(:string))
+      arg(:slug, non_null(:string))
+      arg(:email, :string)
+      arg(:name, :string)
 
-      resolve &Api.TenantResolver.create/2
+      resolve(&Api.TenantResolver.create/2)
     end
 
     field :update_tenant, type: :tenant do
-      arg :tenant, non_null(:tenant_input)
+      arg(:tenant, non_null(:tenant_input))
 
-      resolve &Api.TenantResolver.update/2
+      resolve(&Api.TenantResolver.update/2)
     end
 
     field :create_category, type: :category do
-      arg :category, non_null(:category_input)
+      arg(:category, non_null(:category_input))
 
-      resolve &Api.CategoryResolver.create/2
+      resolve(&Api.CategoryResolver.create/2)
     end
 
     field :update_category, type: :category do
-      arg :id, non_null(:lotta_id)
-      arg :category, non_null(:category_input)
+      arg(:id, non_null(:lotta_id))
+      arg(:category, non_null(:category_input))
 
-      resolve &Api.CategoryResolver.update/2
+      resolve(&Api.CategoryResolver.update/2)
     end
 
     field :delete_category, type: :category do
-      arg :id, non_null(:lotta_id)
+      arg(:id, non_null(:lotta_id))
 
-      resolve &Api.CategoryResolver.delete/2
+      resolve(&Api.CategoryResolver.delete/2)
     end
 
     field :create_widget, type: :widget do
-      arg :title, non_null(:string)
-      arg :type, non_null(:widget_type)
+      arg(:title, non_null(:string))
+      arg(:type, non_null(:widget_type))
 
-      resolve &Api.WidgetResolver.create/2
+      resolve(&Api.WidgetResolver.create/2)
     end
 
     field :update_widget, type: :widget do
-      arg :id, non_null(:lotta_id)
-      arg :widget, non_null(:widget_input)
+      arg(:id, non_null(:lotta_id))
+      arg(:widget, non_null(:widget_input))
 
-      resolve &Api.WidgetResolver.update/2
+      resolve(&Api.WidgetResolver.update/2)
     end
 
     field :delete_widget, type: :widget do
-      arg :id, non_null(:lotta_id)
+      arg(:id, non_null(:lotta_id))
 
-      resolve &Api.WidgetResolver.delete/2
+      resolve(&Api.WidgetResolver.delete/2)
     end
   end
 
@@ -113,10 +113,18 @@ defmodule ApiWeb.Schema.TenantsTypes do
     field :custom_theme, :json
     field :inserted_at, :naive_datetime
     field :logo_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :background_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :categories, list_of(:category), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
-    field :groups, list_of(:user_group), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :custom_domains, list_of(:custom_domain), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+
+    field :background_image_file, :file,
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+
+    field :categories, list_of(:category),
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+
+    field :groups, list_of(:user_group),
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+
+    field :custom_domains, list_of(:custom_domain),
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
 
   object :category do
@@ -155,9 +163,9 @@ defmodule ApiWeb.Schema.TenantsTypes do
   end
 
   enum :widget_type do
-    value :calendar, as: "calendar"
-    value :vplan, as: "vplan"
-    value :schedule, as: "schedule"
-    value :tagcloud, as: "tagcloud"
+    value(:calendar, as: "calendar")
+    value(:vplan, as: "vplan")
+    value(:schedule, as: "schedule")
+    value(:tagcloud, as: "tagcloud")
   end
 end

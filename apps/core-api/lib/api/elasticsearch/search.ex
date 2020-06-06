@@ -8,9 +8,11 @@ defmodule Api.Elasticsearch.Search do
         query
         |> exclude(:order_by)
         |> exclude(:distinct)
+
       ids =
         result["hits"]["hits"]
         |> Enum.map(&String.to_integer(&1["_id"]))
+
       from a in query,
         where: a.id in ^ids,
         order_by: fragment("array_position(?, ?)", ^ids, a.id)
@@ -21,7 +23,8 @@ defmodule Api.Elasticsearch.Search do
   end
 
   defp execute_search(searchtext, %Tenant{} = tenant) do
-    Elasticsearch.post(Api.Elasticsearch.Cluster,
+    Elasticsearch.post(
+      Api.Elasticsearch.Cluster,
       "/articles/_doc/_search",
       %{
         "from" => 0,

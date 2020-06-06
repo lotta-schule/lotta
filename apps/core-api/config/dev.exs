@@ -26,7 +26,6 @@ config :api, :redis_connection,
   password: "lotta",
   name: :redix
 
-
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
   access_key_id: ugc_s3_compat_access_key_id,
@@ -52,11 +51,9 @@ config :api, Api.Guardian,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 
-config :api, :base_url,
-  ".medienportal.lvh.me:3000"
+config :api, :base_url, ".medienportal.lvh.me:3000"
 
-config :api, :schedule_provider_url,
-  "http://schedule_provider:3000"
+config :api, :schedule_provider_url, "http://schedule_provider:3000"
 
 # ## SSL Support
 #

@@ -6,9 +6,8 @@ defmodule Api.Accounts.GroupEnrollmentToken do
   schema "group_enrollment_tokens" do
     field :token, :string
 
-    belongs_to :group, UserGroup,
-      foreign_key: :group_id
-    
+    belongs_to :group, UserGroup, foreign_key: :group_id
+
     timestamps()
   end
 end

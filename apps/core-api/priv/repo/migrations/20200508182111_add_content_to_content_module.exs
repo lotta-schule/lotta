@@ -15,14 +15,16 @@ defmodule Api.Repo.Migrations.AddContentToContentModule do
     from(cm in ContentModule, where: cm.type == "text")
     |> Api.Repo.all()
     |> Enum.each(fn content_module ->
-      content = try do
-        content_module.text |> Base.decode64! |> URI.decode |> Jason.decode!
-      rescue
-        _ ->
-          content_module.text |> Base.decode64! |> Jason.decode!
-      end
+      content =
+        try do
+          content_module.text |> Base.decode64!() |> URI.decode() |> Jason.decode!()
+        rescue
+          _ ->
+            content_module.text |> Base.decode64!() |> Jason.decode!()
+        end
+
       content_module
-      |> change(%{ content: %{ "nodes" => content }})
+      |> change(%{content: %{"nodes" => content}})
       |> Repo.update()
     end)
 
@@ -30,7 +32,7 @@ defmodule Api.Repo.Migrations.AddContentToContentModule do
     |> Api.Repo.all()
     |> Enum.each(fn content_module ->
       content_module
-      |> change(%{ content: %{"title" => content_module.text} })
+      |> change(%{content: %{"title" => content_module.text}})
       |> Repo.update()
     end)
 
@@ -39,7 +41,7 @@ defmodule Api.Repo.Migrations.AddContentToContentModule do
     |> Enum.filter(fn content_module -> !is_nil(content_module.text) end)
     |> Enum.each(fn content_module ->
       content_module
-      |> change(%{ content: %{ captions: Jason.decode!(content_module.text) } })
+      |> change(%{content: %{captions: Jason.decode!(content_module.text)}})
       |> Repo.update()
     end)
 
@@ -48,10 +50,9 @@ defmodule Api.Repo.Migrations.AddContentToContentModule do
     |> Enum.filter(fn content_module -> !is_nil(content_module.text) end)
     |> Enum.each(fn content_module ->
       content_module
-      |> change(%{ content: %{ caption: Enum.at(Jason.decode!(content_module.text), 0) } })
+      |> change(%{content: %{caption: Enum.at(Jason.decode!(content_module.text), 0)}})
       |> Repo.update()
     end)
-
   end
 
   def down do

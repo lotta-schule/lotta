@@ -3,12 +3,11 @@ defmodule Api.TenantsTest do
   alias Api.Fixtures
   alias Api.Tenants
 
-  
   describe "tenants" do
     test "list_tenants/0 returns all tenants" do
       tenant = Fixtures.fixture(:tenant)
 
-      assert Tenants.list_tenants == [tenant]
+      assert Tenants.list_tenants() == [tenant]
     end
 
     test "get_tenant!/1 returns the tenant with given id" do

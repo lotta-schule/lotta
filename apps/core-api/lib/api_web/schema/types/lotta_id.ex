@@ -3,12 +3,12 @@ defmodule ApiWeb.Schema.Types.LottaId do
   The LottaId scalar type allows integer ID values
   """
   use Absinthe.Schema.Notation
-  
+
   scalar :lotta_id do
-    parse &parse_id/1
-    serialize &(&1)
+    parse(&parse_id/1)
+    serialize(& &1)
   end
-      
+
   @spec parse_id(Absinthe.Blueprint.Input.String.t()) :: {:ok, Integer.t()} | :error
   @spec parse_id(Absinthe.Blueprint.Input.Null.t()) :: {:ok, nil}
   defp parse_id(%Absinthe.Blueprint.Input.String{value: value}) do
