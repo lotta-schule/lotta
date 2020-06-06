@@ -21,12 +21,18 @@ defmodule Api.FileResolver do
 
     if User.can_read_directory?(current_user, parent_directory) do
       categories =
-        from(c in Category, where: c.banner_image_file_id == ^id)
+        from(c in Category,
+          where: c.banner_image_file_id == ^id,
+          order_by: [desc: :updated_at, asc: :title]
+        )
         |> Repo.all()
         |> Enum.map(&%{usage: "banner", category: &1})
 
       articles =
-        from(a in Article, where: a.preview_image_file_id == ^id)
+        from(a in Article,
+          where: a.preview_image_file_id == ^id,
+          order_by: [desc: :updated_at, asc: :title]
+        )
         |> Repo.all()
         |> Enum.map(&%{usage: "preview", article: &1})
 
@@ -35,18 +41,25 @@ defmodule Api.FileResolver do
           join: cmf in "content_module_file",
           on: cmf.content_module_id == cm.id,
           preload: :article,
-          where: cmf.file_id == ^id
+          where: cmf.file_id == ^id,
+          order_by: [desc: cm.updated_at, desc: cm.inserted_at, desc: cm.id]
         )
         |> Repo.all()
         |> Enum.map(&%{usage: "file", content_module: &1, article: &1.article})
 
       users =
-        from(u in User, where: u.avatar_image_file_id == ^id)
+        from(u in User,
+          where: u.avatar_image_file_id == ^id,
+          order_by: [:name, :nickname, :inserted_at]
+        )
         |> Repo.all()
         |> Enum.map(&%{usage: "avatar", user: &1})
 
       tenants =
-        from(t in Tenant, where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id)
+        from(t in Tenant,
+          where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id,
+          order_by: :slug
+        )
         |> Repo.all()
         |> Enum.map(
           &%{

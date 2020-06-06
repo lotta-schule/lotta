@@ -336,10 +336,10 @@ defmodule Api.FileResolverTest do
                  "file" => %{
                    "filename" => "logo1.jpg",
                    "usage" => [
-                     %{"category" => %{"title" => "Profil"}, "usage" => "banner"},
+                     %{"category" => %{"title" => "Fächer"}, "usage" => "banner"},
                      %{"category" => %{"title" => "GTA"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Projekt"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Fächer"}, "usage" => "banner"}
+                     %{"category" => %{"title" => "Profil"}, "usage" => "banner"},
+                     %{"category" => %{"title" => "Projekt"}, "usage" => "banner"}
                    ]
                  }
                }
@@ -362,10 +362,10 @@ defmodule Api.FileResolverTest do
                  "file" => %{
                    "filename" => "logo1.jpg",
                    "usage" => [
-                     %{"category" => %{"title" => "Profil"}, "usage" => "banner"},
+                     %{"category" => %{"title" => "Fächer"}, "usage" => "banner"},
                      %{"category" => %{"title" => "GTA"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Projekt"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Fächer"}, "usage" => "banner"}
+                     %{"category" => %{"title" => "Profil"}, "usage" => "banner"},
+                     %{"category" => %{"title" => "Projekt"}, "usage" => "banner"}
                    ]
                  }
                }
