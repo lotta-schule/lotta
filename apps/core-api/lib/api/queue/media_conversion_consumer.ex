@@ -6,7 +6,6 @@ defmodule Api.Queue.MediaConversionConsumer do
   use GenServer
   alias GenRMQ.Message
   alias Api.Accounts
-  alias Api.Repo
 
   require Logger
 
