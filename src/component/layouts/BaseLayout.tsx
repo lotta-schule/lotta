@@ -84,7 +84,7 @@ export const BaseLayout = memo(({ children }) => {
             </header>
             <Navbar />
             <main className={styles.main}>
-                <Grid container justify={'flex-start'} direction={isMobile ? 'column-reverse' : 'row'}>
+                <Grid container justify={'flex-start'} direction={isMobile ? 'column-reverse' : 'row'} wrap={'nowrap'}>
                     {children}
                 </Grid>
             </main>

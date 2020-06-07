@@ -151,7 +151,7 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
     );
 
     return (
-        <Card className={styles.root} data-testid={'ArticlePreview'}>
+        <Card className={styles.root} data-testid="ArticlePreviewDensedLayout">
             <Grid container style={{ position: 'relative', display: 'flex', minHeight: 60 }}>
                 {article.previewImageFile && (
                     <Grid item xs={2} style={{ position: 'relative' }}>

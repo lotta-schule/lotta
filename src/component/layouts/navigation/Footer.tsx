@@ -39,13 +39,13 @@ export const Footer = memo(() => {
             <Typography className={styles.font}>
                 {categories.map(category => (
                     <React.Fragment key={category.id}>
-                        <Link component={CollisionLink} to={category.redirect ? category.redirect : Category.getPath(category)}>
+                        <Link data-testid="SidenavLink" component={CollisionLink} to={category.redirect ? category.redirect : Category.getPath(category)}>
                             {category.title}
                         </Link>
                         &nbsp;|&nbsp;
                     </React.Fragment>
                 ))}
-                <Link component={CollisionLink} to={`/privacy`}>Datenschutz</Link>
+                <Link data-testid="SidenavLink" component={CollisionLink} to={`/privacy`}>Datenschutz</Link>
             </Typography>
         </div>
     )

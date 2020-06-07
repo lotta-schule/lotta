@@ -3,7 +3,6 @@ import { TableRow, TableCell, Checkbox, IconButton, Menu, MenuItem, Divider } fr
 import { MoreVert, CreateOutlined, CloudDownloadOutlined, FileCopyOutlined, DeleteOutlineOutlined } from '@material-ui/icons';
 import { FileModel, DirectoryModel } from 'model';
 import { File } from 'util/model/File';
-import { FileSize } from 'util/FileSize';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
@@ -79,9 +78,6 @@ export const FileTableRow = memo<FileTableRowProps>(({ file, onMark }) => {
                 onCompleteRenaming={() => setIsRenamingFile(false)}
                 onSelect={() => { }}
             />
-            <TableCell align="right">
-                {new FileSize(file.filesize).humanize()}
-            </TableCell>
             {filesAreEditable && (
                 <TableCell>
                     <IconButton aria-label="delete" size="small" onClick={handleEditMenuClick}>
