@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useLayoutEffect, useRef, useState, useContext } from 'react';
-import { DirectoryModel, FileModel, FileModelType } from 'model';
+import { DirectoryModel, FileModel } from 'model';
+import { File } from 'util/model';
 import { IconButton, InputAdornment, TableCell, TextField, Tooltip, makeStyles, CircularProgress } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
@@ -16,6 +17,8 @@ export interface FileTableRowFilenameCellProps {
 }
 
 const useStyles = makeStyles(() => ({
+    root: {
+    },
     tooltip: {
         backgroundColor: 'transparent'
     }
@@ -104,7 +107,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
 
     if (isRenaming) {
         return (
-            <TableCell scope="row" padding="none">
+            <TableCell scope="row" className={styles.root}>
                 <form style={{ width: '100%' }} onSubmit={e => {
                     e.preventDefault();
                     if (newFilename.length > 0) {
@@ -143,20 +146,10 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
         );
     }
 
-    let previewImageUrl: string | null = null;
-    if (file) {
-        if (file.fileType === FileModelType.Image) {
-            previewImageUrl = file.remoteLocation;
-        } else {
-            const imageConversionFile = file.fileConversions?.find(fc => /^gif/.test(fc.format));
-            if (imageConversionFile) {
-                previewImageUrl = imageConversionFile.remoteLocation;
-            }
-        }
-    }
+    const previewImageUrl = File.getPreviewImageLocation(file);
 
     const tableCell = (
-        <TableCell scope="row" padding="none" onClick={e => {
+        <TableCell scope="row" className={styles.root} onClick={e => {
             e.preventDefault();
             onSelect?.();
         }}>
@@ -168,7 +161,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
         return (
             <Tooltip className={styles.tooltip} title={(
                 <img
-                    src={`https://afdptjdxen.cloudimg.io/bound/200x200/foil1/${previewImageUrl}`}
+                    src={previewImageUrl}
                     alt={file!.filename}
                 />
             )}>

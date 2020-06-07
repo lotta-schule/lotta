@@ -64,7 +64,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
             onOpen={() => setIsOpen(true)}
             onClose={() => setIsOpen(false)}
             onChange={(_e: ChangeEvent<{}>, user: UserModel | null) => selectUser(user)}
-            getOptionLabel={option => option.name}
+            getOptionLabel={option => option.name!}
             options={autocompleteOptions}
             loading={isLoading}
             renderInput={params => (

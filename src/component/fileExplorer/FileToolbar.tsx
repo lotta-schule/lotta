@@ -1,5 +1,7 @@
 import React, { memo, useContext } from 'react';
-import { CloudUploadOutlined, CreateNewFolderOutlined, FileCopyOutlined, DeleteOutlineOutlined, HomeOutlined } from '@material-ui/icons';
+import {
+    CloudUploadOutlined, CreateNewFolderOutlined, FileCopyOutlined, DeleteOutlineOutlined, HomeOutlined, Info, InfoOutlined
+} from '@material-ui/icons';
 import { makeStyles, Theme, createStyles, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Zoom, Breadcrumbs, Link } from '@material-ui/core';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
@@ -131,6 +133,19 @@ export const FileToolbar = memo(() => {
                             </Zoom>
                         </>
                     )}
+                    <Tooltip title={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}>
+                        <IconButton
+                            aria-label={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}
+                            onClick={() => dispatch({ type: 'toggleDetailSidebarEnabled' })}
+                        >
+                            {state.detailSidebarEnabled && (
+                                <Info color={'secondary'} data-testid="enable-detail-sidebar-icon" />
+                            )}
+                            {!state.detailSidebarEnabled && (
+                                <InfoOutlined color={'secondary'} data-testid="disable-detail-sidebar-icon" />
+                            )}
+                        </IconButton>
+                    </Tooltip>
                 </div>
             </Toolbar>
         </>

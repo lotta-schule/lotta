@@ -136,7 +136,7 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
     );
 
     return (
-        <Card className={styles.root} data-testid={'ArticlePreview'}>
+        <Card className={styles.root} data-testid="ArticlePreviewStandardLayout">
             <Grid container style={{ display: 'flex' }}>
                 {article.previewImageFile && (
                     <Grid item xs={12} sm={narrow ? 12 : 4}>

@@ -84,6 +84,20 @@ export const File = {
         }
     },
 
+    getPreviewImageLocation(file?: FileModel, size: string = '200x200') {
+        if (file) {
+            if (file.fileType === FileModelType.Image) {
+                return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${file.remoteLocation}`
+            } else {
+                const imageConversionFile = file.fileConversions?.find(fc => /^gif/.test(fc.format));
+                if (imageConversionFile) {
+                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${file.remoteLocation}`;
+                }
+            }
+        }
+        return null;
+    },
+
     getSameOriginUrl(file: FileModel) {
         if (process.env.REACT_APP_FILE_REPLACEMENT_URL) {
             return file.remoteLocation?.replace(new RegExp(`^${process.env.REACT_APP_FILE_REPLACEMENT_URL}`), '');

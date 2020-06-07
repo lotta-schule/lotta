@@ -4,7 +4,6 @@ import { Card, CardContent, Typography } from '@material-ui/core';
 const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
 
 export const ProfileMediaFiles = memo(() => {
-
     return (
         <Card>
             <CardContent>

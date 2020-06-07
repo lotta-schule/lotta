@@ -18,10 +18,12 @@ export const defaultState = {
     ] as ({ id: null } | { id: number; name: string; })[],
     searchtext: '',
     showActiveUploads: false,
+    showFileUsage: false,
     showCreateNewFolder: false,
     showMoveFiles: false,
     showMoveDirectory: false,
     showDeleteFiles: false,
+    detailSidebarEnabled: false
 }
 
 const fileExplorerContext = createContext<[typeof defaultState, Dispatch<Action>]>([defaultState, () => { }]);
