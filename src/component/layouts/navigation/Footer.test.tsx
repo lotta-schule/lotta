@@ -47,7 +47,7 @@ describe('component/layouts/Footer', () => {
             result: { data: { categories: allCategories } }
         }];
 
-        const { queryAllByTestId, queryByText } = render(
+        const { queryAllByTestId } = render(
             <MockedProvider mocks={sidenavCategoriesMock}>
                 <Footer />
             </MockedProvider>

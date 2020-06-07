@@ -8,7 +8,7 @@ import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
-import { I18nextProvider, initReactI18next } from 'react-i18next';
+import { I18nextProvider } from 'react-i18next';
 import { UserModel } from 'model';
 import { theme } from '../theme';
 import { defaultApolloMocks } from 'test/mocks/defaultApolloMocks';

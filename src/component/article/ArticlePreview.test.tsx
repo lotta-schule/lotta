@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup } from 'test/util';
-import { ComputerExperten, HausaufgabenCategory } from 'test/fixtures';
+import { ComputerExperten } from 'test/fixtures';
 import { ArticlePreview } from './ArticlePreview';
 
 afterEach(cleanup);
