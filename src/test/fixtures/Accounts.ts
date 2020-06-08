@@ -1,4 +1,4 @@
-import { FileModelType } from 'model';
+import { FileModelType, UserModel } from 'model';
 
 /*
  *
@@ -8,7 +8,7 @@ import { FileModelType } from 'model';
 
 export const adminGroup = {
         id: 1,
-        createdAt: '2015-01-01 00:00',
+        insertedAt: '2015-01-01 00:00',
         updatedAt:  '2015-01-01 00:00',
         name: 'Administrator',
         sortKey: 1000,
@@ -19,18 +19,18 @@ export const adminGroup = {
 
 export const lehrerGroup = {
         id: 4,
-        createdAt: '2015-01-01 00:00',
+        insertedAt: '2015-01-01 00:00',
         updatedAt:  '2015-01-01 00:00',
         name: 'Lehrer',
         sortKey: 2000,
         isAdminGroup: false,
         tenant: null!,
-        enrollmentTokens: [{ id: 764, createdAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uhfhurehwuehf'  }],
+        enrollmentTokens: [{ id: 764, insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uhfhurehwuehf'  }],
 }
 
 export const elternGroup = {
         id: 10,
-        createdAt: '2015-01-10 11:00',
+        insertedAt: '2015-01-10 11:00',
         updatedAt:  '2015-01-12 14:00',
         name: 'Eltern',
         sortKey: 3000,
@@ -41,15 +41,14 @@ export const elternGroup = {
 
 export const schuelerGroup = {
         id: 5,
-        createdAt: '2015-01-01 07:45',
-        updatedAt:  '2015-01-01 07:45',
+        insertedAt: '2015-01-01 07:45', updatedAt:  '2015-01-01 07:45',
         name: 'Schüler',
         sortKey: 2000,
         isAdminGroup: false,
         tenant: null!,
         enrollmentTokens: [
-            { id: 884, createdAt: '2015-0b-01 14:15', updatedAt: '2015-02-01 14:15', token: 'ajf82j84h2h'  },
-            { id: 892, createdAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uishfiji2j38f'  }
+            { id: 884, insertedAt: '2015-0b-01 14:15', updatedAt: '2015-02-01 14:15', token: 'ajf82j84h2h'  },
+            { id: 892, insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uishfiji2j38f'  }
         ],
 }
 
@@ -103,7 +102,7 @@ export const imageFile = {
     insertedAt: '2001-01-01 14:15',
     updatedAt: '2001-01-01 14:15',
     remoteLocation: 'https://fakes3/meinbild.jpg',
-    fileConversions: [],
+    fileConversions: []
 };
 
 export const otherImageFile = {
@@ -309,12 +308,14 @@ export const powerpointFile = {
 
 export const SomeUser = {
     id: 1,
-    createdAt: new Date().toISOString(),
+    insertedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     lastSeen: new Date().toISOString(),
     email: 'user@lotta.schule',
     name: 'Ernesto Guevara',
+    class: '',
     groups: [],
+    enrollmentTokens: [],
     hideFullName: false,
     nickname: 'Che',
     avatarImageFile: null
@@ -322,12 +323,14 @@ export const SomeUser = {
 
 export const SomeUserin = {
     id: 2,
-    createdAt: '2019-05-18 10:00',
+    insertedAt: '2019-05-18 10:00',
     updatedAt: '2019-05-18 10:00',
     lastSeen: '2019-05-18 10:00',
     email: 'userin@andereandresse.com',
     name: 'Luisa Drinalda',
+    class: '',
     groups: [],
+    enrollmentTokens: [],
     hideFullName: true,
     nickname: 'Lui',
     avatarImageFile: null
@@ -335,15 +338,34 @@ export const SomeUserin = {
 
 export const KeinErSieEsUser = {
     id: 3,
-    createdAt: '2019-05-18 10:00',
+    insertedAt: '2019-05-18 10:00',
     updatedAt: '2019-05-18 10:00',
     lastSeen: '2019-05-18 10:00',
     email: 'userin@andereandresse.com',
     name: 'Michel Dupond (das frz. Michel)',
+    class: '',
     groups: [],
+    enrollmentTokens: [],
     hideFullName: false,
     nickname: 'Mich',
     avatarImageFile: null
 };
-;
 
+export const getPrivateAndPublicFiles = (user: UserModel) => {
+    const directories =
+        [ logosDirectory, profilDirectory, podcastsDirectory, ]
+        .map(directory => ({ ...directory,  user }));
+
+    return [
+        schulweitDirectory, ...directories,
+        ...[
+            { ...imageFile, parentDirectory: directories[0] },
+            { ...otherImageFile, parentDirectory: directories[0] },
+            { ...documentFile, parentDirectory: directories[1] },
+            { ...convertedDocumentFile, parentDirectory: directories[1] },
+            { ...movieFile, parentDirectory: directories[2] },
+            { ...audioFile, parentDirectory: directories[2] },
+            { ...powerpointFile, parentDirectory: directories[1] }
+        ].map(fileOrDirectory => ({ ...fileOrDirectory, userId: user.id }))
+    ];
+};

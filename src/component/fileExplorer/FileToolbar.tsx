@@ -57,7 +57,7 @@ export const FileToolbar = memo(() => {
     return (
         <>
             <Toolbar>
-                <div className={styles.title}>
+                <div className={styles.title} data-testid="FileExplorerToolbarPath">
                     <Breadcrumbs component={'div'} maxItems={7} itemsBeforeCollapse={2} itemsAfterCollapse={4} aria-label="breadcrumb" style={{ fontSize: '.85rem' }}>
                         {state.currentPath.length > 1 && (
                             <Link color="inherit" onClick={() => dispatch({ type: 'setPath', path: [{ id: null }] })}>
@@ -83,7 +83,7 @@ export const FileToolbar = memo(() => {
                                 color={uploads.filter(u => u.error).length ? 'error' : 'primary'}
                                 badgeContent={uploads.filter(u => u.error).length ? <span>!</span> : uploadLength}
                             >
-                                <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })}>
+                                <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })} data-testid="FileExplorerToolbarCurrentUploadsButton">
                                     <CircularProgress
                                         size={20}
                                         variant={'static'}
@@ -97,26 +97,26 @@ export const FileToolbar = memo(() => {
                         <>
                             <Zoom in={showFileEditingButtons}>
                                 <Tooltip title="Dateien verschieben">
-                                    <IconButton aria-label="Dateien verschieben" onClick={() => dispatch({ type: 'showMoveFiles' })}>
+                                    <IconButton aria-label="Dateien verschieben" onClick={() => dispatch({ type: 'showMoveFiles' })} data-testid="FileExplorerToolbarMoveFileButton">
                                         <FileCopyOutlined color={'secondary'} />
                                     </IconButton>
                                 </Tooltip>
                             </Zoom>
                             <Zoom in={showFileEditingButtons}>
                                 <Tooltip title="Dateien löschen">
-                                    <IconButton aria-label="Dateien löschen" onClick={() => dispatch({ type: 'showDeleteFiles' })}>
+                                    <IconButton aria-label="Dateien löschen" onClick={() => dispatch({ type: 'showDeleteFiles' })} data-testid="FileExplorerToolbarDeleteFileButton">
                                         <DeleteOutlineOutlined color={'secondary'} />
                                     </IconButton>
                                 </Tooltip>
                             </Zoom>
                             <Tooltip title="Ordner erstellen">
-                                <IconButton aria-label="Ordner erstellen" onClick={() => dispatch({ type: 'showCreateNewFolder' })}>
+                                <IconButton aria-label="Ordner erstellen" onClick={() => dispatch({ type: 'showCreateNewFolder' })} data-testid="FileExplorerToolbarCreateDirectoryButton">
                                     <CreateNewFolderOutlined color={'secondary'} />
                                 </IconButton>
                             </Tooltip>
                             <Zoom in={state.currentPath.length > 1}>
                                 <Tooltip title="Dateien hochladen">
-                                    <IconButton aria-label="Dateien hochladen">
+                                    <IconButton aria-label="Dateien hochladen" data-testid="FileExplorerToolbarNewUploadButton">
                                         <input
                                             multiple
                                             type={'file'}
@@ -135,6 +135,7 @@ export const FileToolbar = memo(() => {
                     )}
                     <Tooltip title={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}>
                         <IconButton
+                            data-testid="FileExplorerDetailViewButton"
                             aria-label={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}
                             onClick={() => dispatch({ type: 'toggleDetailSidebarEnabled' })}
                         >
