@@ -46,6 +46,68 @@ describe('component/fileExplorer/FileDetailView', () => {
         }
     ];
 
+    const usedFile = {
+        ...file,
+        id: 7132,
+        filename: 'ImportantImage.jpg',
+        filesize: 412756,
+        fileType: FileModelType.Image,
+        mimeType: 'image/jpg',
+        remoteLocation: 'https://localhost:3000/image.jpg'
+    };
+    const usedFileMocks = [{
+        request: { query: GetFileDetailsQuery, variables: { id: 7132 } },
+        result: {
+            data: {
+                file: {
+                    ...usedFile,
+                        user,
+                    usage: [
+                        {
+                            usage: 'preview',
+                            article: {
+                                title: 'Bild als Vorschaubild benutzt',
+                                previewImageFile: {
+                                    ...usedFile
+                                }
+                            }
+                        },
+                        {
+                            usage: 'banner',
+                            category: {
+                                title: 'Als Banner kann man das auch nehmen',
+                                bannerImageFile: {
+                                    ...usedFile
+                                }
+                            },
+                        },
+                        {
+                            usage: 'avatar',
+                            user: {
+                                id: 1123,
+                                nickname: 'Der Dieb',
+                                name: undefined,
+                                avatarImageFile: {
+                                    ...usedFile
+                                }
+                            }
+                        },
+                        {
+                            usage: 'background',
+                            tenant: {
+                                ...TestTenant,
+                                backgroundImageFile: {
+                                    ...usedFile
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }];
+
+
     describe('should show basic file information', () => {
         it('should show the filename', async done => {
             const { findByText } = render(
@@ -149,72 +211,12 @@ describe('component/fileExplorer/FileDetailView', () => {
             );
 
             await findByTestId('AuthorsListItem');
-            
+
             expect(container).toHaveTextContent('Autor:Che');
             done();
         });
 
         it('should show the file\'s usage count', async done => {
-            const usedFile = {
-                ...file,
-                id: 7132,
-                filename: 'ImportantImage.jpg',
-                filesize: 412756,
-                fileType: FileModelType.Image,
-                mimeType: 'image/jpg',
-                remoteLocation: 'https://localhost:3000/image.jpg'
-            };
-            const usedFileMocks = [{
-                request: { query: GetFileDetailsQuery, variables: { id: 7132 } },
-                result: {
-                    data: {
-                        file: {
-                            ...usedFile,
-                                user,
-                            usage: [
-                                {
-                                    usage: 'preview',
-                                    article: {
-                                        title: 'Bild als Vorschaubild benutzt',
-                                        previewImageFile: {
-                                            ...usedFile
-                                        }
-                                    }
-                                },
-                                {
-                                    usage: 'banner',
-                                    category: {
-                                        title: 'Als Banner kann man das auch nehmen',
-                                        bannerImageFile: {
-                                            ...usedFile
-                                        }
-                                    },
-                                },
-                                {
-                                    usage: 'avatar',
-                                    user: {
-                                        id: 1123,
-                                        nickname: 'Der Dieb',
-                                        name: undefined,
-                                        avatarImageFile: {
-                                            ...usedFile
-                                        }
-                                    }
-                                },
-                                {
-                                    usage: 'background',
-                                    tenant: {
-                                        ...TestTenant,
-                                        backgroundImageFile: {
-                                            ...usedFile
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }];
 
             const { findByTestId } = render(
                 <FileDetailView file={usedFile} />,

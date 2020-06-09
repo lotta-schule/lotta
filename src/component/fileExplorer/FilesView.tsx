@@ -6,7 +6,8 @@ import { Sidebar } from './Sidebar';
 const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        overflow: 'auto'
     }
 }));
 

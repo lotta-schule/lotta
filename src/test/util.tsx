@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { unionBy } from 'lodash';
+import React, { Reducer, FC, useReducer, useEffect } from 'react';
+import { unionBy, pick } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react'
@@ -11,8 +11,10 @@ import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueC
 import { I18nextProvider } from 'react-i18next';
 import { UserModel } from 'model';
 import { theme } from '../theme';
-import { defaultApolloMocks } from 'test/mocks/defaultApolloMocks';
+import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import { i18n } from 'i18n';
+import fileExplorerContext, { FileExplorerMode, defaultState as defaultFileExplorerState } from 'component/fileExplorer/context/FileExplorerContext';
+import { reducer as fileExplorerStateReducer, Action as FileExploreerStateAction } from 'component/fileExplorer/context/reducer';
 import DateFnsUtils from '@date-io/date-fns';
 
 export interface TestSetupOptions {
@@ -23,7 +25,7 @@ export interface TestSetupOptions {
 const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
     const mocks = unionBy(
         options.additionalMocks ?? [],
-        defaultApolloMocks,
+        getDefaultApolloMocks(pick(options, 'currentUser')),
         ({ request: { query } }) => query
     );
     return (
@@ -58,6 +60,27 @@ export const getMetaTagValue = (metaName: string) => {
     }
     return "";
 }
+
+export interface TestFileExplorerContextProviderProps {
+    children: any,
+    defaultValue?: Partial<typeof defaultFileExplorerState>,
+    onUpdateState?(currentState: typeof defaultFileExplorerState): void
+};
+export const TestFileExplorerContextProvider: FC<TestFileExplorerContextProviderProps> = ({ children, defaultValue, onUpdateState }) => {
+
+    const [state, dispatch] = useReducer<Reducer<typeof defaultFileExplorerState, FileExploreerStateAction>>(fileExplorerStateReducer, {
+        ...defaultFileExplorerState,
+        ...defaultValue,
+        mode: FileExplorerMode.ViewAndEdit
+    });
+    // eslint-disable-next-line
+    useEffect(() => { onUpdateState?.(state); }, [state]);
+    return (
+        <fileExplorerContext.Provider value={[state, dispatch]}>
+            {children}
+        </fileExplorerContext.Provider>
+    );
+};
 
 // override render method
 export { customRender as render }

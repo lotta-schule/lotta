@@ -4,7 +4,7 @@ import { FileModel } from 'model';
 
 export interface UserModel {
     id: ID;
-    createdAt: string;
+    insertedAt: string;
     updatedAt: string;
     lastSeen: string;
     name?: string;

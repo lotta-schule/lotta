@@ -11,7 +11,7 @@ export const TestTenant: ClientModel = {
     id: 1,
     title: 'DerEineVonHier',
     slug: 'derdiedas',
-    createdAt: '2014-03-08 12:00',
+    insertedAt: '2014-03-08 12:00',
     updatedAt: '2014-03-08 12:00',
     groups: [
         adminGroup,
@@ -37,7 +37,7 @@ export const OtherTenant = {
     id: 2,
     title: 'Um andere gehts ja eigentlich hier nie',
     slug: 'andere',
-    createdAt: '2014-03-08 12:00',
+    insertedAt: '2014-03-08 12:00',
     updatedAt: '2014-03-08 12:00',
     groups: [],
     customDomains: [],
