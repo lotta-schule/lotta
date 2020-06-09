@@ -125,7 +125,7 @@ describe('component/fileExplorer/FileToolbar', () => {
       describe('when a file is selected', () => {
           const stateWithFileSelected: typeof state = {
               ...state,
-              markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ==  'Dateiname.jpg') as FileModel[])
+              markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
           };
 
           it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async done => {
@@ -206,7 +206,7 @@ describe('component/fileExplorer/FileToolbar', () => {
             describe('when a file is selected', () => {
                 const stateWithFileSelected: typeof state = {
                     ...state,
-                    markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ==  'Dateiname.jpg') as FileModel[])
+                    markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
                 };
 
                 it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async done => {
@@ -279,7 +279,7 @@ describe('component/fileExplorer/FileToolbar', () => {
             describe('when a file is selected', () => {
                 const stateWithFileSelected: typeof state = {
                     ...state,
-                    markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ==  'Dateiname.jpg') as FileModel[])
+                    markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
                 };
 
                 it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async done => {
