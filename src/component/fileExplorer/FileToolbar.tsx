@@ -6,13 +6,26 @@ import { makeStyles, Theme, createStyles, Tooltip, IconButton, Toolbar, Badge, C
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useIsMobile } from 'util/useIsMobile';
 import { File } from 'util/model';
 import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
     createStyles({
+        toolbar: {
+            [theme.breakpoints.down('sm')]: {
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                '& $actions': {
+                    alignSelf: 'flex-end'
+                }
+            }
+        },
         spacer: {
-            flexGrow: 1
+            flexGrow: 1,
+            [theme.breakpoints.down('sm')]: {
+                display: 'none'
+            }
         },
         title: {
             overflow: 'auto',
@@ -40,6 +53,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
 
 export const FileToolbar = memo(() => {
     const styles = useStyles();
+    const isMobile = useIsMobile();
 
     const [currentUser] = useCurrentUser();
     const uploads = useUploads();
@@ -56,7 +70,7 @@ export const FileToolbar = memo(() => {
 
     return (
         <>
-            <Toolbar>
+            <Toolbar className={styles.toolbar}>
                 <div className={styles.title} data-testid="FileExplorerToolbarPath">
                     <Breadcrumbs component={'div'} maxItems={7} itemsBeforeCollapse={2} itemsAfterCollapse={4} aria-label="breadcrumb" style={{ fontSize: '.85rem' }}>
                         {state.currentPath.length > 1 && (
@@ -133,20 +147,22 @@ export const FileToolbar = memo(() => {
                             </Zoom>
                         </>
                     )}
-                    <Tooltip title={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}>
-                        <IconButton
-                            data-testid="FileExplorerDetailViewButton"
-                            aria-label={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}
-                            onClick={() => dispatch({ type: 'toggleDetailSidebarEnabled' })}
-                        >
-                            {state.detailSidebarEnabled && (
-                                <Info color={'secondary'} data-testid="enable-detail-sidebar-icon" />
-                            )}
-                            {!state.detailSidebarEnabled && (
-                                <InfoOutlined color={'secondary'} data-testid="disable-detail-sidebar-icon" />
-                            )}
-                        </IconButton>
-                    </Tooltip>
+                    {!isMobile && (
+                        <Tooltip title={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}>
+                            <IconButton
+                                data-testid="FileExplorerDetailViewButton"
+                                aria-label={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}
+                                onClick={() => dispatch({ type: 'toggleDetailSidebarEnabled' })}
+                            >
+                                {state.detailSidebarEnabled && (
+                                    <Info color={'secondary'} data-testid="enable-detail-sidebar-icon" />
+                                )}
+                                {!state.detailSidebarEnabled && (
+                                    <InfoOutlined color={'secondary'} data-testid="disable-detail-sidebar-icon" />
+                                )}
+                            </IconButton>
+                        </Tooltip>
+                    )}
                 </div>
             </Toolbar>
         </>
