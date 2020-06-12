@@ -103,7 +103,7 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                         </section>
                         {dynamicGroups && (
                             <span>
-                                Über einschreibeschlüssel zugewiesene Gruppen:
+                                Über Einschreibeschlüssel zugewiesene Gruppen:
                                 {dynamicGroups.map((group, i, arr) => <><em>{group.name}</em>{i !== arr.length - 1 && <>, </>}</>)}
                             </span>
                         )}
