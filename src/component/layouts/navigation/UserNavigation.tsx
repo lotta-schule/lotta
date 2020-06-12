@@ -48,6 +48,12 @@ const useStyles = makeStyles(theme => ({
             paddingTop: theme.spacing(1.5),
             paddingBottom: theme.spacing(1.5)
         }
+    },
+    avatarContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }));
 
@@ -134,8 +140,8 @@ export const UserNavigation = memo(() => {
                         }}
                     />
                 </Grid>
-                <Grid item xs={5} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <CurrentUserAvatar size={100} style={{ width: 105, height: 105 }} />
+                <Grid item xs={5} className={styles.avatarContainer}>
+                    <CurrentUserAvatar size={100} style={{ width: 100, height: 100 }} />
                 </Grid>
             </Grid>
         );

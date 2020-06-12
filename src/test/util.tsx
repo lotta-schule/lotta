@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react'
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { createBrowserHistory } from 'history';
+import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
@@ -13,28 +13,37 @@ import { UserModel } from 'model';
 import { theme } from '../theme';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import { i18n } from 'i18n';
-import fileExplorerContext, { FileExplorerMode, defaultState as defaultFileExplorerState } from 'component/fileExplorer/context/FileExplorerContext';
 import { reducer as fileExplorerStateReducer, Action as FileExploreerStateAction } from 'component/fileExplorer/context/reducer';
 import DateFnsUtils from '@date-io/date-fns';
+import fileExplorerContext, { FileExplorerMode, defaultState as defaultFileExplorerState } from 'component/fileExplorer/context/FileExplorerContext';
 
 export interface TestSetupOptions {
+    defaultPathEntries?: string[];
+    onChangeLocation?: (location: Location) => void;
     currentUser?: UserModel;
     additionalMocks?: MockedResponse[];
 }
 
 const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
+    const { cache, mocks: defaultMocks } = getDefaultApolloMocks(pick(options, 'currentUser'));
     const mocks = unionBy(
         options.additionalMocks ?? [],
-        getDefaultApolloMocks(pick(options, 'currentUser')),
+        defaultMocks,
         ({ request: { query } }) => query
     );
+    const history = createMemoryHistory({ initialEntries: options.defaultPathEntries });
+    if (options.onChangeLocation) {
+        history.listen((...args) => {
+            options.onChangeLocation!(...(args as unknown as [any]));
+        });
+    }
     return (
         <ThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
                     <I18nextProvider i18n={i18n}>
-                        <MockedProvider mocks={mocks} addTypename={false}>
+                        <MockedProvider mocks={mocks} addTypename={false} cache={cache}>
                             <UploadQueueProvider>
-                                <Router history={createBrowserHistory()}>
+                                <Router history={history}>
                                     {children}
                                 </Router>
                             </UploadQueueProvider>

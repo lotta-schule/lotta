@@ -1,14 +1,14 @@
 import React, { memo, useEffect } from 'react';
-import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
-import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Typography } from '@material-ui/core';
 import { Route, Switch } from 'react-router-dom';
+import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ProfileData } from './ProfileData';
-import { WidgetsList } from '../WidgetsList';
-import { ProfileLayoutNavigation } from './ProfileLayoutNavigation';
 import { ProfileMediaFiles } from './ProfileMediaFiles';
 import { ProfileArticles } from './ProfileArticles';
+import { Header } from '../../general/Header';
 import useRouter from 'use-react-router';
+import bannerProfil from './bannerProfil.png';
 
 export const ProfileLayout = memo(() => {
     const [currentUser] = useCurrentUser();
@@ -25,20 +25,16 @@ export const ProfileLayout = memo(() => {
     }
 
     return (
-        <>
-            <BaseLayoutMainContent>
-                <Switch>
-                    <Route exact path='/profile' component={ProfileData} />
-                    <Route path='/profile/files' component={ProfileMediaFiles} />
-                    <Route path='/profile/articles' component={ProfileArticles} />
-                </Switch>
-            </BaseLayoutMainContent>
-            <BaseLayoutSidebar>
-                <WidgetsList widgets={[]}>
-                    <ProfileLayoutNavigation />
-                </WidgetsList>
-            </BaseLayoutSidebar>
-        </>
+        <BaseLayoutMainContent>
+            <Header bannerImageUrl={bannerProfil}>
+                <Typography variant={'h2'} data-testid="title">Profil</Typography>
+            </Header>
+            <Switch>
+                <Route exact path='/profile' component={ProfileData} />
+                <Route path='/profile/files' component={ProfileMediaFiles} />
+                <Route path='/profile/articles' component={ProfileArticles} />
+            </Switch>
+        </BaseLayoutMainContent>
     );
 });
 export default ProfileLayout;
