@@ -13,7 +13,7 @@ describe('component/layouts/adminLayout/ProfileLayout', () => {
         });
         render(
             <ProfileLayout />,
-            {}, { defaultPathEntries: ['/profile'], onChangeLocation }
+            {}, { defaultPathEntries: ['/profile'], onChangeLocation, useCache: true }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -28,6 +28,7 @@ describe('component/layouts/adminLayout/ProfileLayout', () => {
             {}, {
                 currentUser: SomeUser,
                 defaultPathEntries: ['/profile'],
+                useCache: true,
                 onChangeLocation
             }
         );

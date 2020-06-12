@@ -32,7 +32,7 @@ describe('component/layouts/UserNavigationMobile', () => {
         it('should render profile and createArticle buttons, but not admin buttons', () => {
             const { container, queryByTestId } = render(
                 <UserNavigationMobile />,
-                {}, { currentUser: SomeUser }
+                {}, { currentUser: SomeUser, useCache: true }
             );
             const buttons = container.querySelectorAll('button');
             expect(buttons.length).toEqual(6);
@@ -54,7 +54,7 @@ describe('component/layouts/UserNavigationMobile', () => {
         it('should render profile and createArticle buttons, and also admin buttons', () => {
             const { container, queryByTestId } = render(
                 <UserNavigationMobile />,
-                {}, { currentUser: { ...SomeUser, groups: [adminGroup] } }
+                {}, { currentUser: { ...SomeUser, groups: [adminGroup] }, useCache: true }
             );
             const buttons = container.querySelectorAll('button');
             expect(buttons.length).toEqual(8);

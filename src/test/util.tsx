@@ -22,6 +22,7 @@ export interface TestSetupOptions {
     onChangeLocation?: (location: Location) => void;
     currentUser?: UserModel;
     additionalMocks?: MockedResponse[];
+    useCache?: boolean;
 }
 
 const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
@@ -31,7 +32,6 @@ const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
         defaultMocks,
         ({ request: { query } }) => query
     );
-    console.log(mocks.map(mock => JSON.stringify({ queryKind: mock.request.query.kind, variables: mock.request.variables })));
     const history = createMemoryHistory({ initialEntries: options.defaultPathEntries });
     if (options.onChangeLocation) {
         history.listen((...args) => {
@@ -42,7 +42,7 @@ const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
         <ThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
                     <I18nextProvider i18n={i18n}>
-                        <MockedProvider mocks={mocks} addTypename={false}>
+                        <MockedProvider mocks={mocks} addTypename={false} cache={options.useCache ? cache : undefined}>
                             <UploadQueueProvider>
                                 <Router history={history}>
                                     {children}

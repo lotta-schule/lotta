@@ -13,7 +13,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         });
         render(
             <AdminLayout />,
-            {}, { defaultPathEntries: ['/admin/tenant/general'], onChangeLocation }
+            {}, { defaultPathEntries: ['/admin/tenant/general'], onChangeLocation, useCache: true }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -27,7 +27,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         });
         render(
             <AdminLayout />,
-            {}, { currentUser: SomeUser, defaultPathEntries: ['/admin/tenant/general'], onChangeLocation }
+            {}, { currentUser: SomeUser, defaultPathEntries: ['/admin/tenant/general'], onChangeLocation, useCache: true }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -42,6 +42,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
             {}, {
                 currentUser: { ...SomeUser, groups: [adminGroup] },
                 defaultPathEntries: ['/admin/tenant/general'],
+                useCache: true,
                 onChangeLocation
             }
         );
