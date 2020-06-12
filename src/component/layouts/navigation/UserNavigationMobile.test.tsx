@@ -46,7 +46,6 @@ describe('component/layouts/UserNavigationMobile', () => {
             expect(queryByTestId('ProfileFilesButton')).toBeVisible();
 
             // admin and profile button should not be visible
-            expect(queryByTestId('ProfileButton')).toBeNull();
             expect(queryByTestId('AdminButton')).toBeNull();
         });
     });

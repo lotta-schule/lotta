@@ -58,8 +58,8 @@ export const Header = memo<HeaderProps>(({ children, bannerImageUrl }) => {
     const styles = useStyles({ bannerImageUrl });
 
     return (
-        <Grid container className={styles.root}>
-            <Grid item xs={12} sm={8} xl={9} className={styles.subheader}>
+        <Grid container className={styles.root} data-testid="Header">
+            <Grid item xs={12} sm={8} xl={9} className={styles.subheader} data-testid="HeaderContent">
                 {children}
             </Grid>
             <Grid item xs={false} sm={4} xl={3} className={styles.userNavigationGridItem}>

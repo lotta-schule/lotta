@@ -81,12 +81,12 @@ export const UserNavigationMobile = memo(() => {
                     </ButtonBase>
                     {User.isAdmin(currentUser) && (
                         <>
-                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }}>
+                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }} data-testid="AdminButton">
                                 <SecurityOutlined color={'secondary'} />
                                 Admin
                             </ButtonBase>
                             <ButtonBase className={styles.button} onClick={() => { history.push('/admin/unpublished'); }}>
-                                <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'}>
+                                <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'} data-testid="UnpublishedArticlesButton">
                                     <AssignmentOutlined color={'secondary'} />
                                 </Badge>
                                 freizugebene Beiträge
