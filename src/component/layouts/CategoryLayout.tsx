@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles, Theme } from '@material-ui/core';
-import { fade } from '@material-ui/core/styles';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { ArticleLayout } from './ArticleLayout';
@@ -12,47 +11,9 @@ import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
-import { UserNavigation } from './navigation/UserNavigation';
+import { Header } from 'component/general/Header';
 
 const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
-    subheaderContainer: {
-        height: '120px',
-        border: '0.5em solid',
-        borderColor: theme.palette.background.paper,
-        marginBottom: '0.5em',
-        backgroundColor: theme.palette.background.paper,
-        borderRadius: theme.shape.borderRadius,
-        boxShadow: `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
-        [theme.breakpoints.down('xs')]: {
-            display: 'none',
-        },
-    },
-    subheader: {
-        maxHeight: 120,
-        width: '100%',
-        height: '100%',
-        flexShrink: 1,
-        flexGrow: 1,
-        position: 'relative',
-        '&::after': {
-            position: 'absolute',
-            display: 'block',
-            content: `''`,
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            background: 'linear-gradient(to right, #ffffff00 75%, #ffffffff 98%)'
-        }
-    },
-    bannerheading: {
-        textTransform: 'uppercase',
-        letterSpacing: '5px',
-        fontSize: '1.5em',
-        textShadow: '1px 1px 15px #fff',
-        padding: '0.6em',
-        color: theme.palette.primary.dark,
-    },
     gridItem: {
         display: 'flex',
         '&:nth-child(2n)': {
@@ -64,6 +25,9 @@ const useStyles = makeStyles<Theme, { twoColumns: boolean }>(theme => ({
         '& > *': {
             width: '100%'
         }
+    },
+    articles: {
+        marginTop: theme.spacing(1)
     },
     userNavigationGridItem: {
         [theme.breakpoints.down('sm')]: {
@@ -98,29 +62,18 @@ export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles })
         );
     }
 
+    const bannerImageUrl = category.bannerImageFile?.remoteLocation && (
+        `https://afdptjdxen.cloudimg.io/crop/950x120/foil1/${category.bannerImageFile.remoteLocation}`
+    );
     return (
         <>
             <BaseLayoutMainContent>
-                <Grid container className={styles.subheaderContainer}>
-                    <Grid
-                        item
-                        xs
-                        className={styles.subheader}
-                        style={{
-                            background: category.bannerImageFile ?
-                                `url(https://afdptjdxen.cloudimg.io/cover/950x104/foil1/${category.bannerImageFile.remoteLocation})` :
-                                'transparent'
-                        }}
-                    >
-                        <Typography variant={'h2'} className={styles.bannerheading}>
-                            {category.title}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={false} className={styles.userNavigationGridItem}>
-                        <UserNavigation />
-                    </Grid>
-                </Grid>
-                <Grid container wrap={'wrap'}>
+                <Header bannerImageUrl={bannerImageUrl}>
+                    <Typography variant={'h2'} data-testid="title">
+                        {category.title}
+                    </Typography>
+                </Header>
+                <Grid container wrap={'wrap'} className={styles.articles}>
                     {articles && articles.length > 1 && (
                         [...articles]
                             .sort((a1, a2) => {

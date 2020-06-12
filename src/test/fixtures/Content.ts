@@ -30,7 +30,9 @@ export const ComputerExperten = {
     readyToPublish: true,
     previewImageFile: null,
     title: 'Computerexperten',
-    preview: 'Hallo, wir sind die Computerexperten. Experten deshalb, weil wir wirklich experten sind und nicht nur so tun. Wir lieben FOSS.'
+    preview: 'Hallo, wir sind die Computerexperten. Experten deshalb, weil wir wirklich experten sind und nicht nur so tun. Wir lieben FOSS.',
+    topic: '',
+    category: null
 };
 
 export const VivaLaRevolucion = {
@@ -56,7 +58,9 @@ export const VivaLaRevolucion = {
     readyToPublish: true,
     previewImageFile: null,
     title: 'Viva La Revolucion',
-    preview: 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
+    preview: 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
+    topic: '',
+    category: null
 };
 
 export const Schulfest = {
@@ -102,6 +106,7 @@ export const Schulfest = {
     title: 'Schulfest',
     preview: 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     topic: 'La Revolucion',
+    category: null
 };
 
 export const Weihnachtsmarkt = {
@@ -146,6 +151,7 @@ export const Weihnachtsmarkt = {
     preview: 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     previewImageFile: null,
     topic: 'La Revolucion',
+    category: null
 };
 
 export const Klausurenplan = {
@@ -177,4 +183,5 @@ export const Klausurenplan = {
     preview: 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     previewImageFile: null,
     topic: 'La Revolucion',
+    category: null
 };
