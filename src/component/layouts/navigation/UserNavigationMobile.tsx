@@ -79,17 +79,26 @@ export const UserNavigationMobile = memo(() => {
                         <AssignmentOutlined color={'secondary'} />
                         Meine Beiträge
                     </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }}>
-                        <SecurityOutlined color={'secondary'} />
-                        Admin
-                    </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/admin/unpublished'); }}>
-                        <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'}>
-                            <AssignmentOutlined color={'secondary'} />
-                        </Badge>
-                        freizugebene Beiträge
-                    </ButtonBase>
-                    <div />
+                    {User.isAdmin(currentUser) && (
+                        <>
+                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }}>
+                                <SecurityOutlined color={'secondary'} />
+                                Admin
+                            </ButtonBase>
+                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/unpublished'); }}>
+                                <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'}>
+                                    <AssignmentOutlined color={'secondary'} />
+                                </Badge>
+                                freizugebene Beiträge
+                            </ButtonBase>
+                        </>
+                    )}
+                    {!User.isAdmin(currentUser) && (
+                        <>
+                            <div />
+                            <div />
+                        </>
+                    )}
                     <div />
                 </nav>
                 <CreateArticleDialog
