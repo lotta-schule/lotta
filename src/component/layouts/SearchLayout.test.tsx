@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, waitFor, act } from 'test/util';
+import { render, cleanup, waitFor } from 'test/util';
 import { SearchQuery } from 'api/query/SearchQuery';
 import { ComputerExperten } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';

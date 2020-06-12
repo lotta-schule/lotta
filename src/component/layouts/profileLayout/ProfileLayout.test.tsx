@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, waitFor } from 'test/util';
-import { SomeUser, adminGroup } from 'test/fixtures';
+import { SomeUser } from 'test/fixtures';
 import ProfileLayout from './ProfileLayout';
 
 afterEach(cleanup);
