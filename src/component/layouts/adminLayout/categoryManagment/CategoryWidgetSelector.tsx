@@ -1,31 +1,42 @@
 import React, { memo, useCallback, useMemo } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Button, Card, CardHeader, Checkbox, Divider, Grid, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Card, CardHeader, Checkbox, Grid, List, ListItem, ListItemIcon, ListItemText, IconButton, FormControlLabel, Typography, Switch, Divider } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
+import { ArrowForwardIosOutlined, ArrowBackIosOutlined, CalendarTodayOutlined } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             margin: 'auto',
-            border: '1px solid',
-            borderColor: theme.palette.grey[700]
         },
         cardHeader: {
             padding: theme.spacing(1, 2),
+            fontSize: '1rem',
         },
         list: {
-            width: 200,
-            height: 230,
+            height: 300,
             backgroundColor: theme.palette.background.paper,
             overflow: 'auto',
+        },
+        listItem: {
+            padding:0,
+            marginTop: theme.spacing(1),
+            backgroundColor: theme.palette.grey[100],
         },
         button: {
             margin: theme.spacing(0.5, 0),
         },
+        label: {
+            margin: 0,
+        },
+        widget: {
+            backgroundColor: theme.palette.grey[200],
+            display: 'flex',
+        }
     }),
 );
 
@@ -88,9 +99,13 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
 
     const listOfWidgets = useCallback((title: string, widgets: WidgetModel[]) => (
         <Card>
-            <CardHeader
-                className={styles.cardHeader}
-                avatar={
+            <CardHeader className={styles.cardHeader}
+                title={title}
+                subheader={t('widgets.markedWidgets', { count: numberOfChecked(widgets), total: widgets.length })}
+            >
+            </CardHeader>
+            <FormControlLabel className={styles.label}
+                control={
                     <Checkbox
                         onClick={handleToggleAll(widgets)}
                         checked={numberOfChecked(widgets) === widgets.length && widgets.length !== 0}
@@ -99,16 +114,14 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                         inputProps={{ 'aria-label': 'all items selected' }}
                     />
                 }
-                title={title}
-                subheader={t('widgets.markedWidgets', { count: numberOfChecked(widgets), total: widgets.length })}
+                label="alle auswählen"
             />
-            <Divider />
             <List className={styles.list} dense component="div" role="list" data-testid="WidgetsSelectionList">
                 {widgets.map((widget: WidgetModel) => {
                     const labelId = `transfer-list-all-item-${widget.id}-label`;
 
                     return (
-                        <ListItem key={widget.id} role="listitem" button onClick={handleToggle(widget)}>
+                        <ListItem className={styles.listItem} key={widget.id} role="listitem" button onClick={handleToggle(widget)}>
                             <ListItemIcon>
                                 <Checkbox
                                     checked={checkedWidgets.find(checkedWidget => checkedWidget.id === widget.id) !== undefined}
@@ -124,40 +137,69 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                 <ListItem />
             </List>
         </Card>
-    ), [checkedWidgets, handleToggle, handleToggleAll, numberOfChecked, styles.cardHeader, styles.list, t]);
+    ), [checkedWidgets, handleToggle, handleToggleAll, numberOfChecked, styles.cardHeader, styles.label, styles.list, styles.listItem, t]);
 
     return (
         <>
             <ErrorMessage error={error} />
             <Grid container justify="center" alignItems="center" className={styles.root}>
-                <Grid item>
-                    {isLoadingPossibleWidgets ? null : listOfWidgets('Mögliche Marginale', possibleWidgets)}
+                <Grid item xs={10} sm={5}>
+                    {isLoadingPossibleWidgets ? null : listOfWidgets('Verfügbare Marginale', possibleWidgets)}
                 </Grid>
-                <Grid item>
+                <Grid item xs={2}>
                     <Grid container direction="column" alignItems="center">
-                        <Button
-                            variant="outlined"
-                            size="small"
+                        <IconButton
                             className={styles.button}
                             onClick={handleCheckedRight}
                             disabled={leftChecked.length === 0}
                             aria-label="Marginale wählen"
                         >
-                            &gt;
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            size="small"
+                            <ArrowForwardIosOutlined fontSize="small" />
+                        </IconButton>
+                        <IconButton
                             className={styles.button}
                             onClick={handleCheckedLeft}
                             disabled={rightChecked.length === 0}
                             aria-label="Marginale entfernen"
                         >
-                            &lt;
-                        </Button>
+                            <ArrowBackIosOutlined fontSize="small" />
+                        </IconButton>
                     </Grid>
                 </Grid>
-                <Grid item>{listOfWidgets('Gewählte Marginale', selectedWidgets)}</Grid>
+                <Grid item xs={12} sm={5}>{listOfWidgets('Angezeigte Marginale', selectedWidgets)}</Grid>
+            </Grid>
+            <Grid container justify="center" alignItems="center">
+                <Grid className={styles.widget} style={{marginBottom: '0.5em'}} item xs={12} sm={8}>
+                    <Typography style={{margin: 'auto',}}>Alle aktivieren/deaktivieren</Typography>
+                    <Switch
+                                color="secondary"
+                                style={{margin: 'auto',}}
+                            />
+                </Grid>
+                <Grid className={styles.widget} item xs={12} sm={8}>
+                        <CalendarTodayOutlined style={{margin: '0.5em',}} />
+                        <Typography style={{margin: 'auto',}}>Terminkalender</Typography>
+                        <Switch
+                            color="secondary"
+                            style={{margin: 'auto',}}
+                        />
+                </Grid>
+                <Grid className={styles.widget} item xs={12} sm={8}>
+                        <CalendarTodayOutlined style={{margin: '0.5em',}} />
+                        <Typography style={{margin: 'auto',}}>Terminkalender</Typography>
+                        <Switch
+                            color="secondary"
+                            style={{margin: 'auto',}}
+                        />
+                </Grid>
+                <Grid className={styles.widget} item xs={12} sm={8}>
+                        <CalendarTodayOutlined style={{margin: '0.5em',}} />
+                        <Typography style={{margin: 'auto',}}>Terminkalender</Typography>
+                        <Switch
+                            color="secondary"
+                            style={{margin: 'auto',}}
+                        />
+                </Grid>
             </Grid>
         </>
     );
