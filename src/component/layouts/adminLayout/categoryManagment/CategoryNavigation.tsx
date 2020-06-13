@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => {
             marginRight: theme.spacing(3)
         },
         expansionSummary: {
-            backgroundColor: theme.palette.divider
+            backgroundColor: theme.palette.grey[100]
         }
     });
 });
