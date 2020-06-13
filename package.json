@@ -5,7 +5,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen",
+    "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen --reporters=default",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src .",
     "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx src . --fix",
     "apollo:schema:download": "apollo client:download-schema src/api/schema.json",
