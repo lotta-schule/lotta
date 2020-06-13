@@ -79,7 +79,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
                     }
                 }
             ];
-            const { findByLabelText, queryByLabelText, debug } = render(
+            const { findByLabelText } = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks }
             );
@@ -137,7 +137,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
     describe('show and select user block status', () => {
         it('should show if the user is blocked', async done => {
             const user = { ...SomeUser, groups: [adminGroup, lehrerGroup], assignedGroups: [adminGroup], isBlocked: true };
-            const { queryByTestId, queryByLabelText } = render(
+            const { queryByTestId } = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks: mocks(user) }
             );
