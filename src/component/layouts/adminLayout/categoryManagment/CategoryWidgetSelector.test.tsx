@@ -57,7 +57,7 @@ describe('component/layouts/SearchLayout', () => {
                     <CategoryWidgetSelector selectedWidgets={[]} setSelectedWidgets={() => {}} />
                 </MockedProvider>
             );
-            await findByText('Mögliche Marginale');
+            await findByText('Verfügbare Marginale');
             const [container] = getAllByTestId('WidgetsSelectionList');
             testingLibrary.getByText(container, 'WidgetOne');
             testingLibrary.getByText(container, 'WidgetTwo');
