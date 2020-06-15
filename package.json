@@ -1,11 +1,12 @@
 {
   "name": "web",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen",
+    "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen --reporters=default",
+    "test:ci": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen --reporters=jest-silent-reporter",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src .",
     "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx src . --fix",
     "apollo:schema:download": "apollo client:download-schema src/api/schema.json",
@@ -89,6 +90,7 @@
     "@types/testing-library__jest-dom": "^5.9.1",
     "@types/user-event": "^4.1.0",
     "jest-environment-jsdom-fifteen": "^1.0.2",
+    "jest-silent-reporter": "^0.2.1",
     "node-sass": "^4.14.1",
     "typescript": "^3.9.5"
   }
