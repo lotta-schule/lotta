@@ -16,12 +16,16 @@ import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { SaveButton } from 'component/general/SaveButton';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
+import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
         marginTop: theme.spacing(3),
         width: '100%'
+    },
+    title: {
+        marginBottom: theme.spacing(1)
     },
     switchBase: {
         color: 'gray'
@@ -110,7 +114,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
 
     return (
         <>
-            <Typography variant="h5">
+            <Typography variant={'h5'} className={styles.title}>
                 {selectedCategory ? selectedCategory.title : category && category.title}
             </Typography>
             <ErrorMessage error={error || currentWidgetsError} />
@@ -130,8 +134,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                 />
             )}
 
-            <Typography className={styles.input}>
-                <b>Wähle ein Banner für diese Kategorie</b>
+            <Typography className={clsx(styles.input, styles.title)} variant={'h6'}>
+                Wähle ein Banner für diese Kategorie
             </Typography>
 
             <SelectFileOverlay label={'Banner ändern'} onSelectFile={bannerImageFile => setCategory({ ...category, bannerImageFile })} allowDeletion>
@@ -204,8 +208,8 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                 </>
             )}
 
-            <Typography className={styles.input}>
-                <b>Wähle die marginalen Module für diese Kategorie</b>
+            <Typography className={clsx(styles.input, styles.title)} variant={'h6'}>
+                Wähle die marginalen Module für diese Kategorie
             </Typography>
             <CategoryWidgetSelector
                 selectedWidgets={selectedWidgets}
