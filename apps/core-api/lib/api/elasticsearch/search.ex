@@ -38,37 +38,33 @@ defmodule Api.Elasticsearch.Search do
           "bool" => %{
             "should" => [
               %{
-                "match" => %{
+                "match_phrase" => %{
                   "title" => %{
                     "query" => searchtext,
-                    "boost" => 3,
-                    "fuzziness" => "auto"
+                    "boost" => 3
                   }
                 }
               },
               %{
-                "match" => %{
+                "match_phrase" => %{
                   "title.keyword" => %{
                     "query" => searchtext,
-                    "boost" => 4,
-                    "fuzziness" => "auto"
+                    "boost" => 4
                   }
                 }
               },
               %{
-                "match" => %{
+                "match_phrase" => %{
                   "preview" => %{
-                    "query" => searchtext,
-                    "fuzziness" => "auto"
+                    "query" => searchtext
                   }
                 }
               },
               %{
-                "match" => %{
+                "match_phrase" => %{
                   "topic" => %{
                     "query" => searchtext,
-                    "boost" => 2,
-                    "fuzziness" => "auto"
+                    "boost" => 2
                   }
                 }
               },
@@ -76,10 +72,9 @@ defmodule Api.Elasticsearch.Search do
                 "nested" => %{
                   "path" => "content_modules",
                   "query" => %{
-                    "match" => %{
+                    "match_phrase" => %{
                       "content_modules.content" => %{
-                        "query" => searchtext,
-                        "fuzziness" => "auto"
+                        "query" => searchtext
                       }
                     }
                   }
