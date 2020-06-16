@@ -33,6 +33,7 @@ interface EditOverlayProps {
     label: string;
     onClick(event: MouseEvent<HTMLButtonElement>): void;
     onClickRemove?(event: MouseEvent<HTMLButtonElement>): void;
+    children?: any;
 }
 
 export const EditOverlay = memo<EditOverlayProps>(({ children, label, onClickRemove, onClick }) => {
