@@ -35,7 +35,7 @@ interface EditOverlayProps {
     onClickRemove?(event: MouseEvent<HTMLButtonElement>): void;
 }
 
-export const EditOverlay: FunctionComponent<EditOverlayProps> = memo(({ children, label, onClickRemove, onClick }) => {
+export const EditOverlay = memo<EditOverlayProps>(({ children, label, onClickRemove, onClick }) => {
     const styles = useStyles();
     return (
         <div className={styles.root}>

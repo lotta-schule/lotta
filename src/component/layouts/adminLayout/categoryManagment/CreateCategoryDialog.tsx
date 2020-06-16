@@ -73,8 +73,8 @@ export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> 
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                         disabled={isLoading}
-                        label="Titel der Kategorie:"
-                        placeholder="Meine neuee Kategorie"
+                        label="Name der Kategorie:"
+                        placeholder="Meine neue Kategorie"
                         type="text"
                         autoFocus
                         required

@@ -36,10 +36,10 @@ export const CategorySelect: FunctionComponent<CategorySelectProps> = memo(({ di
         .map(getMenuItemForCategory);
 
     return (
-        <FormControl disabled={disabled} variant={'outlined'} fullWidth>
+        <FormControl disabled={disabled} variant={'outlined'} fullWidth data-testid="CategorySelect">
             <InputLabel ref={inputLabel} htmlFor={'outlined-category-select'}>
                 Kategorie:
-                </InputLabel>
+            </InputLabel>
             <Select
                 fullWidth
                 variant={'outlined'}
