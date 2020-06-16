@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, MouseEvent } from 'react';
+import React, { memo, MouseEvent } from 'react';
 import { makeStyles, Theme, Button, IconButton } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
 import { Clear } from '@material-ui/icons';

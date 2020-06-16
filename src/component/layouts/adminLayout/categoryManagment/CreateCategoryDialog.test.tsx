@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, waitFor, getByRole, findByRole } from 'test/util';
-import { SomeUser, MaterialCategory } from 'test/fixtures';
+import { render, screen, waitFor, getByRole } from 'test/util';
+import { SomeUser } from 'test/fixtures';
 import { CreateCategoryDialog } from './CreateCategoryDialog';
 import { CreateCategoryMutation } from 'api/mutation/CreateCategoryMutation';
 import { CategoryModel } from 'model';
