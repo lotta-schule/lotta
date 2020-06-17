@@ -199,7 +199,6 @@ defmodule Api.UserResolver do
     with {:ok, user} <- Accounts.find_user_by_reset_token(email, token),
          {:ok, user} <- Accounts.update_password(user, password),
          {:ok, jwt} <- User.get_signed_jwt(user) do
-      EmailPublisher.send_password_changed_email(tenant, user)
       {:ok, %{token: jwt}}
     else
       error ->
@@ -247,6 +246,25 @@ defmodule Api.UserResolver do
 
       response ->
         response
+    end
+  end
+
+  def update_password(%{current_password: password, new_password: new_password}, %{
+        context: %{current_user: %{email: email}}
+      }) do
+    with {:ok, user} <- AuthHelper.login_with_username_pass(email, password),
+         {:ok, user} <- Accounts.update_password(user, new_password) do
+      {:ok, user}
+    else
+      {:error, %Changeset{} = changeset} ->
+        {
+          :error,
+          message: "Passwort ändern fehlgeschlagen.", details: error_details(changeset)
+        }
+
+      {:error, reason} = e ->
+        Logger.error("Error changing the user password: #{reason}")
+        e
     end
   end
 
