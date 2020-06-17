@@ -23,7 +23,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
             result: { data: { categories: allCategories } }
         }
     ];
-    const cache = new InMemoryCache();
+    const cache = new InMemoryCache({ addTypename: false });
     cache.writeQuery({ query: GetTenantQuery,  data: { tenant: TestTenant } });
     if (options.currentUser) {
         cache.writeQuery({ query: GetCurrentUserQuery,  data: { currentUser: options.currentUser } });
