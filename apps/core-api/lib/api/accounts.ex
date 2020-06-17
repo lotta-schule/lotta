@@ -318,9 +318,8 @@ defmodule Api.Accounts do
         EmailPublisher.send_password_changed_email(user)
         {:ok, user}
 
-      e = {:error, reason} ->
-        Logger.error("Error updating user password: #{reason}")
-        e
+      error ->
+        error
     end
   end
 

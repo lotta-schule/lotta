@@ -10,7 +10,7 @@ defmodule Api.UserResolverTest do
   alias Api.Repo.Seeder
   alias Api.Tenants
   alias Api.Tenants.{Tenant}
-  alias Api.Accounts.{Directory, User, UserGroup}
+  alias Api.Accounts.{AuthHelper, Directory, User, UserGroup}
 
   setup do
     Seeder.seed()
@@ -927,6 +927,85 @@ defmodule Api.UserResolverTest do
                    "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Benutzern Gruppen zuweisen.",
                    "path" => ["setUserGroups"]
+                 }
+               ]
+             }
+    end
+  end
+
+  describe "a user can update his password with a correct password mutation" do
+    @query """
+    mutation updatePassword($currentPassword: String!, $newPassword: String!) {
+      updatePassword(currentPassword: $currentPassword, newPassword: $newPassword) {
+        name
+      }
+    }
+    """
+    test "should update a users password", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{currentPassword: "test123", newPassword: "test456"}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "updatePassword" => %{
+                   "name" => "Eike Wiewiorra"
+                 }
+               }
+             }
+
+      assert {:ok, _} =
+               AuthHelper.login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
+    end
+
+    test "should return an error when the current password is not correct", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{currentPassword: "test000", newPassword: "test456"}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 0, "line" => 2}],
+                   "message" => "Falsche Zugangsdaten.",
+                   "path" => ["updatePassword"]
+                 }
+               ],
+               "data" => %{"updatePassword" => nil}
+             }
+    end
+
+    test "should return an error when the new password is too short", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{currentPassword: "test123", newPassword: "abc"}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{"updatePassword" => nil},
+               "errors" => [
+                 %{
+                   "details" => %{"password" => ["sollte mindestens 6 Zeichen lang sein"]},
+                   "locations" => [%{"column" => 0, "line" => 2}],
+                   "message" => "Passwort ändern fehlgeschlagen.",
+                   "path" => ["updatePassword"]
                  }
                ]
              }
