@@ -76,7 +76,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             );
 
             const emailField = screen.getByPlaceholderText('beispiel@medienportal.org') as HTMLInputElement;
-            const nameField = screen.getByLabelText('Dein Vor- und Nachname') as HTMLInputElement;
+            // const nameField = screen.getByLabelText('Dein Vor- und Nachname') as HTMLInputElement;
             const nicknameField = screen.getByLabelText('Dein Spitzname') as HTMLInputElement;
             const publishNameCheckbox = screen.getByLabelText('Deinen vollständigen Namen öffentlich verstecken') as HTMLInputElement;
             const classField = screen.getByLabelText('Deine Klasse / Dein Kürzel:') as HTMLInputElement;
