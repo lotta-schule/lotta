@@ -81,6 +81,13 @@ defmodule ApiWeb.Schema.AccountsTypes do
       resolve(&Api.UserResolver.update_profile/2)
     end
 
+    field :update_password, type: :user do
+      arg(:current_password, non_null(:string))
+      arg(:new_password, non_null(:string))
+
+      resolve(&Api.UserResolver.update_password/2)
+    end
+
     field :set_user_blocked, type: :user do
       arg(:id, non_null(:lotta_id))
       arg(:is_blocked, non_null(:boolean))

@@ -128,7 +128,9 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_password_changed_email(%Tenant{} = tenant, %User{} = user) do
+  def send_password_changed_email(%User{} = user) do
+    tenant = Repo.preload(user, :tenant).tenant
+
     send_email(%EmailSendRequest{
       to: user.email,
       sender_name: tenant.title,

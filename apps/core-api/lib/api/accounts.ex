@@ -6,8 +6,8 @@ defmodule Api.Accounts do
   require Logger
   import Ecto.Query
   alias Api.Repo
-
   alias Api.Tenants
+  alias Api.Queue.EmailPublisher
 
   alias Api.Accounts.{
     BlockedTenant,
@@ -309,9 +309,18 @@ defmodule Api.Accounts do
 
   def update_password(%User{} = user, password)
       when is_binary(password) and byte_size(password) > 0 do
-    user
-    |> User.update_password_changeset(password)
-    |> Repo.update()
+    user =
+      user
+      |> User.update_password_changeset(password)
+
+    case Repo.update(user) do
+      {:ok, user} ->
+        EmailPublisher.send_password_changed_email(user)
+        {:ok, user}
+
+      error ->
+        error
+    end
   end
 
   def set_user_blocked(%User{} = user, %Tenant{} = tenant, true) do
