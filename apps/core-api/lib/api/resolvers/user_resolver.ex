@@ -157,7 +157,7 @@ defmodule Api.UserResolver do
     end
   end
 
-  def login(%{username: username, password: password}, %{context: _context}) do
+  def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
          {:ok, jwt} <- User.get_signed_jwt(user) do
       {:ok, %{token: jwt}}
