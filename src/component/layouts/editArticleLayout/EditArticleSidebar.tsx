@@ -259,7 +259,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
                     color={'secondary'}
                     variant={'outlined'}
                     size={'small'}
-                    onClick={() => history.goBack()}
+                    onClick={() => history.back()}
                     fullWidth
                 >
                     Abbrechen

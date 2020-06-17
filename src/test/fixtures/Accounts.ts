@@ -313,7 +313,7 @@ export const SomeUser = {
     lastSeen: new Date().toISOString(),
     email: 'user@lotta.schule',
     name: 'Ernesto Guevara',
-    class: '',
+    class: '5/1',
     groups: [],
     enrollmentTokens: [],
     hideFullName: false,

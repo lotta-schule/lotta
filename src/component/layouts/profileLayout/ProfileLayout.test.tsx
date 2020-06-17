@@ -8,7 +8,7 @@ afterEach(cleanup);
 describe('component/layouts/adminLayout/ProfileLayout', () => {
 
     it('should redirect user to homepage when not logged in', async done => {
-        const onChangeLocation = jest.fn((location: Location) => {
+        const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
         });
         render(
