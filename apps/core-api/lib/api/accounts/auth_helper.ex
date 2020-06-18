@@ -4,12 +4,19 @@ defmodule Api.Accounts.AuthHelper do
   """
 
   import Bcrypt
+  import Ecto.Query
   alias Api.Repo
   alias Api.Accounts.User
   alias Api.Tenants.Tenant
 
   def login_with_username_pass(username, given_pass) do
-    user = Repo.get_by(User, email: String.downcase(username))
+    username = String.downcase(username)
+
+    user =
+      Repo.one(
+        from u in User,
+          where: fragment("lower(?)", u.email) == ^username
+      )
 
     if user && verify_pass(given_pass, user.password_hash) do
       {:ok, user}

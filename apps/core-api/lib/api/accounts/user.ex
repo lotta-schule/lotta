@@ -5,8 +5,9 @@ defmodule Api.Accounts.User do
 
   use Ecto.Schema
   alias Api.Repo
-  import Ecto.Changeset
   import Ecto.Query
+  import Ecto.Changeset
+  alias Ecto.Changeset
   alias Api.Accounts.{Directory, File, User, UserGroup}
   alias Api.Content.Article
   alias Api.Tenants.Tenant
@@ -171,8 +172,9 @@ defmodule Api.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:name, :class, :email])
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_required([:name, :email])
+    |> normalize_email()
   end
 
   def assign_group_changeset(%User{} = user, %{group: newgroup}) do
@@ -181,7 +183,7 @@ defmodule Api.Accounts.User do
 
     user
     |> Repo.preload(:groups)
-    |> Ecto.Changeset.change()
+    |> Changeset.change()
     |> put_assoc(:groups, groups)
   end
 
@@ -190,10 +192,11 @@ defmodule Api.Accounts.User do
     |> Repo.preload([:avatar_image_file, :enrollment_tokens])
     |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
     |> validate_required([:name, :email])
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_assoc_avatar_image_file(params)
     |> put_assoc_enrollment_tokens(params)
+    |> normalize_email()
   end
 
   def registration_changeset(%User{} = user, params \\ %{}) do
@@ -201,19 +204,20 @@ defmodule Api.Accounts.User do
     |> Repo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
     |> validate_required([:name, :email, :password])
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
     |> validate_has_nickname_if_hide_full_name_is_set()
-    |> put_pass_hash()
     |> put_assoc_enrollment_tokens(params)
+    |> normalize_email()
+    |> put_pass_hash()
   end
 
   def update_password_changeset(%User{} = user, password)
       when is_binary(password) and byte_size(password) > 0 do
     user
     |> Repo.preload(:enrollment_tokens)
-    |> Ecto.Changeset.change(%{password: password})
+    |> Changeset.change(%{password: password})
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
     |> put_pass_hash()
@@ -236,8 +240,18 @@ defmodule Api.Accounts.User do
 
   defp put_pass_hash(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+      %Changeset{valid?: true, changes: %{password: password}} ->
         put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(password))
+
+      _ ->
+        changeset
+    end
+  end
+
+  defp normalize_email(changeset) do
+    case changeset do
+      %Changeset{valid?: true, changes: %{email: email}} when is_binary(email) ->
+        put_change(changeset, :email, String.trim(email))
 
       _ ->
         changeset
@@ -263,7 +277,7 @@ defmodule Api.Accounts.User do
 
   defp put_assoc_enrollment_tokens(user, _args), do: user
 
-  defp validate_has_nickname_if_hide_full_name_is_set(%Ecto.Changeset{} = changeset) do
+  defp validate_has_nickname_if_hide_full_name_is_set(%Changeset{} = changeset) do
     case fetch_field(changeset, :hide_full_name) do
       {_, true} ->
         validate_required(changeset, :nickname)

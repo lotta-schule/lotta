@@ -6,7 +6,7 @@ defmodule Api.AccountsTest do
   use Api.DataCase
   alias Api.Fixtures
   alias Api.Accounts
-  alias Api.Accounts.UserGroup
+  alias Api.Accounts.{User, UserGroup}
 
   describe "users" do
     alias Api.Accounts.User
@@ -35,6 +35,18 @@ defmodule Api.AccountsTest do
     test "get_user!/1 returns the user with given id" do
       user = Fixtures.fixture(:registered_user)
       assert Accounts.get_user!(user.id) == user
+    end
+
+    test "register_user/1 should normalize (email) input" do
+      user =
+        %{}
+        |> Map.put(:name, "Ludwig van Beethoven")
+        |> Map.put(:nickname, "Lulu")
+        |> Map.put(:email, "DerLudwigVan@Beethoven.de   ")
+        |> Map.put(:password, "musik123")
+        |> Accounts.register_user()
+
+      assert {:ok, %User{email: "DerLudwigVan@Beethoven.de"}} = user
     end
 
     test "create_user/1 with valid data creates a user" do
