@@ -193,9 +193,7 @@ defmodule Api.UserResolver do
     {:ok, true}
   end
 
-  def reset_password(%{email: email, token: token, password: password}, %{
-        context: %{tenant: tenant}
-      }) do
+  def reset_password(%{email: email, token: token, password: password}, _info) do
     with {:ok, user} <- Accounts.find_user_by_reset_token(email, token),
          {:ok, user} <- Accounts.update_password(user, password),
          {:ok, jwt} <- User.get_signed_jwt(user) do
