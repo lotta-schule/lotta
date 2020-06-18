@@ -78,7 +78,7 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
 
       IO.puts("removed #{n} article_users")
 
-      {n, _} =
+      {files_count, _} =
         Repo.update_all(
           from(repo in "files",
             where: repo.user_id in ^del_users
@@ -86,17 +86,19 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
           set: [user_id: keep_user.id]
         )
 
-      IO.puts("removed #{n} files")
+      IO.puts("removed #{files_count} files")
 
-      {n, _} =
-        Repo.update_all(
-          from(repo in "directories",
-            where: repo.user_id in ^del_users
-          ),
-          set: [user_id: keep_user.id]
-        )
+      if files_count > 0 do
+        {n, _} =
+          Repo.update_all(
+            from(repo in "directories",
+              where: repo.user_id in ^del_users
+            ),
+            set: [user_id: keep_user.id]
+          )
 
-      IO.puts("removed #{n} directories")
+        IO.puts("removed #{n} directories")
+      end
 
       # Same as with articles, make sure not to add someone twice
       keepers_user_groups =
