@@ -172,7 +172,7 @@ defmodule Api.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:name, :class, :email])
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_required([:name, :email])
     |> normalize_email()
   end
@@ -192,7 +192,7 @@ defmodule Api.Accounts.User do
     |> Repo.preload([:avatar_image_file, :enrollment_tokens])
     |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
     |> validate_required([:name, :email])
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_assoc_avatar_image_file(params)
     |> put_assoc_enrollment_tokens(params)
@@ -204,7 +204,7 @@ defmodule Api.Accounts.User do
     |> Repo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
     |> validate_required([:name, :email, :password])
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
     |> validate_has_nickname_if_hide_full_name_is_set()
