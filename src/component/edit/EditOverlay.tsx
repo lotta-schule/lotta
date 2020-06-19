@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, MouseEvent } from 'react';
+import React, { memo, MouseEvent } from 'react';
 import { makeStyles, Theme, Button, IconButton } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
 import { Clear } from '@material-ui/icons';
@@ -33,9 +33,10 @@ interface EditOverlayProps {
     label: string;
     onClick(event: MouseEvent<HTMLButtonElement>): void;
     onClickRemove?(event: MouseEvent<HTMLButtonElement>): void;
+    children?: any;
 }
 
-export const EditOverlay: FunctionComponent<EditOverlayProps> = memo(({ children, label, onClickRemove, onClick }) => {
+export const EditOverlay = memo<EditOverlayProps>(({ children, label, onClickRemove, onClick }) => {
     const styles = useStyles();
     return (
         <div className={styles.root}>

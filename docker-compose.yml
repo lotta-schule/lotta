@@ -1,14 +1,11 @@
 version: "3.7"
 
-volumes:
-  webclient_node_modules:
-
 services:
   app:
-    image: node:12
+    image: node:14
     volumes:
-      - .:/usr/src/svc
-      - webclient_node_modules:/usr/src/app/node_modules
+      - .:/usr/src/svc:delegated
+      - /usr/src/app/node_modules
     working_dir: /usr/src/svc
     ports:
       - 3000:3000

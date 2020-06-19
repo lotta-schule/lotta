@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useState } from 'react';
 import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
-import { AssignUserToGroupsDialog } from './AssignUserToGroupsDialog';
+import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
@@ -146,7 +146,7 @@ export const UsersList = memo(() => {
                     ]}
                 />
                 {selectedUser && (
-                    <AssignUserToGroupsDialog
+                    <EditUserPermissionsDialog
                         onClose={() => setSelectedUser(null)}
                         user={selectedUser}
                     />

@@ -1,31 +1,41 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Button, Card, CardHeader, Checkbox, Divider, Grid, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Grid, FormControlLabel, Typography, Switch, CircularProgress } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
+import { WidgetIcon } from 'component/widgets/WidgetIcon';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             margin: 'auto',
-            border: '1px solid',
-            borderColor: theme.palette.grey[700]
         },
         cardHeader: {
             padding: theme.spacing(1, 2),
         },
-        list: {
-            width: 200,
-            height: 230,
-            backgroundColor: theme.palette.background.paper,
-            overflow: 'auto',
-        },
         button: {
             margin: theme.spacing(0.5, 0),
         },
+        labelWrapper: {
+            margin: 0,
+            display: 'flex',
+            '& $typography': { // Typography
+                display: 'flex',
+                alignItems: 'center',
+                '& > *': {
+                    display: 'inline-block'
+                }
+            }
+        },
+        typography: {},
+        label: {
+            flexGrow: 1
+        },
+        widget: {
+            backgroundColor: theme.palette.grey[200]
+        }
     }),
 );
 
@@ -34,130 +44,72 @@ export interface CategoryWidgetSelectorProps {
     setSelectedWidgets(widgets: WidgetModel[]): void;
 }
 
-const not = (a: WidgetModel[], b: WidgetModel[]): WidgetModel[] => a.filter(widget => b.findIndex(_b => _b.id === widget.id) === -1);
-
-const intersection = (a: WidgetModel[], b: WidgetModel[]): WidgetModel[] => a.filter(_a => b.findIndex(_b => _b.id === _a.id) !== -1);
-
-const union = (a: WidgetModel[], b: WidgetModel[]): WidgetModel[] => [...a, ...not(b, a)];
-
 export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selectedWidgets, setSelectedWidgets }) => {
-    const { t } = useTranslation();
     const styles = useStyles();
-
-    const [checkedWidgets, setCheckedWidgets] = React.useState<WidgetModel[]>([]);
 
     const { data, loading: isLoadingPossibleWidgets, error } = useQuery<{ widgets: WidgetModel[] }>(GetWidgetsQuery);
     const allWidgets = data ? data.widgets || [] : [];
-    const possibleWidgets = useMemo(() => not(allWidgets, selectedWidgets), [allWidgets, selectedWidgets]);
 
-    const leftChecked = intersection(checkedWidgets, possibleWidgets);
-    const rightChecked = intersection(checkedWidgets, selectedWidgets);
-
-    const handleToggle = useCallback((widget: WidgetModel) => () => {
-        const currentIndex = checkedWidgets.findIndex(checkedWidget => checkedWidget.id === widget.id);
-        const newChecked = [...checkedWidgets];
-
-        if (currentIndex === -1) {
-            newChecked.push(widget);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
-        setCheckedWidgets(newChecked);
-    }, [checkedWidgets]);
-
-    const numberOfChecked = useCallback((widgets: WidgetModel[]) => intersection(checkedWidgets, widgets).length, [checkedWidgets]);
-
-    const handleToggleAll = useCallback((widgets: WidgetModel[]) => () => {
-        if (numberOfChecked(widgets) === widgets.length) {
-            setCheckedWidgets(not(checkedWidgets, widgets));
-        } else {
-            setCheckedWidgets(union(checkedWidgets, widgets));
-        }
-    }, [checkedWidgets, numberOfChecked]);
-
-    const handleCheckedRight = () => {
-        setSelectedWidgets(selectedWidgets.concat(leftChecked));
-        setCheckedWidgets(not(checkedWidgets, leftChecked));
+    const handleToggle = (widget: WidgetModel) =>  {
+        setSelectedWidgets(
+            isWidgetSelected(widget) ? selectedWidgets.filter(w => w.id !== widget.id) : [...selectedWidgets, widget]
+        );
     };
 
-    const handleCheckedLeft = () => {
-        setSelectedWidgets(not(selectedWidgets, rightChecked));
-        setCheckedWidgets(not(checkedWidgets, rightChecked));
+    const handleToggleAll = () => {
+        setSelectedWidgets(isAllWidgetsSelected ? [] : [...allWidgets]);
     };
 
-    const listOfWidgets = useCallback((title: string, widgets: WidgetModel[]) => (
-        <Card>
-            <CardHeader
-                className={styles.cardHeader}
-                avatar={
-                    <Checkbox
-                        onClick={handleToggleAll(widgets)}
-                        checked={numberOfChecked(widgets) === widgets.length && widgets.length !== 0}
-                        indeterminate={numberOfChecked(widgets) !== widgets.length && numberOfChecked(widgets) !== 0}
-                        disabled={widgets.length === 0}
-                        inputProps={{ 'aria-label': 'all items selected' }}
-                    />
-                }
-                title={title}
-                subheader={t('widgets.markedWidgets', { count: numberOfChecked(widgets), total: widgets.length })}
-            />
-            <Divider />
-            <List className={styles.list} dense component="div" role="list" data-testid="WidgetsSelectionList">
-                {widgets.map((widget: WidgetModel) => {
-                    const labelId = `transfer-list-all-item-${widget.id}-label`;
+    const isWidgetSelected = (widget: WidgetModel) => selectedWidgets.findIndex(w => w.id === widget.id) > -1;
+    const isAllWidgetsSelected = selectedWidgets.length === allWidgets.length;
 
-                    return (
-                        <ListItem key={widget.id} role="listitem" button onClick={handleToggle(widget)}>
-                            <ListItemIcon>
-                                <Checkbox
-                                    checked={checkedWidgets.find(checkedWidget => checkedWidget.id === widget.id) !== undefined}
-                                    tabIndex={-1}
-                                    disableRipple
-                                    inputProps={{ 'aria-labelledby': labelId }}
-                                />
-                            </ListItemIcon>
-                            <ListItemText id={labelId} primary={widget.title} />
-                        </ListItem>
-                    );
-                })}
-                <ListItem />
-            </List>
-        </Card>
-    ), [checkedWidgets, handleToggle, handleToggleAll, numberOfChecked, styles.cardHeader, styles.list, t]);
+    if (isLoadingPossibleWidgets) {
+        return (
+            <Grid container>
+                <Grid container item xs={12} sm={8} justify={'center'}>
+                    <CircularProgress />
+                </Grid>
+            </Grid>
+        );
+    }
 
     return (
         <>
             <ErrorMessage error={error} />
-            <Grid container justify="center" alignItems="center" className={styles.root}>
-                <Grid item>
-                    {isLoadingPossibleWidgets ? null : listOfWidgets('Mögliche Marginale', possibleWidgets)}
-                </Grid>
-                <Grid item>
-                    <Grid container direction="column" alignItems="center">
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            className={styles.button}
-                            onClick={handleCheckedRight}
-                            disabled={leftChecked.length === 0}
-                            aria-label="Marginale wählen"
-                        >
-                            &gt;
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            className={styles.button}
-                            onClick={handleCheckedLeft}
-                            disabled={rightChecked.length === 0}
-                            aria-label="Marginale entfernen"
-                        >
-                            &lt;
-                        </Button>
+
+            <Grid container justify="center" alignItems="center" data-testid="WidgetsSelectionList">
+                {allWidgets.length > 1 && (
+                    <Grid className={styles.widget} item xs={12} sm={8}>
+                        <FormControlLabel
+                            classes={{ root: styles.labelWrapper, label: styles.label }}
+                            style={{ marginLeft: 5 }}
+                            control={<Switch color={'secondary'} checked={isAllWidgetsSelected} onChange={() => handleToggleAll()} name={'select-all-widgets'} />}
+                            label={(
+                                <Typography component={'div'} className={styles.typography}>
+                                    Alle Marginalen aktivieren
+                                </Typography>
+                            )}
+                            labelPlacement={'start'}
+                        />
                     </Grid>
-                </Grid>
-                <Grid item>{listOfWidgets('Gewählte Marginale', selectedWidgets)}</Grid>
+                )}
+
+                {allWidgets.map(widget => (
+                    <Grid key={widget.id} className={styles.widget} item xs={12} sm={8}>
+                        <FormControlLabel
+                            classes={{ root: styles.labelWrapper, label: styles.label }}
+                            control={<Switch color={'secondary'} checked={isWidgetSelected(widget)} onChange={() => handleToggle(widget)} name={`widget-${widget.id}`} />}
+                            label={(
+                                <Typography component={'div'} className={styles.typography}>
+                                    <WidgetIcon icon={widget.configuration.icon} size={36} />
+                                    {widget.title}
+                                </Typography>
+                            )}
+                            labelPlacement={'start'}
+                        />
+
+                    </Grid>
+                ))}
             </Grid>
         </>
     );

@@ -85,7 +85,7 @@ export const CreateArticleDialog: FunctionComponent<CreateArticleDialogProps> = 
                     </Button>
                     <Button
                         type={'submit'}
-                        disabled={isLoading}
+                        disabled={!title || isLoading}
                         color="secondary"
                         variant="contained"
                     >

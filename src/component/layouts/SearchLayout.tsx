@@ -1,45 +1,20 @@
 import React, { memo, useState } from 'react';
-import { CircularProgress, Grid, TextField, Typography, makeStyles } from '@material-ui/core';
+import { CircularProgress, TextField, Typography, makeStyles } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { ArticlePreviewDensedLayout } from 'component/article/ArticlePreviewDensedLayout';
 import { ArticleModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
 import { SearchQuery } from 'api/query/SearchQuery';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
-import { UserNavigation } from './navigation/UserNavigation';
+import { Header } from '../general/Header';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import searchBannerImage from './searchBanner.png';
 
 const useStyles = makeStyles(theme => ({
-    subheader: {
-        maxHeight: 120,
-        width: '100%',
-        height: '100%',
-        flexShrink: 1,
-        flexGrow: 1,
-        position: 'relative',
-        '&::after': {
-            position: 'absolute',
-            display: 'block',
-            content: `''`,
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            background: 'linear-gradient(to right, #ffffff00 75%, #ffffffff 98%)'
-        }
-    },
-    bannerheading: {
-        textTransform: 'uppercase',
-        letterSpacing: '5px',
-        fontSize: '1.5em',
-        textShadow: '1px 1px 15px #fff',
-        padding: '0.6em',
-        color: theme.palette.primary.dark,
-    },
-    userNavigationGridItem: {
-        [theme.breakpoints.down('sm')]: {
-            display: 'none'
-        }
+    inputSection: {
+        backgroundColor: '#fff',
+        marginBottom: '1em',
+        padding: '8px'
     }
 }));
 
@@ -54,17 +29,12 @@ const SearchLayout = memo(() => {
     return (
         <>
             <BaseLayoutMainContent>
-                <Grid container style={{ backgroundColor: '#fff' }}>
-                    <Grid item xs className={styles.subheader}>
-                        <Typography variant={'h2'} className={styles.bannerheading}>
-                            Suche
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={false} sm={4} xl={3} className={styles.userNavigationGridItem}>
-                        <UserNavigation />
-                    </Grid>
-                </Grid>
-                <section style={{ backgroundColor: '#fff', marginBottom: '1em', padding: '8px' }}>
+
+                <Header bannerImageUrl={searchBannerImage}>
+                    <Typography variant={'h2'}>Suche</Typography>
+                </Header>
+
+                <section className={styles.inputSection}>
                     <TextField
                         fullWidth
                         autoFocus

@@ -85,7 +85,7 @@ export const FaecherCategory = {
 export const MaterialCategory = {
     id: 3,
     sortKey: 5,
-    title: 'Fächer',
+    title: 'Material',
     isHomepage: false,
     isSidenav: false,
     hideArticlesFromHomepage: false,

@@ -55,41 +55,50 @@ export const UserNavigationMobile = memo(() => {
         return (
             <>
                 <nav className={styles.root}>
-                    <ButtonBase className={styles.button} onClick={() => { onLogout(); }}>
+                    <ButtonBase className={styles.button} onClick={() => { onLogout(); }} data-testid="LogoutButton">
                         <ExitToAppOutlined color={'secondary'} />
                         Abmelden
                     </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { setCreateArticleModalIsOpen(true); }}>
+                    <ButtonBase className={styles.button} onClick={() => { setCreateArticleModalIsOpen(true); }} data-testid="CreateArticleButton">
                         <AddCircleOutlineOutlined color={'secondary'} />
                         Beitrag
                     </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/search'); }}>
+                    <ButtonBase className={styles.button} onClick={() => { history.push('/search'); }} data-testid="SearchButton">
                         <SearchOutlined color={'secondary'} />
                         Suche
                     </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/profile'); }}>
+                    <ButtonBase className={styles.button} onClick={() => { history.push('/profile'); }} data-testid="ProfileButton">
                         <PersonOutlineOutlined color={'secondary'} />
                         Profil
                     </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/profile/files'); }}>
+                    <ButtonBase className={styles.button} onClick={() => { history.push('/profile/files'); }} data-testid="ProfileFilesButton">
                         <FolderOutlined color={'secondary'} />
                         Dateien
                     </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/profile/articles'); }}>
+                    <ButtonBase className={styles.button} onClick={() => { history.push('/profile/articles'); }} data-testid="OwnArticlesButton">
                         <AssignmentOutlined color={'secondary'} />
                         Meine Beiträge
                     </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }}>
-                        <SecurityOutlined color={'secondary'} />
-                        Admin
-                    </ButtonBase>
-                    <ButtonBase className={styles.button} onClick={() => { history.push('/admin/unpublished'); }}>
-                        <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'}>
-                            <AssignmentOutlined color={'secondary'} />
-                        </Badge>
-                        freizugebene Beiträge
-                    </ButtonBase>
-                    <div />
+                    {User.isAdmin(currentUser) && (
+                        <>
+                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }} data-testid="AdminButton">
+                                <SecurityOutlined color={'secondary'} />
+                                Admin
+                            </ButtonBase>
+                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/unpublished'); }}>
+                                <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'} data-testid="UnpublishedArticlesButton">
+                                    <AssignmentOutlined color={'secondary'} />
+                                </Badge>
+                                freizugebene Beiträge
+                            </ButtonBase>
+                        </>
+                    )}
+                    {!User.isAdmin(currentUser) && (
+                        <>
+                            <div />
+                            <div />
+                        </>
+                    )}
                     <div />
                 </nav>
                 <CreateArticleDialog
@@ -104,9 +113,15 @@ export const UserNavigationMobile = memo(() => {
     }
     return (
         <div>
-            <Button fullWidth onClick={() => setLoginModalIsOpen(true)}>Anmelden</Button>
-            <Button fullWidth onClick={() => setRegisterModalIsOpen(true)}>Registrieren</Button>
-            <Button fullWidth onClick={() => { history.push('/search'); }}>Suche</Button>
+            <Button fullWidth onClick={() => setLoginModalIsOpen(true)} data-testid="LoginButton">
+                Anmelden
+            </Button>
+            <Button fullWidth onClick={() => setRegisterModalIsOpen(true)} data-testid="RegisterButton">
+                Registrieren
+            </Button>
+            <Button fullWidth onClick={() => { history.push('/search'); }} data-testid="SearchButton">
+                Suche
+            </Button>
             <LoginDialog
                 isOpen={loginModalIsOpen}
                 onRequestClose={() => { setLoginModalIsOpen(false); }}

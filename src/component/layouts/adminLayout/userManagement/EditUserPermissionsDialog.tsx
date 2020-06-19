@@ -14,6 +14,7 @@ import { useTenant } from 'util/client/useTenant';
 import { SetUserBlockedMutation } from 'api/mutation/SetUserBlockedMutation';
 import { Block } from '@material-ui/icons';
 import clsx from 'clsx';
+import { useUserGroups } from 'util/client/useUserGroups';
 
 const useStyles = makeStyles((theme: Theme) => ({
     header: {
@@ -36,27 +37,52 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export interface AssignUserToGroupsDialogProps {
+export interface EditUserPermissionsDialogProps {
     user: UserModel;
     onClose(): void;
 }
 
-export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialogProps> = memo(({ user, onClose }) => {
+export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDialogProps> = memo(({ user, onClose }) => {
     const styles = useStyles();
     const tenant = useTenant();
+    const allUserGroups = useUserGroups();
 
     const { data, loading, error } = useQuery<{ user: UserModel }, { id: ID }>(GetUserQuery, {
         variables: { id: user.id },
         fetchPolicy: 'network-only',
     });
-    const [setUserGroups, { loading: setUserGroupsLoading, error: setUserGroupsError }] = useMutation<{ user: UserModel }, { id: ID, groupIds: ID[] }>(SetUserGroupsMutation);
-    const [setUserBlocked, { loading: setUserBlockedLoading, error: setUserBlockedError }] = useMutation<{ user: UserModel }, { id: ID, isBlocked: boolean }>(SetUserBlockedMutation);
+    const [setUserGroups, { error: setUserGroupsError }] = useMutation<{ user: UserModel }, { id: ID, groupIds: ID[] }>(
+        SetUserGroupsMutation, {
+            optimisticResponse: ({ id, groupIds }) => ({
+                __typename: 'Mutation',
+                user: {
+                    __typename: 'User',
+                    id,
+                    groups: data?.user.groups.map(group => ({ ...group, __typename: 'UserGroup' })),
+                    assignedGroups: allUserGroups.filter(group => groupIds.indexOf(group.id) > -1).map(group => ({ id: group.id, name: group.name, __typename: 'UserGroup' }))
+                }
+            } as any)
+        }
+    );
+    const [setUserBlocked, { loading: setUserBlockedLoading, error: setUserBlockedError }] = useMutation<{ user: UserModel }, { id: ID, isBlocked: boolean }>(
+        SetUserBlockedMutation, {
+            optimisticResponse: ({ id, isBlocked }) => ({
+                __typename: 'Mutation',
+                user: {
+                    __typename: 'User',
+                    id,
+                    isBlocked
+                }
+            } as any),
+            variables: { id: user.id, isBlocked: !data?.user.isBlocked }
+        }
+    );
 
     const dynamicGroups = data && data.user.groups.filter(group => !(data.user.assignedGroups ?? []).find(assignedGroup => assignedGroup.id === group.id))
 
     return (
         <ResponsiveFullScreenDialog open={true} fullWidth>
-            <DialogTitle>{user.name}s Details</DialogTitle>
+            <DialogTitle data-testid="DialogTitle">{user.name}s Details</DialogTitle>
             <DialogContent>
                 <ErrorMessage error={error || setUserGroupsError || setUserBlockedError} />
                 <Grid container justify={'space-evenly'} className={styles.header}>
@@ -64,20 +90,20 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                         <UserAvatar user={user} size={200} />
                     </Grid>
                     <Grid item xs={9}>
-                        <Typography variant="h6">
-                            {(data?.user ?? user).isBlocked && <Block color={'error'} />}
+                        <Typography variant="h6" data-testid="UserName">
+                            {(data?.user ?? user).isBlocked && <Block color={'error'} data-testid="UserBlockedIcon" />}
                             {user.name}
                         </Typography>
                         {user.nickname && (
-                            <Typography variant="body2">
+                            <Typography variant="body2" data-testid="UserNickname">
                                 <strong>{user.nickname}</strong>
                             </Typography>
                         )}
-                        <Typography variant="body1">
+                        <Typography variant="body1" data-testid="UserEmail">
                             {user.email}
                         </Typography>
                         {user.class && (
-                            <Typography variant="body2">
+                            <Typography variant="body2" data-testid="UserClass">
                                 Klasse: {user.class}
                             </Typography>
                         )}
@@ -89,7 +115,7 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                 {data && (
                     <>
                         <Divider />
-                        <section>
+                        <section data-testid="GroupSelectSection">
                             <GroupSelect
                                 row
                                 hidePublicGroupSelection
@@ -97,13 +123,12 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                                 className={styles.margin}
                                 selectedGroups={data.user?.assignedGroups ?? []}
                                 onSelectGroups={groups => setUserGroups({ variables: { id: user.id, groupIds: groups.map(g => g.id) } })}
-                                disabled={setUserGroupsLoading}
                                 label={'Gruppe zuweisen'}
                             />
                         </section>
                         {dynamicGroups && (
-                            <span>
-                                Über einschreibeschlüssel zugewiesene Gruppen:
+                            <span data-testid="DynamicGroups">
+                                Über Einschreibeschlüssel zugewiesene Gruppen:
                                 {dynamicGroups.map((group, i, arr) => <><em>{group.name}</em>{i !== arr.length - 1 && <>, </>}</>)}
                             </span>
                         )}
@@ -111,9 +136,10 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                         <section>
                             {data.user.isBlocked && (
                                 <Button
+                                    data-testid="BlockButton"
                                     className={clsx(styles.blockButton, styles.disableBlockButton)}
                                     disabled={setUserBlockedLoading}
-                                    onClick={() => setUserBlocked({ variables: { id: data.user.id, isBlocked: false } })}
+                                    onClick={() => setUserBlocked()}
                                 >
                                     Nutzer ist gesperrt. Nutzer wieder freischalten.
                                 </Button>
@@ -121,9 +147,10 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
                             {!data.user.isBlocked && (
                                 <>
                                     <Button
+                                        data-testid="BlockButton"
                                         className={clsx(styles.blockButton, styles.enableBlockButton)}
                                         disabled={setUserBlockedLoading}
-                                        onClick={() => setUserBlocked({ variables: { id: data.user.id, isBlocked: true } })}
+                                        onClick={() => setUserBlocked()}
                                     >
                                         Nutzer sperren
                                     </Button>
@@ -138,6 +165,7 @@ export const AssignUserToGroupsDialog: FunctionComponent<AssignUserToGroupsDialo
             </DialogContent>
             <DialogActions>
                 <Button
+                    data-testid="AbortButton"
                     onClick={() => onClose()}
                     color="secondary"
                     variant="outlined"
