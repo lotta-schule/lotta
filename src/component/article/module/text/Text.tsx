@@ -12,6 +12,8 @@ export interface TextProps {
 
 const useStyles = makeStyles(theme => ({
     root: {
+        marginLeft: '10%',
+        marginRight: '10%',
         '& a': {
             textDecoration: 'none',
             color: theme.palette.secondary.main

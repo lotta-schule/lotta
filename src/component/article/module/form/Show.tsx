@@ -17,10 +17,13 @@ const useStyles = makeStyles(theme => ({
         paddingBottom: theme.spacing(1),
         paddingRight: theme.spacing(2),
         paddingLeft: theme.spacing(2),
+        marginLeft: '10%',
+        marginRight: '10%',
     },
     submitButton: {
         float: 'right',
-        marginTop: theme.spacing(2)
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
     },
     formElement: {
         marginBottom: theme.spacing(2)
