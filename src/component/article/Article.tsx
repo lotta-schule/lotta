@@ -15,7 +15,6 @@ const useStyles = makeStyles(theme => ({
     root: {
     },
     contentModules: {
-        marginTop: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
     },
     previewSection: {
