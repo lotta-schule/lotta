@@ -1,5 +1,5 @@
 import React, { MouseEvent, memo, ReactNode, ReactNodeArray } from 'react';
-import { Button, makeStyles, Theme, CircularProgress, ButtonProps } from '@material-ui/core';
+import { Button, makeStyles, Theme, LinearProgress, ButtonProps } from '@material-ui/core';
 import { DoneOutline } from '@material-ui/icons';
 import clsx from 'clsx';
 
@@ -18,7 +18,9 @@ export const useStyles = makeStyles<Theme, { isSuccess?: boolean }>(theme => ({
         borderColor: ({ isSuccess }) => isSuccess ? 'green' : theme.palette.secondary.main,
         pointerEvents: ({ isSuccess }) => isSuccess ? 'none' : 'inherit',
         '& .icon': {
-            color: 'green'
+            color: 'green',
+            fontSize: '0.875rem',
+            lineHeight: '0.875rem',
         }
     },
     progressCircle: {
@@ -30,9 +32,9 @@ export const SaveButton = memo<SaveButtonProps>(({ children, className, isSucces
     const styles = useStyles({ isSuccess });
     const icon = (() => {
         if (isLoading) {
-            return <CircularProgress size={'1em'} classes={{ circle: styles.progressCircle }} />;
+            return <LinearProgress />;
         } else if (isSuccess) {
-            return <DoneOutline color={'action'} className={'icon'} />
+            return <Button size="small" className={'icon'} startIcon={<DoneOutline />}>gespeichert</Button>
         } else {
             return null;
         }
