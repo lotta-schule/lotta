@@ -2,7 +2,7 @@ import React, { memo, useContext } from 'react';
 import {
     CloudUploadOutlined, CreateNewFolderOutlined, FileCopyOutlined, DeleteOutlineOutlined, HomeOutlined, Info, InfoOutlined
 } from '@material-ui/icons';
-import { makeStyles, Theme, createStyles, Tooltip, IconButton, Toolbar, Badge, CircularProgress, Zoom, Breadcrumbs, Link } from '@material-ui/core';
+import { makeStyles, Theme, createStyles, Tooltip, IconButton, Toolbar, Badge, LinearProgress, Zoom, Breadcrumbs, Link } from '@material-ui/core';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -98,10 +98,7 @@ export const FileToolbar = memo(() => {
                                 badgeContent={uploads.filter(u => u.error).length ? <span>!</span> : uploadLength}
                             >
                                 <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })} data-testid="FileExplorerToolbarCurrentUploadsButton">
-                                    <CircularProgress
-                                        size={20}
-                                        variant={'static'}
-                                        value={uploadTotalProgress}
+                                    <LinearProgress
                                     />
                                 </IconButton>
                             </Badge>

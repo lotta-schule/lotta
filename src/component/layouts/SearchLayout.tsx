@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { CircularProgress, TextField, Typography, makeStyles } from '@material-ui/core';
+import { LinearProgress, TextField, Typography, makeStyles } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { ArticlePreviewDensedLayout } from 'component/article/ArticlePreviewDensedLayout';
 import { ArticleModel } from 'model';
@@ -46,7 +46,7 @@ const SearchLayout = memo(() => {
                         onChange={e => setSearchText(e.target.value)}
                     />
                     <Typography variant={'body1'} component={'div'}>
-                        {isLoading && <span><CircularProgress style={{ height: '1em', width: '1em' }} /> Beiträge werden gesucht ...</span>}
+                        {isLoading && <span><LinearProgress /> Beiträge werden gesucht ...</span>}
                         {!isLoading && data && <span>Es wurden {data.results.length} Beiträge gefunden</span>}
                         {!isLoading && !data && <span>&nbsp;</span>}
                     </Typography>

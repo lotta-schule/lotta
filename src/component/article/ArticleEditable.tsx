@@ -2,7 +2,7 @@ import React, { memo, Suspense } from 'react';
 import { ArticleModel } from '../../model';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { makeStyles, CircularProgress, Grid, Typography, Divider } from '@material-ui/core';
+import { makeStyles, LinearProgress, Grid, Typography, Divider } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { ArticleTitle } from './ArticleTitle';
 
@@ -47,7 +47,7 @@ export const ArticleEditable = memo<ArticleEditableProps>(({ article, isEditMode
                         <Divider />
                     </section>
                 )}
-                <Suspense fallback={<CircularProgress />}>
+                <Suspense fallback={<LinearProgress />}>
                     <DragDropContext onDragEnd={({ draggableId, destination, source }) => {
                         if (!destination) {
                             return;

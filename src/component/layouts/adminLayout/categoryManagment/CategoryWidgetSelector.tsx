@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Grid, FormControlLabel, Typography, Switch, CircularProgress } from '@material-ui/core';
+import { Grid, FormControlLabel, Typography, Switch, LinearProgress } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
@@ -67,7 +67,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
         return (
             <Grid container>
                 <Grid container item xs={12} sm={8} justify={'center'}>
-                    <CircularProgress />
+                    <LinearProgress />
                 </Grid>
             </Grid>
         );

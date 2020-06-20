@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
 import {
-    DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, CircularProgress, Theme, makeStyles, Divider
+    DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, LinearProgress, Theme, makeStyles, Divider
 } from '@material-ui/core';
 import { ID, UserModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
@@ -110,7 +110,7 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                     </Grid>
                 </Grid>
                 {loading && (
-                    <CircularProgress />
+                    <LinearProgress />
                 )}
                 {data && (
                     <>

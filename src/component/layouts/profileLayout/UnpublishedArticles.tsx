@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { ArticleModel } from 'model';
-import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
+import { Card, CardContent, Typography, LinearProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { ArticlesManagement } from 'component/profile/ArticlesManagement';
@@ -15,7 +15,7 @@ export const UnpublishedArticles = memo(() => {
                 <Typography variant={'h4'}>Freizugebene Beiträge</Typography>
                 <ErrorMessage error={error} />
                 {isLoading && (
-                    <CircularProgress />
+                    <LinearProgress />
                 )}
 
                 {unpublishedArticlesData && unpublishedArticlesData.articles && (

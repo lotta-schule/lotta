@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
-import { CircularProgress, Typography, makeStyles, Theme } from '@material-ui/core';
+import { LinearProgress, Typography, makeStyles, Theme } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { RelatedArticlesList } from 'component/article/RelatedArticlesList';
@@ -38,7 +38,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => 
 
     const mainContent = useMemo(() => {
         if (isLoading) {
-            return <div><CircularProgress /></div>;
+            return <div><LinearProgress /></div>;
         }
         if (error) {
             return (

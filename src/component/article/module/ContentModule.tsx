@@ -1,5 +1,5 @@
 import React, { memo, useMemo, HTMLAttributes, Suspense } from 'react';
-import { Card, makeStyles, Theme, createStyles, IconButton, Popover, Box, Divider, Button, CardProps, StyledComponentProps, CircularProgress } from '@material-ui/core';
+import { Card, makeStyles, Theme, createStyles, IconButton, Popover, Box, Divider, Button, CardProps, StyledComponentProps, LinearProgress } from '@material-ui/core';
 import { MoreVert, Delete, DragHandle } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
@@ -123,7 +123,7 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
             component={'section'}
             {...cardProps}
         >
-            <Suspense fallback={<CircularProgress />}>
+            <Suspense fallback={<LinearProgress />}>
                 {isEditModeEnabled && (
                     <div {...dragbarProps} className={styles.dragbar} title={'Klicken und Ziehen zum verschieben'}>
                         <DragHandle />

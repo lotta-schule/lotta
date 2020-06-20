@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { UserGroupModel, ID, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/client/useUserGroups';
 import {
-    CircularProgress, Checkbox, FormControl, Input, InputLabel, FormHelperText, FormControlLabel, Button, Typography, makeStyles
+    LinearProgress, Checkbox, FormControl, Input, InputLabel, FormHelperText, FormControlLabel, Button, Typography, makeStyles
 } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
 import { GetGroupQuery } from 'api/query/GetGroupQuery';
@@ -58,7 +58,7 @@ export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
 
     if (isLoading) {
         return (
-            <CircularProgress />
+            <LinearProgress />
         );
     }
 

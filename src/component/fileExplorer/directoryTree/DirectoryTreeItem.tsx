@@ -3,7 +3,7 @@ import { TreeItem } from '@material-ui/lab';
 import { DirectoryModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { useQuery } from '@apollo/client';
-import { CircularProgress } from '@material-ui/core';
+import { LinearProgress } from '@material-ui/core';
 import { HomeOutlined } from '@material-ui/icons';
 import { File } from 'util/model';
 import { SelectedDirectoryContext } from './SelectedDirectoryContext';
@@ -23,7 +23,7 @@ export const DirectoryTreeItem = memo<DirectoryTreeItemProps>(({ directory, show
         }
     });
     const icon = isLoading ?
-        <CircularProgress size={'1em'} /> :
+        <LinearProgress /> :
         directory === null ? <HomeOutlined fontSize={'small'} /> :
             File.getIconForDirectory(directory);
 

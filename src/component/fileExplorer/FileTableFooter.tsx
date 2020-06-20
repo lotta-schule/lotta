@@ -1,5 +1,5 @@
 import React, { memo, useContext } from 'react';
-import { makeStyles, CircularProgress, Typography, Theme, TextField } from '@material-ui/core';
+import { makeStyles, LinearProgress, Typography, Theme, TextField } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, DirectoryModel } from 'model';
@@ -42,7 +42,7 @@ export const FileTableFooter = memo(() => {
         }
         if (isLoading) {
             return (
-                <span><CircularProgress size={'1rem'} /> &nbsp; Dateien werden geladen ...</span>
+                <span><LinearProgress   /> &nbsp; Dateien werden geladen ...</span>
             );
         }
         if (state.markedFiles.length) {

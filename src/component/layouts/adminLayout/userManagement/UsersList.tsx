@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useState } from 'react';
-import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
+import { LinearProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
@@ -79,7 +79,7 @@ export const UsersList = memo(() => {
 
     if (loading) {
         return (
-            <CircularProgress />
+            <LinearProgress />
         );
     }
 
