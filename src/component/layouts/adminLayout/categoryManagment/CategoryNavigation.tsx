@@ -20,7 +20,30 @@ const useStyles = makeStyles((theme: Theme) => {
             marginRight: theme.spacing(3)
         },
         expansionSummary: {
-            backgroundColor: theme.palette.divider
+            backgroundColor: theme.palette.grey[200],
+            borderRadius: 4,
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            marginBottom: theme.spacing(1),
+            '&:hover': {
+                borderColor: theme.palette.grey[400],
+            }
+        },
+        subcategories: {
+            borderRadius: 4,
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            marginBottom: theme.spacing(1),
+            backgroundColor: theme.palette.background.paper,
+            color: theme.palette.grey[700],
+            '&:hover': {
+                borderColor: theme.palette.grey[400],
+            }
+        },
+        before: {
+            '&::before': {
+                display: 'none',
+            },
         }
     });
 });
@@ -65,7 +88,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
             </Typography>
 
             {homepageCategory && (
-                <ExpansionPanel expanded={false} key={homepageCategory.id}>
+                <ExpansionPanel className={styles.before} expanded={false} key={homepageCategory.id}>
                     <ExpansionPanelSummary className={styles.expansionSummary} onClick={() => onSelectCategory(homepageCategory)}>
                         <Typography variant="body1">
                             <b>{homepageCategory.title}</b>
@@ -124,6 +147,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                             }}
                                             innerRef={innerRef}
                                             {...draggableProps}
+                                            className={styles.before}
                                         >
                                             <ExpansionPanelSummary
                                                 aria-controls={`${category.id}-content`}
@@ -148,7 +172,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                                                 <Draggable key={subcategory.id} draggableId={String(subcategory.id)} index={index}>
                                                                     {({ innerRef, dragHandleProps, draggableProps }) => (
                                                                         <ListItem
-                                                                            className={'expansionSummary'}
+                                                                            className={styles.subcategories}
                                                                             style={{ cursor: 'pointer' }}
                                                                             onClick={() => onSelectCategory(subcategory)}
                                                                             innerRef={innerRef}
@@ -183,7 +207,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                 Seitenleistenkategorien
             </Typography>
             {sidenavCategories.map(category => (
-                <ExpansionPanel expanded={false} key={category.id}>
+                <ExpansionPanel className={styles.before} expanded={false} key={category.id}>
                     <ExpansionPanelSummary className={styles.expansionSummary} onClick={() => onSelectCategory(category)}>
                         <Typography variant="body1">
                             <b>{category.title}</b>
