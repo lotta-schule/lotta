@@ -1,11 +1,13 @@
 import React, { memo } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Grid, FormControlLabel, Typography, Switch, LinearProgress } from '@material-ui/core';
+import { Grid, FormControlLabel, Typography, Switch, LinearProgress, withStyles } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
 import { WidgetIcon } from 'component/widgets/WidgetIcon';
+import { grey } from '@material-ui/core/colors';
+import { theme } from 'theme';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -31,13 +33,24 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         typography: {},
         label: {
-            flexGrow: 1
+            flexGrow: 1,
         },
-        widget: {
-            backgroundColor: theme.palette.grey[200]
-        }
+        switchBase: {
+            color: theme.palette.grey[300],
+        },
     }),
 );
+
+const LottaSwitch = withStyles({
+    switchBase: {
+      color: grey[300],
+      '&$checked': {
+        color: theme.palette.secondary.main,
+      },
+    },
+    checked: {},
+    track: {},
+  })(Switch);
 
 export interface CategoryWidgetSelectorProps {
     selectedWidgets: WidgetModel[];
@@ -66,7 +79,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
     if (isLoadingPossibleWidgets) {
         return (
             <Grid container>
-                <Grid container item xs={12} sm={8} justify={'center'}>
+                <Grid container item xs={12}>
                     <LinearProgress />
                 </Grid>
             </Grid>
@@ -79,11 +92,11 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
 
             <Grid container justify="center" alignItems="center" data-testid="WidgetsSelectionList">
                 {allWidgets.length > 1 && (
-                    <Grid className={styles.widget} item xs={12} sm={8}>
+                    <Grid item xs={12} >
                         <FormControlLabel
                             classes={{ root: styles.labelWrapper, label: styles.label }}
                             style={{ marginLeft: 5 }}
-                            control={<Switch color={'secondary'} checked={isAllWidgetsSelected} onChange={() => handleToggleAll()} name={'select-all-widgets'} />}
+                            control={<LottaSwitch color={'secondary'} checked={isAllWidgetsSelected} onChange={() => handleToggleAll()} name={'select-all-widgets'} />}
                             label={(
                                 <Typography component={'div'} className={styles.typography}>
                                     Alle Marginalen aktivieren
@@ -95,10 +108,10 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                 )}
 
                 {allWidgets.map(widget => (
-                    <Grid key={widget.id} className={styles.widget} item xs={12} sm={8}>
+                    <Grid key={widget.id} item xs={12} >
                         <FormControlLabel
                             classes={{ root: styles.labelWrapper, label: styles.label }}
-                            control={<Switch color={'secondary'} checked={isWidgetSelected(widget)} onChange={() => handleToggle(widget)} name={`widget-${widget.id}`} />}
+                            control={<LottaSwitch className={styles.switchBase} color={'secondary'} checked={isWidgetSelected(widget)} onChange={() => handleToggle(widget)} name={`widget-${widget.id}`} />}
                             label={(
                                 <Typography component={'div'} className={styles.typography}>
                                     <WidgetIcon icon={widget.configuration.icon} size={36} />
