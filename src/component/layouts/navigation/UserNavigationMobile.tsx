@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { makeStyles, ButtonBase, Badge, Button } from '@material-ui/core';
+import { makeStyles, ButtonBase, Badge, Button, Typography } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ExitToAppOutlined, AddCircleOutlineOutlined, SecurityOutlined, FolderOutlined, AssignmentOutlined, PersonOutlineOutlined, SearchOutlined } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
@@ -22,10 +22,10 @@ const useStyles = makeStyles(() => ({
     button: {
         display: 'flex',
         flexDirection: 'column',
-        fontSize: '100%',
+        fontSize: '85%',
         '& > :first-child': {
-            width: '50%',
-            height: '50%'
+            width: '35%',
+            height: '35%'
         },
     },
     badge: {
@@ -33,6 +33,9 @@ const useStyles = makeStyles(() => ({
             width: '100%',
             height: '100%'
         }
+    },
+    label: {
+        height: '3em',
     }
 }));
 
@@ -57,39 +60,39 @@ export const UserNavigationMobile = memo(() => {
                 <nav className={styles.root}>
                     <ButtonBase className={styles.button} onClick={() => { onLogout(); }} data-testid="LogoutButton">
                         <ExitToAppOutlined color={'secondary'} />
-                        Abmelden
+                        <Typography className={styles.label}>Abmelden</Typography>
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { setCreateArticleModalIsOpen(true); }} data-testid="CreateArticleButton">
                         <AddCircleOutlineOutlined color={'secondary'} />
-                        Beitrag
+                        <Typography className={styles.label}>Beitrag</Typography>
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/search'); }} data-testid="SearchButton">
                         <SearchOutlined color={'secondary'} />
-                        Suche
+                        <Typography className={styles.label}>Suche</Typography>
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/profile'); }} data-testid="ProfileButton">
                         <PersonOutlineOutlined color={'secondary'} />
-                        Profil
+                        <Typography className={styles.label}>Profil</Typography>
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/profile/files'); }} data-testid="ProfileFilesButton">
                         <FolderOutlined color={'secondary'} />
-                        Dateien
+                        <Typography className={styles.label}>Dateien</Typography>
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/profile/articles'); }} data-testid="OwnArticlesButton">
                         <AssignmentOutlined color={'secondary'} />
-                        Meine Beiträge
+                        <Typography className={styles.label}>Meine Beiträge</Typography>
                     </ButtonBase>
                     {User.isAdmin(currentUser) && (
                         <>
                             <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }} data-testid="AdminButton">
                                 <SecurityOutlined color={'secondary'} />
-                                Admin
+                                <Typography className={styles.label}>Admin</Typography>
                             </ButtonBase>
                             <ButtonBase className={styles.button} onClick={() => { history.push('/admin/unpublished'); }}>
                                 <Badge badgeContent={unpublishedBadgeNumber} className={styles.badge} color={'secondary'} data-testid="UnpublishedArticlesButton">
                                     <AssignmentOutlined color={'secondary'} />
                                 </Badge>
-                                freizugebene Beiträge
+                                <Typography className={styles.label}>freizugende Beiträge</Typography>
                             </ButtonBase>
                         </>
                     )}
