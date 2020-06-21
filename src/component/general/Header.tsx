@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { Grid, makeStyles, Theme } from '@material-ui/core';
-import { fade } from '@material-ui/core/styles';
 import { UserNavigation } from 'component/layouts/navigation/UserNavigation';
 
 export interface HeaderProps {
@@ -12,8 +11,7 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
     root: {
         background: '#ffffff',
         borderRadius: theme.shape.borderRadius,
-        boxShadow: `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
-        marginBottom: theme.spacing(1),
+        boxShadow: 'none',
         '& h2': {
             color: theme.palette.text.primary,
             padding: theme.spacing(1),
