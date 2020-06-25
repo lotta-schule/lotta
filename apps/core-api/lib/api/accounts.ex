@@ -271,14 +271,24 @@ defmodule Api.Accounts do
   end
 
   def request_password_reset_token(email, token) do
-    case Repo.get_by(User, email: email) do
+    email =
+      email
+      |> String.downcase()
+
+    user =
+      Repo.one(
+        from u in User,
+          where: fragment("lower(?)", u.email) == ^email
+      )
+
+    case user do
       nil ->
         {:error, "User not found"}
 
       user ->
         case Redix.command(:redix, [
                "SET",
-               "user-email-verify-token-#{email}",
+               "user-email-verify-token-#{user.email}",
                token,
                "EX",
                6 * 60 * 60

@@ -687,7 +687,7 @@ defmodule Api.UserResolverTest do
     }
     """
 
-    test "returns true if the user exists" do
+    test "returns true and create a token for the database if the user exists" do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:web")
@@ -727,6 +727,28 @@ defmodule Api.UserResolverTest do
 
       Redix.command(:redix, ["FLUSHALL"])
     end
+  end
+
+  test "returns true and create a token for the database if the user exists but is written in the wrong case" do
+    res =
+      build_conn()
+      |> put_req_header("tenant", "slug:web")
+      |> post("/api", query: @query, variables: %{email: "AleXis.Rinaldoni@LOTTA.SCHULE"})
+      |> json_response(200)
+
+    assert res == %{
+             "data" => %{
+               "requestPasswordReset" => true
+             }
+           }
+
+    assert {:ok, 1} =
+             Redix.command(:redix, [
+               "EXISTS",
+               "user-email-verify-token-alexis.rinaldoni@lotta.schule"
+             ])
+
+    Redix.command(:redix, ["FLUSHALL"])
   end
 
   describe "resetPassword mutation" do
