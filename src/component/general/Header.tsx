@@ -21,12 +21,15 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
         }
     },
     subheader: {
-        height: 120,
+        minHeight: 120,
         background: ({ bannerImageUrl }) => bannerImageUrl ?  `url(${bannerImageUrl})` : 'none',
         borderWidth: theme.spacing(1, 0, 1, 1),
         borderStyle: 'solid',
         borderColor: '#ffffff',
         width: '100%',
+        [theme.breakpoints.down('sm')]: {
+            maxWidth: 'initial'
+        },
         flexShrink: 1,
         flexGrow: 1,
         position: 'relative',
