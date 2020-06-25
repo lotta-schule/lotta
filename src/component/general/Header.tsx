@@ -61,10 +61,10 @@ export const Header = memo<HeaderProps>(({ children, bannerImageUrl }) => {
 
     return (
         <Grid container className={styles.root} data-testid="Header">
-            <Grid item xs={12} sm={8} xl={9} className={styles.subheader} data-testid="HeaderContent">
+            <Grid item xs={12} sm={8} className={styles.subheader} data-testid="HeaderContent">
                 {children}
             </Grid>
-            <Grid item xs={false} sm={4} xl={3} className={styles.userNavigationGridItem}>
+            <Grid item xs={false} sm={4} className={styles.userNavigationGridItem}>
                 <UserNavigation />
             </Grid>
         </Grid>
