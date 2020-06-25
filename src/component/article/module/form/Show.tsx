@@ -17,8 +17,8 @@ const useStyles = makeStyles(theme => ({
         paddingBottom: theme.spacing(1),
         paddingRight: theme.spacing(2),
         paddingLeft: theme.spacing(2),
-        marginLeft: '10%',
-        marginRight: '10%',
+        maxWidth: '55em',
+        margin: '0 auto',
     },
     submitButton: {
         float: 'right',

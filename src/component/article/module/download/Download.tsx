@@ -14,8 +14,9 @@ export interface DownloadProps {
 export const useStyles = makeStyles(theme => ({
     downloadItemWrapper: {
         marginBottom: theme.spacing(2),
-        marginLeft: '10%',
-        marginRight: '10%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        maxWidth: '55em',
     },
     downloadWrapperHeader: {
         display: 'flex',
