@@ -1,4 +1,4 @@
-defmodule ApiWeb.Schema.SearchTypes do
+defmodule ApiWeb.Schema.Search do
   @moduledoc false
 
   use Absinthe.Schema.Notation

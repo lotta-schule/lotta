@@ -53,7 +53,7 @@ defmodule Api.ArticleResolverTest do
 
   describe "article query" do
     @query """
-    query article($id: ID!) {
+    query article($id: LottaId!) {
       article(id: $id) {
         title
         preview
@@ -144,13 +144,12 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "article" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast keine Rechte diesen Beitrag anzusehen.",
                    "path" => ["article"]
                  }
@@ -169,13 +168,12 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "article" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast keine Rechte diesen Beitrag anzusehen.",
                    "path" => ["article"]
                  }
@@ -192,13 +190,12 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "article" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast keine Rechte diesen Beitrag anzusehen.",
                    "path" => ["article"]
                  }
@@ -1371,8 +1368,8 @@ defmodule Api.ArticleResolverTest do
     end
 
     @query """
-    query articles($category_id: ID!) {
-      articles(category_id: $category_id) {
+    query getArticles($category_id: LottaId!) {
+      articles(categoryId: $category_id) {
         title
         preview
         topic
@@ -1383,10 +1380,18 @@ defmodule Api.ArticleResolverTest do
     """
 
     test "category: returns a list of articles", %{projekt_category: projekt_category} do
+      request = %{category_id: projekt_category.id}
+
+      IO.inspect(request)
+
       res =
         build_conn()
         |> put_req_header("tenant", "slug:web")
-        |> get("/api", query: @query, variables: %{category_id: projekt_category.id})
+        |> get("/api", query: @query, variables: request)
+        |> (fn conn ->
+              IO.inspect(conn)
+              conn
+            end).()
         |> json_response(200)
 
       assert res == %{
@@ -1427,7 +1432,7 @@ defmodule Api.ArticleResolverTest do
     end
 
     @query """
-    query articles($category_id: ID!) {
+    query articles($category_id: LottaId!) {
       articles(category_id: $category_id) {
         title
         preview
@@ -2409,7 +2414,7 @@ defmodule Api.ArticleResolverTest do
     end
 
     @query """
-    query articles($filter: ArticleFilter, $category_id: ID!) {
+    query articles($filter: ArticleFilter, $category_id: LottaId!) {
       articles(filter: $filter, category_id: $category_id) {
         title
         preview
@@ -2499,13 +2504,12 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "unpublishedArticles" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen.",
                    "path" => ["unpublishedArticles"]
                  }
@@ -2520,13 +2524,12 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "unpublishedArticles" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen.",
                    "path" => ["unpublishedArticles"]
                  }
@@ -2592,13 +2595,12 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "ownArticles" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur angemeldete Nutzer können eigene Beiträge abrufen.",
                    "path" => ["ownArticles"]
                  }
@@ -2780,13 +2782,12 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{article: %{title: "ABC"}})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createArticle" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur angemeldete Nutzer können Beiträge erstellen.",
                    "path" => ["createArticle"]
                  }
@@ -2797,7 +2798,7 @@ defmodule Api.ArticleResolverTest do
 
   describe "updateArticle mutation" do
     @query """
-    mutation updateArticle($id: ID!, $article: ArticleInput!) {
+    mutation updateArticle($id: LottaId!, $article: ArticleInput!) {
       updateArticle(id: $id, article: $article) {
         title
         preview
@@ -2893,13 +2894,12 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "updateArticle" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren oder Autoren dürfen Beiträge bearbeiten.",
                    "path" => ["updateArticle"]
                  }
@@ -2914,13 +2914,12 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "updateArticle" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du musst angemeldet sein um Beiträge zu bearbeiten.",
                    "path" => ["updateArticle"]
                  }
@@ -2931,7 +2930,7 @@ defmodule Api.ArticleResolverTest do
 
   describe "deleteArticle mutation" do
     @query """
-    mutation deleteArticle($id: ID!) {
+    mutation deleteArticle($id: LottaId!) {
       deleteArticle(id: $id) {
         title
       }
@@ -2980,13 +2979,12 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "deleteArticle" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren oder Autoren dürfen Beiträge löschen.",
                    "path" => ["deleteArticle"]
                  }
@@ -3001,13 +2999,12 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "deleteArticle" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du musst angemeldet sein um Beiträge zu löschen.",
                    "path" => ["deleteArticle"]
                  }
@@ -3018,7 +3015,7 @@ defmodule Api.ArticleResolverTest do
 
   describe "toggleArticlePin mutation" do
     @query """
-    mutation toggleArticlePin($id: ID!) {
+    mutation toggleArticlePin($id: LottaId!) {
       toggleArticlePin(id: $id) {
         title
         isPinnedToTop
@@ -3058,13 +3055,12 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "toggleArticlePin" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Beiträge anpinnen.",
                    "path" => ["toggleArticlePin"]
                  }
@@ -3079,18 +3075,17 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "toggleArticlePin" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Beiträge anpinnen.",
                    "path" => ["toggleArticlePin"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

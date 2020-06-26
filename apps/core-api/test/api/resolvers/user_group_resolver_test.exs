@@ -39,7 +39,7 @@ defmodule Api.UserGroupResolverTest do
 
   describe "group query" do
     @query """
-    query group($id: ID!) {
+    query group($id: LottaId!) {
       group(id: $id) {
         name
         enrollmentTokens {
@@ -95,13 +95,12 @@ defmodule Api.UserGroupResolverTest do
         |> get("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "group" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
                    "path" => ["group"]
                  }
@@ -116,13 +115,12 @@ defmodule Api.UserGroupResolverTest do
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "group" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
                    "path" => ["group"]
                  }
@@ -133,7 +131,7 @@ defmodule Api.UserGroupResolverTest do
 
   describe "UpdateUserGroup mutation" do
     @query """
-    mutation UpdateUserGroup($id: ID!, $group: UserGroupInput!) {
+    mutation UpdateUserGroup($id: LottaId!, $group: UserGroupInput!) {
       UpdateUserGroup(id: $id, group: $group) {
         name
         enrollmentTokens {
@@ -183,13 +181,12 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Gruppe existiert nicht.",
                    "path" => ["UpdateUserGroup"]
                  }
@@ -214,13 +211,12 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
                    "path" => ["UpdateUserGroup"]
                  }
@@ -241,13 +237,12 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
                    "path" => ["UpdateUserGroup"]
                  }
@@ -258,7 +253,7 @@ defmodule Api.UserGroupResolverTest do
 
   describe "deleteUserGroup mutation" do
     @query """
-    mutation deleteUserGroup($id: ID!) {
+    mutation deleteUserGroup($id: LottaId!) {
       deleteUserGroup(id: $id) {
         name
       }
@@ -294,13 +289,12 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Gruppe existiert nicht.",
                    "path" => ["deleteUserGroup"]
                  }
@@ -319,13 +313,12 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen löschen.",
                    "path" => ["deleteUserGroup"]
                  }
@@ -340,13 +333,12 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen löschen.",
                    "path" => ["deleteUserGroup"]
                  }
@@ -408,13 +400,12 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen erstellen.",
                    "path" => ["createUserGroup"]
                  }
@@ -435,13 +426,12 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen erstellen.",
                    "path" => ["createUserGroup"]
                  }

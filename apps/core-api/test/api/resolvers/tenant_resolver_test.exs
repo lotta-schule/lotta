@@ -182,13 +182,12 @@ defmodule Api.TenantResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Lotta-Administratoren dürfen das.",
                    "path" => ["createTenant"]
                  }
@@ -211,13 +210,12 @@ defmodule Api.TenantResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Erstellen des Tenant fehlgeschlagen.",
                    "path" => ["createTenant"],
                    "details" => %{
@@ -295,13 +293,12 @@ defmodule Api.TenantResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Erstellen des Tenant fehlgeschlagen.",
                    "path" => ["createTenant"],
                    "details" => %{
@@ -319,13 +316,12 @@ defmodule Api.TenantResolverTest do
         |> post("/api", query: @query, variables: %{title: "Neu", slug: "web"})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Erstellen des Tenant fehlgeschlagen.",
                    "path" => ["createTenant"],
                    "details" => %{
@@ -343,13 +339,12 @@ defmodule Api.TenantResolverTest do
         |> post("/api", query: @query, variables: %{title: "Test-Schule", slug: "test-schule"})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Der Nutzer ist schon Administrator bei lotta.",
                    "path" => ["createTenant"]
                  }
@@ -488,13 +483,12 @@ defmodule Api.TenantResolverTest do
         |> post("/api", query: @query, variables: %{tenant: tenant})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "updateTenant" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen das.",
                    "path" => ["updateTenant"]
                  }
@@ -513,13 +507,12 @@ defmodule Api.TenantResolverTest do
         |> post("/api", query: @query, variables: %{tenant: tenant})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "updateTenant" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen das.",
                    "path" => ["updateTenant"]
                  }

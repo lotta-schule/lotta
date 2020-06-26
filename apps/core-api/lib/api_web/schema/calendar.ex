@@ -1,4 +1,4 @@
-defmodule ApiWeb.Schema.CalendarTypes do
+defmodule ApiWeb.Schema.Calendar do
   @moduledoc false
 
   use Absinthe.Schema.Notation

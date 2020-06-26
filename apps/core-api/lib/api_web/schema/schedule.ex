@@ -1,4 +1,4 @@
-defmodule ApiWeb.Schema.ScheduleTypes do
+defmodule ApiWeb.Schema.Schedule do
   @moduledoc false
 
   use Absinthe.Schema.Notation

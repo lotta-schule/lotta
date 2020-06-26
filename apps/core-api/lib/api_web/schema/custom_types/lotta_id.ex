@@ -1,4 +1,4 @@
-defmodule ApiWeb.Schema.Types.LottaId do
+defmodule ApiWeb.Schema.CustomTypes.LottaId do
   @moduledoc """
   The LottaId scalar type allows integer ID values
   """
@@ -11,6 +11,7 @@ defmodule ApiWeb.Schema.Types.LottaId do
   end
 
   @spec parse_id(Absinthe.Blueprint.Input.String.t()) :: {:ok, Integer.t()} | :error
+  @spec parse_id(Absinthe.Blueprint.Input.Integer.t()) :: {:ok, Integer.t()}
   @spec parse_id(Absinthe.Blueprint.Input.Null.t()) :: {:ok, nil}
   defp parse_id(%Absinthe.Blueprint.Input.String{value: value}) do
     case Integer.parse(value) do
@@ -19,17 +20,13 @@ defmodule ApiWeb.Schema.Types.LottaId do
     end
   end
 
-  @spec parse_id(Absinthe.Blueprint.Input.Integer.t()) :: {:ok, Integer.t()}
-  @spec parse_id(Absinthe.Blueprint.Input.Null.t()) :: {:ok, nil}
-  defp parse_id(%Absinthe.Blueprint.Input.Integer{value: value}) do
-    {:ok, value}
-  end
+  defp parse_id(%Absinthe.Blueprint.Input.Integer{value: value}), do: {:ok, value}
 
-  defp parse_id(%Absinthe.Blueprint.Input.Null{}) do
-    {:ok, nil}
-  end
+  defp parse_id(%Absinthe.Blueprint.Input.Null{}), do: {:ok, nil}
 
-  defp parse_id(_) do
+  defp parse_id(value) do
+    IO.inspect("cannot transform:")
+    IO.inspect(value)
     :error
   end
 end

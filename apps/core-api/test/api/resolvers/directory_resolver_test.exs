@@ -54,7 +54,7 @@ defmodule Api.DirectoryResolverTest do
 
   describe "directories query" do
     @query """
-    query getDirectories($parentDirectoryId: ID) {
+    query getDirectories($parentDirectoryId: LottaId) {
       directories(parentDirectoryId: $parentDirectoryId) {
         name
         user {
@@ -254,11 +254,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"directories" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directories"]
                  }
@@ -285,11 +284,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"directories" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directories"]
                  }
@@ -300,7 +298,7 @@ defmodule Api.DirectoryResolverTest do
 
   describe "directory query" do
     @query """
-    query directory($id: ID) {
+    query directory($id: LottaId) {
       directory(id: $id) {
         name
         parentDirectory {
@@ -384,11 +382,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"directory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directory"]
                  }
@@ -407,11 +404,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"directory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directory"]
                  }
@@ -422,7 +418,7 @@ defmodule Api.DirectoryResolverTest do
 
   describe "create directory mutation" do
     @query """
-    mutation createDirectory($parentDirectoryId: ID, $name: String, $isPublic: Boolean) {
+    mutation createDirectory($parentDirectoryId: LottaId, $name: String, $isPublic: Boolean) {
       createDirectory(parentDirectoryId: $parentDirectoryId, name: $name, isPublic: $isPublic) {
         name
         parentDirectory {
@@ -501,11 +497,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
@@ -527,11 +522,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
@@ -596,11 +590,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
@@ -620,11 +613,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
@@ -643,11 +635,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Ordner nicht gefunden.",
                    "path" => ["createDirectory"]
                  }
@@ -658,7 +649,7 @@ defmodule Api.DirectoryResolverTest do
 
   describe "update directory mutation" do
     @query """
-    mutation updateDirectory($id: ID!, $parentDirectoryId: ID, $name: String) {
+    mutation updateDirectory($id: LottaId!, $parentDirectoryId: LottaId, $name: String) {
       updateDirectory(id: $id, parentDirectoryId: $parentDirectoryId, name: $name) {
         name
         parentDirectory {
@@ -734,11 +725,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
@@ -760,11 +750,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
@@ -780,11 +769,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: 0, name: "newdirectoryname"})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Datei oder Ordner nicht gefunden.",
                    "path" => ["updateDirectory"]
                  }
@@ -824,11 +812,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du kannst diesen Ordner nicht hierher verschieben.",
                    "path" => ["updateDirectory"]
                  }
@@ -854,11 +841,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
@@ -881,11 +867,10 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
@@ -896,7 +881,7 @@ defmodule Api.DirectoryResolverTest do
 
   describe "delete directory mutation" do
     @query """
-    mutation deleteDirectory($id: ID!) {
+    mutation deleteDirectory($id: LottaId!) {
       deleteDirectory(id: $id) {
         name
       }
@@ -949,11 +934,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht löschen.",
                    "path" => ["deleteDirectory"]
                  }
@@ -980,11 +964,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht löschen.",
                    "path" => ["deleteDirectory"]
                  }
@@ -1000,11 +983,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Ordner nicht gefunden.",
                    "path" => ["deleteDirectory"]
                  }
@@ -1049,11 +1031,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Es dürfen nur leere Ordner gelöscht werden.",
                    "path" => ["deleteDirectory"]
                  }
@@ -1100,11 +1081,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Es dürfen nur leere Ordner gelöscht werden.",
                    "path" => ["deleteDirectory"]
                  }
@@ -1123,11 +1103,10 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht löschen.",
                    "path" => ["deleteDirectory"]
                  }

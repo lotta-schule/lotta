@@ -134,7 +134,7 @@ defmodule Api.WidgetResolverTest do
 
   describe "widgets query with categoryId" do
     @query """
-    query GetWidgets($categoryId: ID!) {
+    query GetWidgets($categoryId: LottaId!) {
       widgets(categoryId: $categoryId) {
         title
         type
@@ -258,7 +258,6 @@ defmodule Api.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets erstellen.",
                    "path" => ["createWidget"]
                  }
@@ -279,7 +278,6 @@ defmodule Api.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets erstellen.",
                    "path" => ["createWidget"]
                  }
@@ -290,7 +288,7 @@ defmodule Api.WidgetResolverTest do
 
   describe "updateWidget mutation" do
     @query """
-    mutation updateWidget($id: ID!, $widget: WidgetInput!) {
+    mutation updateWidget($id: LottaId!, $widget: WidgetInput!) {
       updateWidget (id: $id, widget: $widget) {
         title
         type
@@ -336,7 +334,6 @@ defmodule Api.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
                    "path" => ["updateWidget"]
                  }
@@ -360,7 +357,6 @@ defmodule Api.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
                    "path" => ["updateWidget"]
                  }
@@ -371,7 +367,7 @@ defmodule Api.WidgetResolverTest do
 
   describe "deleteWidget mutation" do
     @query """
-    mutation deleteWidget($id: ID!) {
+    mutation deleteWidget($id: LottaId!) {
       deleteWidget (id: $id) {
         id
       }
@@ -409,7 +405,6 @@ defmodule Api.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Marginalen löschen.",
                    "path" => ["deleteWidget"]
                  }
@@ -430,7 +425,6 @@ defmodule Api.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Marginalen löschen.",
                    "path" => ["deleteWidget"]
                  }

@@ -55,7 +55,7 @@ defmodule Api.FileResolverTest do
 
   describe "file query" do
     @query """
-    query getFile($id: ID) {
+    query getFile($id: LottaId) {
       file(id: $id) {
         filename
         user {
@@ -160,11 +160,10 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"file" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diese Datei zu lesen.",
                    "path" => ["file"]
                  }
@@ -183,11 +182,10 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"file" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diese Datei zu lesen.",
                    "path" => ["file"]
                  }
@@ -198,7 +196,7 @@ defmodule Api.FileResolverTest do
 
   describe "resolve file usage" do
     @query """
-    query getFileUsage($id: ID) {
+    query getFileUsage($id: LottaId) {
       file(id: $id) {
         filename
         usage {
@@ -375,7 +373,7 @@ defmodule Api.FileResolverTest do
 
   describe "files query" do
     @query """
-    query getDirectoriesAndFiles($parentDirectoryId: ID) {
+    query getDirectoriesAndFiles($parentDirectoryId: LottaId) {
       files(parentDirectoryId: $parentDirectoryId) {
         filename
         userId
@@ -522,11 +520,10 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"files" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["files"]
                  }
@@ -553,11 +550,10 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"files" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["files"]
                  }
@@ -568,7 +564,7 @@ defmodule Api.FileResolverTest do
 
   describe "update file mutation" do
     @query """
-    mutation updateFile($id: ID!, $parentDirectoryId: ID, $filename: String) {
+    mutation updateFile($id: LottaId!, $parentDirectoryId: LottaId, $filename: String) {
       updateFile(id: $id, parentDirectoryId: $parentDirectoryId, filename: $filename) {
         filename
         parentDirectory {
@@ -616,11 +612,10 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
@@ -642,11 +637,10 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
@@ -662,11 +656,10 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: 0, filename: "neuername.test"})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Datei oder Ordner nicht gefunden.",
                    "path" => ["updateFile"]
                  }
@@ -715,11 +708,10 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
@@ -742,11 +734,10 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
@@ -757,7 +748,7 @@ defmodule Api.FileResolverTest do
 
   describe "delete file mutation" do
     @query """
-    mutation deleteFile($id: ID!) {
+    mutation deleteFile($id: LottaId!) {
       deleteFile(id: $id) {
         filename
       }
@@ -789,11 +780,10 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht löschen.",
                    "path" => ["deleteFile"]
                  }
@@ -809,11 +799,10 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{"deleteFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Datei nicht gefunden.",
                    "path" => ["deleteFile"]
                  }
@@ -848,11 +837,10 @@ defmodule Api.FileResolverTest do
       |> post("/api", query: @query, variables: %{id: public_file.id})
       |> json_response(200)
 
-    assert res == %{
+    assert res = %{
              "data" => %{"deleteFile" => nil},
              "errors" => [
                %{
-                 "locations" => [%{"column" => 0, "line" => 2}],
                  "message" => "Du darfst diese Datei nicht löschen.",
                  "path" => ["deleteFile"]
                }

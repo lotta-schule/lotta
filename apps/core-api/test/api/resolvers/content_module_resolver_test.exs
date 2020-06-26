@@ -34,7 +34,7 @@ defmodule Api.ContentModuleResolverTest do
 
   describe "send_form_response mutation" do
     @query """
-    mutation SendFormResponse($id: ID!, $response: Json!) {
+    mutation SendFormResponse($id: LottaId!, $response: Json!) {
       sendFormResponse(contentModuleId: $id, response: $response)
     }
     """
@@ -160,7 +160,7 @@ defmodule Api.ContentModuleResolverTest do
 
   describe "get form responses" do
     @query """
-    query ContentModuleResults($id: ID!) {
+    query ContentModuleResults($id: LottaId!) {
       contentModuleResults(contentModuleId: $id) {
         user {
           id
@@ -210,13 +210,12 @@ defmodule Api.ContentModuleResolverTest do
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "contentModuleResults" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Modul-Ergebnisse abrufen.",
                    "path" => ["contentModuleResults"]
                  }
@@ -231,13 +230,12 @@ defmodule Api.ContentModuleResolverTest do
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "contentModuleResults" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Modul-Ergebnisse abrufen.",
                    "path" => ["contentModuleResults"]
                  }

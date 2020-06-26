@@ -466,7 +466,7 @@ defmodule Api.CategoryResolverTest do
 
   describe "updateCategory mutation" do
     @query """
-    mutation UpdateCategory($id: ID!, $category: CategoryInput!) {
+    mutation UpdateCategory($id: LottaId!, $category: CategoryInput!) {
       updateCategory(id: $id, category: $category) {
         title
       }
@@ -506,13 +506,12 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: 0, category: category})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "updateCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Kategorie mit der id 0 nicht gefunden.",
                    "path" => ["updateCategory"]
                  }
@@ -535,13 +534,12 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id, category: category})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "updateCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen Kategorien bearbeiten.",
                    "path" => ["updateCategory"]
                  }
@@ -560,13 +558,12 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id, category: category})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "updateCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen Kategorien bearbeiten.",
                    "path" => ["updateCategory"]
                  }
@@ -577,7 +574,7 @@ defmodule Api.CategoryResolverTest do
 
   describe "createCategory mutation" do
     @query """
-    mutation CreateCategory($category: CategoryInput!) {
+    mutation CreateCategory($category: UpdateCategoryInput!) {
       createCategory(category: $category) {
         title
       }
@@ -617,13 +614,12 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{category: category})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen Kategorien erstellen.",
                    "path" => ["createCategory"]
                  }
@@ -642,13 +638,12 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{category: category})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "createCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen Kategorien erstellen.",
                    "path" => ["createCategory"]
                  }
@@ -659,7 +654,7 @@ defmodule Api.CategoryResolverTest do
 
   describe "deleteCategory mutation" do
     @query """
-    mutation DeleteCategory($id: ID!) {
+    mutation DeleteCategory($id: LottaId!) {
       deleteCategory(id: $id) {
         title
       }
@@ -729,18 +724,17 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Kategorie mit der id 0 nicht gefunden.",
                    "path" => ["deleteCategory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error if user is not admin", %{
@@ -754,13 +748,12 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "deleteCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen Kategorien löschen.",
                    "path" => ["deleteCategory"]
                  }
@@ -775,13 +768,12 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id})
         |> json_response(200)
 
-      assert res == %{
+      assert res = %{
                "data" => %{
                  "deleteCategory" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen Kategorien löschen.",
                    "path" => ["deleteCategory"]
                  }
