@@ -49,6 +49,14 @@ config :api, :redis_connection,
   name: :redix,
   timeout: 15000
 
+config :ex_aws, :s3,
+  http_client: ExAws.Request.Hackney,
+  access_key_id: System.get_env("UGC_S3_COMPAT_ACCESS_KEY_ID", ""),
+  secret_access_key: System.get_env("UGC_S3_COMPAT_SECRET_ACCESS_KEY", ""),
+  host: %{"fra1" => System.get_env("UGC_S3_COMPAT_ENDPOINT", "")},
+  region: "fra1",
+  scheme: "https://"
+
 config :api, Api.Guardian,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"

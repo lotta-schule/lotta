@@ -67,7 +67,7 @@ defmodule Api.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.17.4"},
       {:jason, "~> 1.2.0"},
-      {:plug_cowboy, "~> 2.2.1"},
+      {:plug_cowboy, "~> 2.3.0"},
       {:comeonin, "~> 5.3.1"},
       {:bcrypt_elixir, "~> 2.2.0"},
       {:guardian, "~> 2.1.1"},

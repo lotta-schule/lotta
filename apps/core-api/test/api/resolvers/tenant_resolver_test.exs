@@ -3,26 +3,33 @@ defmodule Api.TenantResolverTest do
     Test Module for TenantResolver
   """
 
+  import Ecto.Query
   use ApiWeb.ConnCase
+  alias Api.Repo
+  alias Api.Guardian
+  alias Api.Accounts
+  alias Api.Tenants
+  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Tenants.Category
+  alias Api.Content.Article
 
   setup do
-    Api.Repo.Seeder.seed()
+    Repo.Seeder.seed()
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    lotta_admin = Api.Repo.get_by!(Api.Accounts.User, email: "alexis.rinaldoni@einsa.net")
-    admin = Api.Repo.get_by!(Api.Accounts.User, email: "alexis.rinaldoni@lotta.schule")
-    user = Api.Repo.get_by!(Api.Accounts.User, email: "eike.wiewiorra@lotta.schule")
+    web_tenant = Tenants.get_tenant_by_slug!("web")
+    lotta_admin = Repo.get_by!(User, email: "alexis.rinaldoni@einsa.net")
+    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
+    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
 
     {:ok, lotta_admin_jwt, _} =
-      Api.Guardian.encode_and_sign(lotta_admin, %{
+      Guardian.encode_and_sign(lotta_admin, %{
         email: lotta_admin.email,
         name: lotta_admin.name
       })
 
-    {:ok, admin_jwt, _} =
-      Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
 
     {:ok,
      %{
@@ -247,13 +254,13 @@ defmodule Api.TenantResolverTest do
         end) != nil
       end)
 
-      tenant = Api.Tenants.get_tenant_by_slug("neu")
-      user = Api.Accounts.get_user_by_email("neuernutzer@lotta.schule")
+      tenant = Tenants.get_tenant_by_slug("neu")
+      user = Accounts.get_user_by_email("neuernutzer@lotta.schule")
 
       assert tenant != nil
       assert user != nil
 
-      assert Api.Accounts.User.is_admin?(user, tenant)
+      assert User.is_admin?(user, tenant)
     end
   end
 
@@ -358,9 +365,7 @@ defmodule Api.TenantResolverTest do
           query: @query,
           variables: %{
             title: "Neu",
-            slug: "neu",
-            email: "neuernutzer@lotta.schule",
-            name: "Neuer Nutzer"
+            slug: "neu"
           }
         )
         |> json_response(200)
@@ -376,11 +381,64 @@ defmodule Api.TenantResolverTest do
         end) != nil
       end)
 
-      tenant = Api.Tenants.get_tenant_by_slug("neu")
+      tenant = Tenants.get_tenant_by_slug("neu")
 
       assert tenant != nil
 
-      assert Api.Accounts.User.is_admin?(user_account, tenant)
+      assert User.is_admin?(user_account, tenant)
+    end
+
+    test "should create default content for a new tenant", %{
+      user_jwt: user_jwt,
+      user_account: user_account
+    } do
+      build_conn()
+      |> put_req_header("authorization", "Bearer #{user_jwt}")
+      |> post("/api",
+        query: @query,
+        variables: %{
+          title: "Ein Test",
+          slug: "ein-test"
+        }
+      )
+      |> json_response(200)
+
+      tenant = Tenants.get_tenant_by_slug("ein-test")
+      assert tenant != nil
+      # create default groups
+      groups = Repo.all(from UserGroup, where: [tenant_id: ^tenant.id])
+      assert Enum.count(groups) == 3
+      # create a homepage and a default "welcome" category
+      categories = Repo.all(from Category, where: [tenant_id: ^tenant.id])
+      home_category = Enum.find(categories, fn category -> category.is_homepage end)
+      assert !is_nil(home_category)
+      assert Enum.count(categories, & &1.is_homepage) == 1
+      assert Enum.count(categories, &(&1.title == "Erste Schritte")) == 1
+      # create default shared directory
+      shared_dir =
+        Repo.one!(from d in Directory, where: d.tenant_id == ^tenant.id and is_nil(d.user_id))
+
+      assert !is_nil(shared_dir)
+      assert shared_dir.name == "Öffentliche Dateien"
+      # should have created files in shared_dir
+      shared_files =
+        Repo.all(from File, where: [tenant_id: ^tenant.id, parent_directory_id: ^shared_dir.id])
+
+      assert Enum.all?(shared_files, &(&1.user_id == user_account.id))
+      assert Enum.count(shared_files)
+
+      # should have created 3 articles
+      articles = Repo.all(from Article, where: [tenant_id: ^tenant.id])
+
+      other_category = Enum.find(categories, &(&1.id != home_category.id))
+      assert !is_nil(other_category)
+
+      assert Enum.all?(
+               articles,
+               &(&1.category_id == other_category.id)
+             )
+
+      assert Enum.count(articles, & &1.is_pinned_to_top) == 1
     end
   end
 

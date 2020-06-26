@@ -1,0 +1,78 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "text": ""
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                }
+              ],
+              "src": "__REMOTE_URL____kategorien-anlegen-s5.jpg",
+              "type": "image"
+            },
+            {
+              "text": "Es öffnet sich ein Fenster mit den Einstellungen Ihrer Kategorie."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Geben Sie Ihrer Kategorie eine Beschriftung, "
+            },
+            {
+              "bold": true,
+              "text": "Hinweis"
+            },
+            {
+              "text": ": "
+            },
+            {
+              "small": true,
+              "text": "Eine \"Seitenleistenkategorie\" wird – wie zum Beispiel der Datenschutz oder das Impressum – ganz rechts in Ihrem Lotta neben der rechten Seitenleiste angezeigt."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Bei \""
+            },
+            {
+              "bold": true,
+              "text": "Kategorie wählen"
+            },
+            {
+              "text": "\" haben Sie die Möglichkeit eine Unterkategorie einzurichten."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Bestätigen Sie abschließend mit einem Klick auf \""
+            },
+            {
+              "bold": true,
+              "text": "KATEGORIE ERSTELLEN"
+            },
+            {
+              "text": "\"."
+            }
+          ],
+          "type": "list-item"
+        }
+      ],
+      "type": "unordered-list"
+    }
+  ]
+}

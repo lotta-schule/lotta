@@ -3,6 +3,8 @@ defmodule Api.TenantResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting tenants
   """
 
+  alias Ecto.Changeset
+  alias Api.Repo
   alias Api.Tenants
   alias Api.Accounts
   alias Api.Accounts.User
@@ -31,38 +33,38 @@ defmodule Api.TenantResolver do
         context: %{current_user: current_user}
       }) do
     if User.is_lotta_admin?(current_user) do
-      case Tenants.create_tenant(%{title: title, slug: slug}) do
-        {:ok, tenant, admin_group} ->
-          case Accounts.get_user_by_email(email) do
-            nil ->
-              password =
-                (Enum.to_list(?a..?z) ++ Enum.to_list(?0..?9))
-                |> Enum.take_random(12)
-                |> Enum.join()
+      try do
+        Repo.transaction(fn ->
+          user =
+            case Accounts.get_user_by_email(email) do
+              nil ->
+                password =
+                  (Enum.to_list(?a..?z) ++ Enum.to_list(?0..?9))
+                  |> Enum.take_random(12)
+                  |> Enum.join()
 
-              {:ok, user} =
-                Accounts.register_user(%{
-                  email: email,
-                  name: name,
-                  password: password,
-                  tenant_id: tenant.id
-                })
+                {:ok, user} =
+                  Accounts.register_user(%{
+                    email: email,
+                    name: name,
+                    password: password
+                  })
 
-              user
+                user
 
-            user ->
-              user
-          end
-          |> Accounts.set_user_groups(tenant, [admin_group])
+              user ->
+                user
+            end
 
-          {:ok, tenant}
+          tenant = Tenants.create_tenant!(user, %{title: title, slug: slug})
 
-        {:error, changeset} ->
-          {:error,
-           message: "Erstellen des Tenant fehlgeschlagen.", details: error_details(changeset)}
-
-        result ->
-          result
+          user
+          |> Changeset.change(%{tenant_id: tenant.id})
+          |> Repo.update!()
+        end)
+      catch
+        e ->
+          {:error, e}
       end
     else
       {:error, "Nur Lotta-Administratoren dürfen das."}
@@ -83,17 +85,19 @@ defmodule Api.TenantResolver do
     if current_user_has_admin_groups do
       {:error, "Der Nutzer ist schon Administrator bei lotta."}
     else
-      case Tenants.create_tenant(%{title: title, slug: slug}) do
-        {:ok, tenant, admin_group} ->
-          Accounts.set_user_groups(current_user, tenant, [admin_group])
-          Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
-          {:ok, tenant}
+      try do
+        tenant = Tenants.create_tenant!(current_user, %{title: title, slug: slug})
 
-        {:error, changeset} ->
-          {
-            :error,
-            message: "Erstellen des Tenant fehlgeschlagen.", details: error_details(changeset)
-          }
+        current_user
+        |> Changeset.change(%{tenant_id: tenant.id})
+        |> Repo.update!()
+
+        Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
+
+        {:ok, tenant}
+      catch
+        e ->
+          {:error, e}
       end
     end
   end

@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "text": ""
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                }
+              ],
+              "src": "__REMOTE_URL____kategorien-anlegen-s4.jpg",
+              "type": "image"
+            },
+            {
+              "text": "In Ihrer Kategorieübersicht wird Ihnen als einzige Kategorie die Startseite angezeigt. "
+            },
+            {
+              "bold": true,
+              "text": "Hinweis:"
+            },
+            {
+              "text": " "
+            },
+            {
+              "small": true,
+              "text": "Die Startseite ist eine Sonderkategorie, denn Sie zeigt grundsätzlich alle Beiträge ihres Projektes an. Dabei ist der neuste Beitrag immer oben platziert. Scrollen Sie auf der Startseite nach unten, werden ältere Beiträge Stück für Stück \"nachgeladen\". Somit ist die Startseite eigentlich auch das Archiv ihres Lottas."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Klicken Sie nun auf \""
+            },
+            {
+              "bold": true,
+              "text": "+ KATEGORIE ERSTELLEN"
+            },
+            {
+              "text": "\", um eine neue Kategorie  hinzuzufügen."
+            }
+          ],
+          "type": "list-item"
+        }
+      ],
+      "type": "unordered-list"
+    }
+  ]
+}

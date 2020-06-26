@@ -1,0 +1,107 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "bold": true,
+          "text": "Bild 1"
+        },
+        {
+          "text": ": Klicken Sie auf „"
+        },
+        {
+          "bold": true,
+          "text": "MEIN PROFIL"
+        },
+        {
+          "text": "“ ("
+        },
+        {
+          "bold": true,
+          "text": "1"
+        },
+        {
+          "text": "), dann auf „"
+        },
+        {
+          "bold": true,
+          "text": "Seite administrieren"
+        },
+        {
+          "text": "“ ("
+        },
+        {
+          "bold": true,
+          "text": "2"
+        },
+        {
+          "text": "),dann auf „"
+        },
+        {
+          "bold": true,
+          "text": "NUTZER & GRUPPEN"
+        },
+        {
+          "text": "“ ("
+        },
+        {
+          "bold": true,
+          "text": "3"
+        },
+        {
+          "text": ") und klicken Sie auf \""
+        },
+        {
+          "bold": true,
+          "text": "GRUPPEN"
+        },
+        {
+          "text": "\" ("
+        },
+        {
+          "bold": true,
+          "text": "4"
+        },
+        {
+          "text": ") und anschließend auf „"
+        },
+        {
+          "bold": true,
+          "text": "+ Gruppe erstellen"
+        },
+        {
+          "text": "“ ("
+        },
+        {
+          "bold": true,
+          "text": "5"
+        },
+        {
+          "text": "). Geben Sie der Gruppe einen Namen ("
+        },
+        {
+          "bold": true,
+          "text": "6"
+        },
+        {
+          "text": ") und tragen Sie einen „"
+        },
+        {
+          "bold": true,
+          "text": "Einschreibeschlüssel ein"
+        },
+        {
+          "text": "“ ("
+        },
+        {
+          "bold": true,
+          "text": "7"
+        },
+        {
+          "text": ")."
+        }
+      ],
+      "type": "paragraph"
+    }
+  ]
+}

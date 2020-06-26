@@ -7,7 +7,7 @@ defmodule Api.Tenants do
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Tenants.{Category, CustomDomain, Tenant, Widget}
+  alias Api.Tenants.{DefaultContent, Category, CustomDomain, Tenant, Widget}
   alias Api.Accounts.{User, UserGroup}
 
   def data() do
@@ -181,47 +181,15 @@ defmodule Api.Tenants do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_tenant(attrs \\ %{}) do
+  def create_tenant!(user, attrs \\ %{}) do
     tenant =
       %Tenant{}
       |> Tenant.create_changeset(attrs)
+      |> Repo.insert!()
 
-    case Repo.insert(tenant) do
-      {:ok, tenant} ->
-        %Category{
-          title: "Startseite",
-          sort_key: 0,
-          is_sidenav: false,
-          is_homepage: true,
-          tenant_id: tenant.id
-        }
-        |> Repo.insert()
+    DefaultContent.create_default_content!(tenant, user)
 
-        {:ok, admin_group} =
-          %UserGroup{
-            name: "Administrator",
-            sort_key: 0,
-            is_admin_group: true,
-            tenant_id: tenant.id
-          }
-          |> Repo.insert()
-
-        ["Lehrer", "Schüler"]
-        |> Enum.with_index()
-        |> Enum.each(fn {name, i} ->
-          %UserGroup{
-            name: name,
-            sort_key: 10 + i * 10,
-            tenant_id: tenant.id
-          }
-          |> Repo.insert()
-        end)
-
-        {:ok, tenant, admin_group}
-
-      result ->
-        result
-    end
+    tenant
   end
 
   @doc """

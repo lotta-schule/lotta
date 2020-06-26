@@ -1,0 +1,151 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "bold": true,
+          "text": "Bild 2"
+        },
+        {
+          "text": ": Die Einschreibeschlüssel dienen zum dynamischen Eintragen in Nutzergruppen. "
+        },
+        {
+          "bold": true,
+          "text": "Geben Sie die Einschreibeschlüssel an die Nutzer der entsprechenden Gruppen weiter"
+        },
+        {
+          "text": ". Das kann für Schüler zum Beispiel über die Klassenlehrer und Tutoren erfolgen."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Jeder registrierte Nutzer hat in seinem individuellem Menü „"
+        },
+        {
+          "bold": true,
+          "text": "MEIN PROFIL"
+        },
+        {
+          "text": "“ den Menüpunkt „"
+        },
+        {
+          "bold": true,
+          "text": "Meine Daten"
+        },
+        {
+          "text": "“ und ein Eingabefeld für „"
+        },
+        {
+          "bold": true,
+          "text": "Meine Einschreibeschlüssel"
+        },
+        {
+          "text": "“. In unserem Beispiel ("
+        },
+        {
+          "bold": true,
+          "text": "8"
+        },
+        {
+          "text": ") ein Schüler und ("
+        },
+        {
+          "bold": true,
+          "text": "9"
+        },
+        {
+          "text": ") ein Lehrer. Somit kann sich jeder Nutzer selbst in die Gruppen eintragen."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Pro Nutzer können "
+        },
+        {
+          "bold": true,
+          "text": "mehrere Einschreibeschlüssel"
+        },
+        {
+          "text": " eingetragen werden, was das Spektrum an Möglichkeiten erweitert. Ein Beispiel aus der Praxis verdeutlicht das anschaulich:"
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "small": true,
+          "text": "Für die Schüler einer Schule gibt es einen allgemeinen Einschreibeschlüssel \""
+        },
+        {
+          "bold": true,
+          "italic": true,
+          "small": true,
+          "text": "X-Alle"
+        },
+        {
+          "small": true,
+          "text": "\". Somit kann z.Bsp. die Schulleitung einen Beitrag auf der Homepage erstellen, den alle Schüler sehen können."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "small": true,
+          "text": "Zusätzlich gibt es einen Schlüssel alle Schüler einer Klassenstufe. Zum Beispiel für die Klasse 10: \""
+        },
+        {
+          "bold": true,
+          "italic": true,
+          "small": true,
+          "text": "X-10"
+        },
+        {
+          "small": true,
+          "text": "\". Somit können Beiträge Nur für für die Schüler der Klassenstufe 10 erstellt werden, wie zum Beispiel eine Einladung zu einer Versammlung zur Berufsberatung."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "small": true,
+          "text": "Ein dritter Schlüssel ist für die Klasse 10a: \""
+        },
+        {
+          "bold": true,
+          "small": true,
+          "text": "X-10-a"
+        },
+        {
+          "small": true,
+          "text": "\". Hier kann beispielsweise der Klassenlehrer der Klasse 10a Beiträge zum Unterricht, zur Organisation der Klassenfahr o.ä. auf die Homepage stellen, die nur seine Klasse sieht."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "bold": true,
+          "small": true,
+          "text": "Fazit:"
+        },
+        {
+          "small": true,
+          "text": " Der Schüler der Klasse 10a gibt 3 Eingabeschlüssel ein: \"X-Alle\", \"X-10\" und \"X-10-a\". Somit zeigt die Homepage dem Schüler nur seine Beiträge, was die Homepage für jeden Nutzer sehr übersichtlich macht."
+        }
+      ],
+      "type": "paragraph"
+    }
+  ]
+}
