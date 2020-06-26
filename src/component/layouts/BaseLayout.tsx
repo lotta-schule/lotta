@@ -56,6 +56,9 @@ const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
         justifyContent: 'flex-end',
         paddingRight: theme.spacing(2),
         margin: 'auto 0'
+    },
+    logo: {
+        maxHeight: 80,
     }
 }));
 
@@ -72,8 +75,9 @@ export const BaseLayout = memo(({ children }) => {
                     <Grid item md={3} className={styles.logoGridItem}>
                         {tenant.logoImageFile && (
                             <img
-                                src={`https://afdptjdxen.cloudimg.io/height/80/foil1/${tenant.logoImageFile.remoteLocation}`}
+                                src={`https://afdptjdxen.cloudimg.io/height/160/foil1/${tenant.logoImageFile.remoteLocation}`}
                                 alt={`Logo ${tenant.title}`}
+                                className={styles.logo}
                             />
                         )}
                     </Grid>
