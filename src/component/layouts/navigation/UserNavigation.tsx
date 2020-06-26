@@ -142,7 +142,7 @@ export const UserNavigation = memo(() => {
                     />
                 </Grid>
                 <Grid item xs={5} className={styles.avatarContainer}>
-                    <CurrentUserAvatar size={100} style={{ width: 100, height: 100 }} />
+                    <CurrentUserAvatar size={200} style={{ width: 100, height: 100 }} />
                 </Grid>
             </Grid>
         );
