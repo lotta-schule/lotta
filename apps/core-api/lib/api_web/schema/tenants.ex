@@ -9,7 +9,7 @@ defmodule ApiWeb.Schema.Tenants do
     end
 
     field :tenant, :tenant do
-      arg(:id, :lotta_id)
+      arg(:id, :id)
       arg(:slug, :string)
       resolve(&Api.TenantResolver.get/2)
     end
@@ -19,7 +19,7 @@ defmodule ApiWeb.Schema.Tenants do
     end
 
     field :widgets, list_of(:widget) do
-      arg(:category_id, :lotta_id)
+      arg(:category_id, :id)
 
       resolve(&Api.WidgetResolver.all/2)
     end
@@ -48,14 +48,14 @@ defmodule ApiWeb.Schema.Tenants do
     end
 
     field :update_category, type: :category do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
       arg(:category, non_null(:update_category_input))
 
       resolve(&Api.CategoryResolver.update/2)
     end
 
     field :delete_category, type: :category do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
 
       resolve(&Api.CategoryResolver.delete/2)
     end
@@ -68,14 +68,14 @@ defmodule ApiWeb.Schema.Tenants do
     end
 
     field :update_widget, type: :widget do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
       arg(:widget, non_null(:widget_input))
 
       resolve(&Api.WidgetResolver.update/2)
     end
 
     field :delete_widget, type: :widget do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
 
       resolve(&Api.WidgetResolver.delete/2)
     end

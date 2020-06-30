@@ -34,7 +34,7 @@ defmodule Api.ContentModuleResolverTest do
 
   describe "send_form_response mutation" do
     @query """
-    mutation SendFormResponse($id: LottaId!, $response: Json!) {
+    mutation SendFormResponse($id: ID!, $response: Json!) {
       sendFormResponse(contentModuleId: $id, response: $response)
     }
     """
@@ -160,7 +160,7 @@ defmodule Api.ContentModuleResolverTest do
 
   describe "get form responses" do
     @query """
-    query ContentModuleResults($id: LottaId!) {
+    query ContentModuleResults($id: ID!) {
       contentModuleResults(contentModuleId: $id) {
         user {
           id
@@ -210,7 +210,7 @@ defmodule Api.ContentModuleResolverTest do
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "contentModuleResults" => nil
                },
@@ -220,7 +220,7 @@ defmodule Api.ContentModuleResolverTest do
                    "path" => ["contentModuleResults"]
                  }
                ]
-             }
+             } = res
     end
 
     test "return an error user is not logged in", %{test_formular: test_formular} do
@@ -230,7 +230,7 @@ defmodule Api.ContentModuleResolverTest do
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "contentModuleResults" => nil
                },
@@ -240,7 +240,7 @@ defmodule Api.ContentModuleResolverTest do
                    "path" => ["contentModuleResults"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

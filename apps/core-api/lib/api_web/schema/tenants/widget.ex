@@ -11,7 +11,7 @@ defmodule ApiWeb.Schema.Tenants.Widget do
   end
 
   object :widget do
-    field :id, :lotta_id
+    field :id, :id
     field :title, :string
     field :type, :widget_type
     field :configuration, :json
@@ -28,7 +28,7 @@ defmodule ApiWeb.Schema.Tenants.Widget do
   end
 
   input_object :select_widget_input do
-    field :id, :lotta_id
+    field :id, :id
   end
 
   input_object :tenant_input do

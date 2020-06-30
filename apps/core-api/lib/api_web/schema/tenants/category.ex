@@ -4,7 +4,7 @@ defmodule ApiWeb.Schema.Tenants.Tenant do
   use Absinthe.Schema.Notation
 
   object :category do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :title, :string
@@ -34,6 +34,6 @@ defmodule ApiWeb.Schema.Tenants.Tenant do
   end
 
   input_object :select_category_input do
-    field :id, :lotta_id
+    field :id, :id
   end
 end

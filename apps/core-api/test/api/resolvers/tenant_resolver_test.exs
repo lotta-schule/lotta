@@ -91,7 +91,7 @@ defmodule Api.TenantResolverTest do
       assert res == %{
                "data" => %{
                  "tenant" => %{
-                   "id" => web_tenant.id,
+                   "id" => Integer.to_string(web_tenant.id),
                    "slug" => "web",
                    "title" => "Web Beispiel"
                  }
@@ -109,7 +109,7 @@ defmodule Api.TenantResolverTest do
       assert res == %{
                "data" => %{
                  "tenant" => %{
-                   "id" => web_tenant.id,
+                   "id" => Integer.to_string(web_tenant.id),
                    "slug" => "web",
                    "title" => "Web Beispiel"
                  }
@@ -182,7 +182,7 @@ defmodule Api.TenantResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createTenant" => nil
                },
@@ -192,7 +192,7 @@ defmodule Api.TenantResolverTest do
                    "path" => ["createTenant"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if slug is taken", %{lotta_admin_jwt: admin_jwt} do
@@ -210,20 +210,20 @@ defmodule Api.TenantResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "message" => "Erstellen des Tenant fehlgeschlagen.",
+                   "message" => "Lotta konnte nicht erstellt werden",
                    "path" => ["createTenant"],
                    "details" => %{
                      "slug" => ["ist schon belegt"]
                    }
                  }
                ]
-             }
+             } = res
     end
 
     test "should create a tenant for a new admin", %{lotta_admin_jwt: admin_jwt} do
@@ -293,43 +293,43 @@ defmodule Api.TenantResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "message" => "Erstellen des Tenant fehlgeschlagen.",
+                   "message" => "Lotta konnte nicht erstellt werden",
                    "path" => ["createTenant"],
                    "details" => %{
                      "slug" => ["ist schon belegt"]
                    }
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if slug is 'intern'", %{user_jwt: user_jwt} do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> post("/api", query: @query, variables: %{title: "Neu", slug: "web"})
+        |> post("/api", query: @query, variables: %{title: "Neu", slug: "intern"})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createTenant" => nil
                },
                "errors" => [
                  %{
-                   "message" => "Erstellen des Tenant fehlgeschlagen.",
+                   "message" => "Lotta konnte nicht erstellt werden",
                    "path" => ["createTenant"],
                    "details" => %{
                      "slug" => ["ist schon belegt"]
                    }
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is already admin for a tenant", %{admin_jwt: admin_jwt} do
@@ -339,7 +339,7 @@ defmodule Api.TenantResolverTest do
         |> post("/api", query: @query, variables: %{title: "Test-Schule", slug: "test-schule"})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createTenant" => nil
                },
@@ -349,7 +349,7 @@ defmodule Api.TenantResolverTest do
                    "path" => ["createTenant"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should create a tenant for user", %{user_jwt: user_jwt, user_account: user_account} do
@@ -463,7 +463,7 @@ defmodule Api.TenantResolverTest do
       assert res == %{
                "data" => %{
                  "updateTenant" => %{
-                   "id" => web_tenant.id,
+                   "id" => Integer.to_string(web_tenant.id),
                    "slug" => "web",
                    "title" => "Web Beispiel Neu"
                  }
@@ -483,7 +483,7 @@ defmodule Api.TenantResolverTest do
         |> post("/api", query: @query, variables: %{tenant: tenant})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "updateTenant" => nil
                },
@@ -493,7 +493,7 @@ defmodule Api.TenantResolverTest do
                    "path" => ["updateTenant"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error if user is not logged in" do
@@ -507,7 +507,7 @@ defmodule Api.TenantResolverTest do
         |> post("/api", query: @query, variables: %{tenant: tenant})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "updateTenant" => nil
                },
@@ -517,7 +517,7 @@ defmodule Api.TenantResolverTest do
                    "path" => ["updateTenant"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

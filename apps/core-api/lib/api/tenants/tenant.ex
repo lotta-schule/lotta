@@ -32,7 +32,7 @@ defmodule Api.Tenants.Tenant do
     |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
     |> validate_format(:slug, ~r/[a-z0-9-_]/)
-    |> validate_slug(:slug)
+    |> validate_slug()
   end
 
   @doc false
@@ -61,9 +61,9 @@ defmodule Api.Tenants.Tenant do
     end
   end
 
-  defp validate_slug(changeset, field) when is_atom(field) do
-    validate_change(changeset, field, fn current_field, val ->
-      if val == "intern", do: [current_field: "cannot be 'intern'"], else: []
+  defp validate_slug(changeset) do
+    validate_change(changeset, :slug, fn _field_name, val ->
+      if val == "intern", do: [:slug, "ist schon belegt"], else: []
     end)
   end
 

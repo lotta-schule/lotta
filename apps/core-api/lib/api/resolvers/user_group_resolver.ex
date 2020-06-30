@@ -3,7 +3,8 @@ defmodule Api.UserGroupResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting user groups
   """
 
-  alias Ecto.{Changeset, NoResultsError}
+  alias Ecto.NoResultsError
+  alias ApiWeb.ErrorHelpers
   alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.User
@@ -49,14 +50,15 @@ defmodule Api.UserGroupResolver do
   def create(%{group: group_input}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       case Accounts.create_user_group(tenant, group_input) do
-        {:error, changeset} ->
-          {
-            :error,
-            message: "Fehler beim Erstellen der Gruppe.", details: error_details(changeset)
-          }
+        {:ok, group} ->
+          {:ok, group}
 
-        success ->
-          success
+        {:error, error} ->
+          {:error,
+           [
+             "Fehler beim Anlegen der Gruppe",
+             details: ErrorHelpers.extract_error_details(error)
+           ]}
       end
     else
       {:error, "Nur Administratoren dürfen Gruppen erstellen."}
@@ -97,10 +99,5 @@ defmodule Api.UserGroupResolver do
     else
       {:error, "Nur Administratoren dürfen Gruppen löschen."}
     end
-  end
-
-  defp error_details(%Changeset{} = changeset) do
-    changeset
-    |> Changeset.traverse_errors(fn {msg, _} -> msg end)
   end
 end

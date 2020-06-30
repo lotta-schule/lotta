@@ -4,7 +4,7 @@ defmodule ApiWeb.Schema.Tenants.Category do
   use Absinthe.Schema.Notation
 
   object :tenant do
-    field :id, :lotta_id
+    field :id, :id
     field :title, :string
     field :slug, :string
     field :custom_theme, :json
@@ -25,7 +25,7 @@ defmodule ApiWeb.Schema.Tenants.Category do
   end
 
   object :custom_domain do
-    field :id, :lotta_id
+    field :id, :id
     field :host, :string
     field :is_main_domain, :boolean
     field :inserted_at, :naive_datetime

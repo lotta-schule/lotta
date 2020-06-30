@@ -466,7 +466,7 @@ defmodule Api.CategoryResolverTest do
 
   describe "updateCategory mutation" do
     @query """
-    mutation UpdateCategory($id: LottaId!, $category: CategoryInput!) {
+    mutation UpdateCategory($id: ID!, $category: CategoryInput!) {
       updateCategory(id: $id, category: $category) {
         title
       }
@@ -506,7 +506,7 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: 0, category: category})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "updateCategory" => nil
                },
@@ -516,7 +516,7 @@ defmodule Api.CategoryResolverTest do
                    "path" => ["updateCategory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error if user is not admin", %{
@@ -534,7 +534,7 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id, category: category})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "updateCategory" => nil
                },
@@ -544,7 +544,7 @@ defmodule Api.CategoryResolverTest do
                    "path" => ["updateCategory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error if user is not logged in", %{faecher_category: faecher_category} do
@@ -558,7 +558,7 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id, category: category})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "updateCategory" => nil
                },
@@ -568,7 +568,7 @@ defmodule Api.CategoryResolverTest do
                    "path" => ["updateCategory"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -614,7 +614,7 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{category: category})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createCategory" => nil
                },
@@ -624,7 +624,7 @@ defmodule Api.CategoryResolverTest do
                    "path" => ["createCategory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error if user is not logged in" do
@@ -638,7 +638,7 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{category: category})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createCategory" => nil
                },
@@ -648,13 +648,13 @@ defmodule Api.CategoryResolverTest do
                    "path" => ["createCategory"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "deleteCategory mutation" do
     @query """
-    mutation DeleteCategory($id: LottaId!) {
+    mutation DeleteCategory($id: ID!) {
       deleteCategory(id: $id) {
         title
       }
@@ -748,7 +748,7 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "deleteCategory" => nil
                },
@@ -758,7 +758,7 @@ defmodule Api.CategoryResolverTest do
                    "path" => ["deleteCategory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error if user is not logged in", %{faecher_category: faecher_category} do
@@ -768,7 +768,7 @@ defmodule Api.CategoryResolverTest do
         |> post("/api", query: @query, variables: %{id: faecher_category.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "deleteCategory" => nil
                },
@@ -778,7 +778,7 @@ defmodule Api.CategoryResolverTest do
                    "path" => ["deleteCategory"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

@@ -12,6 +12,6 @@ defmodule ApiWeb.Schema.Search do
   end
 
   input_object :search_options do
-    field :category_id, :lotta_id
+    field :category_id, :id
   end
 end

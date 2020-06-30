@@ -3,13 +3,14 @@ defmodule Api.DirectoryResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting directories
   """
 
+  alias ApiWeb.ErrorHelpers
   alias Api.Accounts
   alias Api.Accounts.User
   alias Api.Repo
   alias UUID
 
   def list(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
-      when is_integer(parent_directory_id) do
+      when not is_nil(parent_directory_id) and byte_size(parent_directory_id) > 0 do
     parent_directory = Accounts.get_directory!(parent_directory_id)
 
     if User.can_read_directory?(current_user, parent_directory) do
@@ -23,8 +24,8 @@ defmodule Api.DirectoryResolver do
     {:ok, Accounts.list_root_directories(tenant, current_user)}
   end
 
-  def get(%{id: id}, %{context: %{current_user: current_user}}) when is_integer(id) do
-    directory = Accounts.get_directory(id)
+  def get(%{id: id}, %{context: %{current_user: current_user}}) do
+    directory = Accounts.get_directory(String.to_integer(id))
 
     cond do
       is_nil(directory) ->
@@ -41,7 +42,7 @@ defmodule Api.DirectoryResolver do
   def create(%{name: name, parent_directory_id: parent_directory_id}, %{
         context: %{current_user: current_user}
       })
-      when is_binary(name) and is_integer(parent_directory_id) do
+      when is_binary(name) and not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory(parent_directory_id)
 
     cond do
@@ -52,13 +53,24 @@ defmodule Api.DirectoryResolver do
         {:error, "Du darfst diesen Ordner hier nicht erstellen."}
 
       true ->
-        Accounts.create_directory(%{
+        attrs = %{
           name: name,
           parent_directory_id: parent_directory.id,
           user_id: parent_directory.user_id,
           tenant_id: parent_directory.tenant_id
-        })
-        |> output_create_result()
+        }
+
+        case Accounts.create_directory(attrs) do
+          {:ok, directory} ->
+            {:ok, directory}
+
+          {:error, error} ->
+            {:error,
+             [
+               "Fehler beim Anlegen des Ordners",
+               details: ErrorHelpers.extract_error_details(error)
+             ]}
+        end
     end
   end
 
@@ -72,7 +84,17 @@ defmodule Api.DirectoryResolver do
         user_id: nil,
         tenant_id: tenant.id
       })
-      |> output_create_result()
+      |> case do
+        {:ok, directory} ->
+          {:ok, directory}
+
+        {:error, error} ->
+          {:error,
+           [
+             "Fehler beim Anlegen des Ordners",
+             details: ErrorHelpers.extract_error_details(error)
+           ]}
+      end
     else
       {:error, "Du darfst diesen Ordner hier nicht erstellen."}
     end
@@ -80,12 +102,23 @@ defmodule Api.DirectoryResolver do
 
   def create(%{name: name}, %{context: %{current_user: current_user, tenant: tenant}})
       when is_binary(name) do
-    Accounts.create_directory(%{
+    attrs = %{
       name: name,
       user_id: current_user.id,
       tenant_id: tenant.id
-    })
-    |> output_create_result()
+    }
+
+    case Accounts.create_directory(attrs) do
+      {:ok, directory} ->
+        {:ok, directory}
+
+      {:error, error} ->
+        {:error,
+         [
+           "Fehler beim Anlegen des Ordners",
+           details: ErrorHelpers.extract_error_details(error)
+         ]}
+    end
   end
 
   def create(_, %{context: %{current_user: _, tenant: _}}),
@@ -93,13 +126,8 @@ defmodule Api.DirectoryResolver do
 
   def create(_, _), do: {:error, "Nur angemeldete Nutzer dürfen Ordner erstellen."}
 
-  defp output_create_result({:error, changeset}),
-    do: {:error, message: "Fehler beim Erstellen des Ordners", details: error_details(changeset)}
-
-  defp output_create_result(result), do: result
-
-  def delete(%{id: id}, %{context: %{current_user: current_user}}) when is_integer(id) do
-    directory = Accounts.get_directory(id)
+  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
+    directory = Accounts.get_directory(String.to_integer(id))
 
     cond do
       is_nil(directory) ->
@@ -123,14 +151,14 @@ defmodule Api.DirectoryResolver do
   end
 
   def update(%{id: id, parent_directory_id: parent_directory_id}, _)
-      when is_integer(id) and is_integer(parent_directory_id) and id == parent_directory_id do
+      when id == parent_directory_id do
     {:error, "Du kannst diesen Ordner nicht hierher verschieben."}
   end
 
   def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     try do
       directory =
-        Accounts.get_directory!(id)
+        Accounts.get_directory!(String.to_integer(id))
         |> Repo.preload([:tenant, :parent_directory])
 
       source_directory = directory.parent_directory
@@ -141,7 +169,7 @@ defmodule Api.DirectoryResolver do
             nil
 
           %{parent_directory_id: target_directory_id} ->
-            Accounts.get_directory!(target_directory_id)
+            Accounts.get_directory!(String.to_integer(target_directory_id))
 
           _ ->
             source_directory
@@ -151,12 +179,15 @@ defmodule Api.DirectoryResolver do
            User.can_write_directory?(current_user, target_directory || directory) do
         Accounts.update_directory(directory, Map.take(args, [:name, :parent_directory_id]))
         |> case do
-          {:error, changeset} ->
-            {:error,
-             message: "Fehler beim Speichern des Ordners", details: error_details(changeset)}
+          {:ok, directory} ->
+            {:ok, directory}
 
-          result ->
-            result
+          {:error, error} ->
+            {:error,
+             [
+               "Fehler beim Bearbeiten des Ordners",
+               details: ErrorHelpers.extract_error_details(error)
+             ]}
         end
       else
         {:error, "Du darfst diesen Ordner nicht bearbeiten."}
@@ -165,10 +196,5 @@ defmodule Api.DirectoryResolver do
       Ecto.NoResultsError ->
         {:error, "Datei oder Ordner nicht gefunden."}
     end
-  end
-
-  defp error_details(%Ecto.Changeset{} = changeset) do
-    changeset
-    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
   end
 end

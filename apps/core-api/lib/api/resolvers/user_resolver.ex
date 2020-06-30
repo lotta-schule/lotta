@@ -5,8 +5,10 @@ defmodule Api.UserResolver do
   """
 
   require Logger
+
   alias Api.Repo
-  alias Ecto.{Changeset, NoResultsError}
+  alias Ecto.NoResultsError
+  alias Ecto.Changeset
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper, User}
   alias Api.Queue.EmailPublisher
@@ -31,7 +33,7 @@ defmodule Api.UserResolver do
 
   def resolve_email(user, _args, %{context: context}) do
     cond do
-      context[:current_user] && context.current_user.id == user.id ->
+      context[:current_user] && context.current_user.id == String.to_integer(user.id) ->
         {:ok, user.email}
 
       context[:current_user] && context[:tenant] &&
@@ -100,7 +102,7 @@ defmodule Api.UserResolver do
   def get(%{id: id}, %{context: %{tenant: tenant} = context}) do
     if context[:current_user] && User.is_admin?(context.current_user, tenant) do
       try do
-        {:ok, Accounts.get_user!(id)}
+        {:ok, Accounts.get_user!(String.to_integer(id))}
       rescue
         NoResultsError -> {:ok, nil}
       end
@@ -141,11 +143,12 @@ defmodule Api.UserResolver do
 
         {:ok, %{token: jwt}}
 
-      {:error, changeset} ->
-        {
-          :error,
-          message: "Registrierung fehlgeschlagen.", details: error_details(changeset)
-        }
+      {:error, error} ->
+        {:error,
+         [
+           message: "Registrierung fehlgeschlagen.",
+           details: ErrorHelpers.extract_error_details(error)
+         ]}
     end
   end
 
@@ -214,7 +217,7 @@ defmodule Api.UserResolver do
           group_ids
           |> Enum.map(fn group_id ->
             try do
-              Accounts.get_user_group!(group_id)
+              Accounts.get_user_group!(String.to_integer(group_id))
             rescue
               NoResultsError -> nil
             end
@@ -222,7 +225,7 @@ defmodule Api.UserResolver do
           |> Enum.filter(fn group -> !is_nil(group) && group.tenant_id == tenant.id end)
 
         try do
-          Accounts.get_user!(id)
+          Accounts.get_user!(String.to_integer(id))
           |> Accounts.set_user_groups(tenant, groups)
         rescue
           NoResultsError ->
@@ -236,14 +239,15 @@ defmodule Api.UserResolver do
 
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
     case Accounts.update_user(current_user, user_params) do
-      {:error, changeset} ->
-        {
-          :error,
-          message: "Speichern fehlgeschlagen.", details: error_details(changeset)
-        }
+      {:ok, user} ->
+        {:ok, user}
 
-      response ->
-        response
+      {:error, error} ->
+        {:error,
+         [
+           message: "Speichern fehlgeschlagen.",
+           details: ErrorHelpers.extract_error_details(error)
+         ]}
     end
   end
 
@@ -254,15 +258,15 @@ defmodule Api.UserResolver do
          {:ok, user} <- Accounts.update_password(user, new_password) do
       {:ok, user}
     else
-      {:error, %Changeset{} = changeset} ->
-        {
-          :error,
-          message: "Passwort ändern fehlgeschlagen.", details: error_details(changeset)
-        }
+      {:error, message} when is_binary(message) ->
+        {:error, message}
 
-      {:error, reason} = e ->
-        Logger.error("Error changing the user password: #{reason}")
-        e
+      {:error, error} ->
+        {:error,
+         [
+           message: "Passwort ändern fehlgeschlagen.",
+           details: ErrorHelpers.extract_error_details(error)
+         ]}
     end
   end
 
@@ -270,7 +274,7 @@ defmodule Api.UserResolver do
     case context[:current_user] && User.is_admin?(context.current_user, tenant) do
       true ->
         try do
-          Accounts.get_user!(id)
+          Accounts.get_user!(String.to_integer(id))
           |> Accounts.set_user_blocked(tenant, is_blocked)
         rescue
           NoResultsError ->
@@ -280,10 +284,5 @@ defmodule Api.UserResolver do
       false ->
         {:error, "Nur Administratoren dürfen Benutzer blocken."}
     end
-  end
-
-  defp error_details(%Changeset{} = changeset) do
-    changeset
-    |> Changeset.traverse_errors(&ErrorHelpers.translate_error/1)
   end
 end

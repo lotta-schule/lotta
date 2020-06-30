@@ -39,7 +39,7 @@ defmodule Api.UserGroupResolverTest do
 
   describe "group query" do
     @query """
-    query group($id: LottaId!) {
+    query group($id: ID!) {
       group(id: $id) {
         name
         enrollmentTokens {
@@ -95,7 +95,7 @@ defmodule Api.UserGroupResolverTest do
         |> get("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "group" => nil
                },
@@ -105,7 +105,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["group"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -115,7 +115,7 @@ defmodule Api.UserGroupResolverTest do
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "group" => nil
                },
@@ -125,13 +125,13 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["group"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "UpdateUserGroup mutation" do
     @query """
-    mutation UpdateUserGroup($id: LottaId!, $group: UserGroupInput!) {
+    mutation UpdateUserGroup($id: ID!, $group: UserGroupInput!) {
       UpdateUserGroup(id: $id, group: $group) {
         name
         enrollmentTokens {
@@ -181,7 +181,7 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
@@ -191,7 +191,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["UpdateUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not an admin", %{
@@ -211,7 +211,7 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
@@ -221,7 +221,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["UpdateUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -237,7 +237,7 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
@@ -247,13 +247,13 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["UpdateUserGroup"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "deleteUserGroup mutation" do
     @query """
-    mutation deleteUserGroup($id: LottaId!) {
+    mutation deleteUserGroup($id: ID!) {
       deleteUserGroup(id: $id) {
         name
       }
@@ -289,7 +289,7 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
@@ -299,7 +299,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["deleteUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not an admin", %{
@@ -313,7 +313,7 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
@@ -323,7 +323,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["deleteUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -333,7 +333,7 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
@@ -343,7 +343,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["deleteUserGroup"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -400,7 +400,7 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createUserGroup" => nil
                },
@@ -410,7 +410,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["createUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -426,7 +426,7 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createUserGroup" => nil
                },
@@ -436,7 +436,7 @@ defmodule Api.UserGroupResolverTest do
                    "path" => ["createUserGroup"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

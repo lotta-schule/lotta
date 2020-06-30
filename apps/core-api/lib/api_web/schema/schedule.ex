@@ -5,7 +5,7 @@ defmodule ApiWeb.Schema.Schedule do
 
   object :schedule_queries do
     field :schedule, :json do
-      arg(:widget_id, non_null(:lotta_id))
+      arg(:widget_id, non_null(:id))
       arg(:date, :date)
       resolve(&Api.ScheduleResolver.get/2)
     end

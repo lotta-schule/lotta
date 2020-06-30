@@ -18,32 +18,32 @@ defmodule ApiWeb.Schema.Accounts do
     end
 
     field :user, type: :user do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
       resolve(&Api.UserResolver.get/2)
     end
 
     field :group, type: :user_group do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
       resolve(&Api.UserGroupResolver.get/2)
     end
 
     field :directory, :directory do
-      arg(:id, :lotta_id)
+      arg(:id, :id)
       resolve(&Api.DirectoryResolver.get/2)
     end
 
     field :directories, list_of(:directory) do
-      arg(:parent_directory_id, :lotta_id)
+      arg(:parent_directory_id, :id)
       resolve(&Api.DirectoryResolver.list/2)
     end
 
     field :file, :file do
-      arg(:id, :lotta_id)
+      arg(:id, :id)
       resolve(&Api.FileResolver.file/2)
     end
 
     field :files, list_of(:file) do
-      arg(:parent_directory_id, :lotta_id)
+      arg(:parent_directory_id, :id)
       resolve(&Api.FileResolver.files/2)
     end
   end
@@ -54,7 +54,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:group_key, :string)
 
       resolve(&Api.UserResolver.register/2)
-      middleware(&Api.AbsintheMiddlewares.set_user_token/2)
+      middleware(ApiWeb.Schema.Middleware.WriteResolutionAuthTokenToAbsintheContext)
     end
 
     field :login, type: :authresult do
@@ -62,7 +62,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:password, :string)
 
       resolve(&Api.UserResolver.login/2)
-      middleware(&Api.AbsintheMiddlewares.set_user_token/2)
+      middleware(ApiWeb.Schema.Middleware.WriteResolutionAuthTokenToAbsintheContext)
     end
 
     field :logout, type: :boolean do
@@ -89,7 +89,7 @@ defmodule ApiWeb.Schema.Accounts do
     end
 
     field :set_user_blocked, type: :user do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
       arg(:is_blocked, non_null(:boolean))
 
       resolve(&Api.UserResolver.set_user_blocked/2)
@@ -102,14 +102,14 @@ defmodule ApiWeb.Schema.Accounts do
     end
 
     field :update_user_group, type: :user_group do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
       arg(:group, non_null(:user_group_input))
 
       resolve(&Api.UserGroupResolver.update/2)
     end
 
     field :delete_user_group, type: :user_group do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
 
       resolve(&Api.UserGroupResolver.delete/2)
     end
@@ -126,53 +126,53 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:password, non_null(:string))
 
       resolve(&Api.UserResolver.reset_password/2)
-      middleware(&Api.AbsintheMiddlewares.set_user_token/2)
+      middleware(ApiWeb.Schema.Middleware.WriteResolutionAuthTokenToAbsintheContext)
     end
 
     field :set_user_groups, type: :user do
-      arg(:id, non_null(:lotta_id))
-      arg(:group_ids, non_null(list_of(:lotta_id)))
+      arg(:id, non_null(:id))
+      arg(:group_ids, non_null(list_of(:id)))
       resolve(&Api.UserResolver.set_user_groups/2)
     end
 
     field :create_directory, type: :directory do
       arg(:name, non_null(:string))
-      arg(:parent_directory_id, :lotta_id)
+      arg(:parent_directory_id, :id)
       arg(:is_public, :boolean)
 
       resolve(&Api.DirectoryResolver.create/2)
     end
 
     field :update_directory, type: :directory do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
       arg(:name, :string)
-      arg(:parent_directory_id, :lotta_id)
+      arg(:parent_directory_id, :id)
 
       resolve(&Api.DirectoryResolver.update/2)
     end
 
     field :delete_directory, type: :directory do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
 
       resolve(&Api.DirectoryResolver.delete/2)
     end
 
     field :upload_file, type: :file do
       arg(:file, non_null(:upload))
-      arg(:parent_directory_id, non_null(:lotta_id))
+      arg(:parent_directory_id, non_null(:id))
 
       resolve(&Api.FileResolver.upload/2)
     end
 
     field :delete_file, type: :file do
-      arg(:id, non_null(:lotta_id))
+      arg(:id, non_null(:id))
 
       resolve(&Api.FileResolver.delete/2)
     end
 
     field :update_file, type: :file do
-      arg(:id, non_null(:lotta_id))
-      arg(:parent_directory_id, :lotta_id)
+      arg(:id, non_null(:id))
+      arg(:parent_directory_id, :id)
       arg(:filename, :string)
 
       resolve(&Api.FileResolver.update/2)

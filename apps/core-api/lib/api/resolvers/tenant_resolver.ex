@@ -4,6 +4,7 @@ defmodule Api.TenantResolver do
   """
 
   alias Ecto.Changeset
+  alias ApiWeb.ErrorHelpers
   alias Api.Repo
   alias Api.Tenants
   alias Api.Accounts
@@ -33,38 +34,44 @@ defmodule Api.TenantResolver do
         context: %{current_user: current_user}
       }) do
     if User.is_lotta_admin?(current_user) do
-      try do
-        Repo.transaction(fn ->
-          user =
-            case Accounts.get_user_by_email(email) do
-              nil ->
-                password =
-                  (Enum.to_list(?a..?z) ++ Enum.to_list(?0..?9))
-                  |> Enum.take_random(12)
-                  |> Enum.join()
+      Repo.transaction(fn ->
+        user =
+          case Accounts.get_user_by_email(email) do
+            nil ->
+              password =
+                (Enum.to_list(?a..?z) ++ Enum.to_list(?0..?9))
+                |> Enum.take_random(12)
+                |> Enum.join()
 
-                {:ok, user} =
-                  Accounts.register_user(%{
-                    email: email,
-                    name: name,
-                    password: password
-                  })
+              {:ok, user} =
+                Accounts.register_user(%{
+                  email: email,
+                  name: name,
+                  password: password
+                })
 
-                user
+              user
 
-              user ->
-                user
-            end
+            user ->
+              user
+          end
 
-          tenant = Tenants.create_tenant!(user, %{title: title, slug: slug})
+        with {:ok, tenant} <- Tenants.create_tenant(user, %{title: title, slug: slug}),
+             {:ok, _user} <- Repo.update(Changeset.change(user, %{tenant_id: tenant.id})) do
+          tenant
+        else
+          {:error, reason} ->
+            Repo.rollback(reason)
+        end
+      end)
+      |> case do
+        {:ok, tenant} ->
+          {:ok, tenant}
 
-          user
-          |> Changeset.change(%{tenant_id: tenant.id})
-          |> Repo.update!()
-        end)
-      catch
-        e ->
-          {:error, e}
+        {:error, changeset} ->
+          {:error,
+           message: "Lotta konnte nicht erstellt werden",
+           details: ErrorHelpers.extract_error_details(changeset)}
       end
     else
       {:error, "Nur Lotta-Administratoren dürfen das."}
@@ -85,19 +92,24 @@ defmodule Api.TenantResolver do
     if current_user_has_admin_groups do
       {:error, "Der Nutzer ist schon Administrator bei lotta."}
     else
-      try do
-        tenant = Tenants.create_tenant!(current_user, %{title: title, slug: slug})
+      Repo.transaction(fn ->
+        with {:ok, tenant} <- Tenants.create_tenant(current_user, %{title: title, slug: slug}),
+             {:ok, user} <- Repo.update(Changeset.change(current_user, %{tenant_id: tenant.id})) do
+          Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, user)
+          tenant
+        else
+          {:error, reason} ->
+            Repo.rollback(reason)
+        end
+      end)
+      |> case do
+        {:ok, tenant} ->
+          {:ok, tenant}
 
-        current_user
-        |> Changeset.change(%{tenant_id: tenant.id})
-        |> Repo.update!()
-
-        Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
-
-        {:ok, tenant}
-      catch
-        e ->
-          {:error, e}
+        {:error, changeset} ->
+          {:error,
+           message: "Lotta konnte nicht erstellt werden",
+           details: ErrorHelpers.extract_error_details(changeset)}
       end
     end
   end
@@ -109,10 +121,5 @@ defmodule Api.TenantResolver do
     else
       {:error, "Nur Administratoren dürfen das."}
     end
-  end
-
-  defp error_details(%Ecto.Changeset{} = changeset) do
-    changeset
-    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
   end
 end

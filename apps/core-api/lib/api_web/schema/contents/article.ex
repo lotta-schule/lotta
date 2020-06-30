@@ -19,14 +19,14 @@ defmodule ApiWeb.Schema.Contents.Article do
 
   @desc "Filtering options for the article list"
   input_object :article_filter do
-    @desc "Limit the number of results to return"
-    field :first, :integer
-    @desc "Return only results updated before than a given date"
-    field :updated_before, :naive_datetime
+    field :updated_before, :naive_datetime,
+      description: "Return only results updated before than a given date"
+
+    field :first, :integer, description: "Limit the number of results to return"
   end
 
   input_object :content_module_input do
-    field :id, :lotta_id
+    field :id, :id
     field :type, :content_module_type, default_value: "text"
     field :content, :json
     field :files, list_of(:select_file_input)
@@ -35,7 +35,7 @@ defmodule ApiWeb.Schema.Contents.Article do
   end
 
   object :article do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :title, :string
@@ -57,7 +57,7 @@ defmodule ApiWeb.Schema.Contents.Article do
   end
 
   object :content_module do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :type, :content_module_type
@@ -68,7 +68,7 @@ defmodule ApiWeb.Schema.Contents.Article do
   end
 
   object :content_module_result do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :result, :json

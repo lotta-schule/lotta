@@ -5,20 +5,20 @@ defmodule ApiWeb.Schema.Accounts.File do
 
   input_object :create_file_input do
     field :filename, :string
-    field :parent_directory_id, :lotta_id
+    field :parent_directory_id, :id
   end
 
   input_object :select_file_input do
-    field :id, :lotta_id
+    field :id, :id
   end
 
   input_object :update_file_input do
     field :filename, :string
-    field :parent_directory_id, :lotta_id
+    field :parent_directory_id, :id
   end
 
   object :directory do
-    field :id, :lotta_id
+    field :id, :id
     field :name, :string
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
@@ -30,7 +30,7 @@ defmodule ApiWeb.Schema.Accounts.File do
   end
 
   object :file do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :filename, :string
@@ -38,7 +38,7 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :mime_type, :string
     field :remote_location, :string
     field :file_type, :file_type
-    field :user_id, :lotta_id
+    field :user_id, :id
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :file_conversions, list_of(:file_conversion),
@@ -51,7 +51,7 @@ defmodule ApiWeb.Schema.Accounts.File do
   end
 
   object :file_conversion do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :format, :string

@@ -134,7 +134,7 @@ defmodule Api.WidgetResolverTest do
 
   describe "widgets query with categoryId" do
     @query """
-    query GetWidgets($categoryId: LottaId!) {
+    query GetWidgets($categoryId: ID!) {
       widgets(categoryId: $categoryId) {
         title
         type
@@ -252,7 +252,7 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{title: "New Widget", type: "CALENDAR"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "createWidget" => nil
                },
@@ -262,7 +262,7 @@ defmodule Api.WidgetResolverTest do
                    "path" => ["createWidget"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in" do
@@ -272,7 +272,7 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{title: "New Widget", type: "CALENDAR"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "createWidget" => nil
                },
@@ -282,13 +282,13 @@ defmodule Api.WidgetResolverTest do
                    "path" => ["createWidget"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "updateWidget mutation" do
     @query """
-    mutation updateWidget($id: LottaId!, $widget: WidgetInput!) {
+    mutation updateWidget($id: ID!, $widget: WidgetInput!) {
       updateWidget (id: $id, widget: $widget) {
         title
         type
@@ -307,14 +307,14 @@ defmodule Api.WidgetResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "updateWidget" => %{
                    "title" => "Changed Widget",
                    "type" => "CALENDAR"
                  }
                }
-             }
+             } = res
     end
 
     test "returns an error if user is not admin", %{user_jwt: user_jwt, widget: widget} do
@@ -328,7 +328,7 @@ defmodule Api.WidgetResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "updateWidget" => nil
                },
@@ -338,7 +338,7 @@ defmodule Api.WidgetResolverTest do
                    "path" => ["updateWidget"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in", %{widget: widget} do
@@ -351,7 +351,7 @@ defmodule Api.WidgetResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "updateWidget" => nil
                },
@@ -361,13 +361,13 @@ defmodule Api.WidgetResolverTest do
                    "path" => ["updateWidget"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "deleteWidget mutation" do
     @query """
-    mutation deleteWidget($id: LottaId!) {
+    mutation deleteWidget($id: ID!) {
       deleteWidget (id: $id) {
         id
       }
@@ -385,7 +385,7 @@ defmodule Api.WidgetResolverTest do
       assert res == %{
                "data" => %{
                  "deleteWidget" => %{
-                   "id" => widget.id
+                   "id" => Integer.to_string(widget.id)
                  }
                }
              }
@@ -399,7 +399,7 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteWidget" => nil
                },
@@ -409,7 +409,7 @@ defmodule Api.WidgetResolverTest do
                    "path" => ["deleteWidget"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in" do
@@ -419,7 +419,7 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteWidget" => nil
                },
@@ -429,7 +429,7 @@ defmodule Api.WidgetResolverTest do
                    "path" => ["deleteWidget"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

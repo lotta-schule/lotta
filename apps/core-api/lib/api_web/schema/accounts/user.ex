@@ -22,11 +22,11 @@ defmodule ApiWeb.Schema.Accounts.User do
   end
 
   input_object :select_user_input do
-    field :id, :lotta_id
+    field :id, :id
   end
 
   input_object :select_user_group_input do
-    field :id, :lotta_id
+    field :id, :id
   end
 
   input_object :user_group_input do
@@ -41,7 +41,7 @@ defmodule ApiWeb.Schema.Accounts.User do
   end
 
   object :user do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :last_seen, :naive_datetime
@@ -68,7 +68,7 @@ defmodule ApiWeb.Schema.Accounts.User do
   end
 
   object :user_group do
-    field :id, :lotta_id
+    field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :name, :string
@@ -81,7 +81,7 @@ defmodule ApiWeb.Schema.Accounts.User do
   end
 
   object :group_enrollment_token do
-    field :id, :lotta_id
+    field :id, :id
     field :token, :string
   end
 end

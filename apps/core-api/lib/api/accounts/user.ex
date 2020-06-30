@@ -2,7 +2,6 @@ defmodule Api.Accounts.User do
   @moduledoc """
     Ecto Schema for users
   """
-
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Query
@@ -285,5 +284,23 @@ defmodule Api.Accounts.User do
       _ ->
         changeset
     end
+  end
+
+  @doc """
+  Generates a changeset which sets the user's groups.
+  Replaces all other group's of the given tenant.
+  """
+  @spec set_users_tenant_groups_changeset(%User{}, %Tenant{}, [%UserGroup{}]) :: %Changeset{}
+  def set_users_tenant_groups_changeset(user, tenant, groups) do
+    user = Repo.preload(user, :groups)
+
+    groups =
+      user.groups
+      |> Enum.filter(fn g -> g.tenant_id !== tenant.id end)
+      |> Enum.concat(groups)
+
+    user
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:groups, groups)
   end
 end

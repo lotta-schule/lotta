@@ -1,11 +1,13 @@
 defmodule ApiWeb.Schema do
   @moduledoc false
 
+  @pipeline_modifier ApiWeb.Schema.PipelineModifier
+
   use Absinthe.Schema
 
   import_types(Absinthe.Plug.Types)
   import_types(Absinthe.Type.Custom)
-  import_types(__MODULE__.CustomTypes.{Json, LottaId})
+  import_types(__MODULE__.CustomTypes.Json)
 
   import_types(__MODULE__.Tenants)
   import_types(__MODULE__.Tenants.{Category, Tenant, Widget})
@@ -50,6 +52,13 @@ defmodule ApiWeb.Schema do
 
     Map.put(ctx, :loader, loader)
   end
+
+  # I leave it here for quick reference how to add middleware
+  # def middleware(middleware, _field, %{identifier: :mutation}) do
+  #   middleware ++ [ApiWeb.Schema.Middleware.HandleChangesetErrors]
+  # end
+
+  def middleware(middleware, _field, _object), do: middleware
 
   def plugins do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()

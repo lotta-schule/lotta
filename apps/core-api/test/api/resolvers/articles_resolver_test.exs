@@ -53,7 +53,7 @@ defmodule Api.ArticleResolverTest do
 
   describe "article query" do
     @query """
-    query article($id: LottaId!) {
+    query article($id: ID!) {
       article(id: $id) {
         title
         preview
@@ -144,7 +144,7 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "article" => nil
                },
@@ -154,7 +154,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["article"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error for lehrer-restricted article to user", %{
@@ -168,7 +168,7 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "article" => nil
                },
@@ -178,7 +178,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["article"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error for lehrer-restricted article if user is not logged in", %{
@@ -190,7 +190,7 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "article" => nil
                },
@@ -200,7 +200,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["article"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -1327,7 +1327,7 @@ defmodule Api.ArticleResolverTest do
     end
 
     @query """
-    query articles($filter: ArticleFilter) {
+    query getArticles($filter: ArticleFilter) {
       articles(filter: $filter) {
         title
         preview
@@ -1342,7 +1342,8 @@ defmodule Api.ArticleResolverTest do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:web")
-        |> get("/api", query: @query, variables: %{filter: %{first: 2}})
+        |> get("/api", query: @query, variables: %{"filter" => %{"first" => 2}})
+        |> IO.inspect()
         |> json_response(200)
 
       assert res == %{
@@ -1368,8 +1369,8 @@ defmodule Api.ArticleResolverTest do
     end
 
     @query """
-    query getArticles($category_id: LottaId!) {
-      articles(categoryId: $category_id) {
+    query getArticles($category_id: ID!) {
+      articles(categoryID: $category_id) {
         title
         preview
         topic
@@ -1382,16 +1383,10 @@ defmodule Api.ArticleResolverTest do
     test "category: returns a list of articles", %{projekt_category: projekt_category} do
       request = %{category_id: projekt_category.id}
 
-      IO.inspect(request)
-
       res =
         build_conn()
         |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: request)
-        |> (fn conn ->
-              IO.inspect(conn)
-              conn
-            end).()
         |> json_response(200)
 
       assert res == %{
@@ -1432,7 +1427,7 @@ defmodule Api.ArticleResolverTest do
     end
 
     @query """
-    query articles($category_id: LottaId!) {
+    query articles($category_id: ID!) {
       articles(category_id: $category_id) {
         title
         preview
@@ -2414,7 +2409,7 @@ defmodule Api.ArticleResolverTest do
     end
 
     @query """
-    query articles($filter: ArticleFilter, $category_id: LottaId!) {
+    query articles($filter: ArticleFilter, $category_id: ID!) {
       articles(filter: $filter, category_id: $category_id) {
         title
         preview
@@ -2433,7 +2428,7 @@ defmodule Api.ArticleResolverTest do
         |> put_req_header("tenant", "slug:web")
         |> get("/api",
           query: @query,
-          variables: %{filter: %{first: 2}, category_id: projekt_category.id}
+          variables: %{"filter" => %{"first" => 2}, "category_id" => projekt_category.id}
         )
         |> json_response(200)
 
@@ -2504,7 +2499,7 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "unpublishedArticles" => nil
                },
@@ -2514,7 +2509,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["unpublishedArticles"]
                  }
                ]
-             }
+             } = res
     end
 
     test "return an error user is not logged in" do
@@ -2524,7 +2519,7 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "unpublishedArticles" => nil
                },
@@ -2534,7 +2529,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["unpublishedArticles"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -2595,7 +2590,7 @@ defmodule Api.ArticleResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "ownArticles" => nil
                },
@@ -2605,7 +2600,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["ownArticles"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -2782,7 +2777,7 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{article: %{title: "ABC"}})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "createArticle" => nil
                },
@@ -2792,13 +2787,13 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["createArticle"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "updateArticle mutation" do
     @query """
-    mutation updateArticle($id: LottaId!, $article: ArticleInput!) {
+    mutation updateArticle($id: ID!, $article: ArticleInput!) {
       updateArticle(id: $id, article: $article) {
         title
         preview
@@ -2894,7 +2889,7 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "updateArticle" => nil
                },
@@ -2904,7 +2899,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["updateArticle"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in", %{draft: draft} do
@@ -2914,7 +2909,7 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "updateArticle" => nil
                },
@@ -2924,13 +2919,13 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["updateArticle"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "deleteArticle mutation" do
     @query """
-    mutation deleteArticle($id: LottaId!) {
+    mutation deleteArticle($id: ID!) {
       deleteArticle(id: $id) {
         title
       }
@@ -2979,7 +2974,7 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "deleteArticle" => nil
                },
@@ -2989,7 +2984,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["deleteArticle"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in", %{draft: draft} do
@@ -2999,7 +2994,7 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "deleteArticle" => nil
                },
@@ -3009,13 +3004,13 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["deleteArticle"]
                  }
                ]
-             }
+             } = res
     end
   end
 
   describe "toggleArticlePin mutation" do
     @query """
-    mutation toggleArticlePin($id: LottaId!) {
+    mutation toggleArticlePin($id: ID!) {
       toggleArticlePin(id: $id) {
         title
         isPinnedToTop
@@ -3055,7 +3050,7 @@ defmodule Api.ArticleResolverTest do
         |> post("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "data" => %{
                  "toggleArticlePin" => nil
                },
@@ -3065,7 +3060,7 @@ defmodule Api.ArticleResolverTest do
                    "path" => ["toggleArticlePin"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in", %{vorausscheid: vorausscheid} do

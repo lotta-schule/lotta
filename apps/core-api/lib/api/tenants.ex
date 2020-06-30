@@ -8,7 +8,7 @@ defmodule Api.Tenants do
   alias Api.Repo
 
   alias Api.Tenants.{DefaultContent, Category, CustomDomain, Tenant, Widget}
-  alias Api.Accounts.{User, UserGroup}
+  alias Api.Accounts.User
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -181,15 +181,21 @@ defmodule Api.Tenants do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_tenant!(user, attrs \\ %{}) do
+  def create_tenant(user, attrs \\ %{}) do
     tenant =
       %Tenant{}
       |> Tenant.create_changeset(attrs)
-      |> Repo.insert!()
 
-    DefaultContent.create_default_content!(tenant, user)
-
-    tenant
+    with {:ok, tenant} <- Repo.insert(tenant),
+         _ <- DefaultContent.create_default_content(tenant, user) do
+      tenant
+    else
+      {:error, reason} = error ->
+        case Repo.in_transaction?() do
+          true -> Repo.rollback(reason)
+          false -> error
+        end
+    end
   end
 
   @doc """
@@ -382,7 +388,7 @@ defmodule Api.Tenants do
         user,
         user_group_ids
       ) do
-    category = get_category!(category_id)
+    category = get_category!(String.to_integer(category_id))
 
     cond do
       category == nil ->
@@ -400,7 +406,7 @@ defmodule Api.Tenants do
             join: cw in "categories_widgets",
             on: cw.widget_id == w.id,
             where:
-              cw.category_id == ^category_id and
+              cw.category_id == ^String.to_integer(category_id) and
                 (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or
                    ^User.is_admin?(user, tenant)),
             distinct: w.id
