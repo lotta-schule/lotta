@@ -182,7 +182,7 @@ defmodule Api.Tenants.DefaultContent do
           })
 
         {:ok, file} =
-          Accounts.create_file(%{
+          %Api.Accounts.File{
             user_id: user_id,
             tenant_id: tenant.id,
             parent_directory_id: shared_dir.id,
@@ -195,7 +195,8 @@ defmodule Api.Tenants.DefaultContent do
                 "application/pdf" -> "pdf"
               end,
             mime_type: type
-          })
+          }
+          |> Repo.insert()
 
         file
       end)

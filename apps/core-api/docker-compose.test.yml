@@ -5,7 +5,7 @@ services:
     environment:
       - "MIX_ENV=test"
       - "APP_ENVIRONMENT=test"
-      - "UGC_S3_COMPAT_ENDPOINT=mp4-dev-ugc.fra1.digitalocean.com"
+      - "UGC_S3_COMPAT_ENDPOINT=mp4-dev-ugc.fra1.digitaloceanspaces.com"
       - "UGC_S3_COMPAT_BUCKET=mp4-dev-ugc"
 
   postgres:

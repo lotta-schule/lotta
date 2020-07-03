@@ -188,7 +188,7 @@ defmodule Api.Tenants do
 
     with {:ok, tenant} <- Repo.insert(tenant),
          _ <- DefaultContent.create_default_content(tenant, user) do
-      tenant
+      {:ok, tenant}
     else
       {:error, reason} = error ->
         case Repo.in_transaction?() do

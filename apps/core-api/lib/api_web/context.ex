@@ -51,11 +51,12 @@ defmodule ApiWeb.Context do
       user_group_ids = Accounts.User.group_ids(current_user, tenant)
       user_is_admin = Accounts.User.is_admin?(current_user, tenant)
 
-      Task.start_link(fn ->
-        current_user
-        |> Repo.preload(:tenant)
-        |> Accounts.see_user()
-      end)
+      if Mix.env() != "test" do
+        Task.start_link(fn ->
+          current_user
+          |> Accounts.see_user()
+        end)
+      end
 
       context
       |> Map.put(:current_user, current_user)

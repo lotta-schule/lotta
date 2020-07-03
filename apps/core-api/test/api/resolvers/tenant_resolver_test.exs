@@ -4,7 +4,7 @@ defmodule Api.TenantResolverTest do
   """
 
   import Ecto.Query
-  use ApiWeb.ConnCase
+  use ApiWeb.ConnCase, async: false
   alias Api.Repo
   alias Api.Guardian
   alias Api.Accounts
@@ -243,7 +243,11 @@ defmodule Api.TenantResolverTest do
 
       assert res["data"]["createTenant"]["slug"] == "neu"
       assert res["data"]["createTenant"]["title"] == "Neu"
-      assert res["data"]["createTenant"]["categories"] == [%{"title" => "Startseite"}]
+
+      assert res["data"]["createTenant"]["categories"] == [
+               %{"title" => "Startseite"},
+               %{"title" => "Erste Schritte"}
+             ]
 
       res["data"]["createTenant"]["groups"]
       |> Enum.all?(fn group ->
@@ -367,7 +371,11 @@ defmodule Api.TenantResolverTest do
 
       assert res["data"]["createTenant"]["slug"] == "neu"
       assert res["data"]["createTenant"]["title"] == "Neu"
-      assert res["data"]["createTenant"]["categories"] == [%{"title" => "Startseite"}]
+
+      assert res["data"]["createTenant"]["categories"] == [
+               %{"title" => "Startseite"},
+               %{"title" => "Erste Schritte"}
+             ]
 
       res["data"]["createTenant"]["groups"]
       |> Enum.all?(fn group ->

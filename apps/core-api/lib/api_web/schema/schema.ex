@@ -1,8 +1,6 @@
 defmodule ApiWeb.Schema do
   @moduledoc false
 
-  @pipeline_modifier ApiWeb.Schema.PipelineModifier
-
   use Absinthe.Schema
 
   import_types(Absinthe.Plug.Types)

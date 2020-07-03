@@ -62,8 +62,12 @@ defmodule Api.Tenants.Tenant do
   end
 
   defp validate_slug(changeset) do
-    validate_change(changeset, :slug, fn _field_name, val ->
-      if val == "intern", do: [:slug, "ist schon belegt"], else: []
+    validate_change(changeset, :slug, fn :slug, slug ->
+      if slug == "intern" do
+        [slug: "ist schon belegt"]
+      else
+        []
+      end
     end)
   end
 
