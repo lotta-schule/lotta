@@ -36,6 +36,8 @@ test:
     POSTGRES_USER: lotta
     POSTGRES_DB: api_test
     REDIS_PASSWORD: lotta
+    UGC_S3_COMPAT_ENDPOINT: mp4-dev-ugc.fra1.digitaloceanspaaces.com
+    UGC_S3_COMPAT_BUCKET: mp4-dev-ugc
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
