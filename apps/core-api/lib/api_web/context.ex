@@ -51,7 +51,7 @@ defmodule ApiWeb.Context do
       user_group_ids = Accounts.User.group_ids(current_user, tenant)
       user_is_admin = Accounts.User.is_admin?(current_user, tenant)
 
-      if Mix.env() != "test" do
+      if System.get_env("APP_ENVIRONMENT") != "test" do
         Task.start_link(fn ->
           current_user
           |> Accounts.see_user()

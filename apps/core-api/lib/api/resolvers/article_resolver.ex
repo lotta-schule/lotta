@@ -50,33 +50,12 @@ defmodule Api.ArticleResolver do
     {:ok,
      Content.list_articles(
        tenant,
-       String.to_integer(category_id),
+       if(is_nil(category_id), do: nil, else: String.to_integer(category_id)),
        current_user,
        context[:user_group_ids],
        context[:user_is_admin],
        args[:filter]
      )}
-  end
-
-  def all(args, %{context: %{current_user: current_user, tenant: tenant} = context}) do
-    {:ok,
-     Content.list_articles(
-       tenant,
-       nil,
-       current_user,
-       context[:user_group_ids],
-       context[:user_is_admin],
-       args[:filter]
-     )}
-  end
-
-  def all(%{category_id: category_id} = args, %{context: %{tenant: tenant}}) do
-    {:ok,
-     Content.list_articles(tenant, String.to_integer(category_id), nil, [], false, args[:filter])}
-  end
-
-  def all(args, %{context: %{tenant: tenant}}) do
-    {:ok, Content.list_articles(tenant, nil, nil, [], false, args[:filter])}
   end
 
   def all(_args, _info) do
