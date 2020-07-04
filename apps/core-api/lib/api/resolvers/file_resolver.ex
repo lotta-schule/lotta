@@ -92,8 +92,9 @@ defmodule Api.FileResolver do
     end
   end
 
-  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) do
-    parent_directory = Accounts.get_directory!(String.to_integer(parent_directory_id))
+  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
+      when not is_nil(parent_directory_id) do
+    parent_directory = Accounts.get_directory!(parent_directory_id)
 
     case User.can_read_directory?(current_user, parent_directory) do
       true ->
@@ -109,7 +110,7 @@ defmodule Api.FileResolver do
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
         context: %{current_user: current_user, tenant: tenant}
       }) do
-    case Accounts.get_directory(String.to_integer(parent_directory_id)) do
+    case Accounts.get_directory(parent_directory_id) do
       directory when not is_nil(directory) ->
         directory = Repo.preload(directory, [:user, :tenant])
 
@@ -135,7 +136,7 @@ defmodule Api.FileResolver do
       target_directory =
         case args do
           %{parent_directory_id: target_directory_id} ->
-            Accounts.get_directory!(String.to_integer(target_directory_id))
+            Accounts.get_directory!(target_directory_id)
 
           _ ->
             source_directory
