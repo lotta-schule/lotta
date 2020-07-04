@@ -13,7 +13,13 @@ export interface DownloadProps {
 
 export const useStyles = makeStyles(theme => ({
     downloadItemWrapper: {
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
+        '&:last-child $downloadItemDivider': {
+            display: 'none'
+        }
+    },
+    downloadItemDivider: {
+        width: '100%'
     },
     downloadWrapperHeader: {
         display: 'flex',

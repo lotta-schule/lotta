@@ -89,7 +89,7 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                     </Typography>
                                 </div>
                             </Grid>
-                            <Divider style={{ width: '100%', }} />
+                            <Divider className={styles.downloadItemDivider} />
                         </Grid>
                     </div>
                 </div>
