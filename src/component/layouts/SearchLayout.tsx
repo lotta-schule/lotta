@@ -13,8 +13,15 @@ import searchBannerImage from './searchBanner.png';
 const useStyles = makeStyles(theme => ({
     inputSection: {
         backgroundColor: '#fff',
-        marginBottom: '1em',
-        padding: '8px'
+        marginBottom: theme.spacing(1),
+        paddingTop: theme.spacing(2),
+        padding: '8px',
+    },
+    result: {
+        marginTop: theme.spacing(1),
+    },
+    description: {
+        marginBottom: theme.spacing(2),
     }
 }));
 
@@ -35,17 +42,19 @@ const SearchLayout = memo(() => {
                 </Header>
 
                 <section className={styles.inputSection}>
+                    <Typography className={styles.description}>Gib ein oder mehrere Suchbegriffe in das Suchfeld ein.</Typography>
                     <TextField
                         fullWidth
                         autoFocus
                         variant={'outlined'}
+                        color={'secondary'}
                         id={'searchfield'}
                         label={'Suchbegriff'}
                         type={'search'}
                         value={searchText}
                         onChange={e => setSearchText(e.target.value)}
                     />
-                    <Typography variant={'body1'} component={'div'}>
+                    <Typography variant={'body1'} component={'div'} className={styles.result}>
                         {isLoading && <span><CircularProgress style={{ height: '1em', width: '1em' }} /> Beiträge werden gesucht ...</span>}
                         {!isLoading && data && <span>Es wurden {data.results.length} Beiträge gefunden</span>}
                         {!isLoading && !data && <span>&nbsp;</span>}
