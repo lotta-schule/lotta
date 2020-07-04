@@ -3,6 +3,9 @@ defmodule Api.TenantResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting tenants
   """
 
+  alias Ecto.Changeset
+  alias ApiWeb.ErrorHelpers
+  alias Api.Repo
   alias Api.Tenants
   alias Api.Accounts
   alias Api.Accounts.User
@@ -31,8 +34,8 @@ defmodule Api.TenantResolver do
         context: %{current_user: current_user}
       }) do
     if User.is_lotta_admin?(current_user) do
-      case Tenants.create_tenant(%{title: title, slug: slug}) do
-        {:ok, tenant, admin_group} ->
+      Repo.transaction(fn ->
+        user =
           case Accounts.get_user_by_email(email) do
             nil ->
               password =
@@ -44,8 +47,7 @@ defmodule Api.TenantResolver do
                 Accounts.register_user(%{
                   email: email,
                   name: name,
-                  password: password,
-                  tenant_id: tenant.id
+                  password: password
                 })
 
               user
@@ -53,16 +55,23 @@ defmodule Api.TenantResolver do
             user ->
               user
           end
-          |> Accounts.set_user_groups(tenant, [admin_group])
 
+        with {:ok, tenant} <- Tenants.create_tenant(user, %{title: title, slug: slug}),
+             {:ok, _user} <- Repo.update(Changeset.change(user, %{tenant_id: tenant.id})) do
+          tenant
+        else
+          {:error, reason} ->
+            Repo.rollback(reason)
+        end
+      end)
+      |> case do
+        {:ok, tenant} ->
           {:ok, tenant}
 
         {:error, changeset} ->
           {:error,
-           message: "Erstellen des Tenant fehlgeschlagen.", details: error_details(changeset)}
-
-        result ->
-          result
+           message: "Lotta konnte nicht erstellt werden",
+           details: ErrorHelpers.extract_error_details(changeset)}
       end
     else
       {:error, "Nur Lotta-Administratoren dürfen das."}
@@ -83,17 +92,24 @@ defmodule Api.TenantResolver do
     if current_user_has_admin_groups do
       {:error, "Der Nutzer ist schon Administrator bei lotta."}
     else
-      case Tenants.create_tenant(%{title: title, slug: slug}) do
-        {:ok, tenant, admin_group} ->
-          Accounts.set_user_groups(current_user, tenant, [admin_group])
-          Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, current_user)
+      Repo.transaction(fn ->
+        with {:ok, tenant} <- Tenants.create_tenant(current_user, %{title: title, slug: slug}),
+             {:ok, user} <- Repo.update(Changeset.change(current_user, %{tenant_id: tenant.id})) do
+          Api.Queue.EmailPublisher.send_tenant_creation_email(tenant, user)
+          tenant
+        else
+          {:error, reason} ->
+            Repo.rollback(reason)
+        end
+      end)
+      |> case do
+        {:ok, tenant} ->
           {:ok, tenant}
 
         {:error, changeset} ->
-          {
-            :error,
-            message: "Erstellen des Tenant fehlgeschlagen.", details: error_details(changeset)
-          }
+          {:error,
+           message: "Lotta konnte nicht erstellt werden",
+           details: ErrorHelpers.extract_error_details(changeset)}
       end
     end
   end
@@ -105,10 +121,5 @@ defmodule Api.TenantResolver do
     else
       {:error, "Nur Administratoren dürfen das."}
     end
-  end
-
-  defp error_details(%Ecto.Changeset{} = changeset) do
-    changeset
-    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
   end
 end

@@ -210,18 +210,17 @@ defmodule Api.ContentModuleResolverTest do
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "contentModuleResults" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Modul-Ergebnisse abrufen.",
                    "path" => ["contentModuleResults"]
                  }
                ]
-             }
+             } = res
     end
 
     test "return an error user is not logged in", %{test_formular: test_formular} do
@@ -231,18 +230,17 @@ defmodule Api.ContentModuleResolverTest do
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "contentModuleResults" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Modul-Ergebnisse abrufen.",
                    "path" => ["contentModuleResults"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

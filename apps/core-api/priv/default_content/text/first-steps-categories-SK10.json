@@ -1,0 +1,37 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "text": ""
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                }
+              ],
+              "src": "https://ugc.lotta.schule/ugc/b1f6cac7-1058-53d7-9bbc-e1945a7ed4c7",
+              "type": "image"
+            },
+            {
+              "text": "Gehen Sie auf Ihre Lotta-Seite. Den Link finden Sie in Ihrer E-Mail, die Ihnen nach erfolgreichem Einrichten Ihres Lottas gesendet wurde."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Wählen Sie im Banner \"anmelden\", um sich mit Ihrer Email-Adresse und Ihrem selbst gewählten Passwort anzumelden"
+            }
+          ],
+          "type": "list-item"
+        }
+      ],
+      "type": "unordered-list"
+    }
+  ]
+}

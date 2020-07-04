@@ -4,6 +4,8 @@ defmodule Api.FileResolver do
   """
 
   import Ecto.Query
+
+  alias ApiWeb.ErrorHelpers
   alias Api.Accounts
   alias Api.Accounts.{Directory, User}
   alias Api.Tenants.{Category, Tenant}
@@ -16,7 +18,7 @@ defmodule Api.FileResolver do
   def resolve_file_usage(%{parent_directory_id: parent_directory_id, id: id}, _args, %{
         context: %{current_user: current_user}
       })
-      when is_integer(id) do
+      when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
 
     if User.can_read_directory?(current_user, parent_directory) do
@@ -75,9 +77,9 @@ defmodule Api.FileResolver do
     end
   end
 
-  def file(%{id: id}, %{context: %{current_user: current_user}}) when is_integer(id) do
+  def file(%{id: id}, %{context: %{current_user: current_user}}) do
     file =
-      Accounts.get_file!(id)
+      Accounts.get_file!(String.to_integer(id))
       |> Repo.preload(:parent_directory)
 
     case file.user_id == current_user.id ||
@@ -90,9 +92,8 @@ defmodule Api.FileResolver do
     end
   end
 
-  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
-      when is_integer(parent_directory_id) do
-    parent_directory = Accounts.get_directory!(parent_directory_id)
+  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) do
+    parent_directory = Accounts.get_directory!(String.to_integer(parent_directory_id))
 
     case User.can_read_directory?(current_user, parent_directory) do
       true ->
@@ -108,7 +109,7 @@ defmodule Api.FileResolver do
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
         context: %{current_user: current_user, tenant: tenant}
       }) do
-    case Accounts.get_directory(parent_directory_id) do
+    case Accounts.get_directory(String.to_integer(parent_directory_id)) do
       directory when not is_nil(directory) ->
         directory = Repo.preload(directory, [:user, :tenant])
 
@@ -126,7 +127,7 @@ defmodule Api.FileResolver do
   def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     try do
       file =
-        Accounts.get_file!(id)
+        Accounts.get_file!(String.to_integer(id))
         |> Repo.preload([:tenant, :parent_directory])
 
       source_directory = file.parent_directory
@@ -134,7 +135,7 @@ defmodule Api.FileResolver do
       target_directory =
         case args do
           %{parent_directory_id: target_directory_id} ->
-            Accounts.get_directory!(target_directory_id)
+            Accounts.get_directory!(String.to_integer(target_directory_id))
 
           _ ->
             source_directory
@@ -155,7 +156,7 @@ defmodule Api.FileResolver do
   def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     try do
       file =
-        Accounts.get_file!(id)
+        Accounts.get_file!(String.to_integer(id))
         |> Repo.preload([:parent_directory])
 
       if User.can_write_directory?(current_user, file.parent_directory) do
@@ -213,11 +214,12 @@ defmodule Api.FileResolver do
         MediaConversionRequestPublisher.send_conversion_request(file)
         {:ok, file}
 
-      {:error, changeset} ->
-        {
-          :error,
-          message: "Upload fehlgeschlagen.", details: error_details(changeset)
-        }
+      {:error, error} ->
+        {:error,
+         [
+           "Fehler beim Anlegen der Datei",
+           details: ErrorHelpers.extract_error_details(error)
+         ]}
     end
   end
 
@@ -249,10 +251,5 @@ defmodule Api.FileResolver do
       "x-application/pdf" -> "pdf"
       _ -> "misc"
     end
-  end
-
-  defp error_details(%Ecto.Changeset{} = changeset) do
-    changeset
-    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
   end
 end

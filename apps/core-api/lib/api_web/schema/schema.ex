@@ -2,16 +2,20 @@ defmodule ApiWeb.Schema do
   @moduledoc false
 
   use Absinthe.Schema
+
   import_types(Absinthe.Plug.Types)
-  import_types(ApiWeb.Schema.Types.JSON)
-  import_types(ApiWeb.Schema.Types.LottaId)
   import_types(Absinthe.Type.Custom)
-  import_types(__MODULE__.TenantsTypes)
-  import_types(__MODULE__.AccountsTypes)
-  import_types(__MODULE__.ContentsTypes)
-  import_types(__MODULE__.ScheduleTypes)
-  import_types(__MODULE__.CalendarTypes)
-  import_types(__MODULE__.SearchTypes)
+  import_types(__MODULE__.CustomTypes.Json)
+
+  import_types(__MODULE__.Tenants)
+  import_types(__MODULE__.Tenants.{Category, Tenant, Widget})
+  import_types(__MODULE__.Accounts)
+  import_types(__MODULE__.Accounts.{File, User})
+  import_types(__MODULE__.Contents)
+  import_types(__MODULE__.Contents.Article)
+  import_types(__MODULE__.Schedule)
+  import_types(__MODULE__.Calendar)
+  import_types(__MODULE__.Search)
 
   query do
     import_fields(:accounts_queries)
@@ -46,6 +50,13 @@ defmodule ApiWeb.Schema do
 
     Map.put(ctx, :loader, loader)
   end
+
+  # I leave it here for quick reference how to add middleware
+  # def middleware(middleware, _field, %{identifier: :mutation}) do
+  #   middleware ++ [ApiWeb.Schema.Middleware.HandleChangesetErrors]
+  # end
+
+  def middleware(middleware, _field, _object), do: middleware
 
   def plugins do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()

@@ -5,6 +5,7 @@ defmodule Api.Accounts do
 
   require Logger
   import Ecto.Query
+  alias Ecto.Changeset
   alias Api.Repo
   alias Api.Tenants
   alias Api.Queue.EmailPublisher
@@ -158,35 +159,19 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  Assigns a group to a user
-
-  ## Examples
-
-      iex> set_user_groups(user, tenant, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> set_user_groups(user, tenant, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
+  Assigns a list of groups to a user.
+  Replaces all other group's of the given tenant.
+  See `Api.Accounts.User` for the used changeset.
   """
-  def set_user_groups(%User{} = user, %Tenant{} = tenant, groups) do
-    groups =
-      user
-      |> Repo.preload(:groups)
-      |> Map.fetch!(:groups)
-      |> Enum.filter(fn group -> group.tenant_id !== tenant.id end)
-      |> Enum.concat(groups)
-
-    user
-    |> Repo.preload(:groups)
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:groups, groups)
+  @spec set_user_groups(%User{}, %Tenant{}, [%UserGroup{}]) ::
+          {:ok, %User{}} | {:error, %Changeset{}}
+  def set_user_groups(user, tenant, groups) when not is_nil(user) and not is_nil(tenant) do
+    User.set_users_tenant_groups_changeset(user, tenant, groups)
     |> Repo.update()
   end
 
   @doc """
   Get groups which have a given enrollment token
-
   """
   def get_groups_by_enrollment_token(%Tenant{} = tenant, token) when is_binary(token) do
     from(g in UserGroup,

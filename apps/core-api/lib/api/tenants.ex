@@ -7,8 +7,8 @@ defmodule Api.Tenants do
   import Ecto.Query
   alias Api.Repo
 
-  alias Api.Tenants.{Category, CustomDomain, Tenant, Widget}
-  alias Api.Accounts.{User, UserGroup}
+  alias Api.Tenants.{DefaultContent, Category, CustomDomain, Tenant, Widget}
+  alias Api.Accounts.User
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -181,46 +181,20 @@ defmodule Api.Tenants do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_tenant(attrs \\ %{}) do
+  def create_tenant(user, attrs \\ %{}) do
     tenant =
       %Tenant{}
       |> Tenant.create_changeset(attrs)
 
-    case Repo.insert(tenant) do
-      {:ok, tenant} ->
-        %Category{
-          title: "Startseite",
-          sort_key: 0,
-          is_sidenav: false,
-          is_homepage: true,
-          tenant_id: tenant.id
-        }
-        |> Repo.insert()
-
-        {:ok, admin_group} =
-          %UserGroup{
-            name: "Administrator",
-            sort_key: 0,
-            is_admin_group: true,
-            tenant_id: tenant.id
-          }
-          |> Repo.insert()
-
-        ["Lehrer", "Schüler"]
-        |> Enum.with_index()
-        |> Enum.each(fn {name, i} ->
-          %UserGroup{
-            name: name,
-            sort_key: 10 + i * 10,
-            tenant_id: tenant.id
-          }
-          |> Repo.insert()
-        end)
-
-        {:ok, tenant, admin_group}
-
-      result ->
-        result
+    with {:ok, tenant} <- Repo.insert(tenant),
+         _ <- DefaultContent.create_default_content(tenant, user) do
+      {:ok, tenant}
+    else
+      {:error, reason} = error ->
+        case Repo.in_transaction?() do
+          true -> Repo.rollback(reason)
+          false -> error
+        end
     end
   end
 
@@ -414,7 +388,7 @@ defmodule Api.Tenants do
         user,
         user_group_ids
       ) do
-    category = get_category!(category_id)
+    category = get_category!(String.to_integer(category_id))
 
     cond do
       category == nil ->
@@ -432,7 +406,7 @@ defmodule Api.Tenants do
             join: cw in "categories_widgets",
             on: cw.widget_id == w.id,
             where:
-              cw.category_id == ^category_id and
+              cw.category_id == ^String.to_integer(category_id) and
                 (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or
                    ^User.is_admin?(user, tenant)),
             distinct: w.id

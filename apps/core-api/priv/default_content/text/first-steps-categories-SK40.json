@@ -1,0 +1,51 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "text": ""
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                }
+              ],
+              "src": "__REMOTE_URL____kategorien-anlegen-s2.jpg",
+              "type": "image"
+            },
+            {
+              "text": "Klicken Sie auf Ihr individuelles Menü \""
+            },
+            {
+              "bold": true,
+              "text": "MEIN PROFIL"
+            },
+            {
+              "text": "\"."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Da Sie Administrator der Seite sind, erscheint in Ihrem Menü \""
+            },
+            {
+              "bold": true,
+              "text": "Seite administrieren"
+            },
+            {
+              "text": "\". Klicken Sie hier!"
+            }
+          ],
+          "type": "list-item"
+        }
+      ],
+      "type": "unordered-list"
+    }
+  ]
+}

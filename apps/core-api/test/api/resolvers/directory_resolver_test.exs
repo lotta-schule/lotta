@@ -83,42 +83,42 @@ defmodule Api.DirectoryResolverTest do
                  "directories" => [
                    %{
                      "name" => "irgendwas",
-                     "user" => %{"id" => admin_account.id},
+                     "user" => %{"id" => Integer.to_string(admin_account.id)},
                      "parentDirectory" => nil
                    },
                    %{
                      "name" => "logos",
-                     "user" => %{"id" => admin_account.id},
+                     "user" => %{"id" => Integer.to_string(admin_account.id)},
                      "parentDirectory" => nil
                    },
                    %{
                      "name" => "Meine Bilder",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => admin_account.id}
+                     "user" => %{"id" => Integer.to_string(admin_account.id)}
                    },
                    %{
                      "name" => "Meine Dokumente",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => admin_account.id}
+                     "user" => %{"id" => Integer.to_string(admin_account.id)}
                    },
                    %{
                      "name" => "Meine Tondokumente",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => admin_account.id}
+                     "user" => %{"id" => Integer.to_string(admin_account.id)}
                    },
                    %{
                      "name" => "Meine Videos",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => admin_account.id}
+                     "user" => %{"id" => Integer.to_string(admin_account.id)}
                    },
                    %{
                      "name" => "Mein Profil",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => admin_account.id}
+                     "user" => %{"id" => Integer.to_string(admin_account.id)}
                    },
                    %{
                      "name" => "podcast",
-                     "user" => %{"id" => admin_account.id},
+                     "user" => %{"id" => Integer.to_string(admin_account.id)},
                      "parentDirectory" => nil
                    },
                    %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
@@ -144,42 +144,42 @@ defmodule Api.DirectoryResolverTest do
                  "directories" => [
                    %{
                      "name" => "avatar",
-                     "user" => %{"id" => user2_account.id},
+                     "user" => %{"id" => Integer.to_string(user2_account.id)},
                      "parentDirectory" => nil
                    },
                    %{
                      "name" => "ehrenberg-on-air",
-                     "user" => %{"id" => user2_account.id},
+                     "user" => %{"id" => Integer.to_string(user2_account.id)},
                      "parentDirectory" => nil
                    },
                    %{
                      "name" => "Meine Bilder",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user2_account.id}
+                     "user" => %{"id" => Integer.to_string(user2_account.id)}
                    },
                    %{
                      "name" => "Meine Dokumente",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user2_account.id}
+                     "user" => %{"id" => Integer.to_string(user2_account.id)}
                    },
                    %{
                      "name" => "Meine Tondokumente",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user2_account.id}
+                     "user" => %{"id" => Integer.to_string(user2_account.id)}
                    },
                    %{
                      "name" => "Meine Videos",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user2_account.id}
+                     "user" => %{"id" => Integer.to_string(user2_account.id)}
                    },
                    %{
                      "name" => "Mein Profil",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user2_account.id}
+                     "user" => %{"id" => Integer.to_string(user2_account.id)}
                    },
                    %{
                      "name" => "podcast",
-                     "user" => %{"id" => user2_account.id},
+                     "user" => %{"id" => Integer.to_string(user2_account.id)},
                      "parentDirectory" => nil
                    },
                    %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
@@ -206,27 +206,27 @@ defmodule Api.DirectoryResolverTest do
                    %{
                      "name" => "Meine Bilder",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user_account.id}
+                     "user" => %{"id" => Integer.to_string(user_account.id)}
                    },
                    %{
                      "name" => "Meine Dokumente",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user_account.id}
+                     "user" => %{"id" => Integer.to_string(user_account.id)}
                    },
                    %{
                      "name" => "Meine Tondokumente",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user_account.id}
+                     "user" => %{"id" => Integer.to_string(user_account.id)}
                    },
                    %{
                      "name" => "Meine Videos",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user_account.id}
+                     "user" => %{"id" => Integer.to_string(user_account.id)}
                    },
                    %{
                      "name" => "Mein Profil",
                      "parentDirectory" => nil,
-                     "user" => %{"id" => user_account.id}
+                     "user" => %{"id" => Integer.to_string(user_account.id)}
                    },
                    %{"name" => "hintergrund", "user" => nil, "parentDirectory" => nil},
                    %{"name" => "logos", "user" => nil, "parentDirectory" => nil}
@@ -254,16 +254,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"directories" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directories"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of private directory and user is admin", %{
@@ -285,16 +284,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"directories" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directories"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -384,16 +382,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"directory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of private directory and user is admin", %{
@@ -407,16 +404,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"directory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["directory"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -453,7 +449,7 @@ defmodule Api.DirectoryResolverTest do
                  "createDirectory" => %{
                    "name" => "Neuer Ordner",
                    "parentDirectory" => nil,
-                   "user" => %{"id" => user2_account.id},
+                   "user" => %{"id" => Integer.to_string(user2_account.id)},
                    "tenant" => %{"slug" => "web"}
                  }
                }
@@ -480,7 +476,7 @@ defmodule Api.DirectoryResolverTest do
                  "createDirectory" => %{
                    "name" => "Neuer Ordner",
                    "parentDirectory" => %{"name" => "avatar"},
-                   "user" => %{"id" => user2_account.id},
+                   "user" => %{"id" => Integer.to_string(user2_account.id)},
                    "tenant" => %{"slug" => "web"}
                  }
                }
@@ -501,16 +497,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of private source directory and user is admin", %{
@@ -527,16 +522,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "create a new root public directory as admin", %{admin_jwt: admin_jwt} do
@@ -596,16 +590,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when creating a directory as a subfolder of a public directory as non-admin",
@@ -620,16 +613,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner hier nicht erstellen.",
                    "path" => ["createDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when directory does not exist", %{admin_jwt: admin_jwt} do
@@ -643,16 +635,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Ordner nicht gefunden.",
                    "path" => ["createDirectory"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -734,16 +725,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of private source directory and user is admin", %{
@@ -760,16 +750,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when directory does not exist", %{admin_jwt: admin_jwt} do
@@ -780,16 +769,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: 0, name: "newdirectoryname"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Datei oder Ordner nicht gefunden.",
                    "path" => ["updateDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "rename a directory in public directory as admin", %{
@@ -824,16 +812,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du kannst diesen Ordner nicht hierher verschieben.",
                    "path" => ["updateDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when trying to move a directory from public directory as non-admin", %{
@@ -854,16 +841,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when trying to move a directory to public directory as non-admin", %{
@@ -881,16 +867,15 @@ defmodule Api.DirectoryResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht bearbeiten.",
                    "path" => ["updateDirectory"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -949,16 +934,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht löschen.",
                    "path" => ["deleteDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of directory as non-admin", %{
@@ -980,16 +964,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht löschen.",
                    "path" => ["deleteDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when directory does not exist", %{admin_jwt: admin_jwt} do
@@ -1000,16 +983,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Ordner nicht gefunden.",
                    "path" => ["deleteDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "deletes a public directory as admin if directory is empty", %{
@@ -1049,16 +1031,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Es dürfen nur leere Ordner gelöscht werden.",
                    "path" => ["deleteDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "deletes own directory as user if directory is empty", %{
@@ -1100,16 +1081,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Es dürfen nur leere Ordner gelöscht werden.",
                    "path" => ["deleteDirectory"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when trying to delete a public directory as non-admin", %{
@@ -1123,16 +1103,15 @@ defmodule Api.DirectoryResolverTest do
         |> post("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diesen Ordner nicht löschen.",
                    "path" => ["deleteDirectory"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

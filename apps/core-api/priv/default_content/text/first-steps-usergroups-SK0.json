@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "text": "Sie haben in Lotta die Möglichkeit, "
+        },
+        {
+          "bold": true,
+          "text": "unbegrenzt Nutzergruppen"
+        },
+        {
+          "text": " anzulegen. Für jede Nutzergruppe haben Sie weiterhin die Möglichkeit, einen Einschreibeschlüssel anzulegen. Ein Einschreibeschlüssel kann jede beliebige Buchstaben-, Zahlen- und Zeichenkombination sein. Mit einem gültigen Einschreibeschlüssel können sich die Nutzer ihrer Homepage "
+        },
+        {
+          "bold": true,
+          "text": "selbständig"
+        },
+        {
+          "text": " in die entsprechenden Nutzergruppen "
+        },
+        {
+          "bold": true,
+          "text": "einschreiben"
+        },
+        {
+          "text": "."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Sie haben weiterhin die Möglichkeit die Sichtbarkeit ihrer Kategorien (Menüpunkte) für Nutzergruppen einzuschränken. Damit können Sie in Ihrem Lotta "
+        },
+        {
+          "bold": true,
+          "text": "geschützte Bereiche"
+        },
+        {
+          "text": " schaffen, die nur die entsprechenden Nutzergruppen sehen."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Zusätzlich können alle "
+        },
+        {
+          "bold": true,
+          "text": "Marginale"
+        },
+        {
+          "text": "n beliebig an Kategorien angehängt werden. Sie erscheinen rechts neben den Beitragsvorschauen in der jeweiligen Kategorie für die Nutzer, für die sie als Sichtbar freigeschaltet sind."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Jeder Beitrag, der in Lotta erstellt wird, wird durch Administratoren freigeschaltet. Hierbei muss die Sichtbarkeit für die entsprechenden Nutzergruppen eingestellt werden. Damit garantieren wir, dass auf Ihrer Homepage jeder Besucher nur das zu sehen bekommt, was er sehen soll."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Gruppen in Lotta zu erstellen ist einfach und schnell gemacht. Gehen Sie wie folgt vor:"
+        }
+      ],
+      "type": "paragraph"
+    }
+  ]
+}

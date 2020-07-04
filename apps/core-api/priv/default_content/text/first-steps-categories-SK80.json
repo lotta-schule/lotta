@@ -1,0 +1,71 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "text": ""
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                }
+              ],
+              "src": "__REMOTE_URL____kategorien-anlegen-s6.jpg",
+              "type": "image"
+            },
+            {
+              "text": "Ihre Kategorie ist nun angelegt, was Sie am Menü oben und in der Kategorieübersicht auf der linken Seite erkennen"
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Nun haben Sie die Möglichkeit diverse Einstellungen für die neu erstellte Kategorie vorzunehmen. Was einzelne Einstellungen bewirken wird Ihnen weiter unten im Beitrag"
+            },
+            {
+              "italic": true,
+              "text": " "
+            },
+            {
+              "text": "beschrieben."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Weitere Möglichkeiten zum Einrichten und Bearbeiten von "
+            },
+            {
+              "italic": true,
+              "text": "Kategorien"
+            },
+            {
+              "text": " finden Sie in folgendem Beitrag auf unserem Hilfeportal: "
+            },
+            {
+              "children": [
+                {
+                  "text": "https://info.lotta.schule/a/1065-04-Kategorien-erstellen-und-bearbeiten"
+                }
+              ],
+              "href": "https://info.lotta.schule/a/1065-04-Kategorien-erstellen-und-bearbeiten",
+              "type": "link"
+            },
+            {
+              "text": ""
+            }
+          ],
+          "type": "list-item"
+        }
+      ],
+      "type": "unordered-list"
+    }
+  ]
+}

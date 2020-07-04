@@ -8,7 +8,7 @@ defmodule Api.ArticleResolver do
   alias Api.Accounts.User
 
   def get(%{id: id}, %{context: %{tenant: tenant, current_user: current_user}}) do
-    article = Repo.preload(Content.get_article!(id), :tenant)
+    article = Repo.preload(Content.get_article!(String.to_integer(id)), :tenant)
 
     if User.is_author?(current_user, article) || User.is_admin?(current_user, tenant) do
       {:ok, article}
@@ -21,7 +21,7 @@ defmodule Api.ArticleResolver do
   end
 
   def get(%{id: id}, _info) do
-    article = Repo.preload(Content.get_article!(id), :groups)
+    article = Repo.preload(Content.get_article!(String.to_integer(id)), :groups)
 
     case article.groups do
       [] ->
@@ -50,7 +50,7 @@ defmodule Api.ArticleResolver do
     {:ok,
      Content.list_articles(
        tenant,
-       category_id,
+       String.to_integer(category_id),
        current_user,
        context[:user_group_ids],
        context[:user_is_admin],
@@ -71,7 +71,8 @@ defmodule Api.ArticleResolver do
   end
 
   def all(%{category_id: category_id} = args, %{context: %{tenant: tenant}}) do
-    {:ok, Content.list_articles(tenant, category_id, nil, [], false, args[:filter])}
+    {:ok,
+     Content.list_articles(tenant, String.to_integer(category_id), nil, [], false, args[:filter])}
   end
 
   def all(args, %{context: %{tenant: tenant}}) do
@@ -135,7 +136,7 @@ defmodule Api.ArticleResolver do
   end
 
   def update(%{id: id, article: article_input}, %{context: %{tenant: tenant} = context}) do
-    article = Content.get_article!(id)
+    article = Content.get_article!(String.to_integer(id))
 
     cond do
       is_nil(context[:current_user]) ->
@@ -152,7 +153,7 @@ defmodule Api.ArticleResolver do
   end
 
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    article = Content.get_article!(id)
+    article = Content.get_article!(String.to_integer(id))
 
     cond do
       is_nil(context[:current_user]) ->
@@ -171,7 +172,7 @@ defmodule Api.ArticleResolver do
   def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant, current_user: current_user}}) do
     case User.is_admin?(current_user, tenant) do
       true ->
-        Content.toggle_article_pin(article_id)
+        Content.toggle_article_pin(String.to_integer(article_id))
 
       false ->
         {:error, "Nur Administratoren dürfen Beiträge anpinnen."}

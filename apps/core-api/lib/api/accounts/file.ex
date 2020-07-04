@@ -8,8 +8,6 @@ defmodule Api.Accounts.File do
   import Ecto.Changeset
 
   schema "files" do
-    field :path, :string
-    field :is_public, :boolean
     field :mime_type, :string
     field :file_type, :string
     field :filename, :string
@@ -36,13 +34,7 @@ defmodule Api.Accounts.File do
     file
     |> cast(attrs, [
       :filename,
-      :filesize,
-      :remote_location,
-      :mime_type,
-      :file_type,
-      :parent_directory_id,
-      :user_id,
-      :tenant_id
+      :parent_directory_id
     ])
     |> validate_required([
       :filename,

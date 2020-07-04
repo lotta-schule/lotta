@@ -252,18 +252,17 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{title: "New Widget", type: "CALENDAR"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "createWidget" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets erstellen.",
                    "path" => ["createWidget"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in" do
@@ -273,18 +272,17 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{title: "New Widget", type: "CALENDAR"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "createWidget" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets erstellen.",
                    "path" => ["createWidget"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -309,14 +307,14 @@ defmodule Api.WidgetResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "updateWidget" => %{
                    "title" => "Changed Widget",
                    "type" => "CALENDAR"
                  }
                }
-             }
+             } = res
     end
 
     test "returns an error if user is not admin", %{user_jwt: user_jwt, widget: widget} do
@@ -330,18 +328,17 @@ defmodule Api.WidgetResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "updateWidget" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
                    "path" => ["updateWidget"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in", %{widget: widget} do
@@ -354,18 +351,17 @@ defmodule Api.WidgetResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "updateWidget" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
                    "path" => ["updateWidget"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -389,7 +385,7 @@ defmodule Api.WidgetResolverTest do
       assert res == %{
                "data" => %{
                  "deleteWidget" => %{
-                   "id" => widget.id
+                   "id" => Integer.to_string(widget.id)
                  }
                }
              }
@@ -403,18 +399,17 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteWidget" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Marginalen löschen.",
                    "path" => ["deleteWidget"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if user is not logged in" do
@@ -424,18 +419,17 @@ defmodule Api.WidgetResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteWidget" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Marginalen löschen.",
                    "path" => ["deleteWidget"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

@@ -95,18 +95,17 @@ defmodule Api.UserGroupResolverTest do
         |> get("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "group" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
                    "path" => ["group"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -116,18 +115,17 @@ defmodule Api.UserGroupResolverTest do
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "group" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
                    "path" => ["group"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -183,18 +181,17 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Gruppe existiert nicht.",
                    "path" => ["UpdateUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not an admin", %{
@@ -214,18 +211,17 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
                    "path" => ["UpdateUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -241,18 +237,17 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "UpdateUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
                    "path" => ["UpdateUserGroup"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -294,18 +289,17 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Gruppe existiert nicht.",
                    "path" => ["deleteUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not an admin", %{
@@ -319,18 +313,17 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen löschen.",
                    "path" => ["deleteUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -340,18 +333,17 @@ defmodule Api.UserGroupResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "deleteUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen löschen.",
                    "path" => ["deleteUserGroup"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -408,18 +400,17 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "createUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen erstellen.",
                    "path" => ["createUserGroup"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -435,18 +426,17 @@ defmodule Api.UserGroupResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "createUserGroup" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Gruppen erstellen.",
                    "path" => ["createUserGroup"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

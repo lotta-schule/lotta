@@ -160,16 +160,15 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"file" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diese Datei zu lesen.",
                    "path" => ["file"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of private directory and user is admin", %{
@@ -183,16 +182,15 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"file" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diese Datei zu lesen.",
                    "path" => ["file"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -405,17 +403,17 @@ defmodule Api.FileResolverTest do
                  "files" => [
                    %{
                      "filename" => "pc3.m4v",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "podcast"}
                    },
                    %{
                      "filename" => "podcast1.mp4",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "podcast"}
                    },
                    %{
                      "filename" => "podcast2.mov",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "podcast"}
                    }
                  ]
@@ -440,22 +438,22 @@ defmodule Api.FileResolverTest do
                  "files" => [
                    %{
                      "filename" => "logo1.jpg",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    },
                    %{
                      "filename" => "logo2.jpg",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    },
                    %{
                      "filename" => "logo3.png",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    },
                    %{
                      "filename" => "logo4.png",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    }
                  ]
@@ -480,22 +478,22 @@ defmodule Api.FileResolverTest do
                  "files" => [
                    %{
                      "filename" => "logo1.jpg",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    },
                    %{
                      "filename" => "logo2.jpg",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    },
                    %{
                      "filename" => "logo3.png",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    },
                    %{
                      "filename" => "logo4.png",
-                     "userId" => admin_account.id,
+                     "userId" => Integer.to_string(admin_account.id),
                      "parentDirectory" => %{"name" => "logos"}
                    }
                  ]
@@ -522,16 +520,15 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"files" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["files"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of private directory and user is admin", %{
@@ -553,16 +550,15 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"files" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
                    "path" => ["files"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -616,16 +612,15 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when user is not owner of private source directory and user is admin", %{
@@ -642,16 +637,15 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when file does not exist", %{admin_jwt: admin_jwt} do
@@ -662,16 +656,15 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: 0, filename: "neuername.test"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Datei oder Ordner nicht gefunden.",
                    "path" => ["updateFile"]
                  }
                ]
-             }
+             } = res
     end
 
     test "move a file in public directory as admin", %{
@@ -715,16 +708,15 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when trying to move a file to public directory as non-admin", %{
@@ -742,16 +734,15 @@ defmodule Api.FileResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -789,16 +780,15 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Du darfst diese Datei nicht löschen.",
                    "path" => ["deleteFile"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when file does not exist", %{admin_jwt: admin_jwt} do
@@ -809,16 +799,15 @@ defmodule Api.FileResolverTest do
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"deleteFile" => nil},
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Datei nicht gefunden.",
                    "path" => ["deleteFile"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -848,15 +837,14 @@ defmodule Api.FileResolverTest do
       |> post("/api", query: @query, variables: %{id: public_file.id})
       |> json_response(200)
 
-    assert res == %{
+    assert %{
              "data" => %{"deleteFile" => nil},
              "errors" => [
                %{
-                 "locations" => [%{"column" => 0, "line" => 2}],
                  "message" => "Du darfst diese Datei nicht löschen.",
                  "path" => ["deleteFile"]
                }
              ]
-           }
+           } = res
   end
 end

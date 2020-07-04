@@ -23,7 +23,7 @@ services:
     working_dir: /usr/src/svc
     ports:
       - 4000:4000
-    command: mix phx.server
+    command: iex -S mix phx.server
     depends_on:
       - rabbitmq
       - postgres
@@ -39,6 +39,8 @@ services:
       MIX_ENV: dev
     env_file:
       - .env
+    tty: true
+    stdin_open: true
 
 
   postgres:

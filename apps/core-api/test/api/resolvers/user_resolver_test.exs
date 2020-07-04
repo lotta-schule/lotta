@@ -61,7 +61,7 @@ defmodule Api.UserResolverTest do
       assert res == %{
                "data" => %{
                  "currentUser" => %{
-                   "id" => admin.id,
+                   "id" => Integer.to_string(admin.id),
                    "email" => "alexis.rinaldoni@lotta.schule",
                    "name" => "Alexis Rinaldoni",
                    "nickname" => "Der Meister"
@@ -134,18 +134,17 @@ defmodule Api.UserResolverTest do
         |> get("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "users" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
                    "path" => ["users"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -274,18 +273,17 @@ defmodule Api.UserResolverTest do
         |> get("/api", query: @query, variables: %{searchtext: "De"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "searchUsers" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
                    "path" => ["searchUsers"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should throw an error if user is not logged in" do
@@ -295,18 +293,17 @@ defmodule Api.UserResolverTest do
         |> get("/api", query: @query, variables: %{searchtext: "De"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "searchUsers" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
                    "path" => ["searchUsers"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -368,18 +365,17 @@ defmodule Api.UserResolverTest do
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "user" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
                    "path" => ["user"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not logged in" do
@@ -389,18 +385,17 @@ defmodule Api.UserResolverTest do
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "user" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
                    "path" => ["user"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -480,19 +475,18 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "register" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Registrierung fehlgeschlagen.",
                    "details" => %{"email" => ["ist schon belegt"]},
                    "path" => ["register"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when no password is given" do
@@ -508,19 +502,18 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "register" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Registrierung fehlgeschlagen.",
                    "details" => %{"password" => ["darf nicht leer sein"]},
                    "path" => ["register"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when no name is given" do
@@ -536,19 +529,18 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "register" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Registrierung fehlgeschlagen.",
                    "details" => %{"name" => ["darf nicht leer sein"]},
                    "path" => ["register"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns error when hide_full_name is selected but no nickname is given" do
@@ -568,19 +560,18 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "register" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Registrierung fehlgeschlagen.",
                    "details" => %{"nickname" => ["darf nicht leer sein"]},
                    "path" => ["register"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -616,18 +607,17 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "login" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Falsche Zugangsdaten.",
                    "path" => ["login"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if the password is wrong" do
@@ -640,18 +630,17 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "login" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Falsche Zugangsdaten.",
                    "path" => ["login"]
                  }
                ]
-             }
+             } = res
     end
 
     test "returns an error if the user is blocked for this tenant" do
@@ -664,19 +653,18 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "login" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" =>
                      "Du wurdest für diese Seite geblockt. Du darfst dich nicht anmelden.",
                    "path" => ["login"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -803,18 +791,17 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "resetPassword" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut.",
                    "path" => ["resetPassword"]
                  }
                ]
-             }
+             } = res
 
       Redix.command(:redix, ["FLUSHALL"])
     end
@@ -837,18 +824,17 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "resetPassword" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut.",
                    "path" => ["resetPassword"]
                  }
                ]
-             }
+             } = res
 
       Redix.command(:redix, ["FLUSHALL"])
     end
@@ -865,7 +851,6 @@ defmodule Api.UserResolverTest do
       }
     }
     """
-
     test "should return user with requested groups if user is admin", %{
       admin_jwt: admin_jwt,
       user2: user2,
@@ -910,18 +895,17 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "setUserGroups" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nutzer mit der id 0 nicht gefunden.",
                    "path" => ["setUserGroups"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user is not an admin", %{
@@ -940,18 +924,17 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "setUserGroups" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Benutzern Gruppen zuweisen.",
                    "path" => ["setUserGroups"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -997,16 +980,15 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Falsche Zugangsdaten.",
                    "path" => ["updatePassword"]
                  }
                ],
                "data" => %{"updatePassword" => nil}
-             }
+             } = res
     end
 
     test "should return an error when the new password is too short", %{user_jwt: user_jwt} do
@@ -1020,17 +1002,16 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{"updatePassword" => nil},
                "errors" => [
                  %{
                    "details" => %{"password" => ["sollte mindestens 6 Zeichen lang sein"]},
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Passwort ändern fehlgeschlagen.",
                    "path" => ["updatePassword"]
                  }
                ]
-             }
+             } = res
     end
   end
 
@@ -1131,18 +1112,17 @@ defmodule Api.UserResolverTest do
         |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: false})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "setUserBlocked" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nur Administratoren dürfen Benutzer blocken.",
                    "path" => ["setUserBlocked"]
                  }
                ]
-             }
+             } = res
     end
 
     test "should return an error if user does not exist", %{admin_jwt: admin_jwt} do
@@ -1153,18 +1133,17 @@ defmodule Api.UserResolverTest do
         |> post("/api", query: @query, variables: %{id: 0, isBlocked: true})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "setUserBlocked" => nil
                },
                "errors" => [
                  %{
-                   "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Nutzer mit der id 0 nicht gefunden.",
                    "path" => ["setUserBlocked"]
                  }
                ]
-             }
+             } = res
     end
   end
 end

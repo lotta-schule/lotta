@@ -63,9 +63,10 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
       # Must take care not to add a same user twice to an article, so first getting the valid user's articles
       keepers_article_ids =
         Repo.all(
-          from repo in "article_users",
+          from(repo in "article_users",
             select: repo.article_id,
             where: repo.user_id == ^keep_user.id
+          )
         )
 
       {n, _} =
@@ -103,9 +104,10 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
       # Same as with articles, make sure not to add someone twice
       keepers_user_groups =
         Repo.all(
-          from repo in "user_user_group",
+          from(repo in "user_user_group",
             select: repo.user_group_id,
             where: repo.user_id == ^keep_user.id
+          )
         )
 
       {n, _} =
@@ -121,9 +123,10 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
       # Same as with articles, make sure not to add someone twice
       keepers_user_enrollment_tokens =
         Repo.all(
-          from repo in "users_enrollment_tokens",
+          from(repo in "users_enrollment_tokens",
             select: repo.enrollment_token,
             where: repo.user_id == ^keep_user.id
+          )
         )
 
       {n, _} =
@@ -144,7 +147,7 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
       Repo.delete_all(from(repo in "users_enrollment_tokens", where: repo.user_id in ^del_users))
 
       IO.inspect("Now delete the users")
-      Repo.delete_all(from u in User, where: u.id in ^del_users)
+      Repo.delete_all(from(u in User, where: u.id in ^del_users))
       IO.inspect("done.")
     end)
 
