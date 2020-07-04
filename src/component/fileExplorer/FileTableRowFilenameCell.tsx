@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useLayoutEffect, useRef, useState, useContext } from 'react';
 import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
-import { IconButton, InputAdornment, TableCell, TextField, Tooltip, makeStyles, LinearProgress } from '@material-ui/core';
+import { IconButton, InputAdornment, TableCell, TextField, Tooltip, makeStyles, CircularProgress } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';
@@ -122,7 +122,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(({ f
                         InputProps={{
                             endAdornment: (isLoadingUpdateFile || isLoadingUpdateDirectory) ? (
                                 <InputAdornment position={'end'}>
-                                    <LinearProgress style={{ width: '1em', height: '1em' }} />
+                                    <CircularProgress style={{ width: '1em', height: '1em' }} />
                                 </InputAdornment>
                             ) : (
                                     <InputAdornment position={'end'}>

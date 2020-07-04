@@ -2,7 +2,7 @@ import React, { memo, Suspense, lazy } from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deDE } from '@material-ui/core/locale';
-import { LinearProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { ClientModel } from 'model';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -34,7 +34,7 @@ export const App = memo(() => {
     if (!calledTenant || !calledCurrentUser || isLoadingTenant || isLoadingCurrentUser) {
         return (
             <div>
-                <LinearProgress />
+                <CircularProgress />
             </div>
         );
     }

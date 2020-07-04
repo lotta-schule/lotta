@@ -1,5 +1,5 @@
 import React, { ChangeEvent, memo, useEffect, useState } from 'react';
-import { LinearProgress, TextField } from '@material-ui/core';
+import { CircularProgress, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import { GetTopicsQuery } from 'api/query/GetTopicsQuery';
@@ -55,7 +55,7 @@ export const SelectTopicAutocomplete = memo<SelectTopicAutocompleteProps>(({ val
                         ...params.InputProps,
                         endAdornment: (
                             <>
-                                {isLoading ? <LinearProgress /> : null}
+                                {isLoading ? <CircularProgress color={'inherit'} size={20} /> : null}
                                 {params.InputProps.endAdornment}
                             </>
                         ),

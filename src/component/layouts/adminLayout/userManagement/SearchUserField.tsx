@@ -1,5 +1,5 @@
 import React, { ChangeEvent, memo, useState, useEffect } from 'react';
-import { LinearProgress, Grid, TextField, Typography } from '@material-ui/core';
+import { CircularProgress, Grid, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { Autocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
@@ -79,7 +79,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
                         ...params.InputProps,
                         endAdornment: (
                             <React.Fragment>
-                                {isLoading ? <LinearProgress /> : null}
+                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
                                 {params.InputProps.endAdornment}
                             </React.Fragment>
                         ),

@@ -1,5 +1,5 @@
 import React, { memo, useContext } from 'react';
-import { Dialog, DialogTitle, List, ListItem, ListItemAvatar, LinearProgress, ListItemText } from '@material-ui/core';
+import { Dialog, DialogTitle, List, ListItem, ListItemAvatar, CircularProgress, ListItemText } from '@material-ui/core';
 import { ErrorOutline } from '@material-ui/icons';
 import { useUploads } from './context/UploadQueueContext';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,10 @@ export const ActiveUploadsModal = memo(() => {
                                         <ErrorOutline color={'error'} />
                                     )}
                                     {!upload.error && (
-                                        <LinearProgress />
+                                        <CircularProgress
+                                            variant={'static'}
+                                            value={upload.uploadProgress}
+                                        />
                                     )}
                                 </>
                             </ListItemAvatar>

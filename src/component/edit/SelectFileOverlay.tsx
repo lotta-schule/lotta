@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo, useState, lazy, Suspense } from 'react';
 import { FileModel } from '../../model';
 import { EditOverlay } from './EditOverlay';
-import { DialogTitle, LinearProgress } from '@material-ui/core';
+import { DialogTitle, CircularProgress } from '@material-ui/core';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
 const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
@@ -22,7 +22,7 @@ export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo
                 {children}
             </EditOverlay>
             <ResponsiveFullScreenDialog open={isSelectFileDialogOpen} onClose={() => setIsSelectFileDialogOpen(false)} fullWidth>
-                <Suspense fallback={<LinearProgress />}>
+                <Suspense fallback={<CircularProgress />}>
                     <DialogTitle>Datei auswählen</DialogTitle>
                     <FileExplorer
                         style={{ padding: '0 .5em' }}

@@ -1,5 +1,5 @@
 import React, { MouseEvent, memo, useContext, useCallback, useEffect, useMemo } from 'react';
-import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, LinearProgress, IconButton, fade, Typography } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, CircularProgress, IconButton, fade, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useQuery } from '@apollo/client';
 import { ArrowBackRounded } from '@material-ui/icons';
@@ -288,7 +288,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                             )}
                         </TableCell>
                         <TableCell>
-                            {isLoading && <LinearProgress   />}
+                            {isLoading && <CircularProgress size={'1rem'} />}
                             {!isLoading && state.currentPath.length > 1 && (
                                 <IconButton
                                     size={'small'}

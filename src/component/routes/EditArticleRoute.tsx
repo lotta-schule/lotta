@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { ArticleModel } from 'model';
-import { LinearProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { RouteComponentProps } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
@@ -14,7 +14,7 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ mat
     const { data, error, loading: isLoading } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id } });
 
     if (!data || isLoading) {
-        return <div><LinearProgress /></div>;
+        return <div><CircularProgress /></div>;
     }
     if (error) {
         return (

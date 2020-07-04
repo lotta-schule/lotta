@@ -4,7 +4,7 @@ import uniq from 'lodash/uniq';
 import { addBusinessDays, isSameDay, parse, subBusinessDays, format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {
-    makeStyles, LinearProgress, Table, TableBody, TableRow, TableCell, Typography, Link, IconButton, Tooltip
+    makeStyles, CircularProgress, Table, TableBody, TableRow, TableCell, Typography, Link, IconButton, Tooltip
 } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { darken } from '@material-ui/core/styles';
@@ -97,7 +97,7 @@ export const Schedule = memo<ScheduleProps>(({ widget }) => {
 
     if (isLoading) {
         return (
-            <LinearProgress />
+            <CircularProgress />
         );
     } else if (error) {
         return (

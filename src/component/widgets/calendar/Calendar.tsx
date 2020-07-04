@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { List, ListItem, ListItemText, makeStyles, Divider, LinearProgress, Tooltip, Typography } from '@material-ui/core';
+import { List, ListItem, ListItemText, makeStyles, Divider, CircularProgress, Tooltip, Typography } from '@material-ui/core';
 import { useApolloClient } from '@apollo/client';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -85,7 +85,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
 
     if (isLoading) {
         return (
-            <LinearProgress />
+            <CircularProgress />
         );
     } else if (error) {
         return (

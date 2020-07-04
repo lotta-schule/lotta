@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { ArticleModel } from 'model';
-import { Card, CardContent, Typography, LinearProgress } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -16,7 +16,7 @@ export const ProfileArticles = memo(() => {
                 <Typography variant={'h4'}>Meine Beiträge</Typography>
                 <ErrorMessage error={error} />
                 {isLoading && (
-                    <LinearProgress />
+                    <CircularProgress />
                 )}
 
                 {ownArticlesData?.articles && (

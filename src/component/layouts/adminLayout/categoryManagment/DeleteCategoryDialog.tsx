@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { LinearProgress, DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
+import { CircularProgress, DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
 import { ArticleModel, CategoryModel, ID } from 'model';
 import { useQuery, useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
@@ -56,7 +56,7 @@ export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(({ isOpen, c
                 </DialogContentText>
                 <DialogContentText>
                     Alle Beiträge, die dieser Kategorie zugeordnet sind, sind dann ohne Kategorie und damit nicht mehr sichtbar.<br />
-                    <em>Beiträge: {isLoadingArticles ? <LinearProgress /> : articlesData && articlesData.articles.length}</em>
+                    <em>Beiträge: {isLoadingArticles ? <CircularProgress /> : articlesData && articlesData.articles.length}</em>
                 </DialogContentText>
                 {!categoryToDelete.isSidenav && (
                     <DialogContentText>

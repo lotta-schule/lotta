@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import {
-    Paper, Typography, makeStyles, Theme, Button, Grid, LinearProgress, Menu, MenuItem
+    Paper, Typography, makeStyles, Theme, Button, Grid, CircularProgress, Menu, MenuItem
 } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { WidgetModel, WidgetModelType } from 'model';
@@ -69,7 +69,7 @@ export const WidgetManagement: FunctionComponent = memo(() => {
 
     if (isLoading) {
         return (
-            <LinearProgress />
+            <CircularProgress />
         );
     }
 
