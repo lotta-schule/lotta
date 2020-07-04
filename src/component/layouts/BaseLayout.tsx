@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { Grid, Container, Theme, Typography, makeStyles } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { useIsMobile } from 'util/useIsMobile';
+import { useIsRetina } from 'util/useIsRetina';
 import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
 import { useTenant } from 'util/client/useTenant';
 import { ClientModel } from 'model';
@@ -68,6 +69,7 @@ export const BaseLayout = memo(({ children }) => {
     const tenant = useTenant();
     const styles = useStyles({ tenant });
     const isMobile = useIsMobile();
+    const retinaMultiplier = useIsRetina() ? 2 : 1;
     return (
         <Container>
             <header className={styles.header}>
@@ -75,7 +77,7 @@ export const BaseLayout = memo(({ children }) => {
                     <Grid item md={3} className={styles.logoGridItem}>
                         {tenant.logoImageFile && (
                             <img
-                                src={`https://afdptjdxen.cloudimg.io/height/160/foil1/${tenant.logoImageFile.remoteLocation}`}
+                                src={`https://afdptjdxen.cloudimg.io/height/${80 * retinaMultiplier}/foil1/${tenant.logoImageFile.remoteLocation}`}
                                 alt={`Logo ${tenant.title}`}
                                 className={styles.logo}
                             />
