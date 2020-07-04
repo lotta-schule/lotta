@@ -8,10 +8,10 @@ import { ContentModuleType } from 'model';
  *
  */
 export const ComputerExperten = {
-    id: 1,
+    id: '1',
     contentModules: [
         {
-            id: 7676765,
+            id: '7676765',
             configuration: {},
             files: [],
             sortKey: 0,
@@ -36,10 +36,10 @@ export const ComputerExperten = {
 };
 
 export const VivaLaRevolucion = {
-    id: 2,
+    id: '2',
     contentModules: [
         {
-            id: 99100,
+            id: '99100',
             sortKey: 0,
             type: ContentModuleType.TEXT,
             files: [],
@@ -64,10 +64,10 @@ export const VivaLaRevolucion = {
 };
 
 export const Schulfest = {
-    id: 3,
+    id: '3',
     contentModules: [
         {
-            id: 100100,
+            id: '100100',
             sortKey: 10,
             type: ContentModuleType.IMAGE_COLLECTION,
             files: [],
@@ -77,7 +77,7 @@ export const Schulfest = {
             content: {}
         },
         {
-            id: 100101,
+            id: '100101',
             sortKey: 0,
             type: ContentModuleType.TEXT,
             files: [],
@@ -88,7 +88,7 @@ export const Schulfest = {
             }
         },
         {
-            id: 100102,
+            id: '100102',
             sortKey: 30,
             type: ContentModuleType.VIDEO,
             content: { captions: ['Tino A und Betty B haben den Schnitt für dieses Video organisiert'] },
@@ -110,10 +110,10 @@ export const Schulfest = {
 };
 
 export const Weihnachtsmarkt = {
-    id: 4,
+    id: '4',
     contentModules: [
         {
-            id: 101100,
+            id: '101100',
             sortKey: 20,
             type: ContentModuleType.IMAGE_COLLECTION,
             files: [],
@@ -122,7 +122,7 @@ export const Weihnachtsmarkt = {
             }
         },
         {
-            id: 101101,
+            id: '101101',
             sortKey: 10,
             type: ContentModuleType.TEXT,
             files: [],
@@ -133,7 +133,7 @@ export const Weihnachtsmarkt = {
             }
         },
         {
-            id: 101102,
+            id: '101102',
             sortKey: 30,
             type: ContentModuleType.VIDEO,
             content: { captions: ['Tino A und Betty B haben den Schnitt für dieses Video organisiert'] },
@@ -155,10 +155,10 @@ export const Weihnachtsmarkt = {
 };
 
 export const Klausurenplan = {
-    id: 5,
+    id: '5',
     contentModules: [
         {
-            id: 10051,
+            id: '10051',
             sortKey: 0,
             type: ContentModuleType.TITLE,
             content: { title: "Na, wie war dein erster Tag?" },
@@ -166,7 +166,7 @@ export const Klausurenplan = {
             files: []
         },
         {
-            id: 10052,
+            id: '10052',
             sortKey: 0,
             type: ContentModuleType.DOWNLOAD,
             configuration: {},

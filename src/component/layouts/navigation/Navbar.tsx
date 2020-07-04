@@ -93,7 +93,7 @@ export const Navbar = memo(() => {
     const apolloClient = useApolloClient();
     const [categories] = useCategories();
     const currentCategoryId = useCurrentCategoryId();
-    const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || 0);
+    const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || '0');
 
     const openDrawer = useCallback(() => {
         apolloClient.writeQuery({

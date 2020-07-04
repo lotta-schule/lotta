@@ -4,7 +4,7 @@ import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { UploadModel, FileModel, DirectoryModel } from 'model';
 
 export class Upload implements UploadModel {
-    public id = new Date().getTime() + Math.random() * 1000;
+    public id = String(new Date().getTime() + Math.random() * 1000);
 
     public parentDirectory: DirectoryModel;
 

@@ -33,7 +33,7 @@ export const Widget = {
 
     getProfileWidget(): WidgetModel {
         return {
-            id: 0,
+            id: '0',
             title: 'Profil',
             type: WidgetModelType.UserNavigationMobile,
             configuration: {

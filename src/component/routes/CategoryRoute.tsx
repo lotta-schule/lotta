@@ -12,7 +12,7 @@ import { useCategories } from 'util/categories/useCategories';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const categoryId = parseInt(match.params.id);
+    const categoryId = match.params.id?.replace(/^(\d+).*/, '$1'); // take only first digits
     const category = useCategory(categoryId);
     const [, { loading: isLoadingCategories }] = useCategories();
     const [lastFetchedElementDate, setLastFetchedElementDate] = useState<string | null>(null);

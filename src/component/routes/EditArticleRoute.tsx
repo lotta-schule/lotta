@@ -9,7 +9,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const id = parseInt(match.params.id);
+    const id = match.params.id;
 
     const { data, error, loading: isLoading } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id } });
 
