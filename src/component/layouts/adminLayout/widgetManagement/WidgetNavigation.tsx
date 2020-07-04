@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => {
             marginBottom: theme.spacing(3),
         },
         expansionSummary: {
-            backgroundColor: theme.palette.divider,
+            backgroundColor: theme.palette.grey[200],
             '& > div > div': {
                 display: 'flex',
                 alignItems: 'center'

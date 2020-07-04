@@ -24,6 +24,10 @@ const useStyles = makeStyles(theme => ({
     },
     iconPreview: {
         float: 'right'
+    },
+    label: {
+        top: '-0.4em',
+        left: '0.8em',
     }
 }))
 
@@ -65,8 +69,10 @@ export const WidgetIconSelection = memo<WidgetIconSelectionProps>(({ icon, onSel
                             </Grid>
                             <Grid item xs={6}>
                                 <FormControl fullWidth>
-                                    <InputLabel>Textfarbe</InputLabel>
+                                    <InputLabel color={'secondary'} className={styles.label} >Textfarbe</InputLabel>
                                     <Select
+                                        color={'secondary'}
+                                        label={'Textfarbe'}
                                         fullWidth
                                         variant={'outlined'}
                                         onChange={({ target: { value } }) => onSelectIcon({ ...icon, overlayTextColor: value as string })}

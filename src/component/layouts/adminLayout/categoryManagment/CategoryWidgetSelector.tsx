@@ -31,11 +31,15 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         typography: {},
         label: {
-            flexGrow: 1
+            flexGrow: 1,
         },
-        widget: {
-            backgroundColor: theme.palette.grey[200]
-        }
+        switch: {
+            color: theme.palette.grey[300],
+            '&$switchChecked': {
+              color: theme.palette.secondary.main,
+            },
+        },
+        switchChecked: {}
     }),
 );
 
@@ -66,7 +70,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
     if (isLoadingPossibleWidgets) {
         return (
             <Grid container>
-                <Grid container item xs={12} sm={8} justify={'center'}>
+                <Grid container item xs={12}>
                     <CircularProgress />
                 </Grid>
             </Grid>
@@ -79,11 +83,11 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
 
             <Grid container justify="center" alignItems="center" data-testid="WidgetsSelectionList">
                 {allWidgets.length > 1 && (
-                    <Grid className={styles.widget} item xs={12} sm={8}>
+                    <Grid item xs={12} >
                         <FormControlLabel
                             classes={{ root: styles.labelWrapper, label: styles.label }}
                             style={{ marginLeft: 5 }}
-                            control={<Switch color={'secondary'} checked={isAllWidgetsSelected} onChange={() => handleToggleAll()} name={'select-all-widgets'} />}
+                            control={<Switch color={'secondary'} classes={{ switchBase: styles.switch, checked: styles.switchChecked }} checked={isAllWidgetsSelected} onChange={() => handleToggleAll()} name={'select-all-widgets'} />}
                             label={(
                                 <Typography component={'div'} className={styles.typography}>
                                     Alle Marginalen aktivieren
@@ -95,10 +99,10 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                 )}
 
                 {allWidgets.map(widget => (
-                    <Grid key={widget.id} className={styles.widget} item xs={12} sm={8}>
+                    <Grid key={widget.id} item xs={12} >
                         <FormControlLabel
                             classes={{ root: styles.labelWrapper, label: styles.label }}
-                            control={<Switch color={'secondary'} checked={isWidgetSelected(widget)} onChange={() => handleToggle(widget)} name={`widget-${widget.id}`} />}
+                            control={<Switch classes={{ switchBase: styles.switch, checked: styles.switchChecked }}  color={'secondary'} checked={isWidgetSelected(widget)} onChange={() => handleToggle(widget)} name={`widget-${widget.id}`} />}
                             label={(
                                 <Typography component={'div'} className={styles.typography}>
                                     <WidgetIcon icon={widget.configuration.icon} size={36} />
