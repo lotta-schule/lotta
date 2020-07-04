@@ -144,6 +144,8 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
                             <Img
                                 operation={'cover'}
                                 size={'450x300'}
+                                width={450}
+                                height={300}
                                 src={article.previewImageFile.remoteLocation}
                                 className={styles.articlePreviewImage}
                                 alt={`Vorschaubild zu ${article.title}`}

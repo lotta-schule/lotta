@@ -156,7 +156,8 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, 
                 {article.previewImageFile && (
                     <Grid item xs={2} style={{ position: 'relative' }}>
                         <BackgroundImg
-                            src={article.previewImageFile.remoteLocation} 
+                            height={'100%'}
+                            src={article.previewImageFile.remoteLocation}
                             className={styles.articlePreviewImage}
                             params="func=crop&gravity=auto"
                         />
