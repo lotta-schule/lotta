@@ -79,7 +79,7 @@ export const ProfileData = memo(() => {
                             onSelect={(file: FileModel) => setAvatarImageFile(file)}
                         />
                         <Divider className={styles.divider} style={{ width: '80%' }} />
-                        <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>}>
+                        <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>} data-testid="ProfileData-GroupsList">
                             {[...currentUser.groups].sort((g1, g2) => g2.sortKey - g1.sortKey).map(group => (
                                 <ListItem key={group.id}>
                                     <ListItemText>{group.name}</ListItemText>
