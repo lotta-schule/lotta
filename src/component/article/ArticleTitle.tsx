@@ -16,13 +16,19 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
     previewImage: {
         height: '100%',
-        width: 'auto'
+        width: 'auto',
+        maxWidth: '25%',
+        objectFit: 'cover'
     },
     mainSection: {
         paddingLeft: theme.spacing(2)
     },
     title: {
-        fontSize: '1.6rem'
+        fontSize: '1.6rem',
+        [theme.breakpoints.down('sm')]: {
+            wordWrap: 'break-word',
+            hyphens: 'auto'
+        }
     },
 }));
 

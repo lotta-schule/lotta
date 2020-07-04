@@ -17,6 +17,12 @@ export const useStyles = makeStyles(theme => ({
         marginLeft: 'auto',
         marginRight: 'auto',
         maxWidth: '55em',
+        '&:last-child $downloadItemDivider': {
+            display: 'none'
+        }
+    },
+    downloadItemDivider: {
+        width: '100%'
     },
     downloadWrapperHeader: {
         display: 'flex',
