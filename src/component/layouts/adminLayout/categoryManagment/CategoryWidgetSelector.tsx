@@ -1,13 +1,11 @@
 import React, { memo } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Grid, FormControlLabel, Typography, Switch, CircularProgress, withStyles } from '@material-ui/core';
+import { Grid, FormControlLabel, Typography, Switch, CircularProgress } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
 import { WidgetIcon } from 'component/widgets/WidgetIcon';
-import { grey } from '@material-ui/core/colors';
-import { theme } from 'theme';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -35,22 +33,15 @@ const useStyles = makeStyles((theme: Theme) =>
         label: {
             flexGrow: 1,
         },
-        switchBase: {
+        switch: {
             color: theme.palette.grey[300],
+            '&$switchChecked': {
+              color: theme.palette.secondary.main,
+            },
         },
+        switchChecked: {}
     }),
 );
-
-const LottaSwitch = withStyles({
-    switchBase: {
-      color: grey[300],
-      '&$checked': {
-        color: theme.palette.secondary.main,
-      },
-    },
-    checked: {},
-    track: {},
-  })(Switch);
 
 export interface CategoryWidgetSelectorProps {
     selectedWidgets: WidgetModel[];
@@ -96,7 +87,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                         <FormControlLabel
                             classes={{ root: styles.labelWrapper, label: styles.label }}
                             style={{ marginLeft: 5 }}
-                            control={<LottaSwitch color={'secondary'} checked={isAllWidgetsSelected} onChange={() => handleToggleAll()} name={'select-all-widgets'} />}
+                            control={<Switch color={'secondary'} classes={{ switchBase: styles.switch, checked: styles.switchChecked }} checked={isAllWidgetsSelected} onChange={() => handleToggleAll()} name={'select-all-widgets'} />}
                             label={(
                                 <Typography component={'div'} className={styles.typography}>
                                     Alle Marginalen aktivieren
@@ -111,7 +102,7 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(({ selec
                     <Grid key={widget.id} item xs={12} >
                         <FormControlLabel
                             classes={{ root: styles.labelWrapper, label: styles.label }}
-                            control={<LottaSwitch className={styles.switchBase} color={'secondary'} checked={isWidgetSelected(widget)} onChange={() => handleToggle(widget)} name={`widget-${widget.id}`} />}
+                            control={<Switch classes={{ switchBase: styles.switch, checked: styles.switchChecked }}  color={'secondary'} checked={isWidgetSelected(widget)} onChange={() => handleToggle(widget)} name={`widget-${widget.id}`} />}
                             label={(
                                 <Typography component={'div'} className={styles.typography}>
                                     <WidgetIcon icon={widget.configuration.icon} size={36} />
