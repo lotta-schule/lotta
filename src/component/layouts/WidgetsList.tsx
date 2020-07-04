@@ -67,7 +67,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
 
     const [currentUser] = useCurrentUser();
     const currentCategoryId = useCurrentCategoryId();
-    const isSecondNavigationOpen = useCategoriesAncestorsForItem(currentCategoryId || 0).length > 0;
+    const isSecondNavigationOpen = useCategoriesAncestorsForItem(currentCategoryId || '0').length > 0;
 
     const styles = useStyles({ isSecondNavigationOpen });
     const theme = useTheme();

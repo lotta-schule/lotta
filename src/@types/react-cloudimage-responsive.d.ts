@@ -21,6 +21,7 @@ declare module 'react-cloudimage-responsive' {
         size?: string;
         filters?: string;
         ratio?: number;
+        lazyLoading?: boolean;
     }
 
     export const CloudimageProvider: ComponentType<{ config: CloudimageProviderConfig }>;

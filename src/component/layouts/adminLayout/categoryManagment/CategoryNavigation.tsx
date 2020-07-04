@@ -108,8 +108,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                         return;
                     }
 
-                    const initialCategoriesArray = destination.droppableId === 'categories-root' ? mainCategories : getSubcategoriesForCategory({ id: Number(destination.droppableId) });
-                    const sourceIndex = findIndex(initialCategoriesArray, { id: Number(draggableId) })
+                    const initialCategoriesArray = destination.droppableId === 'categories-root' ? mainCategories : getSubcategoriesForCategory({ id: destination.droppableId });
+                    const sourceIndex = findIndex(initialCategoriesArray, { id: draggableId })
                     const newCategoriesArray = [...initialCategoriesArray];
                     newCategoriesArray.splice(sourceIndex, 1);
                     newCategoriesArray.splice(destination.index, 0, initialCategoriesArray[sourceIndex]);

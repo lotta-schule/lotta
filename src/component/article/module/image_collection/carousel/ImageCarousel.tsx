@@ -2,9 +2,9 @@ import React, { memo, useCallback } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Button, MobileStepper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
-import SwipeableViews from 'react-swipeable-views';
 import { FileSorter } from '../Config';
 import { ContentModuleModel, FileModel } from 'model';
+import SwipeableViews from 'react-swipeable-views';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -48,7 +48,7 @@ export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
     const styles = useStyles();
     const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
-    const filesConfiguration: { [id: number]: { caption: string; sortKey: number } } = contentModule.configuration?.files ?? {};
+    const filesConfiguration: { [id: string]: { caption: string; sortKey: number } } = contentModule.configuration?.files ?? {};
     const maxSteps = contentModule.files.length;
 
     const handleNext = useCallback(() => {
