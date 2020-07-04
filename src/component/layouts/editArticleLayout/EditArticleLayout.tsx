@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { ArticleModel, ID, ArticleModelInput } from '../../../model';
+import { ArticleModel, ID } from '../../../model';
 import { ArticleEditable as Article } from '../../article/ArticleEditable';
 import { EditArticleSidebar } from './EditArticleSidebar';
 import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
@@ -21,7 +21,7 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
     const [currentUser] = useCurrentUser();
 
     const [editedArticle, setEditedArticle] = useState(article);
-    const [saveArticle, { loading: isLoading }] = useMutation<{ article: ArticleModel }, { id: ID, article: ArticleModelInput }>(UpdateArticleMutation, {
+    const [saveArticle, { loading: isLoading }] = useMutation<{ article: ArticleModel }, { id: ID, article: any }>(UpdateArticleMutation, {
         onCompleted: ({ article }) => {
             if (article) {
                 history.push(ArticleUtil.getPath(article));
@@ -84,10 +84,15 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
                                     contentModules: article.contentModules.map(cm =>
                                         ({
                                             ...(cm.id < 0 ? omit(cm, ['id']) : cm),
-                                            content: cm.content || null
+                                            content: cm.content || null,
+                                            files: cm.files?.map(({ id }) => ({ id }))
                                         })
-                                    )
-                                } as ArticleModelInput
+                                    ),
+                                    previewImageFile: article.previewImageFile ? { id: article.previewImageFile.id } : null,
+                                    category: article.category ? { id: article.category.id } : null,
+                                    groups: article.groups.map(({ id }) => ({ id })),
+                                    users: article.users.map(({ id }) => ({ id })),
+                                }
                             },
                         });
                     }}
