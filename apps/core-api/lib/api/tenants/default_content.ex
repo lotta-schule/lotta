@@ -173,7 +173,7 @@ defmodule Api.Tenants.DefaultContent do
         fullpath = "priv/default_content/files/#{filename}"
         %{size: filesize} = File.stat!(fullpath)
 
-        %{url: remote_location} =
+        {:ok, %{url: remote_location}} =
           UploadService.upload_to_space(%{
             localfilepath: fullpath,
             content_type: type,

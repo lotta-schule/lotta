@@ -154,11 +154,11 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
     flush()
 
     drop(unique_index(:users, [:email]))
-    create(unique_index(:users, ["(lower(email))"]))
+    create(unique_index(:users, ["(lower(email))"], name: "users__lower_email_index"))
   end
 
   def down do
-    drop(unique_index(:users, ["(lower(email))"]))
+    drop(unique_index(:users, ["(lower(email))"], name: "users__lower_email_index"))
     create(unique_index(:users, [:email]))
   end
 end

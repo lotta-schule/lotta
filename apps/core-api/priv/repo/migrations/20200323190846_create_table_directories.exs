@@ -59,8 +59,8 @@ defmodule Api.Repo.Migrations.CreateTableDirectories do
     end)
 
     Api.Repo.all(
-      from(f in Api.Accounts.File,
-        select: struct([:id, :is_public, :tenant_id, :file_type, :user_id])
+      from(f in "files",
+        select: map(f, [:id, :is_public, :path, :tenant_id, :file_type, :user_id])
       )
     )
     |> Enum.map(fn file ->
