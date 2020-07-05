@@ -10,18 +10,25 @@ defmodule Api.UploadService do
       }) do
     bucket_name = System.get_env("UGC_S3_COMPAT_BUCKET")
 
-    localfilepath
-    |> ExAws.S3.Upload.stream_file()
-    |> ExAws.S3.upload(bucket_name, file_name, acl: :public_read, content_type: content_type)
-    |> ExAws.request!()
+    request =
+      localfilepath
+      |> ExAws.S3.Upload.stream_file()
+      |> ExAws.S3.upload(bucket_name, file_name, acl: :public_read, content_type: content_type)
 
-    %{url: "#{System.get_env("UGC_S3_COMPAT_CDN_BASE_URL")}/#{bucket_name}/#{file_name}"}
+    case ExAws.request(request) do
+      {:ok, _status} ->
+        {:ok,
+         %{url: "#{System.get_env("UGC_S3_COMPAT_CDN_BASE_URL")}/#{bucket_name}/#{file_name}"}}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   def delete_from_space(file_name) do
     bucket_name = System.get_env("UGC_S3_COMPAT_BUCKET")
 
     ExAws.S3.delete_object(bucket_name, file_name)
-    |> ExAws.request!()
+    |> ExAws.request()
   end
 end
