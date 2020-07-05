@@ -128,9 +128,9 @@ deploy staging:
       --set redis.cluster.slaveCount=1
       --set redis.metrics.enabled=true
       --set resources.limits.cpu=200m
-      --set resources.limits.memory=256Mi
-      --set resources.requests.cpu=150m
-      --set resources.requests.memory=192Mi
+      --set resources.limits.memory=386Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=256Mi
   only:
     refs:
       - develop
@@ -150,7 +150,7 @@ deploy production:
       --set appEnvironment=production
       --set baseUrl=.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
-      --set replicaCount=2
+      --set replicaCount=1
       --set jwtSecret=$JWT_SECRET
       --set baseSecret=$BASE_SECRET
       --set honeybadger.enabled=true
@@ -180,7 +180,7 @@ deploy production:
       --set postgresql.replication.enabled=true
       --set postgresql.replication.user=$POSTGRES_REPLICATION_USER
       --set postgresql.replication.password=$POSTGRES_REPLICATION_PASSWORD
-      --set postgresql.replication.slaveReplicas=3
+      --set postgresql.replication.slaveReplicas=1
       --set postgresql.replication.synchronousCommit="on"
       --set postgresql.replication.numSynchronousReplicas=1
       --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
@@ -196,12 +196,12 @@ deploy production:
       --set postgresql.backupJob.s3Compat.bucketName=lotta-backup-data
       --set postgresql.backupJob.s3Compat.path="/postgres"
       --set redis.password=$REDIS_PASSWORD
-      --set redis.cluster.slaveCount=2
-      --set redis.metrics.enabled=true
-      --set resources.limits.cpu=500m
+      --set redis.cluster.slaveCount=1
+      --set redis.metrics.enabled=false
+      --set resources.limits.cpu=300m
       --set resources.limits.memory=1536Mi
-      --set resources.requests.cpu=400m
-      --set resources.requests.memory=512Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=384Mi
   only:
     refs:
       - master
