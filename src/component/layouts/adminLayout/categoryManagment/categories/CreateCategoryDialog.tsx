@@ -8,7 +8,7 @@ import { useMutation } from '@apollo/client';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { CategorySelect } from '../../editArticleLayout/CategorySelect';
+import { CategorySelect } from '../../../editArticleLayout/CategorySelect';
 
 export interface CreateCategoryDialogProps {
     isOpen: boolean;
