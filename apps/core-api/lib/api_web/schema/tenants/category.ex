@@ -20,8 +20,14 @@ defmodule ApiWeb.Schema.Tenants.Tenant do
     field :widgets, list_of(:widget), resolve: &Api.Tenants.resolve_widgets/2
   end
 
-  input_object :update_category_input do
+  input_object :create_category_input do
     field :title, non_null(:string)
+    field :is_sidenav, :boolean, default_value: false
+    field :category, :select_category_input
+  end
+
+  input_object :update_category_input do
+    field :title, :string
     field :is_sidenav, :boolean
     field :sort_key, :integer
     field :banner_image_file, :select_file_input

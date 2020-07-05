@@ -42,7 +42,7 @@ defmodule ApiWeb.Schema.Tenants do
     end
 
     field :create_category, type: :category do
-      arg(:category, non_null(:update_category_input))
+      arg(:category, non_null(:create_category_input))
 
       resolve(&Api.CategoryResolver.create/2)
     end
