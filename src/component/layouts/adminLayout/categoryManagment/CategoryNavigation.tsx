@@ -119,12 +119,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                 variables: {
                                     id: category.id,
                                     category: {
-                                        sortKey: index * 10 + 10,
-                                        title: category.title,
-                                        bannerImageFile: category.bannerImageFile ? { id: category.bannerImageFile } : undefined,
-                                        groups: category.groups?.map(({ id }) => ({ id })),
-                                        redirect: category.redirect,
-                                        hideArticlesFromHomepage: category.hideArticlesFromHomepage
+                                        sortKey: index * 10 + 10
                                     }
                                 }
                             });
