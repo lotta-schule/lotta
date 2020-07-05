@@ -574,7 +574,7 @@ defmodule Api.CategoryResolverTest do
 
   describe "createCategory mutation" do
     @query """
-    mutation CreateCategory($category: UpdateCategoryInput!) {
+    mutation CreateCategory($category: CreateCategoryInput!) {
       createCategory(category: $category) {
         title
       }
