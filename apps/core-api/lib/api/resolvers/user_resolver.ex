@@ -8,7 +8,6 @@ defmodule Api.UserResolver do
 
   alias Api.Repo
   alias Ecto.NoResultsError
-  alias Ecto.Changeset
   alias Api.Accounts
   alias Api.Accounts.{AuthHelper, User}
   alias Api.Queue.EmailPublisher

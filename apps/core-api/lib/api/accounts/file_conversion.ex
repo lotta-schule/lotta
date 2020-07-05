@@ -8,8 +8,12 @@ defmodule Api.Accounts.FileConversion do
 
   schema "file_conversions" do
     field :file_type, :string
+    field :filesize, :integer
     field :format, :string
     field :mime_type, :string
+    field :full_metadata, :map
+    field :metadata, :map
+    field :media_duration, :float
     field :remote_location, :string
 
     belongs_to :file, Api.Accounts.File

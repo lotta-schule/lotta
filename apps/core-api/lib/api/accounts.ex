@@ -4,7 +4,9 @@ defmodule Api.Accounts do
   """
 
   require Logger
+
   import Ecto.Query
+
   alias Ecto.Changeset
   alias Api.Repo
   alias Api.Tenants

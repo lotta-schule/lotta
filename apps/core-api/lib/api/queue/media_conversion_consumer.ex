@@ -3,11 +3,14 @@ defmodule Api.Queue.MediaConversionConsumer do
   Incoming Queue for processing media conversions
   """
 
-  use GenServer
-  alias GenRMQ.Message
-  alias Api.Accounts
-
   require Logger
+
+  alias GenRMQ.Message
+  alias Ecto.Changeset
+  alias Api.Repo
+  alias Api.Accounts.{File, FileConversion}
+
+  use GenServer
 
   @behaviour GenRMQ.Consumer
 
@@ -37,28 +40,52 @@ defmodule Api.Queue.MediaConversionConsumer do
     file_id = decoded["parentFileId"]
     outputs = decoded["outputs"]
 
+    if decoded["processingDuration"] do
+      Logger.info("It took the job #{decoded["processingDuration"]}s to complete")
+    end
+
     Logger.info("MediaConversionConsumer received incoming message")
     Logger.info(inspect(outputs))
 
+    with file_id when not is_nil(file_id) <- file_id,
+         %{"metadata" => _source_metadata} <- decoded,
+         file when not is_nil(file) <- Repo.get(File, file_id),
+         {:ok, file} <- Repo.update(add_metadata(file, decoded)) do
+      Logger.info("added source metadata to file #{file.id}")
+    else
+      {:error, %Changeset{} = changeset} ->
+        Logger.error("Could not insert metadata to file: #{inspect(changeset)}")
+
+      nil ->
+        Logger.error("Could not find the File with the given id #{file_id}")
+
+      _ ->
+        nil
+    end
+
     if outputs do
       for output <- outputs do
-        conversion = %{
+        %FileConversion{
           :format => output["format"],
           :remote_location => output["remoteLocation"],
           :mime_type => output["mimeType"],
           :file_type => output["fileType"],
           :file_id => file_id
         }
+        |> add_metadata(output)
+        |> Repo.insert()
+        |> case do
+          {:ok, conversion} ->
+            Logger.info("file conversion #{inspect(conversion)} has been created")
 
-        Accounts.create_file_conversion(conversion)
+          {:error, reason} ->
+            Logger.error("Could not save file conversion to database, error occured: #{reason}")
+            reject(message, false)
+        end
       end
     end
 
     ack(message)
-  rescue
-    exception ->
-      Logger.error(Exception.format(:error, exception, System.stacktrace()))
-      reject(message, false)
   end
 
   def start_link(_args) do
@@ -79,6 +106,30 @@ defmodule Api.Queue.MediaConversionConsumer do
     {:ok, hostname} = :inet.gethostname()
     "#{hostname}-media-conversion-consumer"
   end
+
+  defp add_metadata(file_or_conversion, metadata_map)
+       when is_map(metadata_map) and is_map_key(metadata_map, "metadata") do
+    media_duration =
+      get_in(metadata_map, ["metadata", "format", "duration"])
+      |> Float.parse()
+      |> case do
+        {float, _other} ->
+          float
+
+        :error ->
+          nil
+      end
+
+    file_or_conversion
+    |> Map.put_new(:filesize, get_in(metadata_map, ["metadata", "format", "size"]))
+    |> Changeset.change(%{
+      :full_metadata => metadata_map["metadata"],
+      :metadata => get_in(metadata_map, ["metadata", "format"]),
+      :media_duration => media_duration
+    })
+  end
+
+  defp add_metadata(file_or_conversion, _), do: file_or_conversion
 
   defp rmq_uri do
     config = Application.fetch_env!(:api, :rabbitmq_connection)

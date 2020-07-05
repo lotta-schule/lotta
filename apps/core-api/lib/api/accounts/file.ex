@@ -12,6 +12,9 @@ defmodule Api.Accounts.File do
     field :file_type, :string
     field :filename, :string
     field :filesize, :integer
+    field :full_metadata, :map
+    field :metadata, :map
+    field :media_duration, :float
     field :remote_location, :string
 
     has_many :file_conversions, Api.Accounts.FileConversion

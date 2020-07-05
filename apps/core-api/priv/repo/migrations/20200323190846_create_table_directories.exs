@@ -4,27 +4,27 @@ defmodule Api.Repo.Migrations.CreateTableDirectories do
 
   def up do
     create table(:directories) do
-      add :parent_directory_id, references(:directories, on_delete: :delete_all)
-      add :name, :string
-      add :user_id, references(:users, on_delete: :nothing)
-      add :tenant_id, references(:tenants, on_delete: :nothing)
-      add :group_id, references(:user_groups, on_delete: :nothing)
+      add(:parent_directory_id, references(:directories, on_delete: :delete_all))
+      add(:name, :string)
+      add(:user_id, references(:users, on_delete: :nothing))
+      add(:tenant_id, references(:tenants, on_delete: :nothing))
+      add(:group_id, references(:user_groups, on_delete: :nothing))
 
       timestamps()
     end
 
     alter table(:files) do
-      add :parent_directory_id, references(:directories, on_delete: :delete_all)
+      add(:parent_directory_id, references(:directories, on_delete: :delete_all))
     end
 
-    create index(:directories, [:user_id, :tenant_id])
-    create index(:directories, [:user_id, :tenant_id, :parent_directory_id])
-    create index(:directories, [:group_id])
-    create index(:directories, [:parent_directory_id])
+    create(index(:directories, [:user_id, :tenant_id]))
+    create(index(:directories, [:user_id, :tenant_id, :parent_directory_id]))
+    create(index(:directories, [:group_id]))
+    create(index(:directories, [:parent_directory_id]))
 
-    create unique_index(:directories, [:name, :parent_directory_id, :user_id, :tenant_id])
+    create(unique_index(:directories, [:name, :parent_directory_id, :user_id, :tenant_id]))
 
-    create index(:files, [:parent_directory_id])
+    create(index(:files, [:parent_directory_id]))
 
     flush()
 
@@ -58,7 +58,11 @@ defmodule Api.Repo.Migrations.CreateTableDirectories do
       Api.Repo.insert!(%Api.Accounts.Directory{name: "schulweite Dateien", tenant_id: tenant.id})
     end)
 
-    Api.Repo.all(from(f in Api.Accounts.File))
+    Api.Repo.all(
+      from(f in "files",
+        select: map(f, [:id, :is_public, :path, :tenant_id, :file_type, :user_id])
+      )
+    )
     |> Enum.map(fn file ->
       root_directory =
         if file.is_public do
@@ -142,12 +146,12 @@ defmodule Api.Repo.Migrations.CreateTableDirectories do
   end
 
   def down do
-    drop index(:files, [:parent_directory_id])
+    drop(index(:files, [:parent_directory_id]))
 
     alter table(:files) do
-      remove :parent_directory_id
+      remove(:parent_directory_id)
     end
 
-    drop table(:directories)
+    drop(table(:directories))
   end
 end

@@ -3,8 +3,11 @@ defmodule Api.FileResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting files
   """
 
+  require Logger
+
   import Ecto.Query
 
+  alias Ecto.Changeset
   alias ApiWeb.ErrorHelpers
   alias Api.Accounts
   alias Api.Accounts.{Directory, User}
@@ -192,35 +195,49 @@ defmodule Api.FileResolver do
     oid = user.id + DateTime.to_unix(DateTime.utc_now()) + :rand.uniform(9999)
     uuid = UUID.uuid5(:dns, "#{oid}.ugc.lotta.schule")
 
-    %{url: remote_location} =
-      UploadService.upload_to_space(%{
-        localfilepath: localfilepath,
-        content_type: content_type,
-        file_name: uuid
-      })
+    upload_config = %{
+      localfilepath: localfilepath,
+      content_type: content_type,
+      file_name: uuid
+    }
 
-    %{
+    file = %Api.Accounts.File{
       user_id: user.id,
       tenant_id: tenant.id,
       parent_directory_id: directory.id,
-      remote_location: remote_location,
       filename: filename,
       filesize: filesize,
       file_type: filetype_from(content_type),
       mime_type: content_type
     }
-    |> Accounts.create_file()
-    |> case do
-      {:ok, file} ->
-        MediaConversionRequestPublisher.send_conversion_request(file)
-        {:ok, file}
 
-      {:error, error} ->
+    with {:ok, %{url: remote_location}} <- UploadService.upload_to_space(upload_config),
+         {:ok, file} <- Repo.insert(Map.put(file, :remote_location, remote_location)) do
+      MediaConversionRequestPublisher.send_conversion_request(file)
+      {:ok, file}
+    else
+      {:error, %Changeset{} = changeset} ->
+        Logger.info(
+          "There was an error creating the uploaded file in the db. Trying to rollback upload"
+        )
+
+        case UploadService.delete_from_space(uuid) do
+          {:ok, _status} ->
+            Logger.info("file deleted successfully from #{uuid}")
+
+          {:error, reason} ->
+            Logger.error("error deleting the file: #{inspect(reason)}")
+        end
+
         {:error,
          [
-           "Fehler beim Anlegen der Datei",
-           details: ErrorHelpers.extract_error_details(error)
+           message: "Fehler beim Anlegen der Datei",
+           details: ErrorHelpers.extract_error_details(changeset)
          ]}
+
+      {:error, reason} ->
+        Logger.error("Error uploading file to storage: #{inspect(reason)}")
+        {:error, "Error uploading file to storage"}
     end
   end
 
