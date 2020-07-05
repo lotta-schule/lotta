@@ -51,7 +51,11 @@ export const BasicSettings = memo(() => {
                         <CardContent>
                             <SelectFileOverlay label={'Logo ändern'} onSelectFile={logo => setLogo(logo)} allowDeletion>
                                 {logo ? (
-                                    <Img operation={'height'} size={'200x80'} src={logo.remoteLocation} />
+                                  <Img
+                                    operation={'height'}
+                                    size={'80'}
+                                    src={logo.remoteLocation}
+                                  />
                                 ) : <PlaceholderImage width={'100%'} height={80} />}
                             </SelectFileOverlay>
                         </CardContent>
@@ -98,7 +102,7 @@ export const BasicSettings = memo(() => {
                         fullWidth
                         isLoading={isLoading}
                         isSuccess={isShowSuccess}
-                        onClick={() => updateTenant({ variables: { tenant: { title, logoImageFile: logo } } })}
+                        onClick={() => updateTenant({ variables: { tenant: { title, logoImageFile: logo && { id: logo.id } } } })}
                     >
                         speichern
                     </SaveButton>

@@ -35,7 +35,7 @@ export const WidgetNavigation = memo<WidgetNavigationProps>(({ widgets, selected
     return (
         <>
             <Typography variant="h5" className={styles.heading}>
-                Kategorienübersicht
+                Alle Marginalen
             </Typography>
             <div style={{ paddingBottom: '5em' }}>
                 {widgets.map(widget => (

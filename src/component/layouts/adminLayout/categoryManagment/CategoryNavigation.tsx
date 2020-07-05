@@ -68,7 +68,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
         return categories.filter(c => c.category && c.category.id === category.id);
     }, [categories]);
 
-    const [updateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+    const [updateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: any }>(UpdateCategoryMutation, {
         optimisticResponse: ({ id, category }) => {
             return {
                 __typename: 'Mutation',
@@ -84,7 +84,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
     return (
         <>
             <Typography variant="h5" className={styles.heading}>
-                Kategorienübersicht
+                Alle Kategorien
             </Typography>
 
             {homepageCategory && (
@@ -121,8 +121,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                     category: {
                                         sortKey: index * 10 + 10,
                                         title: category.title,
-                                        bannerImageFile: category.bannerImageFile,
-                                        groups: category.groups,
+                                        bannerImageFile: category.bannerImageFile ? { id: category.bannerImageFile } : undefined,
+                                        groups: category.groups?.map(({ id }) => ({ id })),
                                         redirect: category.redirect,
                                         hideArticlesFromHomepage: category.hideArticlesFromHomepage
                                     }

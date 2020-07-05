@@ -24,7 +24,7 @@ export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> 
     const [title, setTitle] = useState('');
     const [isSidenav, setIsSidenav] = useState(false);
     const [parentCategory, setParentCategory] = useState<CategoryModel | null>(null);
-    const [createCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { category: Partial<CategoryModel> }>(CreateCategoryMutation, {
+    const [createCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { category: any }>(CreateCategoryMutation, {
         update: (cache, { data }) => {
             let categories: CategoryModel[] = [];
             if (data && data.category) {
@@ -56,7 +56,7 @@ export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> 
                         category: {
                             title,
                             isSidenav,
-                            category: isSidenav ? null : parentCategory
+                            category: (!isSidenav && parentCategory) ? { id: parentCategory.id } : null
                         }
                     }
                 });

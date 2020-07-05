@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const CreateCategoryMutation = gql`
-    mutation CreateCategory($category: CategoryInput!) {
+    mutation CreateCategory($category: UpdateCategoryInput!) {
         category: createCategory(category: $category) {
             id
             title
