@@ -58,7 +58,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
     const [selectedWidgets, setSelectedWidgets] = useState<WidgetModel[]>([]);
-    const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+    const [mutateCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { id: ID, category: any }>(UpdateCategoryMutation, {
       refetchQueries: [
           { query: GetCategoryWidgetsQuery, variables: { categoryId: category?.id ?? null } }
       ],
@@ -87,12 +87,12 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
                 category: {
                     sortKey: selectedCategory.sortKey,
                     title: category.title,
-                    bannerImageFile: category.bannerImageFile,
-                    groups: category.groups,
+                    bannerImageFile: category.bannerImageFile && { id: category.bannerImageFile.id },
+                    groups: category.groups?.map(({ id }) => ({ id })),
                     redirect: category.redirect === 'null' ? null : category.redirect,
                     layoutName: category.layoutName,
                     hideArticlesFromHomepage: category.hideArticlesFromHomepage || false,
-                    widgets: selectedWidgets.map((w: WidgetModel) => ({ ...w, configuration: JSON.stringify(w.configuration) })) ?? []
+                    widgets: selectedWidgets?.map(({ id }) => ({ id })) ?? []
                 }
             }
         });
