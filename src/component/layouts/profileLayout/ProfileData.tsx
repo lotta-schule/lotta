@@ -187,7 +187,7 @@ export const ProfileData = memo(() => {
                                         class: classOrShortName,
                                         hideFullName: isHideFullName,
                                         email,
-                                        avatarImageFile: avatarImageFile ? { id: avatarImageFile.id } : undefined,
+                                        avatarImageFile: avatarImageFile ? { id: avatarImageFile.id } : null,
                                         enrollmentTokens
                                     }
                                 }
