@@ -17,7 +17,7 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :class, :string
     field :nickname, :string
     field :hide_full_name, :boolean
-    field :avatar_image_file, list_of(:select_file_input)
+    field :avatar_image_file, :select_file_input
     field :enrollment_tokens, list_of(:string)
   end
 

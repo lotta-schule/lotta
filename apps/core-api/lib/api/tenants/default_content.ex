@@ -5,7 +5,6 @@ defmodule Api.Tenants.DefaultContent do
 
   import Ecto.Changeset
   alias Api.Repo
-  alias Api.Accounts
   alias Api.Accounts.{Directory, User}
   alias Api.UploadService
   alias Api.Tenants.Tenant
