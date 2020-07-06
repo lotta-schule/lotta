@@ -147,6 +147,7 @@ defmodule Api.Repo.Migrations.ChangeUserEmailsToHaveLowercaseIndex do
       Repo.delete_all(from(repo in "users_enrollment_tokens", where: repo.user_id in ^del_users))
 
       IO.inspect("Now delete the users")
+      Repo.delete_all(from(repo in "directories", where: repo.user_id in ^del_users))
       Repo.delete_all(from(u in User, where: u.id in ^del_users))
       IO.inspect("done.")
     end)
