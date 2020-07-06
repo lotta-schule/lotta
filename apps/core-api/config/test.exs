@@ -36,6 +36,8 @@ config :api, Api.Repo,
   password: "lotta",
   database: "api_test",
   hostname: db_host,
+  ownership_timeout: 60_000,
+  timeout: 60_000,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :api, :rabbitmq_connection,

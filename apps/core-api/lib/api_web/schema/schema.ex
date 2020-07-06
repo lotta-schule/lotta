@@ -8,7 +8,7 @@ defmodule ApiWeb.Schema do
   import_types(__MODULE__.CustomTypes.Json)
 
   import_types(__MODULE__.Tenants)
-  import_types(__MODULE__.Tenants.{Category, Tenant, Widget})
+  import_types(__MODULE__.Tenants.{Category, Tenant, Usage, Widget})
   import_types(__MODULE__.Accounts)
   import_types(__MODULE__.Accounts.{File, User})
   import_types(__MODULE__.Contents)

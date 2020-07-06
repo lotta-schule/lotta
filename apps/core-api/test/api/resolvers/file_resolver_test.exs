@@ -329,19 +329,30 @@ defmodule Api.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: public_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "file" => %{
                    "filename" => "logo1.jpg",
-                   "usage" => [
-                     %{"category" => %{"title" => "Fächer"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "GTA"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Profil"}, "usage" => "banner"},
-                     %{"category" => %{"title" => "Projekt"}, "usage" => "banner"}
-                   ]
+                   "usage" => usage
                  }
                }
-             }
+             } = res
+
+      assert Enum.any?(usage, fn %{"category" => %{"title" => title}, "usage" => usage} ->
+               title == "Fächer" && usage == "banner"
+             end)
+
+      assert Enum.any?(usage, fn %{"category" => %{"title" => title}, "usage" => usage} ->
+               title == "GTA" && usage == "banner"
+             end)
+
+      assert Enum.any?(usage, fn %{"category" => %{"title" => title}, "usage" => usage} ->
+               title == "Profil" && usage == "banner"
+             end)
+
+      assert Enum.any?(usage, fn %{"category" => %{"title" => title}, "usage" => usage} ->
+               title == "Projekt" && usage == "banner"
+             end)
     end
 
     test "returns public file's usage for non-admin user", %{
