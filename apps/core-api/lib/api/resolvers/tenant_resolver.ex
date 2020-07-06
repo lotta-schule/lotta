@@ -122,4 +122,15 @@ defmodule Api.TenantResolver do
       {:error, "Nur Administratoren dürfen das."}
     end
   end
+
+  def usage(_args, %{context: %{tenant: tenant, current_user: current_user}}) do
+    if User.is_admin?(current_user, tenant) do
+      tenant
+      |> Tenants.Usage.get_usage()
+    else
+      {:error, "Nur Administratoren dürfen das."}
+    end
+  end
+
+  def usage(_, _), do: {:error, "Nur Administratoren dürfen das."}
 end

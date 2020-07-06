@@ -23,6 +23,10 @@ defmodule ApiWeb.Schema.Tenants do
 
       resolve(&Api.WidgetResolver.all/2)
     end
+
+    field :usage, list_of(:usage) do
+      resolve(&Api.TenantResolver.usage/2)
+    end
   end
 
   object :tenants_mutations do

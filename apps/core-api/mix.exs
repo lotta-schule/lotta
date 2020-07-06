@@ -41,6 +41,7 @@ defmodule Api.MixProject do
         :ssl,
         :inets,
         :con_cache,
+        :timex,
         :os_mon
       ]
     ]
@@ -79,6 +80,7 @@ defmodule Api.MixProject do
       {:uuid, "~> 1.1.8"},
       {:gen_rmq, "~> 2.6.0"},
       {:ex_ical, "~> 0.2.0"},
+      {:timex, "~> 3.0"},
       {:honeybadger, "~> 0.14.0"},
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
