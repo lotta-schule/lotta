@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { useTenant } from 'util/client/useTenant';
 import { useTheme } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
-import { textFonts, headerFonts } from './layouts/adminLayout/tenantManagment/fonts';
+import { textFonts, headerFonts } from './layouts/adminLayout/tenantManagment/presentation/fonts';
 
 export const AppHead = memo(() => {
     const tenant = useTenant();
