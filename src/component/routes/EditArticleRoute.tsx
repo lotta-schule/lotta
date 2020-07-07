@@ -9,7 +9,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
 
 export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const id = match.params.id;
+    const id = match.params.id.replace(/^(\d+).*/, '$1'); // take only first digits
 
     const { data, error, loading: isLoading } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id } });
 
