@@ -170,7 +170,7 @@ defmodule Api.Tenants.DefaultContent do
       |> Enum.with_index()
       |> Enum.map(fn {{filename, type}, index} ->
         oid = "#{user_id}#{DateTime.to_unix(DateTime.utc_now())}#{index}#{:rand.uniform(9999)}"
-        fullpath = Application.app_dir("priv/default_content/files/#{filename}")
+        fullpath = Application.app_dir(:api, "priv/default_content/files/#{filename}")
         %{size: filesize} = File.stat!(fullpath)
 
         {:ok, %{url: remote_location}} =
