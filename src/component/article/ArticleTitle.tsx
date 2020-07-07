@@ -17,8 +17,9 @@ const useStyles = makeStyles<Theme>(theme => ({
     previewImage: {
         height: '100%',
         width: 'auto',
-        maxWidth: '25%',
-        objectFit: 'cover'
+        maxWidth: '30%',
+        objectFit: 'contain',
+        objectPosition: theme.spacing(0, 1)
     },
     mainSection: {
         paddingLeft: theme.spacing(2)
