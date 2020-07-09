@@ -214,7 +214,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
                 >
                     <SaveButton
                         isLoading={isLoading}
-                        onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: undefined })}
+                        onClick={() => onSave({ readyToPublish: isReadyToPublish, updatedAt: new Date().toISOString() })}
                         fullWidth
                     >
 
