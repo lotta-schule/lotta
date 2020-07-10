@@ -16,7 +16,9 @@ import useRouter from 'use-react-router';
 const useStyles = makeStyles(theme => ({
     root: {
         flexShrink: 0,
-        height: '100%'
+        height: '100%',
+        justifyContent: 'center',
+        paddingRight: theme.spacing(1)
     },
     nav: {
         display: 'flex',
@@ -54,7 +56,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: theme.spacing(1)
+        padding: theme.spacing(1, 0, 1, 1)
     }
 }));
 
@@ -79,7 +81,7 @@ export const UserNavigation = memo(() => {
 
     if (currentUser) {
         return (
-            <Grid container justify={'space-evenly'} className={styles.root}>
+            <Grid container className={styles.root}>
                 <Grid item xs={7} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                     <Button className={styles.button} size="small" startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
                     <Button className={styles.button} size="small" startIcon={<SearchRounded color={'secondary'} />} onClick={() => history.push('/search')}>Suche</Button>
@@ -148,7 +150,7 @@ export const UserNavigation = memo(() => {
         );
     } else {
         return (
-            <Grid container direction={'column'} justify={'space-evenly'} alignItems={'flex-end'} style={{ height: '100%' }}>
+            <Grid container direction={'column'} alignItems={'flex-end'} className={styles.root}>
                 <Button size="small" onClick={() => setLoginModalIsOpen(true)}>Anmelden</Button>
                 <Button size="small" onClick={() => setRegisterModalIsOpen(true)}>Registrieren</Button>
                 <Button size="small" onClick={() => history.push('/search')}>Suche</Button>
