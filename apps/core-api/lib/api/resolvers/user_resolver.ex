@@ -250,6 +250,8 @@ defmodule Api.UserResolver do
     end
   end
 
+  def update_profile(_args, _info), do: {:error, "Du bist nicht angemeldet."}
+
   def update_password(%{current_password: password, new_password: new_password}, %{
         context: %{current_user: %{email: email}}
       }) do

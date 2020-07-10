@@ -940,6 +940,58 @@ defmodule Api.UserResolverTest do
 
   describe "a user can update his password with a correct password mutation" do
     @query """
+    mutation UpdateProfile($user: UpdateUserParams!) {
+      updateProfile(user: $user) {
+        name
+        nickname
+      }
+    }
+    """
+    test "should update a users name and nickname", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{user: %{name: "Neuer Name", nickname: "Dr New"}}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "updateProfile" => %{
+                   "name" => "Neuer Name",
+                   "nickname" => "Dr New"
+                 }
+               }
+             }
+    end
+
+    test "should return an error when it the user is not logged in", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> post("/api",
+          query: @query,
+          variables: %{user: %{name: "Neuer Name", nickname: "Dr New"}}
+        )
+        |> json_response(200)
+
+      assert res = %{
+               "errors" => [
+                 %{
+                   "message" => "Du bist nicht angemeldet.",
+                   "path" => ["updateProfile"]
+                 }
+               ],
+               "data" => %{"updateProfile" => nil}
+             }
+    end
+  end
+
+  describe "a user can update his profile" do
+    @query """
     mutation updatePassword($currentPassword: String!, $newPassword: String!) {
       updatePassword(currentPassword: $currentPassword, newPassword: $newPassword) {
         name
