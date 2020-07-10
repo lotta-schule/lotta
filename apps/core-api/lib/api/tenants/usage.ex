@@ -80,7 +80,7 @@ defmodule Api.Tenants.Usage do
          %{all_conversions_size: conversions_size} <- Repo.one(file_conversions) do
       {:ok,
        %{
-         used_total: files_size + conversions_size,
+         used_total: (files_size || 0) + (conversions_size || 0),
          files_total: files_total
        }}
     else
