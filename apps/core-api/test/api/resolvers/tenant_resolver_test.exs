@@ -151,6 +151,82 @@ defmodule Api.TenantResolverTest do
     end
   end
 
+  describe "get usage information" do
+    @query """
+    query getTenantUsage {
+      usage {
+        periodStart
+        periodEnd
+        storage {
+          usedTotal
+          filesTotal
+        }
+        media {
+          mediaFilesTotal
+          mediaFilesTotalDuration
+          MediaConversionCurrentPeriod
+        }
+      }
+    }
+    """
+
+    test "get duration information", %{admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "usage" => []
+               }
+             }
+    end
+
+    test "returns error if user is not admin", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "usage" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Nur Administratoren dürfen das.",
+                   "path" => ["usage"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns error if user is not logged in" do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "usage" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Nur Administratoren dürfen das.",
+                   "path" => ["usage"]
+                 }
+               ]
+             } = res
+    end
+  end
+
   describe "createTenant mutation for lotta-admin" do
     @query """
     mutation CreateTenant($title: String!, $slug: String!, $email: String!, $name: String!) {
