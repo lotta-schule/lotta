@@ -147,21 +147,23 @@ export const FileToolbar = memo(() => {
                             </Zoom>
                         </>
                     )}
-                    {!isMobile && (
-                        <Tooltip title={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}>
-                            <IconButton
-                                data-testid="FileExplorerDetailViewButton"
-                                aria-label={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}
-                                onClick={() => dispatch({ type: 'toggleDetailSidebarEnabled' })}
-                            >
-                                {state.detailSidebarEnabled && (
-                                    <Info color={'secondary'} data-testid="enable-detail-sidebar-icon" />
-                                )}
-                                {!state.detailSidebarEnabled && (
-                                    <InfoOutlined color={'secondary'} data-testid="disable-detail-sidebar-icon" />
-                                )}
-                            </IconButton>
-                        </Tooltip>
+                    {!isMobile && state.mode === FileExplorerMode.ViewAndEdit && (
+                        <Zoom in={state.currentPath.length > 1}>
+                            <Tooltip title={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}>
+                                <IconButton
+                                    data-testid="FileExplorerDetailViewButton"
+                                    aria-label={`Info-Leiste für Dateien und Ordner ${state.detailSidebarEnabled ? 'ausblenden' : 'einblenden'}`}
+                                    onClick={() => dispatch({ type: 'toggleDetailSidebarEnabled' })}
+                                >
+                                    {state.detailSidebarEnabled && (
+                                        <Info color={'secondary'} data-testid="enable-detail-sidebar-icon" />
+                                    )}
+                                    {!state.detailSidebarEnabled && (
+                                        <InfoOutlined color={'secondary'} data-testid="disable-detail-sidebar-icon" />
+                                    )}
+                                </IconButton>
+                            </Tooltip>
+                        </Zoom>
                     )}
                 </div>
             </Toolbar>
