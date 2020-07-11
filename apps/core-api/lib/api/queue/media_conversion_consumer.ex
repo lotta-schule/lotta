@@ -17,20 +17,13 @@ defmodule Api.Queue.MediaConversionConsumer do
   @exchange "media-conversion"
   @queue "media-conversion-results"
 
-  def init(arg) do
-    {:ok, arg}
-  end
-
-  def init do
-    create_rmq_resources()
-
+  def init(_args \\ []) do
     [
       queue: @queue,
-      exchange: {:fanout, @exchange},
-      # routing_key: @queue,
+      exchange: {:direct, @exchange},
+      routing_key: @queue,
       prefetch_count: "10",
-      uri: rmq_uri(),
-      deadletter: false
+      connection: rmq_uri()
     ]
   end
 
@@ -132,29 +125,6 @@ defmodule Api.Queue.MediaConversionConsumer do
   defp add_metadata(file_or_conversion, _), do: file_or_conversion
 
   defp rmq_uri do
-    config = Application.fetch_env!(:api, :rabbitmq_connection)
-    username = Keyword.get(config, :username)
-    password = Keyword.get(config, :password)
-    host = Keyword.get(config, :host)
-
-    "amqp://#{username}:#{password}@#{host}"
-  end
-
-  defp create_rmq_resources do
-    # Setup RabbitMQ connection
-    {:ok, connection} = AMQP.Connection.open(rmq_uri())
-    {:ok, channel} = AMQP.Channel.open(connection)
-
-    # Create exchange
-    # AMQP.Exchange.declare(channel, @exchange, :fanout, durable: true)
-
-    # Create queues
-    AMQP.Queue.declare(channel, @queue, durable: true)
-
-    # AMQP.Queue.bind(channel, @queue, @exchange, routing_key: @queue)
-
-    # Close the channel as it is no longer needed
-    # GenRMQ will manage its own channel
-    AMQP.Channel.close(channel)
+    Application.fetch_env!(:api, :rabbitmq_url)
   end
 end

@@ -18,9 +18,9 @@ defmodule Api.Application do
       # Start the endpoint when the application starts
       ApiWeb.Endpoint,
       # Starts a worker by calling: Api.Worker.start_link(arg)
-      Api.Queue.MediaConversionRequestPublisher,
-      Api.Queue.MediaConversionConsumer,
-      Api.Queue.EmailPublisher,
+      {Api.Queue.MediaConversionRequestPublisher, []},
+      {Api.Queue.MediaConversionConsumer, []},
+      {Api.Queue.EmailPublisher, []},
       {Redix, redis_config},
       Api.Elasticsearch.Cluster,
       {ConCache,

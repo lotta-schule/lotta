@@ -40,10 +40,7 @@ config :api, Api.Repo,
   timeout: 60_000,
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :api, :rabbitmq_connection,
-  username: "guest",
-  password: "guest",
-  host: rabbitmq_host
+config :api, :rabbitmq_url, "amqp://guest:guest@#{rabbitmq_host}"
 
 config :api, :redis_connection,
   host: redis_host,
