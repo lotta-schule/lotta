@@ -14,9 +14,7 @@ db_name = System.fetch_env!("POSTGRES_DB")
 redis_host = System.fetch_env!("REDIS_HOST")
 redis_password = System.fetch_env!("REDIS_PASSWORD")
 # rabbitMQ
-rabbitmq_username = System.fetch_env!("RABBITMQ_USERNAME")
-rabbitmq_password = System.fetch_env!("RABBITMQ_PASSWORD")
-rabbitmq_host = System.fetch_env!("RABBITMQ_HOST")
+rabbitmq_url = System.fetch_env!("RABBITMQ_URL")
 # elasticsearch
 elasticsearch_host = System.fetch_env!("ELASTICSEARCH_HOST")
 # S3-compatible block storage for User Generated Content
@@ -48,10 +46,7 @@ config :api, Api.Repo,
   show_sensitive_data_on_connection_error: false,
   pool_size: 25
 
-config :api, :rabbitmq_connection,
-  username: rabbitmq_username,
-  password: rabbitmq_password,
-  host: rabbitmq_host
+config :api, :rabbitmq_url, rabbitmq_url
 
 config :api, :redis_connection,
   host: redis_host,

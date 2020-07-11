@@ -16,10 +16,7 @@ config :api, Api.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :api, :rabbitmq_connection,
-  username: "guest",
-  password: "guest",
-  host: "rabbitmq"
+config :api, :rabbitmq_url, "amqp://guest:guest@rabbitmq"
 
 config :api, :redis_connection,
   host: "redis",
