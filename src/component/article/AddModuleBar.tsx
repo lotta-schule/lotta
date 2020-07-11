@@ -26,7 +26,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
     const styles = useStyles();
     const [currentUser] = useCurrentUser();
 
-    const createId = (): ID => String(createId());
+    const createId = (): ID => String(-(new Date().getTime() + Math.random() * 1000));
 
     return (
         <div className={styles.root}>
