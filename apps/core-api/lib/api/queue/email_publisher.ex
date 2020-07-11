@@ -18,6 +18,8 @@ defmodule Api.Queue.EmailPublisher do
   @queue "email-out-queue"
 
   def init(_args \\ []) do
+    create_rmq_resources()
+
     [
       queue: @queue,
       exchange: {:direct, @exchange},
@@ -31,7 +33,7 @@ defmodule Api.Queue.EmailPublisher do
 
   def send_email(%EmailSendRequest{} = email_send_request) do
     {:ok, email_send_request} = Poison.encode(email_send_request)
-    GenRMQ.Publisher.publish(Api.Queue.EmailPublisher, email_send_request)
+    GenRMQ.Publisher.publish(Api.Queue.EmailPublisher, email_send_request, @queue)
     email_send_request
   end
 
@@ -206,5 +208,15 @@ defmodule Api.Queue.EmailPublisher do
 
   defp rmq_uri do
     Application.fetch_env!(:api, :rabbitmq_url)
+  end
+
+  defp create_rmq_resources do
+    {:ok, connection} = AMQP.Connection.open(rmq_uri())
+    {:ok, channel} = AMQP.Channel.open(connection)
+
+    AMQP.Queue.declare(channel, @queue, durable: true)
+    GenRMQ.Binding.bind_exchange_and_queue(channel, {:direct, @exchange}, @queue, @queue)
+
+    AMQP.Channel.close(channel)
   end
 end
