@@ -16,7 +16,7 @@ export const User = {
     },
 
     getDefaultAvatarUrl(user?: UserModel | null) {
-        return `https://avatars.dicebear.com/v2/avataaars/${encodeURIComponent(User.getNickname(user) ?? '')}.svg`;
+        return `https://avatars.dicebear.com/api/avataaars/${encodeURIComponent(User.getNickname(user) ?? '')}.svg`;
     },
 
     isAdmin(user?: UserModel | null) {
