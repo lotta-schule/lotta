@@ -154,11 +154,11 @@ defmodule Api.SearchResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "search" => searchresults
                }
-             }
+             } = res
 
       assert Enum.any?(searchresults, fn result ->
                result == %{
