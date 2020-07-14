@@ -4,10 +4,11 @@ defmodule Api.UserGroupResolverTest do
   """
 
   use ApiWeb.ConnCase
+
+  alias ApiWeb.Auth.AccessToken
   alias Ecto.NoResultsError
   alias Api.Repo
   alias Api.Repo.Seeder
-  alias Api.Guardian
   alias Api.Accounts
   alias Api.Tenants
   alias Api.Accounts.{User, UserGroup}

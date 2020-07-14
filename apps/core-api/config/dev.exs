@@ -44,7 +44,7 @@ config :api, ApiWeb.Endpoint,
   check_origin: false,
   watchers: []
 
-config :api, Api.Guardian,
+config :api, ApiWeb.Auth.AccessToken,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 

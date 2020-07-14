@@ -5,12 +5,18 @@ defmodule Api.ArticleResolverTest do
 
   use ApiWeb.ConnCase, async: true
 
+  alias ApiWeb.Auth.AccessToken
+  alias Api.Repo
+  alias Api.Accounts.{File, User}
+  alias Api.Content.Article
+  alias Api.Tenants.Category
+
   setup do
-    Api.Repo.Seeder.seed()
+    Repo.Seeder.seed()
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    faecher_category = Api.Repo.get_by!(Api.Tenants.Category, title: "Fächer")
-    projekt_category = Api.Repo.get_by!(Api.Tenants.Category, title: "Projekt")
+    faecher_category = Repo.get_by!(Category, title: "Fächer")
+    projekt_category = Repo.get_by!(Category, title: "Projekt")
 
     emails = [
       "alexis.rinaldoni@lotta.schule",
@@ -21,15 +27,17 @@ defmodule Api.ArticleResolverTest do
 
     [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
       Enum.map(emails, fn email ->
-        user = Api.Repo.get_by!(Api.Accounts.User, email: email)
-        {:ok, jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+        user = Repo.get_by!(User, email: email)
+
+        {:ok, jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+
         {user, jwt}
       end)
 
     titles = ["Der Podcast zum WB 2", "Der Vorausscheid", "And the oskar goes to ...", "Draft2"]
 
     [kleinkunst_wb2, vorausscheid, oskar, draft] =
-      Enum.map(titles, fn title -> Api.Repo.get_by!(Api.Content.Article, title: title) end)
+      Enum.map(titles, fn title -> Repo.get_by!(Article, title: title) end)
 
     {:ok,
      %{
@@ -2817,11 +2825,11 @@ defmodule Api.ArticleResolverTest do
     """
 
     test "updates an article if user is admin", %{admin_jwt: admin_jwt, draft: draft} do
-      file1 = Api.Repo.get_by!(Api.Accounts.File, filename: "ich_schoen.jpg")
-      file2 = Api.Repo.get_by!(Api.Accounts.File, filename: "ich_haesslich.jpg")
+      file1 = Repo.get_by!(File, filename: "ich_schoen.jpg")
+      file2 = Repo.get_by!(File, filename: "ich_haesslich.jpg")
 
       draft
-      |> Api.Content.Article.changeset(%{
+      |> Article.changeset(%{
         content_modules: [
           %{
             type: "IMAGE",

@@ -75,9 +75,7 @@ config :api, ApiWeb.Endpoint, server: true
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
 
-config :api, Api.Guardian,
-  issuer: "lotta",
-  secret_key: secret_key_jwt
+config :api, Api.Guardian, secret_key: secret_key_jwt
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,

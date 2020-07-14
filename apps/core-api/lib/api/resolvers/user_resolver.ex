@@ -130,8 +130,6 @@ defmodule Api.UserResolver do
 
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-        {:ok, jwt} = User.get_signed_jwt(user)
-
         case context do
           %{tenant: tenant} ->
             EmailPublisher.send_registration_email(tenant, user)
@@ -140,7 +138,7 @@ defmodule Api.UserResolver do
             EmailPublisher.send_registration_email(user)
         end
 
-        {:ok, %{token: jwt}}
+        {:ok, %{sign_in_user: user}}
 
       {:error, error} ->
         {:error,
@@ -153,21 +151,23 @@ defmodule Api.UserResolver do
 
   def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
     with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-         :ok <- AuthHelper.check_if_blocked(user, tenant),
-         {:ok, jwt} <- User.get_signed_jwt(user) do
-      {:ok, %{token: jwt}}
+         :ok <- AuthHelper.check_if_blocked(user, tenant) do
+      {:ok, %{sign_in_user: user}}
     end
   end
 
   def login(%{username: username, password: password}, _info) do
-    with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-         {:ok, jwt} <- User.get_signed_jwt(user) do
-      {:ok, %{token: jwt}}
+    case AuthHelper.login_with_username_pass(username, password) do
+      {:ok, user} ->
+        {:ok, %{sign_in_user: user}}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
   def logout(_args, _info) do
-    {:ok, nil}
+    {:ok, %{sign_out_user: true}}
   end
 
   def request_password_reset(%{email: email}, %{context: %{tenant: tenant}}) do
@@ -197,9 +197,8 @@ defmodule Api.UserResolver do
 
   def reset_password(%{email: email, token: token, password: password}, _info) do
     with {:ok, user} <- Accounts.find_user_by_reset_token(email, token),
-         {:ok, user} <- Accounts.update_password(user, password),
-         {:ok, jwt} <- User.get_signed_jwt(user) do
-      {:ok, %{token: jwt}}
+         {:ok, user} <- Accounts.update_password(user, password) do
+      {:ok, %{sign_in_user: user}}
     else
       error ->
         if error, do: Logger.warn(inspect(error))

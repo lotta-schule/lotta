@@ -4,8 +4,10 @@ defmodule Api.UserResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
-  alias Api.Guardian
+
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
   alias Api.Tenants

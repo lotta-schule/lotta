@@ -4,14 +4,16 @@ defmodule Api.TenantResolverTest do
   """
 
   import Ecto.Query
-  use ApiWeb.ConnCase, async: false
+
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Guardian
   alias Api.Accounts
   alias Api.Tenants
   alias Api.Accounts.{Directory, File, User, UserGroup}
   alias Api.Tenants.Category
   alias Api.Content.Article
+
+  use ApiWeb.ConnCase, async: false
 
   setup do
     Repo.Seeder.seed()
@@ -22,14 +24,15 @@ defmodule Api.TenantResolverTest do
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
 
     {:ok, lotta_admin_jwt, _} =
-      Guardian.encode_and_sign(lotta_admin, %{
+      AccessToken.encode_and_sign(lotta_admin, %{
         email: lotta_admin.email,
         name: lotta_admin.name
       })
 
-    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+    {:ok, admin_jwt, _} =
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
-    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
     {:ok,
      %{

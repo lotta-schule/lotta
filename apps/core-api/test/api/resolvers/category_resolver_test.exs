@@ -4,7 +4,10 @@ defmodule Api.CategoryResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
+
+  alias ApiWeb.AccessToken
   alias Api.Repo
   alias Api.Tenants
   alias Api.Accounts.User
@@ -27,7 +30,7 @@ defmodule Api.CategoryResolverTest do
     [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
       Enum.map(emails, fn email ->
         user = Repo.get_by!(User, email: email)
-        {:ok, jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+        {:ok, jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
         {user, jwt}
       end)
 

@@ -12,13 +12,7 @@ defmodule ApiWeb.Router do
   end
 
   pipeline :auth do
-    plug Guardian.Plug.Pipeline,
-      module: Api.Guardian,
-      error_handler: Api.Guardian.AuthErrorHandler
-
-    # plug Guardian.Plug.VerifySession, %{"typ" => "access"}
-    # plug Guardian.Plug.VerifyCookie, %{"typ" => "access"}
-    # plug Guardian.Plug.LoadResource
+    plug ApiWeb.Auth.Pipeline
     plug ApiWeb.Context
   end
 
@@ -27,6 +21,8 @@ defmodule ApiWeb.Router do
   end
 
   scope "/" do
+    # add normal Guardian auth
+    pipe_through :admin
     # pipe_through :browser
     live_dashboard "/dashboard",
       metrics: ApiWeb.Telemetry
@@ -37,7 +33,7 @@ defmodule ApiWeb.Router do
 
     forward "/", Absinthe.Plug,
       schema: ApiWeb.Schema,
-      before_send: {ApiWeb.AbsintheHooks, :before_send}
+      before_send: {ApiWeb.Auth.AbsintheHooks, :before_send}
   end
 
   scope "/_debug" do

@@ -222,21 +222,6 @@ defmodule Api.Accounts.User do
     |> put_pass_hash()
   end
 
-  def get_signed_jwt(%User{} = user) do
-    claims = %{
-      id: user.id,
-      email: user.email,
-      nickname: user.nickname,
-      name: user.name,
-      class: user.class
-    }
-
-    case Api.Guardian.encode_and_sign(user, claims) do
-      {:ok, jwt, _} -> {:ok, jwt}
-      error -> error
-    end
-  end
-
   defp put_pass_hash(changeset) do
     case changeset do
       %Changeset{valid?: true, changes: %{password: password}} ->

@@ -39,6 +39,10 @@ config :api, Api.Elasticsearch.Cluster,
     hackney: [pool: :elasticsearch_pool]
   ]
 
+config :api, Api.Guardian,
+  issuer: "lotta",
+  key: "lta_auth"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

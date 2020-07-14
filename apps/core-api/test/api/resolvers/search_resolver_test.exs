@@ -3,27 +3,31 @@ defmodule Api.SearchResolverTest do
     Test Module for SearchResolver
   """
 
-  use ApiWeb.ConnCase
+  alias ApiWeb.Auth.AccessToken
+  alias Api.Repo
+  alias Api.Accounts.User
   alias Api.Content
 
+  use ApiWeb.ConnCase
+
   setup do
-    Api.Repo.Seeder.seed()
+    Repo.Seeder.seed()
     Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
     :timer.sleep(200)
     Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, email: "alexis.rinaldoni@lotta.schule")
-    lehrer = Api.Repo.get_by!(Api.Accounts.User, email: "eike.wiewiorra@lotta.schule")
-    user = Api.Repo.get_by!(Api.Accounts.User, email: "doro@lotta.schule")
+    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
+    lehrer = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
+    user = Repo.get_by!(User, email: "doro@lotta.schule")
 
     {:ok, admin_jwt, _} =
-      Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
     {:ok, lehrer_jwt, _} =
-      Api.Guardian.encode_and_sign(lehrer, %{email: lehrer.email, name: lehrer.name})
+      AccessToken.encode_and_sign(lehrer, %{email: lehrer.email, name: lehrer.name})
 
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
     {:ok,
      %{
@@ -172,7 +176,7 @@ defmodule Api.SearchResolverTest do
     test "updated article should be indexed" do
       {:ok, article} =
         Api.Content.Article
-        |> Api.Repo.get_by!(title: "Beitrag Projekt 1")
+        |> Repo.get_by!(title: "Beitrag Projekt 1")
         |> Content.update_article(%{title: "Neuer Artikel nur für die Suche"})
 
       {:ok, %{"_source" => %{"title" => title}}} =
@@ -184,7 +188,7 @@ defmodule Api.SearchResolverTest do
     test "deleted article should be deleted from index" do
       {:ok, %{id: id}} =
         Api.Content.Article
-        |> Api.Repo.get_by!(title: "Beitrag Projekt 1")
+        |> Repo.get_by!(title: "Beitrag Projekt 1")
         |> Content.delete_article()
 
       {result, _} = Elasticsearch.get(Api.Elasticsearch.Cluster, "/articles/_doc/#{id}")

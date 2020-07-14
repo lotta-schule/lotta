@@ -90,6 +90,12 @@ defmodule Api.Queue.MediaConversionConsumer do
     GenRMQ.Consumer.ack(message)
   end
 
+  def handle_error(message, reason) do
+    Logger.warn("#{inspect(reason)} - Failed to process message: #{inspect(message)}")
+
+    reject(message)
+  end
+
   def reject(%Message{attributes: %{delivery_tag: tag}} = message, requeue \\ true) do
     Logger.info("Rejecting message, tag: #{tag}, requeue: #{requeue}")
     GenRMQ.Consumer.reject(message, requeue)
