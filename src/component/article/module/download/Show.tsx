@@ -64,6 +64,7 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                             )}
                             <Grid item xs={12} sm={3} md={2}>
                                 <Button
+                                    fullWidth
                                     variant={'outlined'}
                                     color={'secondary'}
                                     component={'a'}
