@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback, useState } from 'react';
 import { CategoryModel } from 'model';
 import { makeStyles } from '@material-ui/styles';
-import { Theme, Typography, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, List, ListItem } from '@material-ui/core';
+import { Theme, Typography, Accordion, AccordionSummary, AccordionDetails, List, ListItem } from '@material-ui/core';
 import { useCategories } from 'util/categories/useCategories';
 import { MoreVert } from '@material-ui/icons';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
@@ -20,7 +20,30 @@ const useStyles = makeStyles((theme: Theme) => {
             marginRight: theme.spacing(3)
         },
         expansionSummary: {
-            backgroundColor: theme.palette.divider
+            backgroundColor: theme.palette.grey[200],
+            borderRadius: 4,
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            marginBottom: theme.spacing(1),
+            '&:hover': {
+                borderColor: theme.palette.grey[400],
+            }
+        },
+        subcategories: {
+            borderRadius: 4,
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            marginBottom: theme.spacing(1),
+            backgroundColor: theme.palette.background.paper,
+            color: theme.palette.grey[700],
+            '&:hover': {
+                borderColor: theme.palette.grey[400],
+            }
+        },
+        before: {
+            '&::before': {
+                display: 'none',
+            },
         }
     });
 });
@@ -45,7 +68,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
         return categories.filter(c => c.category && c.category.id === category.id);
     }, [categories]);
 
-    const [updateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: Partial<CategoryModel> }>(UpdateCategoryMutation, {
+    const [updateCategory] = useMutation<{ category: CategoryModel }, { id: ID, category: any }>(UpdateCategoryMutation, {
         optimisticResponse: ({ id, category }) => {
             return {
                 __typename: 'Mutation',
@@ -61,17 +84,17 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
     return (
         <>
             <Typography variant="h5" className={styles.heading}>
-                Kategorienübersicht
+                Alle Kategorien
             </Typography>
 
             {homepageCategory && (
-                <ExpansionPanel expanded={false} key={homepageCategory.id}>
-                    <ExpansionPanelSummary className={styles.expansionSummary} onClick={() => onSelectCategory(homepageCategory)}>
+                <Accordion className={styles.before} expanded={false} key={homepageCategory.id}>
+                    <AccordionSummary className={styles.expansionSummary} onClick={() => onSelectCategory(homepageCategory)}>
                         <Typography variant="body1">
                             <b>{homepageCategory.title}</b>
                         </Typography>
-                    </ExpansionPanelSummary>
-                </ExpansionPanel>
+                    </AccordionSummary>
+                </Accordion>
             )}
             <p>&nbsp;</p>
 
@@ -85,8 +108,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                         return;
                     }
 
-                    const initialCategoriesArray = destination.droppableId === 'categories-root' ? mainCategories : getSubcategoriesForCategory({ id: Number(destination.droppableId) });
-                    const sourceIndex = findIndex(initialCategoriesArray, { id: Number(draggableId) })
+                    const initialCategoriesArray = destination.droppableId === 'categories-root' ? mainCategories : getSubcategoriesForCategory({ id: destination.droppableId });
+                    const sourceIndex = findIndex(initialCategoriesArray, { id: draggableId })
                     const newCategoriesArray = [...initialCategoriesArray];
                     newCategoriesArray.splice(sourceIndex, 1);
                     newCategoriesArray.splice(destination.index, 0, initialCategoriesArray[sourceIndex]);
@@ -96,12 +119,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                 variables: {
                                     id: category.id,
                                     category: {
-                                        sortKey: index * 10 + 10,
-                                        title: category.title,
-                                        bannerImageFile: category.bannerImageFile,
-                                        groups: category.groups,
-                                        redirect: category.redirect,
-                                        hideArticlesFromHomepage: category.hideArticlesFromHomepage
+                                        sortKey: index * 10 + 10
                                     }
                                 }
                             });
@@ -115,7 +133,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                             {mainCategories.map((category, index) => (
                                 <Draggable key={category.id} draggableId={String(category.id)} index={index}>
                                     {({ innerRef, dragHandleProps, draggableProps }) => (
-                                        <ExpansionPanel
+                                        <Accordion
                                             expanded={Boolean(expandedMainCategoryId && expandedMainCategoryId === category.id)}
                                             onChange={(e, expanded) => {
                                                 if (expanded) {
@@ -124,8 +142,9 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                             }}
                                             innerRef={innerRef}
                                             {...draggableProps}
+                                            className={styles.before}
                                         >
-                                            <ExpansionPanelSummary
+                                            <AccordionSummary
                                                 aria-controls={`${category.id}-content`}
                                                 id={`${category.id}-header`}
                                                 className={styles.expansionSummary}
@@ -139,8 +158,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                                     </span>
                                                     <b>{category.title}</b>
                                                 </Typography>
-                                            </ExpansionPanelSummary>
-                                            <ExpansionPanelDetails>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
                                                 <Droppable droppableId={String(category.id)} type={`subcategories-to-${category.id}`}>
                                                     {({ droppableProps, innerRef, placeholder }) => (
                                                         <List component="nav" innerRef={innerRef} {...droppableProps}>
@@ -148,7 +167,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                                                 <Draggable key={subcategory.id} draggableId={String(subcategory.id)} index={index}>
                                                                     {({ innerRef, dragHandleProps, draggableProps }) => (
                                                                         <ListItem
-                                                                            className={'expansionSummary'}
+                                                                            className={styles.subcategories}
                                                                             style={{ cursor: 'pointer' }}
                                                                             onClick={() => onSelectCategory(subcategory)}
                                                                             innerRef={innerRef}
@@ -168,8 +187,8 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                                         </List>
                                                     )}
                                                 </Droppable>
-                                            </ExpansionPanelDetails>
-                                        </ExpansionPanel>
+                                            </AccordionDetails>
+                                        </Accordion>
                                     )}
                                 </Draggable>
                             ))}
@@ -183,13 +202,13 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                 Seitenleistenkategorien
             </Typography>
             {sidenavCategories.map(category => (
-                <ExpansionPanel expanded={false} key={category.id}>
-                    <ExpansionPanelSummary className={styles.expansionSummary} onClick={() => onSelectCategory(category)}>
+                <Accordion className={styles.before} expanded={false} key={category.id}>
+                    <AccordionSummary className={styles.expansionSummary} onClick={() => onSelectCategory(category)}>
                         <Typography variant="body1">
                             <b>{category.title}</b>
                         </Typography>
-                    </ExpansionPanelSummary>
-                </ExpansionPanel>
+                    </AccordionSummary>
+                </Accordion>
             ))}
         </>
     );

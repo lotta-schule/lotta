@@ -7,7 +7,7 @@ import { FileModelType, UserModel } from 'model';
  */
 
 export const adminGroup = {
-        id: 1,
+        id: '1',
         insertedAt: '2015-01-01 00:00',
         updatedAt:  '2015-01-01 00:00',
         name: 'Administrator',
@@ -18,18 +18,18 @@ export const adminGroup = {
 }
 
 export const lehrerGroup = {
-        id: 4,
+        id: '4',
         insertedAt: '2015-01-01 00:00',
         updatedAt:  '2015-01-01 00:00',
         name: 'Lehrer',
         sortKey: 2000,
         isAdminGroup: false,
         tenant: null!,
-        enrollmentTokens: [{ id: 764, insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uhfhurehwuehf'  }],
+        enrollmentTokens: [{ id: '764', insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uhfhurehwuehf'  }],
 }
 
 export const elternGroup = {
-        id: 10,
+        id: '10',
         insertedAt: '2015-01-10 11:00',
         updatedAt:  '2015-01-12 14:00',
         name: 'Eltern',
@@ -40,15 +40,15 @@ export const elternGroup = {
 }
 
 export const schuelerGroup = {
-        id: 5,
+        id: '5',
         insertedAt: '2015-01-01 07:45', updatedAt:  '2015-01-01 07:45',
         name: 'Schüler',
         sortKey: 2000,
         isAdminGroup: false,
         tenant: null!,
         enrollmentTokens: [
-            { id: 884, insertedAt: '2015-0b-01 14:15', updatedAt: '2015-02-01 14:15', token: 'ajf82j84h2h'  },
-            { id: 892, insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uishfiji2j38f'  }
+            { id: '884', insertedAt: '2015-0b-01 14:15', updatedAt: '2015-02-01 14:15', token: 'ajf82j84h2h'  },
+            { id: '892', insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uishfiji2j38f'  }
         ],
 }
 
@@ -59,28 +59,28 @@ export const schuelerGroup = {
  */
 
 export const logosDirectory = {
-    id: 8743,
+    id: '8743',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Logos'
 };
     
 export const profilDirectory = {
-    id: 8744,
+    id: '8744',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Profil'
 };
     
 export const podcastsDirectory = {
-    id: 8745,
+    id: '8745',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Profil'
 };
     
 export const schulweitDirectory = {
-    id: 8745,
+    id: '8745',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Schulweit'
@@ -94,7 +94,7 @@ export const schulweitDirectory = {
  */
 
 export const imageFile = {
-    id: 123,
+    id: '123',
     filename: 'Dateiname.jpg',
     filesize: 123123,
     fileType: FileModelType.Image,
@@ -106,7 +106,7 @@ export const imageFile = {
 };
 
 export const otherImageFile = {
-    id: 245,
+    id: '245',
     filename: 'Animiert.gif',
     filesize: 2123123,
     fileType: FileModelType.Image,
@@ -118,7 +118,7 @@ export const otherImageFile = {
 };
 
 export const documentFile = {
-    id: 5545,
+    id: '5545',
     filename: 'Manifest.pdf',
     filesize: 822123123,
     fileType: FileModelType.Pdf,
@@ -130,7 +130,7 @@ export const documentFile = {
 };
 
 export const convertedDocumentFile = {
-    id: 5545,
+    id: '5545',
     filename: 'Bilderbuch.pdf',
     filesize: 2123123,
     fileType: FileModelType.Pdf,
@@ -140,21 +140,21 @@ export const convertedDocumentFile = {
     remoteLocation: 'https://fake3/bildband.pdf',
     fileConversions: [
         {
-            id: 55451,
+            id: '55451',
             fileType: FileModelType.Image,
             format: 'jpg:200',
             mimeType: 'image/jpg',
             remoteLocation: 'https://fake3/bildband55451'
         },
         {
-            id: 55452,
+            id: '55452',
             fileType: FileModelType.Audio,
             format: 'texttospeech:mp3',
             mimeType: 'audio/mp3',
             remoteLocation: 'https://fake3/bildband-tts'
         },
         {
-            id: 55453,
+            id: '55453',
             fileType: FileModelType.Misc,
             format: 'ocr:txt',
             mimeType: 'plain/text',
@@ -165,7 +165,7 @@ export const convertedDocumentFile = {
 
 
 export const movieFile = {
-    id: 75000,
+    id: '75000',
     filename: 'Amelie.mp4',
     filesize: 2323232123123,
     fileType: FileModelType.Video,
@@ -175,7 +175,7 @@ export const movieFile = {
     remoteLocation: 'https://fake3/kino.mp4',
     fileConversions: [
         {
-            id: 75001,
+            id: '75001',
             fileType: FileModelType.Image,
             format: 'gif:300',
             mimeType: 'image/gif',
@@ -184,7 +184,7 @@ export const movieFile = {
             updatedAt: '2001-01-21 00:00',
         },
         {
-            id: 75002,
+            id: '75002',
             fileType: FileModelType.Image,
             format: 'storyboard:800',
             mimeType: 'image/jpg',
@@ -193,7 +193,7 @@ export const movieFile = {
             updatedAt: '2001-01-21 00:00',
         },
         {
-            id: 75003,
+            id: '75003',
             fileType: FileModelType.Video,
             format: 'webm:1080',
             mimeType: 'video/webm',
@@ -203,7 +203,7 @@ export const movieFile = {
 
         },
         {
-            id: 75004,
+            id: '75004',
             fileType: FileModelType.Video,
             format: 'webm:768',
             mimeType: 'video/webm',
@@ -212,7 +212,7 @@ export const movieFile = {
             updatedAt: '2001-01-21 00:00',
         },
         {
-            id: 75005,
+            id: '75005',
             fileType: FileModelType.Video,
             format: 'mp4:1080',
             mimeType: 'video/mp4',
@@ -221,7 +221,7 @@ export const movieFile = {
             updatedAt: '2001-01-21 00:00',
         },
         {
-            id: 75006,
+            id: '75006',
             fileType: FileModelType.Video,
             format: 'mp4:768',
             mimeType: 'video/mp4',
@@ -230,7 +230,7 @@ export const movieFile = {
             updatedAt: '2001-01-21 00:00',
         },
         {
-            id: 75007,
+            id: '75007',
             fileType: FileModelType.Audio,
             format: 'mp3:std',
             mimeType: 'audio/mp3',
@@ -243,7 +243,7 @@ export const movieFile = {
 
 
 export const audioFile = {
-    id: 99000,
+    id: '99000',
     filename: 'Kaenguru.wav',
     filesize: 3232123123,
     fileType: FileModelType.Audio,
@@ -253,7 +253,7 @@ export const audioFile = {
     remoteLocation: 'https://fake3/vietkong.wav',
     fileConversions: [
         {
-            id: 99001,
+            id: '99001',
             fileType: FileModelType.Audio,
             format: 'hifi:flac',
             mimeType: 'audio/flac',
@@ -262,7 +262,7 @@ export const audioFile = {
             updatedAt: '2001-01-21 00:00',
         },
         {
-            id: 99002,
+            id: '99002',
             fileType: FileModelType.Audio,
             format: 'lofi:mp3',
             mimeType: 'audio/mp3',
@@ -275,7 +275,7 @@ export const audioFile = {
 
 
 export const powerpointFile = {
-    id: 20,
+    id: '20',
     filename: 'praesi.ppt',
     filesize: 23123,
     fileType: FileModelType.Misc,
@@ -285,7 +285,7 @@ export const powerpointFile = {
     remoteLocation: 'https://fake3/langweilig.ppt',
     fileConversions: [
         {
-            id: 21,
+            id: '21',
             fileType: FileModelType.Misc,
             format: 'thumbnail:jpg',
             mimeType: 'image/jpg',
@@ -307,7 +307,7 @@ export const powerpointFile = {
  */
 
 export const SomeUser = {
-    id: 1,
+    id: '1',
     insertedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     lastSeen: new Date().toISOString(),
@@ -322,7 +322,7 @@ export const SomeUser = {
 };
 
 export const SomeUserin = {
-    id: 2,
+    id: '2',
     insertedAt: '2019-05-18 10:00',
     updatedAt: '2019-05-18 10:00',
     lastSeen: '2019-05-18 10:00',
@@ -337,7 +337,7 @@ export const SomeUserin = {
 };
 
 export const KeinErSieEsUser = {
-    id: 3,
+    id: '3',
     insertedAt: '2019-05-18 10:00',
     updatedAt: '2019-05-18 10:00',
     lastSeen: '2019-05-18 10:00',

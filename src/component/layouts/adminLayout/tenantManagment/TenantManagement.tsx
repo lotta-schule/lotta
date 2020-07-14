@@ -1,8 +1,9 @@
 import React, { memo } from 'react';
 import { Paper, Theme, Tab, Tabs, makeStyles } from '@material-ui/core';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { BasicSettings } from './BasicSettings';
-import { PresentationSettings } from './PresentationSettings';
+import { BasicSettings } from './basic/BasicSettings';
+import { PresentationSettings } from './presentation/PresentationSettings';
+import { UsageOverview } from './usage/UsageOverview';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -23,6 +24,7 @@ export const TenantManagement = memo(() => {
             <Tabs value={location.pathname} indicatorColor={'primary'} textColor={'primary'} onChange={(_, pathname) => history.push(pathname)}>
                 <Tab value={'/admin/tenant/general'} label={'Grundeinstellungen'} />
                 <Tab value={'/admin/tenant/presentation'} label={'Darstellung'} />
+                <Tab value={'/admin/tenant/usage'} label={'Nutzung'} />
             </Tabs>
             <section className={styles.content}>
                 <Switch>
@@ -31,6 +33,7 @@ export const TenantManagement = memo(() => {
                     </Route>
                     <Route path='/admin/tenant/general' component={BasicSettings} />
                     <Route path='/admin/tenant/presentation' component={PresentationSettings} />
+                    <Route path='/admin/tenant/usage' component={UsageOverview} />
                 </Switch>
             </section>
         </Paper>

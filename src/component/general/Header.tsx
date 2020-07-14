@@ -35,7 +35,7 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
         position: 'relative',
         '&::after': {
             position: 'absolute',
-            display: 'block',
+            display: ({ bannerImageUrl }) => bannerImageUrl ? 'block' : 'none',
             content: `''`,
             left: 0,
             top: 0,

@@ -3,7 +3,7 @@ import { render, cleanup, waitFor, TestFileExplorerContextProvider } from 'test/
 import { FileToolbar } from './FileToolbar';
 import { getPrivateAndPublicFiles, SomeUser, adminGroup } from 'test/fixtures';
 import { DirectoryModel, FileModel } from 'model';
-import { defaultState } from './context/FileExplorerContext';
+import { defaultState, FileExplorerMode } from './context/FileExplorerContext';
 
 const user = SomeUser;
 const filesAndDirectories = getPrivateAndPublicFiles(user);
@@ -29,7 +29,7 @@ describe('component/fileExplorer/FileToolbar', () => {
       });
 
 
-      it('should show the FileDetailInfo button, and not show the other buttons', async done => {
+      it('should show no buttons', async done => {
 
           const { queryByTestId, findByTestId } = render(
               (
@@ -45,12 +45,12 @@ describe('component/fileExplorer/FileToolbar', () => {
             expect(queryByTestId('FileExplorerToolbarMoveFileButton')).toBeNull();
             expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeNull();
             expect(queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeNull();
-            expect(queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
+            expect(queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
           });
           done();
       });
 
-      it('should show the FileDetailInfo button, but also the CreateDirectoryButton for a admin user', async done => {
+      it('show only the CreateDirectoryButton for a admin user', async done => {
 
           const { queryByTestId, findByTestId } = render(
               (
@@ -66,7 +66,7 @@ describe('component/fileExplorer/FileToolbar', () => {
               expect(queryByTestId('FileExplorerToolbarNewUploadButton')).not.toBeVisible();
               expect(queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
               expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
-              expect(queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
+              expect(queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
           });
           done();
       });
@@ -121,6 +121,28 @@ describe('component/fileExplorer/FileToolbar', () => {
           });
           done();
       });
+
+      it('should not show the FileDetailInfo button if a file is being selected', async done => {
+
+          const { queryByTestId } = render(
+              (
+                  <TestFileExplorerContextProvider defaultValue={{...state, mode: FileExplorerMode.Select }}>
+                      <FileToolbar />
+                  </TestFileExplorerContextProvider>
+              ),
+            { }, { currentUser: user }
+          );
+          await waitFor(() => {
+              expect(queryByTestId('FileExplorerToolbarPath')).toBeVisible();
+              expect(queryByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
+              expect(queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
+              expect(queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
+              expect(queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
+              expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
+          });
+          done();
+      });
+
 
       describe('when a file is selected', () => {
           const stateWithFileSelected: typeof state = {

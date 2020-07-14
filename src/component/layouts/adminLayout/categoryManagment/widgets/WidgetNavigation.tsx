@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { Theme, Typography, ExpansionPanel, ExpansionPanelSummary } from '@material-ui/core';
+import { Theme, Typography, Accordion, AccordionSummary } from '@material-ui/core';
 import { WidgetModel } from 'model';
 import { WidgetIcon } from 'component/widgets/WidgetIcon';
 import clsx from 'clsx';
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => {
             marginBottom: theme.spacing(3),
         },
         expansionSummary: {
-            backgroundColor: theme.palette.divider,
+            backgroundColor: theme.palette.grey[200],
             '& > div > div': {
                 display: 'flex',
                 alignItems: 'center'
@@ -35,12 +35,12 @@ export const WidgetNavigation = memo<WidgetNavigationProps>(({ widgets, selected
     return (
         <>
             <Typography variant="h5" className={styles.heading}>
-                Kategorienübersicht
+                Alle Marginalen
             </Typography>
             <div style={{ paddingBottom: '5em' }}>
                 {widgets.map(widget => (
-                    <ExpansionPanel key={widget.id} expanded={false}>
-                        <ExpansionPanelSummary
+                    <Accordion key={widget.id} expanded={false}>
+                        <AccordionSummary
                             aria-controls={`${widget.id}-content`}
                             id={`${widget.id}-header`}
                             className={styles.expansionSummary}
@@ -53,8 +53,8 @@ export const WidgetNavigation = memo<WidgetNavigationProps>(({ widgets, selected
                                     {widget.title}
                                 </span>
                             </Typography>
-                        </ExpansionPanelSummary>
-                    </ExpansionPanel>
+                        </AccordionSummary>
+                    </Accordion>
                 ))}
             </div>
         </>

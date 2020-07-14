@@ -1,5 +1,5 @@
 import { defaultState } from './FileExplorerContext';
-import { FileModel, DirectoryModel } from '../../../model';
+import { FileModel, DirectoryModel, ID } from '../../../model';
 
 export type Action =
     | { type: 'setMode', mode: typeof defaultState.mode }
@@ -11,7 +11,7 @@ export type Action =
     | { type: 'setMarkedDirectories', directories: DirectoryModel[] }
     | { type: 'resetMarkedDirectories' }
     | { type: 'markSingleDirectory', directory: DirectoryModel }
-    | { type: 'setPath', path: ({ id: null } | { id: number; name: string })[] }
+    | { type: 'setPath', path: ({ id: null } | { id: ID; name: string })[] }
     | { type: 'setSearchFilter', searchtext: string }
     | { type: 'showActiveUploads' } | { type: 'hideActiveUploads' }
     | { type: 'showFileUsage' } | { type: 'hideFileUsage' }

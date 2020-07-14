@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor, getByText, getByRole } from 'test/util';
-import { SomeUser } from 'test/fixtures';
+import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
 import { ProfileData } from './ProfileData';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import userEvent from '@testing-library/user-event';
@@ -95,6 +95,21 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             await waitFor(() => {
                 expect(didCallUpdateData).toEqual(true);
             });
+            done();
+        });
+    });
+
+    describe('User groups', () => {
+        it('should show all the user\'s groups', async done => {
+            render(
+                <ProfileData />,
+                {}, { currentUser: { ...SomeUser, groups: [adminGroup, lehrerGroup, elternGroup], assignedGroups: [adminGroup, lehrerGroup] }, useCache: true }
+            );
+            const groupsList = await screen.findByTestId('ProfileData-GroupsList');
+            expect(groupsList).toBeVisible();
+            expect(groupsList).toHaveTextContent('Administrator');
+            expect(groupsList).toHaveTextContent('Lehrer');
+            expect(groupsList).toHaveTextContent('Eltern');
             done();
         });
     });

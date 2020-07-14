@@ -8,7 +8,7 @@ import { ClientModel } from 'model';
  */
 
 export const TestTenant: ClientModel = {
-    id: 1,
+    id: '1',
     title: 'DerEineVonHier',
     slug: 'derdiedas',
     insertedAt: '2014-03-08 12:00',
@@ -24,7 +24,7 @@ export const TestTenant: ClientModel = {
             host: 'chezmoi.fr',
             insertedAt: '2014-12-24 18:00',
             updatedAt: '2014-12-24 18:00',
-            id: 1,
+            id: '1',
             isMainDomain: true
         }
     ],
@@ -34,7 +34,7 @@ export const TestTenant: ClientModel = {
 };
 
 export const OtherTenant = {
-    id: 2,
+    id: '2',
     title: 'Um andere gehts ja eigentlich hier nie',
     slug: 'andere',
     insertedAt: '2014-03-08 12:00',
@@ -55,7 +55,7 @@ export const OtherTenant = {
  */
 
 export const StartseiteCategory = {
-    id: 1,
+    id: '1',
     sortKey: 0,
     title: 'Start',
     isHomepage: true,
@@ -69,7 +69,7 @@ export const StartseiteCategory = {
 };
 
 export const FaecherCategory = {
-    id: 2,
+    id: '2',
     sortKey: 1,
     title: 'Fächer',
     isHomepage: false,
@@ -83,7 +83,7 @@ export const FaecherCategory = {
 };
 
 export const MaterialCategory = {
-    id: 3,
+    id: '3',
     sortKey: 5,
     title: 'Material',
     isHomepage: false,
@@ -97,7 +97,7 @@ export const MaterialCategory = {
 };
 
 export const ImpressumCategory = {
-    id: 4,
+    id: '4',
     sortKey: 7,
     title: 'Impressum',
     isHomepage: false,
@@ -111,7 +111,7 @@ export const ImpressumCategory = {
 };
 
 export const DatenschutzCategory = {
-    id: 5,
+    id: '5',
     sortKey: 10,
     title: 'Datenschutz',
     isHomepage: false,
@@ -126,7 +126,7 @@ export const DatenschutzCategory = {
 
 
 export const MatheCategory = {
-    id: 20,
+    id: '20',
     sortKey: 0,
     title: 'Mathe',
     isHomepage: false,
@@ -140,7 +140,7 @@ export const MatheCategory = {
 };
 
 export const SportCategory = {
-    id: 21,
+    id: '21',
     sortKey: 10,
     title: 'Sport',
     isHomepage: false,
@@ -154,7 +154,7 @@ export const SportCategory = {
 };
 
 export const KunstCategory = {
-    id: 22,
+    id: '22',
     sortKey: 20,
     title: 'Kunst',
     isHomepage: false,
@@ -168,7 +168,7 @@ export const KunstCategory = {
 };
 
 export const MusikCategory = {
-    id: 23,
+    id: '23',
     sortKey: 30,
     title: 'Musik',
     isHomepage: false,
@@ -182,7 +182,7 @@ export const MusikCategory = {
 };
 
 export const DeutschCategory = {
-    id: 24,
+    id: '24',
     sortKey: 40,
     title: 'Deutsch',
     isHomepage: false,
@@ -196,7 +196,7 @@ export const DeutschCategory = {
 };
 
 export const FrancaisCategory = {
-    id: 25,
+    id: '25',
     sortKey: 50,
     title: 'Français',
     isHomepage: false,
@@ -210,7 +210,7 @@ export const FrancaisCategory = {
 };
 
 export const KlassenarbeitenUCategory = {
-    id: 31,
+    id: '31',
     sortKey: 0,
     title: 'Klassenarbeiten Unterstufe',
     isHomepage: false,
@@ -224,7 +224,7 @@ export const KlassenarbeitenUCategory = {
 };
 
 export const KlassenarbeitenOCategory = {
-    id: 32,
+    id: '32',
     sortKey: 10,
     title: 'Klassenarbeiten Oberstufe',
     isHomepage: false,
@@ -238,7 +238,7 @@ export const KlassenarbeitenOCategory = {
 };
 
 export const HausaufgabenCategory = {
-    id: 33,
+    id: '33',
     sortKey: 20,
     title: 'Hausaufgaben',
     isHomepage: false,
@@ -252,7 +252,7 @@ export const HausaufgabenCategory = {
 };
 
 export const ArbeitsblätterCategory = {
-    id: 34,
+    id: '34',
     sortKey: 30,
     title: 'Arbeitsblätter',
     isHomepage: false,

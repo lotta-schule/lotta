@@ -5,10 +5,9 @@ import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
 import { Switch, Redirect, Route } from 'react-router-dom';
 import { AdminLayoutNavigation } from './AdminLayoutNavigation';
 import { UserManagement } from './userManagement/UserManagement';
-import { CategoriesManagement } from './categoryManagment/CategoryManagement';
 import { UnpublishedArticles } from '../profileLayout/UnpublishedArticles';
+import { CategoryManagement } from './categoryManagment/CategoryManagement';
 import { TenantManagement } from './tenantManagment/TenantManagement';
-import { WidgetManagement } from './widgetManagement/WidgetManagement';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { WidgetsList } from '../WidgetsList';
 import { Header } from '../../general/Header';
@@ -43,12 +42,9 @@ export const AdminLayout = memo(() => {
                         <Redirect to={'/admin/tenant/general'} />
                     </Route>
                     <Route path={'/admin/tenant'} component={TenantManagement} />
+                    <Route path={'/admin/categories'} component={CategoryManagement} />
                     <Route path={'/admin/users'} component={UserManagement} />
-                    <Route path={'/admin/categories'} component={CategoriesManagement} />
-                    <Route path={'/admin/widgets'} component={WidgetManagement} />
-                    {User.isAdmin(currentUser) && (
-                        <Route path={'/admin/unpublished'} component={UnpublishedArticles} />
-                    )}
+                    <Route path={'/admin/unpublished'} component={UnpublishedArticles} />
                 </Switch>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
