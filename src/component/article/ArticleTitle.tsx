@@ -126,9 +126,11 @@ export const ArticleTitle = memo<ArticleTitleProps>(({ article }) => {
                                 <>&nbsp;<AuthorAvatarsList users={article.users} />&nbsp;</>
                                 {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
                             </Typography>
-                            <div className={styles.topic}>
-                            {article.topic && <> {article.topic}</>}
-                            </div>
+                            {article.topic && (
+                                <div className={styles.topic}>
+                                    {article.topic}
+                                </div>
+                            )}
                         </Grid>
                         <Grid item xs={12} sm={9}>
                             <Grid container>
