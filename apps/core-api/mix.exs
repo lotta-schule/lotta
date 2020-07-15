@@ -4,7 +4,7 @@ defmodule Api.MixProject do
   def project do
     [
       app: :api,
-      version: "1.8.0",
+      version: "1.9.0",
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -22,7 +22,7 @@ defmodule Api.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
-      ],
+      ]
     ]
   end
 
@@ -32,7 +32,18 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:honeybadger, :lager, :logger, :runtime_tools, :amqp, :ssl, :inets, :con_cache, :os_mon]
+      extra_applications: [
+        :honeybadger,
+        :lager,
+        :logger,
+        :runtime_tools,
+        :amqp,
+        :ssl,
+        :inets,
+        :con_cache,
+        :timex,
+        :os_mon
+      ]
     ]
   end
 
@@ -45,18 +56,19 @@ defmodule Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.5.1"},
       {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.1"},
       {:ecto_sql, "~> 3.4.2"},
-      {:absinthe, "~> 1.4.16"},
-      {:absinthe_plug, "~> 1.4.7"},
+      {:absinthe, "~> 1.5"},
+      {:absinthe_plug, "~> 1.5"},
       {:dataloader, "~> 1.0.7"},
       {:corsica, "~> 1.1.3"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.17.4"},
       {:jason, "~> 1.2.0"},
-      {:plug_cowboy, "~> 2.2.1"},
+      {:plug_cowboy, "~> 2.3.0"},
       {:comeonin, "~> 5.3.1"},
       {:bcrypt_elixir, "~> 2.2.0"},
       {:guardian, "~> 2.1.1"},
@@ -68,6 +80,7 @@ defmodule Api.MixProject do
       {:uuid, "~> 1.1.8"},
       {:gen_rmq, "~> 2.6.0"},
       {:ex_ical, "~> 0.2.0"},
+      {:timex, "~> 3.0"},
       {:honeybadger, "~> 0.14.0"},
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
@@ -76,7 +89,7 @@ defmodule Api.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:phoenix_live_dashboard, "~> 0.1"},
-      #test
+      # test
       {:excoveralls, "~> 0.12", only: :test}
     ]
   end

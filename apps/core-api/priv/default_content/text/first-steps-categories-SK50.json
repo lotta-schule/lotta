@@ -1,0 +1,44 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "text": ""
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                }
+              ],
+              "src": "__REMOTE_URL____kategorien-anlegen-s3.jpg",
+              "type": "image"
+            },
+            {
+              "text": "Es öffnet sich der Administrationsbereich von Lotta und Sie sind im ersten Bereich \"MEIN LOTTA\", erkennbar rechts an der farbigen Hervorhebung im Submenü des Administrationsbereiches."
+            }
+          ],
+          "type": "list-item"
+        },
+        {
+          "children": [
+            {
+              "text": "Klicken Sie auf den Bereich \""
+            },
+            {
+              "bold": true,
+              "text": "KATEGORIEN"
+            },
+            {
+              "text": "\" im Submenü rechts. "
+            }
+          ],
+          "type": "list-item"
+        }
+      ],
+      "type": "unordered-list"
+    }
+  ]
+}

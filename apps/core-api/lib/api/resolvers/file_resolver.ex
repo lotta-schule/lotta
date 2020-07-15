@@ -1,34 +1,128 @@
 defmodule Api.FileResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting files
+  """
+
+  require Logger
+
+  import Ecto.Query
+
+  alias Ecto.Changeset
+  alias ApiWeb.ErrorHelpers
   alias Api.Accounts
-  alias Api.Accounts.{Directory,User}
-  alias Api.Tenants.Tenant
+  alias Api.Accounts.{Directory, User}
+  alias Api.Tenants.{Category, Tenant}
+  alias Api.Content.{Article, ContentModule}
   alias Api.UploadService
   alias Api.Queue.MediaConversionRequestPublisher
   alias Api.Repo
   alias UUID
 
-  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}}) when is_integer(parent_directory_id) do
+  def resolve_file_usage(%{parent_directory_id: parent_directory_id, id: id}, _args, %{
+        context: %{current_user: current_user}
+      })
+      when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
+
+    if User.can_read_directory?(current_user, parent_directory) do
+      categories =
+        from(c in Category,
+          where: c.banner_image_file_id == ^id,
+          order_by: [desc: :updated_at, asc: :title]
+        )
+        |> Repo.all()
+        |> Enum.map(&%{usage: "banner", category: &1})
+
+      articles =
+        from(a in Article,
+          where: a.preview_image_file_id == ^id,
+          order_by: [desc: :updated_at, asc: :title]
+        )
+        |> Repo.all()
+        |> Enum.map(&%{usage: "preview", article: &1})
+
+      content_modules =
+        from(cm in ContentModule,
+          join: cmf in "content_module_file",
+          on: cmf.content_module_id == cm.id,
+          preload: :article,
+          where: cmf.file_id == ^id,
+          order_by: [desc: cm.updated_at, desc: cm.inserted_at, desc: cm.id]
+        )
+        |> Repo.all()
+        |> Enum.map(&%{usage: "file", content_module: &1, article: &1.article})
+
+      users =
+        from(u in User,
+          where: u.avatar_image_file_id == ^id,
+          order_by: [:name, :nickname, :inserted_at]
+        )
+        |> Repo.all()
+        |> Enum.map(&%{usage: "avatar", user: &1})
+
+      tenants =
+        from(t in Tenant,
+          where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id,
+          order_by: :slug
+        )
+        |> Repo.all()
+        |> Enum.map(
+          &%{
+            usage: if(&1.logo_image_file_id == id, do: "logo", else: "background"),
+            tenant: &1
+          }
+        )
+
+      usages = categories ++ articles ++ content_modules ++ users ++ tenants
+      {:ok, usages}
+    else
+      {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
+    end
+  end
+
+  def file(%{id: id}, %{context: %{current_user: current_user}}) do
+    file =
+      Accounts.get_file!(String.to_integer(id))
+      |> Repo.preload(:parent_directory)
+
+    case file.user_id == current_user.id ||
+           User.can_read_directory?(current_user, file.parent_directory) do
+      true ->
+        {:ok, file}
+
+      _ ->
+        {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
+    end
+  end
+
+  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
+      when not is_nil(parent_directory_id) do
+    parent_directory = Accounts.get_directory!(parent_directory_id)
+
     case User.can_read_directory?(current_user, parent_directory) do
       true ->
         {:ok, Accounts.list_files(parent_directory)}
+
       _ ->
         {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
     end
   end
+
   def files(_, _), do: {:ok, []}
 
-  def upload(%{file: file, parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user, tenant: tenant}}) do
-    with directory when not is_nil(directory) <- Accounts.get_directory(parent_directory_id) do
-      directory =
-        directory
-        |> Repo.preload([:user, :tenant])
-      if User.can_write_directory?(current_user, directory) do
-        upload_file_to_directory(file, directory, current_user, tenant)
-      else
-        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
-      end
-    else
+  def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
+        context: %{current_user: current_user, tenant: tenant}
+      }) do
+    case Accounts.get_directory(parent_directory_id) do
+      directory when not is_nil(directory) ->
+        directory = Repo.preload(directory, [:user, :tenant])
+
+        if User.can_write_directory?(current_user, directory) do
+          upload_file_to_directory(file, directory, current_user, tenant)
+        else
+          {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+        end
+
       _ ->
         {:error, "Der Ordner wurde nicht gefunden."}
     end
@@ -37,20 +131,25 @@ defmodule Api.FileResolver do
   def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     try do
       file =
-        Accounts.get_file!(id)
+        Accounts.get_file!(String.to_integer(id))
         |> Repo.preload([:tenant, :parent_directory])
+
       source_directory = file.parent_directory
+
       target_directory =
-        with %{parent_directory_id: target_directory_id} <- args do
-          Accounts.get_directory!(target_directory_id)
-        else
+        case args do
+          %{parent_directory_id: target_directory_id} ->
+            Accounts.get_directory!(target_directory_id)
+
           _ ->
             source_directory
         end
-      if User.can_write_directory?(current_user, source_directory) && User.can_write_directory?(current_user, target_directory) do
+
+      if User.can_write_directory?(current_user, source_directory) &&
+           User.can_write_directory?(current_user, target_directory) do
         Accounts.update_file(file, Map.take(args, [:filename, :parent_directory_id]))
       else
-        {:error, "Du darfst diese Datei nicht bearbeiten."}        
+        {:error, "Du darfst diese Datei nicht bearbeiten."}
       end
     rescue
       Ecto.NoResultsError ->
@@ -61,16 +160,19 @@ defmodule Api.FileResolver do
   def delete(%{id: id}, %{context: %{current_user: current_user}}) do
     try do
       file =
-        Accounts.get_file!(id)
+        Accounts.get_file!(String.to_integer(id))
         |> Repo.preload([:parent_directory])
+
       if User.can_write_directory?(current_user, file.parent_directory) do
         file =
           file
           |> Repo.preload(:file_conversions)
-        Enum.map(file.file_conversions, fn file_conversion ->
+
+        Enum.each(file.file_conversions, fn file_conversion ->
           Accounts.delete_file_conversion(file_conversion)
           Accounts.File.delete_attachment(file_conversion)
         end)
+
         Accounts.delete_file(file)
         Accounts.File.delete_attachment(file)
       else
@@ -82,33 +184,60 @@ defmodule Api.FileResolver do
     end
   end
 
-  defp upload_file_to_directory(%Plug.Upload{} = file, %Directory{} = directory, %User{} = user, %Tenant{} = tenant) do
-    %{filename: filename,content_type: content_type,path: localfilepath} = file
-    %{size: filesize} = File.stat! localfilepath
-    oid = user.id + DateTime.to_unix(DateTime.utc_now) + :rand.uniform(9999)
+  defp upload_file_to_directory(
+         %Plug.Upload{} = file,
+         %Directory{} = directory,
+         %User{} = user,
+         %Tenant{} = tenant
+       ) do
+    %{filename: filename, content_type: content_type, path: localfilepath} = file
+    %{size: filesize} = File.stat!(localfilepath)
+    oid = user.id + DateTime.to_unix(DateTime.utc_now()) + :rand.uniform(9999)
     uuid = UUID.uuid5(:dns, "#{oid}.ugc.lotta.schule")
-    %{url: remote_location} = UploadService.upload_to_space(%{localfilepath: localfilepath, content_type: content_type, file_name: uuid})
-    %{
+
+    upload_config = %{
+      localfilepath: localfilepath,
+      content_type: content_type,
+      file_name: uuid
+    }
+
+    file = %Api.Accounts.File{
       user_id: user.id,
       tenant_id: tenant.id,
       parent_directory_id: directory.id,
-      remote_location: remote_location,
       filename: filename,
       filesize: filesize,
       file_type: filetype_from(content_type),
       mime_type: content_type
     }
-    |> Accounts.create_file()
-    |> case do
-      {:ok, file} ->
-        MediaConversionRequestPublisher.send_conversion_request(file)
-        {:ok, file}
-      {:error, changeset} ->
-        {
-          :error,
-          message: "Upload fehlgeschlagen.",
-          details: error_details(changeset)
-        }
+
+    with {:ok, %{url: remote_location}} <- UploadService.upload_to_space(upload_config),
+         {:ok, file} <- Repo.insert(Map.put(file, :remote_location, remote_location)) do
+      MediaConversionRequestPublisher.send_conversion_request(file)
+      {:ok, file}
+    else
+      {:error, %Changeset{} = changeset} ->
+        Logger.info(
+          "There was an error creating the uploaded file in the db. Trying to rollback upload"
+        )
+
+        case UploadService.delete_from_space(uuid) do
+          {:ok, _status} ->
+            Logger.info("file deleted successfully from #{uuid}")
+
+          {:error, reason} ->
+            Logger.error("error deleting the file: #{inspect(reason)}")
+        end
+
+        {:error,
+         [
+           message: "Fehler beim Anlegen der Datei",
+           details: ErrorHelpers.extract_error_details(changeset)
+         ]}
+
+      {:error, reason} ->
+        Logger.error("Error uploading file to storage: #{inspect(reason)}")
+        {:error, "Error uploading file to storage"}
     end
   end
 
@@ -141,10 +270,4 @@ defmodule Api.FileResolver do
       _ -> "misc"
     end
   end
-
-  defp error_details(%Ecto.Changeset{} = changeset) do
-    changeset
-    |> Ecto.Changeset.traverse_errors(&ApiWeb.ErrorHelpers.translate_error/1)
-  end
-
 end

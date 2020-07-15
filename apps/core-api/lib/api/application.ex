@@ -6,12 +6,10 @@ defmodule Api.Application do
   use Application
 
   def start(_type, _args) do
-
     redis_config = Application.fetch_env!(:api, :redis_connection)
 
     # List all child processes to be supervised
-    children =
-    [
+    children = [
       # Start the Ecto repository
       Api.Repo,
       # Start the PubSub Server
@@ -20,12 +18,13 @@ defmodule Api.Application do
       # Start the endpoint when the application starts
       ApiWeb.Endpoint,
       # Starts a worker by calling: Api.Worker.start_link(arg)
-      Api.Queue.MediaConversionRequestPublisher,
-      Api.Queue.MediaConversionConsumer,
-      Api.Queue.EmailPublisher,
+      {Api.Queue.MediaConversionRequestPublisher, []},
+      {Api.Queue.MediaConversionConsumer, []},
+      {Api.Queue.EmailPublisher, []},
       {Redix, redis_config},
       Api.Elasticsearch.Cluster,
-      {ConCache, name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
+      {ConCache,
+       name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

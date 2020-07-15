@@ -1,14 +1,16 @@
-defmodule ApiWeb.Schema.CalendarTypes do
+defmodule ApiWeb.Schema.Calendar do
+  @moduledoc false
+
   use Absinthe.Schema.Notation
 
   object :calendar_queries do
     field :calendar, list_of(:calendar_event) do
-      arg :url, non_null(:string)
-      arg :days, :integer
-      resolve &Api.CalendarResolver.get/2
+      arg(:url, non_null(:string))
+      arg(:days, :integer)
+      resolve(&Api.CalendarResolver.get/2)
     end
   end
-  
+
   object :calendar_event do
     field :uid, :string
     field :description, :string

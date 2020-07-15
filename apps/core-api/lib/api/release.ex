@@ -1,4 +1,8 @@
 defmodule Api.Release do
+  @moduledoc """
+    Release tasks like database migrations
+  """
+
   @app :api
 
   @elasticsearch_clusters [Api.Elasticsearch.Cluster]
@@ -12,7 +16,7 @@ defmodule Api.Release do
 
   def drop do
     for repo <- repos() do
-      :ok = Ecto.Migrator.with_repo(repo, &(&1.__adapter__.storage_down(&1.config)))
+      :ok = Ecto.Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
     end
   end
 
@@ -23,9 +27,10 @@ defmodule Api.Release do
   def build_elasticsearch_indexes do
     Application.load(@app)
     IO.puts("Building indexes...")
-    Enum.each @elasticsearch_clusters, fn cluster ->
+
+    Enum.each(@elasticsearch_clusters, fn cluster ->
       Enum.each(@elasticsearch_indexes, &Elasticsearch.Index.hot_swap(cluster, &1))
-    end
+    end)
   end
 
   defp repos do

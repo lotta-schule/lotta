@@ -11,6 +11,8 @@ defmodule Api.Repo.Migrations.CreateTableCategoriesWidgets do
     create index(:categories_widgets, [:category_id])
     create index(:categories_widgets, [:widget_id])
 
-    create unique_index(:categories_widgets, [:category_id, :widget_id], name: :category_id_widget_id_unique_index)
+    create unique_index(:categories_widgets, [:category_id, :widget_id],
+             name: :category_id_widget_id_unique_index
+           )
   end
 end

@@ -1,29 +1,29 @@
 defmodule Api.Queue.MediaConversionConsumer do
-  use GenServer
-  alias GenRMQ.Message
-  alias Api.Accounts
-  alias Api.Repo
+  @moduledoc """
+  Incoming Queue for processing media conversions
+  """
 
   require Logger
 
+  alias GenRMQ.Message
+  alias Ecto.Changeset
+  alias Api.Repo
+  alias Api.Accounts.{File, FileConversion}
+
+  use GenServer
+
   @behaviour GenRMQ.Consumer
 
-  @exchange    "media-conversion"
-  @queue       "media-conversion-results"
+  @exchange "media-conversion"
+  @queue "media-conversion-results"
 
-  def init(arg) do
-    {:ok, arg}
-  end
-  def init do
-    create_rmq_resources()
-
+  def init(_args \\ []) do
     [
       queue: @queue,
-      exchange: {:fanout, @exchange},
-      # routing_key: @queue,
+      exchange: {:direct, @exchange},
+      routing_key: @queue,
       prefetch_count: "10",
-      uri: rmq_uri(),
-      deadletter: false
+      connection: rmq_uri()
     ]
   end
 
@@ -33,24 +33,52 @@ defmodule Api.Queue.MediaConversionConsumer do
     file_id = decoded["parentFileId"]
     outputs = decoded["outputs"]
 
-    IO.inspect(outputs)
+    if decoded["processingDuration"] do
+      Logger.info("It took the job #{decoded["processingDuration"]}s to complete")
+    end
+
+    Logger.info("MediaConversionConsumer received incoming message")
+    Logger.info(inspect(outputs))
+
+    with file_id when not is_nil(file_id) <- file_id,
+         %{"metadata" => _source_metadata} <- decoded,
+         file when not is_nil(file) <- Repo.get(File, file_id),
+         {:ok, file} <- Repo.update(add_metadata(file, decoded)) do
+      Logger.info("added source metadata to file #{file.id}")
+    else
+      {:error, %Changeset{} = changeset} ->
+        Logger.error("Could not insert metadata to file: #{inspect(changeset)}")
+
+      nil ->
+        Logger.error("Could not find the File with the given id #{file_id}")
+
+      _ ->
+        nil
+    end
+
     if outputs do
       for output <- outputs do
-        conversion = %{
+        %FileConversion{
           :format => output["format"],
           :remote_location => output["remoteLocation"],
           :mime_type => output["mimeType"],
           :file_type => output["fileType"],
           :file_id => file_id
         }
-        Accounts.create_file_conversion(conversion)
+        |> add_metadata(output)
+        |> Repo.insert()
+        |> case do
+          {:ok, conversion} ->
+            Logger.info("file conversion #{inspect(conversion)} has been created")
+
+          {:error, reason} ->
+            Logger.error("Could not save file conversion to database, error occured: #{reason}")
+            reject(message, false)
+        end
       end
     end
+
     ack(message)
-  rescue
-    exception ->
-      Logger.error(Exception.format(:error, exception, System.stacktrace()))
-      reject(message, false)
   end
 
   def start_link(_args) do
@@ -72,30 +100,31 @@ defmodule Api.Queue.MediaConversionConsumer do
     "#{hostname}-media-conversion-consumer"
   end
 
-  defp rmq_uri do
-    config = Application.fetch_env!(:api, :rabbitmq_connection)
-    username = Keyword.get(config, :username)
-    password = Keyword.get(config, :password)
-    host = Keyword.get(config, :host)
+  defp add_metadata(file_or_conversion, metadata_map)
+       when is_map(metadata_map) and is_map_key(metadata_map, "metadata") do
+    media_duration =
+      get_in(metadata_map, ["metadata", "format", "duration"])
+      |> Float.parse()
+      |> case do
+        {float, _other} ->
+          float
 
-    "amqp://#{username}:#{password}@#{host}"
+        :error ->
+          nil
+      end
+
+    file_or_conversion
+    |> Map.put_new(:filesize, get_in(metadata_map, ["metadata", "format", "size"]))
+    |> Changeset.change(%{
+      :full_metadata => metadata_map["metadata"],
+      :metadata => get_in(metadata_map, ["metadata", "format"]),
+      :media_duration => media_duration
+    })
   end
 
-  defp create_rmq_resources do
-    # Setup RabbitMQ connection
-    {:ok, connection} = AMQP.Connection.open(rmq_uri())
-    {:ok, channel} = AMQP.Channel.open(connection)
+  defp add_metadata(file_or_conversion, _), do: file_or_conversion
 
-    # Create exchange
-    # AMQP.Exchange.declare(channel, @exchange, :fanout, durable: true)
-
-    # Create queues
-    AMQP.Queue.declare(channel, @queue, durable: true)
-
-    # AMQP.Queue.bind(channel, @queue, @exchange, routing_key: @queue)
-
-    # Close the channel as it is no longer needed
-    # GenRMQ will manage its own channel
-    AMQP.Channel.close(channel)
+  defp rmq_uri do
+    Application.fetch_env!(:api, :rabbitmq_url)
   end
 end

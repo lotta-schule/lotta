@@ -14,9 +14,7 @@ db_name = System.fetch_env!("POSTGRES_DB")
 redis_host = System.fetch_env!("REDIS_HOST")
 redis_password = System.fetch_env!("REDIS_PASSWORD")
 # rabbitMQ
-rabbitmq_username = System.fetch_env!("RABBITMQ_USERNAME")
-rabbitmq_password = System.fetch_env!("RABBITMQ_PASSWORD")
-rabbitmq_host = System.fetch_env!("RABBITMQ_HOST")
+rabbitmq_url = System.fetch_env!("RABBITMQ_URL")
 # elasticsearch
 elasticsearch_host = System.fetch_env!("ELASTICSEARCH_HOST")
 # S3-compatible block storage for User Generated Content
@@ -34,10 +32,11 @@ schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 sentry_dsn = System.fetch_env("SENTRY_DSN")
 sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || "prod"
 
-host = case System.get_env("APP_ENVIRONMENT") do
-  "staging" -> "api.staging.lotta.schule"
-  _ -> "api.lotta.schule"
-end
+host =
+  case System.get_env("APP_ENVIRONMENT") do
+    "staging" -> "api.staging.lotta.schule"
+    _ -> "api.lotta.schule"
+  end
 
 config :api, Api.Repo,
   username: db_user,
@@ -47,37 +46,31 @@ config :api, Api.Repo,
   show_sensitive_data_on_connection_error: false,
   pool_size: 25
 
-config :api, :rabbitmq_connection,
-  username: rabbitmq_username,
-  password: rabbitmq_password,
-  host: rabbitmq_host
+config :api, :rabbitmq_url, rabbitmq_url
 
 config :api, :redis_connection,
   host: redis_host,
   password: redis_password,
   name: :redix
 
-config :api, :base_url,
-  base_url
-config :api, :schedule_provider_url,
-  schedule_provider_url
+config :api, :base_url, base_url
+config :api, :schedule_provider_url, schedule_provider_url
 
-config :api, Api.Elasticsearch.Cluster,
-  url: elasticsearch_host
+config :api, Api.Elasticsearch.Cluster, url: elasticsearch_host
 
 config :api, ApiWeb.Endpoint,
   url: [host: host],
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base,
-  live_view: [signing_salt: secret_key_base]  
+  live_view: [signing_salt: secret_key_base]
 
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-config :api, ApiWeb.Endpoint,
-  server: true
+config :api, ApiWeb.Endpoint, server: true
+
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
@@ -103,4 +96,3 @@ config :honeybadger,
 config :lager,
   error_logger_redirect: false,
   handlers: [level: :critical]
-

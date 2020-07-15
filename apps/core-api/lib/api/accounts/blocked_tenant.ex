@@ -1,4 +1,8 @@
 defmodule Api.Accounts.BlockedTenant do
+  @moduledoc """
+    Ecto Schema for blocked user lists for tenants
+  """
+
   use Ecto.Schema
   alias Api.Accounts.User
   alias Api.Tenants.Tenant
@@ -9,5 +13,4 @@ defmodule Api.Accounts.BlockedTenant do
 
     timestamps()
   end
-
 end

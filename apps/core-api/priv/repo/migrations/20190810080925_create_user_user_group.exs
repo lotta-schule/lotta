@@ -11,7 +11,9 @@ defmodule Api.Repo.Migrations.CreateUserUserGroup do
     create index(:user_user_group, [:user_group_id])
 
     create(
-      unique_index(:user_user_group, [:user_id, :user_group_id], name: :user_id_group_id_unique_index)
+      unique_index(:user_user_group, [:user_id, :user_group_id],
+        name: :user_id_group_id_unique_index
+      )
     )
   end
 end

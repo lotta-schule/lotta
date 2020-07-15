@@ -1,11 +1,11 @@
 import Config
 
-ugc_s3_compat_endpoint = System.fetch_env!("UGC_S3_COMPAT_ENDPOINT")
-ugc_s3_compat_access_key_id = System.fetch_env!("UGC_S3_COMPAT_ACCESS_KEY_ID")
-ugc_s3_compat_secret_access_key = System.fetch_env!("UGC_S3_COMPAT_SECRET_ACCESS_KEY")
-ugc_s3_compat_bucket = System.fetch_env!("UGC_S3_COMPAT_BUCKET")
-ugc_s3_compat_region = System.fetch_env!("UGC_S3_COMPAT_REGION")
-ugc_s3_compat_cdn_base_url = System.fetch_env!("UGC_S3_COMPAT_CDN_BASE_URL")
+ugc_s3_compat_endpoint = System.get_env("UGC_S3_COMPAT_ENDPOINT", "")
+ugc_s3_compat_access_key_id = System.get_env("UGC_S3_COMPAT_ACCESS_KEY_ID", "")
+ugc_s3_compat_secret_access_key = System.get_env("UGC_S3_COMPAT_SECRET_ACCESS_KEY", "")
+ugc_s3_compat_bucket = System.get_env("UGC_S3_COMPAT_BUCKET", "")
+ugc_s3_compat_region = System.get_env("UGC_S3_COMPAT_REGION", "")
+ugc_s3_compat_cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL", "")
 
 # Configure your database
 config :api, Api.Repo,
@@ -16,16 +16,12 @@ config :api, Api.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :api, :rabbitmq_connection,
-  username: "guest",
-  password: "guest",
-  host: "rabbitmq"
+config :api, :rabbitmq_url, "amqp://guest:guest@rabbitmq"
 
 config :api, :redis_connection,
   host: "redis",
   password: "lotta",
   name: :redix
-
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
@@ -52,11 +48,9 @@ config :api, Api.Guardian,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 
-config :api, :base_url,
-  ".medienportal.lvh.me:3000"
+config :api, :base_url, ".medienportal.lvh.me:3000"
 
-config :api, :schedule_provider_url,
-  "http://schedule_provider:3000"
+config :api, :schedule_provider_url, "http://schedule_provider:3000"
 
 # ## SSL Support
 #
@@ -84,6 +78,8 @@ config :api, :schedule_provider_url,
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
+
+config :absinthe, Absinthe.Logger, pipeline: true
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.

@@ -2,6 +2,17 @@ defmodule ApiWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
+  alias Ecto.Changeset
+
+  @doc """
+  Translates custom objects to errors
+  """
+  def extract_error_details(%Changeset{} = changeset) do
+    changeset
+    |> Changeset.traverse_errors(&translate_error/1)
+  end
+
+  def extract_error_details(error), do: error
 
   @doc """
   Translates an error message using gettext.

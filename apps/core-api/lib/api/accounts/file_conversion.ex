@@ -1,11 +1,19 @@
 defmodule Api.Accounts.FileConversion do
+  @moduledoc """
+    Ecto Schema for file conversions
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "file_conversions" do
     field :file_type, :string
+    field :filesize, :integer
     field :format, :string
     field :mime_type, :string
+    field :full_metadata, :map
+    field :metadata, :map
+    field :media_duration, :float
     field :remote_location, :string
 
     belongs_to :file, Api.Accounts.File

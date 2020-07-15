@@ -1,4 +1,8 @@
 defmodule Api.Content.ContentModuleResult do
+  @moduledoc """
+    Ecto Schema for content module results
+  """
+
   use Ecto.Schema
 
   schema "content_module_results" do

@@ -1,23 +1,36 @@
 defmodule Api.ContentModuleResolver do
+  @moduledoc """
+    GraphQL Resolver Module for finding, creating, updating and deleting content modules
+  """
+
   alias Api.Repo
   alias Api.Content
   alias Api.Accounts.User
 
-  def send_form_response(%{content_module_id: content_module_id, response: response}, %{context: context}) do
+  def send_form_response(%{content_module_id: content_module_id, response: response}, %{
+        context: context
+      }) do
     content_module = Content.get_content_module!(content_module_id)
+
     try do
       %{configuration: %{"elements" => elements} = configuration} = content_module
+
       responses =
         elements
         |> Enum.reduce(%{}, fn element, acc ->
           Map.put(acc, element["name"], response[element["name"]] || "(LEER)")
         end)
+
       if !is_nil(configuration["destination"]) do
-          Api.Queue.EmailPublisher.send_content_module_form_response(content_module, responses)
+        Api.Queue.EmailPublisher.send_content_module_form_response(content_module, responses)
       end
+
       if !is_nil(configuration["save_internally"]) do
-        Content.save_content_module_result!(content_module, context[:current_user], %{responses: responses})
+        Content.save_content_module_result!(content_module, context[:current_user], %{
+          responses: responses
+        })
       end
+
       {:ok, true}
     rescue
       MatchError ->
@@ -29,12 +42,14 @@ defmodule Api.ContentModuleResolver do
     content_module =
       Content.get_content_module!(content_module_id)
       |> Repo.preload([:results, :article])
+
     tenant =
       content_module
       |> Map.fetch!(:article)
       |> Repo.preload(:tenant)
       |> Map.fetch!(:tenant)
-    unless context[:current_user] && User.is_admin?(context.current_user, tenant) do
+
+    if !context[:current_user] || !User.is_admin?(context.current_user, tenant) do
       {:error, "Nur Administratoren dürfen Modul-Ergebnisse abrufen."}
     else
       {:ok, content_module.results}

@@ -1,0 +1,42 @@
+{
+  "nodes": [
+    {
+      "children": [
+        {
+          "text": "Auch an "
+        },
+        {
+          "bold": true,
+          "text": "öffentlichen Kategorien"
+        },
+        {
+          "text": " können Beiträge angehängt werden, die für bestimmte Nutzergruppen bestimmt sind. Diese Beiträge werden nach dem Anmelden eines Nutzers sichtbar, wenn er den entsprechenden Einschreibeschlüssel einer Gruppe eingegeben hat."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Als Administrator haben Sie die Möglichkeit Einschreibeschlüssel von Gruppen"
+        },
+        {
+          "bold": true,
+          "text": " jederzeit zu ändern"
+        },
+        {
+          "text": ". Dies mach besonders am Ende eines Schuljahres Sinn, da Schüler in der Regel in eine höhere Klasse versetzt werden, neue Klassen hinzukommen und Klassen die Schule verlassen."
+        }
+      ],
+      "type": "paragraph"
+    },
+    {
+      "children": [
+        {
+          "text": "Über die Vergabe von Eingabeschlüsseln bleibt Ihnen am Ende des Schuljahres viel Arbeit an der Homepage erspart, wenn Sie die Vergabe der Eingabeschlüssel klug steuern."
+        }
+      ],
+      "type": "paragraph"
+    }
+  ]
+}

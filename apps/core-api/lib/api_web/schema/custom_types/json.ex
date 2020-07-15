@@ -1,8 +1,9 @@
-defmodule ApiWeb.Schema.Types.JSON do
+defmodule ApiWeb.Schema.CustomTypes.Json do
   @moduledoc """
   The Json scalar type allows arbitrary JSON values to be passed in and out.
   Requires `{:jason, "~> 1.1"}` package: https://github.com/michalmuskala/jason
   """
+
   use Absinthe.Schema.Notation
 
   scalar :json, name: "Json" do
@@ -25,14 +26,9 @@ defmodule ApiWeb.Schema.Types.JSON do
     end
   end
 
-  defp decode(%Absinthe.Blueprint.Input.Null{}) do
-    {:ok, nil}
-  end
+  defp decode(%Absinthe.Blueprint.Input.Null{}), do: {:ok, nil}
 
-  defp decode(_) do
-    :error
-  end
+  defp decode(_), do: :error
 
   defp encode(value), do: value
 end
-

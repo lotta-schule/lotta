@@ -1,4 +1,8 @@
 defmodule ApiWeb.Telemetry do
+  @moduledoc """
+  Telemeetry configuration
+  """
+
   use Supervisor
   import Telemetry.Metrics
 

@@ -36,6 +36,10 @@ test:
     POSTGRES_USER: lotta
     POSTGRES_DB: api_test
     REDIS_PASSWORD: lotta
+    UGC_S3_COMPAT_ACCESS_KEY_ID: "${S3COMPAT_ACCESS_KEY_ID}"
+    UGC_S3_COMPAT_SECRET_ACCESS_KEY: "${S3COMPAT_SECRET_ACCESS_KEY}"
+    UGC_S3_COMPAT_ENDPOINT: mp4-dev-ugc.fra1.digitaloceanspaces.com
+    UGC_S3_COMPAT_BUCKET: mp4-dev-ugc
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
@@ -112,21 +116,14 @@ deploy staging:
       --set postgresql.replication.synchronousCommit="on"
       --set postgresql.replication.numSynchronousReplicas=1
       --set postgresql.metrics.enabled=true
-      --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
-      --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
-      --set rabbitmq.ingress.enabled=true
-      --set rabbitmq.ingress.hostName=rabbitmq.intern.staging.lotta.schule
-      --set rabbitmq.ingress.tlsSecret=rabbitmq-staging-ingress-certificate
-      --set-string rabbitmq.ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
-      --set-string rabbitmq.ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;grpc_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;"
-      --set-string rabbitmq.ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
+      --set rabbitmq.url=$RABBITMQ_URL
       --set redis.password=$REDIS_PASSWORD
       --set redis.cluster.slaveCount=1
       --set redis.metrics.enabled=true
       --set resources.limits.cpu=200m
-      --set resources.limits.memory=256Mi
-      --set resources.requests.cpu=150m
-      --set resources.requests.memory=192Mi
+      --set resources.limits.memory=386Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=256Mi
   only:
     refs:
       - develop
@@ -146,7 +143,7 @@ deploy production:
       --set appEnvironment=production
       --set baseUrl=.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
-      --set replicaCount=2
+      --set replicaCount=1
       --set jwtSecret=$JWT_SECRET
       --set baseSecret=$BASE_SECRET
       --set honeybadger.enabled=true
@@ -176,28 +173,21 @@ deploy production:
       --set postgresql.replication.enabled=true
       --set postgresql.replication.user=$POSTGRES_REPLICATION_USER
       --set postgresql.replication.password=$POSTGRES_REPLICATION_PASSWORD
-      --set postgresql.replication.slaveReplicas=3
+      --set postgresql.replication.slaveReplicas=1
       --set postgresql.replication.synchronousCommit="on"
       --set postgresql.replication.numSynchronousReplicas=1
-      --set rabbitmq.rabbitmq.username=$RABBITMQ_USERNAME
-      --set rabbitmq.rabbitmq.password=$RABBITMQ_PASSWORD
-      --set rabbitmq.ingress.enabled=true
-      --set rabbitmq.ingress.hostName=rabbitmq.intern.lotta.schule
-      --set rabbitmq.ingress.tlsSecret=rabbitmq-staging-certificate
-      --set-string rabbitmq.ingress.annotations."kubernetes\.io/ingress\.class"="nginx"
-      --set-string rabbitmq.ingress.annotations."nginx\.ingress\.kubernetes\.io/configuration-snippet"="proxy_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;grpc_set_header l5d-dst-override \\\$service_name.\\\$namespace.svc.cluster.local:\\\$service_port;"
-      --set-string rabbitmq.ingress.annotations."cert-manager\.io/cluster-issuer"="letsencrypt-production"
+      --set rabbitmq.url=$RABBITMQ_URL
       --set postgresql.backupJob.enabled=true
       --set-string postgresql.backupJob.s3Compat.hostBucket="\%(bucket)s\.fra1\.digitaloceanspaces\.com"
       --set postgresql.backupJob.s3Compat.bucketName=lotta-backup-data
       --set postgresql.backupJob.s3Compat.path="/postgres"
       --set redis.password=$REDIS_PASSWORD
-      --set redis.cluster.slaveCount=2
-      --set redis.metrics.enabled=true
-      --set resources.limits.cpu=500m
+      --set redis.cluster.slaveCount=1
+      --set redis.metrics.enabled=false
+      --set resources.limits.cpu=300m
       --set resources.limits.memory=1536Mi
-      --set resources.requests.cpu=400m
-      --set resources.requests.memory=512Mi
+      --set resources.requests.cpu=200m
+      --set resources.requests.memory=384Mi
   only:
     refs:
       - master

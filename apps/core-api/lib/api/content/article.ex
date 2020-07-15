@@ -1,11 +1,15 @@
 defmodule Api.Content.Article do
+  @moduledoc """
+    Ecto Schema for articles
+  """
+
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Changeset
   import Ecto.Query
-  alias Api.Accounts.{File,User,UserGroup}
-  alias Api.Content.{Article,ContentModule}
-  alias Api.Tenants.{Category,Tenant}
+  alias Api.Accounts.{File, User, UserGroup}
+  alias Api.Content.{Article, ContentModule}
+  alias Api.Tenants.{Category, Tenant}
 
   schema "articles" do
     field :title, :string
@@ -18,15 +22,17 @@ defmodule Api.Content.Article do
     belongs_to :category, Category, on_replace: :nilify
     belongs_to :preview_image_file, File, on_replace: :nilify
     has_many :content_modules, ContentModule, on_replace: :delete
+
     many_to_many :groups,
-      UserGroup,
-      join_through: "articles_user_groups",
-      join_keys: [article_id: :id, group_id: :id],
-      on_replace: :delete
+                 UserGroup,
+                 join_through: "articles_user_groups",
+                 join_keys: [article_id: :id, group_id: :id],
+                 on_replace: :delete
+
     many_to_many :users,
-      User,
-      join_through: "article_users",
-      on_replace: :delete
+                 User,
+                 join_through: "article_users",
+                 on_replace: :delete
 
     timestamps()
   end
@@ -36,7 +42,10 @@ defmodule Api.Content.Article do
     |> Repo.preload(:tenant)
     |> Map.fetch!(:tenant)
     |> Tenant.get_main_url()
-    |> String.replace_suffix("", "/a/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}")
+    |> String.replace_suffix(
+      "",
+      "/a/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}"
+    )
   end
 
   @doc false
@@ -63,30 +72,38 @@ defmodule Api.Content.Article do
 
   defp put_assoc_users(changeset, %{users: users}) do
     changeset
-    |> put_assoc(:users, Repo.all(from(u in User, where: u.id in ^(Enum.map(users, &(&1.id))))))
+    |> put_assoc(:users, Repo.all(from(u in User, where: u.id in ^Enum.map(users, & &1.id))))
   end
+
   defp put_assoc_users(changeset, _), do: changeset
 
   defp put_assoc_category(changeset, %{category: %{id: category_id}}) do
     changeset
     |> put_assoc(:category, Repo.get(Category, category_id))
   end
+
   defp put_assoc_category(changeset, _), do: changeset
 
   defp put_assoc_preview_image_file(changeset, %{preview_image_file: %{id: preview_image_file_id}}) do
     changeset
     |> put_assoc(:preview_image_file, Repo.get(File, preview_image_file_id))
   end
+
   defp put_assoc_preview_image_file(changeset, %{preview_image_file: nil}) do
     changeset
     |> put_assoc(:preview_image_file, nil)
   end
+
   defp put_assoc_preview_image_file(changeset, _), do: changeset
 
   defp put_assoc_groups(changeset, %{groups: groups}) do
     changeset
-    |> put_assoc(:groups, Repo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))
+    |> put_assoc(
+      :groups,
+      Repo.all(from(ug in UserGroup, where: ug.id in ^Enum.map(groups, & &1.id)))
+    )
   end
+
   defp put_assoc_groups(changeset, _), do: changeset
 
   defp maybe_send_admin_notification(changeset) do
@@ -94,10 +111,12 @@ defmodule Api.Content.Article do
       case apply_action(changeset, :update) do
         {:ok, article} ->
           Api.Queue.EmailPublisher.send_article_is_ready_admin_notification(article)
+
         {:error, _} ->
           nil
       end
     end
+
     changeset
   end
 end

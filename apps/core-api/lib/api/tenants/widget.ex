@@ -1,10 +1,14 @@
 defmodule Api.Tenants.Widget do
+  @moduledoc """
+    Ecto Schema for widgets
+  """
+
   use Ecto.Schema
   alias Api.Repo
   import Ecto.Changeset
   import Ecto.Query
-  alias Api.Accounts.{File,UserGroup}
-  alias Api.Tenants.{Category,Tenant}
+  alias Api.Accounts.{File, UserGroup}
+  alias Api.Tenants.{Category, Tenant}
 
   schema "widgets" do
     field :configuration, :map
@@ -13,15 +17,17 @@ defmodule Api.Tenants.Widget do
 
     belongs_to :icon_image_file, File, on_replace: :nilify
     belongs_to :tenant, Tenant
+
     many_to_many :groups,
-      Api.Accounts.UserGroup,
-      join_through: "widgets_user_groups",
-      join_keys: [widget_id: :id, group_id: :id],
-      on_replace: :delete
+                 Api.Accounts.UserGroup,
+                 join_through: "widgets_user_groups",
+                 join_keys: [widget_id: :id, group_id: :id],
+                 on_replace: :delete
+
     many_to_many :categories,
-      Category,
-      join_through: "categories_widgets",
-      on_replace: :delete
+                 Category,
+                 join_through: "categories_widgets",
+                 on_replace: :delete
 
     timestamps()
   end
@@ -46,11 +52,16 @@ defmodule Api.Tenants.Widget do
     changeset
     |> put_assoc(:icon_image_file, Repo.get(Api.Accounts.File, icon_image_file_id))
   end
+
   defp put_assoc_icon_image_file(changeset, _args), do: changeset
 
   defp put_assoc_groups(changeset, %{groups: groups}) do
     changeset
-    |> put_assoc(:groups, Repo.all(from(ug in UserGroup, where: ug.id in ^(Enum.map(groups, &(&1.id))))))
+    |> put_assoc(
+      :groups,
+      Repo.all(from(ug in UserGroup, where: ug.id in ^Enum.map(groups, & &1.id)))
+    )
   end
+
   defp put_assoc_groups(changeset, _args), do: changeset
 end
