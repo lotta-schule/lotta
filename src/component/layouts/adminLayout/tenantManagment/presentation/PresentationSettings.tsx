@@ -230,7 +230,7 @@ export const PresentationSettings = memo(() => {
                             color={'secondary'}
                             onClick={() => updateTenant({
                                 variables: {
-                                    tenant: { customTheme: JSON.stringify(customTheme), backgroundImageFile: backgroundImage }
+                                    tenant: { customTheme: JSON.stringify(customTheme), backgroundImageFile: backgroundImage && { id: backgroundImage.id } }
                                 }
                             })}
                         >

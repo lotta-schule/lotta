@@ -4,7 +4,7 @@ import { ArticleLayout } from 'component/layouts/ArticleLayout';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const ArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const id = parseInt(match.params.id);
+    const id = match.params.id.replace(/^(\d+).*/, '$1'); // take only first digits
 
     if (!id) {
         return (

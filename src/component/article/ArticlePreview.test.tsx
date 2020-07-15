@@ -1,51 +1,41 @@
 import React from 'react';
-import {
-    render,
-    cleanup,
-
-} from 'test/util';
+import { render, cleanup } from 'test/util';
+import { ComputerExperten } from 'test/fixtures';
 import { ArticlePreview } from './ArticlePreview';
-import { UeberSuedamerika } from 'test/fixtures/Article';
 
 afterEach(cleanup);
 
 describe('component/article/ArticlePreview', () => {
 
-    describe('Title', () => {
-        it('should render a correct title', () => {
-            const { container } = render(<ArticlePreview article={UeberSuedamerika} />);
-            const title = container.querySelector('h5');
-            expect(title).toHaveTextContent('Mein Artikel');
-        });
-
-        it('should have link if disableLink is not passed', () => {
-            const { container } = render(<ArticlePreview article={UeberSuedamerika} />);
-            const title = container.querySelector('h5');
-            const titleLink = title!.querySelector('a');
-            expect(titleLink).toBeDefined();
-            expect(titleLink).toHaveAttribute('href', `/a/${UeberSuedamerika.id}-Mein-Artikel`);
-            expect(titleLink).toHaveTextContent('Mein Artikel');
-        });
-
-        it('should not have link if disableLink is passed true', () => {
-            const { container } = render(<ArticlePreview article={UeberSuedamerika} disableLink />);
-            const title = container.querySelector('h5');
-            const titleLink = title!.querySelector('a');
-            expect(titleLink).toBeNull();
-        });
+    it('should render an ArticlePreview in StandardLayout when no option is given', async done => {
+        const { findByTestId } = render(
+            <ArticlePreview article={ComputerExperten} />,
+        );
+        await findByTestId('ArticlePreviewStandardLayout');
+        done();
     });
 
-    describe('Subtitle', () => {
-        it('should show last updated', () => {
-            const { container } = render(<ArticlePreview article={UeberSuedamerika} />);
-            const subtitle = container.querySelector('h6');
-            expect(subtitle).toHaveTextContent(/11\. Oktober 2019/);
-        });
+    it('should render an ArticlePreview in StandardLayout if \'standard\' layout is given', async done => {
+        const { findByTestId } = render(
+            <ArticlePreview article={ComputerExperten} layout={'standard'} />,
+        );
+        await findByTestId('ArticlePreviewStandardLayout');
+        done();
+    });
 
-        it('should show topic', () => {
-            const { container } = render(<ArticlePreview article={UeberSuedamerika} />);
-            const subtitle = container.querySelector('h6');
-            expect(subtitle).toHaveTextContent(/La Revolucion/);
-        });
+    it('should render an ArticlePreview in DensedLayout if \'densed\' layout is given', async done => {
+        const { findByTestId } = render(
+            <ArticlePreview article={ComputerExperten} layout={'densed'} />,
+        );
+        await findByTestId('ArticlePreviewDensedLayout');
+        done();
+    });
+
+    it('should render an ArticlePreview in StandardLayout when \'2-columns\' layout is given', async done => {
+        const { findByTestId } = render(
+            <ArticlePreview article={ComputerExperten} layout={'2-columns'} />,
+        );
+        await findByTestId('ArticlePreviewStandardLayout');
+        done();
     });
 });

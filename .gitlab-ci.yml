@@ -17,15 +17,15 @@ cache:
 
 test:
   stage: test
-  image: node:12
+  image: node:14
   script:
     - npm install
-    - npm run test -- --coverage
+    - npm run test:ci -- --coverage
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 lint:
   stage: test
-  image: node:12
+  image: node:14
   script:
     - npm install
     - npm run lint -- --max-warnings=0
@@ -44,11 +44,8 @@ build docker image:staging:
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL
-      --build-arg AUTHENTICATION_TOKEN_NAME
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
-      --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID
       --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:staging
     - docker push lotta/web
@@ -80,7 +77,6 @@ deploy:staging:
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="1500M"
       --set ingress.hosts[0].host="*.staging.lotta.schule"
-      --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.staging.lotta.schule"
       --set ingress.tls[0].secretName="lotta-web-staging-certificate"
       --set resources.limits.cpu=50m
@@ -106,11 +102,8 @@ build docker image:production:
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL
-      --build-arg AUTHENTICATION_TOKEN_NAME
       --build-arg CLOUDIMG_TOKEN
       --build-arg HONEYBADGER_API_KEY
-      --build-arg MATOMO_URL
-      --build-arg MATOMO_SITEID
       --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:production
     - docker push lotta/web
@@ -142,7 +135,6 @@ deploy:production:
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/http2-push-preload"="true"
       --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="5M"
       --set ingress.hosts[0].host="*.lotta.schule"
-      --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.lotta.schule"
       --set ingress.tls[0].secretName="lotta-web-certificate"
       --set resources.limits.cpu=100m
@@ -153,4 +145,3 @@ deploy:production:
   only:
     refs:
       - master
-  

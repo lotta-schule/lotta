@@ -1,4 +1,4 @@
-import React, { MouseEvent, memo, useContext } from 'react';
+import React, { MouseEvent, memo, useContext, useCallback, useEffect, useMemo } from 'react';
 import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, CircularProgress, IconButton, fade, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useQuery } from '@apollo/client';
@@ -30,7 +30,9 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
         borderColor: '2px solid transparent',
         transition: 'ease-out 250ms all',
         border: '2px dashed transparent',
-        outline: 'none'
+        outline: 'none',
+        flexGrow: 1,
+        flexShrink: 1
     },
     isDragActive: {
         backgroundColor: fade(theme.palette.secondary.main, .075),
@@ -93,9 +95,6 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme
                     width: 'auto',
                     flexGrow: 1,
                     flexShrink: 1
-                },
-                '&:nth-child(4)': {
-                    width: '20%'
                 },
                 '&:nth-child(5)': {
                     width: '3em',
@@ -182,7 +181,8 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         }
     };
 
-    const filteredFiles = data?.files
+    const filteredSortedFiles = useMemo(() =>
+        data?.files
         .filter(file => {
             const byFileFilter = !fileFilter || fileFilter(file);
             let bySearchFilter = true;
@@ -190,7 +190,68 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                 bySearchFilter = !state.searchtext || new RegExp(state.searchtext, 'i').test(file.filename);
             } catch { }
             return byFileFilter && bySearchFilter;
-        }) ?? [];
+        })
+        .sort((f1, f2) => f1.filename.localeCompare(f2.filename)) ?? []
+    , [data, fileFilter, state.searchtext]);
+
+    const filteredSortedDirectories = useMemo(() =>
+        data?.directories
+            .filter(d => true)
+            .sort((d1, d2) => d1.name.localeCompare(d2.name)) ?? []
+    , [data]);
+
+    const lowestSelectedFileIndex = useMemo(() => {
+        if (!state.markedFiles.length) {
+            return null;
+        }
+        return state.markedFiles.reduce<number | null>((currentLowestIndex, file) => {
+            const currentIndex = filteredSortedFiles.findIndex(sortedFile => sortedFile.id === file.id);
+            return currentLowestIndex ? Math.min(currentLowestIndex, currentIndex) : currentIndex;
+        }, null);
+    }, [state.markedFiles, filteredSortedFiles]);
+    const highestSelectedFileIndex = useMemo(() => {
+        if (!state.markedFiles.length) {
+            return null;
+        }
+        return state.markedFiles.reduce<number | null>((currentHighestIndex, file) => {
+            const currentIndex = filteredSortedFiles.findIndex(sortedFile => sortedFile.id === file.id);
+            return currentHighestIndex ? Math.max(currentHighestIndex, currentIndex) : currentIndex;
+        }, null);
+    }, [state.markedFiles, filteredSortedFiles]);
+
+    const onKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.keyCode === 38) { // key up
+            if (state.markedFiles.length) {
+                if (lowestSelectedFileIndex !== null && lowestSelectedFileIndex > 0) {
+                    e.preventDefault();
+                    if (e.shiftKey) {
+                        dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, filteredSortedFiles[lowestSelectedFileIndex - 1]] });
+                    } else {
+                        dispatch({ type: 'markSingleFile', file: filteredSortedFiles[lowestSelectedFileIndex - 1] });
+                    }
+                }
+            }
+        }
+        if (e.keyCode === 40) { // key down
+            if (state.markedFiles.length) {
+                if (highestSelectedFileIndex !== null && highestSelectedFileIndex < filteredSortedFiles.length) {
+                    e.preventDefault();
+                    if (e.shiftKey) {
+                        dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, filteredSortedFiles[highestSelectedFileIndex + 1]] });
+                    } else {
+                        dispatch({ type: 'markSingleFile', file: filteredSortedFiles[highestSelectedFileIndex + 1] });
+                    }
+                }
+            }
+        }
+    }, [dispatch, filteredSortedFiles, highestSelectedFileIndex, lowestSelectedFileIndex, state.markedFiles]);
+
+    useEffect(() => {
+        document.addEventListener('keydown', onKeyDown);
+        return () => {
+            document.removeEventListener('keydown', onKeyDown);
+        };
+    }, [onKeyDown]);
 
     return (
         <div {...getRootProps()} className={clsx(styles.root, { [styles.isDragActive]: isDragActive, [styles.isDragAccept]: isDragAccept })}>
@@ -244,18 +305,17 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                             {!isLoading && state.currentPath.length < 2 && <strong>Wähle einen Ordner um Dateien hochzuladen.</strong>}
                             {state.currentPath.length > 1 && 'Dateiname'}
                         </TableCell>
-                        <TableCell>{state.currentPath.length > 1 && 'Dateigröße'}</TableCell>
                         {state.mode === FileExplorerMode.ViewAndEdit && <TableCell>&nbsp;</TableCell>}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {[...(data?.directories ?? [])].sort((d1, d2) => d1.name.localeCompare(d2.name)).map(directory => (
+                    {filteredSortedDirectories.map(directory => (
                         <DirectoryTableRow
                             key={`dir-${directory.id}`}
                             directory={directory}
                         />
                     ))}
-                    {filteredFiles.sort((f1, f2) => f1.filename.localeCompare(f2.filename)).map(file => (
+                    {filteredSortedFiles.map(file => (
                         <FileTableRow
                             key={`file-${file.id}`}
                             file={file}

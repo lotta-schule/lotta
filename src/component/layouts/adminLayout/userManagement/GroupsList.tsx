@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Button, Accordion, AccordionSummary, AccordionDetails, Grid, Typography, makeStyles } from '@material-ui/core';
 import { AddCircle, ExpandMore, DragHandle } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
@@ -96,7 +96,7 @@ export const GroupsList = memo(() => {
                             {groups.map((group, index) => (
                                 <Draggable key={group.id} draggableId={String(group.id)} index={index}>
                                     {({ innerRef, dragHandleProps, draggableProps }) => (
-                                        <ExpansionPanel
+                                        <Accordion
                                             key={group.id}
                                             expanded={expandedGroupId === group.id}
                                             onChange={(_, expanded) => setExpandedGroupId(expanded ? group.id : null)}
@@ -104,7 +104,7 @@ export const GroupsList = memo(() => {
                                             innerRef={innerRef}
                                             {...draggableProps}
                                         >
-                                            <ExpansionPanelSummary
+                                            <AccordionSummary
                                                 expandIcon={<ExpandMore />}
                                                 aria-controls={`group-panel-${group.id}-content`}
                                                 id={`group-panel-${group.id}-header`}
@@ -115,11 +115,11 @@ export const GroupsList = memo(() => {
                                                     </span>
                                                     {group.name}
                                                 </Typography>
-                                            </ExpansionPanelSummary>
-                                            <ExpansionPanelDetails>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
                                                 <EditGroupForm group={group} />
-                                            </ExpansionPanelDetails>
-                                        </ExpansionPanel>
+                                            </AccordionDetails>
+                                        </Accordion>
                                     )}
                                 </Draggable>
                             ))}

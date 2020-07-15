@@ -50,7 +50,7 @@ export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(({ children, isEmp
 
     if (isMobile) {
         return (
-            <Drawer classes={{ paper: styles.drawer }} anchor={'right'} open={isMobileDrawerOpen} onClose={() => closeDrawer()}>
+            <Drawer data-testid="BaseLayoutSidebar" classes={{ paper: styles.drawer }} anchor={'right'} open={isMobileDrawerOpen} onClose={() => closeDrawer()}>
                 {isEmpty ? <WidgetsList widgets={[]} /> : children}
                 <Footer />
             </Drawer>
@@ -58,13 +58,13 @@ export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(({ children, isEmp
     } else if (isEmpty) {
         // there must be a relative container for footer positioning
         return (
-            <div style={{ position: 'relative', width: 0 }}>
+            <div data-testid="BaseLayoutSidebar" style={{ position: 'relative', width: 0 }}>
                 <Footer />
             </div>
         );
     } else {
         return (
-            <Grid className={styles.root} item component={'aside'} xs={12} md={3} xl={3}>
+            <Grid data-testid="BaseLayoutSidebar" className={styles.root} item component={'aside'} xs={12} md={3} xl={3}>
                 {children}
                 <Footer />
             </Grid>

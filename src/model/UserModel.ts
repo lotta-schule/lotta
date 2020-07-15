@@ -4,10 +4,10 @@ import { FileModel } from 'model';
 
 export interface UserModel {
     id: ID;
-    createdAt: string;
+    insertedAt: string;
     updatedAt: string;
     lastSeen: string;
-    name: string;
+    name?: string;
     nickname: string;
     hideFullName: boolean;
     email: string;
@@ -15,7 +15,7 @@ export interface UserModel {
     phone?: string;
     assignedGroups?: UserGroupModel[];
     groups: UserGroupModel[];
-    avatarImageFile?: FileModel;
+    avatarImageFile?: FileModel | null;
     isBlocked?: boolean;
     enrollmentTokens?: string[];
 }

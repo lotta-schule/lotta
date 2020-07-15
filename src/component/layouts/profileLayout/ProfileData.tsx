@@ -1,9 +1,8 @@
 import React, { memo, useState } from 'react';
 import {
-    Avatar, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField,
-    Typography, IconButton, Badge, Divider, makeStyles, List, ListItemText, ListItem, ListSubheader
+    Avatar, Card, CardContent, Checkbox, FormGroup, FormControlLabel, Grid, TextField, Typography,
+    Button, IconButton, Badge, Divider, makeStyles, List, ListItemText, ListItem, ListSubheader
 } from '@material-ui/core';
-import { Redirect } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { Clear } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
@@ -13,8 +12,9 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
+import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
 import { SaveButton } from 'component/general/SaveButton';
+import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
 
 export const useStyles = makeStyles(theme => ({
     divider: {
@@ -26,15 +26,17 @@ export const useStyles = makeStyles(theme => ({
 export const ProfileData = memo(() => {
     const styles = useStyles();
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser()[0] as UserModel;
 
-    const [classOrShortName, setClassOrShortName] = useState(currentUser?.class ?? '');
-    const [email, setEmail] = useState(currentUser?.email);
-    const [name, setName] = useState(currentUser?.name);
-    const [nickname, setNickname] = useState(currentUser?.nickname);
-    const [isHideFullName, setIsHideFullName] = useState(currentUser?.hideFullName);
-    const [avatarImageFile, setAvatarImageFile] = useState<FileModel | null | undefined>(currentUser?.avatarImageFile);
-    const [enrollmentTokens, setEnrollmentTokens] = useState<string[]>(currentUser?.enrollmentTokens ?? []);
+    const [classOrShortName, setClassOrShortName] = useState(currentUser.class);
+    const [email, setEmail] = useState(currentUser.email);
+    const [name, setName] = useState(currentUser.name);
+    const [nickname, setNickname] = useState(currentUser.nickname);
+    const [isHideFullName, setIsHideFullName] = useState(currentUser.hideFullName);
+    const [avatarImageFile, setAvatarImageFile] = useState<FileModel | null | undefined>(currentUser.avatarImageFile);
+    const [enrollmentTokens, setEnrollmentTokens] = useState<string[]>(currentUser.enrollmentTokens ?? []);
+
+    const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] = useState(false);
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
     const [updateProfile, { error, loading: isLoading }] = useMutation<{ user: UserModel }>(UpdateProfileMutation, {
@@ -44,12 +46,6 @@ export const ProfileData = memo(() => {
         }
     });
     const getFieldError = useGetFieldError(error);
-
-    if (!currentUser) {
-        return (
-            <Redirect to={'/'} />
-        );
-    }
 
     return (
         <Card>
@@ -70,7 +66,10 @@ export const ProfileData = memo(() => {
                                 </IconButton>
                             )}
                         >
-                            <Avatar src={avatarImageFile ? avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(currentUser!)} alt={User.getNickname(currentUser!)} />
+                            <Avatar
+                                src={avatarImageFile ? avatarImageFile.remoteLocation : User.getDefaultAvatarUrl(currentUser)}
+                                alt={User.getNickname(currentUser)}
+                            />
                         </Badge>
                         <br />
                         <SelectFileButton
@@ -80,7 +79,7 @@ export const ProfileData = memo(() => {
                             onSelect={(file: FileModel) => setAvatarImageFile(file)}
                         />
                         <Divider className={styles.divider} style={{ width: '80%' }} />
-                        <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>}>
+                        <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>} data-testid="ProfileData-GroupsList">
                             {[...currentUser.groups].sort((g1, g2) => g2.sortKey - g1.sortKey).map(group => (
                                 <ListItem key={group.id}>
                                     <ListItemText>{group.name}</ListItemText>
@@ -89,6 +88,24 @@ export const ProfileData = memo(() => {
                         </List>
                     </Grid>
                     <Grid item md={8}>
+                        <TextField
+                            autoFocus
+                            fullWidth
+                            margin="dense"
+                            id="email"
+                            label="Deine Email-Adresse:"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            placeholder="beispiel@medienportal.org"
+                            type="email"
+                            error={!!getFieldError('email')}
+                            helperText={getFieldError('email')}
+                            disabled={isLoading}
+                            inputProps={{ maxLength: 100 }}
+                        />
+                        <Button onClick={() => setIsShowUpdatePasswordDialog(true)} style={{ float: 'right' }}>
+                            Passwort ändern
+                        </Button>
                         <TextField
                             autoFocus
                             fullWidth
@@ -123,28 +140,13 @@ export const ProfileData = memo(() => {
                         <FormGroup>
                             <FormControlLabel
                                 control={<Checkbox checked={isHideFullName!} onChange={(e, checked) => setIsHideFullName(checked)} />}
-                                label={'Deinen vollständen Namen öffentlich verstecken'}
+                                label={'Deinen vollständigen Namen öffentlich verstecken'}
                             />
                         </FormGroup>
                         <Typography variant="caption" component={'div'}>
                             Verstecke deinen vollständigen Namen, damit er nur vom Administrator deiner Schule gesehen werden kann.
                             Dein Name taucht nicht in den von dir erstellten Artikeln oder in deinem Profil auf. Stattdessen wird dein Spitzname angezeigt.
                         </Typography>
-                        <TextField
-                            autoFocus
-                            fullWidth
-                            margin="dense"
-                            id="email"
-                            label="Deine Email-Adresse:"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            placeholder="beispiel@medienportal.org"
-                            type="email"
-                            error={!!getFieldError('email')}
-                            helperText={getFieldError('email')}
-                            disabled={isLoading}
-                            inputProps={{ maxLength: 100 }}
-                        />
                         <TextField
                             autoFocus
                             fullWidth
@@ -185,7 +187,7 @@ export const ProfileData = memo(() => {
                                         class: classOrShortName,
                                         hideFullName: isHideFullName,
                                         email,
-                                        avatarImageFile,
+                                        avatarImageFile: avatarImageFile ? { id: avatarImageFile.id } : null,
                                         enrollmentTokens
                                     }
                                 }
@@ -193,6 +195,7 @@ export const ProfileData = memo(() => {
                         >
                             Speichern
                         </SaveButton>
+                        <UpdatePasswordDialog isOpen={isShowUpdatePasswordDialog} onRequestClose={() => setIsShowUpdatePasswordDialog(false)} />
                     </Grid>
                 </Grid>
             </CardContent>

@@ -51,7 +51,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
     const [isDeleteWidgetDialogOpen, setIsDeleteWidgetDialogOpen] = useState(false);
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
-    const [mutateWidget, { loading: isLoading, error }] = useMutation<{ widget: WidgetModel }, { id: ID, widget: Partial<WidgetModel> }>(UpdateWidgetMutation, {
+    const [mutateWidget, { loading: isLoading, error }] = useMutation<{ widget: WidgetModel }, { id: ID, widget: any }>(UpdateWidgetMutation, {
         onCompleted: () => {
             setIsShowSuccess(true);
             setTimeout(() => setIsShowSuccess(false), 3000);
@@ -67,8 +67,8 @@ export const WidgetEditor = memo<WidgetEditorProps>(({ selectedWidget, onSelectW
                 id: selectedWidget.id,
                 widget: {
                     title: widget.title,
-                    groups: widget.groups,
-                    iconImageFile: widget.iconImageFile,
+                    groups: widget.groups?.map(({ id }) => ({ id })),
+                    iconImageFile: widget.iconImageFile && { id: widget.iconImageFile.id },
                     configuration: JSON.stringify(widget.configuration)
                 }
             }

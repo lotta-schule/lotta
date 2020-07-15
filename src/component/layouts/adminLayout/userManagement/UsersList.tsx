@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useState } from 'react';
 import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
-import { AssignUserToGroupsDialog } from './AssignUserToGroupsDialog';
+import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
@@ -11,8 +11,8 @@ import { GroupSelect } from 'component/edit/GroupSelect';
 import { VirtualizedTable } from 'component/general/VirtualizedTable';
 import { SearchUserField } from './SearchUserField';
 import { Block } from '@material-ui/icons';
-import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     avatar: {
@@ -66,7 +66,7 @@ export const UsersList = memo(() => {
         return data?.users?.filter(user =>
             user.groups.find(group => selectedGroupsFilter.find(g => g.id === group.id))
         )?.filter(user =>
-            !filterText ? true : new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name)
+            !filterText ? true : new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name!)
         )?.map(user =>
             ({
                 avatarImage: <UserAvatar className={styles.avatar} user={user} size={25} />,
@@ -146,7 +146,7 @@ export const UsersList = memo(() => {
                     ]}
                 />
                 {selectedUser && (
-                    <AssignUserToGroupsDialog
+                    <EditUserPermissionsDialog
                         onClose={() => setSelectedUser(null)}
                         user={selectedUser}
                     />

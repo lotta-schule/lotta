@@ -1,10 +1,11 @@
 import React, { memo } from 'react';
 import { ContentModuleModel, FileModel, FileModelType, FileConversion } from '../../../../model';
 import { File } from 'util/model';
-import { CardContent, Typography, Button, Grid } from '@material-ui/core';
+import { CardContent, Typography, Button, Grid, Divider } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { useStyles } from './Download';
 import { BackgroundImg } from 'react-cloudimage-responsive';
+import { CloudDownload } from '@material-ui/icons';
 
 export interface ShowProps {
     contentModule: ContentModuleModel;
@@ -61,7 +62,20 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                     />
                                 </Grid>
                             )}
-                            <Grid item xs>
+                            <Grid item xs={12} sm={3} md={2}>
+                                <Button
+                                    fullWidth
+                                    variant={'outlined'}
+                                    color={'secondary'}
+                                    component={'a'}
+                                    href={File.getSameOriginUrl(file)}
+                                    download={file.filename}
+                                    target={'_blank'}
+                                    startIcon={<CloudDownload />}>
+                                    download
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12} sm={9} md={10}>
                                 <div>
                                     {getConfiguration(file).description && (
                                         <Typography className={styles.downloadDescription}>
@@ -76,17 +90,7 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                     </Typography>
                                 </div>
                             </Grid>
-                            <Grid item xs={12} sm={4} md={2}>
-                                <Button
-                                    variant={'outlined'}
-                                    color={'secondary'}
-                                    component={'a'}
-                                    href={File.getSameOriginUrl(file)}
-                                    download={file.filename}
-                                    target={'_blank'}>
-                                    download
-                                </Button>
-                            </Grid>
+                            <Divider className={styles.downloadItemDivider} />
                         </Grid>
                     </div>
                 </div>

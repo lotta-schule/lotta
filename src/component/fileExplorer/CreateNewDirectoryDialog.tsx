@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, useState, useEffect } from 'react';
 import { DialogTitle, DialogContent, DialogContentText, TextField, Button, DialogActions, FormControlLabel, Checkbox } from '@material-ui/core';
-import { DirectoryModel, FileModel } from 'model';
+import { DirectoryModel, FileModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
@@ -11,7 +11,7 @@ import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
 export interface CreateNewFolderDialogProps {
-    basePath?: ({ id: null } | { id: number; name: string })[];
+    basePath?: ({ id: null } | { id: ID; name: string })[];
     open: boolean;
     onClose(event: {}, reason: 'backdropClick' | 'escapeKeyDown' | 'auto'): void;
 }

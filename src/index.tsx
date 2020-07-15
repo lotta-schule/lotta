@@ -18,16 +18,15 @@ import { de } from 'date-fns/locale';
 import { I18nextProvider } from 'react-i18next';
 import { i18n } from './i18n';
 
-if (process.env.REACT_APP_MATOMO_URL) {
-    Matomo.default().init(
-        process.env.REACT_APP_MATOMO_URL,
-        document.location.hostname,
-        {
-            async: true,
-            srcUri: `${process.env.REACT_APP_MATOMO_URL}/matomo.js`
-        }
-    );
-}
+Matomo.default().init(
+    '/',
+    document.location.hostname,
+    {
+        async: true,
+        srcUri: '/matana.js'
+    }
+);
+Matomo.default().push(['setTrackerUrl', '/matanb']);
 
 try {
     Honeybadger.configure({

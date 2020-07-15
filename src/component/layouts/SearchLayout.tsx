@@ -1,45 +1,27 @@
 import React, { memo, useState } from 'react';
-import { CircularProgress, Grid, TextField, Typography, makeStyles } from '@material-ui/core';
+import { CircularProgress, TextField, Typography, makeStyles } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { ArticlePreviewDensedLayout } from 'component/article/ArticlePreviewDensedLayout';
 import { ArticleModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
 import { SearchQuery } from 'api/query/SearchQuery';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
-import { UserNavigation } from './navigation/UserNavigation';
+import { Header } from '../general/Header';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import searchBannerImage from './searchBanner.png';
 
 const useStyles = makeStyles(theme => ({
-    subheader: {
-        maxHeight: 120,
-        width: '100%',
-        height: '100%',
-        flexShrink: 1,
-        flexGrow: 1,
-        position: 'relative',
-        '&::after': {
-            position: 'absolute',
-            display: 'block',
-            content: `''`,
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            background: 'linear-gradient(to right, #ffffff00 75%, #ffffffff 98%)'
-        }
+    inputSection: {
+        backgroundColor: '#fff',
+        marginBottom: theme.spacing(1),
+        paddingTop: theme.spacing(2),
+        padding: '8px',
     },
-    bannerheading: {
-        textTransform: 'uppercase',
-        letterSpacing: '5px',
-        fontSize: '1.5em',
-        textShadow: '1px 1px 15px #fff',
-        padding: '0.6em',
-        color: theme.palette.primary.dark,
+    result: {
+        marginTop: theme.spacing(1),
     },
-    userNavigationGridItem: {
-        [theme.breakpoints.down('sm')]: {
-            display: 'none'
-        }
+    description: {
+        marginBottom: theme.spacing(2),
     }
 }));
 
@@ -54,28 +36,25 @@ const SearchLayout = memo(() => {
     return (
         <>
             <BaseLayoutMainContent>
-                <Grid container style={{ backgroundColor: '#fff' }}>
-                    <Grid item xs className={styles.subheader}>
-                        <Typography variant={'h2'} className={styles.bannerheading}>
-                            Suche
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={false} sm={4} xl={3} className={styles.userNavigationGridItem}>
-                        <UserNavigation />
-                    </Grid>
-                </Grid>
-                <section style={{ backgroundColor: '#fff', marginBottom: '1em', padding: '8px' }}>
+
+                <Header bannerImageUrl={searchBannerImage}>
+                    <Typography variant={'h2'}>Suche</Typography>
+                </Header>
+
+                <section className={styles.inputSection}>
+                    <Typography className={styles.description}>Gib ein oder mehrere Suchbegriffe in das Suchfeld ein.</Typography>
                     <TextField
                         fullWidth
                         autoFocus
                         variant={'outlined'}
+                        color={'secondary'}
                         id={'searchfield'}
                         label={'Suchbegriff'}
                         type={'search'}
                         value={searchText}
                         onChange={e => setSearchText(e.target.value)}
                     />
-                    <Typography variant={'body1'} component={'div'}>
+                    <Typography variant={'body1'} component={'div'} className={styles.result}>
                         {isLoading && <span><CircularProgress style={{ height: '1em', width: '1em' }} /> Beiträge werden gesucht ...</span>}
                         {!isLoading && data && <span>Es wurden {data.results.length} Beiträge gefunden</span>}
                         {!isLoading && !data && <span>&nbsp;</span>}

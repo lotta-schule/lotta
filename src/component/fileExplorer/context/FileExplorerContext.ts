@@ -1,5 +1,5 @@
 import { createContext, Dispatch } from 'react';
-import { FileModel, DirectoryModel } from 'model';
+import { FileModel, DirectoryModel, ID } from 'model';
 import { Action } from './reducer';
 
 export enum FileExplorerMode {
@@ -15,13 +15,15 @@ export const defaultState = {
     markedDirectories: [] as DirectoryModel[],
     currentPath: [
         { id: null } as any
-    ] as ({ id: null } | { id: number; name: string; })[],
+    ] as ({ id: null } | { id: ID; name: string; })[],
     searchtext: '',
     showActiveUploads: false,
+    showFileUsage: false,
     showCreateNewFolder: false,
     showMoveFiles: false,
     showMoveDirectory: false,
     showDeleteFiles: false,
+    detailSidebarEnabled: false
 }
 
 const fileExplorerContext = createContext<[typeof defaultState, Dispatch<Action>]>([defaultState, () => { }]);

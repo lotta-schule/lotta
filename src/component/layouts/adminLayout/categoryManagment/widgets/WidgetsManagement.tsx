@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import {
     Paper, Typography, makeStyles, Theme, Button, Grid, CircularProgress, Menu, MenuItem
 } from '@material-ui/core';
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export const WidgetManagement: FunctionComponent = memo(() => {
+export const WidgetsManagement = memo(() => {
     const styles = useStyles();
 
     const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null);

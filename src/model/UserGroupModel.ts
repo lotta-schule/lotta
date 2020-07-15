@@ -4,7 +4,7 @@ import { ID } from './ID';
 
 export interface UserGroupModel {
     id: ID;
-    createdAt: string;
+    insertedAt: string;
     updatedAt: string;
     name: string;
     isAdminGroup: boolean;

@@ -1,5 +1,5 @@
 import { defaultState } from './FileExplorerContext';
-import { FileModel, DirectoryModel } from '../../../model';
+import { FileModel, DirectoryModel, ID } from '../../../model';
 
 export type Action =
     | { type: 'setMode', mode: typeof defaultState.mode }
@@ -11,13 +11,15 @@ export type Action =
     | { type: 'setMarkedDirectories', directories: DirectoryModel[] }
     | { type: 'resetMarkedDirectories' }
     | { type: 'markSingleDirectory', directory: DirectoryModel }
-    | { type: 'setPath', path: ({ id: null } | { id: number; name: string })[] }
+    | { type: 'setPath', path: ({ id: null } | { id: ID; name: string })[] }
     | { type: 'setSearchFilter', searchtext: string }
     | { type: 'showActiveUploads' } | { type: 'hideActiveUploads' }
+    | { type: 'showFileUsage' } | { type: 'hideFileUsage' }
     | { type: 'showCreateNewFolder' } | { type: 'hideCreateNewFolder' }
     | { type: 'showMoveFiles' } | { type: 'hideMoveFiles' }
     | { type: 'showMoveDirectory' } | { type: 'hideMoveDirectory' }
     | { type: 'showDeleteFiles' } | { type: 'hideDeleteFiles' }
+    | { type: 'toggleDetailSidebarEnabled' }
 
 export const reducer = (state: typeof defaultState, action: Action): typeof defaultState => {
     switch (action.type) {
@@ -84,6 +86,11 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
                 ...state,
                 showActiveUploads: true
             }
+        case 'showFileUsage':
+            return {
+                ...state,
+                showFileUsage: true
+            }
         case 'showCreateNewFolder':
             return {
                 ...state,
@@ -109,6 +116,11 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
                 ...state,
                 showActiveUploads: false
             }
+        case 'hideFileUsage':
+            return {
+                ...state,
+                showFileUsage: false
+            }
         case 'hideCreateNewFolder':
             return {
                 ...state,
@@ -128,6 +140,11 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
             return {
                 ...state,
                 showDeleteFiles: false
+            }
+        case 'toggleDetailSidebarEnabled':
+            return {
+                ...state,
+                detailSidebarEnabled: !state.detailSidebarEnabled
             }
         default:
             return state;

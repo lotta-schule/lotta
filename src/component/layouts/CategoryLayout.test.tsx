@@ -1,37 +1,52 @@
 import React from 'react';
-import {
-    render,
-    cleanup,
-
-} from 'test/util';
-import { UeberSuedamerika, VivaLaRevolucion } from 'test/fixtures/Article';
+import { render, cleanup, waitFor } from 'test/util';
+import { Klausurenplan, VivaLaRevolucion, MusikCategory, KeinErSieEsUser, SomeUser, imageFile } from 'test/fixtures';
+import { ArticleModel } from 'model';
 import { CategoryLayout } from './CategoryLayout';
-import { SuedAmerikaCategory } from 'test/fixtures/Tenant';
 
 afterEach(cleanup);
 
 describe('component/article/CategoryLayout', () => {
 
     describe('Standard Category', () => {
+        const articles = [Klausurenplan, VivaLaRevolucion]
+            .map(partialArticle => ({ ...partialArticle, users: [KeinErSieEsUser, SomeUser], category: MusikCategory}) as ArticleModel);
+
         it('should render the category title', async done => {
-            const { container } = render(<CategoryLayout category={SuedAmerikaCategory} articles={[UeberSuedamerika, VivaLaRevolucion]} />);
-            await new Promise(resolve => setTimeout(resolve));
-            const title = container.querySelector('h2');
-            expect(title).toHaveTextContent('Südamerika');
+            const { queryByText } = render(
+                <CategoryLayout category={MusikCategory} articles={articles} />
+            );
+            await waitFor(() => {
+                expect(queryByText('Musik')).toBeVisible();
+            });
+            done();
+        });
+
+        it('should render the category banner image', async done => {
+            const category = { ...MusikCategory, bannerImageFile: imageFile };
+            const { findByTestId } = render(
+                <CategoryLayout category={category as any} articles={articles} />
+            );
+            const headerContent = await findByTestId('HeaderContent');
+            expect(getComputedStyle(headerContent).backgroundImage).toContain('meinbild.jpg');
             done();
         });
 
         it('should render the widgets list', async done => {
-            const { getByTestId } = render(<CategoryLayout category={SuedAmerikaCategory} articles={[UeberSuedamerika, VivaLaRevolucion]} />);
-            await new Promise(resolve => setTimeout(resolve));
-            getByTestId('WidgetsList');
+            const { queryByTestId } = render(<CategoryLayout category={MusikCategory} articles={articles} />);
+            await waitFor(() => {
+                expect(queryByTestId('WidgetsList')).toBeVisible();
+            });
             done();
         });
 
         it('should render an ArticlePreview', async done => {
-            const { getAllByTestId } = render(<CategoryLayout category={SuedAmerikaCategory} articles={[UeberSuedamerika, VivaLaRevolucion]} />);
-            await new Promise(resolve => setTimeout(resolve));
-            getAllByTestId('ArticlePreview');
+            const { queryAllByTestId } = render(
+                <CategoryLayout category={MusikCategory} articles={articles} />
+            );
+            await waitFor(() => {
+                expect([...queryAllByTestId('ArticlePreviewDensedLayout'), ...queryAllByTestId('ArticlePreviewStandardLayout')]).toHaveLength(2);
+            });
             done();
         });
     });

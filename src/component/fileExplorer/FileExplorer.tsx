@@ -3,9 +3,10 @@ import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
 import { FileModel } from 'model';
 import { useTranslation } from 'react-i18next';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
+import { FileUsageModal } from './FileUsageModal';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DeleteFilesDialog } from './DeleteFilesDialog';
-import { FileTable } from './FileTable';
+import { FilesView } from './FilesView';
 import { FileToolbar } from './FileToolbar';
 import { MoveFilesDialog } from './MoveFilesDialog';
 import { Provider, defaultState, FileExplorerMode } from './context/FileExplorerContext';
@@ -40,6 +41,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
     <Provider value={[state, dispatch]}>
       <Paper style={{ position: 'relative', outline: 'none', ...style }} className={className}>
         <ActiveUploadsModal />
+        <FileUsageModal />
         <CreateNewDirectoryDialog
           open={state.showCreateNewFolder}
           basePath={state.currentPath}
@@ -52,8 +54,7 @@ export const FileExplorer = memo<FileExplorerProps>(({ style, className, multipl
         <DeleteFilesDialog />
 
         <FileToolbar />
-        <FileTable fileFilter={fileFilter} />
-
+        <FilesView />
         {state.mode !== FileExplorerMode.ViewAndEdit && (
           <Toolbar className={styles.bottomToolbar}>
             <Button

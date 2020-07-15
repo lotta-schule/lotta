@@ -1,8 +1,9 @@
 import React, { FunctionComponent, memo, MouseEvent, useEffect, KeyboardEventHandler, KeyboardEvent, useCallback } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { useMediaQuery, Theme, IconButton, Typography } from '@material-ui/core';
+import { Theme, IconButton, Typography } from '@material-ui/core';
 import { FileModel } from 'model';
 import { useWindowSize } from 'util/useWindowSize';
+import { useIsRetina } from 'util/useIsRetina';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
 import { Close, ChevronLeft, ChevronRight } from '@material-ui/icons';
 
@@ -57,7 +58,7 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ select
     useLockBodyScroll();
     const styles = useStyles();
     const { innerHeight, innerWidth } = useWindowSize();
-    const retinaMultiplier = useMediaQuery('screen and (-webkit-min-device-pixel-ratio: 2)') ? 2 : 1;
+    const retinaMultiplier = useIsRetina() ? 2 : 1;
     const [width, height] = [innerWidth, innerHeight].map(px => Math.floor(px * .8 * retinaMultiplier));
 
     const onKeyDown: KeyboardEventHandler<Window> = useCallback(event => {

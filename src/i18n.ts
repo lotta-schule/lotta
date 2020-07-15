@@ -8,6 +8,9 @@ const resources = {
                 file: 'Datei',
                 files: '{{count}} Datei',
                 files_plural: '{{count}} Dateien',
+                format: 'Format',
+                formats: '{{count}} Format',
+                formats_plural: '{{count}} Formate',
                 explorer: {
                     filesAreBeingUploaded: '$t(files.file) wird hochgeladen',
                     filesAreBeingUploaded_plural: '$t(files.files, {"count": {{count}}}) werden hochgeladen',
@@ -16,12 +19,27 @@ const resources = {
                     markedFiles: '$t(files.files, {"count": {{count}}}) von $t(files.files, {"count": {{total}}}) ausgewählt.',
                     totalFiles: '$t(files.files, {"count": {{count}}}) im Ordner',
                     selectFiles: '$t(files.files, {"count": {{count}}}) auswählen',
+                },
+                usage: {
+                    preview: 'Vorschaubild',
+                    banner: 'Bannerbild',
+                    file: 'Moduldatei',
+                    avatar: 'Profilbild',
+                    logo: 'Logo',
+                    background: 'Hintergrundbild'
+                },
+                filetypes: {
+                    PDF: 'PDF-Dokument',
+                    IMAGE: 'Bild',
+                    VIDEO: 'Video',
+                    AUDIO: 'Audio-Aufnahme',
+                    MISC: 'Sonstiges',
+                    DIRECTORY: 'Ordner'
                 }
             },
             widgets: {
                 widget: 'Marginale',
                 widgets: '{{count}} Marginale',
-                markedWidgets: '{{count}} / $t(widgets.widgets, {"count": {{total}}})',
             },
             administration: {
                 result: 'Ergebnis',

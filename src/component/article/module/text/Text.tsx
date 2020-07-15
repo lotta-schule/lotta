@@ -12,6 +12,10 @@ export interface TextProps {
 
 const useStyles = makeStyles(theme => ({
     root: {
+        margin: '0 16.6%',
+        [theme.breakpoints.down('sm')]: {
+            margin: 0,
+        },
         '& a': {
             textDecoration: 'none',
             color: theme.palette.secondary.main

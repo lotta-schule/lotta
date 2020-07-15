@@ -1,9 +1,10 @@
-import React, { memo, useMemo } from 'react';
-import { UserModel } from 'model';
+import React, { memo } from 'react';
 import { Avatar } from '@material-ui/core';
 import { AvatarProps } from '@material-ui/core/Avatar';
-import { useCurrentUser } from 'util/user/useCurrentUser';
+import { UserModel } from 'model';
 import { User } from 'util/model';
+import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useIsRetina } from 'util/useIsRetina';
 
 export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
     user: UserModel;
@@ -12,9 +13,9 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
 }
 
 export const UserAvatar = memo<UserAvatarProps>(({ user, size, ...otherProps }) => {
-    const src = useMemo(() => {
-        return User.getAvatarUrl(user, size);
-    }, [size, user]);
+    const retinaMultiplier = useIsRetina() ? 2 : 1;
+    const src = User.getAvatarUrl(user, size && (size * retinaMultiplier));
+
     return (
         <Avatar src={src} alt={user.name} {...otherProps} />
     );
