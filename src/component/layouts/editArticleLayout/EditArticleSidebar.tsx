@@ -4,7 +4,7 @@ import {
     Switch, ButtonGroup, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem, Divider, DialogTitle, DialogContent, DialogActions
 } from '@material-ui/core';
 import { DateTimePicker } from '@material-ui/pickers';
-import uniqBy from 'lodash/uniqBy';
+import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CategorySelect } from './CategorySelect';
 import { GroupSelect } from '../../edit/GroupSelect';
@@ -20,9 +20,9 @@ import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
 import { UsersList } from './UsersList';
 import { SelectTopicAutocomplete } from './SelectTopicAutocomplete';
 import { SaveButton } from 'component/general/SaveButton';
+import uniqBy from 'lodash/uniqBy';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
-import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -65,7 +65,7 @@ interface EditArticleSidebarProps {
 export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLoading, onUpdate, onSave }) => {
     const styles = useStyles();
     const [currentUser] = useCurrentUser();
-    const { history } = useRouter();
+    const history = useHistory();
 
     const [isReadyToPublish, setIsReadyToPublish] = useState(article.readyToPublish || false);
     const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = useState(false);
@@ -259,7 +259,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
                     color={'secondary'}
                     variant={'outlined'}
                     size={'small'}
-                    onClick={() => history.back()}
+                    onClick={() => history.go(-1)}
                     fullWidth
                 >
                     Abbrechen
