@@ -86,9 +86,9 @@ defmodule Api.MixProject do
       {:con_cache, "~> 0.14"},
       {:elasticsearch, "~> 1.0.0"},
       # live dashboard
-      {:telemetry_poller, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:phoenix_live_dashboard, "~> 0.1"},
+      {:telemetry_poller, "~> 0.5"},
+      {:telemetry_metrics, "~> 0.5"},
+      {:phoenix_live_dashboard, "~> 0.2.7"},
       # test
       {:excoveralls, "~> 0.12", only: :test}
     ]
