@@ -98,6 +98,7 @@ defmodule Api.Accounts.Authentication do
   def get_claims_for_user(user, tenant) when is_nil(tenant) do
     %{
       aud: "lotta",
+      email: user.email,
       gps: Enum.map(User.get_groups(user), &%{id: to_string(&1.id), name: &1.name}),
       agp: Enum.map(User.get_assigned_groups(user), &%{id: to_string(&1.id), name: &1.name})
     }
@@ -106,6 +107,7 @@ defmodule Api.Accounts.Authentication do
   def get_claims_for_user(user, tenant) do
     %{
       tid: tenant.id,
+      email: user.email,
       aud: Tenant.get_lotta_url(tenant, skip_protocol: true),
       adm: user_is_admin?(user, tenant),
       sad: user_is_lotta_admin?(user),

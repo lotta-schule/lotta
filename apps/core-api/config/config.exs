@@ -43,7 +43,7 @@ config :api, Api.Elasticsearch.Cluster,
     hackney: [pool: :elasticsearch_pool]
   ]
 
-config :api, Api.Guardian, issuer: "lotta"
+config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
 
 # Configures Elixir's Logger
 config :logger, :console,

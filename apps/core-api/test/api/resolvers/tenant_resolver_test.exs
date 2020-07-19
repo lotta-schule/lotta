@@ -4,7 +4,7 @@ defmodule Api.TenantResolverTest do
   """
 
   import Ecto.Query
-  import ApiWeb.Accounts.Permissions
+  import Api.Accounts.Permissions
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo

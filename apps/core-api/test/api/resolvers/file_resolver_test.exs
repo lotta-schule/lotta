@@ -7,7 +7,7 @@ defmodule Api.FileResolverTest do
 
   import Ecto.Query
 
-  alias ApiWeb.AccessToken
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
   alias Api.Tenants

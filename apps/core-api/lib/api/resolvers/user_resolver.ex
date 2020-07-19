@@ -154,6 +154,7 @@ defmodule Api.UserResolver do
 
   def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
     with {:ok, user} <- login_with_username_pass(username, password),
+         :ok <- ensure_user_is_not_blocked(user, tenant),
          {:ok, access_token, refresh_token} <-
            create_user_tokens(user, get_claims_for_user(user, tenant)) do
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}

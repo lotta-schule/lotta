@@ -59,7 +59,7 @@ defmodule ApiWeb.Context do
   end
 
   defp maybe_put_user(context, conn) do
-    case Guardian.Plug.current_resource(conn) do
+    case ApiWeb.Auth.AccessToken.Plug.current_resource(conn) do
       user when not is_nil(user) ->
         if System.get_env("APP_ENVIRONMENT") != "test",
           do: Task.start_link(fn -> Accounts.see_user(user) end)

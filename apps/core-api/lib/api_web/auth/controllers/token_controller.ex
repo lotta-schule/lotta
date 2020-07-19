@@ -8,7 +8,7 @@ defmodule ApiWeb.Auth.TokenController do
   def refresh(conn, params) do
     conn =
       conn
-      |> Plug.Conn.fetch_cookies()
+      |> Plug.Conn.fetch_cookies(encrypted: ~w(SignInRefreshToken))
 
     token = params["token"] || conn.cookies["SignInRefreshToken"]
 

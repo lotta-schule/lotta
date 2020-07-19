@@ -7,7 +7,7 @@ defmodule Api.CategoryResolverTest do
 
   import Ecto.Query
 
-  alias ApiWeb.AccessToken
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Tenants
   alias Api.Accounts.User
