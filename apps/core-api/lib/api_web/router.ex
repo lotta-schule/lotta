@@ -17,7 +17,7 @@ defmodule ApiWeb.Router do
   end
 
   pipeline :admin do
-    plug :basic_auth, username: "admin", password: "d2jm8oj23ndhng3"
+    plug :basic_auth, Application.fetch_env!(:api, :live_view)
   end
 
   pipeline :json_api do
