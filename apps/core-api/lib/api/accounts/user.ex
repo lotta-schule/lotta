@@ -2,12 +2,16 @@ defmodule Api.Accounts.User do
   @moduledoc """
     Ecto Schema for users
   """
+
   use Ecto.Schema
-  alias Api.Repo
+
   import Ecto.Query
   import Ecto.Changeset
+
+  alias Api.Repo
   alias Ecto.Changeset
-  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Accounts
+  alias Api.Accounts.{BlockedTenant, File, User, UserEnrollmentToken, UserGroup}
   alias Api.Content.Article
   alias Api.Tenants.Tenant
 
@@ -21,11 +25,11 @@ defmodule Api.Accounts.User do
     field :password, :string, virtual: true
     field :password_hash, :string
 
-    belongs_to :tenant, Api.Tenants.Tenant
-    belongs_to :avatar_image_file, Api.Accounts.File, on_replace: :nilify
-    has_many :files, Api.Accounts.File
-    has_many :blocked_tenants, Api.Accounts.BlockedTenant, on_replace: :delete
-    has_many :enrollment_tokens, Api.Accounts.UserEnrollmentToken, on_replace: :delete
+    belongs_to :tenant, Tenant
+    belongs_to :avatar_image_file, File, on_replace: :nilify
+    has_many :files, File
+    has_many :blocked_tenants, BlockedTenant, on_replace: :delete
+    has_many :enrollment_tokens, UserEnrollmentToken, on_replace: :delete
 
     many_to_many :groups,
                  UserGroup,
@@ -40,88 +44,9 @@ defmodule Api.Accounts.User do
     timestamps()
   end
 
-  def is_lotta_admin?(%User{} = user) do
-    [
-      "alexis.rinaldoni@einsa.net",
-      "eike.wiewiorra@einsa.net",
-      "billy@einsa.net"
-    ]
-    |> Enum.any?(fn email ->
-      user.email == email
-    end)
-  end
+  @type email :: String.t()
 
-  def is_admin?(%User{} = user, %Tenant{} = tenant) do
-    is_lotta_admin?(user) ||
-      user
-      |> get_groups(tenant)
-      |> Enum.any?(fn group -> group.tenant_id == tenant.id && group.is_admin_group end)
-  end
-
-  def is_admin?(_, _), do: false
-
-  def is_author?(%User{} = user, %Article{} = article) do
-    article
-    |> Repo.preload(:users)
-    |> Map.get(:users)
-    |> Enum.any?(fn u -> u.id == user.id end)
-  end
-
-  def is_author?(%User{id: user_id}, %Directory{} = directory) do
-    case Repo.preload(directory, :user) do
-      %{user: %{id: id}} -> id == user_id
-      _ -> false
-    end
-  end
-
-  def is_author?(%User{id: user_id}, %File{} = file) do
-    case Repo.preload(file, :user) do
-      %{user: %{id: id}} -> id == user_id
-      _ -> false
-    end
-  end
-
-  def is_author?(_, _), do: false
-
-  def can_write_directory?(%User{} = user, %Directory{} = directory) do
-    directory = Repo.preload(directory, [:tenant, :user])
-
-    User.is_author?(user, directory) ||
-      if User.is_admin?(user, directory.tenant) do
-        is_nil(directory.user)
-      else
-        false
-      end
-  end
-
-  def can_write_directory?(_, _), do: false
-
-  def can_read_directory?(%User{} = user, %Directory{} = directory) do
-    directory = Repo.preload(directory, [:user])
-    User.is_author?(user, directory) || is_nil(directory.user)
-  end
-
-  def can_read_directory?(_, _), do: false
-
-  def has_group_for_article?(%User{} = user, %Article{} = article) do
-    user_group_ids = User.group_ids(user, Repo.preload(article, :tenant).tenant)
-
-    article_group_ids =
-      article
-      |> Repo.preload([:groups, :tenant])
-      |> Map.fetch!(:groups)
-      |> Enum.map(fn group -> group.id end)
-
-    Enum.empty?(article_group_ids) ||
-      Enum.any?(article_group_ids, &Enum.member?(user_group_ids, &1))
-  end
-
-  def is_blocked?(%User{} = user, %Tenant{} = tenant) do
-    user
-    |> Repo.preload(:blocked_tenants)
-    |> Map.fetch!(:blocked_tenants)
-    |> Enum.any?(fn blocked_tenant -> blocked_tenant.tenant_id == tenant.id end)
-  end
+  @type t :: %User{id: pos_integer(), email: email(), name: String.t()}
 
   def get_assigned_groups(%User{} = user, %Tenant{} = tenant) do
     user
@@ -147,7 +72,7 @@ defmodule Api.Accounts.User do
       |> Enum.map(& &1.enrollment_token)
 
     tenant
-    |> Api.Accounts.get_groups_by_enrollment_tokens(tokens)
+    |> Accounts.get_groups_by_enrollment_tokens(tokens)
   end
 
   def get_groups(%User{} = user, %Tenant{} = tenant) do
@@ -244,7 +169,7 @@ defmodule Api.Accounts.User do
 
   defp put_assoc_avatar_image_file(user, %{avatar_image_file: %{id: avatar_image_file_id}}) do
     user
-    |> put_assoc(:avatar_image_file, Repo.get(Api.Accounts.File, avatar_image_file_id))
+    |> put_assoc(:avatar_image_file, Repo.get(File, avatar_image_file_id))
   end
 
   defp put_assoc_avatar_image_file(user, %{avatar_image_file: nil}) do
@@ -285,7 +210,7 @@ defmodule Api.Accounts.User do
       |> Enum.concat(groups)
 
     user
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:groups, groups)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:groups, groups)
   end
 end

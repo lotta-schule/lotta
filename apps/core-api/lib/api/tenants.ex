@@ -4,11 +4,12 @@ defmodule Api.Tenants do
   """
 
   require Logger
-  import Ecto.Query
-  alias Api.Repo
 
+  import Ecto.Query
+  import Api.Accounts.Permissions
+
+  alias Api.Repo
   alias Api.Tenants.{DefaultContent, Category, CustomDomain, Tenant, Widget}
-  alias Api.Accounts.User
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -366,7 +367,7 @@ defmodule Api.Tenants do
         where:
           w.tenant_id == ^tenant.id and
             (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or
-               ^User.is_admin?(user, tenant)),
+               ^user_is_admin?(user, tenant)),
         distinct: w.id
       )
       |> Repo.all()
@@ -408,7 +409,7 @@ defmodule Api.Tenants do
             where:
               cw.category_id == ^String.to_integer(category_id) and
                 (wug.group_id in ^user_group_ids or is_nil(wug.group_id) or
-                   ^User.is_admin?(user, tenant)),
+                   ^user_is_admin?(user, tenant)),
             distinct: w.id
           )
           |> Repo.all()

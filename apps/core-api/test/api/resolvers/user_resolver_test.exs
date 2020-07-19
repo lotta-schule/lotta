@@ -6,13 +6,14 @@ defmodule Api.UserResolverTest do
   use ApiWeb.ConnCase
 
   import Ecto.Query
+  import Api.Accounts.Authentication
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
   alias Api.Tenants
   alias Api.Tenants.{Tenant}
-  alias Api.Accounts.{AuthHelper, Directory, User, UserGroup}
+  alias Api.Accounts.{Directory, User, UserGroup}
 
   setup do
     Seeder.seed()
@@ -1019,8 +1020,7 @@ defmodule Api.UserResolverTest do
                }
              }
 
-      assert {:ok, _} =
-               AuthHelper.login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
+      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
     end
 
     test "should return an error when the current password is not correct", %{user_jwt: user_jwt} do

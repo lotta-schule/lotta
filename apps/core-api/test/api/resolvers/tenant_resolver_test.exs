@@ -4,6 +4,7 @@ defmodule Api.TenantResolverTest do
   """
 
   import Ecto.Query
+  import ApiWeb.Accounts.Permissions
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
@@ -341,7 +342,7 @@ defmodule Api.TenantResolverTest do
       assert tenant != nil
       assert user != nil
 
-      assert User.is_admin?(user, tenant)
+      assert user_is_admin?(user, tenant)
     end
   end
 
@@ -467,7 +468,7 @@ defmodule Api.TenantResolverTest do
 
       assert tenant != nil
 
-      assert User.is_admin?(user_account, tenant)
+      assert user_is_admin?(user_account, tenant)
     end
 
     test "should create default content for a new tenant", %{

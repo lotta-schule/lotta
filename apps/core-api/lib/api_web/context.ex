@@ -9,15 +9,15 @@ defmodule ApiWeb.Context do
   require Logger
 
   import Plug.Conn
+  import Api.Accounts.Authentication
+  import Api.Accounts.Permissions
 
-  alias Api.{Accounts, Tenants, Repo}
+  alias Api.{Accounts, Tenants}
   alias Api.Accounts.User
 
   def init(opts), do: opts
 
-  def call(conn, blueprint) do
-    IO.inspect(blueprint)
-
+  def call(conn, _blueprint) do
     context =
       %{}
       |> maybe_put_tenant(conn)
@@ -72,7 +72,7 @@ defmodule ApiWeb.Context do
         )
         |> Map.put(
           :user_is_admin,
-          if(tenant = context[:tenant], do: User.is_admin?(user, tenant), else: false)
+          if(tenant = context[:tenant], do: user_is_admin?(user, tenant), else: false)
         )
 
       nil ->
@@ -82,19 +82,16 @@ defmodule ApiWeb.Context do
     end
   end
 
-  defp maybe_put_user_is_blocked(%{current_user: user, tenant: tenant} = context, _conn)
-       when not is_nil(user) and not is_nil(tenant) do
-    user =
-      user
-      |> Repo.preload([:groups, :avatar_image_file])
+  defp maybe_put_user_is_blocked(%{current_user: user, tenant: tenant} = context, _conn) do
+    case ensure_user_is_not_blocked(user, tenant) do
+      :ok ->
+        context
 
-    if User.is_blocked?(user, tenant) do
-      Logger.warn("User is blocked for tenant #{tenant.slug}.")
+      {:error, _} ->
+        Logger.warn("User #{user.email} is blocked for tenant #{tenant.slug}.")
 
-      context
-      |> Map.put(:user_is_blocked, true)
-    else
-      context
+        context
+        |> Map.put(:user_is_blocked, true)
     end
   end
 

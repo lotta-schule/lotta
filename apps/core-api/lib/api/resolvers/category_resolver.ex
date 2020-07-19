@@ -3,9 +3,10 @@ defmodule Api.CategoryResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting categories
   """
 
+  import Api.Accounts.Permissions
+
   alias ApiWeb.ErrorHelpers
   alias Api.Tenants
-  alias Api.Accounts.User
 
   def all(_args, %{
         context: %{current_user: current_user, user_group_ids: user_group_ids, tenant: tenant}
@@ -15,7 +16,7 @@ defmodule Api.CategoryResolver do
        tenant,
        current_user,
        user_group_ids,
-       User.is_admin?(current_user, tenant)
+       user_is_admin?(current_user, tenant)
      )}
   end
 
@@ -28,7 +29,7 @@ defmodule Api.CategoryResolver do
   end
 
   def update(%{id: id, category: category_params}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       try do
         category = Tenants.get_category!(id)
 
@@ -53,7 +54,7 @@ defmodule Api.CategoryResolver do
   end
 
   def create(%{category: category_params}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       case Tenants.create_category(tenant, category_params) do
         {:ok, category} ->
           {:ok, category}
@@ -71,7 +72,7 @@ defmodule Api.CategoryResolver do
   end
 
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       try do
         category = Tenants.get_category!(id)
 

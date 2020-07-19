@@ -37,7 +37,8 @@ defmodule ApiWeb.Schema.Accounts.User do
   end
 
   object :authresult do
-    field :token, :string
+    field :access_token, :string
+    field :refresh_token, :string
   end
 
   object :user do

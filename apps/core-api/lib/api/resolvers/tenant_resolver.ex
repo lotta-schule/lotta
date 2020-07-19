@@ -3,6 +3,8 @@ defmodule Api.TenantResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting tenants
   """
 
+  import Api.Accounts.Permissions
+
   alias Ecto.Changeset
   alias ApiWeb.ErrorHelpers
   alias Api.Repo
@@ -33,7 +35,7 @@ defmodule Api.TenantResolver do
   def create(%{title: title, slug: slug, email: email, name: name}, %{
         context: %{current_user: current_user}
       }) do
-    if User.is_lotta_admin?(current_user) do
+    if user_is_lotta_admin?(current_user) do
       Repo.transaction(fn ->
         user =
           case Accounts.get_user_by_email(email) do
@@ -115,7 +117,7 @@ defmodule Api.TenantResolver do
   end
 
   def update(%{tenant: tenant_input}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       tenant
       |> Tenants.update_tenant(tenant_input)
     else
@@ -124,7 +126,7 @@ defmodule Api.TenantResolver do
   end
 
   def usage(_args, %{context: %{tenant: tenant, current_user: current_user}}) do
-    if User.is_admin?(current_user, tenant) do
+    if user_is_admin?(current_user, tenant) do
       tenant
       |> Tenants.Usage.get_usage()
     else

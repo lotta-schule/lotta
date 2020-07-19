@@ -3,11 +3,12 @@ defmodule Api.UserGroupResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting user groups
   """
 
+  import Api.Accounts.Permissions
+
   alias Ecto.NoResultsError
   alias ApiWeb.ErrorHelpers
   alias Api.Repo
   alias Api.Accounts
-  alias Api.Accounts.User
 
   def resolve_model_groups(_args, %{source: model}) do
     groups =
@@ -23,7 +24,7 @@ defmodule Api.UserGroupResolver do
   def resolve_enrollment_tokens(user_group, _args, %{context: %{current_user: current_user}}) do
     tenant = user_group |> Repo.preload(:tenant) |> Map.fetch!(:tenant)
 
-    case User.is_admin?(current_user, tenant) do
+    case user_is_admin?(current_user, tenant) do
       true ->
         {:ok,
          user_group
@@ -48,7 +49,7 @@ defmodule Api.UserGroupResolver do
   end
 
   def create(%{group: group_input}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       case Accounts.create_user_group(tenant, group_input) do
         {:ok, group} ->
           {:ok, group}
@@ -66,7 +67,7 @@ defmodule Api.UserGroupResolver do
   end
 
   def update(%{id: id, group: group_input}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       try do
         group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
 
@@ -84,7 +85,7 @@ defmodule Api.UserGroupResolver do
   end
 
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       try do
         group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
 
