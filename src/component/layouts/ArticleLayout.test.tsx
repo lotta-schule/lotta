@@ -18,11 +18,11 @@ describe('component/article/ArticleLayout', () => {
     };
 
     it('should show the correct title in the Browser header', async done => {
-        const { findByTestId } = render(
+        const screen = render(
             <ArticleLayout articleId={Schulfest.id} />,
             { }, testSetupOptions
         );
-        await findByTestId('Article'); // wait until Article is loaded
+        await screen.findByTestId('Article'); // wait until Article is loaded
         await waitFor(() => {
             expect(document.title).toContain('Schulfest');
             expect(getMetaTagValue('description')).toEqual('lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.');
@@ -32,12 +32,12 @@ describe('component/article/ArticleLayout', () => {
     });
 
     it('should not render the widgets list', async done => {
-        const { findByTestId, queryByTestId } = render(
+        const screen = render(
             <ArticleLayout articleId={Schulfest.id} />,
             { }, testSetupOptions
         );
-        await findByTestId('Article'); // wait until Article is loaded
-        const sidebar = queryByTestId('BaseLayoutSidebar');
+        await screen.findByTestId('Article'); // wait until Article is loaded
+        const sidebar = screen.findByTestId('BaseLayoutSidebar');
         expect(sidebar).not.toBeNull();
         expect(sidebar).toHaveStyle({ width: 0 });
         done();
