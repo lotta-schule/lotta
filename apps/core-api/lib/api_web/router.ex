@@ -60,7 +60,6 @@ defmodule ApiWeb.Router do
       put_resp_cookie(conn, "SignInRefreshToken", token,
         max_age: 21 * 24 * 60 * 60,
         http_only: true,
-        encrypted: true,
         same_site: "Lax"
       )
     end

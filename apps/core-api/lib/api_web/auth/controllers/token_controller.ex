@@ -4,11 +4,12 @@ defmodule ApiWeb.Auth.TokenController do
   use Phoenix.Controller
 
   import Api.Accounts.Authentication
+  import Plug.Conn
 
   def refresh(conn, params) do
     conn =
       conn
-      |> Plug.Conn.fetch_cookies(encrypted: ~w(SignInRefreshToken))
+      |> fetch_cookies()
 
     token = params["token"] || conn.cookies["SignInRefreshToken"]
 
@@ -21,6 +22,10 @@ defmodule ApiWeb.Auth.TokenController do
       case refresh_token(token) do
         {:ok, access_token, refresh_token} ->
           conn
+          |> delete_resp_cookie("SignInRefreshToken",
+            http_only: true,
+            same_site: "Lax"
+          )
           |> json(%{
             accessToken: access_token,
             refreshToken: refresh_token
@@ -31,6 +36,10 @@ defmodule ApiWeb.Auth.TokenController do
 
           conn
           |> put_status(401)
+          |> delete_resp_cookie("SignInRefreshToken",
+            http_only: true,
+            same_site: "Lax"
+          )
           |> put_view(ApiWeb.ErrorView)
           |> render(:"401")
       end
