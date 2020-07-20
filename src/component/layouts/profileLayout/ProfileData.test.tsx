@@ -1,44 +1,49 @@
 import React from 'react';
-import { render, screen, waitFor, getByText, getByRole } from 'test/util';
+import { render, waitFor, getByText, getByRole } from 'test/util';
 import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
 import { ProfileData } from './ProfileData';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import userEvent from '@testing-library/user-event';
+import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 
 describe('component/layouts/profileLayout/ProfileData', () => {
 
     describe('show user data', () => {
-        it('should show an input with the username', async () => {
-            render(
+        it('should show an input with the username', async done => {
+            const screen = render(
                 <ProfileData />,
                 {}, { currentUser: SomeUser, useCache: true }
             );
-            expect(screen.getByLabelText(/vor- und nachname/i)).toHaveValue('Ernesto Guevara');
+            expect(await screen.findByLabelText(/vor- und nachname/i)).toHaveValue('Ernesto Guevara');
+            done();
         });
 
-        it('should show an input with the user\'s email', async () => {
-            render(
+        it('should show an input with the user\'s email', async done => {
+            const screen = render(
                 <ProfileData />,
                 {}, { currentUser: SomeUser, useCache: true }
             );
-            expect(screen.getByLabelText(/Email-Adresse/i)).toHaveValue('user@lotta.schule');
+            expect(await screen.findByLabelText(/Email-Adresse/i)).toHaveValue('user@lotta.schule');
+            done();
         });
 
-        it('should show an input with the user\'s name, nickname and class', async () => {
-            render(
+        it('should show an input with the user\'s name, nickname and class', async done => {
+            const screen = render(
                 <ProfileData />,
                 {}, { currentUser: SomeUser, useCache: true }
             );
-            expect(screen.getByLabelText(/vor- und nachname/i)).toHaveValue('Ernesto Guevara');
-            expect(screen.getByLabelText(/spitzname/i)).toHaveValue('Che');
+            expect(await screen.findByLabelText(/vor- und nachname/i)).toHaveValue('Ernesto Guevara');
+            expect(await screen.findByLabelText(/spitzname/i)).toHaveValue('Che');
+            done();
         });
 
-        it('should check the corresponding checkbox if user is hiding his full name', async () => {
-            render(
+        it('should check the corresponding checkbox if user is hiding his full name', async done => {
+            const screen = render(
                 <ProfileData />,
                 {}, { currentUser: { ...SomeUser, hideFullName: true }, useCache: true }
             );
-            expect(screen.getByLabelText(/öffentlich verstecken/i)).toBeChecked();
+            expect(await screen.findByLabelText(/öffentlich verstecken/i)).toBeChecked();
+            done();
         });
 
         it('should send a change request with the correct data', async done => {
@@ -66,7 +71,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                     } } };
                 }
             }];
-            render(
+            const screen = render(
                 <ProfileData />,
                 {}, {
                     currentUser: SomeUser,
@@ -101,7 +106,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
 
     describe('User groups', () => {
         it('should show all the user\'s groups', async done => {
-            render(
+            const screen = render(
                 <ProfileData />,
                 {}, { currentUser: { ...SomeUser, groups: [adminGroup, lehrerGroup, elternGroup], assignedGroups: [adminGroup, lehrerGroup] }, useCache: true }
             );
@@ -116,11 +121,19 @@ describe('component/layouts/profileLayout/ProfileData', () => {
 
     describe('Profile picture', () => {
         it('should open the file selection dialog when "Change profile picture" is selected', async done => {
-            render(
+            const screen = render(
                 <ProfileData />,
-                {}, { currentUser: { ...SomeUser, hideFullName: true }, useCache: true }
+                {},
+                {
+                    useCache: true,
+                    currentUser: { ...SomeUser, hideFullName: true },
+                    additionalMocks: [{
+                        request: { query: GetDirectoriesAndFilesQuery, variables: { parentDirectoryId: null } },
+                        result: { data: [] }
+                    }],
+                }
             );
-            const profilePictureButton = screen.getAllByText('Profilbild ändern')[0];
+            const profilePictureButton = (await screen.findAllByText('Profilbild ändern'))[0];
             expect(profilePictureButton).toBeVisible();
             await userEvent.click(profilePictureButton);
             await waitFor(() => {
@@ -132,11 +145,11 @@ describe('component/layouts/profileLayout/ProfileData', () => {
 
     describe('Password', () => {
         it('should open the change password dialog when the change password button is clicked', async done => {
-            render(
+            const screen = render(
                 <ProfileData />,
                 {}, { currentUser: { ...SomeUser, hideFullName: true }, useCache: true }
             );
-            const changePasswordButton = screen.getAllByText('Passwort ändern')[0];
+            const changePasswordButton = (await screen.findAllByText('Passwort ändern'))[0];
             expect(changePasswordButton).toBeVisible();
             await userEvent.click(changePasswordButton);
             await waitFor(() => {
