@@ -2,6 +2,7 @@ import React from 'react';
 import { render, cleanup, waitFor, getMetaTagValue } from 'test/util';
 import { Schulfest, MusikCategory } from 'test/fixtures';
 import { ArticleLayout } from './ArticleLayout';
+import { GetTopicQuery } from 'api/query/GetTopicQuery';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 
 afterEach(cleanup);
@@ -13,6 +14,10 @@ describe('component/article/ArticleLayout', () => {
             {
                 request: { query: GetArticleQuery, variables: { id: Schulfest.id } },
                 result: { data: { article: { ...Schulfest, category: MusikCategory } } }
+            },
+            {
+                request: { query: GetTopicQuery, variables: { topic: "La Revolucion" } },
+                result: { data: { articles: [] } }
             }
         ]
     };
@@ -37,7 +42,7 @@ describe('component/article/ArticleLayout', () => {
             { }, testSetupOptions
         );
         await screen.findByTestId('Article'); // wait until Article is loaded
-        const sidebar = screen.findByTestId('BaseLayoutSidebar');
+        const sidebar = await screen.findByTestId('BaseLayoutSidebar');
         expect(sidebar).not.toBeNull();
         expect(sidebar).toHaveStyle({ width: 0 });
         done();
