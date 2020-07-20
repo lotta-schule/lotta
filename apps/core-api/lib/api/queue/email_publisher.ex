@@ -50,7 +50,7 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_registration_email(%Tenant{} = tenant, %User{} = user) do
+  def send_registration_email(%User{} = user, %Tenant{} = tenant) do
     send_email(%EmailSendRequest{
       to: user.email,
       subject: "Deine Registrierung bei #{tenant.title}",
@@ -65,7 +65,7 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_registration_email(%User{} = user) do
+  def send_registration_email(%User{} = user, nil) do
     send_email(%EmailSendRequest{
       to: user.email,
       subject: "Ihre Registrierung bei lotta",

@@ -131,23 +131,17 @@ defmodule Api.UserResolver do
           user_params
       end
 
-    case Accounts.register_user(user_params) do
-      {:ok, user} ->
-        case context do
-          %{tenant: tenant} ->
-            EmailPublisher.send_registration_email(tenant, user)
-
-          _ ->
-            EmailPublisher.send_registration_email(user)
-        end
-
-        {:ok, %{sign_in_user: user}}
-
-      {:error, error} ->
+    with {:ok, user} <- Accounts.register_user(user_params),
+         {:ok, access_token, refresh_token} <-
+           create_user_tokens(user, get_claims_for_user(user, context[:tenant])) do
+      EmailPublisher.send_registration_email(user, context[:tenant])
+      {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
+    else
+      {:error, reason} ->
         {:error,
          [
            message: "Registrierung fehlgeschlagen.",
-           details: extract_error_details(error)
+           details: extract_error_details(reason)
          ]}
     end
   end
@@ -204,10 +198,12 @@ defmodule Api.UserResolver do
     {:ok, true}
   end
 
-  def reset_password(%{email: email, token: token, password: password}, _info) do
+  def reset_password(%{email: email, token: token, password: password}, %{context: context}) do
     with {:ok, user} <- Accounts.find_user_by_reset_token(email, token),
-         {:ok, user} <- Accounts.update_password(user, password) do
-      {:ok, %{sign_in_user: user}}
+         {:ok, user} <- Accounts.update_password(user, password),
+         {:ok, access_token, refresh_token} <-
+           create_user_tokens(user, get_claims_for_user(user, context[:tenant])) do
+      {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
       error ->
         if error, do: Logger.warn(inspect(error))

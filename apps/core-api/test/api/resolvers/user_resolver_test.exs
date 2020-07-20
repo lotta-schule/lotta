@@ -432,15 +432,15 @@ defmodule Api.UserResolverTest do
         conn
         |> json_response(200)
 
-      refresh_token = conn.cookies["SignInRefreshToken"]
-      assert String.valid?(refresh_token)
-      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(refresh_token)
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
       assert email == "neuernutzer@example.com"
 
       access_token = res["data"]["register"]["access_token"]
       assert String.valid?(access_token)
 
-      {:ok, %{"id" => id}} = AccessToken.decode_and_verify(access_token)
+      {:ok, %{"sub" => id}} = AccessToken.decode_and_verify(access_token)
 
       directories =
         from(d in Directory, where: d.user_id == ^id and d.tenant_id == ^web_tenant.id)
@@ -466,15 +466,16 @@ defmodule Api.UserResolverTest do
         conn
         |> json_response(200)
 
-      refresh_token = conn.cookies["SignInRefreshToken"]
-      assert String.valid?(refresh_token)
-      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(refresh_token)
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
       assert email == "neuernutzer@example.com"
 
       access_token = res["data"]["register"]["access_token"]
       assert String.valid?(access_token)
 
-      {:ok, %{"id" => id}} = AccessToken.decode_and_verify(access_token)
+      {:ok, %{"sub" => _id, "email" => "neuernutzer@example.com"}} =
+        AccessToken.decode_and_verify(access_token)
 
       user_groups =
         User.get_groups(
@@ -626,18 +627,18 @@ defmodule Api.UserResolverTest do
         conn
         |> json_response(200)
 
-      refresh_token = conn.cookies["SignInRefreshToken"]
-      assert String.valid?(refresh_token)
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
 
-      {:ok, %{"email" => email, "typ" => "refresh"}} =
-        AccessToken.decode_and_verify(refresh_token)
+      {:ok, %{"email" => email, "typ" => "refresh"}} = AccessToken.decode_and_verify(token)
 
       assert email == "alexis.rinaldoni@lotta.schule"
 
-      access_token = res["data"]["register"]["access_token"]
+      access_token = res["data"]["login"]["access_token"]
       assert String.valid?(access_token)
 
-      {:ok, %{"id" => id}} = AccessToken.decode_and_verify(access_token)
+      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
+        AccessToken.decode_and_verify(access_token)
     end
 
     test "returns an error if the username is non-existent" do
@@ -702,8 +703,7 @@ defmodule Api.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" =>
-                     "Du wurdest für diese Seite geblockt. Du darfst dich nicht anmelden.",
+                   "message" => "Du wurdest geblockt. Du darfst dich nicht anmelden.",
                    "path" => ["login"]
                  }
                ]
@@ -813,15 +813,17 @@ defmodule Api.UserResolverTest do
         conn
         |> json_response(200)
 
-      refresh_token = conn.cookies["SignInRefreshToken"]
-      assert String.valid?(refresh_token)
-      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(refresh_token)
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
       assert email == "alexis.rinaldoni@lotta.schule"
 
-      assert String.valid?(res["data"]["resetPassword"]["access_token"])
+      access_token = res["data"]["resetPassword"]["access_token"]
+      assert String.valid?(access_token)
 
-      access_token = res["data"]["register"]["access_token"]
-      {:ok, %{"id" => id}} = AccessToken.decode_and_verify(access_token)
+      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
+        AccessToken.decode_and_verify(access_token)
+
       user = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
 
       assert String.valid?(res["data"]["resetPassword"]["access_token"])
@@ -1024,7 +1026,7 @@ defmodule Api.UserResolverTest do
              }
     end
 
-    test "should return an error when it the user is not logged in", %{user_jwt: user_jwt} do
+    test "should return an error when it the user is not logged in" do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:web")
@@ -1034,7 +1036,7 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "errors" => [
                  %{
                    "message" => "Du bist nicht angemeldet.",
@@ -1042,7 +1044,7 @@ defmodule Api.UserResolverTest do
                  }
                ],
                "data" => %{"updateProfile" => nil}
-             }
+             } = res
     end
   end
 
