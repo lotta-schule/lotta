@@ -26,7 +26,7 @@ defmodule ApiWeb.Auth.TokenControllerTest do
     %{refresh_token: refresh_token, admin: admin, web_tenant: web_tenant}
   end
 
-  describe "Exchange Cookie Refresh Tokens by an access token and a new refresh token" do
+  describe "Refresh Token <-> Refresh+Access Token Exchange" do
     test "should refresh a valid token if it is valid", %{refresh_token: token} do
       conn =
         build_conn()
@@ -40,14 +40,14 @@ defmodule ApiWeb.Auth.TokenControllerTest do
         |> json_response(200)
 
       new_token = conn.cookies["SignInRefreshToken"]
-      assert is_nil(new_token)
+      refute is_nil(new_token)
 
       {:ok, %{"email" => email}} = AccessToken.decode_and_verify(new_token, %{"typ" => "refresh"})
 
       assert email == "alexis.rinaldoni@lotta.schule"
 
       access_token = res["accessToken"]
-      refute String.valid?(access_token)
+      assert String.valid?(access_token)
 
       {:ok, %{"email" => email}} =
         AccessToken.decode_and_verify(access_token, %{"typ" => "access"})
