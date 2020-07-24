@@ -9,9 +9,10 @@ export interface HeaderProps {
 
 const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
     root: {
-        background: '#ffffff',
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: 0,
         boxShadow: 'none',
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
         '& h2': {
             color: theme.palette.text.primary,
             padding: theme.spacing(1),
@@ -23,9 +24,6 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
     subheader: {
         minHeight: 120,
         background: ({ bannerImageUrl }) => bannerImageUrl ?  `url(${bannerImageUrl})` : 'none',
-        borderWidth: theme.spacing(1, 0, 1, 1),
-        borderStyle: 'solid',
-        borderColor: '#ffffff',
         width: '100%',
         [theme.breakpoints.down('sm')]: {
             maxWidth: 'initial'
@@ -53,6 +51,7 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
         color: theme.palette.primary.dark,
     },
     userNavigationGridItem: {
+        paddingLeft: theme.spacing(1),
         [theme.breakpoints.down('sm')]: {
             display: 'none'
         }

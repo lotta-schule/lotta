@@ -14,9 +14,12 @@ export interface DownloadProps {
 export const useStyles = makeStyles(theme => ({
     downloadItemWrapper: {
         marginBottom: theme.spacing(2),
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        maxWidth: '55em',
+        marginLeft: '16.6%',
+        marginRight: '16,6%',
+        [theme.breakpoints.down('sm')]: {
+            marginRight: 0,
+            marginLeft: 0,
+        },
         '&:last-child $downloadItemDivider': {
             display: 'none'
         }

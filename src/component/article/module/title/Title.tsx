@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
-import { CardContent } from '@material-ui/core';
+import { CardContent, makeStyles } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
@@ -10,8 +10,21 @@ export interface TitleProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Title: FunctionComponent<TitleProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent style={{ paddingTop: 30, paddingBottom: 0, maxWidth: '55em', margin: '0 auto', }}>
+const useStyles = makeStyles(theme => ({
+    root: {
+        paddingTop: 30, 
+        paddingBottom: 0,
+        margin: '0 16.6%',
+        [theme.breakpoints.down('sm')]: {
+            margin: 0,
+        },
+    }
+}));
+
+export const Title: FunctionComponent<TitleProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+    const styles = useStyles();
+    return (
+    <CardContent className={styles.root}>
         {isEditModeEnabled && onUpdateModule && (
             <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
         )}
@@ -19,4 +32,5 @@ export const Title: FunctionComponent<TitleProps> = memo(({ isEditModeEnabled, c
             <Show contentModule={contentModule} />
         )}
     </CardContent>
-));
+    );
+});
