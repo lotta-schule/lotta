@@ -84,6 +84,9 @@ deploy staging:
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
       --set jwtSecret=$JWT_SECRET
+      --set liveViewSaltSecret=$LIVE_VIEW_SALT_SECRET
+      --set liveView.username=lotta
+      --set liveView.password=$LIVE_VIEW_PASSWORD
       --set baseSecret=$BASE_SECRET
       --set honeybadger.enabled=true
       --set honeybadger.apiKey=$HONEYBADGER_API_KEY
@@ -145,6 +148,9 @@ deploy production:
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
       --set jwtSecret=$JWT_SECRET
+      --set liveViewSaltSecret=$LIVE_VIEW_SALT_SECRET
+      --set liveView.username=lotta
+      --set liveView.password=$LIVE_VIEW_PASSWORD
       --set baseSecret=$BASE_SECRET
       --set honeybadger.enabled=true
       --set honeybadger.apiKey=$HONEYBADGER_API_KEY

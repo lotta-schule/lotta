@@ -4,10 +4,11 @@ defmodule Api.UserGroupResolverTest do
   """
 
   use ApiWeb.ConnCase
+
+  alias ApiWeb.Auth.AccessToken
   alias Ecto.NoResultsError
   alias Api.Repo
   alias Api.Repo.Seeder
-  alias Api.Guardian
   alias Api.Accounts
   alias Api.Tenants
   alias Api.Accounts.{User, UserGroup}
@@ -19,8 +20,12 @@ defmodule Api.UserGroupResolverTest do
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")
-    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
-    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+
+    {:ok, admin_jwt, _} =
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+
     schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
     lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
 

@@ -3,9 +3,10 @@ defmodule Api.DirectoryResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting directories
   """
 
+  import Api.Accounts.Permissions
+
   alias ApiWeb.ErrorHelpers
   alias Api.Accounts
-  alias Api.Accounts.User
   alias Api.Repo
   alias UUID
 
@@ -13,7 +14,7 @@ defmodule Api.DirectoryResolver do
       when not is_nil(parent_directory_id) and byte_size(parent_directory_id) > 0 do
     parent_directory = Accounts.get_directory!(parent_directory_id)
 
-    if User.can_read_directory?(current_user, parent_directory) do
+    if user_can_read_directory?(current_user, parent_directory) do
       {:ok, Accounts.list_directories(parent_directory)}
     else
       {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
@@ -31,7 +32,7 @@ defmodule Api.DirectoryResolver do
       is_nil(directory) ->
         {:error, "Ordner nicht gefunden."}
 
-      !User.can_read_directory?(current_user, directory) ->
+      !user_can_read_directory?(current_user, directory) ->
         {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
 
       true ->
@@ -49,7 +50,7 @@ defmodule Api.DirectoryResolver do
       is_nil(parent_directory) ->
         {:error, "Ordner nicht gefunden."}
 
-      !User.can_write_directory?(current_user, parent_directory) ->
+      !user_can_write_directory?(current_user, parent_directory) ->
         {:error, "Du darfst diesen Ordner hier nicht erstellen."}
 
       true ->
@@ -78,7 +79,7 @@ defmodule Api.DirectoryResolver do
         context: %{current_user: current_user, tenant: tenant}
       })
       when is_binary(name) do
-    if User.is_admin?(current_user, tenant) do
+    if user_is_admin?(current_user, tenant) do
       Accounts.create_directory(%{
         name: name,
         user_id: nil,
@@ -133,7 +134,7 @@ defmodule Api.DirectoryResolver do
       is_nil(directory) ->
         {:error, "Ordner nicht gefunden."}
 
-      !User.can_write_directory?(current_user, directory) ->
+      !user_can_write_directory?(current_user, directory) ->
         {:error, "Du darfst diesen Ordner nicht löschen."}
 
       directory
@@ -175,8 +176,8 @@ defmodule Api.DirectoryResolver do
             source_directory
         end
 
-      if User.can_write_directory?(current_user, source_directory || directory) &&
-           User.can_write_directory?(current_user, target_directory || directory) do
+      if user_can_write_directory?(current_user, source_directory || directory) &&
+           user_can_write_directory?(current_user, target_directory || directory) do
         Accounts.update_directory(directory, Map.take(args, [:name, :parent_directory_id]))
         |> case do
           {:ok, directory} ->

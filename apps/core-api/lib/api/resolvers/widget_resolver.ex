@@ -3,9 +3,10 @@ defmodule Api.WidgetResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting widgets
   """
 
+  import Api.Accounts.Permissions
+
   alias Ecto.NoResultsError
   alias Api.Tenants
-  alias Api.Accounts.User
 
   def all(%{category_id: category_id}, %{context: %{tenant: tenant} = context}) do
     Tenants.list_widgets_by_tenant_and_category_id(
@@ -25,7 +26,7 @@ defmodule Api.WidgetResolver do
   end
 
   def create(%{title: title, type: type}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context[:current_user], tenant) do
+    if context[:current_user] && user_is_admin?(context[:current_user], tenant) do
       %{title: title, type: type, tenant_id: tenant.id}
       |> Tenants.create_widget()
     else
@@ -34,7 +35,7 @@ defmodule Api.WidgetResolver do
   end
 
   def update(%{id: id, widget: widget_params}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       try do
         Tenants.get_widget!(id)
         |> Tenants.update_widget(widget_params)
@@ -48,7 +49,7 @@ defmodule Api.WidgetResolver do
   end
 
   def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
       try do
         Tenants.get_widget!(id)
         |> Tenants.delete_widget()

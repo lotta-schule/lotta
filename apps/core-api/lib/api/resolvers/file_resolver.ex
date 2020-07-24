@@ -6,6 +6,7 @@ defmodule Api.FileResolver do
   require Logger
 
   import Ecto.Query
+  import Api.Accounts.Permissions
 
   alias Ecto.Changeset
   alias ApiWeb.ErrorHelpers
@@ -24,7 +25,7 @@ defmodule Api.FileResolver do
       when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
 
-    if User.can_read_directory?(current_user, parent_directory) do
+    if user_can_read_directory?(current_user, parent_directory) do
       categories =
         from(c in Category,
           where: c.banner_image_file_id == ^id,
@@ -86,7 +87,7 @@ defmodule Api.FileResolver do
       |> Repo.preload(:parent_directory)
 
     case file.user_id == current_user.id ||
-           User.can_read_directory?(current_user, file.parent_directory) do
+           user_can_read_directory?(current_user, file.parent_directory) do
       true ->
         {:ok, file}
 
@@ -99,7 +100,7 @@ defmodule Api.FileResolver do
       when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
 
-    case User.can_read_directory?(current_user, parent_directory) do
+    case user_can_read_directory?(current_user, parent_directory) do
       true ->
         {:ok, Accounts.list_files(parent_directory)}
 
@@ -117,7 +118,7 @@ defmodule Api.FileResolver do
       directory when not is_nil(directory) ->
         directory = Repo.preload(directory, [:user, :tenant])
 
-        if User.can_write_directory?(current_user, directory) do
+        if user_can_write_directory?(current_user, directory) do
           upload_file_to_directory(file, directory, current_user, tenant)
         else
           {:error, "Du darfst diesen Ordner hier nicht erstellen."}
@@ -145,8 +146,8 @@ defmodule Api.FileResolver do
             source_directory
         end
 
-      if User.can_write_directory?(current_user, source_directory) &&
-           User.can_write_directory?(current_user, target_directory) do
+      if user_can_write_directory?(current_user, source_directory) &&
+           user_can_write_directory?(current_user, target_directory) do
         Accounts.update_file(file, Map.take(args, [:filename, :parent_directory_id]))
       else
         {:error, "Du darfst diese Datei nicht bearbeiten."}
@@ -163,7 +164,7 @@ defmodule Api.FileResolver do
         Accounts.get_file!(String.to_integer(id))
         |> Repo.preload([:parent_directory])
 
-      if User.can_write_directory?(current_user, file.parent_directory) do
+      if user_can_write_directory?(current_user, file.parent_directory) do
         file =
           file
           |> Repo.preload(:file_conversions)

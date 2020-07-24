@@ -3,36 +3,41 @@ defmodule Api.DirectoryResolverTest do
     Test Module for DirectoryResolver
   """
 
-  use ApiWeb.ConnCase
   import Ecto.Query
 
+  alias ApiWeb.Auth.AccessToken
+  alias Api.Repo
+  alias Api.Accounts.{Directory, User}
+
+  use ApiWeb.ConnCase
+
   setup do
-    Api.Repo.Seeder.seed()
+    Repo.Seeder.seed()
 
     web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, email: "alexis.rinaldoni@lotta.schule")
-    user2 = Api.Repo.get_by!(Api.Accounts.User, email: "eike.wiewiorra@lotta.schule")
-    user = Api.Repo.get_by!(Api.Accounts.User, email: "billy@lotta.schule")
+    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
+    user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
+    user = Repo.get_by!(User, email: "billy@lotta.schule")
 
     {:ok, admin_jwt, _} =
-      Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
     {:ok, user2_jwt, _} =
-      Api.Guardian.encode_and_sign(user2, %{email: user2.email, name: user2.name})
+      AccessToken.encode_and_sign(user2, %{email: user2.email, name: user2.name})
 
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
     user2_directory =
-      Api.Repo.one!(
-        from d in Api.Accounts.Directory,
+      Repo.one!(
+        from d in Directory,
           where:
             is_nil(d.parent_directory_id) and d.name == "avatar" and d.tenant_id == ^web_tenant.id and
               d.user_id == ^user2.id
       )
 
     public_directory =
-      Api.Repo.one!(
-        from d in Api.Accounts.Directory,
+      Repo.one!(
+        from d in Directory,
           where:
             d.name == "logos" and d.tenant_id == ^web_tenant.id and is_nil(d.user_id) and
               is_nil(d.parent_directory_id)
@@ -241,7 +246,7 @@ defmodule Api.DirectoryResolverTest do
       web_tenant: web_tenant
     } do
       user2_directory =
-        Api.Repo.get_by!(Api.Accounts.Directory,
+        Repo.get_by!(Directory,
           name: "avatar",
           tenant_id: web_tenant.id,
           user_id: user2_account.id
@@ -271,7 +276,7 @@ defmodule Api.DirectoryResolverTest do
       web_tenant: web_tenant
     } do
       user2_directory =
-        Api.Repo.get_by!(Api.Accounts.Directory,
+        Repo.get_by!(Directory,
           name: "avatar",
           tenant_id: web_tenant.id,
           user_id: user2_account.id
@@ -663,8 +668,7 @@ defmodule Api.DirectoryResolverTest do
       user2_jwt: user2_jwt,
       user2_account: user2_account
     } do
-      target_dir =
-        Api.Repo.get_by!(Api.Accounts.Directory, name: "podcast", user_id: user2_account.id)
+      target_dir = Repo.get_by!(Directory, name: "podcast", user_id: user2_account.id)
 
       res =
         build_conn()
@@ -692,7 +696,7 @@ defmodule Api.DirectoryResolverTest do
       user2_account: user2_account
     } do
       dir =
-        Api.Repo.insert!(%Api.Accounts.Directory{
+        Repo.insert!(%Directory{
           user_id: user2_account.id,
           name: "directory",
           tenant_id: user2_directory.tenant_id,
@@ -828,8 +832,7 @@ defmodule Api.DirectoryResolverTest do
       user2_jwt: user2_jwt,
       user2_account: user2_account
     } do
-      target_dir =
-        Api.Repo.get_by!(Api.Accounts.Directory, name: "podcast", user_id: user2_account.id)
+      target_dir = Repo.get_by!(Directory, name: "podcast", user_id: user2_account.id)
 
       res =
         build_conn()
@@ -893,7 +896,7 @@ defmodule Api.DirectoryResolverTest do
       web_tenant: web_tenant
     } do
       directory =
-        Api.Repo.insert!(%Api.Accounts.Directory{
+        Repo.insert!(%Directory{
           name: "temporary",
           user_id: user2_account.id,
           tenant_id: web_tenant.id
@@ -912,7 +915,7 @@ defmodule Api.DirectoryResolverTest do
                }
              }
 
-      assert Api.Repo.get(Api.Accounts.Directory, directory.id) == nil
+      assert Repo.get(Directory, directory.id) == nil
     end
 
     test "returns error when user is not owner of directory as admin", %{
@@ -921,7 +924,7 @@ defmodule Api.DirectoryResolverTest do
       web_tenant: web_tenant
     } do
       directory =
-        Api.Repo.insert!(%Api.Accounts.Directory{
+        Repo.insert!(%Directory{
           name: "temporary",
           user_id: user2_account.id,
           tenant_id: web_tenant.id
@@ -951,7 +954,7 @@ defmodule Api.DirectoryResolverTest do
       web_tenant: web_tenant
     } do
       directory =
-        Api.Repo.insert!(%Api.Accounts.Directory{
+        Repo.insert!(%Directory{
           name: "temporary",
           user_id: user2_account.id,
           tenant_id: web_tenant.id
@@ -999,7 +1002,7 @@ defmodule Api.DirectoryResolverTest do
       web_tenant: web_tenant
     } do
       directory =
-        Api.Repo.insert!(%Api.Accounts.Directory{
+        Repo.insert!(%Directory{
           name: "public_temporary",
           tenant_id: web_tenant.id
         })
@@ -1017,7 +1020,7 @@ defmodule Api.DirectoryResolverTest do
                }
              }
 
-      assert Api.Repo.get(Api.Accounts.Directory, directory.id) == nil
+      assert Repo.get(Directory, directory.id) == nil
     end
 
     test "returns error when trying to delete a non-empty public directory as admin", %{
@@ -1048,7 +1051,7 @@ defmodule Api.DirectoryResolverTest do
       web_tenant: web_tenant
     } do
       directory =
-        Api.Repo.insert!(%Api.Accounts.Directory{
+        Repo.insert!(%Directory{
           name: "temporary",
           tenant_id: web_tenant.id,
           user_id: user_account.id
@@ -1067,7 +1070,7 @@ defmodule Api.DirectoryResolverTest do
                }
              }
 
-      assert Api.Repo.get(Api.Accounts.Directory, directory.id) == nil
+      assert Repo.get(Directory, directory.id) == nil
     end
 
     test "returns error when trying to delete a non-empty public directory as non-admin", %{

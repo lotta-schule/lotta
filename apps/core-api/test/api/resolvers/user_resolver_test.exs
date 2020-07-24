@@ -4,13 +4,16 @@ defmodule Api.UserResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
-  alias Api.Guardian
+  import Api.Accounts.Authentication
+
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
   alias Api.Tenants
   alias Api.Tenants.{Tenant}
-  alias Api.Accounts.{AuthHelper, Directory, User, UserGroup}
+  alias Api.Accounts.{Directory, User, UserGroup}
 
   setup do
     Seeder.seed()
@@ -20,8 +23,12 @@ defmodule Api.UserResolverTest do
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")
     evil_user = Repo.get_by!(User, email: "drevil@lotta.schule")
-    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
-    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+
+    {:ok, admin_jwt, _} =
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+
     schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
     lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
 
@@ -403,14 +410,14 @@ defmodule Api.UserResolverTest do
     @query """
     mutation register($user: RegisterUserParams!, $groupKey: String) {
       register(user: $user, groupKey: $groupKey) {
-        token
+        access_token
       }
     }
     """
 
     test "register the user if data is entered correctly - user should have default directories",
          %{web_tenant: web_tenant} do
-      res =
+      conn =
         build_conn()
         |> put_req_header("tenant", "slug:web")
         |> post("/api",
@@ -419,12 +426,21 @@ defmodule Api.UserResolverTest do
             user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123"}
           }
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
 
-      assert String.valid?(res["data"]["register"]["token"])
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
+      assert email == "neuernutzer@example.com"
 
-      token = res["data"]["register"]["token"]
-      {:ok, %{"id" => id}} = Guardian.decode_and_verify(token)
+      access_token = res["data"]["register"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => id}} = AccessToken.decode_and_verify(access_token)
 
       directories =
         from(d in Directory, where: d.user_id == ^id and d.tenant_id == ^web_tenant.id)
@@ -434,7 +450,7 @@ defmodule Api.UserResolverTest do
     end
 
     test "register the user and put him into groupkey's group" do
-      res =
+      conn =
         build_conn()
         |> put_req_header("tenant", "slug:web")
         |> post("/api",
@@ -444,9 +460,22 @@ defmodule Api.UserResolverTest do
             groupKey: "LEb0815Hp!1969"
           }
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
 
-      assert String.valid?(res["data"]["register"]["token"])
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
+      assert email == "neuernutzer@example.com"
+
+      access_token = res["data"]["register"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => _id, "email" => "neuernutzer@example.com"}} =
+        AccessToken.decode_and_verify(access_token)
 
       user_groups =
         User.get_groups(
@@ -579,22 +608,37 @@ defmodule Api.UserResolverTest do
     @query """
     mutation login($username: String!, $password: String!) {
       login(username: $username, password: $password) {
-        token
+        access_token
       }
     }
     """
 
     test "returns the user if data is entered correctly" do
-      res =
+      conn =
         build_conn()
         |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{username: "alexis.rinaldoni@lotta.schule", password: "test123"}
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
 
-      assert String.valid?(res["data"]["login"]["token"])
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+
+      {:ok, %{"email" => email, "typ" => "refresh"}} = AccessToken.decode_and_verify(token)
+
+      assert email == "alexis.rinaldoni@lotta.schule"
+
+      access_token = res["data"]["login"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
+        AccessToken.decode_and_verify(access_token)
     end
 
     test "returns an error if the username is non-existent" do
@@ -659,8 +703,7 @@ defmodule Api.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" =>
-                     "Du wurdest für diese Seite geblockt. Du darfst dich nicht anmelden.",
+                   "message" => "Du wurdest geblockt. Du darfst dich nicht anmelden.",
                    "path" => ["login"]
                  }
                ]
@@ -743,7 +786,7 @@ defmodule Api.UserResolverTest do
     @query """
     mutation resetPassword($email: String!, $token: String!, $password: String!) {
       resetPassword(email: $email, token: $token, password: $password) {
-        token
+        access_token
       }
     }
     """
@@ -757,19 +800,34 @@ defmodule Api.UserResolverTest do
         token
       ])
 
-      res =
+      conn =
         build_conn()
         |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"}
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
+
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
+      assert email == "alexis.rinaldoni@lotta.schule"
+
+      access_token = res["data"]["resetPassword"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
+        AccessToken.decode_and_verify(access_token)
 
       user = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
 
-      assert String.valid?(res["data"]["resetPassword"]["token"])
-      assert true = Bcrypt.verify_pass("abcdef", user.password_hash)
+      assert String.valid?(res["data"]["resetPassword"]["access_token"])
+      assert Bcrypt.verify_pass("abcdef", user.password_hash)
       Redix.command(:redix, ["FLUSHALL"])
     end
 
@@ -968,7 +1026,7 @@ defmodule Api.UserResolverTest do
              }
     end
 
-    test "should return an error when it the user is not logged in", %{user_jwt: user_jwt} do
+    test "should return an error when it the user is not logged in" do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:web")
@@ -978,7 +1036,7 @@ defmodule Api.UserResolverTest do
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "errors" => [
                  %{
                    "message" => "Du bist nicht angemeldet.",
@@ -986,7 +1044,7 @@ defmodule Api.UserResolverTest do
                  }
                ],
                "data" => %{"updateProfile" => nil}
-             }
+             } = res
     end
   end
 
@@ -1017,8 +1075,7 @@ defmodule Api.UserResolverTest do
                }
              }
 
-      assert {:ok, _} =
-               AuthHelper.login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
+      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
     end
 
     test "should return an error when the current password is not correct", %{user_jwt: user_jwt} do

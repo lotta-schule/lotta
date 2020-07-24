@@ -3,17 +3,18 @@ defmodule Api.ArticleResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting articles
   """
 
+  import Api.Accounts.Permissions
+
   alias Api.Repo
   alias Api.Content
-  alias Api.Accounts.User
 
   def get(%{id: id}, %{context: %{tenant: tenant, current_user: current_user}}) do
     article = Repo.preload(Content.get_article!(String.to_integer(id)), :tenant)
 
-    if User.is_author?(current_user, article) || User.is_admin?(current_user, tenant) do
+    if user_is_author?(current_user, article) || user_is_admin?(current_user, tenant) do
       {:ok, article}
     else
-      case User.has_group_for_article?(current_user, article) do
+      case user_has_group_for_article?(current_user, article) do
         true -> {:ok, article}
         _ -> {:error, "Du hast keine Rechte diesen Beitrag anzusehen."}
       end
@@ -121,8 +122,8 @@ defmodule Api.ArticleResolver do
       is_nil(context[:current_user]) ->
         {:error, "Du musst angemeldet sein um Beiträge zu bearbeiten."}
 
-      !User.is_admin?(context.current_user, tenant) &&
-          !User.is_author?(context.current_user, article) ->
+      !user_is_admin?(context.current_user, tenant) &&
+          !user_is_author?(context.current_user, article) ->
         {:error, "Nur Administratoren oder Autoren dürfen Beiträge bearbeiten."}
 
       true ->
@@ -138,8 +139,8 @@ defmodule Api.ArticleResolver do
       is_nil(context[:current_user]) ->
         {:error, "Du musst angemeldet sein um Beiträge zu löschen."}
 
-      !User.is_admin?(context.current_user, tenant) &&
-          !User.is_author?(context.current_user, article) ->
+      !user_is_admin?(context.current_user, tenant) &&
+          !user_is_author?(context.current_user, article) ->
         {:error, "Nur Administratoren oder Autoren dürfen Beiträge löschen."}
 
       true ->
@@ -149,7 +150,7 @@ defmodule Api.ArticleResolver do
   end
 
   def toggle_pin(%{id: article_id}, %{context: %{tenant: tenant, current_user: current_user}}) do
-    case User.is_admin?(current_user, tenant) do
+    case user_is_admin?(current_user, tenant) do
       true ->
         Content.toggle_article_pin(String.to_integer(article_id))
 

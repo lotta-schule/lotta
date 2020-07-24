@@ -1,8 +1,14 @@
 import Config
 
 # general app config
+# Token secrets
 secret_key_base = System.fetch_env!("SECRET_KEY_BASE")
 secret_key_jwt = System.fetch_env!("SECRET_KEY_JWT")
+# Live View
+secret_signing_salt_live_view = System.getch_env!("LIVE_VIEW_SALT_SECRET")
+live_view_username = System.fetch_env!("LIVE_VIEW_USERNAME")
+live_view_password = System.fetch_env!("LIVE_VIEW_PASSWORD")
+
 hostname = System.get_env("HOSTNAME") || "api.lotta.schule"
 port = String.to_integer(System.get_env("PORT") || "4000")
 # database
@@ -56,13 +62,17 @@ config :api, :redis_connection,
 config :api, :base_url, base_url
 config :api, :schedule_provider_url, schedule_provider_url
 
+config :api, :live_view,
+  username: live_view_username,
+  password: live_view_password
+
 config :api, Api.Elasticsearch.Cluster, url: elasticsearch_host
 
 config :api, ApiWeb.Endpoint,
   url: [host: host],
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base,
-  live_view: [signing_salt: secret_key_base]
+  live_view: [signing_salt: secret_signign_salt_live_view]
 
 # ## Using releases (Elixir v1.9+)
 #
@@ -75,9 +85,7 @@ config :api, ApiWeb.Endpoint, server: true
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
 
-config :api, Api.Guardian,
-  issuer: "lotta",
-  secret_key: secret_key_jwt
+config :api, ApiWeb.Auth.AccessToken, secret_key: secret_key_jwt
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,

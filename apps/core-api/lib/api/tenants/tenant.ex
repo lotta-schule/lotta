@@ -25,6 +25,8 @@ defmodule Api.Tenants.Tenant do
     timestamps()
   end
 
+  @type t :: %Tenant{id: pos_integer(), slug: String.t(), title: String.t()}
+
   @doc false
   def create_changeset(%Tenant{} = tenant, attrs) do
     tenant
@@ -71,9 +73,10 @@ defmodule Api.Tenants.Tenant do
     end)
   end
 
-  def get_lotta_url(%Api.Tenants.Tenant{slug: slug}) do
+  def get_lotta_url(%Api.Tenants.Tenant{slug: slug}, options \\ []) do
     base_url = Application.fetch_env!(:api, :base_url)
-    "https://" <> slug <> base_url
+    protocol = if Keyword.get(options, :skip_protocol), do: "", else: "https://"
+    protocol <> slug <> base_url
   end
 
   def get_admin_users(%Api.Tenants.Tenant{} = tenant) do

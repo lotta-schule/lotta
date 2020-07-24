@@ -3,9 +3,10 @@ defmodule Api.ContentModuleResolver do
     GraphQL Resolver Module for finding, creating, updating and deleting content modules
   """
 
+  import Api.Accounts.Permissions
+
   alias Api.Repo
   alias Api.Content
-  alias Api.Accounts.User
 
   def send_form_response(%{content_module_id: content_module_id, response: response}, %{
         context: context
@@ -49,7 +50,7 @@ defmodule Api.ContentModuleResolver do
       |> Repo.preload(:tenant)
       |> Map.fetch!(:tenant)
 
-    if !context[:current_user] || !User.is_admin?(context.current_user, tenant) do
+    if !context[:current_user] || !user_is_admin?(context.current_user, tenant) do
       {:error, "Nur Administratoren dürfen Modul-Ergebnisse abrufen."}
     else
       {:ok, content_module.results}

@@ -4,11 +4,13 @@ defmodule Api.FileResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
+
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
   alias Api.Tenants
-  alias Api.Guardian
   alias Api.Accounts.{User, File, Directory}
 
   setup do
@@ -18,9 +20,14 @@ defmodule Api.FileResolverTest do
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user = Repo.get_by!(User, email: "billy@lotta.schule")
-    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
-    {:ok, user2_jwt, _} = Guardian.encode_and_sign(user2, %{email: user2.email, name: user2.name})
-    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+
+    {:ok, admin_jwt, _} =
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+
+    {:ok, user2_jwt, _} =
+      AccessToken.encode_and_sign(user2, %{email: user2.email, name: user2.name})
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
     admin_file = Repo.get_by!(File, filename: "ich_schoen.jpg")
     user_file = Repo.get_by!(File, filename: "ich_schoen.jpg")
     user2_file = Repo.get_by!(File, filename: "wieartig1.jpg")

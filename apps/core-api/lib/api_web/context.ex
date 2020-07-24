@@ -6,77 +6,35 @@ defmodule ApiWeb.Context do
 
   @behaviour Plug
 
-  import Plug.Conn
+  require Logger
 
-  alias Api.{Guardian, Accounts, Tenants, Repo}
+  import Plug.Conn
+  import Api.Accounts.Authentication
+  import Api.Accounts.Permissions
+
+  alias Api.{Accounts, Tenants}
+  alias Api.Accounts.User
 
   def init(opts), do: opts
 
-  def call(conn, _) do
+  def call(conn, _blueprint) do
+    context =
+      %{}
+      |> maybe_put_tenant(conn)
+      |> maybe_put_user(conn)
+      |> maybe_put_user_is_blocked(conn)
+
     conn
-    |> Absinthe.Plug.put_options(context: build_absinthe_context(conn))
+    |> Absinthe.Plug.put_options(context: context)
   end
 
-  def build_absinthe_context(conn, context \\ %{}) do
-    context
-    |> put_tenant(conn)
-    |> put_user(conn)
-  end
+  defp maybe_put_tenant(context, conn) do
+    case tenant_by_slug_header(conn) || tenant_by_origin_header(conn) do
+      tenant when not is_nil(tenant) ->
+        Map.put(context, :tenant, tenant)
 
-  defp put_user(context, conn) do
-    conn =
-      conn
-      |> Plug.Conn.fetch_cookies()
-
-    authorization_header = get_req_header(conn, "authorization")
-
-    authorization_token =
-      case authorization_header do
-        ["Bearer " <> token] ->
-          token
-
-        _ ->
-          conn.cookies["LottaAuth"]
-      end
-
-    tenant = context[:tenant]
-
-    with false <- is_nil(authorization_token),
-         {:ok, current_user, _claims} <- Guardian.resource_from_token(authorization_token),
-         true <- !tenant || !Accounts.User.is_blocked?(current_user, tenant) do
-      current_user =
-        Repo.get(Accounts.User, current_user.id)
-        |> Repo.preload([:groups, :avatar_image_file])
-
-      user_group_ids = Accounts.User.group_ids(current_user, tenant)
-      user_is_admin = Accounts.User.is_admin?(current_user, tenant)
-
-      if System.get_env("APP_ENVIRONMENT") != "test" do
-        Task.start_link(fn ->
-          current_user
-          |> Accounts.see_user()
-        end)
-      end
-
-      context
-      |> Map.put(:current_user, current_user)
-      |> Map.put(:user_group_ids, user_group_ids)
-      |> Map.put(:user_is_admin, user_is_admin)
-    else
-      _ ->
+      nil ->
         context
-        |> Map.put(:user_group_ids, [])
-        |> Map.put(:user_is_admin, false)
-    end
-  end
-
-  defp put_tenant(context, conn) do
-    tenant = tenant_by_slug_header(conn) || tenant_by_origin_header(conn)
-
-    if is_nil(tenant) do
-      context
-    else
-      Map.put(context, :tenant, tenant)
     end
   end
 
@@ -99,4 +57,43 @@ defmodule ApiWeb.Context do
         nil
     end
   end
+
+  defp maybe_put_user(context, conn) do
+    case ApiWeb.Auth.AccessToken.Plug.current_resource(conn) do
+      user when not is_nil(user) ->
+        if System.get_env("APP_ENVIRONMENT") != "test",
+          do: Task.start_link(fn -> Accounts.see_user(user) end)
+
+        context
+        |> Map.put(:current_user, user)
+        |> Map.put(
+          :user_group_ids,
+          if(tenant = context[:tenant], do: User.group_ids(user, tenant), else: [])
+        )
+        |> Map.put(
+          :user_is_admin,
+          if(tenant = context[:tenant], do: user_is_admin?(user, tenant), else: false)
+        )
+
+      nil ->
+        context
+        |> Map.put(:user_group_ids, [])
+        |> Map.put(:user_is_admin, false)
+    end
+  end
+
+  defp maybe_put_user_is_blocked(%{current_user: user, tenant: tenant} = context, _conn) do
+    case ensure_user_is_not_blocked(user, tenant) do
+      :ok ->
+        context
+
+      {:error, _} ->
+        Logger.warn("User #{user.email} is blocked for tenant #{tenant.slug}.")
+
+        context
+        |> Map.put(:user_is_blocked, true)
+    end
+  end
+
+  defp maybe_put_user_is_blocked(context, _conn), do: context
 end

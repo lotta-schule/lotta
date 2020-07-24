@@ -4,9 +4,11 @@ defmodule Api.WidgetResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
+
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo.Seeder
-  alias Api.Guardian
   alias Api.Repo
   alias Api.Tenants
   alias Api.Tenants.{Category, Widget}
@@ -18,8 +20,11 @@ defmodule Api.WidgetResolverTest do
     web_tenant = Tenants.get_tenant_by_slug!("web")
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
-    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
-    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+
+    {:ok, admin_jwt, _} =
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
     web_tenant_id = web_tenant.id
 
     widget =

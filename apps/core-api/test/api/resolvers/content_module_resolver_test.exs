@@ -4,7 +4,10 @@ defmodule Api.ContentModuleResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
+
+  alias ApiWeb.Auth.AccessToken
 
   setup do
     Api.Repo.Seeder.seed()
@@ -18,9 +21,9 @@ defmodule Api.ContentModuleResolverTest do
     user = Api.Repo.get_by!(Api.Accounts.User, email: "eike.wiewiorra@lotta.schule")
 
     {:ok, admin_jwt, _} =
-      Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
     {:ok,
      %{
