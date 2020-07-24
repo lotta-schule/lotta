@@ -32,7 +32,7 @@ export const AuthorAvatarsList = memo<AuthorAvatarsListProps>(({ users, classNam
         return null;
     }
     return (
-        <AvatarGroup max={max ?? 2} classes={{ root: clsx(styles.root, className), avatar: styles.authorAvatar }}>
+        <AvatarGroup max={max ?? 3} classes={{ root: clsx(styles.root, className), avatar: styles.authorAvatar }}>
             {users.map(user => (
                 <Tooltip title={User.getNickname(user)} key={user.id}>
                     <Avatar src={User.getAvatarUrl(user, 40)} />
