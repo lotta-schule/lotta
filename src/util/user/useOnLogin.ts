@@ -14,6 +14,7 @@ export const useOnLogin = (fn: 'login' | 'register' | 'resetPassword', options?:
         onCompleted: data => {
             if (data[fn]) {
                 apolloClient.resetStore();
+                localStorage.setItem('id', data[fn].accessToken);
                 options?.onCompleted?.(data);
                 if (options?.redirect) {
                     history.push(options.redirect);

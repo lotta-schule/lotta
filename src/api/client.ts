@@ -1,7 +1,47 @@
 import { createLink } from 'apollo-v3-absinthe-upload-link';
 import { onError } from '@apollo/link-error';
 import { ApolloClient, ApolloLink, InMemoryCache, gql } from '@apollo/client';
+import { JWT } from 'util/auth/jwt';
+import { isAfter, sub } from 'date-fns';
 import axios, { AxiosRequestConfig } from 'axios';
+
+const sendRefreshRequest = async () => {
+    try {
+        const { data } = await axios({
+            method: 'post',
+            baseURL: process.env.REACT_APP_AUTH_URL!,
+            url: '/token/refresh',
+            withCredentials: true,
+        });
+        if (data?.accessToken) {
+            localStorage.setItem('id', data.accessToken);
+        } else {
+            localStorage.clear();
+        }
+    } catch {
+        localStorage.clear();
+    }
+};
+
+export const checkExpiredToken = async (firstRun: boolean = false) => {
+    const accessToken = localStorage.getItem('id');
+    if (accessToken) {
+        try {
+            const jwt = JWT.parse(accessToken);
+            const now = new Date();
+
+            if (isAfter(now, sub(new Date(jwt.body.expires), { minutes: 5 }))) {
+                await sendRefreshRequest();
+            }
+        } catch (e) {
+            localStorage.clear();
+        }
+    } else if (firstRun) {
+        // when there are no tokens in localstorage, have a try refreshing,
+        // there may be a refresh token saved as HTTPOnly Cookie
+        await sendRefreshRequest();
+    }
+};
 
 const customFetch = (url: string, options: any) => {
     const { headers, body, method, ...miscOptions } = options;
@@ -72,7 +112,14 @@ const apolloClient = new ApolloClient({
         new ApolloLink((operation, forward) => {
             if (operation.variables) {
                 operation.variables = mutateVariableInputObject(operation.variables, '__typename');
-                return forward ? forward(operation) : null;
+            }
+            const token = localStorage.getItem('id');
+            if (token) {
+                operation.setContext({
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
             }
             return forward ? forward(operation) : null;
         }),
