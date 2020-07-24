@@ -3,6 +3,7 @@ import { FileModelType, FileModel } from '../../../../model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { ImageContent, ImageContentProps } from './ImageContent';
 import { ImageCaption } from './ImageCaption';
+import { makeStyles, Theme } from '@material-ui/core';
 
 interface ImageImageProps extends Omit<ImageContentProps, 'onClick'> {
     isEditModeEnabled: boolean;
@@ -12,6 +13,17 @@ interface ImageImageProps extends Omit<ImageContentProps, 'onClick'> {
     onUpdateCaption(caption: string): void;
     onSelect?(e: MouseEvent<HTMLImageElement>): void;
 }
+
+const useStyles = makeStyles<Theme>(theme => ({
+    image: {
+        margin: 0,
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(1),
+        [theme.breakpoints.down('xs')]: {
+            padding: 0,
+        }
+    }
+}));
 
 export const ImageImage = memo<ImageImageProps>(({ isEditModeEnabled, file, caption, onUpdateFile, onUpdateCaption, onSelect, ...otherProps }) => {
     const imageContent = isEditModeEnabled ?
@@ -27,8 +39,9 @@ export const ImageImage = memo<ImageImageProps>(({ isEditModeEnabled, file, capt
         (
             <ImageContent onClick={onSelect} file={file} {...otherProps} />
         );
+    const styles = useStyles();
     return (
-        <figure style={{ margin: 0, }}>
+        <figure className={styles.image}>
             {imageContent}
             <ImageCaption isEditModeEnabled={isEditModeEnabled} value={caption} onUpdate={onUpdateCaption} />
         </figure>
