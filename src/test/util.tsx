@@ -9,7 +9,7 @@ import { Router } from 'react-router-dom';
 import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
-import { UserModel } from 'model';
+import { ClientModel, UserModel } from 'model';
 import { theme } from '../theme';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import { i18n } from 'i18n';
@@ -21,12 +21,13 @@ export interface TestSetupOptions {
     defaultPathEntries?: string[];
     onChangeLocation?: (location: Location) => void;
     currentUser?: UserModel;
+    tenant?: ClientModel;
     additionalMocks?: MockedResponse[];
     useCache?: boolean;
 }
 
 const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
-    const { cache, mocks: defaultMocks } = getDefaultApolloMocks(pick(options, 'currentUser'));
+    const { cache, mocks: defaultMocks } = getDefaultApolloMocks(pick(options, ['currentUser', 'tenant']));
     const mocks = unionBy(
         options.additionalMocks ?? [],
         defaultMocks,
