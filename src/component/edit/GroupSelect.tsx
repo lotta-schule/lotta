@@ -20,7 +20,9 @@ export interface GroupSelectProps {
 }
 
 const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
-    root: {},
+    root: {
+        margin: theme.spacing(1, 0)
+    },
     publicGroupSelectionLabel: {
         margin: 0
     },
