@@ -12,8 +12,8 @@ import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
-import clsx from 'clsx';
 import { Article as ArticleUtil } from 'util/model/Article';
+import clsx from 'clsx';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(theme => ({
     container: {
@@ -136,7 +136,7 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
 
     const styles = useStyle({ isEmbedded, narrow });
     const showEditSection = (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
-    
+
     const [toggleArticlePin] = useMutation<{ article: ArticleModel }, { id: ID }>(ToggleArticlePinMutation, {
         variables: { id: article.id }
     });
@@ -154,76 +154,76 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
     );
 
     return (
-                <Container className={styles.container}>
-                    <Grid container style={{ height: '100%' }}>
-                        <Grid item xs={12} sm={narrow ? 12 : 3} container >
-                            {maybeLinked(article.previewImageFile && 
-                                <img
-                                    className={styles.previewImage}
-                                    src={`https://afdptjdxen.cloudimg.io/crop/400x300/foil1/${article.previewImageFile.remoteLocation}`}
-                                    alt={`Vorschaubild zu ${article.title}`}
-                                />
-                            )}
-                        </Grid>
-                        <Grid item xs={12} sm={9} className={styles.mainSection}>
-                            <Typography gutterBottom className={styles.title}>
-                                {maybeLinked(article.title)}
-                            </Typography>
-                            <Typography className={styles.previewSection} variant={'subtitle2'}>
-                                {article.preview}
-                            </Typography>
-                            {article.topic && (
-                                <div className={styles.topic}>
-                                    {article.topic}
-                                </div>
-                            )}
-                            <Grid container>
-                                    <Grid item xs={9} style={{ display: 'flex', }} >
-                                        <Grid item>
-                                            <Typography className={styles.date} component={'div'} variant={'subtitle1'}>
-                                                {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <AuthorAvatarsList users={article.users} />
-                                        </Grid>
-                                    </Grid>
-                                    {(!isMobile || isEmbedded) && (
-                                    <Grid item xs={3}>
-                                    {(article.preview || showEditSection) && (
-                                        <section>
-                                                {showEditSection && (
-                                                    <div className={styles.buttonSection}>
-                                                        {User.canEditArticle(currentUser, article) && (
-                                                            <IconButton
-                                                                aria-label="Edit"
-                                                                size="small"
-                                                                className={clsx(styles.editButton, 'edit-button')}
-                                                                component={CollisionLink}
-                                                                to={ArticleUtil.getPath(article, { edit: true })}
-                                                            >
-                                                                <Edit />
-                                                            </IconButton>
-                                                        )}
-                                                        {User.isAdmin(currentUser) && (
-                                                            <IconButton
-                                                                aria-label="Pin"
-                                                                size="small"
-                                                                className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
-                                                                onClick={() => toggleArticlePin()}
-                                                            >
-                                                                <Place />
-                                                            </IconButton>
-                                                        )}
-                                                    </div>
-                                                )}
-                                        </section>
-                                    )}
-                                    </Grid>
-                                    )}
+        <Container className={styles.container}>
+            <Grid container style={{ height: '100%' }}>
+                <Grid item xs={12} sm={narrow ? 12 : 3} container >
+                    {maybeLinked(article.previewImageFile &&
+                        <img
+                            className={styles.previewImage}
+                            src={`https://afdptjdxen.cloudimg.io/crop/400x300/foil1/${article.previewImageFile.remoteLocation}`}
+                            alt={`Vorschaubild zu ${article.title}`}
+                        />
+                    )}
+                </Grid>
+                <Grid item xs={12} sm={9} className={styles.mainSection}>
+                    <Typography gutterBottom className={styles.title}>
+                        {maybeLinked(article.title)}
+                    </Typography>
+                    <Typography className={styles.previewSection} variant={'subtitle2'}>
+                        {article.preview}
+                    </Typography>
+                    {article.topic && (
+                        <div className={styles.topic}>
+                            {article.topic}
+                        </div>
+                    )}
+                    <Grid container>
+                        <Grid item xs={9} style={{ display: 'flex', }}>
+                            <Grid item>
+                                <Typography className={styles.date} component={'div'} variant={'subtitle1'}>
+                                    {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <AuthorAvatarsList users={article.users} />
                             </Grid>
                         </Grid>
+                        {(!isMobile || isEmbedded) && (
+                            <Grid item xs={3}>
+                                {(article.preview || showEditSection) && (
+                                    <section>
+                                        {showEditSection && (
+                                            <div className={styles.buttonSection}>
+                                                {User.canEditArticle(currentUser, article) && (
+                                                    <IconButton
+                                                        aria-label="Edit"
+                                                        size="small"
+                                                        className={clsx(styles.editButton, 'edit-button')}
+                                                        component={CollisionLink}
+                                                        to={ArticleUtil.getPath(article, { edit: true })}
+                                                    >
+                                                        <Edit />
+                                                    </IconButton>
+                                                )}
+                                                {User.isAdmin(currentUser) && (
+                                                    <IconButton
+                                                        aria-label="Pin"
+                                                        size="small"
+                                                        className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
+                                                        onClick={() => toggleArticlePin()}
+                                                    >
+                                                        <Place />
+                                                    </IconButton>
+                                                )}
+                                            </div>
+                                        )}
+                                    </section>
+                                )}
+                            </Grid>
+                        )}
                     </Grid>
-                </Container>
+                </Grid>
+            </Grid>
+        </Container>
     );
 });
