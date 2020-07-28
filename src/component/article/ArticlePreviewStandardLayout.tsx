@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
-import { Card, CardContent, Typography, Link, Grid, Fab, makeStyles, Theme } from '@material-ui/core';
-import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
+import { Typography, Link, Grid, makeStyles, Theme, Container, IconButton } from '@material-ui/core';
+import { Edit, Place } from '@material-ui/icons';
 import { fade } from '@material-ui/core/styles';
-import { format, isBefore } from 'date-fns';
+import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -12,73 +12,63 @@ import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
+import { Article as ArticleUtil } from 'util/model/Article';
 import clsx from 'clsx';
-import Img from 'react-cloudimage-responsive';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(theme => ({
-    root: {
+    container: {
+        backgroundColor: theme.palette.background.paper,
         padding: theme.spacing(1),
+        marginBottom: theme.spacing(1),
         borderRadius: theme.shape.borderRadius,
         boxShadow: ({ isEmbedded }) => isEmbedded ? 'initial' : `1px 1px 2px ${fade(theme.palette.text.primary, .2)}`,
         '&:hover': {
             '& .edit-button': {
-                border: 0,
-                display: 'flex',
-                color: theme.palette.primary.contrastText,
-                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.secondary.main,
             },
-        }
-    },
-    cardContent: {
-        [theme.breakpoints.down('sm')]: {
-            padding: theme.spacing(0, 1)
-        },
-        [theme.breakpoints.down('xs')]: {
-            padding: theme.spacing(1, 0)
         },
     },
-    editButton: {
-        float: 'right',
-        color: theme.palette.grey[400],
-        background: 'transparent',
-        transition: 'opacity ease-in 250ms',
-    },
-    pinButton: {
-        float: 'right',
-        color: theme.palette.grey[400],
-        marginRight: '1em',
-        '&.active': {
-            color: theme.palette.grey[700]
-        }
-    },
-    articlePreviewImage: {
+    previewImage: {
         width: '100%',
-        height: 'auto',
+        maxHeight: 300,
+        objectFit: 'cover',
+        height: '100%',
         flexShrink: 0,
         flexGrow: 0,
         backgroundPosition: '0 0'
     },
-    authorAvatarsList: {
-        marginLeft: theme.spacing(2)
+    mainSection: {
+        paddingLeft: theme.spacing(1.5),
+        paddingRight: theme.spacing(1),
+        [theme.breakpoints.down('xs')]: {
+            border: 0,
+            padding: theme.spacing(0.5),
+        }
     },
-    articleTitle: {
+    title: {
         ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title),
+        fontSize: '1.4rem',
         [theme.breakpoints.down('sm')]: {
             fontSize: '1.2rem',
             lineHeight: 1.05,
             wordBreak: 'break-word',
             hyphens: 'auto'
+
         }
     },
-    subtitle: {
-        display: ({ narrow }) => narrow ? 'block' : 'flex',
-        alignItems: 'center',
-        textTransform: 'uppercase',
-        fontSize: '0.85rem',
+    previewSection: {
         marginBottom: theme.spacing(1),
+        color: theme.palette.grey[600],
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        height: '3.2em',
+        display: ({ narrow }) => narrow ? 'block' : 'flex',
+        [theme.breakpoints.down('xs')]: {
+            padding: theme.spacing(0.5),
+        },
         [theme.breakpoints.down('sm')]: {
             display: 'flex !important',
-            lineHeight: 1,
+            lineHeight: 1.5,
             '& span:last-child': {
                 textAlign: 'right'
             }
@@ -88,18 +78,44 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(t
                 display: ({ narrow }) => narrow ? 'block' : 'initial',
                 width: ({ narrow }) => narrow ? '100%' : 'auto'
             }
+        },
+    },
+    buttonSection: {
+        textAlign: 'right',
+        paddingTop: theme.spacing(1),
+        [theme.breakpoints.down('xs')]: {
+            padding: theme.spacing(0.5),
         }
     },
-    previewTextLimitedHeight: {
-        overflow: 'hidden',
-        webkitLineClamp: 3,
-        lineClamp: 3,
-        WebkitBoxOrient: 'vertical',
-        boxOrient: 'vertical',
-        display: '-webkit-box',
-        [theme.breakpoints.down('sm')]: {
-            lineHeight: 1.3
+    editButton: {
+        color: theme.palette.grey[400],
+    },
+    pinButton: {
+        color: theme.palette.grey[400],
+        '&.active': {
+            color: theme.palette.secondary.main
         }
+    },
+    date: {
+        paddingTop: theme.spacing(1),
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.down('xs')]: {
+            padding: theme.spacing(0.5),
+        }
+    },
+    topic: {
+        border: '1px solid',
+        borderColor: theme.palette.secondary.main,
+        color: theme.palette.secondary.main,
+        fontSize: '0.7rem',
+        padding: '2px 4px',
+        marginBottom: theme.spacing(2),
+        borderRadius: 4,
+        maxWidth: 'max-content',
+        fontFamily: theme.typography.fontFamily
+    },
+    link: {
+        width: '100%',
     }
 }
 ));
@@ -119,6 +135,7 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
     const [currentUser] = useCurrentUser();
 
     const styles = useStyle({ isEmbedded, narrow });
+    const showEditSection = (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
 
     const [toggleArticlePin] = useMutation<{ article: ArticleModel }, { id: ID }>(ToggleArticlePinMutation, {
         variables: { id: article.id }
@@ -130,75 +147,83 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
             color='inherit'
             underline='none'
             to={Article.getPath(article)}
+            className={styles.link}
         >
             {content}
         </Link>
     );
 
     return (
-        <Card className={styles.root} data-testid="ArticlePreviewStandardLayout">
-            <Grid container style={{ display: 'flex' }}>
-                {article.previewImageFile && (
-                    <Grid item xs={12} sm={narrow ? 12 : 4}>
-                        {maybeLinked(
-                            <Img
-                                operation={'cover'}
-                                size={'450x300'}
-                                width={450}
-                                height={300}
-                                src={article.previewImageFile.remoteLocation}
-                                className={styles.articlePreviewImage}
-                                alt={`Vorschaubild zu ${article.title}`}
-                            />
+        <Container className={styles.container} data-testid="ArticlePreviewStandardLayout">
+            <Grid container style={{ height: '100%' }}>
+                <Grid item xs={12} sm={narrow ? 12 : 3} container>
+                    {maybeLinked(article.previewImageFile && (
+                        <img
+                            className={styles.previewImage}
+                            src={`https://afdptjdxen.cloudimg.io/crop/400x300/foil1/${article.previewImageFile.remoteLocation}`}
+                            alt={`Vorschaubild zu ${article.title}`}
+                        />
+                    ))}
+                </Grid>
+                <Grid item xs={12} sm={9} className={styles.mainSection}>
+                    <Typography gutterBottom className={styles.title}>
+                        {maybeLinked(article.title)}
+                    </Typography>
+                    <Typography className={styles.previewSection} variant={'subtitle2'}>
+                        {article.preview}
+                    </Typography>
+                    {article.topic && (
+                        <div className={styles.topic}>
+                            {article.topic}
+                        </div>
+                    )}
+                    <Grid container>
+                        <Grid item xs={9} style={{ display: 'flex' }}>
+                            <Grid item>
+                                <Typography className={styles.date} component={'div'} variant={'subtitle1'}>
+                                    {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <AuthorAvatarsList users={article.users} />
+                            </Grid>
+                        </Grid>
+                        {(!isMobile || isEmbedded) && (
+                            <Grid item xs={3}>
+                                {(article.preview || showEditSection) && (
+                                    <section>
+                                        {showEditSection && (
+                                            <div className={styles.buttonSection}>
+                                                {User.canEditArticle(currentUser, article) && (
+                                                    <IconButton
+                                                        aria-label="Edit"
+                                                        size="small"
+                                                        className={clsx(styles.editButton, 'edit-button')}
+                                                        component={CollisionLink}
+                                                        to={ArticleUtil.getPath(article, { edit: true })}
+                                                    >
+                                                        <Edit />
+                                                    </IconButton>
+                                                )}
+                                                {User.isAdmin(currentUser) && (
+                                                    <IconButton
+                                                        aria-label="Pin"
+                                                        size="small"
+                                                        className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
+                                                        onClick={() => toggleArticlePin()}
+                                                    >
+                                                        <Place />
+                                                    </IconButton>
+                                                )}
+                                            </div>
+                                        )}
+                                    </section>
+                                )}
+                            </Grid>
                         )}
                     </Grid>
-                )}
-                <Grid item xs>
-                    <CardContent className={styles.cardContent}>
-                        <Typography component={'h5'} variant={'h5'} gutterBottom className={styles.articleTitle}>
-                            {!isEmbedded && currentUser && currentUser.lastSeen && isBefore(new Date(currentUser.lastSeen), new Date(article.updatedAt)) && (
-                                <FiberManualRecord color={'secondary'} fontSize={'small'} />
-                            )}
-                            {maybeLinked(article.title)}
-                            {(!isMobile || isEmbedded) && (
-                                <>
-                                    {!disableEdit && User.canEditArticle(currentUser, article) && (
-                                        <Fab
-                                            aria-label="Edit"
-                                            size="small"
-                                            className={clsx(styles.editButton, 'edit-button')}
-                                            component={CollisionLink}
-                                            to={Article.getPath(article, { edit: true })}
-                                        >
-                                            <Edit />
-                                        </Fab>
-                                    )}
-                                    {!disablePin && User.isAdmin(currentUser) && (
-                                        <Fab
-                                            aria-label="Pin"
-                                            size="small"
-                                            className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
-                                            onClick={() => toggleArticlePin()}
-                                        >
-                                            <Place />
-                                        </Fab>
-                                    )}
-                                </>
-                            )}
-                        </Typography>
-                        <Typography variant={'subtitle1'} className={clsx(styles.subtitle)}>
-                            <span>{format(new Date(article.updatedAt), narrow && isMobile ? 'P' : 'PPP', { locale: de }) + ' '}</span>
-                            {!isMobile && (
-                                <span>{article.topic && <> | {article.topic}&nbsp;</>}</span>
-                            )}
-                            <span>{article.users && article.users.length > 0 && <>&nbsp;<AuthorAvatarsList className={styles.authorAvatarsList} users={article.users} max={8} />&nbsp;</>}</span>
-                        </Typography>
-                        <Typography variant={'subtitle1'} color="textSecondary" className={clsx({ [styles.previewTextLimitedHeight]: limitedHeight })}>
-                            {article.preview}
-                        </Typography>
-                    </CardContent>
                 </Grid>
             </Grid>
-        </Card>
+        </Container>
     );
 });

@@ -56,6 +56,7 @@ const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
         alignItems: 'flex-start',
         justifyContent: 'flex-end',
         paddingRight: theme.spacing(2),
+        paddingLeft: theme.spacing(2),
         margin: 'auto 0'
     },
     logo: {
