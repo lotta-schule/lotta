@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { Fragment, FunctionComponent, memo } from 'react';
 import {
     DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, CircularProgress, Theme, makeStyles, Divider
 } from '@material-ui/core';
@@ -129,7 +129,12 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                         {dynamicGroups && (
                             <span data-testid="DynamicGroups">
                                 Über Einschreibeschlüssel zugewiesene Gruppen:
-                                {dynamicGroups.map((group, i, arr) => <><em>{group.name}</em>{i !== arr.length - 1 && <>, </>}</>)}
+                              {dynamicGroups.map((group, i, arr) => (
+                                <Fragment key={group.id}>
+                                  <em>{group.name}</em>
+                                  {i !== arr.length - 1 && (<>, </>)}
+                                </Fragment>
+                              ))}
                             </span>
                         )}
                         <Divider />

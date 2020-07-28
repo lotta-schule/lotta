@@ -1,4 +1,5 @@
 import React from 'react';
+import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { render, cleanup, waitFor } from 'test/util';
 import { SomeUser, adminGroup } from 'test/fixtures';
 import AdminLayout from './AdminLayout';
@@ -42,8 +43,9 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
             {}, {
                 currentUser: { ...SomeUser, groups: [adminGroup] },
                 defaultPathEntries: ['/admin/tenant/general'],
+                additionalMocks: [{ request: { query: GetUnpublishedArticlesQuery }, result: { data: { articles: [] } } }],
+                onChangeLocation,
                 useCache: true,
-                onChangeLocation
             }
         );
         await findByTestId('title');

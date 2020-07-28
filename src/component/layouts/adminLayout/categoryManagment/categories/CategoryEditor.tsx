@@ -145,43 +145,45 @@ export const CategoryEditor = memo<CategoryEditorProps>(({ selectedCategory, onS
             </SelectFileOverlay>
 
             {!category.isHomepage && (
+                <FormControl className={styles.input}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={category.hideArticlesFromHomepage}
+                                onChange={(_, checked) => setCategory({ ...category, hideArticlesFromHomepage: checked })}
+                                value={'hideArticlesFromHomepage'}
+                            />
+                        }
+                        label={'Beiträge dieser Kategorie auf der Startseite verstecken'}
+                    />
+                </FormControl>
+            )}
+
+            <FormControl className={styles.input}>
+                <InputLabel htmlFor={'category-redirect'}>Layout für die Kategorie wählen</InputLabel>
+                <Select
+                    value={category.layoutName ?? 'standard'}
+                    onChange={({ target }) => setCategory({ ...category, layoutName: target.value as any })}
+                    inputProps={{
+                        id: 'category-layout'
+                    }}
+                    displayEmpty
+                    fullWidth
+                >
+                    <MenuItem value={'standard'}>
+                        Standardlayout
+                    </MenuItem>
+                    <MenuItem value={'densed'}>
+                        Kompaktlayout
+                    </MenuItem>
+                    <MenuItem value={'2-columns'}>
+                        Zweispaltenlayout
+                    </MenuItem>
+                </Select>
+            </FormControl>
+
+            {!category.isHomepage && (
                 <>
-                    <FormControl className={styles.input}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={category.hideArticlesFromHomepage}
-                                    onChange={(_, checked) => setCategory({ ...category, hideArticlesFromHomepage: checked })}
-                                    value={'hideArticlesFromHomepage'}
-                                />
-                            }
-                            label={'Beiträge dieser Kategorie auf der Startseite verstecken'}
-                        />
-                    </FormControl>
-
-                    <FormControl className={styles.input}>
-                        <InputLabel htmlFor={'category-redirect'}>Layout für die Kategorie wählen</InputLabel>
-                        <Select
-                            value={category.layoutName ?? 'standard'}
-                            onChange={({ target }) => setCategory({ ...category, layoutName: target.value as any })}
-                            inputProps={{
-                                id: 'category-layout'
-                            }}
-                            displayEmpty
-                            fullWidth
-                        >
-                            <MenuItem value={'standard'}>
-                                Standardlayout
-                            </MenuItem>
-                            <MenuItem value={'densed'}>
-                                Kompaktlayout
-                            </MenuItem>
-                            <MenuItem value={'2-columns'}>
-                                Zweispaltenlayout
-                            </MenuItem>
-                        </Select>
-                    </FormControl>
-
                     <FormControl className={styles.input}>
                         <InputLabel htmlFor={'category-redirect'}>Zu einer anderen Kategorie weiterleiten ...</InputLabel>
                         <Select

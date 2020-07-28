@@ -5,6 +5,7 @@ import {
 
 } from 'test/util';
 import { UserNavigationMobile } from './UserNavigationMobile';
+import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { SomeUser, adminGroup } from 'test/fixtures';
 
 afterEach(cleanup);
@@ -54,7 +55,12 @@ describe('component/layouts/UserNavigationMobile', () => {
         it('should render profile and createArticle buttons, and also admin buttons', () => {
             const { container, queryByTestId } = render(
                 <UserNavigationMobile />,
-                {}, { currentUser: { ...SomeUser, groups: [adminGroup] }, useCache: true }
+                {},
+                {
+                    currentUser: { ...SomeUser, groups: [adminGroup] },
+                    additionalMocks: [{ request: { query: GetUnpublishedArticlesQuery }, result: { data: { articles: [] } } }],
+                    useCache: true
+                }
             );
             const buttons = container.querySelectorAll('button');
             expect(buttons.length).toEqual(8);

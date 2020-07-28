@@ -42,8 +42,10 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
             onCompleted: ({ articles }) => {
                 if (articles.length < nextFetchCount) {
                     const lastDate = [...articles]
-                        .sort((a1, a2) => new Date(a1.updatedAt).getTime() - new Date(a2.updatedAt).getTime())[0].updatedAt;
-                    setLastFetchedElementDate(lastDate);
+                        .sort((a1, a2) => new Date(a1.updatedAt).getTime() - new Date(a2.updatedAt).getTime())[0]?.updatedAt;
+                    if (lastDate) {
+                        setLastFetchedElementDate(lastDate);
+                    }
                 }
             }
         },
@@ -109,8 +111,6 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
         )
     }
 
-    return (
-        <p>Keine Beiträge in dieser Kategorie.</p>
-    );
+    return null;
 });
 export default CategoryRoute;

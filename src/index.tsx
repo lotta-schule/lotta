@@ -5,9 +5,9 @@ import Matomo from 'matomo-ts';
 import React from 'react';
 import DateFnsUtils from '@date-io/date-fns';
 import ReactDOM from 'react-dom';
-import * as serviceWorker from './serviceWorker';
 import { ApolloProvider } from '@apollo/client';
 import { App } from './component/App';
+import { Authentication } from './component/Authentication';
 import { client } from 'api/client';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { theme } from './theme';
@@ -17,6 +17,7 @@ import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueC
 import { de } from 'date-fns/locale';
 import { I18nextProvider } from 'react-i18next';
 import { i18n } from './i18n';
+import * as serviceWorker from './serviceWorker';
 
 Matomo.default().init(
     '/',
@@ -38,26 +39,28 @@ try {
     console.error(e);
 }
 
-
-ReactDOM.render(
-    (
-
-        <I18nextProvider i18n={i18n}>
-            <ThemeProvider theme={theme}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
-                    <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
-                        <ApolloProvider client={client}>
-                            <UploadQueueProvider>
-                                <App />
-                            </UploadQueueProvider>
-                        </ApolloProvider >
-                    </CloudimageProvider>
-                </MuiPickersUtilsProvider>
-            </ThemeProvider>
-        </I18nextProvider>
-    ),
-    document.getElementById('root')
-);
+(async () => {
+    ReactDOM.render(
+        (
+            <I18nextProvider i18n={i18n}>
+                <ThemeProvider theme={theme}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
+                        <CloudimageProvider config={{ token: process.env.REACT_APP_CLOUDIMG_TOKEN }}>
+                            <Authentication>
+                                <ApolloProvider client={client}>
+                                    <UploadQueueProvider>
+                                        <App />
+                                    </UploadQueueProvider>
+                                </ApolloProvider>
+                            </Authentication>
+                        </CloudimageProvider>
+                    </MuiPickersUtilsProvider>
+                </ThemeProvider>
+            </I18nextProvider>
+        ),
+        document.getElementById('root')
+    );
+})();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
