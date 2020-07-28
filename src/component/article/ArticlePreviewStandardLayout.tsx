@@ -154,16 +154,16 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
     );
 
     return (
-        <Container className={styles.container}>
+        <Container className={styles.container} data-testid="ArticlePreviewStandardLayout">
             <Grid container style={{ height: '100%' }}>
-                <Grid item xs={12} sm={narrow ? 12 : 3} container >
-                    {maybeLinked(article.previewImageFile &&
+                <Grid item xs={12} sm={narrow ? 12 : 3} container>
+                    {maybeLinked(article.previewImageFile && (
                         <img
                             className={styles.previewImage}
                             src={`https://afdptjdxen.cloudimg.io/crop/400x300/foil1/${article.previewImageFile.remoteLocation}`}
                             alt={`Vorschaubild zu ${article.title}`}
                         />
-                    )}
+                    ))}
                 </Grid>
                 <Grid item xs={12} sm={9} className={styles.mainSection}>
                     <Typography gutterBottom className={styles.title}>
@@ -178,7 +178,7 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
                         </div>
                     )}
                     <Grid container>
-                        <Grid item xs={9} style={{ display: 'flex', }}>
+                        <Grid item xs={9} style={{ display: 'flex' }}>
                             <Grid item>
                                 <Typography className={styles.date} component={'div'} variant={'subtitle1'}>
                                     {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
