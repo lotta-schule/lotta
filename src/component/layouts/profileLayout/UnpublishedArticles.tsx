@@ -3,7 +3,7 @@ import { ArticleModel } from 'model';
 import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
-import { ArticlesManagement } from 'component/profile/ArticlesManagement';
+import { ArticlesList } from 'component/profile/ArticlesList';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 
 export const UnpublishedArticles = memo(() => {
@@ -19,7 +19,7 @@ export const UnpublishedArticles = memo(() => {
                 )}
 
                 {unpublishedArticlesData && unpublishedArticlesData.articles && (
-                    <ArticlesManagement articles={unpublishedArticlesData.articles} />
+                    <ArticlesList articles={unpublishedArticlesData.articles} />
                 )}
             </CardContent>
         </Card>

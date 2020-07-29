@@ -6,6 +6,7 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ProfileData } from './ProfileData';
 import { ProfileMediaFiles } from './ProfileMediaFiles';
 import { ProfileArticles } from './ProfileArticles';
+import { ProfileDelete } from './ProfileDelete';
 import { Header } from '../../general/Header';
 import useRouter from 'use-react-router';
 import bannerProfil from './bannerProfil.png';
@@ -33,6 +34,7 @@ export const ProfileLayout = memo(() => {
                 <Route exact path='/profile' component={ProfileData} />
                 <Route path='/profile/files' component={ProfileMediaFiles} />
                 <Route path='/profile/articles' component={ProfileArticles} />
+                <Route path='/profile/delete' component={ProfileDelete} />
             </Switch>
         </BaseLayoutMainContent>
     );
