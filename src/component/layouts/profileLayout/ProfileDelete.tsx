@@ -55,10 +55,12 @@ export const ProfileDelete = memo(() => {
         skip: currentStep !== ProfileDeleteStep.ReviewArticles,
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'cache-first',
-        onCompleted: ({ articles }) => {
-            if (!articles.length) {
-                // user has not written any articles. So don't bother him, go to next step
-                setCurrentStep(s => s + 1);
+        onCompleted: (data) => {
+            if (data) {
+                if (!data.articles.length) {
+                    // user has not written any articles. So don't bother him, go to next step
+                    setCurrentStep(s => s + 1);
+                }
             }
         },
         onError: () => setCurrentStep(s => s - 1)
@@ -68,12 +70,14 @@ export const ProfileDelete = memo(() => {
         skip: currentStep !== ProfileDeleteStep.ReviewFiles,
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'cache-first',
-        onCompleted: ({ files }) => {
-            if (!files.length) {
-                // user has no files used in public articles or categories. Just show him his own files
-                setSelectedFilesTab(1);
-            } else {
-                setSelectedFilesToTransfer([...files]);
+        onCompleted: (data) => {
+            if (data) {
+                if (!data.files.length) {
+                    // user has no files used in public articles or categories. Just show him his own files
+                    setSelectedFilesTab(1);
+                } else {
+                    setSelectedFilesToTransfer([...data.files]);
+                }
             }
         },
         onError: () => setCurrentStep(s => s - 1)
@@ -110,11 +114,11 @@ export const ProfileDelete = memo(() => {
         return (
             <CardActions className={styles.cardActions}>
                 <Grow in={!isLoading && currentStep > ProfileDeleteStep.Start}>
-                    <Button size={'small'} color={'secondary'} disabled={currentStep <= ProfileDeleteStep.Start} onClick={() => setCurrentStep(s => s - 1)}>
+                    <Button size={'small'} color={'secondary'} disabled={currentStep <= ProfileDeleteStep.Start} onClick={() => setCurrentStep(s => s - 1)} aria-hidden={isLoading || currentStep <= ProfileDeleteStep.Start}>
                         &lt; Zurück
                     </Button>
                 </Grow>
-                <Grow in={!isLoading} style={{ transitionDelay: currentStep > 0 ? '1' : '0' }}>
+                <Grow in={!isLoading}>
                     {button}
                 </Grow>
             </CardActions>
@@ -124,7 +128,7 @@ export const ProfileDelete = memo(() => {
     return (
         <>
             {isLoading && (
-                <Card>
+                <Card data-testid={'ProfileDeleteLoadingCard'}>
                     <CardContent>
                         <LinearProgress variant={'indeterminate'} />
                     </CardContent>
@@ -134,7 +138,7 @@ export const ProfileDelete = memo(() => {
             <ErrorMessage error={ownArticlesError || relevantFilesError} />
 
             <Collapse in={!isLoading && currentStep === ProfileDeleteStep.Start}>
-                <Card>
+                <Card aria-hidden={isLoading || currentStep !== ProfileDeleteStep.Start} data-testid={'ProfileDeleteStep1Card'}>
                     <CardContent>
                         <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Benutzerkonto und Daten löschen</Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
@@ -154,7 +158,7 @@ export const ProfileDelete = memo(() => {
             </Collapse>
 
             <Collapse in={!isLoading && currentStep === ProfileDeleteStep.ReviewArticles}>
-                <Card>
+                <Card aria-hidden={isLoading || currentStep !== ProfileDeleteStep.ReviewArticles} data-testid={'ProfileDeleteStep2Card'}>
                    <CardContent>
                        {ownArticlesData && ownArticlesData.articles.length > 0 && (
                            <>
@@ -178,7 +182,7 @@ export const ProfileDelete = memo(() => {
             </Collapse>
 
             <Collapse in={!isLoading && currentStep === ProfileDeleteStep.ReviewFiles}>
-                <Card>
+                <Card aria-hidden={isLoading || currentStep !== ProfileDeleteStep.ReviewFiles} data-testid={'ProfileDeleteStep3Card'}>
                     <CardContent>
                         {relevantFilesData && relevantFilesData.files.length > 1 && (
                             <Tabs
@@ -196,8 +200,10 @@ export const ProfileDelete = memo(() => {
                             </Tabs>
                         )}
 
-                        <div role={'tabpanel'} hidden={selectedFilesTab !== 0}>
-                            <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Dateien aus genutzten Beiträgen übergeben</Typography>
+                        <div role={'tabpanel'} hidden={selectedFilesTab !== 0} aria-labelledby={'tabpanel-handover-heading'}>
+                            <Typography className={styles.paragraph} variant={'h4'} component={'h3'} id={'tabpanel-handover-heading'}>
+                                Dateien aus genutzten Beiträgen übergeben
+                            </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
                                 Es gibt Dateien, die du hochgeladen hast, die bei <em>{tenant.title}</em> in Beiträgen sichtbar sind.
                             </Typography>
@@ -215,8 +221,10 @@ export const ProfileDelete = memo(() => {
                                 onSelectFiles={setSelectedFilesToTransfer}
                             />
                         </div>
-                        <div role={'tabpanel'} hidden={selectedFilesTab !== 1}>
-                            <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Alle Dateien überprüfen</Typography>
+                        <div role={'tabpanel'} hidden={selectedFilesTab !== 1} aria-labelledby={'tabpanel-files-heading'}>
+                            <Typography className={styles.paragraph} variant={'h4'} component={'h3'} id={'tabpanel-files-heading'}>
+                                Alle Dateien überprüfen
+                            </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
                                 Hier hast du nochmal einen Überblick über alle deine Dateien.
                             </Typography>
@@ -233,9 +241,11 @@ export const ProfileDelete = memo(() => {
             </Collapse>
 
             <Collapse in={!isLoading && currentStep === ProfileDeleteStep.ConfirmDeletion}>
-                <Card>
+                <Card aria-hidden={isLoading || currentStep !== ProfileDeleteStep.ConfirmDeletion} data-testid={'ProfileDeleteStep4Card'}>
                     <CardContent>
-                        <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Benutzerkonto und Daten löschen</Typography>
+                        <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>
+                            Löschanfrage bestätigen
+                        </Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
                             Deine Daten können nun gelöscht werden.
                         </Typography>

@@ -164,12 +164,13 @@ describe('component/article/ProfileDeleteFileSelection', () => {
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(7);
                 expect(newSelection.map(f => f.filename).sort()).toEqual([
-                    'Dateiname.jpg',
-                    'Animiert.gif',
-                    'Manifest.pdf',
-                    'Bilderbuch.pdf',
                     'Amelie.mp4',
-                    'Kaenguru.wav'
+                    'Animiert.gif',
+                    'Bilderbuch.pdf',
+                    'Dateiname.jpg',
+                    'Kaenguru.wav',
+                    'Manifest.pdf',
+                    'praesi.ppt'
                 ]);
             });
             const screen = render(
@@ -210,12 +211,13 @@ describe('component/article/ProfileDeleteFileSelection', () => {
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(7);
                 expect(newSelection.map(f => f.filename).sort()).toEqual([
-                    'Dateiname.jpg',
-                    'Animiert.gif',
-                    'Manifest.pdf',
-                    'Bilderbuch.pdf',
                     'Amelie.mp4',
-                    'Kaenguru.wav'
+                    'Animiert.gif',
+                    'Bilderbuch.pdf',
+                    'Dateiname.jpg',
+                    'Kaenguru.wav',
+                    'Manifest.pdf',
+                    'praesi.ppt'
                 ]);
             });
             const screen = render(

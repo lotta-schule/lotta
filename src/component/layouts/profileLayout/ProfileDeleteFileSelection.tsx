@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     root: {
         maxHeight: '70vh',
         '& th': {
-            backgroundColor: theme.palette.background.default
+            backgroundColor: theme.palette.background.paper
         }
     },
 }));

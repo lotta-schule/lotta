@@ -1,6 +1,5 @@
-import React, { ReactNode, ReactNodeArray, memo } from 'react';
+import React, { CSSProperties, ReactNode, ReactNodeArray, memo } from 'react';
 import { Grid } from '@material-ui/core';
-import { CSSProperties } from '@material-ui/styles';
 
 export interface BaseLayoutMainContentProps {
     style?: CSSProperties;
