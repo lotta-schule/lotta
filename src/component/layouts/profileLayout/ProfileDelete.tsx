@@ -1,14 +1,16 @@
 import React, { memo, lazy, useState, useMemo, Suspense } from 'react';
-import { Button, Card, CardContent, CardActions, Collapse, Grow, LinearProgress, Tabs, Tab, Typography, makeStyles } from '@material-ui/core';
+import {
+    Button, Card, CardContent, CardActions, Collapse, Grow, LinearProgress, Tabs, Tab, Typography, fade, makeStyles } from '@material-ui/core';
 import { ArticleModel, FileModel, ID } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useQuery } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
-import { GetDirectoriesAndFilesQuery as GetRelevantFilesInUsageQuery } from 'api/query/GetDirectoriesAndFiles';
+import { GetRelevantFilesInUsageQuery } from 'api/query/GetRelevantFilesInUsage';
 import { useTenant } from 'util/client/useTenant';
 import { Article } from 'util/model';
 import { ArticlesList } from 'component/profile/ArticlesList';
 import clsx from 'clsx';
+import { ProfileDeleteFileSelection } from './ProfileDeleteFileSelection';
 const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
 
 enum ProfileDeleteStep {
@@ -30,6 +32,13 @@ export const useStyles = makeStyles(theme => ({
     list: {
         listStyle: 'initial',
         paddingLeft: '2em'
+    },
+    deleteButton: {
+        color: theme.palette.error.main,
+        borderColor: theme.palette.error.main,
+        '&:hover': {
+            backgroundColor: fade(theme.palette.error.main, .08)
+        }
     }
 }))
 
@@ -37,7 +46,7 @@ export const ProfileDelete = memo(() => {
     const styles = useStyles();
 
     const tenant = useTenant();
-    const [fileIdsToTransfer, ] = useState<ID[]>([]);
+    const [selectedFilesToTransfer, setSelectedFilesToTransfer] = useState<FileModel[]>([]);
 
     const [currentStep, setCurrentStep] = useState<ProfileDeleteStep>(ProfileDeleteStep.Start);
     const [selectedFilesTab, setSelectedFilesTab] = useState(0);
@@ -51,7 +60,8 @@ export const ProfileDelete = memo(() => {
                 // user has not written any articles. So don't bother him, go to next step
                 setCurrentStep(s => s + 1);
             }
-        }
+        },
+        onError: () => setCurrentStep(s => s - 1)
     });
 
     const { data: relevantFilesData, loading: isLoadingRelevantFiles, error: relevantFilesError } = useQuery<{ files: FileModel[] }>(GetRelevantFilesInUsageQuery, {
@@ -62,20 +72,18 @@ export const ProfileDelete = memo(() => {
             if (!files.length) {
                 // user has no files used in public articles or categories. Just show him his own files
                 setSelectedFilesTab(1);
+            } else {
+                setSelectedFilesToTransfer([...files]);
             }
-        }
+        },
+        onError: () => setCurrentStep(s => s - 1)
     });
 
-    const isLoading = isLoadingOwnArticles || isLoadingRelevantFiles;
+    const isLoading = isLoadingOwnArticles || isLoadingRelevantFiles;
 
-    const cardActions = useMemo(() => (
-        <CardActions className={styles.cardActions}>
-            <Grow in={!isLoading && currentStep > ProfileDeleteStep.Start}>
-                <Button size={'small'} color={'secondary'} disabled={currentStep <= ProfileDeleteStep.Start} onClick={() => setCurrentStep(s => s - 1)}>
-                    &lt; Zurück
-                </Button>
-            </Grow>
-            <Grow in={!isLoading} style={{ transitionDelay: '1s' }}>
+    const cardActions = useMemo(() => {
+        const button =
+            currentStep < ProfileDeleteStep.ConfirmDeletion ? (
                 <Button
                     size={'small'}
                     color={'secondary'}
@@ -84,11 +92,34 @@ export const ProfileDelete = memo(() => {
                         setCurrentStep(s => s + 1);
                     }}
                 >
-                    {currentStep === ProfileDeleteStep.ConfirmDeletion ?  'Daten endültig löschen' : 'Weiter >'}
+                    Weiter &gt;
                 </Button>
-            </Grow>
-        </CardActions>
-    ), [currentStep, styles.cardActions, isLoading]);
+            ) : (
+                <Button
+                    size={'small'}
+                    variant={'outlined'}
+                    className={styles.deleteButton}
+                    disabled={isLoading}
+                    onClick={() => {
+                        setCurrentStep(s => s + 1);
+                    }}
+                >
+                        Daten endgültig löschen
+                </Button>
+            );
+        return (
+            <CardActions className={styles.cardActions}>
+                <Grow in={!isLoading && currentStep > ProfileDeleteStep.Start}>
+                    <Button size={'small'} color={'secondary'} disabled={currentStep <= ProfileDeleteStep.Start} onClick={() => setCurrentStep(s => s - 1)}>
+                        &lt; Zurück
+                    </Button>
+                </Grow>
+                <Grow in={!isLoading} style={{ transitionDelay: currentStep > 0 ? '1' : '0' }}>
+                    {button}
+                </Grow>
+            </CardActions>
+        );
+    }, [currentStep, styles, isLoading]);
 
     return (
         <>
@@ -157,7 +188,10 @@ export const ProfileDelete = memo(() => {
                                 textColor={'primary'}
                                 variant={'fullWidth'}
                             >
-                                <Tab value={0} label={'Dateien übergeben'} />
+                                <Tab
+                                    value={0}
+                                    label={`Dateien übergeben (${selectedFilesToTransfer.length}/${relevantFilesData.files.length})`}
+                                />
                                 <Tab value={1} label={'Alle Dateien überprüfen'} />
                             </Tabs>
                         )}
@@ -165,7 +199,7 @@ export const ProfileDelete = memo(() => {
                         <div role={'tabpanel'} hidden={selectedFilesTab !== 0}>
                             <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Dateien aus genutzten Beiträgen übergeben</Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
-                                Es gibt noch Dateien, die bei <em>{tenant.title}</em> in Beiträgen sichtbar sind, die du aber ursprünglich hochgeladen hast.
+                                Es gibt Dateien, die du hochgeladen hast, die bei <em>{tenant.title}</em> in Beiträgen sichtbar sind.
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
                                 Du hast jetzt die Möglichkeit, die Nutzungsrechte an diesen Dateien <em>{tenant.title}</em> zu übergeben.
@@ -173,16 +207,13 @@ export const ProfileDelete = memo(() => {
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
                                 Überlege dir gut, für welche Dateien du <em>{tenant.title}</em> erlauben möchtest, sie weiterhin auf ihrer Webseite zu zeigen:
-                                Wenn dein Benutzerkonto erst gelöscht ist, kann der Vorgang nicht mehr automatisiert werden, und du wirst dich persönlich an <em>{tenant.title}</em>
-                                wenden müssen.
+                                Wenn dein Benutzerkonto erst gelöscht ist, kann der Vorgang nicht mehr automatisiert werden, und du wirst dich persönlich an <em>{tenant.title}</em> wenden müssen.
                             </Typography>
-                            x<br />
-                            x<br />
-                            x<br />
-                            x<br />
-                            x<br />
-                            x<br />
-                            x<br />
+                            <ProfileDeleteFileSelection
+                                files={relevantFilesData?.files ?? []}
+                                selectedFiles={selectedFilesToTransfer}
+                                onSelectFiles={setSelectedFilesToTransfer}
+                            />
                         </div>
                         <div role={'tabpanel'} hidden={selectedFilesTab !== 1}>
                             <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Alle Dateien überprüfen</Typography>
@@ -211,10 +242,13 @@ export const ProfileDelete = memo(() => {
                         <Typography className={clsx(styles.paragraph, styles.list)} variant={'body1'} component={'ul'}>
                             <li>Von dir erstellte, nicht veröffentlichte Beiträge, bei denen es keine anderen AutorInnen gibt, werden gelöscht</li>
                             <li>Du wirst als AutorIn aus Beiträgen entfernt, die veröffentlicht sind</li>
-                            {fileIdsToTransfer.length > 0 && (
-                                <li>Deine Dateien und Ordner, ausgenommen die ${fileIdsToTransfer} Dateien, die du ${tenant.title} überlässt, werden gelöscht</li>
+                            {selectedFilesToTransfer.length > 0 && (
+                                <li>
+                                    Deine Dateien und Ordner, ausgenommen die <em>{selectedFilesToTransfer.length} Dateien</em>,
+                                    die du {tenant.title} überlässt, werden gelöscht
+                                </li>
                             )}
-                            {fileIdsToTransfer.length === 0 && (
+                            {selectedFilesToTransfer.length === 0 && (
                                 <li>Alle deine Dateien und Ordner werden gelöscht</li>
                             )}
                             <li>Dein Nutzeraccount und alle darin gespeicherten Informationen werden gelöscht</li>
@@ -226,6 +260,9 @@ export const ProfileDelete = memo(() => {
                         <Typography className={styles.paragraph} variant={'body1'}>
                             Wenn du einverstanden bist, klicke auf 'Daten endgültig löschen'.
                             Du wirst abgemeldet und auf die Startseite weitergeleitet.
+                        </Typography>
+                        <Typography className={styles.paragraph} variant={'body1'}>
+                            Dieser Vorgang ist endgültig.
                         </Typography>
                     </CardContent>
                     {cardActions}
