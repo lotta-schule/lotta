@@ -14,8 +14,9 @@ import { theme } from '../theme';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import { i18n } from 'i18n';
 import { reducer as fileExplorerStateReducer, Action as FileExploreerStateAction } from 'component/fileExplorer/context/reducer';
-import DateFnsUtils from '@date-io/date-fns';
 import fileExplorerContext, { FileExplorerMode, defaultState as defaultFileExplorerState } from 'component/fileExplorer/context/FileExplorerContext';
+import DateFnsUtils from '@date-io/date-fns';
+import { createMuiTheme } from '@material-ui/core';
 
 export interface TestSetupOptions {
     defaultPathEntries?: string[];
@@ -39,24 +40,28 @@ const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
             options.onChangeLocation!(...(args as unknown as [any]));
         });
     }
+    const testTheme = createMuiTheme({
+        ...theme,
+        transitions: { create: () => 'none' }
+    });
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={testTheme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
-                    <I18nextProvider i18n={i18n}>
-                        <MockedProvider mocks={mocks} addTypename={false} cache={options.useCache ? cache : undefined}>
-                            <UploadQueueProvider>
-                                <Router history={history}>
-                                    {children}
-                                </Router>
-                            </UploadQueueProvider>
-                        </MockedProvider>
-                    </I18nextProvider>
+                <I18nextProvider i18n={i18n}>
+                    <MockedProvider mocks={mocks} addTypename={false} cache={options.useCache ? cache : undefined}>
+                        <UploadQueueProvider>
+                            <Router history={history}>
+                                {children}
+                            </Router>
+                        </UploadQueueProvider>
+                    </MockedProvider>
+                </I18nextProvider>
             </MuiPickersUtilsProvider>
         </ThemeProvider>
     )
 }
 
-const customRender = (ui: React.ReactElement, renderOptions: Omit<RenderOptions, 'queries'> = {}, testSetupOptions: TestSetupOptions = {}) =>
+const customRender = (ui: React.ReactElement, renderOptions: Omit<RenderOptions, 'wrapper'> = {}, testSetupOptions: TestSetupOptions = {}) =>
     render(ui, { wrapper: ProviderFactory(testSetupOptions), ...renderOptions })
 
 // re-export everything

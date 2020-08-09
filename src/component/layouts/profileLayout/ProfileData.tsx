@@ -15,11 +15,41 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
 import { SaveButton } from 'component/general/SaveButton';
 import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
+import { CollisionLink } from 'component/general/CollisionLink';
 
 export const useStyles = makeStyles(theme => ({
+    gridContainer: {
+        [theme.breakpoints.down('sm')]: {
+            flexDirection: 'column-reverse'
+        },
+        '& > div': {
+            padding: theme.spacing(1),
+            position: 'relative'
+        }
+    },
     divider: {
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
+        width: '80%',
+        [theme.breakpoints.down('sm')]: {
+            width: '100%'
+        }
+    },
+    dangerSection: {
+        width: '100%',
+        position: 'absolute',
+        bottom: theme.spacing(1),
+        left: theme.spacing(1),
+        [theme.breakpoints.down('sm')]: {
+            position: 'relative',
+            bottom: 'initial',
+            left: 'initial',
+            marginBottom: theme.spacing(2)
+        }
+    },
+    deleteAccountButton: {
+        color: theme.palette.error.main,
+        borderColor: theme.palette.error.main
     }
 }))
 
@@ -52,8 +82,8 @@ export const ProfileData = memo(() => {
             <CardContent>
                 <Typography variant={'h4'}>Meine Daten</Typography>
                 <ErrorMessage error={error} />
-                <Grid container>
-                    <Grid item md={4} style={{ marginTop: '1em' }}>
+                <Grid container className={styles.gridContainer}>
+                    <Grid item xs md={4}>
                         <Badge
                             overlap={'circle'}
                             anchorOrigin={{
@@ -78,7 +108,7 @@ export const ProfileData = memo(() => {
                             label={'Profilbild ändern'}
                             onSelect={(file: FileModel) => setAvatarImageFile(file)}
                         />
-                        <Divider className={styles.divider} style={{ width: '80%' }} />
+                        <Divider className={styles.divider} />
                         <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>} data-testid="ProfileData-GroupsList">
                             {[...currentUser.groups].sort((g1, g2) => g2.sortKey - g1.sortKey).map(group => (
                                 <ListItem key={group.id}>
@@ -86,6 +116,18 @@ export const ProfileData = memo(() => {
                                 </ListItem>
                             ))}
                         </List>
+                        <section className={styles.dangerSection}>
+                            <Divider className={styles.divider} />
+                                <Button
+                                    component={CollisionLink}
+                                    to={'/profile/delete'}
+                                    variant={'outlined'}
+                                    color={'inherit'}
+                                    className={styles.deleteAccountButton}
+                                >
+                                Benutzerkonto löschen
+                            </Button>
+                        </section>
                     </Grid>
                     <Grid item md={8}>
                         <TextField

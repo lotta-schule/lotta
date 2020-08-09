@@ -72,7 +72,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const additionalMocks = [
                 ...mocks(user),
                 {
-                    request: { query: SetUserGroupsMutation, variables: { id: SomeUser.id, groupIds: [adminGroup.id, elternGroup.id] } },
+                    request: { query: SetUserGroupsMutation, variables: { id: user.id, groupIds: [adminGroup.id, elternGroup.id] } },
                     result: () => {
                         mutationHasBeenCalled = true;
                         return {
