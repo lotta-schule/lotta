@@ -46,6 +46,10 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:parent_directory_id, :id)
       resolve(&Api.FileResolver.files/2)
     end
+
+    field :relevant_files_in_usage, list_of(:file) do
+      resolve(&Api.FileResolver.relevant_files_in_usage/2)
+    end
   end
 
   object :accounts_mutations do

@@ -580,6 +580,49 @@ defmodule Api.FileResolverTest do
     end
   end
 
+  describe "relevant files in usage query" do
+    @query """
+    query relevantFilesInUsage {
+      relevantFilesInUsage {
+        filename
+      }
+    }
+    """
+
+    test "it should return an error when user is not logged in" do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"relevantFilesInUsage" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du bist nicht angemeldet.",
+                   "path" => ["relevantFilesInUsage"]
+                 }
+               ]
+             } = res
+    end
+
+    test "it should return the user's relevant files in usage", %{user2_jwt: user2_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "relevantFilesInUsage" => [%{"filename" => "wieartig1.jpg"}]
+               }
+             } = res
+    end
+  end
+
   describe "update file mutation" do
     @query """
     mutation updateFile($id: ID!, $parentDirectoryId: ID, $filename: String) {
