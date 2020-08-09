@@ -1,5 +1,3 @@
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
-import { UserModel } from 'model';
 import { LogoutMutation } from 'api/mutation/LogoutMutation';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useHistory } from 'react-router-dom';
