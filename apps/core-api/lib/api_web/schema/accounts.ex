@@ -86,6 +86,12 @@ defmodule ApiWeb.Schema.Accounts do
       resolve(&Api.UserResolver.update_password/2)
     end
 
+    field :destroy_account, type: :user do
+      arg(:transfer_file_ids, list_of(non_null(:id)))
+
+      resolve(&Api.UserResolver.destroy_account/2)
+    end
+
     field :set_user_blocked, type: :user do
       arg(:id, non_null(:id))
       arg(:is_blocked, non_null(:boolean))

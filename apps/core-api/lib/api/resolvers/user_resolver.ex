@@ -211,6 +211,14 @@ defmodule Api.UserResolver do
     end
   end
 
+  def destroy_account(args, %{context: %{current_user: current_user}}) do
+    transfer_file_ids = args[:transfer_file_ids] || []
+    Accounts.transfer_files_by_ids(transfer_file_ids, current_user)
+    Accounts.delete_user(current_user)
+  end
+
+  def destroy_account(_args, _info), do: {:error, "Du bist nicht angemeldet."}
+
   def set_user_groups(%{id: id, group_ids: group_ids}, %{
         context: %{current_user: current_user, tenant: tenant}
       }) do

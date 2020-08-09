@@ -165,17 +165,7 @@ defmodule Api.FileResolver do
         |> Repo.preload([:parent_directory])
 
       if user_can_write_directory?(current_user, file.parent_directory) do
-        file =
-          file
-          |> Repo.preload(:file_conversions)
-
-        Enum.each(file.file_conversions, fn file_conversion ->
-          Accounts.delete_file_conversion(file_conversion)
-          Accounts.File.delete_attachment(file_conversion)
-        end)
-
         Accounts.delete_file(file)
-        Accounts.File.delete_attachment(file)
       else
         {:error, "Du darfst diese Datei nicht löschen."}
       end
