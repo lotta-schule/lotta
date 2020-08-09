@@ -5,7 +5,7 @@ import Config
 secret_key_base = System.fetch_env!("SECRET_KEY_BASE")
 secret_key_jwt = System.fetch_env!("SECRET_KEY_JWT")
 # Live View
-secret_signing_salt_live_view = System.getch_env!("LIVE_VIEW_SALT_SECRET")
+secret_signing_salt_live_view = System.fetch_env!("LIVE_VIEW_SALT_SECRET")
 live_view_username = System.fetch_env!("LIVE_VIEW_USERNAME")
 live_view_password = System.fetch_env!("LIVE_VIEW_PASSWORD")
 
