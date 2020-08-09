@@ -238,9 +238,6 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         await waitFor(() => {
             expect(didCallDeleteMutation).toEqual(true);
         });
-        await waitFor(() => {
-            expect(onChangeLocation).toHaveBeenCalled();
-        });
 
         done();
     }, 15_000);
