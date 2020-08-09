@@ -46,6 +46,10 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:parent_directory_id, :id)
       resolve(&Api.FileResolver.files/2)
     end
+
+    field :relevant_files_in_usage, list_of(:file) do
+      resolve(&Api.FileResolver.relevant_files_in_usage/2)
+    end
   end
 
   object :accounts_mutations do
@@ -84,6 +88,12 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:new_password, non_null(:string))
 
       resolve(&Api.UserResolver.update_password/2)
+    end
+
+    field :destroy_account, type: :user do
+      arg(:transfer_file_ids, list_of(non_null(:id)))
+
+      resolve(&Api.UserResolver.destroy_account/2)
     end
 
     field :set_user_blocked, type: :user do

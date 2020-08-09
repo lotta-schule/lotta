@@ -20,8 +20,10 @@ defmodule Api.Accounts.Directory do
     timestamps()
   end
 
+  @type t :: %__MODULE__{id: pos_integer(), name: String.t()}
+
   @doc false
-  def changeset(%Api.Accounts.Directory{} = directory, attrs) do
+  def changeset(%__MODULE__{} = directory, attrs) do
     directory
     |> cast(attrs, [:name, :user_id, :tenant_id, :parent_directory_id])
     |> validate_required([:name, :tenant_id])

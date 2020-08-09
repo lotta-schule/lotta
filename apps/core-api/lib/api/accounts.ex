@@ -241,6 +241,12 @@ defmodule Api.Accounts do
 
   """
   def delete_user(%User{} = user) do
+    # delete every file manually so that the files are deleted
+    # this should probably be merged to a genserver / bg job of some kind
+    from(f in File, where: f.user_id == ^user.id)
+    |> Repo.all()
+    |> Enum.each(&delete_file/1)
+
     Repo.delete(user)
   end
 
@@ -540,7 +546,7 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  Deletes a File.
+  Deletes a File AND all its dependend conversions
 
   ## Examples
 
@@ -552,7 +558,84 @@ defmodule Api.Accounts do
 
   """
   def delete_file(%File{} = file) do
+    file = Repo.preload(file, [:file_conversions])
+
+    Enum.each(file.file_conversions, fn file_conversion ->
+      delete_file_conversion(file_conversion)
+    end)
+
+    File.delete_attachment(file)
     Repo.delete(file)
+  end
+
+  @doc """
+  Given a list of ids, transfers the corresponding files to their tenants public archive.
+  This is the new directory structure created:
+  / archive / <current_year> / <user_id> / <filename>.ext
+  """
+  @doc since: "2.0.0"
+
+  @spec transfer_files_by_ids([pos_integer()], User.t()) :: [File.t()]
+
+  def transfer_files_by_ids(file_ids, %User{id: user_id}) do
+    from(f in File, where: f.user_id == ^user_id and f.id in ^file_ids, preload: [:tenant])
+    |> Repo.all()
+    |> Enum.group_by(& &1.tenant_id)
+    |> Enum.flat_map(fn {_tenant_id, files} ->
+      parent_directory =
+        List.first(files)
+        |> Map.fetch!(:tenant)
+        |> ensure_archive_directory("#{DateTime.utc_now().year}/#{user_id}")
+        |> List.last()
+
+      Enum.map(files, fn file ->
+        file
+        |> Changeset.change(%{user_id: nil, parent_directory_id: parent_directory.id})
+        |> Repo.update!()
+      end)
+    end)
+  end
+
+  @spec ensure_archive_directory(Tenant.t(), String.t() | nil) :: [Directory.t()]
+
+  defp ensure_archive_directory(%Tenant{id: tenant_id}, path) do
+    ["archiv" | if(is_nil(path), do: [], else: String.split(path, "/"))]
+    |> Enum.reduce([], fn dirname, dir_list ->
+      parent_directory = List.last(dir_list)
+
+      parent_directory_condition =
+        case parent_directory do
+          nil ->
+            dynamic([d], is_nil(d.parent_directory_id))
+
+          directory ->
+            dynamic([d], d.parent_directory_id == ^directory.id)
+        end
+
+      condition =
+        dynamic(
+          [d],
+          d.name == ^dirname and d.tenant_id == ^tenant_id and ^parent_directory_condition
+        )
+
+      from(d in Directory, where: ^condition)
+      |> Repo.one()
+      |> case do
+        nil ->
+          {:ok, directory} =
+            create_directory(%{
+              name: dirname,
+              tenant_id: tenant_id,
+              parent_directory_id:
+                if(is_nil(parent_directory), do: nil, else: parent_directory.id)
+            })
+
+          dir_list ++ [directory]
+
+        directory ->
+          dir_list ++ [directory]
+      end
+    end)
   end
 
   @doc """
@@ -646,6 +729,7 @@ defmodule Api.Accounts do
 
   """
   def delete_file_conversion(%FileConversion{} = file_conversion) do
+    File.delete_attachment(file_conversion)
     Repo.delete(file_conversion)
   end
 

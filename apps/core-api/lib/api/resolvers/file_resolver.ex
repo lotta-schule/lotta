@@ -111,6 +111,44 @@ defmodule Api.FileResolver do
 
   def files(_, _), do: {:ok, []}
 
+  def relevant_files_in_usage(_args, %{
+        context: %{current_user: current_user, tenant: %{id: tenant_id}}
+      }) do
+    category_files =
+      from f in Accounts.File,
+        join: c in Category,
+        where:
+          c.tenant_id == ^tenant_id and f.user_id == ^current_user.id and
+            c.banner_image_file_id == f.id
+
+    article_files =
+      from f in Accounts.File,
+        join: a in Article,
+        where:
+          a.tenant_id == ^tenant_id and f.user_id == ^current_user.id and
+            a.preview_image_file_id == f.id
+
+    article_cm_files =
+      from f in Accounts.File,
+        join: cmf in "content_module_file",
+        on: cmf.file_id == f.id,
+        join: cm in ContentModule,
+        on: cm.id == cmf.content_module_id,
+        join: a in Article,
+        on: a.id == cm.article_id,
+        where: a.tenant_id == ^tenant_id and f.user_id == ^current_user.id
+
+    combined_files =
+      [category_files, article_files, article_cm_files]
+      |> Enum.map(&Repo.all/1)
+      |> List.flatten()
+      |> Enum.uniq_by(& &1.id)
+
+    {:ok, combined_files}
+  end
+
+  def relevant_files_in_usage(_args, _context), do: {:error, "Du bist nicht angemeldet."}
+
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
         context: %{current_user: current_user, tenant: tenant}
       }) do
@@ -165,17 +203,7 @@ defmodule Api.FileResolver do
         |> Repo.preload([:parent_directory])
 
       if user_can_write_directory?(current_user, file.parent_directory) do
-        file =
-          file
-          |> Repo.preload(:file_conversions)
-
-        Enum.each(file.file_conversions, fn file_conversion ->
-          Accounts.delete_file_conversion(file_conversion)
-          Accounts.File.delete_attachment(file_conversion)
-        end)
-
         Accounts.delete_file(file)
-        Accounts.File.delete_attachment(file)
       else
         {:error, "Du darfst diese Datei nicht löschen."}
       end

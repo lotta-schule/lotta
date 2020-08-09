@@ -13,7 +13,7 @@ defmodule Api.UserResolverTest do
   alias Api.Repo.Seeder
   alias Api.Tenants
   alias Api.Tenants.{Tenant}
-  alias Api.Accounts.{Directory, User, UserGroup}
+  alias Api.Accounts.{Directory, File, User, UserGroup}
 
   setup do
     Seeder.seed()
@@ -23,6 +23,8 @@ defmodule Api.UserResolverTest do
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")
     evil_user = Repo.get_by!(User, email: "drevil@lotta.schule")
+
+    user_relevant_file = Repo.get_by!(File, filename: "wieartig1.jpg")
 
     {:ok, admin_jwt, _} =
       AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
@@ -42,7 +44,8 @@ defmodule Api.UserResolverTest do
        evil_user: evil_user,
        user_jwt: user_jwt,
        schueler_group: schueler_group,
-       lehrer_group: lehrer_group
+       lehrer_group: lehrer_group,
+       user_relevant_file: user_relevant_file
      }}
   end
 
@@ -1121,6 +1124,123 @@ defmodule Api.UserResolverTest do
                  }
                ]
              } = res
+    end
+  end
+
+  describe "destroy account mutation" do
+    @query """
+    mutation DestroyAccountMutation($transferFileIds: [ID!]) {
+      destroyAccount(transferFileIds: $transferFileIds) {
+        email
+      }
+    }
+    """
+    test "should return an error when user is not logged in", %{user_relevant_file: file} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> post("/api",
+          query: @query,
+          variables: %{transferFileIds: [file.id]}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{"destroyAccount" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du bist nicht angemeldet.",
+                   "path" => ["destroyAccount"],
+                   "locations" => [%{"column" => 3, "line" => 2}]
+                 }
+               ]
+             }
+    end
+
+    test "should successfully destroy the account without transferring files", %{
+      user_jwt: user_jwt,
+      user: user
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "destroyAccount" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
+                 }
+               }
+             } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(User, user.id)
+      end
+    end
+
+    test "should successfully destroy the account, transferring files", %{
+      user_jwt: user_jwt,
+      user: user,
+      user_relevant_file: file
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{transferFileIds: [file.id]}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "destroyAccount" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
+                 }
+               }
+             } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(User, user.id)
+      end
+
+      refetched_file = Repo.get!(File, file.id)
+      refute refetched_file.user_id
+    end
+
+    test "should successfully destroy the account, ignoring invalid file ids", %{
+      user_jwt: user_jwt,
+      user: user,
+      user_relevant_file: file
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:web")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{transferFileIds: [1, file.id]}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "destroyAccount" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
+                 }
+               }
+             } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(User, user.id)
+      end
+
+      refetched_file = Repo.get!(File, file.id)
+      refute refetched_file.user_id
     end
   end
 
