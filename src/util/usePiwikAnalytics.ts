@@ -1,5 +1,5 @@
-import useRouter from "use-react-router";
-import Matomo from "matomo-ts";
+import useRouter from 'use-react-router';
+import Matomo from 'matomo-ts';
 
 export const usePiwikAnalytics = () => {
     const { location } = useRouter();

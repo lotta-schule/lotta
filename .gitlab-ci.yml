@@ -45,10 +45,11 @@ build docker image:staging:
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL
       --build-arg CLOUDIMG_TOKEN
-      --build-arg HONEYBADGER_API_KEY
+      --build-arg SENTRY_DSN
       --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:staging
     - docker push lotta/web
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d '{ "version":"web-$CI_COMMIT_SHA", "refs":[{ "repository":"$CI_PROJECT_PATH", "commit":"$CI_COMMIT_SHA", "previousCommit":"$CI_COMMIT_BEFORE_SHA" }], "projects":["web"] } '
   only:
     refs:
       - develop
@@ -83,7 +84,7 @@ deploy:staging:
       --set resources.limits.memory=32Mi
       --set resources.requests.cpu=50m
       --set resources.requests.memory=32Mi
-    - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=staging&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/web-$CI_COMMIT_SHA/deploys/" -X POST -X POST -H 'Content-Type:application/json' -H "Authorization:Bearer $SENTRY_API_TOKEN" -d '{"environment":"staging"}'
   only:
     refs:
       - develop
@@ -103,10 +104,11 @@ build docker image:production:
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL
       --build-arg CLOUDIMG_TOKEN
-      --build-arg HONEYBADGER_API_KEY
+      --build-arg SENTRY_DSN
       --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:production
     - docker push lotta/web
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d '{ "version":"web-$CI_COMMIT_SHA", "refs":[{ "repository":"$CI_PROJECT_PATH", "commit":"$CI_COMMIT_SHA", "previousCommit":"$CI_COMMIT_BEFORE_SHA" }], "projects":["web"] } '
   only:
     refs:
       - master
@@ -141,7 +143,7 @@ deploy:production:
       --set resources.limits.memory=32Mi
       --set resources.requests.cpu=75m
       --set resources.requests.memory=32Mi
-    - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=production&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/web-$CI_COMMIT_SHA/deploys/" -X POST -X POST -H 'Content-Type:application/json' -H "Authorization:Bearer $SENTRY_API_TOKEN" -d '{"environment":"production"}'
   only:
     refs:
       - master
