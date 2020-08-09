@@ -15,7 +15,7 @@ describe('component/article/ProfileDeleteFileSelection', () => {
     // Dateiname.jpg, Animiert.gif, Manifest.pdf, Bilderbuch.pdf, Amelie.mp4, Kaenguru.wav, praesi.ppt
 
     it('should render an ProfileDeleteFileSelection', async () => {
-        const screen = render(
+        render(
             <ProfileDeleteFileSelection files={[]} selectedFiles={[]} onSelectFiles={() => {}} />,
         );
     });
