@@ -1,7 +1,6 @@
 import { LogoutMutation } from 'api/mutation/LogoutMutation';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { useHistory } from 'react-router-dom';
-import Matomo from 'matomo-ts';
 
 export const useOnLogout = () => {
     const apolloClient = useApolloClient();
@@ -9,13 +8,8 @@ export const useOnLogout = () => {
     const [logout] = useMutation(LogoutMutation, {
         onCompleted: () => {
             history.push('/');
-            if (window._paq) {
-                Matomo.default().resetUserId();
-            }
             localStorage.clear();
-            apolloClient.clearStore().then(() => {
-                apolloClient.resetStore();
-            });
+            apolloClient.resetStore();
         }
     });
 
