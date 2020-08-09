@@ -72,7 +72,7 @@ config :api, ApiWeb.Endpoint,
   url: [host: host],
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base,
-  live_view: [signing_salt: secret_signign_salt_live_view]
+  live_view: [signing_salt: secret_signing_salt_live_view]
 
 # ## Using releases (Elixir v1.9+)
 #
