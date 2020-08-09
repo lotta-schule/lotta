@@ -15,6 +15,7 @@ import {
 } from 'test/fixtures';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { ProfileDelete } from './ProfileDelete';
+import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
 
 // FIXME:
 // There are massive problems here with both of the queries (GetOwnArticles and GetRelevantFilesUsage)
@@ -80,10 +81,12 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
 
         expect(await screen.findByRole('progressbar')).toBeVisible();
 
-        expect(await screen.findByTestId('ProfileDeleteStep2Card')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByTestId('ProfileDeleteStep2Card')).toBeVisible();
+        });
 
         done();
-    });
+    }, 10_000);
 
     it('should be able to go to third page after having seen the first and the second one', async done => {
         const screen = await render(
@@ -127,7 +130,7 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
             expect(screen.getByTestId('ProfileDeleteStep3Card')).toBeVisible();
         });
         done();
-    });
+    }, 10_000);
 
     it('The third page should not show the ProfileDeleteFileSelection or the tab bar if user has no files', async done => {
         const screen = await render(
@@ -171,6 +174,75 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         expect(screen.queryByRole('tabpanel', { name: /dateien aus beiträgen übergeben/i})).toBeNull();
         expect(screen.queryByRole('tabpanel', { name: /alle dateien überprüfen/i})).toBeVisible();
         done();
-    });
+    }, 10_000);
+
+    it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async done => {
+        let didCallDeleteMutation = false;
+        const onChangeLocation = jest.fn(({ location }) => {
+            expect(location.pathname).toEqual('/');
+        });
+        const screen = await render(
+            <ProfileDelete />,
+            {},
+            {
+                currentUser: SomeUser,
+                useCache: true,
+                defaultPathEntries: ['/profile/delete'],
+                onChangeLocation,
+                additionalMocks: [
+                    {
+                        request: { query: DestroyAccountMutation },
+                        result: { data: { user: SomeUser } }
+                    },
+                    {
+                        request: { query: GetRelevantFilesInUsageQuery },
+                        result: { data: { files: [] } }
+                    },
+                    {
+                        request: { query: GetOwnArticlesQuery },
+                        result: () => {
+                            didCallDeleteMutation = true;
+                            return {
+                                data: {
+                                    articles: [
+                                        Weihnachtsmarkt,
+                                        Klausurenplan,
+                                        Schulfest,
+                                        VivaLaRevolucion,
+                                        ComputerExperten
+                                    ]
+                                }
+                            };
+                        }
+                    },
+                    {
+                        request: { query: GetDirectoriesAndFilesQuery, variables: { parentDirectoryId: null } },
+                        result: { data: { files: [], directories: rootDirectories } }
+                    }
+                ]
+            }
+        );
+
+        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        expect(await screen.findByRole('progressbar')).toBeVisible();
+        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        expect(await screen.findByTestId('ProfileDeleteStep3Card')).toBeInTheDocument();
+        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        expect(await screen.findByTestId('ProfileDeleteStep4Card')).toBeInTheDocument();
+        await userEvent.click(await screen.findByRole('button', { name: /endgültig löschen/i }));
+
+        expect(await screen.findByRole('dialog')).toBeVisible();
+
+        await userEvent.click(await screen.findByRole('button', { name: /endgültig löschen/i }));
+
+        await waitFor(() => {
+            expect(didCallDeleteMutation).toEqual(true);
+        });
+        await waitFor(() => {
+            expect(onChangeLocation).toHaveBeenCalled();
+        });
+
+        done();
+    }, 15_000);
 
 });

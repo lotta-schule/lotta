@@ -1,16 +1,22 @@
 import React, { memo, lazy, useState, useMemo, Suspense } from 'react';
 import {
-    Button, Card, CardContent, CardActions, Collapse, Grow, LinearProgress, Tabs, Tab, Typography, fade, makeStyles } from '@material-ui/core';
-import { ArticleModel, FileModel, ID } from 'model';
+    Button, Card, CardContent, CardActions, Collapse, DialogActions, DialogTitle, DialogContent, DialogContentText,
+    Grow, LinearProgress, Tabs, Tab, Typography, fade, makeStyles
+} from '@material-ui/core';
+import { ArticleModel, FileModel } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { GetRelevantFilesInUsageQuery } from 'api/query/GetRelevantFilesInUsage';
 import { useTenant } from 'util/client/useTenant';
+import { useOnLogout } from 'util/user/useOnLogout';
 import { Article } from 'util/model';
 import { ArticlesList } from 'component/profile/ArticlesList';
-import clsx from 'clsx';
 import { ProfileDeleteFileSelection } from './ProfileDeleteFileSelection';
+import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { useHistory } from 'react-router-dom';
+import clsx from 'clsx';
 const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
 
 enum ProfileDeleteStep {
@@ -45,11 +51,15 @@ export const useStyles = makeStyles(theme => ({
 export const ProfileDelete = memo(() => {
     const styles = useStyles();
 
+    const history = useHistory();
+    const onLogout = useOnLogout();
+
     const tenant = useTenant();
     const [selectedFilesToTransfer, setSelectedFilesToTransfer] = useState<FileModel[]>([]);
 
     const [currentStep, setCurrentStep] = useState<ProfileDeleteStep>(ProfileDeleteStep.Start);
     const [selectedFilesTab, setSelectedFilesTab] = useState(0);
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
     const { data: ownArticlesData, loading: isLoadingOwnArticles, error: ownArticlesError } = useQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery, {
         skip: currentStep !== ProfileDeleteStep.ReviewArticles,
@@ -83,7 +93,16 @@ export const ProfileDelete = memo(() => {
         onError: () => setCurrentStep(s => s - 1)
     });
 
-    const isLoading = isLoadingOwnArticles || isLoadingRelevantFiles;
+    const [destroyAccount, { loading: isLoadingDestroyAccount, error: destroyAccountError }] = useMutation(DestroyAccountMutation, {
+        variables: { transferFileIds: selectedFilesToTransfer.map(f => f.id) },
+        onCompleted: () => {
+            setIsConfirmDialogOpen(false);
+            onLogout({ update: () => { history.push('/'); } });
+        },
+        onError: () => setCurrentStep(s => s - 1)
+    });
+
+    const isLoading = isLoadingOwnArticles || isLoadingRelevantFiles || isLoadingDestroyAccount;
 
     const cardActions = useMemo(() => {
         const button =
@@ -105,7 +124,7 @@ export const ProfileDelete = memo(() => {
                     className={styles.deleteButton}
                     disabled={isLoading}
                     onClick={() => {
-                        setCurrentStep(s => s + 1);
+                        setIsConfirmDialogOpen(true);
                     }}
                 >
                         Daten endgültig löschen
@@ -278,7 +297,28 @@ export const ProfileDelete = memo(() => {
                     {cardActions}
                 </Card>
             </Collapse>
+            <ResponsiveFullScreenDialog
+                open={isConfirmDialogOpen}
+                onClose={() => setIsConfirmDialogOpen(false)}
+                aria-labelledby={'alert-dialog-title'}
+                aria-describedby={'alert-dialog-description'}
+            >
+                <DialogTitle id={'alert-dialog-title'}>Benutzerkonto wirklich löschen?</DialogTitle>
+                <DialogContent>
+                    <ErrorMessage error={destroyAccountError} />
+                    <DialogContentText id={'alert-dialog-description'}>
+                        Das Benutzerkonto wird endgültig und unwiederbringlich gelöscht. Daten können nicht wiederhergestellt werden.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setIsConfirmDialogOpen(false)} color={'primary'} autoFocus>
+                        Abbrechen
+                    </Button>
+                    <Button onClick={() => destroyAccount()} className={styles.deleteButton} disabled={isLoading}>
+                        Alle Daten endgültig löschen
+                    </Button>
+                </DialogActions>
+            </ResponsiveFullScreenDialog>
         </>
-
     );
 });
