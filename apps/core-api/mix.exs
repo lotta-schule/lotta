@@ -33,7 +33,6 @@ defmodule Api.MixProject do
     [
       mod: {Api.Application, []},
       extra_applications: [
-        :honeybadger,
         :lager,
         :logger,
         :runtime_tools,
@@ -81,7 +80,7 @@ defmodule Api.MixProject do
       {:gen_rmq, "~> 3.0.0"},
       {:ex_ical, "~> 0.2.0"},
       {:timex, "~> 3.0"},
-      {:honeybadger, "~> 0.14.0"},
+      {:sentry, "~> 8.0.1"},
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
       {:elasticsearch, "~> 1.0.0"},

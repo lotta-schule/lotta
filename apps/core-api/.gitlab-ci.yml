@@ -73,12 +73,14 @@ deploy staging:
     name: lotta/do-helm-deploy:latest
   script:
     - /user/local/bin/setup.sh
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d '{ "version":"api-$CI_COMMIT_SHA", "refs":[{ "repository":"$CI_PROJECT_PATH", "commit":"$CI_COMMIT_SHA", "previousCommit":"$CI_COMMIT_BEFORE_SHA" }], "projects":["api"] } '
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api lotta/lotta-api
       --namespace lotta-staging
       --set image.pullPolicy=Always
       --set appEnvironment=staging
+      --set appRevision=$CI_COMMIT_SHA
       --set loadFromBackup=true
       --set baseUrl=.staging.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
@@ -127,6 +129,7 @@ deploy staging:
       --set resources.limits.memory=386Mi
       --set resources.requests.cpu=200m
       --set resources.requests.memory=256Mi
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/api-$CI_COMMIT_SHA/deploys/" -X POST -X POST -H 'Content-Type:application/json' -H "Authorization:Bearer $SENTRY_API_TOKEN" -d '{"environment":"production"}'
   only:
     refs:
       - develop
@@ -139,11 +142,13 @@ deploy production:
     name: lotta/do-helm-deploy:latest
   script:
     - /user/local/bin/setup.sh
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d '{ "version":"api-$CI_COMMIT_SHA", "refs":[{ "repository":"$CI_PROJECT_PATH", "commit":"$CI_COMMIT_SHA", "previousCommit":"$CI_COMMIT_BEFORE_SHA" }], "projects":["api"] } '
     - helm repo add lotta https://medienportal.gitlab.io/helm-charts
     - helm repo update
     - helm upgrade --install lotta-api lotta/lotta-api
       --namespace lotta
       --set appEnvironment=production
+      --set appRevision=$CI_COMMIT_SHA
       --set baseUrl=.lotta.schule
       --set image.tag=$CI_COMMIT_SHA
       --set replicaCount=1
@@ -194,6 +199,7 @@ deploy production:
       --set resources.limits.memory=1536Mi
       --set resources.requests.cpu=200m
       --set resources.requests.memory=384Mi
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/api-$CI_COMMIT_SHA/deploys/" -X POST -X POST -H 'Content-Type:application/json' -H "Authorization:Bearer $SENTRY_API_TOKEN" -d '{"environment":"production"}'
   only:
     refs:
       - master
