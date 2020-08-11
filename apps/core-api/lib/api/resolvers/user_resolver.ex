@@ -186,7 +186,8 @@ defmodule Api.UserResolver do
 
       error ->
         try do
-          Honeybadger.notify(error, %{tenant: tenant, email: email})
+          Sentry.capture_message(inspect(error), extra: %{tenant: tenant, email: email})
+
           Logger.error("Error setting request password reset token")
           Logger.error(inspect(error))
         rescue

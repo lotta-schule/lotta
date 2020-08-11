@@ -7,10 +7,6 @@ defmodule ApiWeb.Router do
   import Plug.BasicAuth
   import Phoenix.LiveDashboard.Router
 
-  if Application.get_env(:honeybadger, :api_key) do
-    use Honeybadger.Plug
-  end
-
   pipeline :auth do
     plug ApiWeb.Auth.Pipeline
     plug ApiWeb.Context

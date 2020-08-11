@@ -45,7 +45,12 @@ config :api, Api.Elasticsearch.Cluster,
 
 config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
 
+config :sentry, []
+
 # Configures Elixir's Logger
+config :logger,
+  backends: [:console, Sentry.LoggerBackend]
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]

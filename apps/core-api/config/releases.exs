@@ -95,11 +95,19 @@ config :ex_aws, :s3,
   region: ugc_s3_compat_region,
   scheme: "https://"
 
-config :honeybadger,
-  api_key: System.get_env("HONEYBADGER_API_KEY"),
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN"),
   environment_name: String.to_atom(System.get_env("APP_ENVIRONMENT") || "staging"),
-  breadcrumbs_enabled: true,
-  ecto_repos: [Api.Repo]
+  included_environments: ~w(production staging),
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!(),
+  release:
+  case System.get_env("APP_ENVIRONMENT") do
+    "production" ->
+      to_string(Application.spec(:my_app, :vsn),
+    _ ->
+      System.get_env("APP_RELEASE")
+    )
 
 config :lager,
   error_logger_redirect: false,

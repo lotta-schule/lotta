@@ -3,6 +3,8 @@ defmodule ApiWeb.Endpoint do
   Phoenix endpoint configuration
   """
 
+  use Sentry.PlugCapture
+
   use Phoenix.Endpoint, otp_app: :api
 
   socket "/socket", ApiWeb.UserSocket,
@@ -37,6 +39,8 @@ defmodule ApiWeb.Endpoint do
     pass: ["*/*"],
     length: 1.5 * 1024 * 1024 * 1024,
     json_decoder: Poison
+
+  plug Sentry.PlugContext
 
   plug Plug.MethodOverride
   plug Plug.Head
