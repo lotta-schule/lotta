@@ -104,10 +104,10 @@ config :sentry,
   release:
   case System.get_env("APP_ENVIRONMENT") do
     "production" ->
-      to_string(Application.spec(:my_app, :vsn),
+      to_string(Application.spec(:my_app, :vsn)),
     _ ->
       System.get_env("APP_RELEASE")
-    )
+  end
 
 config :lager,
   error_logger_redirect: false,
