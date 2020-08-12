@@ -129,7 +129,7 @@ deploy staging:
       --set resources.limits.memory=386Mi
       --set resources.requests.cpu=200m
       --set resources.requests.memory=256Mi
-    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/api-$CI_COMMIT_SHA/deploys/" -X POST -X POST -H 'Content-Type:application/json' -H "Authorization:Bearer $SENTRY_API_TOKEN" -d '{"environment":"production"}'
+    - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/api-$CI_COMMIT_SHA/deploys/" -X POST -X POST -H 'Content-Type:application/json' -H "Authorization:Bearer $SENTRY_API_TOKEN" -d '{"environment":"staging"}'
   only:
     refs:
       - develop
