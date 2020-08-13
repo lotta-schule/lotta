@@ -14,6 +14,7 @@ import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
 import { Article as ArticleUtil } from 'util/model/Article';
 import clsx from 'clsx';
+import { theme } from 'theme';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(theme => ({
     container: {
@@ -30,9 +31,8 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(t
     },
     previewImage: {
         width: '100%',
-        maxHeight: 300,
+        height: ({ narrow }) => narrow ? 'auto' : '100%',
         objectFit: 'cover',
-        height: '100%',
         flexShrink: 0,
         flexGrow: 0,
         backgroundPosition: '0 0'
@@ -40,9 +40,17 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(t
     mainSection: {
         paddingLeft: theme.spacing(1.5),
         paddingRight: theme.spacing(1),
+        width: '70%',
         [theme.breakpoints.down('xs')]: {
             border: 0,
             padding: theme.spacing(0.5),
+            width: '100%',
+        }
+    },
+    imageSection: {
+        width: ({ narrow }) => narrow ? '100%' : '30%',
+        [theme.breakpoints.down('xs')]: {
+            width: ({ narrow }) => narrow ? '100%' : '100%'
         }
     },
     title: {
@@ -109,7 +117,7 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(t
         color: theme.palette.secondary.main,
         fontSize: '0.7rem',
         padding: '2px 4px',
-        marginBottom: theme.spacing(2),
+        marginBottom: theme.spacing(1.5),
         borderRadius: 4,
         maxWidth: 'max-content',
         fontFamily: theme.typography.fontFamily
@@ -155,17 +163,17 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
 
     return (
         <Container className={styles.container} data-testid="ArticlePreviewStandardLayout">
-            <Grid container style={{ height: '100%' }}>
-                <Grid item xs={12} sm={narrow ? 12 : 3} container>
+            <Grid container>
+                <Grid className={styles.imageSection} container>
                     {maybeLinked(article.previewImageFile && (
                         <img
                             className={styles.previewImage}
-                            src={`https://afdptjdxen.cloudimg.io/crop/400x300/foil1/${article.previewImageFile.remoteLocation}`}
+                            src={`https://afdptjdxen.cloudimg.io/bound/400x300/foil1/${article.previewImageFile.remoteLocation}`}
                             alt={`Vorschaubild zu ${article.title}`}
                         />
                     ))}
                 </Grid>
-                <Grid item xs={12} sm={9} className={styles.mainSection}>
+                <Grid className={styles.mainSection}>
                     <Typography gutterBottom className={styles.title}>
                         {maybeLinked(article.title)}
                     </Typography>
