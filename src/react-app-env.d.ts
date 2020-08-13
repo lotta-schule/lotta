@@ -7,7 +7,7 @@ declare namespace NodeJS {
         REACT_APP_APP_REVISION: string;
         REACT_APP_API_URL: string;
         REACT_APP_APP_BASE_DOMAIN: string;
-        REACT_APP_HONEYBADGER_API_KEY: string;
+        REACT_APP_SENTRY_DSN: string;
         REACT_APP_FILE_REPLACEMENT_URL: string;
     }
 }

@@ -53,20 +53,12 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                             spacing={1}
                             style={{ position: 'relative' }}
                         >
-                            {!contentModule.configuration?.hidePreviews && hasPreviewImage(file) && (
-                                <Grid item xs={2} style={{ position: 'relative' }}>
-                                    <BackgroundImg
-                                        style={{ width: '100%', height: '100%', background: 'transparent 50% 50% / cover no-repeat' }}
-                                        src={previewFile(file).remoteLocation}
-                                        params="func=crop&gravity=auto"
-                                    />
-                                </Grid>
-                            )}
-                            <Grid item xs={12} sm={3} md={2}>
+                            <Grid item xs={8} sm={3} md={3} style={{ alignSelf: 'center', }}>
                                 <Button
                                     fullWidth
                                     variant={'outlined'}
                                     color={'secondary'}
+                                    style={{ minWidth: 130, maxWidth: 160, }}
                                     component={'a'}
                                     href={File.getSameOriginUrl(file)}
                                     download={file.filename}
@@ -75,7 +67,16 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                     download
                                 </Button>
                             </Grid>
-                            <Grid item xs={12} sm={9} md={10}>
+                            {!contentModule.configuration?.hidePreviews && hasPreviewImage(file) && (
+                                <Grid item xs={4} sm={2} md={1} style={{ position: 'relative' }}>
+                                    <BackgroundImg
+                                        style={{ width: '100%', height: '100%', borderRadius: 4, background: 'transparent 50% 50% / cover no-repeat' }}
+                                        src={previewFile(file).remoteLocation}
+                                        params="func=crop&gravity=auto"
+                                    />
+                                </Grid>
+                            )}
+                            <Grid item xs={12} sm={7} md={8}>
                                 <div>
                                     {getConfiguration(file).description && (
                                         <Typography className={styles.downloadDescription}>

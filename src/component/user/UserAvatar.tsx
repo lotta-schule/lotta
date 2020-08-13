@@ -14,10 +14,10 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
 
 export const UserAvatar = memo<UserAvatarProps>(({ user, size, ...otherProps }) => {
     const retinaMultiplier = useIsRetina() ? 2 : 1;
-    const src = User.getAvatarUrl(user, size && (size * retinaMultiplier));
+    const src = User.getAvatarUrl(user, size ? (size * retinaMultiplier) : undefined);
 
     return (
-        <Avatar src={src} alt={user.name} {...otherProps} />
+        <Avatar src={src} alt={`Profilbild von ${User.getNickname(user)}`} {...otherProps} />
     );
 });
 

@@ -50,6 +50,7 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
     const { data, loading, error } = useQuery<{ user: UserModel }, { id: ID }>(GetUserQuery, {
         variables: { id: user.id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-first'
     });
     const [setUserGroups, { error: setUserGroupsError }] = useMutation<{ user: UserModel }, { id: ID, groupIds: ID[] }>(
         SetUserGroupsMutation, {

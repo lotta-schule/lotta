@@ -4,11 +4,11 @@ import { Card, CardContent, Typography, CircularProgress } from '@material-ui/co
 import { useQuery } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ArticlesManagement } from 'component/profile/ArticlesManagement';
+import { ArticlesList } from 'component/profile/ArticlesList';
 
 export const ProfileArticles = memo(() => {
 
-    const { data: ownArticlesData, loading: isLoading, error } = useQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
+    const { data, loading: isLoading, error } = useQuery<{ articles: ArticleModel[] }>(GetOwnArticlesQuery);
 
     return (
         <Card>
@@ -19,12 +19,8 @@ export const ProfileArticles = memo(() => {
                     <CircularProgress />
                 )}
 
-                {ownArticlesData?.articles && (
-                    <ArticlesManagement
-                        articles={[...ownArticlesData.articles].sort((a1, a2) =>
-                            new Date(a2.updatedAt).getTime() - new Date(a1.updatedAt).getTime()
-                        )}
-                    />
+                {data?.articles && (
+                    <ArticlesList articles={data.articles} />
                 )}
             </CardContent>
         </Card>

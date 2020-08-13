@@ -34,7 +34,7 @@ export interface FileModel {
     remoteLocation: string;
     mimeType: string;
     fileType: FileModelType;
-    parentDirectory?: Partial<DirectoryModel>
+    parentDirectory: Partial<DirectoryModel>
     fileConversions: FileConversion[];
     usage?: FileModelUsageLocation[];
 }

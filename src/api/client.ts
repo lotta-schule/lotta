@@ -132,15 +132,15 @@ const apolloClient = new ApolloClient({
     cache: new InMemoryCache(),
 });
 
-apolloClient.writeQuery({
-    query: gql`{ isMobileDrawerOpen }`,
-    data: { isMobileDrawerOpen: false }
-});
-apolloClient.onResetStore(async () => {
+const writeDefaults = () => {
     apolloClient.writeQuery({
         query: gql`{ isMobileDrawerOpen }`,
         data: { isMobileDrawerOpen: false }
     });
+};
+writeDefaults();
+apolloClient.onResetStore(async () => {
+    writeDefaults();
 });
 
 export const client = apolloClient;

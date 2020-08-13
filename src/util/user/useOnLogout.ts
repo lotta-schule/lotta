@@ -1,24 +1,15 @@
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
-import { UserModel } from 'model';
 import { LogoutMutation } from 'api/mutation/LogoutMutation';
 import { useApolloClient, useMutation } from '@apollo/client';
-import Matomo from 'matomo-ts';
+import { useHistory } from 'react-router-dom';
 
 export const useOnLogout = () => {
     const apolloClient = useApolloClient();
+    const history = useHistory();
     const [logout] = useMutation(LogoutMutation, {
         onCompleted: () => {
-            if (window._paq) {
-                Matomo.default().resetUserId();
-            }
-            apolloClient.resetStore();
+            history.push('/');
             localStorage.clear();
-            apolloClient.writeQuery<{ currentUser: UserModel | null }>({
-                query: GetCurrentUserQuery,
-                data: {
-                    currentUser: null
-                }
-            });
+            apolloClient.resetStore();
         }
     });
 
