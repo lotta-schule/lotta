@@ -86,11 +86,11 @@ deploy:review:
       --set ingress.hosts[0].host="*.$CI_ENVIRONMENT_SLUG.lotta.schule"
       --set ingress.hosts[0].paths[0]=/
       --set ingress.tls[0].hosts[0]="*.$CI_ENVIRONMENT_SLUG.lotta.schule"
+      --set ingress.tls[0].secretName="$CI_ENVIRONMENT_SLUG-web-tls-cert"
       --set resources.limits.cpu=50m
       --set resources.limits.memory=32Mi
       --set resources.requests.cpu=50m
       --set resources.requests.memory=32Mi
-    - curl -g "https://api.honeybadger.io/v1/deploys?deploy[environment]=review&deploy[repository]=$CI_REPOSITORY_URL&deploy[revision]=$CI_COMMIT_SHA&api_key=$HONEYBADGER_API_KEY"
   except:
     refs:
       - develop
