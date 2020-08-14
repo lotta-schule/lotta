@@ -47,9 +47,9 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(t
         }
     },
     imageSection: {
-        width: ({ narrow }) => narrow ? '100%' : '30%',
-        [theme.breakpoints.down('xs')]: {
-            width: '100%'
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            width: ({ narrow }) => narrow ? '100%' : '30%'
         }
     },
     title: {
