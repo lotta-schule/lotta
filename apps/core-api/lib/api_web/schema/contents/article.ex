@@ -84,5 +84,6 @@ defmodule ApiWeb.Schema.Contents.Article do
     value(:audio, as: "audio")
     value(:download, as: "download")
     value(:form, as: "form")
+    value(:table, as: "table")
   end
 end
