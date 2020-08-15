@@ -185,3 +185,38 @@ export const Klausurenplan = {
     topic: 'La Revolucion',
     category: null
 };
+
+export const LehrerListe = {
+    id: '5',
+    contentModules: [
+        {
+            id: '10155',
+            sortKey: 0,
+            type: ContentModuleType.TABLE,
+            content: {
+                rows: [
+                    [{ text: 'Kürzel' }, { text: 'Name' }],
+                    [{ text: 'LAb' }, { text: 'Lehrer Ah' }],
+                    [{ text: 'LeB' }, { text: 'Lehrer Be' }],
+                    [{ text: 'LZe' }, { text: 'Lehrer C' }],
+                    [{ text: 'LDy' }, { text: 'Lehrer D' }],
+                    [{ text: 'LÄh' }, { text: 'Lehrer E' }],
+                    [{ text: 'LeF' }, { text: 'Lehrer F' }],
+                ]
+            },
+            configuration: {},
+            files: []
+        }
+    ],
+    users: [],
+    groups: [],
+    insertedAt: '2020-06-01T19:00:00.000Z',
+    updatedAt: '2020-07-11T20:00:00.000Z',
+    isPinnedToTop: false,
+    readyToPublish: true,
+    title: 'Lehrerliste',
+    preview: 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
+    previewImageFile: null,
+    topic: null,
+    category: null
+};
