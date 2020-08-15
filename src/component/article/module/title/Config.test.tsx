@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 
 const titleContentModule = Klausurenplan.contentModules[0];
 
-describe('component/article/module/table/Config', () => {
+describe('component/article/module/title/Config', () => {
 
     it('should render without an error', () => {
         render(<Config contentModule={titleContentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />);

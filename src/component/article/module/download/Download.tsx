@@ -53,7 +53,7 @@ export const useStyles = makeStyles(theme => ({
     }
 }));
 export const Download = memo<DownloadProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent>
+    <CardContent data-testid="DownloadContentModule">
         {isEditModeEnabled && onUpdateModule && (
             <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
         )}

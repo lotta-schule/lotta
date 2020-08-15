@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { FormControl, FormControlLabel, Checkbox } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -16,7 +16,7 @@ interface ConfigProps {
     onRequestClose(): void;
 }
 
-export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule }) => {
+export const Config = memo<ConfigProps>(({ contentModule, onUpdateModule }) => {
 
     const hidePreviews = get(contentModule.configuration, 'hidePreviews', false);
     const styles = useStyles();
@@ -28,7 +28,7 @@ export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onU
                 control={(
                     <Checkbox
                         checked={!hidePreviews}
-                        onChange={(_, checked) => 
+                        onChange={(_, checked) =>
                             onUpdateModule({
                                 ...contentModule,
                                 configuration: {
