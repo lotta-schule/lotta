@@ -40,6 +40,7 @@ build docker image:review:
     name: review/$CI_COMMIT_REF_NAME
   script:
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker pull lotta/web:staging
     - docker build -t lotta/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=review/$CI_COMMIT_REF_NAME
       --build-arg APP_REVISION=$CI_COMMIT_SHA
@@ -128,6 +129,7 @@ build docker image:staging:
     name: staging
   script:
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker pull lotta/web:staging
     - docker build -t lotta/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=staging
       --build-arg APP_REVISION=$CI_COMMIT_SHA
@@ -187,6 +189,7 @@ build docker image:production:
     name: production
   script:
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker pull lotta/web:production
     - docker build -t lotta/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=production
       --build-arg APP_REVISION=$CI_COMMIT_SHA
