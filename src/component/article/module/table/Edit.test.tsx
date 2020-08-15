@@ -1,8 +1,8 @@
 import React from 'react';
-import { UserGroupModel } from 'model';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, fireEvent } from 'test/util';
 import { LehrerListe } from 'test/fixtures';
 import { Edit } from './Edit';
+import { excelPasteTransfer, numbersPasteTransfer } from './mockData';
 import userEvent from '@testing-library/user-event';
 
 const tableContentModule = LehrerListe.contentModules[0];
@@ -208,6 +208,88 @@ describe('component/article/module/table/Edit', () => {
                 expect(screen.container.querySelector('[data-row="7"][data-column="0"]')).toHaveFocus();
                 done();
             });
+        });
+    });
+
+    describe('pasting from other application', () => {
+
+        it('should paste from excel to top-most upper-left corner', async done => {
+            const callback = jest.fn(cm => {
+                expect(cm.content).toEqual({
+                    rows: [
+                        [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
+                        [{ text: 'D' }, { text: 'E' }, { text: 'F' }],
+                        [{ text: 'G' }, { text: 'H' }, { text: 'I' }],
+                        [{ text: 'LZe' }, { text: 'Lehrer C' }, { text: '' }],
+                        [{ text: 'LDy' }, { text: 'Lehrer D' }, { text: '' }],
+                        [{ text: 'LÄh' }, { text: 'Lehrer E' }, { text: '' }],
+                        [{ text: 'LeF' }, { text: 'Lehrer F' }, { text: '' }],
+                    ]
+                });
+            });
+            const screen = render(
+                <Edit contentModule={tableContentModule} onUpdateModule={callback} />
+            );
+            const upperLeftInput = screen.getByDisplayValue('Kürzel');
+            await userEvent.click(upperLeftInput);
+            await fireEvent.paste(upperLeftInput, { clipboardData: excelPasteTransfer });
+            await waitFor(() => {
+                expect(callback).toHaveBeenCalled();
+            });
+            done();
+        });
+
+        it('should paste from numbers to top-most upper-left corner', async done => {
+            const callback = jest.fn(cm => {
+                expect(cm.content).toEqual({
+                    rows: [
+                        [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
+                        [{ text: 'D' }, { text: 'E' }, { text: 'F' }],
+                        [{ text: 'G' }, { text: 'H' }, { text: 'I' }],
+                        [{ text: 'LZe' }, { text: 'Lehrer C' }, { text: '' }],
+                        [{ text: 'LDy' }, { text: 'Lehrer D' }, { text: '' }],
+                        [{ text: 'LÄh' }, { text: 'Lehrer E' }, { text: '' }],
+                        [{ text: 'LeF' }, { text: 'Lehrer F' }, { text: '' }],
+                    ]
+                });
+            });
+            const screen = render(
+                <Edit contentModule={tableContentModule} onUpdateModule={callback} />
+            );
+            const upperLeftInput = screen.getByDisplayValue('Kürzel');
+            await userEvent.click(upperLeftInput);
+            await fireEvent.paste(upperLeftInput, { clipboardData: numbersPasteTransfer });
+            await waitFor(() => {
+                expect(callback).toHaveBeenCalled();
+            });
+            done();
+        });
+
+        it('should expand the current grid if pastet to the bottom right corner', async done => {
+            const callback = jest.fn(cm => {
+                expect(cm.content).toEqual({
+                    rows: [
+                        [{ text: 'Kürzel' }, { text: 'Name' }, { text: '' }, { text: '' }],
+                        [{ text: 'LAb' }, { text: 'Lehrer Ah' }, { text: '' }, { text: '' }],
+                        [{ text: 'LeB' }, { text: 'Lehrer Be' }, { text: '' }, { text: '' }],
+                        [{ text: 'LZe' }, { text: 'Lehrer C' }, { text: '' }, { text: '' }],
+                        [{ text: 'LDy' }, { text: 'Lehrer D' }, { text: '' }, { text: '' }],
+                        [{ text: 'LÄh' }, { text: 'A' }, { text: 'B' }, { text: 'C' }],
+                        [{ text: 'LeF' }, { text: 'D' }, { text: 'E' }, { text: 'F' }],
+                        [{ text: '' }, { text: 'G' }, { text: 'H' }, { text: 'I' }],
+                    ]
+                });
+            });
+            const screen = render(
+                <Edit contentModule={tableContentModule} onUpdateModule={callback} />
+            );
+            const bottomRightInput = screen.getByDisplayValue('Lehrer E');
+            await userEvent.click(bottomRightInput);
+            await fireEvent.paste(bottomRightInput, { clipboardData: numbersPasteTransfer });
+            await waitFor(() => {
+                expect(callback).toHaveBeenCalled();
+            });
+            done();
         });
     });
 });

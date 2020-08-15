@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useLayoutEffect, useMemo, useState, useRef, KeyboardEvent } from 'react';
+import React, { memo, useEffect, useLayoutEffect, useMemo, useState, useRef, ClipboardEvent, KeyboardEvent } from 'react';
 import { IconButton, Table, TableBody, TableCell, TableRow, TextField, makeStyles, Tooltip, TextFieldProps } from '@material-ui/core';
 import { SkipPrevious, SkipNext, ExpandLess, ExpandMore } from '@material-ui/icons';
 import { range } from 'lodash';
@@ -105,6 +105,57 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 } else {
                     e.preventDefault();
                     tableRef.current!.querySelector<HTMLInputElement>(`[data-row="${row}"][data-column="${parseInt(column, 10) + 1}"]`)?.focus();
+                }
+            }
+        }
+    };
+
+    const onCellPaste = (e: ClipboardEvent<HTMLDivElement>) => {
+        if (e.clipboardData.types.indexOf('text/html') > -1) {
+            // if user is pasting an html table
+            // table calculation programs like Excel or Numbers do provide copied data as html (next to other formats),
+            // so this allows pasting from Excel or Numbers
+            const htmlContent = e.clipboardData.getData('text/html');
+            const container = document.createElement('html');
+            container.innerHTML = htmlContent;
+            const table = container.querySelector('table');
+            if (table) {
+                const convertedRows =
+                    Array.from(table.querySelectorAll('tr'))
+                    .map(trEl => Array.from(trEl.cells).map(tdEl => ({ text: tdEl.textContent?.trim() ?? '' })))
+                const convertedRowCount = convertedRows.length;
+                const convertedColumnCount = Math.max(...convertedRows.map(row => row.length));
+
+                const relativePastePosition = {
+                    row: parseInt(e.currentTarget.querySelector<HTMLInputElement>('[data-row]')!.dataset.row!, 10),
+                    column: parseInt(e.currentTarget.querySelector<HTMLInputElement>('[data-row]')!.dataset.column!, 10)
+                };
+                const newTableDimensions = {
+                    rowsCount: Math.max(rowCount, relativePastePosition.row + convertedRowCount),
+                    columnCount: Math.max(columnCount, relativePastePosition.column + convertedColumnCount)
+                };
+                if (convertedRowCount > 0 && convertedColumnCount > 0) {
+                    e.preventDefault();
+                    onUpdateModule({
+                        ...contentModule,
+                        content: {
+                            rows: range(newTableDimensions.rowsCount).map((rowI) => (
+                                range(newTableDimensions.columnCount).map((colI) => {
+                                    const convertedCellAtPosition = convertedRows[rowI - relativePastePosition.row]?.[colI - relativePastePosition.column];
+                                    const contentCellAtPosition = contentRows[rowI]?.[colI];
+                                    if (convertedCellAtPosition) {
+                                        return convertedCellAtPosition;
+                                    } else {
+                                        return {
+                                            // @ts-ignore
+                                            text: '',
+                                            ...contentCellAtPosition
+                                        };
+                                    }
+                                })
+                            ))
+                        }
+                    });
                 }
             }
         }
@@ -224,6 +275,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                                             position={{ row: rowIndex, column: columnIndex }}
                                             cell={contentRows[rowIndex][columnIndex]}
                                             onKeyDown={onCellKeyDown}
+                                            onPaste={onCellPaste}
                                             onChange={updatedCell => {
                                                 onUpdateModule({
                                                     ...contentModule,
