@@ -5,15 +5,11 @@ export class DataTransfer {
 
     public setData(key: string, val: string) { this.data[key] = val; }
     public getData(key: string) { return this.data[key]; }
-    public clearData() { this.data = {}; }
 
     public setDragImage = () => {};
 
     public get types() {
         return Object.keys(this.data);
-    }
-    public get items(): any {
-        return {};
     }
 
     public dropEffect = 'none';

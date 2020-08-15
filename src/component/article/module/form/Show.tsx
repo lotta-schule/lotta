@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 export const Show = memo<ShowProps>(({ contentModule }) => {
     const styles = useStyles();
     const [sendFormResponse, { loading: isLoading, data }] = useMutation(SendFormResponseMutation)
-    const configuration: FormConfiguration = { destination: '', elements: [], ...contentModule.configuration };
+    const configuration: FormConfiguration = useMemo(() => ({ destination: '', elements: [], ...contentModule.configuration }), [contentModule.configuration]);
     const [formData, setFormData] = useState<any>({});
     const formRef = useRef<HTMLFormElement | null>(null);
 

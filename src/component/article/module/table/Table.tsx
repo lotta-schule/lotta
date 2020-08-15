@@ -35,13 +35,13 @@ const useStyles = makeStyles(theme => ({
 export const Table = memo<TableProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
     const styles = useStyles();
     return (
-    <CardContent className={styles.root} data-testid="TableContentModule">
-        {isEditModeEnabled && onUpdateModule && (
-            <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-        )}
-        {(!isEditModeEnabled || !onUpdateModule) && (
-            <Show contentModule={contentModule} />
-        )}
-    </CardContent>
+        <CardContent className={styles.root} data-testid="TableContentModule">
+            {isEditModeEnabled && onUpdateModule && (
+                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+            )}
+            {(!isEditModeEnabled || !onUpdateModule) && (
+                <Show contentModule={contentModule} />
+            )}
+        </CardContent>
     );
 });
