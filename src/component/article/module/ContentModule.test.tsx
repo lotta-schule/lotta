@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, waitFor } from 'test/util';
 import { ContentModuleType } from 'model';
-import { Klausurenplan, ComputerExperten, imageFile, otherImageFile } from 'test/fixtures';
+import { Klausurenplan, ComputerExperten } from 'test/fixtures';
 import { ContentModule } from './ContentModule';
-import userEvent from '@testing-library/user-event';
 import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
+import userEvent from '@testing-library/user-event';
 
 
 describe('component/article/module/ContentModule', () => {
