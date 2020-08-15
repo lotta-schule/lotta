@@ -51,7 +51,7 @@ export const Config = memo<ConfigProps>(({ contentModule, onUpdateModule, onRequ
     const styles = useStyles();
 
     return (
-        <form>
+        <form data-testid="ImageCollectionContentModuleConfiguration">
             <FormControl fullWidth className={styles.formControl}>
                 <InputLabel htmlFor="image-style">Stil</InputLabel>
                 <Select

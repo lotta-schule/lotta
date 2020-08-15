@@ -22,7 +22,7 @@ export const Config = memo<ConfigProps>(({ contentModule, onUpdateModule }) => {
     const styles = useStyles();
 
     return (
-        <form>
+        <form data-testid="DownloadContentModuleConfiguration">
             <FormControl className={styles.formControl}>
             <FormControlLabel
                 control={(

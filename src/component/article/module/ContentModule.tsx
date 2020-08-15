@@ -132,13 +132,14 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                             <IconButton
                                 classes={{ root: styles.dragbarButton }}
                                 style={{ position: 'absolute', top: 0, right: 0 }}
-                                aria-label="Settings"
+                                aria-label="Einstellungen"
                                 {...bindTrigger(popupState)}
                             >
                                 <MoreVert className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: popupState.isOpen })} />
                             </IconButton>
                             <Popover
                                 {...bindPopover(popupState)}
+                                aria-label={'Einstellungen'}
                                 anchorOrigin={{
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -158,7 +159,7 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                                     <Button
                                         color={'primary'}
                                         startIcon={<Delete className={clsx(styles.buttonIcon)} />}
-                                        aria-label={'Delete'}
+                                        aria-label={'Modul löschen'}
                                         style={{ float: 'right' }}
                                         onClick={() => onRemoveContentModule()}
                                     >
@@ -168,8 +169,7 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                             </Popover>
                         </span>
                     </div>
-                )
-                }
+                )}
                 {contentModule.type === ContentModuleType.TITLE && (
                     <Title
                         contentModule={contentModule}

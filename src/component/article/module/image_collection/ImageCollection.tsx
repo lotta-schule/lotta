@@ -56,7 +56,7 @@ export const ImageCollection: FunctionComponent<ImageProps> = memo(({ isEditMode
     // TODO Migration Part /END
 
     return (
-        <CardContent>
+        <CardContent data-testid="ImageCollectionContentModule">
             {imageStyle === ImageStyle.GALLERY && (
                 <Gallery isEditModeEnabled={!!isEditModeEnabled} contentModule={shownContentModule} onUpdateModule={onUpdateModule} />
             )}

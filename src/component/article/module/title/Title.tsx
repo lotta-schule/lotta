@@ -24,13 +24,13 @@ const useStyles = makeStyles(theme => ({
 export const Title = memo<TitleProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
     const styles = useStyles();
     return (
-    <CardContent className={styles.root} data-testid="TitleContentModule">
-        {isEditModeEnabled && onUpdateModule && (
-            <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-        )}
-        {(!isEditModeEnabled || !onUpdateModule) && (
-            <Show contentModule={contentModule} />
-        )}
-    </CardContent>
+        <CardContent className={styles.root} data-testid="TitleContentModule">
+            {isEditModeEnabled && onUpdateModule && (
+                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+            )}
+            {(!isEditModeEnabled || !onUpdateModule) && (
+                <Show contentModule={contentModule} />
+            )}
+        </CardContent>
     );
 });

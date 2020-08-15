@@ -22,7 +22,7 @@ export const Config = memo<ConfigProps>(({ contentModule, onUpdateModule, onRequ
     const styles = useStyles();
 
     return (
-        <form>
+        <form data-testid="TitleContentModuleConfiguration">
             <FormControl className={styles.formControl}>
                 <InputLabel htmlFor="heading-level">Überschrifgrößen (1-3)</InputLabel>
                 <Select
