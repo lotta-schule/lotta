@@ -1,7 +1,7 @@
 import React, { FunctionComponent, memo } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, Grid } from '@material-ui/core';
-import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined, Feedback } from '@material-ui/icons';
+import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined, Feedback, TableChart } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType, ID } from 'model';
 import { AddModuleButton } from './AddModuleButton';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -73,6 +73,60 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                 </Grid>
                 <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
+                        label={'Dateien'}
+                        icon={<FileCopyOutlined />}
+                        onClick={() => {
+                            onAddModule({
+                                id: createId(),
+                                sortKey: null!,
+                                type: ContentModuleType.DOWNLOAD,
+                                content: null,
+                                files: [],
+                            });
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={4} sm={3} md={2}>
+                    <AddModuleButton
+                        label={'Formular'}
+                        icon={<Feedback />}
+                        onClick={() => {
+                            onAddModule({
+                                id: createId(),
+                                sortKey: null!,
+                                type: ContentModuleType.FORM,
+                                configuration: { destination: currentUser!.email, save_internally: true, elements: [] },
+                                content: null,
+                                files: [],
+                            });
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={4} sm={3} md={2}>
+                    <AddModuleButton
+                        label={'Tabelle'}
+                        icon={<TableChart />}
+                        onClick={() => {
+                            onAddModule({
+                                id: createId(),
+                                sortKey: null!,
+                                type: ContentModuleType.TABLE,
+                                configuration: {
+                                    headRow: true
+                                },
+                                content: {
+                                    rows: [
+                                        [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
+                                        [{ text: '1' }, { text: '2' }, { text: '3' }]
+                                    ]
+                                },
+                                files: [],
+                            });
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={4} sm={3} md={2}>
+                    <AddModuleButton
                         label={'Bild'}
                         icon={<Image />}
                         onClick={() => {
@@ -125,37 +179,6 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: createId(),
                                 sortKey: null!,
                                 type: ContentModuleType.AUDIO,
-                                content: null,
-                                files: [],
-                            });
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={4} sm={3} md={2}>
-                    <AddModuleButton
-                        label={'Dateien'}
-                        icon={<FileCopyOutlined />}
-                        onClick={() => {
-                            onAddModule({
-                                id: createId(),
-                                sortKey: null!,
-                                type: ContentModuleType.DOWNLOAD,
-                                content: null,
-                                files: [],
-                            });
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={4} sm={3} md={2}>
-                    <AddModuleButton
-                        label={'Formular'}
-                        icon={<Feedback />}
-                        onClick={() => {
-                            onAddModule({
-                                id: createId(),
-                                sortKey: null!,
-                                type: ContentModuleType.FORM,
-                                configuration: { destination: currentUser!.email, save_internally: true, elements: [] },
                                 content: null,
                                 files: [],
                             });
