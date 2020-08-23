@@ -1,6 +1,6 @@
 defmodule ApiWeb.SitemapPlug do
   @moduledoc """
-    Phoenix Plug which returns a valid XML sitemap for a given tenant
+    Phoenix Plug which returns a valid XML sitemap
   """
 
   import Plug.Conn
@@ -13,56 +13,30 @@ defmodule ApiWeb.SitemapPlug do
   def init(opts), do: opts
 
   def call(conn, _) do
-    tenant =
-      case get_req_header(conn, "tenant") do
-        ["slug:" <> slug] ->
-          Tenants.get_tenant_by_slug(slug)
+    query_params =
+      conn
+      |> fetch_query_params()
+      |> Map.fetch!(:params)
+
+    conn
+    |> put_resp_content_type("application/xml")
+    |> send_resp(
+      200,
+      case query_params do
+        %{"categories" => nil} ->
+          get_categories_body(conn)
+
+        %{"articles" => nil, "date" => date} ->
+          get_articles_body(conn, Date.from_iso8601!(date))
 
         _ ->
-          case get_req_header(conn, "host") do
-            [host] ->
-              Tenants.get_tenant_by_origin("https://" <> host)
-
-            _ ->
-              # only for testing
-              Tenants.get_tenant_by_slug("ehrenberg")
-          end
+          get_index_body(conn)
       end
-
-    case tenant do
-      nil ->
-        conn
-        |> put_resp_content_type("text/plain")
-        |> send_resp(404, "Not Found")
-
-      tenant ->
-        query_params =
-          conn
-          |> fetch_query_params()
-          |> Map.fetch!(:params)
-
-        conn
-        |> put_resp_content_type("application/xml")
-        |> send_resp(
-          200,
-          case query_params do
-            %{"categories" => nil} ->
-              get_categories_body(conn, tenant)
-
-            %{"articles" => nil, "date" => date} ->
-              get_articles_body(conn, tenant, Date.from_iso8601!(date))
-
-            _ ->
-              get_index_body(conn)
-          end
-        )
-    end
+    )
   end
 
-  defp get_categories_body(conn, %Tenant{} = tenant) do
-    categories =
-      tenant
-      |> Tenants.list_categories_by_tenant(nil, [], false)
+  defp get_categories_body(conn) do
+    categories = Tenants.list_categories(nil, [], false)
 
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <>
       "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n" <>
@@ -79,10 +53,8 @@ defmodule ApiWeb.SitemapPlug do
       "</urlset>"
   end
 
-  defp get_articles_body(conn, %Tenant{} = tenant, date) do
-    query =
-      tenant
-      |> Content.list_public_articles(nil, [], false)
+  defp get_articles_body(conn, date) do
+    query = Content.list_public_articles(nil, [], false)
 
     articles =
       from(

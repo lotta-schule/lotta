@@ -110,6 +110,5 @@ defmodule ApiWeb.Schema.Accounts.File do
 
   object :file_tenant_usage_location do
     field :usage, :string
-    field :tenant, :tenant
   end
 end

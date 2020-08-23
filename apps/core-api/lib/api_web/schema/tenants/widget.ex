@@ -17,7 +17,6 @@ defmodule ApiWeb.Schema.Tenants.Widget do
     field :configuration, :json
     field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
-    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
   end
 
   input_object :widget_input do

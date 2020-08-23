@@ -14,24 +14,18 @@ defmodule Api.Repo.Seeder do
     # add "lotta.web" as custom domain
     |> Repo.insert!()
 
-    lotta_tenant = Repo.insert!(%Tenant{slug: "lotta", title: "Lotta"})
-
     admin_group =
       Repo.insert!(%UserGroup{
-        tenant_id: web_tenant.id,
         name: "Administration",
         is_admin_group: true,
         sort_key: 1000
       })
 
-    verwaltung_group =
-      Repo.insert!(%UserGroup{tenant_id: web_tenant.id, name: "Verwaltung", sort_key: 800})
+    verwaltung_group = Repo.insert!(%UserGroup{name: "Verwaltung", sort_key: 800})
 
-    lehrer_group =
-      Repo.insert!(%UserGroup{tenant_id: web_tenant.id, name: "Lehrer", sort_key: 600})
+    lehrer_group = Repo.insert!(%UserGroup{name: "Lehrer", sort_key: 600})
 
-    schueler_group =
-      Repo.insert!(%UserGroup{tenant_id: web_tenant.id, name: "Schüler", sort_key: 400})
+    schueler_group = Repo.insert!(%UserGroup{name: "Schüler", sort_key: 400})
 
     Ecto.build_assoc(lehrer_group, :enrollment_tokens)
     |> Map.put(:token, "LEb0815Hp!1969")
@@ -45,8 +39,7 @@ defmodule Api.Repo.Seeder do
       Accounts.register_user(%{
         name: "Alexis Rinaldoni",
         email: "alexis.rinaldoni@einsa.net",
-        password: "test123",
-        tenant_id: web_tenant.id
+        password: "test123"
       })
 
     {:ok, alexis} =
@@ -54,8 +47,7 @@ defmodule Api.Repo.Seeder do
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
         email: "alexis.rinaldoni@lotta.schule",
-        password: "test123",
-        tenant_id: web_tenant.id
+        password: "test123"
       })
 
     {:ok, _billy} =
@@ -64,7 +56,6 @@ defmodule Api.Repo.Seeder do
         nickname: "Billy",
         email: "billy@lotta.schule",
         password: "test123",
-        tenant_id: web_tenant.id,
         enrollment_tokens: ["Seb034hP2?019"]
       })
 
@@ -73,8 +64,7 @@ defmodule Api.Repo.Seeder do
         name: "Eike Wiewiorra",
         nickname: "Chef",
         email: "eike.wiewiorra@lotta.schule",
-        password: "test123",
-        tenant_id: web_tenant.id
+        password: "test123"
       })
 
     {:ok, dr_evil} =
@@ -82,56 +72,50 @@ defmodule Api.Repo.Seeder do
         name: "Dr Evil",
         nickname: "drEvil",
         email: "drevil@lotta.schule",
-        password: "test123",
-        tenant_id: web_tenant.id
+        password: "test123"
       })
 
     Accounts.register_user(%{
       name: "Max Mustermann",
       nickname: "MaXi",
       email: "maxi@lotta.schule",
-      password: "test123",
-      tenant_id: web_tenant.id
+      password: "test123"
     })
 
     Accounts.register_user(%{
       name: "Dorothea Musterfrau",
       nickname: "Doro",
       email: "doro@lotta.schule",
-      password: "test123",
-      tenant_id: web_tenant.id
+      password: "test123"
     })
 
     Accounts.register_user(%{
       name: "Marie Curie",
       nickname: "Polonium",
       email: "mcurie@lotta.schule",
-      password: "test456",
-      tenant_id: lotta_tenant.id
+      password: "test456"
     })
 
-    Accounts.set_user_groups(alexis, web_tenant, [admin_group])
-    Accounts.set_user_groups(eike, web_tenant, [lehrer_group])
+    Accounts.set_user_groups(alexis, [admin_group])
+    Accounts.set_user_groups(eike, [lehrer_group])
 
-    Accounts.set_user_blocked(dr_evil, web_tenant, true)
+    Accounts.set_user_blocked(dr_evil, true)
 
     # public files
-    public_logos = %Directory{name: "logos", tenant_id: web_tenant.id} |> Repo.insert!()
+    public_logos = %Directory{name: "logos"} |> Repo.insert!()
 
     public_logos_podcast =
-      %Directory{name: "podcast", tenant_id: web_tenant.id, parent_directory_id: public_logos.id}
+      %Directory{name: "podcast", parent_directory_id: public_logos.id}
       |> Repo.insert!()
 
     public_logos_chamaeleon =
       %Directory{
         name: "chamaeleon",
-        tenant_id: web_tenant.id,
         parent_directory_id: public_logos.id
       }
       |> Repo.insert!()
 
-    public_hintergrund =
-      %Directory{name: "hintergrund", tenant_id: web_tenant.id} |> Repo.insert!()
+    public_hintergrund = %Directory{name: "hintergrund"} |> Repo.insert!()
 
     public_files =
       [
@@ -227,20 +211,17 @@ defmodule Api.Repo.Seeder do
       |> Enum.map(fn file ->
         file
         |> Map.put(:user_id, alexis.id)
-        |> Map.put(:tenant_id, web_tenant.id)
         |> Repo.insert!()
       end)
 
     # alexis' files
-    avatar_directory =
-      %Directory{name: "logos", tenant_id: web_tenant.id, user_id: alexis.id} |> Repo.insert!()
+    avatar_directory = %Directory{name: "logos", user_id: alexis.id} |> Repo.insert!()
 
     irgendwas_directory =
-      %Directory{name: "irgendwas", tenant_id: web_tenant.id, user_id: alexis.id}
+      %Directory{name: "irgendwas", user_id: alexis.id}
       |> Repo.insert!()
 
-    podcast_directory =
-      %Directory{name: "podcast", tenant_id: web_tenant.id, user_id: alexis.id} |> Repo.insert!()
+    podcast_directory = %Directory{name: "podcast", user_id: alexis.id} |> Repo.insert!()
 
     alexis_files =
       [
@@ -307,7 +288,6 @@ defmodule Api.Repo.Seeder do
       |> Enum.map(fn file ->
         file
         |> Map.put(:user_id, alexis.id)
-        |> Map.put(:tenant_id, web_tenant.id)
         |> Repo.insert!()
       end)
 
@@ -318,15 +298,13 @@ defmodule Api.Repo.Seeder do
     |> Repo.update()
 
     # Eike' files
-    avatar_directory =
-      %Directory{name: "avatar", tenant_id: web_tenant.id, user_id: eike.id} |> Repo.insert!()
+    avatar_directory = %Directory{name: "avatar", user_id: eike.id} |> Repo.insert!()
 
     eoa_directory =
-      %Directory{name: "ehrenberg-on-air", tenant_id: web_tenant.id, user_id: eike.id}
+      %Directory{name: "ehrenberg-on-air", user_id: eike.id}
       |> Repo.insert!()
 
-    podcast_directory =
-      %Directory{name: "podcast", tenant_id: web_tenant.id, user_id: eike.id} |> Repo.insert!()
+    podcast_directory = %Directory{name: "podcast", user_id: eike.id} |> Repo.insert!()
 
     eike_files =
       [
@@ -390,16 +368,13 @@ defmodule Api.Repo.Seeder do
       |> Enum.map(fn file ->
         file
         |> Map.put(:user_id, eike.id)
-        |> Map.put(:tenant_id, web_tenant.id)
         |> Repo.insert!()
       end)
 
-    homepage =
-      Repo.insert!(%Category{tenant_id: web_tenant.id, title: "Start", is_homepage: true})
+    homepage = Repo.insert!(%Category{title: "Start", is_homepage: true})
 
     profil =
       Repo.insert!(%Category{
-        tenant_id: web_tenant.id,
         sort_key: 10,
         title: "Profil",
         banner_image_file_id: List.first(public_files).id
@@ -407,7 +382,6 @@ defmodule Api.Repo.Seeder do
 
     gta =
       Repo.insert!(%Category{
-        tenant_id: web_tenant.id,
         sort_key: 20,
         title: "GTA",
         banner_image_file_id: List.first(public_files).id
@@ -415,7 +389,6 @@ defmodule Api.Repo.Seeder do
 
     projekt =
       Repo.insert!(%Category{
-        tenant_id: web_tenant.id,
         sort_key: 30,
         title: "Projekt",
         banner_image_file_id: List.first(public_files).id
@@ -423,17 +396,15 @@ defmodule Api.Repo.Seeder do
 
     faecher =
       Repo.insert!(%Category{
-        tenant_id: web_tenant.id,
         sort_key: 40,
         title: "Fächer",
         banner_image_file_id: List.first(public_files).id
       })
 
-    material = Repo.insert!(%Category{tenant_id: web_tenant.id, sort_key: 50, title: "Material"})
-    Repo.insert!(%Category{tenant_id: web_tenant.id, sort_key: 60, title: "Galerien"})
+    material = Repo.insert!(%Category{sort_key: 50, title: "Material"})
+    Repo.insert!(%Category{sort_key: 60, title: "Galerien"})
 
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 70,
       title: "Impressum",
       is_sidenav: true
@@ -446,21 +417,18 @@ defmodule Api.Repo.Seeder do
 
     # Fächer
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 10,
       title: "Sport",
       category_id: faecher.id
     })
 
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 20,
       title: "Kunst",
       category_id: faecher.id
     })
 
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 30,
       title: "Sprache",
       category_id: faecher.id
@@ -469,44 +437,39 @@ defmodule Api.Repo.Seeder do
 
     # Profil
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 10,
       title: "Podcast",
       category_id: profil.id
     })
 
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 20,
       title: "Offene Kunst-AG",
       category_id: profil.id
     })
 
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 30,
       title: "Schülerzeitung",
       category_id: profil.id
     })
 
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 40,
       title: "Oskar-Reime-Chor",
       category_id: profil.id
     })
 
     Repo.insert!(%Category{
-      tenant_id: web_tenant.id,
       sort_key: 50,
       title: "Schüler-Radio",
       category_id: profil.id
     })
 
     # Kalender-Widgets
-    widget1 = Repo.insert!(%Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})
-    widget2 = Repo.insert!(%Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})
-    widget3 = Repo.insert!(%Widget{tenant_id: web_tenant.id, title: "Kalender", type: "calendar"})
+    widget1 = Repo.insert!(%Widget{title: "Kalender", type: "calendar"})
+    widget2 = Repo.insert!(%Widget{title: "Kalender", type: "calendar"})
+    widget3 = Repo.insert!(%Widget{title: "Kalender", type: "calendar"})
     assign_groups(widget2, [verwaltung_group, lehrer_group])
     assign_groups(widget3, [verwaltung_group, lehrer_group])
 
@@ -519,7 +482,6 @@ defmodule Api.Repo.Seeder do
     # Articles
 
     Repo.insert(%Article{
-      tenant_id: web_tenant.id,
       title: "Draft1",
       preview: "Entwurf Artikel zu I",
       inserted_at: ~N[2019-09-01 10:00:00],
@@ -533,7 +495,6 @@ defmodule Api.Repo.Seeder do
     |> Repo.update()
 
     Repo.insert(%Article{
-      tenant_id: web_tenant.id,
       title: "Draft2",
       preview: "Entwurf Artikel zu XYZ",
       inserted_at: ~N[2019-09-01 10:05:00],
@@ -547,7 +508,6 @@ defmodule Api.Repo.Seeder do
     |> Repo.update()
 
     Repo.insert(%Article{
-      tenant_id: web_tenant.id,
       title: "Fertiger Artikel zum Konzert",
       preview: "Entwurf Artikel zu XYZ",
       ready_to_publish: true,
@@ -563,7 +523,6 @@ defmodule Api.Repo.Seeder do
 
     oskar_goes_to =
       Repo.insert!(%Article{
-        tenant_id: web_tenant.id,
         category_id: profil.id,
         title: "And the oskar goes to ...",
         preview: "Hallo hallo hallo",
@@ -709,7 +668,6 @@ defmodule Api.Repo.Seeder do
 
     landesfinale =
       Repo.insert!(%Article{
-        tenant_id: web_tenant.id,
         category_id: profil.id,
         title: "Landesfinale Volleyball WK IV",
         preview:
@@ -774,7 +732,6 @@ defmodule Api.Repo.Seeder do
 
     kleinkunst_wb2 =
       Repo.insert!(%Article{
-        tenant_id: web_tenant.id,
         category_id: profil.id,
         title: "Der Podcast zum WB 2",
         preview:
@@ -842,7 +799,6 @@ defmodule Api.Repo.Seeder do
 
     vorausscheid =
       Repo.insert!(%Article{
-        tenant_id: web_tenant.id,
         category_id: profil.id,
         title: "Der Vorausscheid",
         preview:
@@ -910,7 +866,6 @@ defmodule Api.Repo.Seeder do
 
     nipplejesus =
       Repo.insert!(%Article{
-        tenant_id: web_tenant.id,
         category_id: projekt.id,
         title: "„Nipple Jesus“- eine extreme Erfahrung",
         preview:
@@ -974,7 +929,6 @@ defmodule Api.Repo.Seeder do
     })
 
     Repo.insert!(%Article{
-      tenant_id: web_tenant.id,
       category_id: projekt.id,
       title: "Beitrag Projekt 1",
       preview: "Lorem ipsum dolor sit amet.",
@@ -983,7 +937,6 @@ defmodule Api.Repo.Seeder do
     })
 
     Repo.insert!(%Article{
-      tenant_id: web_tenant.id,
       category_id: projekt.id,
       title: "Beitrag Projekt 2",
       preview: "Lorem ipsum dolor sit amet.",
@@ -992,7 +945,6 @@ defmodule Api.Repo.Seeder do
     })
 
     Repo.insert!(%Article{
-      tenant_id: web_tenant.id,
       category_id: projekt.id,
       title: "Beitrag Projekt 3",
       preview: "Lorem ipsum dolor sit amet.",
@@ -1003,7 +955,6 @@ defmodule Api.Repo.Seeder do
     Enum.map(4..30, fn i ->
       art1 =
         Repo.insert!(%Article{
-          tenant_id: web_tenant.id,
           category_id: projekt.id,
           title: "Beitrag Projekt #{i} - nur für Lehrer",
           preview: "Lorem ipsum dolor sit amet.",
@@ -1013,7 +964,6 @@ defmodule Api.Repo.Seeder do
 
       art2 =
         Repo.insert!(%Article{
-          tenant_id: web_tenant.id,
           category_id: projekt.id,
           title: "Beitrag Projekt #{i} - nur für Schüler",
           preview: "Lorem ipsum dolor sit amet.",

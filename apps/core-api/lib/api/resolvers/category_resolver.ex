@@ -9,27 +9,26 @@ defmodule Api.CategoryResolver do
   alias Api.Tenants
 
   def all(_args, %{
-        context: %{current_user: current_user, user_group_ids: user_group_ids, tenant: tenant}
+        context: %{current_user: current_user, user_group_ids: user_group_ids}
       }) do
     {:ok,
-     Tenants.list_categories_by_tenant(
-       tenant,
+     Tenants.list_categories(
        current_user,
        user_group_ids,
-       user_is_admin?(current_user, tenant)
+       user_is_admin?(current_user)
      )}
   end
 
-  def all(_args, %{context: %{tenant: tenant}}) do
-    {:ok, Tenants.list_categories_by_tenant(tenant, nil, [], false)}
+  def all(_args, %{context: context}) do
+    {:ok, Tenants.list_categories(nil, [], false)}
   end
 
   def all(_args, _info) do
     {:error, "Tenant nicht gefunden"}
   end
 
-  def update(%{id: id, category: category_params}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
+  def update(%{id: id, category: category_params}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
       try do
         category = Tenants.get_category!(id)
 
@@ -53,9 +52,9 @@ defmodule Api.CategoryResolver do
     end
   end
 
-  def create(%{category: category_params}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
-      case Tenants.create_category(tenant, category_params) do
+  def create(%{category: category_params}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
+      case Tenants.create_category(category_params) do
         {:ok, category} ->
           {:ok, category}
 
@@ -71,8 +70,8 @@ defmodule Api.CategoryResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
+  def delete(%{id: id}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
       try do
         category = Tenants.get_category!(id)
 

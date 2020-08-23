@@ -2,6 +2,8 @@ defmodule Api.Release do
   @moduledoc """
     Release tasks like database migrations
   """
+  alias Api.Repo
+  import Ecto.Query
 
   @app :api
 

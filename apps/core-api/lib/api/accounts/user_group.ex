@@ -16,8 +16,6 @@ defmodule Api.Accounts.UserGroup do
     field :sort_key, :integer
     field :is_admin_group, :boolean
 
-    belongs_to :tenant, Api.Tenants.Tenant
-
     has_many :enrollment_tokens, Api.Accounts.GroupEnrollmentToken,
       foreign_key: :group_id,
       on_replace: :delete
@@ -46,8 +44,8 @@ defmodule Api.Accounts.UserGroup do
 
   defp put_assoc_enrollment_tokens(user_group, _args), do: user_group
 
-  def get_max_sort_key(%Tenant{id: tenant_id}) do
-    from(c in UserGroup, where: c.tenant_id == ^tenant_id, select: max(c.sort_key))
+  def get_max_sort_key() do
+    from(c in UserGroup, select: max(c.sort_key))
     |> Repo.one()
   end
 end

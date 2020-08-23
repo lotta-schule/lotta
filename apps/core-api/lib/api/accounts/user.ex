@@ -25,10 +25,8 @@ defmodule Api.Accounts.User do
     field :password, :string, virtual: true
     field :password_hash, :string
 
-    belongs_to :tenant, Tenant
     belongs_to :avatar_image_file, File, on_replace: :nilify
     has_many :files, File
-    has_many :blocked_tenants, BlockedTenant, on_replace: :delete
     has_many :enrollment_tokens, UserEnrollmentToken, on_replace: :delete
 
     many_to_many :groups,
@@ -48,11 +46,10 @@ defmodule Api.Accounts.User do
 
   @type t :: %User{id: pos_integer(), email: email(), name: String.t()}
 
-  def get_assigned_groups(%User{} = user, %Tenant{} = tenant) do
+  def get_assigned_groups(%User{} = user) do
     user
     |> Repo.preload(:groups)
     |> Map.fetch!(:groups)
-    |> Enum.filter(&(&1.tenant_id == tenant.id))
   end
 
   def get_assigned_groups(%User{} = user) do
@@ -61,36 +58,22 @@ defmodule Api.Accounts.User do
     |> Map.fetch!(:groups)
   end
 
-  def get_dynamic_groups(%User{} = user, %Tenant{} = tenant) do
-    user =
-      user
-      |> Repo.preload(:enrollment_tokens)
-
-    tokens =
-      user
-      |> Map.fetch!(:enrollment_tokens)
-      |> Enum.map(& &1.enrollment_token)
-
-    tenant
+  def get_dynamic_groups(%User{} = user) do
+    user
+    |> Repo.preload(:enrollment_tokens)
+    |> Map.fetch!(:enrollment_tokens)
+    |> Enum.map(& &1.enrollment_token)
     |> Accounts.get_groups_by_enrollment_tokens(tokens)
   end
 
-  def get_groups(%User{} = user, %Tenant{} = tenant) do
-    get_assigned_groups(user, tenant) ++ get_dynamic_groups(user, tenant)
+  def get_groups(%User{} = user) do
+    get_assigned_groups(user) ++ get_dynamic_groups(user)
   end
 
   def get_groups(%User{} = user) do
     user
     |> get_assigned_groups()
   end
-
-  def group_ids(%User{} = user, %Tenant{} = tenant) do
-    user
-    |> User.get_groups(tenant)
-    |> Enum.map(fn group -> group.id end)
-  end
-
-  def group_ids(_, _), do: []
 
   @doc false
   def changeset(user, attrs) do
@@ -102,8 +85,7 @@ defmodule Api.Accounts.User do
   end
 
   def assign_group_changeset(%User{} = user, %{group: newgroup}) do
-    groups =
-      Repo.all(from g in UserGroup, where: g.tenant_id != ^newgroup.tenant_id) ++ [newgroup]
+    groups = Repo.all(UserGroup) ++ [newgroup]
 
     user
     |> Repo.preload(:groups)
@@ -126,7 +108,7 @@ defmodule Api.Accounts.User do
   def registration_changeset(%User{} = user, params \\ %{}) do
     user
     |> Repo.preload(:enrollment_tokens)
-    |> cast(params, [:name, :class, :nickname, :email, :password, :tenant_id, :hide_full_name])
+    |> cast(params, [:name, :class, :nickname, :email, :password, :hide_full_name])
     |> validate_required([:name, :email, :password])
     |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_required(:password)
@@ -197,19 +179,12 @@ defmodule Api.Accounts.User do
   end
 
   @doc """
-  Generates a changeset which sets the user's groups.
-  Replaces all other group's of the given tenant.
+  Changeset which sets the user's groups.
   """
-  @spec set_users_tenant_groups_changeset(%User{}, %Tenant{}, [%UserGroup{}]) :: %Changeset{}
-  def set_users_tenant_groups_changeset(user, tenant, groups) do
-    user = Repo.preload(user, :groups)
-
-    groups =
-      user.groups
-      |> Enum.filter(fn g -> g.tenant_id !== tenant.id end)
-      |> Enum.concat(groups)
-
+  @spec set_users_groups_changeset(%User{}, [%UserGroup{}]) :: %Changeset{}
+  def set_users_groups_changeset(user, groups) do
     user
+    |> Repo.preload(:groups)
     |> Changeset.change()
     |> Changeset.put_assoc(:groups, groups)
   end

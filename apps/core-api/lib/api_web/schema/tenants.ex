@@ -4,10 +4,6 @@ defmodule ApiWeb.Schema.Tenants do
   use Absinthe.Schema.Notation
 
   object :tenants_queries do
-    field :tenants, list_of(:tenant) do
-      resolve(&Api.TenantResolver.all/2)
-    end
-
     field :tenant, :tenant do
       arg(:id, :id)
       arg(:slug, :string)
