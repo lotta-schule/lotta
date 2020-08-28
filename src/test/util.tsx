@@ -1,4 +1,4 @@
-import React, { Reducer, FC, useReducer, useEffect } from 'react';
+import React, { Reducer, FC, Suspense, useReducer, useEffect } from 'react';
 import { unionBy, pick } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -9,14 +9,15 @@ import { Router } from 'react-router-dom';
 import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
+import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { ClientModel, UserModel } from 'model';
 import { theme } from '../theme';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import { i18n } from 'i18n';
 import { reducer as fileExplorerStateReducer, Action as FileExploreerStateAction } from 'component/fileExplorer/context/reducer';
+import { createMuiTheme } from '@material-ui/core';
 import fileExplorerContext, { FileExplorerMode, defaultState as defaultFileExplorerState } from 'component/fileExplorer/context/FileExplorerContext';
 import DateFnsUtils from '@date-io/date-fns';
-import { createMuiTheme } from '@material-ui/core';
 
 export interface TestSetupOptions {
     defaultPathEntries?: string[];
@@ -48,13 +49,17 @@ const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
         <ThemeProvider theme={testTheme}>
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
                 <I18nextProvider i18n={i18n}>
-                    <MockedProvider mocks={mocks} addTypename={false} cache={options.useCache ? cache : undefined}>
-                        <UploadQueueProvider>
-                            <Router history={history}>
-                                {children}
-                            </Router>
-                        </UploadQueueProvider>
-                    </MockedProvider>
+                    <CloudimageProvider config={{ token: 'ABCDEF', lazyLoading: false }}>
+                        <MockedProvider mocks={mocks} addTypename={false} cache={options.useCache ? cache : undefined}>
+                            <UploadQueueProvider>
+                                <Suspense fallback={<span data-testid="LazyLoadIndicator">Lazy Load ES6 Module</span>}>
+                                    <Router history={history}>
+                                        {children}
+                                    </Router>
+                                </Suspense>
+                            </UploadQueueProvider>
+                        </MockedProvider>
+                    </CloudimageProvider>
                 </I18nextProvider>
             </MuiPickersUtilsProvider>
         </ThemeProvider>

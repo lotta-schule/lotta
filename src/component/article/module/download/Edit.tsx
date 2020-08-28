@@ -1,8 +1,6 @@
 import React, { memo } from 'react';
 import { ContentModuleModel, FileModel } from '../../../../model';
-import {
-    CardContent, Typography, TextareaAutosize, IconButton
-} from '@material-ui/core';
+import { CardContent, Typography, TextareaAutosize, IconButton } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';

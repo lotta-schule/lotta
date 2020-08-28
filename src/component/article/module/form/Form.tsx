@@ -1,4 +1,5 @@
 import React, { memo, lazy } from 'react';
+import { CardContent } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { Show } from './Show';
 
@@ -36,13 +37,14 @@ export interface FormConfiguration {
 }
 
 export const Form = memo<FormProps>(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
-    if (isEditModeEnabled) {
-        return (
-            <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-        );
-    } else {
-        return (
-            <Show contentModule={contentModule} />
-        );
-    }
+    return (
+        <CardContent data-testid="FormContentModule">
+            {isEditModeEnabled && (
+                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+            )}
+            {!isEditModeEnabled && (
+                <Show contentModule={contentModule} />
+            )}
+        </CardContent>
+    );
 });

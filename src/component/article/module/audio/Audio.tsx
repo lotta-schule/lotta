@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, lazy } from 'react';
+import React, { memo, lazy } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { CardContent } from '@material-ui/core';
 import { Show } from './Show';
@@ -11,8 +11,8 @@ export interface AudioProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Audio: FunctionComponent<AudioProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent>
+export const Audio = memo<AudioProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
+    <CardContent data-testid="AudioContentModule">
         {isEditModeEnabled && onUpdateModule ?
             (
                 <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />

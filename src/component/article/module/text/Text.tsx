@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 export const Text = memo<TextProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
     const styles = useStyles();
     return (
-        <CardContent className={styles.root}>
+        <CardContent className={styles.root} data-testid="TextContentModule">
             {isEditModeEnabled && onUpdateModule ?
                 (
                     <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />

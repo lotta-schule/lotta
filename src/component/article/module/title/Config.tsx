@@ -1,8 +1,8 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { FormControl, Select, InputLabel, MenuItem } from '@material-ui/core';
-import get from 'lodash/get';
 import { makeStyles } from '@material-ui/styles';
+import get from 'lodash/get';
 
 const useStyles = makeStyles(() => ({
     formControl: {
@@ -16,13 +16,13 @@ interface ConfigProps {
     onRequestClose(): void;
 }
 
-export const Config: FunctionComponent<ConfigProps> = memo(({ contentModule, onUpdateModule, onRequestClose }) => {
+export const Config = memo<ConfigProps>(({ contentModule, onUpdateModule, onRequestClose }) => {
 
     const headingLevel: number = get(contentModule.configuration, 'level', 4);
     const styles = useStyles();
 
     return (
-        <form>
+        <form data-testid="TitleContentModuleConfiguration">
             <FormControl className={styles.formControl}>
                 <InputLabel htmlFor="heading-level">Überschrifgrößen (1-3)</InputLabel>
                 <Select

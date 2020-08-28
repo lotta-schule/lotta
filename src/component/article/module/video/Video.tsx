@@ -11,7 +11,7 @@ export interface VideoProps {
 }
 
 export const Video: FunctionComponent<VideoProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent style={{ padding: 0, }}>
+    <CardContent style={{ padding: 0, }} data-testid="VideoContentModule">
         {isEditModeEnabled && onUpdateModule ?
             (
                 <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
