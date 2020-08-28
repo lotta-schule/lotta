@@ -1,7 +1,7 @@
 import React, { memo, lazy, useState, useMemo, Suspense } from 'react';
 import {
     Button, Card, CardContent, CardActions, Collapse, DialogActions, DialogTitle, DialogContent, DialogContentText,
-    Grow, LinearProgress, Tabs, Tab, Typography, fade, makeStyles
+    Grow, LinearProgress, Tabs, Tab, Typography, fade, makeStyles,
 } from '@material-ui/core';
 import { ArticleModel, FileModel } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -17,6 +17,7 @@ import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
+import { NavigateNext, NavigateBefore, Warning, DeleteForever } from '@material-ui/icons';
 const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
 
 enum ProfileDeleteStep {
@@ -109,13 +110,15 @@ export const ProfileDelete = memo(() => {
             currentStep < ProfileDeleteStep.ConfirmDeletion ? (
                 <Button
                     size={'small'}
+                    variant={'outlined'}
                     color={'secondary'}
                     disabled={isLoading}
+                    endIcon={<NavigateNext />}
                     onClick={() => {
                         setCurrentStep(s => s + 1);
                     }}
                 >
-                    Weiter &gt;
+                    Weiter
                 </Button>
             ) : (
                 <Button
@@ -123,6 +126,7 @@ export const ProfileDelete = memo(() => {
                     variant={'outlined'}
                     className={styles.deleteButton}
                     disabled={isLoading}
+                    startIcon={<Warning />}
                     onClick={() => {
                         setIsConfirmDialogOpen(true);
                     }}
@@ -133,8 +137,13 @@ export const ProfileDelete = memo(() => {
         return (
             <CardActions className={styles.cardActions}>
                 <Grow in={!isLoading && currentStep > ProfileDeleteStep.Start}>
-                    <Button size={'small'} color={'secondary'} disabled={currentStep <= ProfileDeleteStep.Start} onClick={() => setCurrentStep(s => s - 1)} aria-hidden={isLoading || currentStep <= ProfileDeleteStep.Start}>
-                        &lt; Zurück
+                    <Button 
+                        size={'small'} 
+                        color={'secondary'}
+                        variant={'outlined'}
+                        startIcon={<NavigateBefore />}
+                        disabled={currentStep <= ProfileDeleteStep.Start} onClick={() => setCurrentStep(s => s - 1)} aria-hidden={isLoading || currentStep <= ProfileDeleteStep.Start}>
+                        Zurück
                     </Button>
                 </Grow>
                 <Grow in={!isLoading}>
@@ -161,16 +170,17 @@ export const ProfileDelete = memo(() => {
                     <CardContent>
                         <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Benutzerkonto und Daten löschen</Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
-                            Deine Zeit bei <em>{tenant.title}</em> ist vorbei und du möchtest dein Benutzerkonto mit deinen persönlichen Dateien und Daten löschen?<br />
+                            Deine Zeit bei <em>{tenant.title}</em> ist vorbei und du möchtest dein Benutzerkonto mit deinen persönlichen Dateien und Daten löschen?
                         </Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
-                            Es ist wichtig zu wissen, wo persönliche Daten von und über dich gespeichert sind, und es ist gut,
-                            dass du dich rechtzeitig darum kümmerst, nicht mehr gebrauchte Daten wieder zu löschen.
+                            <p>Es ist wichtig zu wissen, wo persönliche Daten von dir und über dich gespeichert sind.</p>
+                            <p>Hier erhältst du eine Übersicht darüber,</p>
                         </Typography>
-                        <Typography className={styles.paragraph} variant={'body1'}>
-                            Hier erhältst du eine Übersicht darüber, welche Daten wir über dich haben und welche wir löschen werden.<br />
-                            Du erhältst so zum Beispiel die Gelgenheit, einzelne Dateien zu sichern.
-                        </Typography>
+                        <Typography className={clsx(styles.paragraph, styles.list)} variant={'body1'} component={'ul'}>
+                            <li>welche Daten Lotta über dich gespeichert hat,</li>
+                            <li>welche gelöscht werden können und</li>
+                            <li>welche Daten Du an <em>{tenant.title}</em> übergeben kannst, sodass nachfolgende Generationen auf der Homepage von <em>{tenant.title}</em> von Dir lesen können.</li>
+                         </Typography>
                     </CardContent>
                     {cardActions}
                 </Card>
@@ -183,14 +193,12 @@ export const ProfileDelete = memo(() => {
                            <>
                                <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Deine Beiträge</Typography>
                                <Typography className={styles.paragraph} variant={'body1'}>
-                                   Du bist bei {ownArticlesData.articles.filter(Article.isVisible).length} sichtbaren Beiträgen auf <em>{tenant.title}</em> als Autor eingetragen.
-                               </Typography>
-                               <Typography className={styles.paragraph} variant={'body1'}>
-                                   Wenn dein Konto gelöscht ist bleiben die sichtbaren Artikel erhalten, nur du wirst als Autor entfernt.
-                               </Typography>
-                               <Typography className={styles.paragraph} variant={'body1'}>
-                                   Überprüfe, ob das für dich in Ordnung ist. Du hast hier nochmal die letzte Gelegenheit, Beiträge zu überprüfen.
-                                   Alle nicht-sichtbaren Beiträge werden gelöscht.
+                                   Du bist bei <strong> {ownArticlesData.articles.filter(Article.isVisible).length} </strong> sichtbaren Beiträgen auf <em>{tenant.title}</em> als Autor eingetragen.
+                                </ Typography>
+                                <Typography className={styles.paragraph} variant={'body1'}>
+                                    Wenn dein Konto gelöscht ist, bleiben die sichtbaren Artikel erhalten, nur du wirst als Autor entfernt.
+                                    Überprüfe, ob das für dich in Ordnung ist. Du hast hier nochmal die Gelegenheit, Beiträge zu überprüfen. 
+                                    Alle nicht-sichtbaren Beiträge (z.Bsp. Beiträge die in Bearbeitung sind) werden gelöscht.
                                </Typography>
                                <ArticlesList articles={ownArticlesData.articles} />
                            </>
@@ -224,15 +232,13 @@ export const ProfileDelete = memo(() => {
                                 Dateien aus genutzten Beiträgen übergeben
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
-                                Es gibt Dateien, die du hochgeladen hast, die bei <em>{tenant.title}</em> in Beiträgen sichtbar sind.
+                                Es gibt Dateien, die du hochgeladen hast, die bei <em>{tenant.title}</em> in Beiträgen sichtbar sind. 
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
-                                Du hast jetzt die Möglichkeit, die Nutzungsrechte an diesen Dateien <em>{tenant.title}</em> zu übergeben.
-                                Dadurch blieben die Beiträge weiter vollständig und die Dateien wären weiter für Besucher zugänglich.
+                                Du hast jetzt die Möglichkeit, die Nutzungsrechte an diesen Dateien <em>{tenant.title}</em> zu übergeben. Dadurch bleiben die Beiträge weiter vollständig und die Dateien wären weiter für Nutzer sichtbar. 
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
-                                Überlege dir gut, für welche Dateien du <em>{tenant.title}</em> erlauben möchtest, sie weiterhin auf ihrer Webseite zu zeigen:
-                                Wenn dein Benutzerkonto erst gelöscht ist, kann der Vorgang nicht mehr automatisiert werden, und du wirst dich persönlich an <em>{tenant.title}</em> wenden müssen.
+                                Überlege dir gut, für welche Dateien du <em>{tenant.title}</em> erlauben möchtest, sie weiterhin auf ihrer Webseite zu zeigen. Wenn dein Benutzerkonto erst gelöscht ist, kann der Vorgang nicht mehr korrigiert werden, und du wirst dich persönlich an einen Administrator wenden müssen.
                             </Typography>
                             <ProfileDeleteFileSelection
                                 files={relevantFilesData?.files ?? []}
@@ -243,9 +249,6 @@ export const ProfileDelete = memo(() => {
                         <div role={'tabpanel'} hidden={selectedFilesTab !== 1} aria-labelledby={'tabpanel-files-heading'}>
                             <Typography className={styles.paragraph} variant={'h4'} component={'h3'} id={'tabpanel-files-heading'}>
                                 Alle Dateien überprüfen
-                            </Typography>
-                            <Typography className={styles.paragraph} variant={'body1'}>
-                                Hier hast du nochmal einen Überblick über alle deine Dateien.
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
                                 Du kannst Dateien, die du behalten möchtest, zur Sicherheit herunterladen. Andere Dateien werden endgültig gelöscht.
@@ -271,6 +274,7 @@ export const ProfileDelete = memo(() => {
                         <Typography className={clsx(styles.paragraph, styles.list)} variant={'body1'} component={'ul'}>
                             <li>Von dir erstellte, nicht veröffentlichte Beiträge, bei denen es keine anderen AutorInnen gibt, werden gelöscht</li>
                             <li>Du wirst als AutorIn aus Beiträgen entfernt, die veröffentlicht sind</li>
+                            <li>Du wirst als AutorIn aus Beiträgen entfernt, die veröffentlicht sind</li>
                             {selectedFilesToTransfer.length > 0 && (
                                 <li>
                                     Deine Dateien und Ordner, ausgenommen die <em>{selectedFilesToTransfer.length} Dateien</em>,
@@ -280,15 +284,14 @@ export const ProfileDelete = memo(() => {
                             {selectedFilesToTransfer.length === 0 && (
                                 <li>Alle deine Dateien und Ordner werden gelöscht</li>
                             )}
-                            <li>Dein Nutzeraccount und alle darin gespeicherten Informationen werden gelöscht</li>
-                            <li>
-                                Es kann bis zu vier Wochen dauern, bis die allerletzten Daten, wie IP-Adressen aus Logs,
-                                oder Daten die sich in Backups befinden, gelöscht werden.
+                            <li>Dein Nutzeraccount und alle darin gespeicherten Informationen werden gelöscht
+                                [Hinweis: Es kann bis zu vier Wochen dauern, bis die allerletzten Daten, wie IP-Adressen aus Logs,
+                                oder Daten die sich in Backups befinden, gelöscht werden.]
                             </li>
                         </Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
                             Wenn du einverstanden bist, klicke auf 'Daten endgültig löschen'.
-                            Du wirst abgemeldet und auf die Startseite weitergeleitet.
+                            Du wirst dann abgemeldet und auf die Startseite weitergeleitet.
                         </Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
                             Dieser Vorgang ist endgültig.
@@ -314,8 +317,8 @@ export const ProfileDelete = memo(() => {
                     <Button onClick={() => setIsConfirmDialogOpen(false)} color={'primary'} autoFocus>
                         Abbrechen
                     </Button>
-                    <Button onClick={() => destroyAccount()} className={styles.deleteButton} disabled={isLoading}>
-                        Alle Daten endgültig löschen
+                    <Button onClick={() => destroyAccount()} variant={'outlined'} startIcon={<DeleteForever />} className={styles.deleteButton} disabled={isLoading}>
+                        Jetzt alle Daten endgültig löschen
                     </Button>
                 </DialogActions>
             </ResponsiveFullScreenDialog>
