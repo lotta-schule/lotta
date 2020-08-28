@@ -1,7 +1,7 @@
 import React, { memo, lazy, useState, useMemo, Suspense } from 'react';
 import {
     Button, Card, CardContent, CardActions, Collapse, DialogActions, DialogTitle, DialogContent, DialogContentText,
-    Grow, LinearProgress, Tabs, Tab, Typography, fade, makeStyles, Icon
+    Grow, LinearProgress, Tabs, Tab, Typography, fade, makeStyles,
 } from '@material-ui/core';
 import { ArticleModel, FileModel } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
