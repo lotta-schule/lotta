@@ -19,9 +19,6 @@ export const UpdateProfileMutation = gql`
                 name
                 sortKey
                 isAdminGroup
-                tenant {
-                    id
-                }
             }
         }
     }

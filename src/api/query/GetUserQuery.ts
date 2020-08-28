@@ -16,9 +16,6 @@ export const GetUserQuery = gql`
                 id
                 name
                 isAdminGroup
-                tenant {
-                    id
-                }
             }
             assignedGroups {
                 id

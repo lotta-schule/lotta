@@ -3,10 +3,9 @@ import { Card, CardContent, Grid, Link, Table, TableBody, TableRow, TableCell, T
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useTenant } from 'util/client/useTenant';
-import { Tenant } from 'util/model';
+import { useSystem } from 'util/client/useSystem';
 import { useMutation } from '@apollo/client';
-import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
+import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
 import { SaveButton } from 'component/general/SaveButton';
 import Img from 'react-cloudimage-responsive';
 
@@ -18,12 +17,12 @@ const useStyles = makeStyles(theme => ({
 
 export const BasicSettings = memo(() => {
     const styles = useStyles();
-    const tenant = useTenant();
-    const [title, setTitle] = useState(tenant.title);
-    const [logo, setLogo] = useState(tenant.logoImageFile);
+    const system = useSystem();
+    const [title, setTitle] = useState(system.title);
+    const [logo, setLogo] = useState(system.logoImageFile);
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
-    const [updateTenant, { loading: isLoading, error }] = useMutation(UpdateTenantMutation, {
+    const [updateSystem, { loading: isLoading, error }] = useMutation(UpdateSystemMutation, {
         onCompleted: () => {
             setIsShowSuccess(true);
             setTimeout(() => setIsShowSuccess(false), 3000);
@@ -77,12 +76,12 @@ export const BasicSettings = memo(() => {
                         <TableBody>
                             <TableRow>
                                 <TableCell>
-                                    <Link href={`https://${Tenant.getLottaDomainHost(tenant)}`}>
-                                        {Tenant.getLottaDomainHost(tenant)}
+                                    <Link href={`https://${system.host}`}>
+                                        {system.host}
                                     </Link>
                                 </TableCell>
                             </TableRow>
-                            {tenant.customDomains.map(customDomain => (
+                            {system.customDomains.map(customDomain => (
                                 <TableRow key={customDomain.host}>
                                     <TableCell>
                                         <Link href={`https://${customDomain.host}`}>
@@ -102,7 +101,7 @@ export const BasicSettings = memo(() => {
                         fullWidth
                         isLoading={isLoading}
                         isSuccess={isShowSuccess}
-                        onClick={() => updateTenant({ variables: { tenant: { title, logoImageFile: logo && { id: logo.id } } } })}
+                        onClick={() => updateSystem({ variables: { system: { title, logoImageFile: logo && { id: logo.id } } } })}
                     >
                         speichern
                     </SaveButton>

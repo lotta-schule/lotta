@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const UpdateTenantMutation = gql`
-    mutation UpdateTenant($tenant: TenantInput) {
-        updateTenant(tenant: $tenant) {
+export const UpdateSystemMutation = gql`
+    mutation UpdateSystem($system: SystemInput) {
+        updateSystem(system: $system) {
             id
             title
             slug

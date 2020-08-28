@@ -23,18 +23,19 @@ export interface TestSetupOptions {
     defaultPathEntries?: string[];
     onChangeLocation?: (location: Location) => void;
     currentUser?: UserModel;
-    tenant?: ClientModel;
     additionalMocks?: MockedResponse[];
     useCache?: boolean;
+    system?: ClientModel;
 }
 
 const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
-    const { cache, mocks: defaultMocks } = getDefaultApolloMocks(pick(options, ['currentUser', 'tenant']));
+    const { cache, mocks: defaultMocks } = getDefaultApolloMocks(pick(options, ['currentUser', 'system']));
     const mocks = unionBy(
         options.additionalMocks ?? [],
         defaultMocks,
         ({ request: { query } }) => query
     );
+
     const history = createMemoryHistory({ initialEntries: options.defaultPathEntries });
     if (options.onChangeLocation) {
         history.listen((...args) => {

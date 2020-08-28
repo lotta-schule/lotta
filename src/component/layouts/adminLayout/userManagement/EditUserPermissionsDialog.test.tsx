@@ -5,8 +5,8 @@ import { render, cleanup, waitFor } from 'test/util';
 import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { SetUserGroupsMutation } from 'api/mutation/SetUserGroupsMutation';
-import userEvent from '@testing-library/user-event'
 import { SetUserBlockedMutation } from 'api/mutation/SetUserBlockedMutation';
+import userEvent from '@testing-library/user-event'
 
 afterEach(cleanup);
 

@@ -20,9 +20,6 @@ export const GetCurrentUserQuery = gql`
                 id
                 name
                 isAdminGroup
-                tenant {
-                    id
-                }
             }
         }
     }

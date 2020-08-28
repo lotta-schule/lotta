@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { UserGroupModel } from 'model/UserGroupModel';
-import { useTenant } from './useTenant';
+import { useSystem } from './useSystem';
 
 export const useUserGroups = (): UserGroupModel[] => {
-    const tenant = useTenant();
-    const groups = tenant?.groups ?? [];
+    const system = useSystem();
+    const groups = useMemo(() => system?.groups ?? [], [system]);
     return useMemo(() => [...groups].sort((g1, g2) => g1.sortKey - g2.sortKey), [groups]);
 }

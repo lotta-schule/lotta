@@ -1,4 +1,3 @@
-import { ClientModel } from './ClientModel';
 import { GroupEnrollmentTokenModel } from './GroupEnrollmentTokenModel';
 import { ID } from './ID';
 
@@ -9,7 +8,6 @@ export interface UserGroupModel {
     name: string;
     isAdminGroup: boolean;
     sortKey: number;
-    tenant: ClientModel;
     enrollmentTokens: GroupEnrollmentTokenModel[];
 }
 

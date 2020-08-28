@@ -15,9 +15,6 @@ export const GetUsersQuery = gql`
                 id
                 name
                 isAdminGroup
-                tenant {
-                    id
-                }
             }
             avatarImageFile {
                 remoteLocation

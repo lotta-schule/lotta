@@ -8,7 +8,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useQuery, useMutation } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { GetRelevantFilesInUsageQuery } from 'api/query/GetRelevantFilesInUsage';
-import { useTenant } from 'util/client/useTenant';
+import { useSystem } from 'util/client/useSystem';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { Article } from 'util/model';
 import { ArticlesList } from 'component/profile/ArticlesList';
@@ -54,7 +54,7 @@ export const ProfileDelete = memo(() => {
     const history = useHistory();
     const onLogout = useOnLogout();
 
-    const tenant = useTenant();
+    const system = useSystem();
     const [selectedFilesToTransfer, setSelectedFilesToTransfer] = useState<FileModel[]>([]);
 
     const [currentStep, setCurrentStep] = useState<ProfileDeleteStep>(ProfileDeleteStep.Start);
@@ -161,7 +161,7 @@ export const ProfileDelete = memo(() => {
                     <CardContent>
                         <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Benutzerkonto und Daten löschen</Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
-                            Deine Zeit bei <em>{tenant.title}</em> ist vorbei und du möchtest dein Benutzerkonto mit deinen persönlichen Dateien und Daten löschen?<br />
+                            Deine Zeit bei <em>{system.title}</em> ist vorbei und du möchtest dein Benutzerkonto mit deinen persönlichen Dateien und Daten löschen?<br />
                         </Typography>
                         <Typography className={styles.paragraph} variant={'body1'}>
                             Es ist wichtig zu wissen, wo persönliche Daten von und über dich gespeichert sind, und es ist gut,
@@ -183,7 +183,7 @@ export const ProfileDelete = memo(() => {
                            <>
                                <Typography className={styles.paragraph} variant={'h4'} component={'h3'}>Deine Beiträge</Typography>
                                <Typography className={styles.paragraph} variant={'body1'}>
-                                   Du bist bei {ownArticlesData.articles.filter(Article.isVisible).length} sichtbaren Beiträgen auf <em>{tenant.title}</em> als Autor eingetragen.
+                                   Du bist bei {ownArticlesData.articles.filter(Article.isVisible).length} sichtbaren Beiträgen auf <em>{system.title}</em> als Autor eingetragen.
                                </Typography>
                                <Typography className={styles.paragraph} variant={'body1'}>
                                    Wenn dein Konto gelöscht ist bleiben die sichtbaren Artikel erhalten, nur du wirst als Autor entfernt.
@@ -224,15 +224,15 @@ export const ProfileDelete = memo(() => {
                                 Dateien aus genutzten Beiträgen übergeben
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
-                                Es gibt Dateien, die du hochgeladen hast, die bei <em>{tenant.title}</em> in Beiträgen sichtbar sind.
+                                Es gibt Dateien, die du hochgeladen hast, die bei <em>{system.title}</em> in Beiträgen sichtbar sind.
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
-                                Du hast jetzt die Möglichkeit, die Nutzungsrechte an diesen Dateien <em>{tenant.title}</em> zu übergeben.
+                                Du hast jetzt die Möglichkeit, die Nutzungsrechte an diesen Dateien <em>{system.title}</em> zu übergeben.
                                 Dadurch blieben die Beiträge weiter vollständig und die Dateien wären weiter für Besucher zugänglich.
                             </Typography>
                             <Typography className={styles.paragraph} variant={'body1'}>
-                                Überlege dir gut, für welche Dateien du <em>{tenant.title}</em> erlauben möchtest, sie weiterhin auf ihrer Webseite zu zeigen:
-                                Wenn dein Benutzerkonto erst gelöscht ist, kann der Vorgang nicht mehr automatisiert werden, und du wirst dich persönlich an <em>{tenant.title}</em> wenden müssen.
+                                Überlege dir gut, für welche Dateien du <em>{system.title}</em> erlauben möchtest, sie weiterhin auf ihrer Webseite zu zeigen:
+                                Wenn dein Benutzerkonto erst gelöscht ist, kann der Vorgang nicht mehr automatisiert werden, und du wirst dich persönlich an <em>{system.title}</em> wenden müssen.
                             </Typography>
                             <ProfileDeleteFileSelection
                                 files={relevantFilesData?.files ?? []}
@@ -274,7 +274,7 @@ export const ProfileDelete = memo(() => {
                             {selectedFilesToTransfer.length > 0 && (
                                 <li>
                                     Deine Dateien und Ordner, ausgenommen die <em>{selectedFilesToTransfer.length} Dateien</em>,
-                                    die du {tenant.title} überlässt, werden gelöscht
+                                    die du {system.title} überlässt, werden gelöscht
                                 </li>
                             )}
                             {selectedFilesToTransfer.length === 0 && (

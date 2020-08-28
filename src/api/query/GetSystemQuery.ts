@@ -1,20 +1,13 @@
 import { gql } from '@apollo/client';
 
-export const GetTenantQuery = gql`
-    query GetTenant {
-        tenant {
+export const GetSystemQuery = gql`
+    query GetSystem {
+        system {
             id
             title
             slug
+            host
             customTheme
-            logoImageFile {
-                id
-                remoteLocation
-            }
-            backgroundImageFile {
-                id
-                remoteLocation
-            }
             groups {
                 id
                 name
