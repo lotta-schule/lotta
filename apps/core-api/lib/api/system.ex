@@ -3,7 +3,10 @@ defmodule Api.System do
   import Api.Accounts.Permissions
 
   alias Api.Repo
-  alias Api.System.{Category, CustomDomain, Widget}
+  alias Api.Accounts.File
+  alias Api.System.{Category, Configuration, CustomDomain, Widget}
+
+  @allowed_configuration_keys [:title, :custom_theme, :logo_image_file, :banner_image_file]
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -33,118 +36,105 @@ defmodule Api.System do
     {:ok, widgets}
   end
 
+  @doc """
+  Gets system configuration.
+  Merges static application default configuration with custom config from database.
+  The configuration from the database overwrites the default configuration.
+  Always returns an object.
+
+  ## Examples
+
+    iex> get_configuration()
+    %{title: "Meine Schule"}
+  """
+  @doc since: "2.0.0"
+
+  @spec get_configuration() :: map()
+
   def get_configuration() do
-    %{
-      title: "Ehrenberg-Gymnasium Delitzsch",
-      slug: "ehrenberg",
-      custom_theme: %{
-        "overrides" => %{
-          "LottaArticlePreview" => %{
-            "title" => %{
-              "fontFamily" => "Schoolbell"
-            }
-          }
-        },
-        "palette" => %{
-          "background" => %{
-            "default" => "#eee9e4"
-          },
-          "secondary" => %{
-            "main" => "#ff5424"
-          }
-        },
-        "typography" => %{
-          "body1" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "1rem",
-            "fontWeight" => 400,
-            "lineHeight" => 1.5
-          },
-          "body2" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "0.875rem",
-            "fontWeight" => 400,
-            "lineHeight" => 1.43
-          },
-          "button" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "0.875rem",
-            "fontWeight" => 500,
-            "lineHeight" => 1.75,
-            "textTransform" => "uppercase"
-          },
-          "caption" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "0.75rem",
-            "fontWeight" => 400,
-            "lineHeight" => 1.66
-          },
-          "fontFamily" => "Montserrat",
-          "fontSize" => 14,
-          "fontWeightBold" => 700,
-          "fontWeightLight" => 300,
-          "fontWeightMedium" => 500,
-          "fontWeightRegular" => 400,
-          "h1" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "6rem",
-            "fontWeight" => 300,
-            "lineHeight" => 1.167
-          },
-          "h2" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "3.75rem",
-            "fontWeight" => 300,
-            "lineHeight" => 1.2
-          },
-          "h3" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "3rem",
-            "fontWeight" => 400,
-            "lineHeight" => 1.167
-          },
-          "h4" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "2.125rem",
-            "fontWeight" => 400,
-            "lineHeight" => 1.235
-          },
-          "h5" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "1.5rem",
-            "fontWeight" => 400,
-            "lineHeight" => 1.334
-          },
-          "h6" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "1.25rem",
-            "fontWeight" => 500,
-            "lineHeight" => 1.6
-          },
-          "htmlFontSize" => 16,
-          "overline" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "0.75rem",
-            "fontWeight" => 400,
-            "lineHeight" => 2.66,
-            "textTransform" => "uppercase"
-          },
-          "subtitle1" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "1rem",
-            "fontWeight" => 400,
-            "lineHeight" => 1.75
-          },
-          "subtitle2" => %{
-            "fontFamily" => "Montserrat",
-            "fontSize" => "0.875rem",
-            "fontWeight" => 500,
-            "lineHeight" => 1.57
-          }
-        }
-      }
-    }
+    custom_configuration =
+      Repo.all(Configuration)
+      |> Enum.reduce(%{}, fn configuration_line, system ->
+        %{name: name, file_value: file, string_value: string, json: json} =
+          Repo.preload(configuration_line, [:file_value])
+
+        system
+        |> Map.put(name, file || string || json)
+      end)
+
+    Application.get_env(:api, :default_configuration, %{})
+    |> Map.merge(custom_configuration)
   end
+
+  @doc """
+  Adds or alters a config line of the systems and persists it.
+  Returns a tuple with either :ok and the new system configuration, or :error and the reason
+
+  ## Examples
+
+    iex> get_configuration()
+    iex> |> put_configuration(:title, "Meine Schule")
+    %{title: "Meine Schule"}
+  """
+  @doc since: "2.0.0"
+
+  @spec put_configuration(map(), String.t(), Configuration.value()) ::
+          {:ok, map()} | {:error, term()}
+
+  def put_configuration(system, name, value) when name in @allowed_configuration_keys do
+    configline = make_configuration_line(name, value)
+
+    configline
+    |> Repo.insert(
+      conflict_target: :name,
+      on_conflict: [
+        set: [
+          string_value: configline.string_value,
+          json_value: configline.json_value,
+          file_value_id: configline.file_value_id
+        ]
+      ]
+    )
+    |> case do
+      {:ok, _} ->
+        {:ok, Map.put(system, ensure_atom(name), value)}
+
+      error ->
+        error
+    end
+  end
+
+  def put_configuration(_, name, _), do: {:error, "key #{name} is not allowed"}
+
+  @doc """
+  """
+  @doc since: "2.0.0"
+
+  @spec update_configuration(map(), map()) :: map()
+  def update_configuration(system, attributes) do
+    Enum.reduce(attributes, system, fn {key, value}, system ->
+      put_configuration(system, ensure_atom(key), value)
+    end)
+  end
+
+  @spec make_configuration_line(String.t() | atom(), Configuration.value()) :: Configuration.t()
+
+  defp make_configuration_line(name, %File{id: id}) do
+    %Configuration{name: to_string(name), file_value_id: id}
+  end
+
+  defp make_configuration_line(name, map) when is_map(map) do
+    %Configuration{name: to_string(name), json_value: map}
+  end
+
+  defp make_configuration_line(name, string) when is_binary(string) do
+    %Configuration{name: to_string(name), string_value: string}
+  end
+
+  @spec ensure_atom(String.t() | atom()) :: atom()
+
+  defp ensure_atom(value) when is_atom(value), do: value
+  defp ensure_atom(value) when is_binary(value), do: String.to_atom(value)
 
   def get_main_url(options \\ []) do
     protocol = unless options[:skip_protocol], do: "https://", else: ""

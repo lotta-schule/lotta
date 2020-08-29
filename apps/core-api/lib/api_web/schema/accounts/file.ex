@@ -72,7 +72,7 @@ defmodule ApiWeb.Schema.Accounts.File do
       :file_article_usage_location,
       :file_content_module_usage_location,
       :file_user_usage_location,
-      :file_tenant_usage_location
+      :file_system_usage_location
     ])
 
     resolve_type(fn map, _ ->
@@ -80,8 +80,8 @@ defmodule ApiWeb.Schema.Accounts.File do
         %{category: _} -> :file_category_usage_location
         %{article: _} -> :file_article_usage_location
         %{content_module: _} -> :file_content_module_usage_location
-        %{tenant: _} -> :file_tenant_usage_location
         %{user: _} -> :file_user_usage_location
+        _ -> :file_system_usage_location
       end
     end)
   end
@@ -107,7 +107,7 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :user, :user
   end
 
-  object :file_tenant_usage_location do
+  object :file_system_usage_location do
     field :usage, :string
   end
 end

@@ -79,7 +79,7 @@ defmodule Api.SystemResolverTest do
         media {
           mediaFilesTotal
           mediaFilesTotalDuration
-          MediaConversionCurrentPeriod
+          mediaConversionCurrentPeriod
         }
       }
     }
@@ -92,11 +92,25 @@ defmodule Api.SystemResolverTest do
         |> post("/api", query: @query)
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
-                 "usage" => []
+                 "usage" => [current_usage, _, _, _, _, _]
                }
-             }
+             } = res
+
+      assert %{
+               "periodStart" => _start,
+               "periodEnd" => _end,
+               "media" => %{
+                 "mediaConversionCurrentPeriod" => 480.9,
+                 "mediaFilesTotal" => 3,
+                 "mediaFilesTotalDuration" => 480.9
+               },
+               "storage" => %{
+                 "filesTotal" => 25,
+                 "usedTotal" => 307_200
+               }
+             } = current_usage
     end
 
     test "returns error if user is not admin", %{user_jwt: user_jwt} do

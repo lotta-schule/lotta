@@ -20,10 +20,6 @@ defmodule Api.WidgetResolver do
     System.list_widgets(context[:current_user], context[:user_group_ids])
   end
 
-  def all(_args, _info) do
-    {:error, "Tenant nicht gefunden"}
-  end
-
   def create(%{title: title, type: type}, %{context: context}) do
     if context[:current_user] && user_is_admin?(context[:current_user]) do
       System.create_widget(%{title: title, type: type})

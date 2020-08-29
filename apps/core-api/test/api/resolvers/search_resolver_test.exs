@@ -56,26 +56,16 @@ defmodule Api.SearchResolverTest do
         |> get("/api", query: @query, variables: %{searchText: "Nipple Jesus"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
-                 "search" => [
-                   %{
-                     "preview" =>
-                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
-                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
-                   },
-                   %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
-                   %{
-                     "preview" =>
-                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-                     "title" => "Landesfinale Volleyball WK IV"
-                   },
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"}
-                 ]
+                 "search" => results
                }
-             }
+             } = res
+
+      assert Enum.any?(
+               results,
+               &(Map.get(&1, "title") == "„Nipple Jesus“- eine extreme Erfahrung")
+             )
     end
 
     test "search for restricted articles should not return them when user is not in the right group",
@@ -92,26 +82,16 @@ defmodule Api.SearchResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
-                 "search" => [
-                   %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
-                   %{
-                     "preview" =>
-                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-                     "title" => "Landesfinale Volleyball WK IV"
-                   },
-                   %{
-                     "preview" =>
-                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
-                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
-                   },
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"}
-                 ]
+                 "search" => results
                }
-             }
+             } = res
+
+      refute Enum.any?(
+               results,
+               &(Map.get(&1, "title") == "Der Podcast zum WB 2")
+             )
     end
 
     test "search for a restricted article should be returned when user is in the right groupe", %{

@@ -221,9 +221,6 @@ defmodule Api.FileResolverTest do
               }
             }
           }
-          ... on FileSystemUsageLocation {
-            usage
-          }
           ... on FileUserUsageLocation {
             usage
             user {
@@ -233,6 +230,9 @@ defmodule Api.FileResolverTest do
                 remoteLocation
               }
             }
+          }
+          ... on FileSystemUsageLocation {
+            usage
           }
         }
       }

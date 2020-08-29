@@ -8,17 +8,12 @@ defmodule Api.SystemResolver do
   alias Api.System
 
   def get(_args, _info) do
-    {:ok,
-     %{
-       slug: "ehrenberg",
-       title: "Ehrenberg"
-     }}
+    {:ok, System.get_configuration()}
   end
 
   def update(%{system: system_input}, %{context: context}) do
     if context[:current_user] && user_is_admin?(context.current_user) do
-      # System.update(system_input)
-      {:ok, Map.merge(%{slug: "ehrenberg", title: "Ehrenberg"}, system_input)}
+      System.update_configuration(System.get_configuration(), system_input)
     else
       {:error, "Nur Administratoren dürfen das."}
     end

@@ -42,6 +42,12 @@ config :api, Api.Repo,
 
 config :api, Api.Repo, after_connect: {Api.Repo, :after_connect, ["public"]}
 
+config :api, :default_configuration, %{
+  slug: "web",
+  title: "Web Beispiel",
+  custom_theme: %{}
+}
+
 config :api, :rabbitmq_url, "amqp://guest:guest@#{rabbitmq_host}"
 
 config :api, :redis_connection,

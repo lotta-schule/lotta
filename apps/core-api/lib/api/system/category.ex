@@ -68,7 +68,7 @@ defmodule Api.System.Category do
 
   defp put_assoc_category(changeset, %{category: %{id: category_id}}) do
     changeset
-    |> put_assoc(:category, Repo.get(Api.Tenants.Category, category_id))
+    |> put_assoc(:category, Repo.get(Api.System.Category, category_id))
   end
 
   defp put_assoc_category(changeset, _args), do: changeset

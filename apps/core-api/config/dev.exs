@@ -20,6 +20,12 @@ config :api, :rabbitmq_url, "amqp://guest:guest@rabbitmq"
 
 config :api, Api.Repo, after_connect: {Api.Repo, :after_connect, ["tenant_2"]}
 
+config :api, :default_configuration, %{
+  slug: "ehrenberg",
+  title: "Ehrenberg-Gymnasium-Delitzsch",
+  custom_theme: %{}
+}
+
 config :api, :redis_connection,
   host: "redis",
   password: "lotta",

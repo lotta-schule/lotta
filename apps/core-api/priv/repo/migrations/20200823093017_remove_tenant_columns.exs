@@ -38,6 +38,17 @@ defmodule Api.Repo.Migrations.RemoveTenantColumns do
     end
 
     drop_if_exists(table("blocked_tenants"))
+
+    create table("configuration", primary_key: false) do
+      add(:name, :string)
+      add(:string_value, :string)
+      add(:json_value, :jsonb)
+      add(:file_value_id, references(:files, on_delete: :delete_all))
+
+      timestamps()
+    end
+
+    create(unique_index("configuration", [:name]))
   end
 
   def down do
@@ -81,5 +92,7 @@ defmodule Api.Repo.Migrations.RemoveTenantColumns do
       add(:user_id, :integer)
       timestamps()
     end
+
+    drop(table("configuration"))
   end
 end

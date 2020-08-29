@@ -65,10 +65,6 @@ defmodule Api.ArticleResolver do
     end
   end
 
-  def all_unpublished(_args, _info) do
-    {:error, "Tenant nicht gefunden."}
-  end
-
   def own(_args, %{context: %{current_user: current_user}}) do
     {:ok, Content.list_user_articles(current_user)}
   end
@@ -85,10 +81,6 @@ defmodule Api.ArticleResolver do
        context[:user_is_admin],
        topic
      )}
-  end
-
-  def by_topic(_args, _info) do
-    {:error, "Tenant nicht gefunden."}
   end
 
   def create(%{article: article_input}, %{context: context}) do
