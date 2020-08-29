@@ -13,10 +13,10 @@ defmodule Api.SearchResolverTest do
   setup do
     Repo.Seeder.seed()
     Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
-    :timer.sleep(200)
+    :timer.sleep(500)
     Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
+    :timer.sleep(500)
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     lehrer = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user = Repo.get_by!(User, email: "doro@lotta.schule")
@@ -31,7 +31,6 @@ defmodule Api.SearchResolverTest do
 
     {:ok,
      %{
-       web_tenant: web_tenant,
        admin_account: admin,
        admin_jwt: admin_jwt,
        lehrer_account: lehrer,
@@ -54,7 +53,6 @@ defmodule Api.SearchResolverTest do
     test "search for public articles should return them" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: %{searchText: "Nipple Jesus"})
         |> json_response(200)
 
@@ -80,11 +78,10 @@ defmodule Api.SearchResolverTest do
              }
     end
 
-    test "search for restricted articles should not returne them when user is not in the right group",
+    test "search for restricted articles should not return them when user is not in the right group",
          %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api",
           query: @query,
@@ -122,7 +119,6 @@ defmodule Api.SearchResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api",
           query: @query,
@@ -147,7 +143,6 @@ defmodule Api.SearchResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api",
           query: @query,

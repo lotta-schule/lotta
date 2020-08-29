@@ -10,8 +10,6 @@ import Config
 config :api,
   ecto_repos: [Api.Repo]
 
-config :api, Api.Repo, after_connect: {Api.Repo, :after_connect, []}
-
 config :api, Api.Repo, start_apps_before_migration: [:httpoison]
 
 config :api, :live_view,

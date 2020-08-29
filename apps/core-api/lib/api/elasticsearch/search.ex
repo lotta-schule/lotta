@@ -3,11 +3,10 @@ defmodule Api.Elasticsearch.Search do
     Module for executing an elastic search request
   """
 
-  alias Api.Tenants.Tenant
   import Ecto.Query
 
-  def search_query_filter(query, searchtext, %Tenant{} = tenant) do
-    case execute_search(searchtext, tenant) do
+  def search_query_filter(query, searchtext) do
+    case execute_search(searchtext) do
       {:ok, result} ->
         query =
           query
@@ -27,7 +26,7 @@ defmodule Api.Elasticsearch.Search do
     end
   end
 
-  defp execute_search(searchtext, %Tenant{} = tenant) do
+  defp execute_search(searchtext) do
     Elasticsearch.post(
       Api.Elasticsearch.Cluster,
       "/articles/_doc/_search",
@@ -80,12 +79,7 @@ defmodule Api.Elasticsearch.Search do
                   }
                 }
               }
-            ],
-            "filter" => %{
-              "term" => %{
-                "tenant_id" => tenant.id
-              }
-            }
+            ]
           }
         }
       }

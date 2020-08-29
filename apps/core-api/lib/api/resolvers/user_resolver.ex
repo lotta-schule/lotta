@@ -45,12 +45,6 @@ defmodule Api.UserResolver do
     end
   end
 
-  def resolve_is_blocked(user, _args, _info) do
-    {:ok, user_is_blocked?(user)}
-  end
-
-  def resolve_is_blocked(_user, _args, _context), do: {:ok, false}
-
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
   end
@@ -59,13 +53,9 @@ defmodule Api.UserResolver do
     {:ok, nil}
   end
 
-  def resolve_groups(user, _args, _info) do
-    {:ok, User.get_groups(user)}
-  end
+  def resolve_groups(user, _args, _info), do: {:ok, User.get_groups(user)}
 
-  def resolve_groups(user, _args, _context), do: {:ok, User.get_groups(user)}
-
-  def resolve_assigned_groups(user, _args, %{context: context}) do
+  def resolve_assigned_groups(user, _args, _info) do
     {:ok, User.get_assigned_groups(user)}
   end
 
@@ -93,7 +83,7 @@ defmodule Api.UserResolver do
         {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
 
       String.length(searchtext) >= 2 ->
-        Accounts.search_user(searchtext)
+        {:ok, Accounts.search_user(searchtext)}
 
       true ->
         {:ok, []}
@@ -112,7 +102,7 @@ defmodule Api.UserResolver do
     end
   end
 
-  def register(%{user: user_params} = args, %{context: context}) do
+  def register(%{user: user_params} = args, _info) do
     user_params =
       user_params
       |> Map.put(
@@ -178,7 +168,7 @@ defmodule Api.UserResolver do
     {:ok, true}
   end
 
-  def reset_password(%{email: email, token: token, password: password}, %{context: context}) do
+  def reset_password(%{email: email, token: token, password: password}, _info) do
     with {:ok, user} <- Accounts.find_user_by_reset_token(email, token),
          {:ok, user} <- Accounts.update_password(user, password),
          {:ok, access_token, refresh_token} <- create_user_tokens(user, get_claims_for_user(user)) do
@@ -198,35 +188,22 @@ defmodule Api.UserResolver do
 
   def destroy_account(_args, _info), do: {:error, "Du bist nicht angemeldet."}
 
-  def set_user_groups(%{id: id, group_ids: group_ids}, %{context: %{current_user: current_user}}) do
-    case user_is_admin?(current_user) do
-      true ->
-        groups =
-          group_ids
-          |> Enum.map(fn group_id ->
-            try do
-              Accounts.get_user_group!(String.to_integer(group_id))
-            rescue
-              NoResultsError -> nil
-            end
-          end)
-          |> Enum.filter(&(!is_nil(&1)))
-
-        try do
-          Accounts.get_user!(String.to_integer(id))
-          |> Accounts.set_user_groups(groups)
-        rescue
-          NoResultsError ->
-            {:error, "Nutzer mit der id #{id} nicht gefunden."}
-        end
-
-      false ->
-        {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}
+  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
+    if user_is_admin?(current_user) do
+      try do
+        Accounts.get_user!(String.to_integer(id))
+        |> Accounts.update_user(args)
+      rescue
+        NoResultsError ->
+          {:error, "Nutzer mit der id #{id} nicht gefunden."}
+      end
+    else
+      {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}
     end
   end
 
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
-    case Accounts.update_user(current_user, user_params) do
+    case Accounts.update_profile(current_user, user_params) do
       {:ok, user} ->
         {:ok, user}
 
@@ -257,22 +234,6 @@ defmodule Api.UserResolver do
            message: "Passwort ändern fehlgeschlagen.",
            details: extract_error_details(error)
          ]}
-    end
-  end
-
-  def set_user_blocked(%{id: id, is_blocked: is_blocked}, %{context: context}) do
-    case context[:current_user] && user_is_admin?(context.current_user, tenant) do
-      true ->
-        try do
-          Accounts.get_user!(String.to_integer(id))
-          |> Accounts.set_user_blocked(is_blocked)
-        rescue
-          NoResultsError ->
-            {:error, "Nutzer mit der id #{id} nicht gefunden."}
-        end
-
-      false ->
-        {:error, "Nur Administratoren dürfen Benutzer blocken."}
     end
   end
 end

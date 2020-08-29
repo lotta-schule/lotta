@@ -1,27 +1,25 @@
-defmodule ApiWeb.Schema.Tenants.Category do
+defmodule ApiWeb.Schema.System.System do
   @moduledoc false
 
   use Absinthe.Schema.Notation
 
-  object :tenant do
+  alias Api.{UserGroupResolver, SystemResolver}
+
+  object :system do
     field :id, :id
     field :title, :string
     field :slug, :string
     field :custom_theme, :json
     field :inserted_at, :naive_datetime
+    field :host, :string, resolve: &SystemResolver.host/2
     field :logo_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :background_image_file, :file,
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
-    field :categories, list_of(:category),
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :groups, list_of(:user_group), resolve: &UserGroupResolver.all/2
 
-    field :groups, list_of(:user_group),
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-
-    field :custom_domains, list_of(:custom_domain),
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :custom_domains, list_of(:custom_domain), resolve: &SystemResolver.custom_domains/2
   end
 
   object :custom_domain do

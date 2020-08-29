@@ -5,15 +5,13 @@ defmodule Api.Accounts.User do
 
   use Ecto.Schema
 
-  import Ecto.Query
   import Ecto.Changeset
 
   alias Api.Repo
   alias Ecto.Changeset
   alias Api.Accounts
-  alias Api.Accounts.{BlockedTenant, File, User, UserEnrollmentToken, UserGroup}
+  alias Api.Accounts.{File, User, UserEnrollmentToken, UserGroup}
   alias Api.Content.Article
-  alias Api.Tenants.Tenant
 
   schema "users" do
     field :email, :string
@@ -22,6 +20,7 @@ defmodule Api.Accounts.User do
     field :class, :string
     field :last_seen, :naive_datetime
     field :hide_full_name, :boolean
+    field :is_blocked, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string
 
@@ -52,48 +51,26 @@ defmodule Api.Accounts.User do
     |> Map.fetch!(:groups)
   end
 
-  def get_assigned_groups(%User{} = user) do
-    user
-    |> Repo.preload(:groups)
-    |> Map.fetch!(:groups)
-  end
-
   def get_dynamic_groups(%User{} = user) do
     user
     |> Repo.preload(:enrollment_tokens)
     |> Map.fetch!(:enrollment_tokens)
     |> Enum.map(& &1.enrollment_token)
-    |> Accounts.get_groups_by_enrollment_tokens(tokens)
+    |> Accounts.get_groups_by_enrollment_tokens()
   end
 
   def get_groups(%User{} = user) do
     get_assigned_groups(user) ++ get_dynamic_groups(user)
   end
 
-  def get_groups(%User{} = user) do
-    user
-    |> get_assigned_groups()
-  end
-
-  @doc false
-  def changeset(user, attrs) do
-    user
-    |> cast(attrs, [:name, :class, :email])
-    |> unique_constraint(:email, name: :users__lower_email_index)
-    |> validate_required([:name, :email])
-    |> normalize_email()
-  end
-
-  def assign_group_changeset(%User{} = user, %{group: newgroup}) do
-    groups = Repo.all(UserGroup) ++ [newgroup]
-
+  def update_changeset(%User{} = user, params \\ %{}) do
     user
     |> Repo.preload(:groups)
-    |> Changeset.change()
-    |> put_assoc(:groups, groups)
+    |> cast(params, [:is_blocked])
+    |> put_assoc_groups(params)
   end
 
-  def update_changeset(%User{} = user, params \\ %{}) do
+  def update_profile_changeset(%User{} = user, params \\ %{}) do
     user
     |> Repo.preload([:avatar_image_file, :enrollment_tokens])
     |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
@@ -168,6 +145,26 @@ defmodule Api.Accounts.User do
 
   defp put_assoc_enrollment_tokens(user, _args), do: user
 
+  defp put_assoc_groups(user, %{groups: groups}) do
+    groups =
+      groups
+      |> Enum.map(fn group ->
+        case group do
+          %UserGroup{} ->
+            group
+
+          %{id: id} ->
+            Repo.get(UserGroup, String.to_integer(id))
+        end
+      end)
+      |> Enum.filter(&(!is_nil(&1)))
+
+    user
+    |> put_assoc(:groups, groups)
+  end
+
+  defp put_assoc_groups(user, _args), do: user
+
   defp validate_has_nickname_if_hide_full_name_is_set(%Changeset{} = changeset) do
     case fetch_field(changeset, :hide_full_name) do
       {_, true} ->
@@ -176,16 +173,5 @@ defmodule Api.Accounts.User do
       _ ->
         changeset
     end
-  end
-
-  @doc """
-  Changeset which sets the user's groups.
-  """
-  @spec set_users_groups_changeset(%User{}, [%UserGroup{}]) :: %Changeset{}
-  def set_users_groups_changeset(user, groups) do
-    user
-    |> Repo.preload(:groups)
-    |> Changeset.change()
-    |> Changeset.put_assoc(:groups, groups)
   end
 end

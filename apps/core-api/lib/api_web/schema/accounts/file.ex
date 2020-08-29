@@ -23,7 +23,6 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
 
     field :parent_directory, :directory,
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)

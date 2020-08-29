@@ -3,16 +3,11 @@ defmodule Api.Repo.Seeder do
   alias Ecto.Changeset
   alias Api.Accounts
   alias Api.Accounts.{Directory, File, UserGroup}
-  alias Api.Tenants.{Category, Tenant, Widget}
+  alias Api.System.{Category, CustomDomain, Widget}
   alias Api.Content.{Article, ContentModule}
 
   def seed() do
-    web_tenant = Repo.insert!(%Tenant{slug: "web", title: "Web Beispiel"})
-
-    web_tenant
-    |> Ecto.build_assoc(:custom_domains, %{host: "lotta.web", is_main_domain: true})
-    # add "lotta.web" as custom domain
-    |> Repo.insert!()
+    Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
 
     admin_group =
       Repo.insert!(%UserGroup{
@@ -96,10 +91,9 @@ defmodule Api.Repo.Seeder do
       password: "test456"
     })
 
-    Accounts.set_user_groups(alexis, [admin_group])
-    Accounts.set_user_groups(eike, [lehrer_group])
-
-    Accounts.set_user_blocked(dr_evil, true)
+    Accounts.update_user(alexis, %{groups: [admin_group]})
+    Accounts.update_user(eike, %{groups: [lehrer_group]})
+    Accounts.update_user(dr_evil, %{is_blocked: true})
 
     # public files
     public_logos = %Directory{name: "logos"} |> Repo.insert!()
@@ -295,7 +289,7 @@ defmodule Api.Repo.Seeder do
     |> Repo.preload(:avatar_image_file)
     |> Changeset.change()
     |> Changeset.put_assoc(:avatar_image_file, List.first(alexis_files))
-    |> Repo.update()
+    |> Repo.update!()
 
     # Eike' files
     avatar_directory = %Directory{name: "avatar", user_id: eike.id} |> Repo.insert!()
@@ -477,37 +471,35 @@ defmodule Api.Repo.Seeder do
     |> Repo.preload(:widgets)
     |> Changeset.change()
     |> Changeset.put_assoc(:widgets, [widget1, widget2, widget3])
-    |> Repo.update()
+    |> Repo.update!()
 
     # Articles
 
-    Repo.insert(%Article{
+    Repo.insert!(%Article{
       title: "Draft1",
       preview: "Entwurf Artikel zu I",
       inserted_at: ~N[2019-09-01 10:00:00],
       updated_at: ~N[2019-09-01 10:00:00],
       preview_image_file_id: List.first(eike_files).id
     })
-    |> elem(1)
     |> Repo.preload(:users)
     |> Changeset.change()
     |> Changeset.put_assoc(:users, [eike])
-    |> Repo.update()
+    |> Repo.update!()
 
-    Repo.insert(%Article{
+    Repo.insert!(%Article{
       title: "Draft2",
       preview: "Entwurf Artikel zu XYZ",
       inserted_at: ~N[2019-09-01 10:05:00],
       updated_at: ~N[2019-09-01 10:05:00],
       preview_image_file_id: List.first(eike_files).id
     })
-    |> elem(1)
     |> Repo.preload(:users)
     |> Changeset.change()
     |> Changeset.put_assoc(:users, [eike])
-    |> Repo.update()
+    |> Repo.update!()
 
-    Repo.insert(%Article{
+    Repo.insert!(%Article{
       title: "Fertiger Artikel zum Konzert",
       preview: "Entwurf Artikel zu XYZ",
       ready_to_publish: true,
@@ -515,11 +507,10 @@ defmodule Api.Repo.Seeder do
       updated_at: ~N[2019-09-01 10:06:00],
       preview_image_file_id: List.first(eike_files).id
     })
-    |> elem(1)
     |> Repo.preload(:users)
     |> Changeset.change()
     |> Changeset.put_assoc(:users, [eike])
-    |> Repo.update()
+    |> Repo.update!()
 
     oskar_goes_to =
       Repo.insert!(%Article{
@@ -983,6 +974,6 @@ defmodule Api.Repo.Seeder do
     |> Repo.preload(:groups)
     |> Changeset.change()
     |> Changeset.put_assoc(:groups, groups)
-    |> Repo.update()
+    |> Repo.update!()
   end
 end

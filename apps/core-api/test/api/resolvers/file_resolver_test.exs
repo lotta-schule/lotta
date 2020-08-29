@@ -10,13 +10,11 @@ defmodule Api.FileResolverTest do
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
-  alias Api.Tenants
   alias Api.Accounts.{User, File, Directory}
 
   setup do
     Seeder.seed()
 
-    web_tenant = Tenants.get_tenant_by_slug!("web")
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user = Repo.get_by!(User, email: "billy@lotta.schule")
@@ -35,9 +33,7 @@ defmodule Api.FileResolverTest do
     public_directory =
       Repo.one!(
         from d in Directory,
-          where:
-            d.name == "logos" and d.tenant_id == ^web_tenant.id and is_nil(d.user_id) and
-              is_nil(d.parent_directory_id)
+          where: d.name == "logos" and is_nil(d.user_id) and is_nil(d.parent_directory_id)
       )
 
     public_file =
@@ -45,7 +41,6 @@ defmodule Api.FileResolverTest do
 
     {:ok,
      %{
-       web_tenant: web_tenant,
        admin_account: admin,
        admin_jwt: admin_jwt,
        user2_account: user2,
@@ -82,7 +77,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: admin_file.id})
         |> json_response(200)
@@ -107,7 +101,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: public_file.id})
         |> json_response(200)
@@ -134,7 +127,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: public_file.id})
         |> json_response(200)
@@ -162,7 +154,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
@@ -184,7 +175,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
@@ -231,11 +221,8 @@ defmodule Api.FileResolverTest do
               }
             }
           }
-          ... on FileTenantUsageLocation {
+          ... on FileSystemUsageLocation {
             usage
-            tenant {
-              slug
-            }
           }
           ... on FileUserUsageLocation {
             usage
@@ -258,7 +245,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: admin_file.id})
         |> json_response(200)
@@ -288,7 +274,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> get("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
@@ -331,7 +316,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: public_file.id})
         |> json_response(200)
@@ -368,7 +352,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> get("/api", query: @query, variables: %{id: public_file.id})
         |> json_response(200)
@@ -411,7 +394,6 @@ defmodule Api.FileResolverTest do
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{parentDirectoryId: admin_dir.id})
         |> json_response(200)
@@ -446,7 +428,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{parentDirectoryId: public_directory.id})
         |> json_response(200)
@@ -486,7 +467,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{parentDirectoryId: public_directory.id})
         |> json_response(200)
@@ -521,19 +501,12 @@ defmodule Api.FileResolverTest do
 
     test "returns error when user is not owner of private directory and user is not admin", %{
       user_jwt: user_jwt,
-      user2_account: user2_account,
-      web_tenant: web_tenant
+      user2_account: user2_account
     } do
-      user2_directory =
-        Repo.get_by!(Directory,
-          name: "avatar",
-          tenant_id: web_tenant.id,
-          user_id: user2_account.id
-        )
+      user2_directory = Repo.get_by!(Directory, name: "avatar", user_id: user2_account.id)
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
@@ -551,19 +524,16 @@ defmodule Api.FileResolverTest do
 
     test "returns error when user is not owner of private directory and user is admin", %{
       admin_jwt: admin_jwt,
-      user2_account: user2_account,
-      web_tenant: web_tenant
+      user2_account: user2_account
     } do
       user2_directory =
         Repo.get_by!(Directory,
           name: "avatar",
-          tenant_id: web_tenant.id,
           user_id: user2_account.id
         )
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
@@ -592,7 +562,6 @@ defmodule Api.FileResolverTest do
     test "it should return an error when user is not logged in" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api", query: @query)
         |> json_response(200)
 
@@ -610,7 +579,6 @@ defmodule Api.FileResolverTest do
     test "it should return the user's relevant files in usage", %{user2_jwt: user2_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query)
         |> json_response(200)
@@ -643,7 +611,6 @@ defmodule Api.FileResolverTest do
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -665,7 +632,6 @@ defmodule Api.FileResolverTest do
          %{user2_file: user2_file, user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -690,7 +656,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -712,7 +677,6 @@ defmodule Api.FileResolverTest do
     test "returns error when file does not exist", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: 0, filename: "neuername.test"})
         |> json_response(200)
@@ -734,7 +698,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -761,7 +724,6 @@ defmodule Api.FileResolverTest do
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -787,7 +749,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -818,7 +779,6 @@ defmodule Api.FileResolverTest do
     test "delete a user's own file", %{user2_file: user2_file, user2_jwt: user2_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
@@ -836,7 +796,6 @@ defmodule Api.FileResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
@@ -855,7 +814,6 @@ defmodule Api.FileResolverTest do
     test "returns error when file does not exist", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -875,7 +833,6 @@ defmodule Api.FileResolverTest do
   test "deletes a public file as admin", %{public_file: public_file, admin_jwt: admin_jwt} do
     res =
       build_conn()
-      |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{admin_jwt}")
       |> post("/api", query: @query, variables: %{id: public_file.id})
       |> json_response(200)
@@ -893,7 +850,6 @@ defmodule Api.FileResolverTest do
   } do
     res =
       build_conn()
-      |> put_req_header("tenant", "slug:web")
       |> put_req_header("authorization", "Bearer #{user2_jwt}")
       |> post("/api", query: @query, variables: %{id: public_file.id})
       |> json_response(200)

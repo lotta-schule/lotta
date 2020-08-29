@@ -3,7 +3,7 @@ defmodule Api.Repo do
     otp_app: :api,
     adapter: Ecto.Adapters.Postgres
 
-  def after_connect(pid) do
-    Postgrex.query!(pid, "SET search_path TO tenant_2", [])
+  def after_connect(pid, schema) do
+    Postgrex.query!(pid, "SET search_path TO #{schema}", [])
   end
 end

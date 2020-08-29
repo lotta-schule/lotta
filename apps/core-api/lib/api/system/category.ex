@@ -1,4 +1,4 @@
-defmodule Api.Tenants.Category do
+defmodule Api.System.Category do
   @moduledoc """
     Ecto Schema for categories
   """
@@ -7,7 +7,7 @@ defmodule Api.Tenants.Category do
   import Ecto.{Changeset, Query}
   alias Api.Repo
   alias Api.Accounts.{File, UserGroup}
-  alias Api.Tenants.{Category, Tenant, Widget}
+  alias Api.System.{Category, Widget}
 
   schema "categories" do
     field :title, :string
@@ -20,7 +20,6 @@ defmodule Api.Tenants.Category do
 
     belongs_to :banner_image_file, File, on_replace: :nilify
     belongs_to :category, Category
-    belongs_to :tenant, Tenant
 
     many_to_many :groups,
                  Api.Accounts.UserGroup,
@@ -97,8 +96,8 @@ defmodule Api.Tenants.Category do
 
   defp put_assoc_widgets(changeset, _args), do: changeset
 
-  def get_max_sort_key(%Tenant{id: tenant_id}) do
-    from(c in Category, where: c.tenant_id == ^tenant_id, select: max(c.sort_key))
+  def get_max_sort_key() do
+    from(c in Category, select: max(c.sort_key))
     |> Repo.one()
   end
 end

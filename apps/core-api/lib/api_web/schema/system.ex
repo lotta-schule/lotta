@@ -1,13 +1,13 @@
-defmodule ApiWeb.Schema.Tenants do
+defmodule ApiWeb.Schema.System do
   @moduledoc false
 
   use Absinthe.Schema.Notation
 
-  object :tenants_queries do
-    field :tenant, :tenant do
+  object :system_queries do
+    field :system, :system do
       arg(:id, :id)
       arg(:slug, :string)
-      resolve(&Api.TenantResolver.get/2)
+      resolve(&Api.SystemResolver.get/2)
     end
 
     field :categories, list_of(:category) do
@@ -21,24 +21,15 @@ defmodule ApiWeb.Schema.Tenants do
     end
 
     field :usage, list_of(:usage) do
-      resolve(&Api.TenantResolver.usage/2)
+      resolve(&Api.SystemResolver.usage/2)
     end
   end
 
-  object :tenants_mutations do
-    field :create_tenant, type: :tenant do
-      arg(:title, non_null(:string))
-      arg(:slug, non_null(:string))
-      arg(:email, :string)
-      arg(:name, :string)
+  object :system_mutations do
+    field :update_system, type: :system do
+      arg(:system, non_null(:system_input))
 
-      resolve(&Api.TenantResolver.create/2)
-    end
-
-    field :update_tenant, type: :tenant do
-      arg(:tenant, non_null(:tenant_input))
-
-      resolve(&Api.TenantResolver.update/2)
+      resolve(&Api.SystemResolver.update/2)
     end
 
     field :create_category, type: :category do

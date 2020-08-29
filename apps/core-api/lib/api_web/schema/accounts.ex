@@ -96,13 +96,6 @@ defmodule ApiWeb.Schema.Accounts do
       resolve(&Api.UserResolver.destroy_account/2)
     end
 
-    field :set_user_blocked, type: :user do
-      arg(:id, non_null(:id))
-      arg(:is_blocked, non_null(:boolean))
-
-      resolve(&Api.UserResolver.set_user_blocked/2)
-    end
-
     field :create_user_group, type: :user_group do
       arg(:group, non_null(:user_group_input))
 
@@ -137,10 +130,11 @@ defmodule ApiWeb.Schema.Accounts do
       middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
-    field :set_user_groups, type: :user do
+    field :update_user, type: :user do
       arg(:id, non_null(:id))
-      arg(:group_ids, non_null(list_of(:id)))
-      resolve(&Api.UserResolver.set_user_groups/2)
+      arg(:is_blocked, :boolean)
+      arg(:groups, list_of(non_null(:select_user_group_input)))
+      resolve(&Api.UserResolver.update/2)
     end
 
     field :create_directory, type: :directory do

@@ -53,7 +53,7 @@ defmodule ApiWeb.Schema.Contents.Article do
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
 
     field :users, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.System)
   end
 
   object :content_module do

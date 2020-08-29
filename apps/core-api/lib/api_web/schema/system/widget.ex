@@ -1,4 +1,4 @@
-defmodule ApiWeb.Schema.Tenants.Widget do
+defmodule ApiWeb.Schema.System.Widget do
   @moduledoc false
 
   use Absinthe.Schema.Notation
@@ -30,7 +30,7 @@ defmodule ApiWeb.Schema.Tenants.Widget do
     field :id, :id
   end
 
-  input_object :tenant_input do
+  input_object :system_input do
     field :title, :string
     field :custom_theme, :json
     field :logo_image_file, :select_file_input

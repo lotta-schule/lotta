@@ -9,11 +9,9 @@ defmodule Api.Accounts do
 
   alias Ecto.Changeset
   alias Api.Repo
-  alias Api.Tenants
   alias Api.Queue.EmailPublisher
 
   alias Api.Accounts.{
-    BlockedTenant,
     User,
     UserGroup,
     GroupEnrollmentToken,
@@ -22,8 +20,6 @@ defmodule Api.Accounts do
     File,
     FileConversion
   }
-
-  alias Api.Tenants.Tenant
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -62,6 +58,16 @@ defmodule Api.Accounts do
         order_by: [q.name, q.email]
 
     Repo.all(query)
+  end
+
+  def get_admin_users() do
+    from(u in User,
+      join: ug in assoc(u, :groups),
+      where: ug.is_admin_group == true,
+      order_by: [u.name, u.email],
+      distinct: true
+    )
+    |> Repo.all()
   end
 
   @doc """
@@ -112,34 +118,19 @@ defmodule Api.Accounts do
     matching_searchtext = "%#{searchtext}%"
 
     query =
-      Ecto.Query.from(u in User,
+      from(u in User,
         where:
-          u.email == ^searchtext or (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext)))
+          u.email == ^searchtext or
+            (ilike(u.name, ^matching_searchtext) or ilike(u.nickname, ^matching_searchtext))
       )
 
     Repo.all(query)
   end
 
   @doc """
-  Creates a user.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a user.
+  Updates a user by an admin.
+  This is to assign groups or block user.
+  See `Api.Accounts.update_profile/2` if you want to change your own user's data.
 
   ## Examples
 
@@ -157,14 +148,26 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  Assigns a list of groups to a user.  Replaces all groups.
-  See `Api.Accounts.User` for the used changeset.
+  Updates a profile (user's own data)
+  This is for profile data like image, name, ...
+
+  ## Examples
+
+      iex> update_profile(user, %{field: new_value})
+      {:ok, %User{}}
+
+      iex> update_profile(user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
   """
-  @spec set_user_groups(%User{}, [%UserGroup{}]) :: {:ok, %User{}} | {:error, %Changeset{}}
-  def set_user_groups(user, groups) when not is_nil(user) do
+  def update_profile(%User{} = user, attrs) do
     user
-    |> User.set_users_groups_changeset(groups)
+    |> User.update_profile_changeset(attrs)
     |> Repo.update()
+  end
+
+  def list_user_groups() do
+    Repo.all(UserGroup)
   end
 
   @doc """
@@ -245,19 +248,6 @@ defmodule Api.Accounts do
     Repo.delete(user)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
-
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{source: %User{}}
-
-  """
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
-  end
-
   def request_password_reset_token(email, token) do
     email =
       email
@@ -319,14 +309,6 @@ defmodule Api.Accounts do
       error ->
         error
     end
-  end
-
-  def set_user_blocked(%User{} = user, true) do
-    # TODO: block user
-  end
-
-  def set_user_blocked(%User{} = user, false) do
-    # TODO: unblock user
   end
 
   @doc """
@@ -404,7 +386,7 @@ defmodule Api.Accounts do
     |> Repo.insert()
   end
 
-  def create_user_default_directories(%User{} = user) do
+  def create_new_user_directories(%User{} = user) do
     ["Mein Profil", "Meine Bilder", "Meine Dokumente", "Meine Videos", "Meine Tondokumente"]
     |> Enum.map(fn name ->
       create_directory(%{
@@ -455,7 +437,7 @@ defmodule Api.Accounts do
 
   """
   def list_files(%Directory{} = parent_directory) do
-    Ecto.Query.from(f in File,
+    from(f in File,
       where: f.parent_directory_id == ^parent_directory.id,
       order_by: [:filename]
     )
@@ -544,17 +526,17 @@ defmodule Api.Accounts do
   @spec transfer_files_by_ids([pos_integer()], User.t()) :: [File.t()]
 
   def transfer_files_by_ids(file_ids, %User{id: user_id}) do
-    from(f in File, where: f.user_id == ^user_id and f.id in ^file_ids)
+    from(f in File,
+      where: f.user_id == ^user_id and f.id in ^file_ids
+    )
     |> Repo.all()
-    |> Enum.map(fn files ->
+    |> Enum.map(fn file ->
       parent_directory =
         List.last(ensure_archive_directory("#{DateTime.utc_now().year}/#{user_id}"))
 
-      Enum.map(files, fn file ->
-        file
-        |> Changeset.change(%{user_id: nil, parent_directory_id: parent_directory.id})
-        |> Repo.update!()
-      end)
+      file
+      |> Changeset.change(%{user_id: nil, parent_directory_id: parent_directory.id})
+      |> Repo.update!()
     end)
   end
 
@@ -734,16 +716,17 @@ defmodule Api.Accounts do
 
   """
   def create_user_group(attrs) do
-    attrs
-    |> case do
-      %{sort_key: _} ->
-        attrs
+    attrs =
+      case attrs do
+        %{sort_key: _} ->
+          attrs
 
-      attrs ->
-        attrs
-        |> Map.put(:sort_key, UserGroup.get_max_sort_key() + 10)
-    end
-    |> UserGroup.changeset()
+        attrs ->
+          attrs
+          |> Map.put(:sort_key, UserGroup.get_max_sort_key() + 10)
+      end
+
+    UserGroup.changeset(%UserGroup{}, attrs)
     |> Repo.insert()
   end
 

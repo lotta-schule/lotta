@@ -7,9 +7,10 @@ defmodule Api.Content.Article do
   alias Api.Repo
   import Ecto.Changeset
   import Ecto.Query
+  alias Api.System
   alias Api.Accounts.{File, User, UserGroup}
   alias Api.Content.{Article, ContentModule}
-  alias Api.Tenants.{Category, Tenant}
+  alias Api.System.Category
 
   schema "articles" do
     field :title, :string
@@ -37,7 +38,7 @@ defmodule Api.Content.Article do
   end
 
   def get_url(%Article{} = article) do
-    Tenant.get_main_url()
+    System.get_main_url()
     |> String.replace_suffix(
       "",
       "/a/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}"

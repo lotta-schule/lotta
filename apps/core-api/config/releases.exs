@@ -16,6 +16,7 @@ db_user = System.fetch_env!("POSTGRES_USER")
 db_password = System.fetch_env!("POSTGRES_PASSWORD")
 db_host = System.fetch_env!("POSTGRES_HOST")
 db_name = System.fetch_env!("POSTGRES_DB")
+db_schema = System.fetch_env!("POSTGRES_SCHEMA")
 # redis
 redis_host = System.fetch_env!("REDIS_HOST")
 redis_password = System.fetch_env!("REDIS_PASSWORD")
@@ -51,6 +52,8 @@ config :api, Api.Repo,
   hostname: db_host,
   show_sensitive_data_on_connection_error: false,
   pool_size: 25
+
+config :api, Api.Repo, after_connect: {Api.Repo, :after_connect, [db_schema]}
 
 config :api, :rabbitmq_url, rabbitmq_url
 

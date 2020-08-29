@@ -18,6 +18,8 @@ config :api, Api.Repo,
 
 config :api, :rabbitmq_url, "amqp://guest:guest@rabbitmq"
 
+config :api, Api.Repo, after_connect: {Api.Repo, :after_connect, ["tenant_2"]}
+
 config :api, :redis_connection,
   host: "redis",
   password: "lotta",

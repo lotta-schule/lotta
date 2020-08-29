@@ -6,8 +6,7 @@ defmodule ApiWeb.SitemapPlug do
   import Plug.Conn
   import Ecto.Query
   alias Api.Repo
-  alias Api.Tenants
-  alias Api.Tenants.Tenant
+  alias Api.System
   alias Api.Content
 
   def init(opts), do: opts
@@ -36,7 +35,7 @@ defmodule ApiWeb.SitemapPlug do
   end
 
   defp get_categories_body(conn) do
-    categories = Tenants.list_categories(nil, [], false)
+    categories = System.list_categories(nil, [], false)
 
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <>
       "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n" <>

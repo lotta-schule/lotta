@@ -34,6 +34,8 @@ defmodule Api.UserGroupResolver do
     end
   end
 
+  def all(_args, _info), do: {:ok, Accounts.list_user_groups()}
+
   def get(%{id: id}, %{context: context}) do
     if context[:current_user] && context[:user_is_admin] do
       try do

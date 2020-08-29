@@ -9,8 +9,8 @@ defmodule Api.Accounts.Authentication do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
+  alias Api.System
   alias Api.Accounts.User
-  alias Api.Tenants.Tenant
 
   @typedoc """
   A token representing a user.
@@ -87,49 +87,35 @@ defmodule Api.Accounts.Authentication do
   end
 
   @doc """
-  generate token claims for a given user in dependence of an optionally given tenant
+  generate token claims for a given user
   """
   @doc since: "2.0.0"
 
-  @spec get_claims_for_user(User.t(), Tenant.t() | nil) :: {:ok, map()} | {:error, term()}
+  @spec get_claims_for_user(User.t()) :: {:ok, map()} | {:error, term()}
 
-  def get_claims_for_user(user, tenant \\ nil)
-
-  def get_claims_for_user(user, tenant) when is_nil(tenant) do
+  def get_claims_for_user(user) do
     %{
-      aud: "lotta",
       email: user.email,
-      gps: Enum.map(User.get_groups(user), &%{id: to_string(&1.id), name: &1.name}),
-      agp: Enum.map(User.get_assigned_groups(user), &%{id: to_string(&1.id), name: &1.name})
-    }
-  end
-
-  def get_claims_for_user(user, tenant) do
-    %{
-      tid: tenant.id,
-      email: user.email,
-      aud: Tenant.get_lotta_url(tenant, skip_protocol: true),
-      adm: user_is_admin?(user, tenant),
-      sad: user_is_lotta_admin?(user),
-      gps: Enum.map(User.get_groups(user, tenant), &%{id: to_string(&1.id)}),
-      agp: Enum.map(User.get_assigned_groups(user, tenant), &%{id: to_string(&1.id)})
+      aud: System.get_main_url(skip_protocol: true),
+      adm: user_is_admin?(user),
+      gps: Enum.map(User.get_groups(user), &%{id: to_string(&1.id)}),
+      agp: Enum.map(User.get_assigned_groups(user), &%{id: to_string(&1.id)})
     }
   end
 
   @doc """
-  Ensures a given user is not blocked for a given tenant.
-  Returns `{:error, reason}` if the user is blocked for the tenant.
+  Ensures a given user is not blocked for a given.
+  Returns `{:error, reason}` if the user is blocked.
   Returns `:ok` if the user is fine.
   """
   @doc since: "2.0.0"
 
-  @spec ensure_user_is_not_blocked(User.t(), Tenant.t()) :: :ok | {:error, term()}
+  @spec ensure_user_is_not_blocked(User.t()) :: :ok | {:error, term()}
 
-  def ensure_user_is_not_blocked(%User{} = user, %Tenant{} = tenant) do
-    if user_is_blocked?(user, tenant) do
-      {:error, "Du wurdest geblockt. Du darfst dich nicht anmelden."}
-    else
-      :ok
+  def ensure_user_is_not_blocked(%User{} = user) do
+    case user.is_blocked do
+      true -> {:error, "Du wurdest geblockt. Du darfst dich nicht anmelden."}
+      false -> :ok
     end
   end
 end

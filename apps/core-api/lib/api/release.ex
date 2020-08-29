@@ -2,8 +2,7 @@ defmodule Api.Release do
   @moduledoc """
     Release tasks like database migrations
   """
-  alias Api.Repo
-  import Ecto.Query
+  alias Ecto.Migrator
 
   @app :api
 
@@ -12,18 +11,18 @@ defmodule Api.Release do
 
   def migrate do
     for repo <- repos() do
-      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+      {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :up, all: true))
     end
   end
 
   def drop do
     for repo <- repos() do
-      :ok = Ecto.Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
+      :ok = Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
     end
   end
 
   def rollback(repo, version) do
-    {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+    {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :down, to: version))
   end
 
   def build_elasticsearch_indexes do

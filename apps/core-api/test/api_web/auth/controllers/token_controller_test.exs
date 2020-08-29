@@ -14,16 +14,13 @@ defmodule ApiWeb.Auth.TokenControllerTest do
   setup do
     Seeder.seed()
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-
     email = "alexis.rinaldoni@lotta.schule"
 
     admin = Repo.get_by!(User, email: email)
 
-    {:ok, _access_token, refresh_token} =
-      create_user_tokens(admin, get_claims_for_user(admin, web_tenant))
+    {:ok, _access_token, refresh_token} = create_user_tokens(admin, get_claims_for_user(admin))
 
-    %{refresh_token: refresh_token, admin: admin, web_tenant: web_tenant}
+    %{refresh_token: refresh_token, admin: admin}
   end
 
   describe "Refresh Token <-> Refresh+Access Token Exchange" do

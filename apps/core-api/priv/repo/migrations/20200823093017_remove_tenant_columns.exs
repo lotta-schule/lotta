@@ -1,13 +1,14 @@
 defmodule Api.Repo.Migrations.RemoveTenantColumns do
   use Ecto.Migration
 
-  def change do
+  def up do
     alter table("categories") do
       remove(:tenant_id, :integer)
     end
 
     alter table("users") do
       remove(:tenant_id, :integer)
+      add(:is_blocked, :boolean, default: false)
     end
 
     alter table("user_groups") do
@@ -15,10 +16,10 @@ defmodule Api.Repo.Migrations.RemoveTenantColumns do
     end
 
     alter table("directories") do
-      remove(unique_index(:directories, [:name, :parent_directory_id, :user_id, :tenant_id]))
       remove(:tenant_id, :integer)
-      add(unique_index(:directories, [:name, :parent_directory_id, :user_id]))
     end
+
+    create(unique_index(:directories, [:name, :parent_directory_id, :user_id]))
 
     alter table("files") do
       remove(:tenant_id, :integer)
@@ -36,6 +37,49 @@ defmodule Api.Repo.Migrations.RemoveTenantColumns do
       remove(:tenant_id, :integer)
     end
 
-    drop(table("blocked_tenants"))
+    drop_if_exists(table("blocked_tenants"))
+  end
+
+  def down do
+    alter table("categories") do
+      add(:tenant_id, :integer)
+    end
+
+    alter table("users") do
+      add(:tenant_id, :integer)
+      remove(:is_blocked, :boolean)
+    end
+
+    alter table("user_groups") do
+      add(:tenant_id, :integer)
+    end
+
+    alter table("directories") do
+      add(:tenant_id, :integer)
+    end
+
+    drop(unique_index(:directories, [:name, :parent_directory_id, :user_id]))
+
+    alter table("files") do
+      add(:tenant_id, :integer)
+    end
+
+    alter table("widgets") do
+      add(:tenant_id, :integer)
+    end
+
+    alter table("articles") do
+      add(:tenant_id, :integer)
+    end
+
+    alter table("custom_domains") do
+      add(:tenant_id, :integer)
+    end
+
+    create table("blocked_tenants") do
+      add(:tenant_id, :integer)
+      add(:user_id, :integer)
+      timestamps()
+    end
   end
 end

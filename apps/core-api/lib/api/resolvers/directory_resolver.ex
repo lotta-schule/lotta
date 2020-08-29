@@ -74,7 +74,7 @@ defmodule Api.DirectoryResolver do
     end
   end
 
-  def create(%{name: name, is_public: true}, %{context: %{current_user: current_user})
+  def create(%{name: name, is_public: true}, %{context: %{current_user: current_user}})
       when is_binary(name) do
     if user_is_admin?(current_user) do
       Accounts.create_directory(%{

@@ -8,11 +8,9 @@ defmodule ApiWeb.Context do
 
   require Logger
 
-  import Plug.Conn
-  import Api.Accounts.Authentication
   import Api.Accounts.Permissions
 
-  alias Api.{Accounts, Tenants}
+  alias Api.Accounts
   alias Api.Accounts.User
 
   def init(opts), do: opts
@@ -52,15 +50,11 @@ defmodule ApiWeb.Context do
   end
 
   defp maybe_put_user_is_blocked(%{current_user: user} = context, _conn) do
-    case ensure_user_is_not_blocked(user) do
-      :ok ->
-        context
-
-      {:error, _} ->
-        Logger.warn("User #{user.email} is blocked.")
-
-        context
-        |> Map.put(:user_is_blocked, true)
+    if user.is_blocked do
+      Logger.warn("User #{user.email} is blocked.")
+      Map.put(context, :user_is_blocked, true)
+    else
+      context
     end
   end
 

@@ -12,7 +12,7 @@ defmodule Api.FileResolver do
   alias ApiWeb.ErrorHelpers
   alias Api.Accounts
   alias Api.Accounts.{Directory, User}
-  alias Api.Tenants.{Category, Tenant}
+  alias Api.System.{Category}
   alias Api.Content.{Article, ContentModule}
   alias Api.UploadService
   alias Api.Queue.MediaConversionRequestPublisher

@@ -6,33 +6,27 @@ defmodule Api.CategoryResolver do
   import Api.Accounts.Permissions
 
   alias ApiWeb.ErrorHelpers
-  alias Api.Tenants
+  alias Api.System
 
-  def all(_args, %{
-        context: %{current_user: current_user, user_group_ids: user_group_ids}
-      }) do
+  def all(_args, %{context: %{current_user: current_user, user_group_ids: user_group_ids}}) do
     {:ok,
-     Tenants.list_categories(
+     System.list_categories(
        current_user,
        user_group_ids,
        user_is_admin?(current_user)
      )}
   end
 
-  def all(_args, %{context: context}) do
-    {:ok, Tenants.list_categories(nil, [], false)}
-  end
-
   def all(_args, _info) do
-    {:error, "Tenant nicht gefunden"}
+    {:ok, System.list_categories(nil, [], false)}
   end
 
   def update(%{id: id, category: category_params}, %{context: context}) do
     if context[:current_user] && user_is_admin?(context.current_user) do
       try do
-        category = Tenants.get_category!(id)
+        category = System.get_category!(id)
 
-        case Tenants.update_category(category, category_params) do
+        case System.update_category(category, category_params) do
           {:ok, category} ->
             {:ok, category}
 
@@ -54,7 +48,7 @@ defmodule Api.CategoryResolver do
 
   def create(%{category: category_params}, %{context: context}) do
     if context[:current_user] && user_is_admin?(context.current_user) do
-      case Tenants.create_category(category_params) do
+      case System.create_category(category_params) do
         {:ok, category} ->
           {:ok, category}
 
@@ -73,9 +67,9 @@ defmodule Api.CategoryResolver do
   def delete(%{id: id}, %{context: context}) do
     if context[:current_user] && user_is_admin?(context.current_user) do
       try do
-        category = Tenants.get_category!(id)
+        category = System.get_category!(id)
 
-        case Tenants.delete_category(category) do
+        case System.delete_category(category) do
           {:ok, category} ->
             {:ok, category}
 

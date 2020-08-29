@@ -1,4 +1,4 @@
-defmodule Api.Tenants.Widget do
+defmodule Api.System.Widget do
   @moduledoc """
     Ecto Schema for widgets
   """
@@ -8,7 +8,7 @@ defmodule Api.Tenants.Widget do
   import Ecto.Changeset
   import Ecto.Query
   alias Api.Accounts.{File, UserGroup}
-  alias Api.Tenants.{Category, Tenant}
+  alias Api.System.Category
 
   schema "widgets" do
     field :configuration, :map
@@ -16,7 +16,6 @@ defmodule Api.Tenants.Widget do
     field :type, :string
 
     belongs_to :icon_image_file, File, on_replace: :nilify
-    belongs_to :tenant, Tenant
 
     many_to_many :groups,
                  Api.Accounts.UserGroup,
@@ -34,8 +33,8 @@ defmodule Api.Tenants.Widget do
 
   def create_changeset(widget, attrs) do
     widget
-    |> cast(attrs, [:title, :type, :tenant_id])
-    |> validate_required([:title, :type, :tenant_id])
+    |> cast(attrs, [:title, :type])
+    |> validate_required([:title, :type])
   end
 
   @doc false

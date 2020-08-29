@@ -6,7 +6,6 @@ defmodule Api.Accounts.Permissions do
   alias Api.Repo
   alias Api.Accounts.{Directory, File, User}
   alias Api.Content.Article
-  alias Api.Tenants.Tenant
 
   @doc """
   Wether a user has rights to administer the current and all other systems
@@ -138,22 +137,5 @@ defmodule Api.Accounts.Permissions do
 
     Enum.empty?(article_group_ids) ||
       Enum.any?(article_group_ids, &Enum.member?(user_group_ids, &1))
-  end
-
-  @doc """
-  Wether a given user is blocked
-
-  Returns true or false
-  """
-  @doc since: "2.0.0"
-
-  @spec user_is_blocked?(User.t(), Article.t()) :: boolean
-  def user_is_blocked?(%User{} = user) do
-    # TODO: check database ( easiest would be to just add a is_blocked prop on user )
-    false
-    # user
-    # |> Repo.preload(:blocked_tenants)
-    # |> Map.fetch!(:blocked_tenants)
-    # |> Enum.any?(fn blocked_tenant -> blocked_tenant.tenant_id == tenant.id end)
   end
 end
