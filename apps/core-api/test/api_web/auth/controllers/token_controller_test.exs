@@ -38,6 +38,7 @@ defmodule ApiWeb.Auth.TokenControllerTest do
 
       new_token = conn.cookies["SignInRefreshToken"]
       refute is_nil(new_token)
+      refute new_token == token
 
       {:ok, %{"email" => email}} = AccessToken.decode_and_verify(new_token, %{"typ" => "refresh"})
 
