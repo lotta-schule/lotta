@@ -8,6 +8,14 @@ export const GetSystemQuery = gql`
             slug
             host
             customTheme
+            logoImageFile {
+                id
+                remoteLocation
+            }
+            backgroundImageFile {
+                id
+                remoteLocation
+            }
             groups {
                 id
                 name
