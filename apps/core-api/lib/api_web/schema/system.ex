@@ -5,7 +5,6 @@ defmodule ApiWeb.Schema.System do
 
   object :system_queries do
     field :system, :system do
-      arg(:id, :id)
       arg(:slug, :string)
       resolve(&Api.SystemResolver.get/2)
     end

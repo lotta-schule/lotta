@@ -13,7 +13,7 @@ defmodule Api.SystemResolver do
 
   def update(%{system: system_input}, %{context: context}) do
     if context[:current_user] && user_is_admin?(context.current_user) do
-      System.update_configuration(System.get_configuration(), system_input)
+      {:ok, System.update_configuration(System.get_configuration(), system_input)}
     else
       {:error, "Nur Administratoren dürfen das."}
     end

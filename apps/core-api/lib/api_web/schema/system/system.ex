@@ -12,10 +12,8 @@ defmodule ApiWeb.Schema.System.System do
     field :custom_theme, :json
     field :inserted_at, :naive_datetime
     field :host, :string, resolve: &SystemResolver.host/2
-    field :logo_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-
-    field :background_image_file, :file,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :logo_image_file, :file
+    field :background_image_file, :file
 
     field :groups, list_of(:user_group), resolve: &UserGroupResolver.all/2
 

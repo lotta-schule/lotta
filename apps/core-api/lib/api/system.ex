@@ -6,7 +6,12 @@ defmodule Api.System do
   alias Api.Accounts.File
   alias Api.System.{Category, Configuration, CustomDomain, Widget}
 
-  @allowed_configuration_keys [:title, :custom_theme, :logo_image_file, :banner_image_file]
+  @allowed_configuration_keys [
+    "title",
+    "custom_theme",
+    "logo_image_file",
+    "background_image_file"
+  ]
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -55,11 +60,11 @@ defmodule Api.System do
     custom_configuration =
       Repo.all(Configuration)
       |> Enum.reduce(%{}, fn configuration_line, system ->
-        %{name: name, file_value: file, string_value: string, json: json} =
+        %{name: name, file_value: file, string_value: string, json_value: json} =
           Repo.preload(configuration_line, [:file_value])
 
         system
-        |> Map.put(name, file || string || json)
+        |> Map.put(ensure_atom(name), file || string || json)
       end)
 
     Application.get_env(:api, :default_configuration, %{})
@@ -73,13 +78,16 @@ defmodule Api.System do
   ## Examples
 
     iex> get_configuration()
-    iex> |> put_configuration(:title, "Meine Schule")
+    iex> |> put_configuration("title", "Meine Schule")
     %{title: "Meine Schule"}
   """
   @doc since: "2.0.0"
 
-  @spec put_configuration(map(), String.t(), Configuration.value()) ::
+  @spec put_configuration(map(), String.t() | atom(), Configuration.value()) ::
           {:ok, map()} | {:error, term()}
+
+  def put_configuration(system, name, value) when is_atom(name),
+    do: put_configuration(system, to_string(name), value)
 
   def put_configuration(system, name, value) when name in @allowed_configuration_keys do
     configline = make_configuration_line(name, value)
@@ -97,6 +105,7 @@ defmodule Api.System do
     )
     |> case do
       {:ok, _} ->
+        IO.inspect(system)
         {:ok, Map.put(system, ensure_atom(name), value)}
 
       error ->
@@ -111,16 +120,37 @@ defmodule Api.System do
   @doc since: "2.0.0"
 
   @spec update_configuration(map(), map()) :: map()
+
   def update_configuration(system, attributes) do
     Enum.reduce(attributes, system, fn {key, value}, system ->
-      put_configuration(system, ensure_atom(key), value)
+      {:ok, system} = put_configuration(system, ensure_atom(key), value)
+      system
     end)
   end
 
   @spec make_configuration_line(String.t() | atom(), Configuration.value()) :: Configuration.t()
 
-  defp make_configuration_line(name, %File{id: id}) do
-    %Configuration{name: to_string(name), file_value_id: id}
+  defp make_configuration_line(name, nil) do
+    %Configuration{
+      name: to_string(name),
+      string_value: nil,
+      json_value: nil,
+      file_value_id: nil,
+      file_value: nil
+    }
+  end
+
+  defp make_configuration_line(name, %File{id: id} = file) do
+    %Configuration{name: to_string(name), file_value_id: id, file_value: file}
+  end
+
+  defp make_configuration_line(name, %{id: id})
+       when binary_part(name, byte_size(name), -4) == "file" do
+    %Configuration{
+      name: to_string(name),
+      file_value_id: String.to_integer(id),
+      file_value: Repo.get(File, String.to_integer(id))
+    }
   end
 
   defp make_configuration_line(name, map) when is_map(map) do
