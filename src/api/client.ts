@@ -129,7 +129,13 @@ const apolloClient = new ApolloClient({
         })
     ]),
     resolvers: {},
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+        typePolicies: {
+            System: {
+                keyFields: ['title']
+            }
+        }
+    }),
 });
 
 const writeDefaults = () => {
