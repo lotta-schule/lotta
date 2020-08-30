@@ -5,11 +5,9 @@ defmodule Api.Accounts.Authentication do
 
   import Bcrypt
   import Ecto.Query
-  import Api.Accounts.Permissions
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.System
   alias Api.Accounts.User
 
   @typedoc """
@@ -53,13 +51,12 @@ defmodule Api.Accounts.Authentication do
   """
   @doc since: "2.0.0"
 
-  @spec create_user_tokens(%User{}, map()) ::
-          {:ok, access_token, refresh_token} | {:error, term()}
-  def create_user_tokens(user, claims \\ %{}) do
+  @spec create_user_tokens(User.t()) :: {:ok, access_token, refresh_token} | {:error, term()}
+  def create_user_tokens(user) do
     with {:ok, access_token, _claims} <-
-           AccessToken.encode_and_sign(user, claims, token_type: :access),
+           AccessToken.encode_and_sign(user, %{}, token_type: "access"),
          {:ok, refresh_token, _claims} <-
-           AccessToken.encode_and_sign(user, claims, token_type: :refresh) do
+           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, access_token, refresh_token}
     else
       {:error, reason} ->
@@ -78,29 +75,13 @@ defmodule Api.Accounts.Authentication do
     with {:ok, _old_data, {access_token, _claims}} <-
            AccessToken.exchange(token, "refresh", "access"),
          {:ok, user, _claims} <- AccessToken.resource_from_token(access_token),
-         {:ok, refresh_token, _claims} <- AccessToken.encode_and_sign(user) do
+         {:ok, refresh_token, _claims} <-
+           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, access_token, refresh_token}
     else
       {:error, reason} ->
         {:error, reason}
     end
-  end
-
-  @doc """
-  generate token claims for a given user
-  """
-  @doc since: "2.0.0"
-
-  @spec get_claims_for_user(User.t()) :: {:ok, map()} | {:error, term()}
-
-  def get_claims_for_user(user) do
-    %{
-      email: user.email,
-      aud: System.get_main_url(skip_protocol: true),
-      adm: user_is_admin?(user),
-      gps: Enum.map(User.get_groups(user), &%{id: to_string(&1.id)}),
-      agp: Enum.map(User.get_assigned_groups(user), &%{id: to_string(&1.id)})
-    }
   end
 
   @doc """

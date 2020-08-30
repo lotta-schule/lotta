@@ -105,7 +105,6 @@ defmodule Api.System do
     )
     |> case do
       {:ok, _} ->
-        IO.inspect(system)
         {:ok, Map.put(system, ensure_atom(name), value)}
 
       error ->
@@ -167,8 +166,9 @@ defmodule Api.System do
   defp ensure_atom(value) when is_binary(value), do: String.to_atom(value)
 
   def get_main_url(options \\ []) do
+    config = get_configuration()
     protocol = unless options[:skip_protocol], do: "https://", else: ""
-    "#{protocol}ehrenberg.lotta.schule"
+    "#{protocol}#{config[:slug]}#{Application.fetch_env!(:api, :base_url)}"
   end
 
   def list_custom_domains() do

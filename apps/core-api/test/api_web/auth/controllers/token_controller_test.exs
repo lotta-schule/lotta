@@ -18,7 +18,7 @@ defmodule ApiWeb.Auth.TokenControllerTest do
 
     admin = Repo.get_by!(User, email: email)
 
-    {:ok, _access_token, refresh_token} = create_user_tokens(admin, get_claims_for_user(admin))
+    {:ok, _access_token, refresh_token} = create_user_tokens(admin)
 
     %{refresh_token: refresh_token, admin: admin}
   end

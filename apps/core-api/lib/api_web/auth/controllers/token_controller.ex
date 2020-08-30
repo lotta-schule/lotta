@@ -3,8 +3,9 @@ defmodule ApiWeb.Auth.TokenController do
 
   use Phoenix.Controller
 
-  import Api.Accounts.Authentication
   import Plug.Conn
+
+  alias Api.Accounts.Authentication
 
   def refresh(conn, params) do
     conn =
@@ -19,12 +20,14 @@ defmodule ApiWeb.Auth.TokenController do
       |> put_view(ApiWeb.ErrorView)
       |> render(:"400")
     else
-      case refresh_token(token) do
+      case Authentication.refresh_token(token) do
         {:ok, access_token, refresh_token} ->
           conn
           |> put_resp_cookie("SignInRefreshToken", refresh_token,
             http_only: true,
-            same_site: "Lax"
+            same_site: "Lax",
+            # 3 weeks max_age
+            max_age: 3 * 7 * 24 * 60 * 60
           )
           |> json(%{
             accessToken: access_token,
