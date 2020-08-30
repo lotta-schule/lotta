@@ -26,6 +26,7 @@ redis_password = System.fetch_env!("REDIS_PASSWORD")
 rabbitmq_url = System.fetch_env!("RABBITMQ_URL")
 # elasticsearch
 elasticsearch_host = System.fetch_env!("ELASTICSEARCH_HOST")
+elasticsearch_index_prefix = System.fetch_env!("ELASTICSEARCH_INDEX_PREFIX")
 # S3-compatible block storage for User Generated Content
 ugc_s3_compat_endpoint = System.fetch_env!("UGC_S3_COMPAT_ENDPOINT")
 ugc_s3_compat_access_key_id = System.fetch_env!("UGC_S3_COMPAT_ACCESS_KEY_ID")
@@ -77,7 +78,9 @@ config :api, :live_view,
   username: live_view_username,
   password: live_view_password
 
-config :api, Api.Elasticsearch.Cluster, url: elasticsearch_host
+config :api, Api.Elasticsearch.Cluster,
+  url: elasticsearch_host,
+  index_prefix: elasticsearch_index_prefix
 
 config :api, ApiWeb.Endpoint,
   url: [host: host],

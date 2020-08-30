@@ -31,6 +31,8 @@ config :api, :redis_connection,
   password: "lotta",
   name: :redix
 
+config :api, Api.Elasticsearch.Cluster, index_prefix: "tenant_2"
+
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
   access_key_id: ugc_s3_compat_access_key_id,

@@ -114,7 +114,7 @@ defmodule Api.UserResolver do
       )
 
     with {:ok, user} <- Accounts.register_user(user_params),
-         {:ok, access_token, refresh_token} <- create_user_tokens(user, get_claims_for_user(user)) do
+         {:ok, access_token, refresh_token} <- create_user_tokens(user) do
       EmailPublisher.send_registration_email(user)
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
@@ -130,7 +130,7 @@ defmodule Api.UserResolver do
   def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- login_with_username_pass(username, password),
          :ok <- ensure_user_is_not_blocked(user),
-         {:ok, access_token, refresh_token} <- create_user_tokens(user, get_claims_for_user(user)) do
+         {:ok, access_token, refresh_token} <- create_user_tokens(user) do
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
       {:error, reason} ->
@@ -171,7 +171,7 @@ defmodule Api.UserResolver do
   def reset_password(%{email: email, token: token, password: password}, _info) do
     with {:ok, user} <- Accounts.find_user_by_reset_token(email, token),
          {:ok, user} <- Accounts.update_password(user, password),
-         {:ok, access_token, refresh_token} <- create_user_tokens(user, get_claims_for_user(user)) do
+         {:ok, access_token, refresh_token} <- create_user_tokens(user) do
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
       error ->

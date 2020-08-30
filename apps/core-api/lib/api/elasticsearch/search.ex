@@ -29,7 +29,7 @@ defmodule Api.Elasticsearch.Search do
   defp execute_search(searchtext) do
     Elasticsearch.post(
       Api.Elasticsearch.Cluster,
-      "/articles/_doc/_search",
+      "/#{Api.Elasticsearch.Cluster.get_prefixed_index("articles")}/_doc/_search",
       %{
         "from" => 0,
         "size" => 15,
