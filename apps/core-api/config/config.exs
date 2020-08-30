@@ -28,7 +28,7 @@ config :api, Api.Elasticsearch.Cluster,
   url: "http://elasticsearch:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
-  index_prefix: "prefix",
+  index_prefix: "",
   indexes: %{
     articles: %{
       settings: "priv/elasticsearch/articles.json",
