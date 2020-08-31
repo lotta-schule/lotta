@@ -53,10 +53,10 @@ config :api, Api.Repo,
   password: db_password,
   database: db_name,
   hostname: db_host,
+  prefix: db_schema,
+  after_connect: {Api.Repo, :after_connect, [db_schema]},
   show_sensitive_data_on_connection_error: false,
   pool_size: 25
-
-config :api, Api.Repo, after_connect: {Api.Repo, :after_connect, [db_schema]}
 
 config :api, :default_configuration, %{
   slug: slug,

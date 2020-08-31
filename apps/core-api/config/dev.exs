@@ -13,12 +13,12 @@ config :api, Api.Repo,
   password: "lotta",
   database: "lotta",
   hostname: "postgres",
+  prefix: "tenant_2",
+  after_connect: {Api.Repo, :after_connect, ["tenant_2"]},
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
 config :api, :rabbitmq_url, "amqp://guest:guest@rabbitmq"
-
-config :api, Api.Repo, after_connect: {Api.Repo, :after_connect, ["tenant_2"]}
 
 config :api, :default_configuration, %{
   slug: "ehrenberg",
