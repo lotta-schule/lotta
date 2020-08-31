@@ -43,8 +43,10 @@ defmodule Api.Release do
   end
 
   defp database_prefix(repo) do
-    Application.fetch_env!(:api, Api.Repo)
+    Application.fetch_env!(@app, repo)
+    |> IO.inspect()
     |> Keyword.get(:prefix)
+    |> IO.inspect()
   end
 
   defp repos do
