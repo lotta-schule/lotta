@@ -126,4 +126,4 @@ config :sentry,
 
 config :lager,
   error_logger_redirect: false,
-  handlers: [level: :critical]
+  handlers: [level: :debug]
