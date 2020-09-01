@@ -46,6 +46,7 @@ build docker image:review:
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN=.$CI_ENVIRONMENT_SLUG.lotta.schule
       --build-arg API_URL
+      --build-arg AUTH_URL
       --build-arg AUTHENTICATION_TOKEN_NAME
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
@@ -132,6 +133,7 @@ build docker image:staging:
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL
+      --build-arg AUTH_URL
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg FILE_REPLACEMENT_URL .
@@ -155,7 +157,7 @@ build docker image:production:
       --build-arg APP_ENVIRONMENT=production
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
-      --build-arg API_URL
+      --build-arg AUTH_URL
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg FILE_REPLACEMENT_URL .
