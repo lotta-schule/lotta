@@ -84,7 +84,7 @@ export const UserNavigationMobile = memo(() => {
                     </ButtonBase>
                     {User.isAdmin(currentUser) && (
                         <>
-                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/tenant/general'); }} data-testid="AdminButton">
+                            <ButtonBase className={styles.button} onClick={() => { history.push('/admin/system/general'); }} data-testid="AdminButton">
                                 <SecurityOutlined color={'secondary'} />
                                 <Typography className={styles.label}>Admin</Typography>
                             </ButtonBase>

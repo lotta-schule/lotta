@@ -7,7 +7,7 @@ import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { RelatedArticlesList } from 'component/article/RelatedArticlesList';
 import { Helmet } from 'react-helmet';
-import { useTenant } from 'util/client/useTenant';
+import { useSystem } from 'util/client/useSystem';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
@@ -32,7 +32,7 @@ export interface ArticleLayoutProps {
 
 export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => {
     const styles = useStyle();
-    const client = useTenant() || {};
+    const client = useSystem() || {};
 
     const { data, loading: isLoading, error } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id: articleId } });
 

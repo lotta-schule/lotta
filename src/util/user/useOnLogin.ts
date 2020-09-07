@@ -9,11 +9,12 @@ export const useOnLogin = (fn: 'login' | 'register' | 'resetPassword', options?:
     const apolloClient = useApolloClient();
     const mutation = fn === 'register' ? RegisterMutation :
         fn === 'login' ? LoginMutation : ResetPasswordMutation;
-    const [login, { error, loading, called }] = useMutation(mutation, {
+    const [login, mutationTuple] = useMutation(mutation, {
         errorPolicy: 'all',
         onCompleted: data => {
             if (data[fn]) {
                 apolloClient.resetStore();
+                localStorage.setItem('id', data[fn].accessToken);
                 options?.onCompleted?.(data);
                 if (options?.redirect) {
                     history.push(options.redirect);
@@ -21,5 +22,5 @@ export const useOnLogin = (fn: 'login' | 'register' | 'resetPassword', options?:
             }
         }
     });
-    return [login, { error, loading, called }];
+    return [login, mutationTuple];
 };

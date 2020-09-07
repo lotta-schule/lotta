@@ -13,7 +13,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { AppHead } from './AppHead';
 import { EmptyLoadingLayout } from './layouts/EmptyLoadingLayout';
 import { BaseLayout } from './layouts/BaseLayout';
-import { GetTenantQuery } from 'api/query/GetTenantQuery';
+import { GetSystemQuery } from 'api/query/GetSystemQuery';
 import merge from 'lodash/merge';
 
 const AdminLayout = lazy(() => import('./layouts/adminLayout/AdminLayout'));
@@ -27,22 +27,15 @@ const ResetPasswordLayout = lazy(() => import('./layouts/ResetPasswordLayout'));
 const RequestPasswordResetLayout = lazy(() => import('./layouts/RequestPasswordResetLayout'));
 
 export const App = memo(() => {
-    const { data, loading: isLoadingTenant, error, called: calledTenant } = useQuery<{ tenant: ClientModel }>(GetTenantQuery);
+    const { data, loading: isLoadingSystem, error, called: calledSystem } = useQuery<{ system: ClientModel }>(GetSystemQuery);
     const [, { called: calledCurrentUser, loading: isLoadingCurrentUser }] = useCurrentUser();
     useCategories();
 
-    if (!calledTenant || !calledCurrentUser || isLoadingTenant || isLoadingCurrentUser) {
+    if (!calledSystem || !calledCurrentUser || isLoadingSystem || isLoadingCurrentUser) {
         return (
             <div>
                 <CircularProgress />
             </div>
-        );
-    }
-
-    if (calledTenant && (!data || !data.tenant)) {
-        console.log(error);
-        return (
-            <ErrorMessage error={new Error('Adresse ungültig')} />
         );
     }
 
@@ -52,12 +45,12 @@ export const App = memo(() => {
         );
     }
 
-    const { tenant } = data!;
+    const { system } = data!;
 
     return (
         <ThemeProvider theme={() => {
-            if (tenant.customTheme) {
-                return createMuiTheme(merge({}, theme, tenant.customTheme), deDE);
+            if (system.customTheme) {
+                return createMuiTheme(merge({}, theme, system.customTheme), deDE);
             }
             return theme;
         }}>

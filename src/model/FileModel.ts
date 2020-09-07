@@ -34,7 +34,7 @@ export interface FileModel {
     remoteLocation: string;
     mimeType: string;
     fileType: FileModelType;
-    parentDirectory?: Partial<DirectoryModel>
+    parentDirectory: Partial<DirectoryModel>
     fileConversions: FileConversion[];
     usage?: FileModelUsageLocation[];
 }
@@ -48,14 +48,14 @@ export interface FileConversion {
 }
 
 export type FileModelUsageLocation =
-    Partial<FileModelTenantUsageLocation> &
+    Partial<FileModelSystemUsageLocation> &
     Partial<FileModelUserUsageLocation> &
     Partial<FileModelContentModuleUsageLocation> &
     Partial<FileModelArticleUsageLocation> &
     Partial<FileModelCategoryUsageLocation>;
-export interface FileModelTenantUsageLocation {
+export interface FileModelSystemUsageLocation {
     usage: string;
-    tenant: ClientModel;
+    system: ClientModel;
 }
 export interface FileModelCategoryUsageLocation {
     usage: string;

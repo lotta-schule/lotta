@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { Fragment, FunctionComponent, memo } from 'react';
 import {
     DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, CircularProgress, Theme, makeStyles, Divider
 } from '@material-ui/core';
@@ -10,7 +10,7 @@ import { GroupSelect } from 'component/edit/GroupSelect';
 import { SetUserGroupsMutation } from 'api/mutation/SetUserGroupsMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useTenant } from 'util/client/useTenant';
+import { useSystem } from 'util/client/useSystem';
 import { SetUserBlockedMutation } from 'api/mutation/SetUserBlockedMutation';
 import { Block } from '@material-ui/icons';
 import clsx from 'clsx';
@@ -44,12 +44,13 @@ export interface EditUserPermissionsDialogProps {
 
 export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDialogProps> = memo(({ user, onClose }) => {
     const styles = useStyles();
-    const tenant = useTenant();
+    const system = useSystem();
     const allUserGroups = useUserGroups();
 
     const { data, loading, error } = useQuery<{ user: UserModel }, { id: ID }>(GetUserQuery, {
         variables: { id: user.id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-first'
     });
     const [setUserGroups, { error: setUserGroupsError }] = useMutation<{ user: UserModel }, { id: ID, groupIds: ID[] }>(
         SetUserGroupsMutation, {
@@ -129,7 +130,12 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                         {dynamicGroups && (
                             <span data-testid="DynamicGroups">
                                 Über Einschreibeschlüssel zugewiesene Gruppen:
-                                {dynamicGroups.map((group, i, arr) => <><em>{group.name}</em>{i !== arr.length - 1 && <>, </>}</>)}
+                              {dynamicGroups.map((group, i, arr) => (
+                                <Fragment key={group.id}>
+                                  <em>{group.name}</em>
+                                  {i !== arr.length - 1 && (<>, </>)}
+                                </Fragment>
+                              ))}
                             </span>
                         )}
                         <Divider />
@@ -155,7 +161,7 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                                         Nutzer sperren
                                     </Button>
                                     <Typography variant={'subtitle2'}>
-                                        Ein gesperrter Nutzer wird abgemeldet und kann sich nicht mehr auf der Seite von "{tenant!.title}" anmelden.
+                                        Ein gesperrter Nutzer wird abgemeldet und kann sich nicht mehr auf der Seite von "{system!.title}" anmelden.
                                     </Typography>
                                 </>
                             )}

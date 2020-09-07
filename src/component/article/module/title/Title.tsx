@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import React, { memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { CardContent, makeStyles } from '@material-ui/core';
 import { Edit } from './Edit';
@@ -12,7 +12,7 @@ export interface TitleProps {
 
 const useStyles = makeStyles(theme => ({
     root: {
-        paddingTop: 30, 
+        paddingTop: 30,
         paddingBottom: 0,
         margin: '0 16.6%',
         [theme.breakpoints.down('sm')]: {
@@ -21,16 +21,16 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const Title: FunctionComponent<TitleProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+export const Title = memo<TitleProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
     const styles = useStyles();
     return (
-    <CardContent className={styles.root}>
-        {isEditModeEnabled && onUpdateModule && (
-            <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-        )}
-        {(!isEditModeEnabled || !onUpdateModule) && (
-            <Show contentModule={contentModule} />
-        )}
-    </CardContent>
+        <CardContent className={styles.root} data-testid="TitleContentModule">
+            {isEditModeEnabled && onUpdateModule && (
+                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+            )}
+            {(!isEditModeEnabled || !onUpdateModule) && (
+                <Show contentModule={contentModule} />
+            )}
+        </CardContent>
     );
 });

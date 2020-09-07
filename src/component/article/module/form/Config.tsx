@@ -12,7 +12,7 @@ interface ConfigProps {
 export const Config = memo<ConfigProps>(({ contentModule }) => {
     const [isResultsDialogOpen, setIsResultsDialogOpen] = useState(false);
     return (
-        <>
+        <div data-testid="FormContentModuleConfiguration">
             <Button
                 fullWidth
                 color={'primary'}
@@ -23,6 +23,6 @@ export const Config = memo<ConfigProps>(({ contentModule }) => {
                 Daten ansehen
             </Button>
             <FormResultsDialog contentModule={contentModule} isOpen={isResultsDialogOpen} onRequestClose={() => setIsResultsDialogOpen(false)} />
-        </>
+        </div>
     );
 });

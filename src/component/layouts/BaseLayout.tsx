@@ -4,10 +4,10 @@ import { Navbar } from './navigation/Navbar';
 import { useIsMobile } from 'util/useIsMobile';
 import { useIsRetina } from 'util/useIsRetina';
 import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
-import { useTenant } from 'util/client/useTenant';
+import { useSystem } from 'util/client/useSystem';
 import { ClientModel } from 'model';
 
-const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
+const useStyles = makeStyles<Theme, { system: ClientModel }>(theme => ({
     '@global': {
         '*': {
             boxSizing: 'border-box'
@@ -26,7 +26,7 @@ const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
                 backgroundAttachment: 'scroll',
                 backgroundSize: 'cover',
                 [theme.breakpoints.up('md')]: {
-                    backgroundImage: ({ tenant }) => tenant.backgroundImageFile ? `url(${tenant.backgroundImageFile.remoteLocation})` : undefined,
+                    backgroundImage: ({ system }) => system.backgroundImageFile ? `url(${system.backgroundImageFile.remoteLocation})` : undefined,
                 }
             },
         }
@@ -56,6 +56,7 @@ const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
         alignItems: 'flex-start',
         justifyContent: 'flex-end',
         paddingRight: theme.spacing(2),
+        paddingLeft: theme.spacing(2),
         margin: 'auto 0'
     },
     logo: {
@@ -66,8 +67,8 @@ const useStyles = makeStyles<Theme, { tenant: ClientModel }>(theme => ({
 
 export const BaseLayout = memo(({ children }) => {
     usePiwikAnalytics();
-    const tenant = useTenant();
-    const styles = useStyles({ tenant });
+    const system = useSystem();
+    const styles = useStyles({ system });
     const isMobile = useIsMobile();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
     return (
@@ -75,16 +76,16 @@ export const BaseLayout = memo(({ children }) => {
             <header className={styles.header}>
                 <Grid container style={{ height: '100%' }}>
                     <Grid item md={3} className={styles.logoGridItem}>
-                        {tenant.logoImageFile && (
+                        {system.logoImageFile && (
                             <img
-                                src={`https://afdptjdxen.cloudimg.io/height/${80 * retinaMultiplier}/foil1/${tenant.logoImageFile.remoteLocation}`}
-                                alt={`Logo ${tenant.title}`}
+                                src={`https://afdptjdxen.cloudimg.io/height/${80 * retinaMultiplier}/foil1/${system.logoImageFile.remoteLocation}`}
+                                alt={`Logo ${system.title}`}
                                 className={styles.logo}
                             />
                         )}
                     </Grid>
                     <Grid item md={9} className={styles.titleGridItem}>
-                        <Typography variant="h5" style={{ marginBottom: 0, }} gutterBottom>{tenant.title}</Typography>
+                        <Typography variant="h5" style={{ marginBottom: 0, }} gutterBottom>{system.title}</Typography>
                     </Grid>
                 </Grid>
             </header>

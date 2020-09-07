@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: theme.spacing(1, 0, 1, 1)
+        padding: theme.spacing(1, 0, 1, 0)
     }
 }));
 
@@ -82,6 +82,9 @@ export const UserNavigation = memo(() => {
     if (currentUser) {
         return (
             <Grid container className={styles.root}>
+                <Grid item xs={5} className={styles.avatarContainer}>
+                    <CurrentUserAvatar size={100} style={{ width: 100, height: 100 }} />
+                </Grid>
                 <Grid item xs={7} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                     <Button className={styles.button} size="small" startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
                     <Button className={styles.button} size="small" startIcon={<SearchRounded color={'secondary'} />} onClick={() => history.push('/search')}>Suche</Button>
@@ -114,7 +117,7 @@ export const UserNavigation = memo(() => {
                             </MenuItem>,
                             ...(User.isAdmin(currentUser) ? [
                                 <Divider key={'admin-divider'} />,
-                                <MenuItem key={'administration'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/tenant/general'); }}>
+                                <MenuItem key={'administration'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/system/general'); }}>
                                     <SecurityOutlined color={'secondary'} />
                                     &nbsp;
                                     Seite administrieren
@@ -142,9 +145,6 @@ export const UserNavigation = memo(() => {
                             history.push(Article.getPath(article, { edit: true }));
                         }}
                     />
-                </Grid>
-                <Grid item xs={5} className={styles.avatarContainer}>
-                    <CurrentUserAvatar size={100} style={{ width: 100, height: 100 }} />
                 </Grid>
             </Grid>
         );

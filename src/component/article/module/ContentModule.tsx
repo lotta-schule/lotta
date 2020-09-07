@@ -14,6 +14,7 @@ import { Video } from './video/Video';
 import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
 import { Form } from './form/Form';
+import { Table } from './table/Table';
 import { bindTrigger, bindPopover, usePopupState } from 'material-ui-popup-state/hooks';
 import clsx from 'clsx';
 
@@ -131,13 +132,14 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                             <IconButton
                                 classes={{ root: styles.dragbarButton }}
                                 style={{ position: 'absolute', top: 0, right: 0 }}
-                                aria-label="Settings"
+                                aria-label="Einstellungen"
                                 {...bindTrigger(popupState)}
                             >
                                 <MoreVert className={clsx(styles.buttonIcon, { [styles.activeButtonIcon]: popupState.isOpen })} />
                             </IconButton>
                             <Popover
                                 {...bindPopover(popupState)}
+                                aria-label={'Einstellungen'}
                                 anchorOrigin={{
                                     vertical: 'top',
                                     horizontal: 'right',
@@ -157,7 +159,7 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                                     <Button
                                         color={'primary'}
                                         startIcon={<Delete className={clsx(styles.buttonIcon)} />}
-                                        aria-label={'Delete'}
+                                        aria-label={'Modul löschen'}
                                         style={{ float: 'right' }}
                                         onClick={() => onRemoveContentModule()}
                                     >
@@ -167,8 +169,7 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                             </Popover>
                         </span>
                     </div>
-                )
-                }
+                )}
                 {contentModule.type === ContentModuleType.TITLE && (
                     <Title
                         contentModule={contentModule}
@@ -200,6 +201,9 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
                 )}
                 {contentModule.type === ContentModuleType.FORM && (
                     <Form contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
+                )}
+                {contentModule.type === ContentModuleType.TABLE && (
+                    <Table contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
                 )}
             </Suspense>
         </Card>
