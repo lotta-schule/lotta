@@ -5,12 +5,10 @@ defmodule Api.Accounts.Authentication do
 
   import Bcrypt
   import Ecto.Query
-  import Api.Accounts.Permissions
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Accounts.User
-  alias Api.Tenants.Tenant
 
   @typedoc """
   A token representing a user.
@@ -53,13 +51,12 @@ defmodule Api.Accounts.Authentication do
   """
   @doc since: "2.0.0"
 
-  @spec create_user_tokens(%User{}, map()) ::
-          {:ok, access_token, refresh_token} | {:error, term()}
-  def create_user_tokens(user, claims \\ %{}) do
+  @spec create_user_tokens(User.t()) :: {:ok, access_token, refresh_token} | {:error, term()}
+  def create_user_tokens(user) do
     with {:ok, access_token, _claims} <-
-           AccessToken.encode_and_sign(user, claims, token_type: :access),
+           AccessToken.encode_and_sign(user, %{}, token_type: "access"),
          {:ok, refresh_token, _claims} <-
-           AccessToken.encode_and_sign(user, claims, token_type: :refresh) do
+           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, access_token, refresh_token}
     else
       {:error, reason} ->
@@ -78,7 +75,8 @@ defmodule Api.Accounts.Authentication do
     with {:ok, _old_data, {access_token, _claims}} <-
            AccessToken.exchange(token, "refresh", "access"),
          {:ok, user, _claims} <- AccessToken.resource_from_token(access_token),
-         {:ok, refresh_token, _claims} <- AccessToken.encode_and_sign(user) do
+         {:ok, refresh_token, _claims} <-
+           AccessToken.encode_and_sign(user, %{}, token_type: "refresh") do
       {:ok, access_token, refresh_token}
     else
       {:error, reason} ->
@@ -87,49 +85,18 @@ defmodule Api.Accounts.Authentication do
   end
 
   @doc """
-  generate token claims for a given user in dependence of an optionally given tenant
-  """
-  @doc since: "2.0.0"
-
-  @spec get_claims_for_user(User.t(), Tenant.t() | nil) :: {:ok, map()} | {:error, term()}
-
-  def get_claims_for_user(user, tenant \\ nil)
-
-  def get_claims_for_user(user, tenant) when is_nil(tenant) do
-    %{
-      aud: "lotta",
-      email: user.email,
-      gps: Enum.map(User.get_groups(user), &%{id: to_string(&1.id), name: &1.name}),
-      agp: Enum.map(User.get_assigned_groups(user), &%{id: to_string(&1.id), name: &1.name})
-    }
-  end
-
-  def get_claims_for_user(user, tenant) do
-    %{
-      tid: tenant.id,
-      email: user.email,
-      aud: Tenant.get_lotta_url(tenant, skip_protocol: true),
-      adm: user_is_admin?(user, tenant),
-      sad: user_is_lotta_admin?(user),
-      gps: Enum.map(User.get_groups(user, tenant), &%{id: to_string(&1.id)}),
-      agp: Enum.map(User.get_assigned_groups(user, tenant), &%{id: to_string(&1.id)})
-    }
-  end
-
-  @doc """
-  Ensures a given user is not blocked for a given tenant.
-  Returns `{:error, reason}` if the user is blocked for the tenant.
+  Ensures a given user is not blocked for a given.
+  Returns `{:error, reason}` if the user is blocked.
   Returns `:ok` if the user is fine.
   """
   @doc since: "2.0.0"
 
-  @spec ensure_user_is_not_blocked(User.t(), Tenant.t()) :: :ok | {:error, term()}
+  @spec ensure_user_is_not_blocked(User.t()) :: :ok | {:error, term()}
 
-  def ensure_user_is_not_blocked(%User{} = user, %Tenant{} = tenant) do
-    if user_is_blocked?(user, tenant) do
-      {:error, "Du wurdest geblockt. Du darfst dich nicht anmelden."}
-    else
-      :ok
+  def ensure_user_is_not_blocked(%User{} = user) do
+    case user.is_blocked do
+      true -> {:error, "Du wurdest geblockt. Du darfst dich nicht anmelden."}
+      false -> :ok
     end
   end
 end

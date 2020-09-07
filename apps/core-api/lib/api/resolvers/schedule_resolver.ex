@@ -4,10 +4,10 @@ defmodule Api.ScheduleResolver do
     Is routed to schedule-provider microservice.
   """
 
-  alias Api.Tenants
+  alias Api.System
 
   def get(%{widget_id: widget_id} = args, %{context: %{current_user: %{class: class}}}) do
-    widget = Tenants.get_widget!(widget_id)
+    widget = System.get_widget!(widget_id)
     base_url = Application.fetch_env!(:api, :schedule_provider_url)
 
     case widget.configuration do

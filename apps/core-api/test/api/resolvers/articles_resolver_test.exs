@@ -9,12 +9,11 @@ defmodule Api.ArticleResolverTest do
   alias Api.Repo
   alias Api.Accounts.{File, User}
   alias Api.Content.Article
-  alias Api.Tenants.Category
+  alias Api.System.Category
 
   setup do
     Repo.Seeder.seed()
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
     faecher_category = Repo.get_by!(Category, title: "Fächer")
     projekt_category = Repo.get_by!(Category, title: "Projekt")
 
@@ -41,7 +40,6 @@ defmodule Api.ArticleResolverTest do
 
     {:ok,
      %{
-       web_tenant: web_tenant,
        faecher_category: faecher_category,
        projekt_category: projekt_category,
        admin: admin,
@@ -74,7 +72,6 @@ defmodule Api.ArticleResolverTest do
     test "returns an article", %{oskar: oskar} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: %{id: oskar.id})
         |> json_response(200)
 
@@ -97,7 +94,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
@@ -122,7 +118,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
@@ -147,7 +142,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
@@ -171,7 +165,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
@@ -194,7 +187,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 
@@ -228,7 +220,6 @@ defmodule Api.ArticleResolverTest do
     test "homepage: returns a list of articles" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -304,7 +295,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -934,7 +924,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -1354,7 +1343,6 @@ defmodule Api.ArticleResolverTest do
     # test "homepage: returns a list of articles, but limit to 2" do
     #   res =
     #     build_conn()
-    #     |> put_req_header("tenant", "slug:web")
     #     |> get("/api", query: @query, variables: %{"filter" => %{"first" => 2}})
     #     |> json_response(200)
 
@@ -1397,7 +1385,6 @@ defmodule Api.ArticleResolverTest do
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: request)
         |> json_response(200)
 
@@ -1458,7 +1445,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api", query: @query, variables: %{category_id: projekt_category.id})
         |> json_response(200)
@@ -2050,7 +2036,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
         |> get("/api", query: @query, variables: %{category_id: projekt_category.id})
         |> json_response(200)
@@ -2443,7 +2428,6 @@ defmodule Api.ArticleResolverTest do
     # } do
     #   res =
     #     build_conn()
-    #     |> put_req_header("tenant", "slug:web")
     #     |> get("/api",
     #       query: @query,
     #       variables: %{"filter" => %{"first" => 2}, "category_id" => projekt_category.id}
@@ -2489,7 +2473,6 @@ defmodule Api.ArticleResolverTest do
     test "return a list of all unpublished articles if user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -2512,7 +2495,6 @@ defmodule Api.ArticleResolverTest do
     test "return an error user is not admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -2533,7 +2515,6 @@ defmodule Api.ArticleResolverTest do
     test "return an error user is not logged in" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -2567,7 +2548,6 @@ defmodule Api.ArticleResolverTest do
     test "return a list of all articles from the current user", %{lehrer_jwt: lehrer_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -2604,7 +2584,6 @@ defmodule Api.ArticleResolverTest do
     test "return an error user is not logged in" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -2632,7 +2611,6 @@ defmodule Api.ArticleResolverTest do
     test "topics: returns a list of topics for a normal user" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -2646,7 +2624,6 @@ defmodule Api.ArticleResolverTest do
     test "topics: returns a list of topics for an admin user", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -2675,7 +2652,6 @@ defmodule Api.ArticleResolverTest do
     test "returns all articles for lehrer_group", %{lehrer_jwt: lehrer_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api", query: @query, variables: %{topic: "KleinKunst 2018"})
         |> json_response(200)
@@ -2707,7 +2683,6 @@ defmodule Api.ArticleResolverTest do
     test "returns all articles for schueler_group", %{schueler_jwt: schueler_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
         |> get("/api", query: @query, variables: %{topic: "KleinKunst 2018"})
         |> json_response(200)
@@ -2731,7 +2706,6 @@ defmodule Api.ArticleResolverTest do
     test "returns all articles for not logged in user", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{topic: "KleinKunst 2018"})
         |> json_response(200)
@@ -2762,7 +2736,6 @@ defmodule Api.ArticleResolverTest do
     test "creates an article if user is logged in", %{lehrer_jwt: lehrer_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> post("/api",
           query: @query,
@@ -2791,7 +2764,6 @@ defmodule Api.ArticleResolverTest do
     test "return an error if user is not logged in" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api", query: @query, variables: %{article: %{title: "ABC"}})
         |> json_response(200)
 
@@ -2843,7 +2815,6 @@ defmodule Api.ArticleResolverTest do
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -2881,7 +2852,6 @@ defmodule Api.ArticleResolverTest do
     test "updates an article if user is author", %{lehrer_jwt: lehrer_jwt, draft: draft} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> post("/api", query: @query, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
@@ -2902,7 +2872,6 @@ defmodule Api.ArticleResolverTest do
     test "returns an error if user is not author", %{schueler_jwt: schueler_jwt, draft: draft} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
         |> post("/api", query: @query, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
@@ -2923,7 +2892,6 @@ defmodule Api.ArticleResolverTest do
     test "returns an error if user is not logged in", %{draft: draft} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api", query: @query, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
 
@@ -2953,7 +2921,6 @@ defmodule Api.ArticleResolverTest do
     test "updates an article if user is admin", %{admin_jwt: admin_jwt, draft: draft} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
@@ -2970,7 +2937,6 @@ defmodule Api.ArticleResolverTest do
     test "updates an article if user is author", %{lehrer_jwt: lehrer_jwt, draft: draft} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
@@ -2987,7 +2953,6 @@ defmodule Api.ArticleResolverTest do
     test "returns an error if user is not author", %{schueler_jwt: schueler_jwt, draft: draft} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
@@ -3008,7 +2973,6 @@ defmodule Api.ArticleResolverTest do
     test "returns an error if user is not logged in", %{draft: draft} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api", query: @query, variables: %{id: draft.id})
         |> json_response(200)
 
@@ -3042,7 +3006,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
@@ -3063,7 +3026,6 @@ defmodule Api.ArticleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> post("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
@@ -3084,7 +3046,6 @@ defmodule Api.ArticleResolverTest do
     test "returns an error if user is not logged in", %{vorausscheid: vorausscheid} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api", query: @query, variables: %{id: vorausscheid.id})
         |> json_response(200)
 

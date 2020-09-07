@@ -7,9 +7,10 @@ defmodule Api.Content.Article do
   alias Api.Repo
   import Ecto.Changeset
   import Ecto.Query
+  alias Api.System
   alias Api.Accounts.{File, User, UserGroup}
   alias Api.Content.{Article, ContentModule}
-  alias Api.Tenants.{Category, Tenant}
+  alias Api.System.Category
 
   schema "articles" do
     field :title, :string
@@ -18,7 +19,6 @@ defmodule Api.Content.Article do
     field :ready_to_publish, :boolean
     field :is_pinned_to_top, :boolean
 
-    belongs_to :tenant, Tenant, on_replace: :nilify
     belongs_to :category, Category, on_replace: :nilify
     belongs_to :preview_image_file, File, on_replace: :nilify
     has_many :content_modules, ContentModule, on_replace: :delete
@@ -38,10 +38,7 @@ defmodule Api.Content.Article do
   end
 
   def get_url(%Article{} = article) do
-    article
-    |> Repo.preload(:tenant)
-    |> Map.fetch!(:tenant)
-    |> Tenant.get_main_url()
+    System.get_main_url()
     |> String.replace_suffix(
       "",
       "/a/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}"
@@ -51,7 +48,7 @@ defmodule Api.Content.Article do
   @doc false
   def create_changeset(article, attrs) do
     article
-    |> Repo.preload([:tenant, :category, :groups, :users, :preview_image_file, :content_modules])
+    |> Repo.preload([:category, :groups, :users, :preview_image_file, :content_modules])
     |> cast(attrs, [:title, :inserted_at])
     |> validate_required([:title])
   end
@@ -59,7 +56,7 @@ defmodule Api.Content.Article do
   @doc false
   def changeset(article, attrs) do
     article
-    |> Repo.preload([:tenant, :category, :groups, :users, :preview_image_file, :content_modules])
+    |> Repo.preload([:category, :groups, :users, :preview_image_file, :content_modules])
     |> cast(attrs, [:title, :inserted_at, :updated_at, :ready_to_publish, :preview, :topic])
     |> validate_required([:title])
     |> put_assoc_users(attrs)

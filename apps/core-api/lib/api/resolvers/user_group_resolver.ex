@@ -22,9 +22,7 @@ defmodule Api.UserGroupResolver do
   end
 
   def resolve_enrollment_tokens(user_group, _args, %{context: %{current_user: current_user}}) do
-    tenant = user_group |> Repo.preload(:tenant) |> Map.fetch!(:tenant)
-
-    case user_is_admin?(current_user, tenant) do
+    case user_is_admin?(current_user) do
       true ->
         {:ok,
          user_group
@@ -35,6 +33,8 @@ defmodule Api.UserGroupResolver do
         {:ok, []}
     end
   end
+
+  def all(_args, _info), do: {:ok, Accounts.list_user_groups()}
 
   def get(%{id: id}, %{context: context}) do
     if context[:current_user] && context[:user_is_admin] do
@@ -48,9 +48,9 @@ defmodule Api.UserGroupResolver do
     end
   end
 
-  def create(%{group: group_input}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
-      case Accounts.create_user_group(tenant, group_input) do
+  def create(%{group: group_input}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
+      case Accounts.create_user_group(group_input) do
         {:ok, group} ->
           {:ok, group}
 
@@ -66,16 +66,11 @@ defmodule Api.UserGroupResolver do
     end
   end
 
-  def update(%{id: id, group: group_input}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
+  def update(%{id: id, group: group_input}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
       try do
-        group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
-
-        if group.tenant.id == tenant.id do
-          Accounts.update_user_group(group, group_input)
-        else
-          {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
-        end
+        Accounts.get_user_group!(id)
+        |> Accounts.update_user_group(group_input)
       rescue
         NoResultsError -> {:error, "Gruppe existiert nicht."}
       end
@@ -84,16 +79,11 @@ defmodule Api.UserGroupResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
+  def delete(%{id: id}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
       try do
-        group = Accounts.get_user_group!(id) |> Repo.preload(:tenant)
-
-        if group.tenant.id == tenant.id do
-          Accounts.delete_user_group(group)
-        else
-          {:error, "Nur Administratoren dürfen Gruppen löschen."}
-        end
+        Accounts.get_user_group!(id)
+        |> Accounts.delete_user_group()
       rescue
         NoResultsError -> {:error, "Gruppe existiert nicht."}
       end

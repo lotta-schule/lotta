@@ -19,7 +19,6 @@ defmodule Api.Accounts.File do
 
     has_many :file_conversions, Api.Accounts.FileConversion
     belongs_to :user, Api.Accounts.User
-    belongs_to :tenant, Api.Tenants.Tenant
     belongs_to :parent_directory, Api.Accounts.Directory
 
     many_to_many(
@@ -46,8 +45,7 @@ defmodule Api.Accounts.File do
       :mime_type,
       :file_type,
       :parent_directory_id,
-      :user_id,
-      :tenant_id
+      :user_id
     ])
   end
 

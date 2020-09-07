@@ -21,8 +21,8 @@ defmodule Api.DirectoryResolver do
     end
   end
 
-  def list(_, %{context: %{current_user: current_user, tenant: tenant}}) do
-    {:ok, Accounts.list_root_directories(tenant, current_user)}
+  def list(_, %{context: %{current_user: current_user}}) do
+    {:ok, Accounts.list_root_directories(current_user)}
   end
 
   def get(%{id: id}, %{context: %{current_user: current_user}}) do
@@ -57,8 +57,7 @@ defmodule Api.DirectoryResolver do
         attrs = %{
           name: name,
           parent_directory_id: parent_directory.id,
-          user_id: parent_directory.user_id,
-          tenant_id: parent_directory.tenant_id
+          user_id: parent_directory.user_id
         }
 
         case Accounts.create_directory(attrs) do
@@ -75,15 +74,12 @@ defmodule Api.DirectoryResolver do
     end
   end
 
-  def create(%{name: name, is_public: true}, %{
-        context: %{current_user: current_user, tenant: tenant}
-      })
+  def create(%{name: name, is_public: true}, %{context: %{current_user: current_user}})
       when is_binary(name) do
-    if user_is_admin?(current_user, tenant) do
+    if user_is_admin?(current_user) do
       Accounts.create_directory(%{
         name: name,
-        user_id: nil,
-        tenant_id: tenant.id
+        user_id: nil
       })
       |> case do
         {:ok, directory} ->
@@ -101,12 +97,11 @@ defmodule Api.DirectoryResolver do
     end
   end
 
-  def create(%{name: name}, %{context: %{current_user: current_user, tenant: tenant}})
+  def create(%{name: name}, %{context: %{current_user: current_user}})
       when is_binary(name) do
     attrs = %{
       name: name,
-      user_id: current_user.id,
-      tenant_id: tenant.id
+      user_id: current_user.id
     }
 
     case Accounts.create_directory(attrs) do
@@ -122,7 +117,7 @@ defmodule Api.DirectoryResolver do
     end
   end
 
-  def create(_, %{context: %{current_user: _, tenant: _}}),
+  def create(_, %{context: %{current_user: _}}),
     do: {:error, "Der Name für den neuen Ordner ist ungültig."}
 
   def create(_, _), do: {:error, "Nur angemeldete Nutzer dürfen Ordner erstellen."}
@@ -160,7 +155,7 @@ defmodule Api.DirectoryResolver do
     try do
       directory =
         Accounts.get_directory!(String.to_integer(id))
-        |> Repo.preload([:tenant, :parent_directory])
+        |> Repo.preload([:parent_directory])
 
       source_directory = directory.parent_directory
 

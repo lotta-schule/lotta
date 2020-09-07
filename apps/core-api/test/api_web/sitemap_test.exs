@@ -6,19 +6,9 @@ defmodule Api.SitemapTest do
   end
 
   describe "sitemaps" do
-    test "returns an 404 if not found" do
-      res =
-        build_conn()
-        |> get("/sitemap.xml")
-        |> text_response(404)
-
-      assert res == "Not Found"
-    end
-
     test "returns an index sitemap" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/sitemap.xml")
         |> response(200)
 
@@ -32,7 +22,6 @@ defmodule Api.SitemapTest do
     test "returns categories sitemap" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/sitemap.xml?categories")
         |> response(200)
 
@@ -52,7 +41,6 @@ defmodule Api.SitemapTest do
     test "returns articles sitemap" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/sitemap.xml?articles&date=#{Date.to_iso8601(~D[2019-09-01])}")
         |> response(200)
 

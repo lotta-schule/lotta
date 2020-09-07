@@ -50,7 +50,6 @@ defmodule ApiWeb.Endpoint do
     origins: {ApiWeb.Cors, :allow_origin},
     allow_headers: [
       "Authorization",
-      "Tenant",
       "Content-Type",
       "Accept",
       "Origin",

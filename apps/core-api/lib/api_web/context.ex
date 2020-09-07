@@ -1,18 +1,16 @@
 defmodule ApiWeb.Context do
   @moduledoc """
     Plug which builds a context for connections into the app.
-    Will provide tenant and user account information
+    Will provide user account information
   """
 
   @behaviour Plug
 
   require Logger
 
-  import Plug.Conn
-  import Api.Accounts.Authentication
   import Api.Accounts.Permissions
 
-  alias Api.{Accounts, Tenants}
+  alias Api.Accounts
   alias Api.Accounts.User
 
   def init(opts), do: opts
@@ -20,42 +18,11 @@ defmodule ApiWeb.Context do
   def call(conn, _blueprint) do
     context =
       %{}
-      |> maybe_put_tenant(conn)
       |> maybe_put_user(conn)
       |> maybe_put_user_is_blocked(conn)
 
     conn
     |> Absinthe.Plug.put_options(context: context)
-  end
-
-  defp maybe_put_tenant(context, conn) do
-    case tenant_by_slug_header(conn) || tenant_by_origin_header(conn) do
-      tenant when not is_nil(tenant) ->
-        Map.put(context, :tenant, tenant)
-
-      nil ->
-        context
-    end
-  end
-
-  defp tenant_by_slug_header(conn) do
-    case get_req_header(conn, "tenant") do
-      ["slug:" <> slug] ->
-        Tenants.get_tenant_by_slug(slug)
-
-      _ ->
-        nil
-    end
-  end
-
-  defp tenant_by_origin_header(conn) do
-    case get_req_header(conn, "origin") do
-      [origin] ->
-        Tenants.get_tenant_by_origin(origin)
-
-      _ ->
-        nil
-    end
   end
 
   defp maybe_put_user(context, conn) do
@@ -68,11 +35,11 @@ defmodule ApiWeb.Context do
         |> Map.put(:current_user, user)
         |> Map.put(
           :user_group_ids,
-          if(tenant = context[:tenant], do: User.group_ids(user, tenant), else: [])
+          Enum.map(User.get_groups(user), & &1.id)
         )
         |> Map.put(
           :user_is_admin,
-          if(tenant = context[:tenant], do: user_is_admin?(user, tenant), else: false)
+          user_is_admin?(user)
         )
 
       nil ->
@@ -82,16 +49,12 @@ defmodule ApiWeb.Context do
     end
   end
 
-  defp maybe_put_user_is_blocked(%{current_user: user, tenant: tenant} = context, _conn) do
-    case ensure_user_is_not_blocked(user, tenant) do
-      :ok ->
-        context
-
-      {:error, _} ->
-        Logger.warn("User #{user.email} is blocked for tenant #{tenant.slug}.")
-
-        context
-        |> Map.put(:user_is_blocked, true)
+  defp maybe_put_user_is_blocked(%{current_user: user} = context, _conn) do
+    if user.is_blocked do
+      Logger.warn("User #{user.email} is blocked.")
+      Map.put(context, :user_is_blocked, true)
+    else
+      context
     end
   end
 

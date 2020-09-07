@@ -1,4 +1,4 @@
-defmodule ApiWeb.Schema.Tenants.Usage do
+defmodule ApiWeb.Schema.System.Usage do
   @moduledoc false
 
   use Absinthe.Schema.Notation

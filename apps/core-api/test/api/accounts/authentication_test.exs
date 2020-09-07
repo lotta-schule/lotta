@@ -9,19 +9,13 @@ defmodule Api.Accounts.AuthenticationTest do
 
   alias Api.Repo.Seeder
   alias Api.Accounts.User
-  alias Api.Tenants
 
   setup do
     Seeder.seed()
 
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
-    web_tenant = Tenants.get_tenant_by_slug!("web")
 
-    {:ok,
-     %{
-       web_tenant: web_tenant,
-       user: user
-     }}
+    {:ok, %{user: user}}
   end
 
   describe "login_with_username_pass/2" do

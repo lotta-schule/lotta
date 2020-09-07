@@ -24,14 +24,14 @@ defmodule Api.ContentTest do
         |> Api.Repo.preload([:category, :users])
 
       listed_articles =
-        Enum.map(Content.list_user_articles(Fixtures.fixture(:tenant), user), fn article ->
+        Enum.map(Content.list_user_articles(user), fn article ->
           Api.Repo.preload(article, [:category, :users])
         end)
 
       assert listed_articles == [article]
     end
 
-    test "list_unpublished_articles/2 should return the tenants unpublished articles" do
+    test "list_unpublished_articles/2 should return all unpublished articles" do
       user = Fixtures.fixture(:registered_user)
 
       article =
@@ -39,14 +39,14 @@ defmodule Api.ContentTest do
         |> Api.Repo.preload([:category, :users])
 
       listed_articles =
-        Enum.map(Content.list_unpublished_articles(Fixtures.fixture(:tenant)), fn article ->
+        Enum.map(Content.list_unpublished_articles(), fn article ->
           Api.Repo.preload(article, [:category, :users])
         end)
 
       assert listed_articles == [article]
     end
 
-    test "list_user_articles/2 should return the tenants users' articles" do
+    test "list_user_articles/2 should return users' articles" do
       user = Fixtures.fixture(:registered_user)
 
       article =
@@ -54,7 +54,7 @@ defmodule Api.ContentTest do
         |> Api.Repo.preload([:category, :users])
 
       listed_articles =
-        Enum.map(Content.list_user_articles(Fixtures.fixture(:tenant), user), fn article ->
+        Enum.map(Content.list_user_articles(user), fn article ->
           Api.Repo.preload(article, [:category, :users])
         end)
 

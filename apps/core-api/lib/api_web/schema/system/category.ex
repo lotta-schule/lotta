@@ -1,4 +1,4 @@
-defmodule ApiWeb.Schema.Tenants.Tenant do
+defmodule ApiWeb.Schema.System.Category do
   @moduledoc false
 
   use Absinthe.Schema.Notation
@@ -15,9 +15,9 @@ defmodule ApiWeb.Schema.Tenants.Tenant do
     field :hide_articles_from_homepage, :boolean
     field :sort_key, :integer
     field :banner_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.System)
     field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
-    field :widgets, list_of(:widget), resolve: &Api.Tenants.resolve_widgets/2
+    field :widgets, list_of(:widget), resolve: &Api.System.resolve_widgets/2
   end
 
   input_object :create_category_input do

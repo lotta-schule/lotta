@@ -8,7 +8,7 @@ defmodule Api.Content do
   alias Api.Repo
 
   alias Api.Content.{Article, ContentModule}
-  alias Api.Tenants.{Category, Tenant}
+  alias Api.System.Category
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -27,8 +27,8 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles(%Tenant{} = tenant, category_id, user, user_group_ids, user_is_admin, filter) do
-    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
+  def list_articles(category_id, user, user_group_ids, user_is_admin, filter) do
+    query = list_public_articles(user, user_group_ids, user_is_admin)
 
     case category_id do
       nil ->
@@ -41,8 +41,8 @@ defmodule Api.Content do
     |> Repo.all()
   end
 
-  def get_topics(%Tenant{} = tenant, user, user_group_ids, user_is_admin) do
-    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
+  def get_topics(user, user_group_ids, user_is_admin) do
+    query = list_public_articles(user, user_group_ids, user_is_admin)
 
     Ecto.Query.from([a, ...] in query,
       where: not is_nil(a.topic),
@@ -60,8 +60,8 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles_by_topic(%Tenant{} = tenant, user, user_group_ids, user_is_admin, topic) do
-    query = list_public_articles(tenant, user, user_group_ids, user_is_admin)
+  def list_articles_by_topic(user, user_group_ids, user_is_admin, topic) do
+    query = list_public_articles(user, user_group_ids, user_is_admin)
 
     from(a in query,
       where: a.topic == ^topic,
@@ -71,7 +71,7 @@ defmodule Api.Content do
   end
 
   @doc """
-  Returns the list of unpublished articles belonging to a tenant.
+  Returns the list of unpublished articles.
 
   ## Examples
 
@@ -79,15 +79,15 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_unpublished_articles(%Api.Tenants.Tenant{} = tenant) do
+  def list_unpublished_articles() do
     Ecto.Query.from(a in Article,
-      where: a.tenant_id == ^tenant.id and a.ready_to_publish == true and is_nil(a.category_id)
+      where: a.ready_to_publish == true and is_nil(a.category_id)
     )
     |> Repo.all()
   end
 
   @doc """
-  Returns the list of articles for a user (given a tenant's scope).
+  Returns the list of articles for a user
 
   ## Examples
 
@@ -95,14 +95,14 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_user_articles(%Api.Tenants.Tenant{} = tenant, %Api.Accounts.User{} = user) do
+  def list_user_articles(%Api.Accounts.User{} = user) do
     user_id = user.id
 
     Repo.all(
       Ecto.Query.from(a in Article,
-        where: a.tenant_id == ^tenant.id,
         join: au in "article_users",
-        where: au.article_id == a.id and au.user_id == ^user_id,
+        on: au.article_id == a.id,
+        where: au.user_id == ^user_id,
         order_by: :id
       )
     )
@@ -138,11 +138,10 @@ defmodule Api.Content do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_article(attrs \\ %{}, tenant, user) do
+  def create_article(attrs \\ %{}, user) do
     changeset =
       %Article{}
       |> Article.create_changeset(attrs)
-      |> put_assoc(:tenant, tenant)
       |> put_assoc(:users, [user])
 
     case Repo.insert(changeset) do
@@ -327,14 +326,14 @@ defmodule Api.Content do
     |> Repo.update()
   end
 
-  def list_public_articles(%Tenant{} = tenant, _user, user_group_ids, user_is_admin) do
+  def list_public_articles(_user, user_group_ids, user_is_admin) do
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,
       join: c in Category,
       on: c.id == a.category_id,
       where:
-        a.tenant_id == ^tenant.id and not is_nil(a.category_id) and
+        not is_nil(a.category_id) and
           (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^user_is_admin),
       distinct: true
     )

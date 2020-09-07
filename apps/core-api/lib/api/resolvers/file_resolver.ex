@@ -12,7 +12,7 @@ defmodule Api.FileResolver do
   alias ApiWeb.ErrorHelpers
   alias Api.Accounts
   alias Api.Accounts.{Directory, User}
-  alias Api.Tenants.{Category, Tenant}
+  alias Api.System.{Category}
   alias Api.Content.{Article, ContentModule}
   alias Api.UploadService
   alias Api.Queue.MediaConversionRequestPublisher
@@ -61,20 +61,23 @@ defmodule Api.FileResolver do
         |> Repo.all()
         |> Enum.map(&%{usage: "avatar", user: &1})
 
-      tenants =
-        from(t in Tenant,
-          where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id,
-          order_by: :slug
-        )
-        |> Repo.all()
-        |> Enum.map(
-          &%{
-            usage: if(&1.logo_image_file_id == id, do: "logo", else: "background"),
-            tenant: &1
-          }
-        )
+      # TODO: fetch from configuration
+      #
+      # tenants =
+      #   from(t in Tenant,
+      #     where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id,
+      #     order_by: :slug
+      #   )
+      #   |> Repo.all()
+      #   |> Enum.map(
+      #     &%{
+      #       usage: if(&1.logo_image_file_id == id, do: "logo", else: "background"),
+      #       tenant: &1
+      #     }
+      #   )
 
-      usages = categories ++ articles ++ content_modules ++ users ++ tenants
+      # ++ tenants
+      usages = categories ++ articles ++ content_modules ++ users
       {:ok, usages}
     else
       {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
@@ -111,22 +114,16 @@ defmodule Api.FileResolver do
 
   def files(_, _), do: {:ok, []}
 
-  def relevant_files_in_usage(_args, %{
-        context: %{current_user: current_user, tenant: %{id: tenant_id}}
-      }) do
+  def relevant_files_in_usage(_args, %{context: %{current_user: current_user}}) do
     category_files =
       from f in Accounts.File,
         join: c in Category,
-        where:
-          c.tenant_id == ^tenant_id and f.user_id == ^current_user.id and
-            c.banner_image_file_id == f.id
+        where: f.user_id == ^current_user.id and c.banner_image_file_id == f.id
 
     article_files =
       from f in Accounts.File,
         join: a in Article,
-        where:
-          a.tenant_id == ^tenant_id and f.user_id == ^current_user.id and
-            a.preview_image_file_id == f.id
+        where: f.user_id == ^current_user.id and a.preview_image_file_id == f.id
 
     article_cm_files =
       from f in Accounts.File,
@@ -136,7 +133,7 @@ defmodule Api.FileResolver do
         on: cm.id == cmf.content_module_id,
         join: a in Article,
         on: a.id == cm.article_id,
-        where: a.tenant_id == ^tenant_id and f.user_id == ^current_user.id
+        where: f.user_id == ^current_user.id
 
     combined_files =
       [category_files, article_files, article_cm_files]
@@ -150,14 +147,14 @@ defmodule Api.FileResolver do
   def relevant_files_in_usage(_args, _context), do: {:error, "Du bist nicht angemeldet."}
 
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
-        context: %{current_user: current_user, tenant: tenant}
+        context: %{current_user: current_user}
       }) do
     case Accounts.get_directory(parent_directory_id) do
       directory when not is_nil(directory) ->
-        directory = Repo.preload(directory, [:user, :tenant])
+        directory = Repo.preload(directory, [:user])
 
         if user_can_write_directory?(current_user, directory) do
-          upload_file_to_directory(file, directory, current_user, tenant)
+          upload_file_to_directory(file, directory, current_user)
         else
           {:error, "Du darfst diesen Ordner hier nicht erstellen."}
         end
@@ -171,7 +168,7 @@ defmodule Api.FileResolver do
     try do
       file =
         Accounts.get_file!(String.to_integer(id))
-        |> Repo.preload([:tenant, :parent_directory])
+        |> Repo.preload([:parent_directory])
 
       source_directory = file.parent_directory
 
@@ -216,8 +213,7 @@ defmodule Api.FileResolver do
   defp upload_file_to_directory(
          %Plug.Upload{} = file,
          %Directory{} = directory,
-         %User{} = user,
-         %Tenant{} = tenant
+         %User{} = user
        ) do
     %{filename: filename, content_type: content_type, path: localfilepath} = file
     %{size: filesize} = File.stat!(localfilepath)
@@ -232,7 +228,6 @@ defmodule Api.FileResolver do
 
     file = %Api.Accounts.File{
       user_id: user.id,
-      tenant_id: tenant.id,
       parent_directory_id: directory.id,
       filename: filename,
       filesize: filesize,

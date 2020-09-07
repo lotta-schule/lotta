@@ -4,6 +4,7 @@ networks:
   api:
     driver: bridge
   postgres:
+    driver: bridge
   redis:
   elasticsearch:
     driver: bridge

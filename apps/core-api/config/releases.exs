@@ -16,6 +16,9 @@ db_user = System.fetch_env!("POSTGRES_USER")
 db_password = System.fetch_env!("POSTGRES_PASSWORD")
 db_host = System.fetch_env!("POSTGRES_HOST")
 db_name = System.fetch_env!("POSTGRES_DB")
+db_schema = System.fetch_env!("POSTGRES_SCHEMA")
+# config
+slug = System.fetch_env!("SHORT_TITLE")
 # redis
 redis_host = System.fetch_env!("REDIS_HOST")
 redis_password = System.fetch_env!("REDIS_PASSWORD")
@@ -23,6 +26,7 @@ redis_password = System.fetch_env!("REDIS_PASSWORD")
 rabbitmq_url = System.fetch_env!("RABBITMQ_URL")
 # elasticsearch
 elasticsearch_host = System.fetch_env!("ELASTICSEARCH_HOST")
+elasticsearch_index_prefix = System.fetch_env!("ELASTICSEARCH_INDEX_PREFIX")
 # S3-compatible block storage for User Generated Content
 ugc_s3_compat_endpoint = System.fetch_env!("UGC_S3_COMPAT_ENDPOINT")
 ugc_s3_compat_access_key_id = System.fetch_env!("UGC_S3_COMPAT_ACCESS_KEY_ID")
@@ -35,7 +39,7 @@ base_url = System.get_env("BASE_URL") || ".lotta.schule"
 # Schedule Provider
 schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 # Sentry Error Logging
-sentry_dsn = System.fetch_env("SENTRY_DSN")
+sentry_dsn = System.get_env("SENTRY_DSN")
 sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || "prod"
 
 host =
@@ -49,8 +53,16 @@ config :api, Api.Repo,
   password: db_password,
   database: db_name,
   hostname: db_host,
+  prefix: db_schema,
+  after_connect: {Api.Repo, :after_connect, [db_schema]},
   show_sensitive_data_on_connection_error: false,
   pool_size: 25
+
+config :api, :default_configuration, %{
+  slug: slug,
+  title: "",
+  custom_theme: %{}
+}
 
 config :api, :rabbitmq_url, rabbitmq_url
 
@@ -66,7 +78,9 @@ config :api, :live_view,
   username: live_view_username,
   password: live_view_password
 
-config :api, Api.Elasticsearch.Cluster, url: elasticsearch_host
+config :api, Api.Elasticsearch.Cluster,
+  url: elasticsearch_host,
+  index_prefix: elasticsearch_index_prefix
 
 config :api, ApiWeb.Endpoint,
   url: [host: host],
@@ -112,4 +126,4 @@ config :sentry,
 
 config :lager,
   error_logger_redirect: false,
-  handlers: [level: :critical]
+  handlers: [level: :debug]

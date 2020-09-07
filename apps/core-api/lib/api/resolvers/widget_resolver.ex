@@ -6,39 +6,33 @@ defmodule Api.WidgetResolver do
   import Api.Accounts.Permissions
 
   alias Ecto.NoResultsError
-  alias Api.Tenants
+  alias Api.System
 
-  def all(%{category_id: category_id}, %{context: %{tenant: tenant} = context}) do
-    Tenants.list_widgets_by_tenant_and_category_id(
-      tenant,
+  def all(%{category_id: category_id}, %{context: context}) do
+    System.list_widgets_by_category_id(
       category_id,
       context[:current_user],
       context[:user_group_ids]
     )
   end
 
-  def all(_args, %{context: %{tenant: tenant} = context}) do
-    Tenants.list_widgets_by_tenant(tenant, context[:current_user], context[:user_group_ids])
+  def all(_args, %{context: context}) do
+    System.list_widgets(context[:current_user], context[:user_group_ids])
   end
 
-  def all(_args, _info) do
-    {:error, "Tenant nicht gefunden"}
-  end
-
-  def create(%{title: title, type: type}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context[:current_user], tenant) do
-      %{title: title, type: type, tenant_id: tenant.id}
-      |> Tenants.create_widget()
+  def create(%{title: title, type: type}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context[:current_user]) do
+      System.create_widget(%{title: title, type: type})
     else
       {:error, "Nur Administratoren dürfen Widgets erstellen."}
     end
   end
 
-  def update(%{id: id, widget: widget_params}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
+  def update(%{id: id, widget: widget_params}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
       try do
-        Tenants.get_widget!(id)
-        |> Tenants.update_widget(widget_params)
+        System.get_widget!(id)
+        |> System.update_widget(widget_params)
       rescue
         NoResultsError ->
           {:error, "Marginale mit der id #{id} nicht gefunden."}
@@ -48,11 +42,11 @@ defmodule Api.WidgetResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && user_is_admin?(context.current_user, tenant) do
+  def delete(%{id: id}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
       try do
-        Tenants.get_widget!(id)
-        |> Tenants.delete_widget()
+        System.get_widget!(id)
+        |> System.delete_widget()
       rescue
         NoResultsError ->
           {:error, "Marginale mit der id #{id} nicht gefunden."}
