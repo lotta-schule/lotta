@@ -1,11 +1,12 @@
 import { gql } from '@apollo/client';
 
-export const UpdateTenantMutation = gql`
-    mutation UpdateTenant($tenant: TenantInput) {
-        updateTenant(tenant: $tenant) {
+export const GetSystemQuery = gql`
+    query GetSystem {
+        system {
             id
             title
             slug
+            host
             customTheme
             logoImageFile {
                 id
@@ -14,6 +15,16 @@ export const UpdateTenantMutation = gql`
             backgroundImageFile {
                 id
                 remoteLocation
+            }
+            groups {
+                id
+                name
+                sortKey
+                isAdminGroup
+            }
+            customDomains {
+                host
+                isMainDomain
             }
         }
     }

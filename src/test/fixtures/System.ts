@@ -3,16 +3,17 @@ import { ClientModel } from 'model';
 
 /**
  *
- * Tenants
+ * System
  *
  */
 
-export const TestTenant: ClientModel = {
-    id: '1',
+export const system: ClientModel = {
+    id: '1', // add ID for cache
     title: 'DerEineVonHier',
     slug: 'derdiedas',
     insertedAt: '2014-03-08 12:00',
     updatedAt: '2014-03-08 12:00',
+    host: 'info.lotta.schule',
     groups: [
         adminGroup,
         lehrerGroup,
@@ -31,19 +32,7 @@ export const TestTenant: ClientModel = {
     customTheme: {},
     logoImageFile: null,
     backgroundImageFile: null
-};
-
-export const OtherTenant = {
-    id: '2',
-    title: 'Um andere gehts ja eigentlich hier nie',
-    slug: 'andere',
-    insertedAt: '2014-03-08 12:00',
-    updatedAt: '2014-03-08 12:00',
-    groups: [],
-    customDomains: [],
-    logoImageFile: null,
-    backgroundImageFile: null
-};
+} as ClientModel;
 
 /**
  *

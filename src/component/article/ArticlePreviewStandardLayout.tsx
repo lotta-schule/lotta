@@ -156,7 +156,7 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
             to={Article.getPath(article)}
             className={styles.link}
         >
-            {content}
+            {content ?? ''}
         </Link>
     );
 

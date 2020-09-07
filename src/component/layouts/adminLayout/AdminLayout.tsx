@@ -7,7 +7,7 @@ import { AdminLayoutNavigation } from './AdminLayoutNavigation';
 import { UserManagement } from './userManagement/UserManagement';
 import { UnpublishedArticles } from '../profileLayout/UnpublishedArticles';
 import { CategoryManagement } from './categoryManagment/CategoryManagement';
-import { TenantManagement } from './tenantManagment/TenantManagement';
+import { SystemManagement } from './systemManagment/SystemManagement';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { WidgetsList } from '../WidgetsList';
 import { Header } from '../../general/Header';
@@ -39,9 +39,9 @@ export const AdminLayout = memo(() => {
                 </Header>
                 <Switch>
                     <Route exact path='/admin'>
-                        <Redirect to={'/admin/tenant/general'} />
+                        <Redirect to={'/admin/system/general'} />
                     </Route>
-                    <Route path={'/admin/tenant'} component={TenantManagement} />
+                    <Route path={'/admin/system'} component={SystemManagement} />
                     <Route path={'/admin/categories'} component={CategoryManagement} />
                     <Route path={'/admin/users'} component={UserManagement} />
                     <Route path={'/admin/unpublished'} component={UnpublishedArticles} />

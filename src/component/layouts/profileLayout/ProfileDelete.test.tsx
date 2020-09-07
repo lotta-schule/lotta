@@ -240,6 +240,6 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         });
 
         done();
-    }, 15_000);
+    }, 25_000);
 
 });

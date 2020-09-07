@@ -3,7 +3,7 @@ import { Button, DialogTitle, DialogContent, DialogContentText, DialogActions, T
 import { useMutation } from '@apollo/client';
 import { ClientModel, UserGroupModel } from 'model';
 import { CreateUserGroupMutation } from 'api/mutation/CreateUserGroupMutation';
-import { GetTenantQuery } from 'api/query/GetTenantQuery';
+import { GetSystemQuery } from 'api/query/GetSystemQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 
@@ -22,13 +22,13 @@ export const CreateUserGroupDialog = memo<CreateUserGroupDialogProps>(({
     const [createUserGroup, { loading: isLoading, error }] = useMutation<{ group: UserGroupModel }, { group: Partial<UserGroupModel> }>(CreateUserGroupMutation, {
         update: (cache, { data }) => {
             if (data && data.group) {
-                const readTenantResult = cache.readQuery<{ tenant: ClientModel }>({ query: GetTenantQuery });
-                cache.writeQuery<{ tenant: ClientModel }>({
-                    query: GetTenantQuery,
+                const readSystemResult = cache.readQuery<{ system: ClientModel }>({ query: GetSystemQuery });
+                cache.writeQuery<{ system: ClientModel }>({
+                    query: GetSystemQuery,
                     data: {
-                        tenant: {
-                            ...readTenantResult!.tenant,
-                            groups: [...readTenantResult!.tenant.groups, data.group]
+                        system: {
+                            ...readSystemResult!.system,
+                            groups: [...readSystemResult!.system.groups, data.group]
                         }
                     }
                 });

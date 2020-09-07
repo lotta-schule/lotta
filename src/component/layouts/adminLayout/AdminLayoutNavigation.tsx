@@ -11,8 +11,8 @@ export const AdminLayoutNavigation = memo(() => {
                 onChange={(_, value) => {
                     const destination = ((basePath: string) => {
                         switch (basePath) {
-                            case '/admin/tenant':
-                                return '/admin/tenant/general';
+                            case '/admin/system':
+                                return '/admin/system/general';
                             case '/admin/users':
                                 return '/admin/users/list';
                             case '/admin/categories':
@@ -27,7 +27,7 @@ export const AdminLayoutNavigation = memo(() => {
                 variant="scrollable"
                 aria-label="Admin Einstellungen"
             >
-                <Tab label="Mein Lotta" value={'/admin/tenant'} />
+                <Tab label="Mein Lotta" value={'/admin/system'} />
                 <Tab label="Nutzer &amp; Gruppen" value={'/admin/users'} />
                 <Tab label="Kategorien &amp; Marginalen" value={'/admin/categories'} />
                 <Tab label="Freizugebende Beiträge" value={'/admin/unpublished'} />

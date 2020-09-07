@@ -15,25 +15,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export const TenantManagement = memo(() => {
+export const SystemManagement = memo(() => {
     const styles = useStyles();
     const { history, location } = useRouter();
 
     return (
         <Paper>
             <Tabs value={location.pathname} indicatorColor={'primary'} textColor={'primary'} onChange={(_, pathname) => history.push(pathname)}>
-                <Tab value={'/admin/tenant/general'} label={'Grundeinstellungen'} />
-                <Tab value={'/admin/tenant/presentation'} label={'Darstellung'} />
-                <Tab value={'/admin/tenant/usage'} label={'Nutzung'} />
+                <Tab value={'/admin/system/general'} label={'Grundeinstellungen'} />
+                <Tab value={'/admin/system/presentation'} label={'Darstellung'} />
+                <Tab value={'/admin/system/usage'} label={'Nutzung'} />
             </Tabs>
             <section className={styles.content}>
                 <Switch>
-                    <Route exact path='/admin/tenant'>
-                        <Redirect to={'/admin/tenant/general'} />
+                    <Route exact path='/admin/system'>
+                        <Redirect to={'/admin/system/general'} />
                     </Route>
-                    <Route path='/admin/tenant/general' component={BasicSettings} />
-                    <Route path='/admin/tenant/presentation' component={PresentationSettings} />
-                    <Route path='/admin/tenant/usage' component={UsageOverview} />
+                    <Route path='/admin/system/general' component={BasicSettings} />
+                    <Route path='/admin/system/presentation' component={PresentationSettings} />
+                    <Route path='/admin/system/usage' component={UsageOverview} />
                 </Switch>
             </section>
         </Paper>

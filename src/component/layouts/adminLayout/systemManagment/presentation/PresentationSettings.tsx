@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Card, CardContent, Grid, Typography, makeStyles, Theme, useTheme, FormControl, InputLabel, Select, MenuItem, Divider } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
-import { useTenant } from 'util/client/useTenant';
-import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
+import { useSystem } from 'util/client/useSystem';
+import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
@@ -26,15 +26,15 @@ const useStyles = makeStyles(theme => ({
 
 export const PresentationSettings = memo(() => {
     const styles = useStyles();
-    const tenant = useTenant();
+    const system = useSystem();
     const theme = useTheme();
 
     const [allThemes, setAllThemes] = useState<{ title: string; theme: Partial<Theme> }[]>([{ title: 'Standard', theme: {} }]);
 
-    const [customTheme, setCustomTheme] = useState<any>(tenant.customTheme || {});
-    const [backgroundImage, setBackgroundImage] = useState(tenant.backgroundImageFile);
+    const [customTheme, setCustomTheme] = useState<any>(system.customTheme || {});
+    const [backgroundImage, setBackgroundImage] = useState(system.backgroundImageFile);
 
-    const [updateTenant, { loading: isLoading, error }] = useMutation(UpdateTenantMutation);
+    const [updateSystem, { loading: isLoading, error }] = useMutation(UpdateSystemMutation);
 
     const getFromTheme = (key: string): any => {
         return get(customTheme, key, get(theme, key));
@@ -228,9 +228,9 @@ export const PresentationSettings = memo(() => {
                             disabled={isLoading}
                             variant={'outlined'}
                             color={'secondary'}
-                            onClick={() => updateTenant({
+                            onClick={() => updateSystem({
                                 variables: {
-                                    tenant: { customTheme: JSON.stringify(customTheme), backgroundImageFile: backgroundImage && { id: backgroundImage.id } }
+                                    system: { customTheme: JSON.stringify(customTheme), backgroundImageFile: backgroundImage && { id: backgroundImage.id } }
                                 }
                             })}
                         >

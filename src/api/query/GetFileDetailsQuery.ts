@@ -47,16 +47,8 @@ export const GetFileDetailsQuery = gql`
                       }
                   }
               }
-              ... on FileTenantUsageLocation {
+              ... on FileSystemUsageLocation {
                   usage
-                  tenant {
-                      id
-                      slug
-                      title
-                      logoImageFile {
-                          remoteLocation
-                      }
-                  }
               }
               ... on FileUserUsageLocation {
                   usage

@@ -117,7 +117,7 @@ export const UserNavigation = memo(() => {
                             </MenuItem>,
                             ...(User.isAdmin(currentUser) ? [
                                 <Divider key={'admin-divider'} />,
-                                <MenuItem key={'administration'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/tenant/general'); }}>
+                                <MenuItem key={'administration'} onClick={() => { setProfileMenuAnchorEl(null); history.push('/admin/system/general'); }}>
                                     <SecurityOutlined color={'secondary'} />
                                     &nbsp;
                                     Seite administrieren

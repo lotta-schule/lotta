@@ -1,13 +1,12 @@
 import React, { memo } from 'react';
 import { Card, CardContent, Grid, Grow, Typography, makeStyles, LinearProgress } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useTenant } from 'util/client/useTenant';
-import { Tenant } from 'util/model';
+import { useSystem } from 'util/client/useSystem';
 import { FileSize } from 'util/FileSize';
 import { useQuery } from '@apollo/client';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { GetTenantUsageQuery } from 'api/query/GetTenantUsageQuery';
+import { GetSystemUsageQuery } from 'api/query/GetSystemUsageQuery';
 
 const useStyles = makeStyles(theme => ({
     gridContainer: {
@@ -18,9 +17,9 @@ const useStyles = makeStyles(theme => ({
 
 export const UsageOverview = memo(() => {
     const styles = useStyles();
-    const tenant = useTenant();
+    const system = useSystem();
 
-    const { data, error, loading: isLoading } = useQuery(GetTenantUsageQuery);
+    const { data, error, loading: isLoading } = useQuery(GetSystemUsageQuery);
 
     const getMediaConversionTimeFormatted = ((usage: any) => {
         if (!data?.usage) {
@@ -39,13 +38,13 @@ export const UsageOverview = memo(() => {
             <Card variant={'outlined'}>
                 <CardContent>
                     <Typography color="textSecondary" gutterBottom>
-                        {Tenant.getLottaDomainHost(tenant)}
+                        {system.host}
                     </Typography>
                     <Typography variant={'h5'} component={'h2'}>
-                        {tenant.title}
+                        {system.title}
                     </Typography>
                     <Typography color={'textSecondary'}>
-                        {tenant.insertedAt}
+                        {system.insertedAt}
                     </Typography>
                  </CardContent>
             </Card>
