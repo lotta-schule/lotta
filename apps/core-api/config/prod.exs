@@ -12,7 +12,9 @@ import Config
 config :api, ApiWeb.Endpoint, url: [host: "localhost"]
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger,
+  level: :debug,
+  handle_sasl_reports: true
 
 # ## SSL Support
 #

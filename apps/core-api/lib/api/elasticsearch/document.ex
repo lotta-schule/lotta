@@ -15,7 +15,6 @@ defimpl Elasticsearch.Document, for: Api.Content.Article do
       |> Repo.preload([:content_modules, :users])
 
     %{
-      tenant_id: article.tenant_id,
       category_id: article.category_id,
       title: article.title,
       preview: article.preview,

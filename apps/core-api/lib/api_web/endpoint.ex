@@ -3,6 +3,8 @@ defmodule ApiWeb.Endpoint do
   Phoenix endpoint configuration
   """
 
+  use Sentry.PlugCapture
+
   use Phoenix.Endpoint, otp_app: :api
 
   socket "/socket", ApiWeb.UserSocket,
@@ -33,11 +35,12 @@ defmodule ApiWeb.Endpoint do
   plug Plug.Logger
 
   plug Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
+    parsers: [:urlencoded, :multipart, :json, Absinthe.Plug.Parser],
     pass: ["*/*"],
-    # 1.5 GB
     length: 1.5 * 1024 * 1024 * 1024,
     json_decoder: Poison
+
+  plug Sentry.PlugContext
 
   plug Plug.MethodOverride
   plug Plug.Head
@@ -47,7 +50,6 @@ defmodule ApiWeb.Endpoint do
     origins: {ApiWeb.Cors, :allow_origin},
     allow_headers: [
       "Authorization",
-      "Tenant",
       "Content-Type",
       "Accept",
       "Origin",
@@ -61,14 +63,6 @@ defmodule ApiWeb.Endpoint do
       "X-CSRF-Token"
     ],
     allow_credentials: true
-
-  # The session will be stored in the cookie and signed,
-  # this means its contents can be read but not tampered with.
-  # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
-    key: "_api_key",
-    signing_salt: "sPyTc4VZ"
 
   plug ApiWeb.Router
 

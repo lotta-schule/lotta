@@ -6,12 +6,13 @@ defmodule Api.FileResolver do
   require Logger
 
   import Ecto.Query
+  import Api.Accounts.Permissions
 
   alias Ecto.Changeset
   alias ApiWeb.ErrorHelpers
   alias Api.Accounts
   alias Api.Accounts.{Directory, User}
-  alias Api.Tenants.{Category, Tenant}
+  alias Api.System.{Category}
   alias Api.Content.{Article, ContentModule}
   alias Api.UploadService
   alias Api.Queue.MediaConversionRequestPublisher
@@ -24,7 +25,7 @@ defmodule Api.FileResolver do
       when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
 
-    if User.can_read_directory?(current_user, parent_directory) do
+    if user_can_read_directory?(current_user, parent_directory) do
       categories =
         from(c in Category,
           where: c.banner_image_file_id == ^id,
@@ -60,20 +61,23 @@ defmodule Api.FileResolver do
         |> Repo.all()
         |> Enum.map(&%{usage: "avatar", user: &1})
 
-      tenants =
-        from(t in Tenant,
-          where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id,
-          order_by: :slug
-        )
-        |> Repo.all()
-        |> Enum.map(
-          &%{
-            usage: if(&1.logo_image_file_id == id, do: "logo", else: "background"),
-            tenant: &1
-          }
-        )
+      # TODO: fetch from configuration
+      #
+      # tenants =
+      #   from(t in Tenant,
+      #     where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id,
+      #     order_by: :slug
+      #   )
+      #   |> Repo.all()
+      #   |> Enum.map(
+      #     &%{
+      #       usage: if(&1.logo_image_file_id == id, do: "logo", else: "background"),
+      #       tenant: &1
+      #     }
+      #   )
 
-      usages = categories ++ articles ++ content_modules ++ users ++ tenants
+      # ++ tenants
+      usages = categories ++ articles ++ content_modules ++ users
       {:ok, usages}
     else
       {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
@@ -86,7 +90,7 @@ defmodule Api.FileResolver do
       |> Repo.preload(:parent_directory)
 
     case file.user_id == current_user.id ||
-           User.can_read_directory?(current_user, file.parent_directory) do
+           user_can_read_directory?(current_user, file.parent_directory) do
       true ->
         {:ok, file}
 
@@ -99,7 +103,7 @@ defmodule Api.FileResolver do
       when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory!(parent_directory_id)
 
-    case User.can_read_directory?(current_user, parent_directory) do
+    case user_can_read_directory?(current_user, parent_directory) do
       true ->
         {:ok, Accounts.list_files(parent_directory)}
 
@@ -110,15 +114,47 @@ defmodule Api.FileResolver do
 
   def files(_, _), do: {:ok, []}
 
+  def relevant_files_in_usage(_args, %{context: %{current_user: current_user}}) do
+    category_files =
+      from f in Accounts.File,
+        join: c in Category,
+        where: f.user_id == ^current_user.id and c.banner_image_file_id == f.id
+
+    article_files =
+      from f in Accounts.File,
+        join: a in Article,
+        where: f.user_id == ^current_user.id and a.preview_image_file_id == f.id
+
+    article_cm_files =
+      from f in Accounts.File,
+        join: cmf in "content_module_file",
+        on: cmf.file_id == f.id,
+        join: cm in ContentModule,
+        on: cm.id == cmf.content_module_id,
+        join: a in Article,
+        on: a.id == cm.article_id,
+        where: f.user_id == ^current_user.id
+
+    combined_files =
+      [category_files, article_files, article_cm_files]
+      |> Enum.map(&Repo.all/1)
+      |> List.flatten()
+      |> Enum.uniq_by(& &1.id)
+
+    {:ok, combined_files}
+  end
+
+  def relevant_files_in_usage(_args, _context), do: {:error, "Du bist nicht angemeldet."}
+
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
-        context: %{current_user: current_user, tenant: tenant}
+        context: %{current_user: current_user}
       }) do
     case Accounts.get_directory(parent_directory_id) do
       directory when not is_nil(directory) ->
-        directory = Repo.preload(directory, [:user, :tenant])
+        directory = Repo.preload(directory, [:user])
 
-        if User.can_write_directory?(current_user, directory) do
-          upload_file_to_directory(file, directory, current_user, tenant)
+        if user_can_write_directory?(current_user, directory) do
+          upload_file_to_directory(file, directory, current_user)
         else
           {:error, "Du darfst diesen Ordner hier nicht erstellen."}
         end
@@ -132,7 +168,7 @@ defmodule Api.FileResolver do
     try do
       file =
         Accounts.get_file!(String.to_integer(id))
-        |> Repo.preload([:tenant, :parent_directory])
+        |> Repo.preload([:parent_directory])
 
       source_directory = file.parent_directory
 
@@ -145,8 +181,8 @@ defmodule Api.FileResolver do
             source_directory
         end
 
-      if User.can_write_directory?(current_user, source_directory) &&
-           User.can_write_directory?(current_user, target_directory) do
+      if user_can_write_directory?(current_user, source_directory) &&
+           user_can_write_directory?(current_user, target_directory) do
         Accounts.update_file(file, Map.take(args, [:filename, :parent_directory_id]))
       else
         {:error, "Du darfst diese Datei nicht bearbeiten."}
@@ -163,18 +199,8 @@ defmodule Api.FileResolver do
         Accounts.get_file!(String.to_integer(id))
         |> Repo.preload([:parent_directory])
 
-      if User.can_write_directory?(current_user, file.parent_directory) do
-        file =
-          file
-          |> Repo.preload(:file_conversions)
-
-        Enum.each(file.file_conversions, fn file_conversion ->
-          Accounts.delete_file_conversion(file_conversion)
-          Accounts.File.delete_attachment(file_conversion)
-        end)
-
+      if user_can_write_directory?(current_user, file.parent_directory) do
         Accounts.delete_file(file)
-        Accounts.File.delete_attachment(file)
       else
         {:error, "Du darfst diese Datei nicht löschen."}
       end
@@ -187,8 +213,7 @@ defmodule Api.FileResolver do
   defp upload_file_to_directory(
          %Plug.Upload{} = file,
          %Directory{} = directory,
-         %User{} = user,
-         %Tenant{} = tenant
+         %User{} = user
        ) do
     %{filename: filename, content_type: content_type, path: localfilepath} = file
     %{size: filesize} = File.stat!(localfilepath)
@@ -203,7 +228,6 @@ defmodule Api.FileResolver do
 
     file = %Api.Accounts.File{
       user_id: user.id,
-      tenant_id: tenant.id,
       parent_directory_id: directory.id,
       filename: filename,
       filesize: filesize,

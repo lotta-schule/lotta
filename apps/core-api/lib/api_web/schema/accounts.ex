@@ -46,6 +46,10 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:parent_directory_id, :id)
       resolve(&Api.FileResolver.files/2)
     end
+
+    field :relevant_files_in_usage, list_of(:file) do
+      resolve(&Api.FileResolver.relevant_files_in_usage/2)
+    end
   end
 
   object :accounts_mutations do
@@ -54,7 +58,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:group_key, :string)
 
       resolve(&Api.UserResolver.register/2)
-      middleware(ApiWeb.Schema.Middleware.WriteResolutionAuthTokenToAbsintheContext)
+      middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
     field :login, type: :authresult do
@@ -62,17 +66,15 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:password, :string)
 
       resolve(&Api.UserResolver.login/2)
-      middleware(ApiWeb.Schema.Middleware.WriteResolutionAuthTokenToAbsintheContext)
+      middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
-    field :logout, type: :boolean do
-      resolve(fn _args, _info -> {:ok, true} end)
-
-      middleware(fn resolution, _ ->
-        Map.update!(resolution, :context, fn ctx ->
-          Map.put(ctx, :auth_token, nil)
-        end)
+    field :logout, type: :authresult do
+      resolve(fn _args, _info ->
+        {:ok, %{refresh_token: nil, access_token: nil}}
       end)
+
+      middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
     field :update_profile, type: :user do
@@ -88,11 +90,10 @@ defmodule ApiWeb.Schema.Accounts do
       resolve(&Api.UserResolver.update_password/2)
     end
 
-    field :set_user_blocked, type: :user do
-      arg(:id, non_null(:id))
-      arg(:is_blocked, non_null(:boolean))
+    field :destroy_account, type: :user do
+      arg(:transfer_file_ids, list_of(non_null(:id)))
 
-      resolve(&Api.UserResolver.set_user_blocked/2)
+      resolve(&Api.UserResolver.destroy_account/2)
     end
 
     field :create_user_group, type: :user_group do
@@ -126,13 +127,14 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:password, non_null(:string))
 
       resolve(&Api.UserResolver.reset_password/2)
-      middleware(ApiWeb.Schema.Middleware.WriteResolutionAuthTokenToAbsintheContext)
+      middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
-    field :set_user_groups, type: :user do
+    field :update_user, type: :user do
       arg(:id, non_null(:id))
-      arg(:group_ids, non_null(list_of(:id)))
-      resolve(&Api.UserResolver.set_user_groups/2)
+      arg(:is_blocked, :boolean)
+      arg(:groups, list_of(non_null(:select_user_group_input)))
+      resolve(&Api.UserResolver.update/2)
     end
 
     field :create_directory, type: :directory do

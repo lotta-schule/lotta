@@ -4,30 +4,35 @@ defmodule Api.UserResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
-  alias Api.Guardian
+  import Api.Accounts.Authentication
+
+  alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
-  alias Api.Tenants
-  alias Api.Tenants.{Tenant}
-  alias Api.Accounts.{AuthHelper, Directory, User, UserGroup}
+  alias Api.Accounts.{Directory, File, User, UserGroup}
 
   setup do
     Seeder.seed()
 
-    web_tenant = Tenants.get_tenant_by_slug!("web")
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")
     evil_user = Repo.get_by!(User, email: "drevil@lotta.schule")
-    {:ok, admin_jwt, _} = Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
-    {:ok, user_jwt, _} = Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+
+    user_relevant_file = Repo.get_by!(File, filename: "wieartig1.jpg")
+
+    {:ok, admin_jwt, _} =
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+
     schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
     lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
 
     {:ok,
      %{
-       web_tenant: web_tenant,
        admin: admin,
        admin_jwt: admin_jwt,
        user: user,
@@ -35,7 +40,8 @@ defmodule Api.UserResolverTest do
        evil_user: evil_user,
        user_jwt: user_jwt,
        schueler_group: schueler_group,
-       lehrer_group: lehrer_group
+       lehrer_group: lehrer_group,
+       user_relevant_file: user_relevant_file
      }}
   end
 
@@ -98,7 +104,6 @@ defmodule Api.UserResolverTest do
     test "returns users list if user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -129,7 +134,6 @@ defmodule Api.UserResolverTest do
     test "returns error if user is not admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -159,10 +163,9 @@ defmodule Api.UserResolverTest do
     }
     """
 
-    test "should find users of same tenant by name is user is admin", %{admin_jwt: admin_jwt} do
+    test "should find users by name is user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "alexis"})
         |> json_response(200)
@@ -186,10 +189,9 @@ defmodule Api.UserResolverTest do
              end)
     end
 
-    test "should find users of same tenant by nickname is user is admin", %{admin_jwt: admin_jwt} do
+    test "should find users by nickname is user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "Meister"})
         |> json_response(200)
@@ -207,12 +209,11 @@ defmodule Api.UserResolverTest do
              }
     end
 
-    test "should find users of same tenant by exact email is user is admin", %{
+    test "should find users by exact email is user is admin", %{
       admin_jwt: admin_jwt
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "mcurie@lotta.schule"})
         |> json_response(200)
@@ -233,7 +234,6 @@ defmodule Api.UserResolverTest do
     test "should return an empty results array if there is no match", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api",
           query: @query,
@@ -253,7 +253,6 @@ defmodule Api.UserResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "D"})
         |> json_response(200)
@@ -268,7 +267,6 @@ defmodule Api.UserResolverTest do
     test "should throw an error if user is not admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "De"})
         |> json_response(200)
@@ -289,7 +287,6 @@ defmodule Api.UserResolverTest do
     test "should throw an error if user is not logged in" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: %{searchtext: "De"})
         |> json_response(200)
 
@@ -324,7 +321,6 @@ defmodule Api.UserResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -345,7 +341,6 @@ defmodule Api.UserResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -360,7 +355,6 @@ defmodule Api.UserResolverTest do
     test "should return an error if user is not an admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -381,7 +375,6 @@ defmodule Api.UserResolverTest do
     test "should return an error if user is not logged in" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
@@ -403,40 +396,46 @@ defmodule Api.UserResolverTest do
     @query """
     mutation register($user: RegisterUserParams!, $groupKey: String) {
       register(user: $user, groupKey: $groupKey) {
-        token
+        access_token
       }
     }
     """
 
-    test "register the user if data is entered correctly - user should have default directories",
-         %{web_tenant: web_tenant} do
-      res =
+    test "register the user if data is entered correctly - user should have default directories" do
+      conn =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
             user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123"}
           }
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
 
-      assert String.valid?(res["data"]["register"]["token"])
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
+      assert email == "neuernutzer@example.com"
 
-      token = res["data"]["register"]["token"]
-      {:ok, %{"id" => id}} = Guardian.decode_and_verify(token)
+      access_token = res["data"]["register"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => id}} = AccessToken.decode_and_verify(access_token)
 
       directories =
-        from(d in Directory, where: d.user_id == ^id and d.tenant_id == ^web_tenant.id)
+        from(d in Directory, where: d.user_id == ^id)
         |> Repo.all()
 
       assert length(directories) == 5
     end
 
     test "register the user and put him into groupkey's group" do
-      res =
+      conn =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
@@ -444,15 +443,24 @@ defmodule Api.UserResolverTest do
             groupKey: "LEb0815Hp!1969"
           }
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
 
-      assert String.valid?(res["data"]["register"]["token"])
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
+      assert email == "neuernutzer@example.com"
 
-      user_groups =
-        User.get_groups(
-          Repo.get_by!(User, email: "neuernutzer@example.com"),
-          Repo.get_by!(Tenant, slug: "web")
-        )
+      access_token = res["data"]["register"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => _id, "email" => "neuernutzer@example.com"}} =
+        AccessToken.decode_and_verify(access_token)
+
+      user_groups = User.get_groups(Repo.get_by!(User, email: "neuernutzer@example.com"))
 
       [%{name: group_name}] = user_groups
       assert group_name == "Lehrer"
@@ -461,7 +469,6 @@ defmodule Api.UserResolverTest do
     test "returns error when email is already taken" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
@@ -492,7 +499,6 @@ defmodule Api.UserResolverTest do
     test "returns error when no password is given" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
@@ -519,7 +525,6 @@ defmodule Api.UserResolverTest do
     test "returns error when no name is given" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
@@ -546,7 +551,6 @@ defmodule Api.UserResolverTest do
     test "returns error when hide_full_name is selected but no nickname is given" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
@@ -579,28 +583,41 @@ defmodule Api.UserResolverTest do
     @query """
     mutation login($username: String!, $password: String!) {
       login(username: $username, password: $password) {
-        token
+        access_token
       }
     }
     """
 
     test "returns the user if data is entered correctly" do
-      res =
+      conn =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{username: "alexis.rinaldoni@lotta.schule", password: "test123"}
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
 
-      assert String.valid?(res["data"]["login"]["token"])
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+
+      {:ok, %{"email" => email, "typ" => "refresh"}} = AccessToken.decode_and_verify(token)
+
+      assert email == "alexis.rinaldoni@lotta.schule"
+
+      access_token = res["data"]["login"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
+        AccessToken.decode_and_verify(access_token)
     end
 
     test "returns an error if the username is non-existent" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "test123"}
@@ -623,7 +640,6 @@ defmodule Api.UserResolverTest do
     test "returns an error if the password is wrong" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{username: "alexis.rinaldoni@lotta.schule", password: "abcdef999"}
@@ -643,10 +659,9 @@ defmodule Api.UserResolverTest do
              } = res
     end
 
-    test "returns an error if the user is blocked for this tenant" do
+    test "returns an error if the user is blocked" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{username: "drevil@lotta.schule", password: "test123"}
@@ -659,8 +674,7 @@ defmodule Api.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" =>
-                     "Du wurdest für diese Seite geblockt. Du darfst dich nicht anmelden.",
+                   "message" => "Du wurdest geblockt. Du darfst dich nicht anmelden.",
                    "path" => ["login"]
                  }
                ]
@@ -678,7 +692,6 @@ defmodule Api.UserResolverTest do
     test "returns true and create a token for the database if the user exists" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule"})
         |> json_response(200)
 
@@ -700,7 +713,6 @@ defmodule Api.UserResolverTest do
     test "returns true if the user does not exist" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api", query: @query, variables: %{email: "abcZZa@invalid.email"})
         |> json_response(200)
 
@@ -720,7 +732,6 @@ defmodule Api.UserResolverTest do
   test "returns true and create a token for the database if the user exists but is written in the wrong case" do
     res =
       build_conn()
-      |> put_req_header("tenant", "slug:web")
       |> post("/api", query: @query, variables: %{email: "AleXis.Rinaldoni@LOTTA.SCHULE"})
       |> json_response(200)
 
@@ -743,7 +754,7 @@ defmodule Api.UserResolverTest do
     @query """
     mutation resetPassword($email: String!, $token: String!, $password: String!) {
       resetPassword(email: $email, token: $token, password: $password) {
-        token
+        access_token
       }
     }
     """
@@ -757,19 +768,33 @@ defmodule Api.UserResolverTest do
         token
       ])
 
-      res =
+      conn =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"}
         )
+        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+
+      res =
+        conn
         |> json_response(200)
+
+      token = conn.cookies["SignInRefreshToken"]
+      assert String.valid?(token)
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
+      assert email == "alexis.rinaldoni@lotta.schule"
+
+      access_token = res["data"]["resetPassword"]["access_token"]
+      assert String.valid?(access_token)
+
+      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
+        AccessToken.decode_and_verify(access_token)
 
       user = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
 
-      assert String.valid?(res["data"]["resetPassword"]["token"])
-      assert true = Bcrypt.verify_pass("abcdef", user.password_hash)
+      assert String.valid?(res["data"]["resetPassword"]["access_token"])
+      assert Bcrypt.verify_pass("abcdef", user.password_hash)
       Redix.command(:redix, ["FLUSHALL"])
     end
 
@@ -784,7 +809,6 @@ defmodule Api.UserResolverTest do
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"}
@@ -817,7 +841,6 @@ defmodule Api.UserResolverTest do
 
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{email: "alexis.rinaldoni@blub.einsa.net", token: token, password: "abcdef"}
@@ -840,11 +863,12 @@ defmodule Api.UserResolverTest do
     end
   end
 
-  describe "setUserGroups mutation" do
+  describe "updateUser mutation" do
     @query """
-    mutation setUserGroups($id: ID!, $groupIds: [ID!]!) {
-      setUserGroups(id: $id, groupIds: $groupIds) {
+    mutation updateUser($id: ID!, $groups: [SelectUserGroupInput!], $isBlocked: Boolean) {
+      updateUser(id: $id, groups: $groups, isBlocked: $isBlocked) {
         email
+        isBlocked
         groups {
           name
         }
@@ -859,25 +883,66 @@ defmodule Api.UserResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: user2.id, groupIds: [schueler_group.id, lehrer_group.id]}
+          variables: %{id: user2.id, groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]}
         )
         |> json_response(200)
 
-      assert res["data"]
-      assert res["data"]["setUserGroups"]
-      assert res["data"]["setUserGroups"]["email"] == "mcurie@lotta.schule"
+      assert %{
+               "data" => %{
+                 "updateUser" => %{
+                   "email" => "mcurie@lotta.schule",
+                   "isBlocked" => false,
+                   "groups" => groups
+                 }
+               }
+             } = res
 
-      assert Enum.find(res["data"]["setUserGroups"]["groups"], fn %{"name" => name} ->
-               name == "Schüler"
-             end)
+      assert Enum.any?(groups, &(Map.get(&1, "name") == "Schüler"))
+      assert Enum.any?(groups, &(Map.get(&1, "name") == "Lehrer"))
+    end
 
-      assert Enum.find(res["data"]["setUserGroups"]["groups"], fn %{"name" => name} ->
-               name == "Lehrer"
-             end)
+    test "should block a user", %{admin_jwt: admin_jwt, user2: user2} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{id: user2.id, isBlocked: true})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "updateUser" => %{
+                   "email" => "mcurie@lotta.schule",
+                   "isBlocked" => true,
+                   "groups" => []
+                 }
+               }
+             }
+
+      assert %User{is_blocked: true} = Repo.get!(User, user2.id)
+    end
+
+    test "should unblock a user",
+         %{admin_jwt: admin_jwt, evil_user: evil_user} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: false})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "updateUser" => %{
+                   "email" => "drevil@lotta.schule",
+                   "isBlocked" => false,
+                   "groups" => []
+                 }
+               }
+             }
+
+      assert %User{is_blocked: false} = Repo.get!(User, evil_user.id)
     end
 
     test "should return an error if user does not exist", %{
@@ -887,22 +952,21 @@ defmodule Api.UserResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: 0, groupIds: [schueler_group.id, lehrer_group.id]}
+          variables: %{id: 0, groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]}
         )
         |> json_response(200)
 
       assert %{
                "data" => %{
-                 "setUserGroups" => nil
+                 "updateUser" => nil
                },
                "errors" => [
                  %{
                    "message" => "Nutzer mit der id 0 nicht gefunden.",
-                   "path" => ["setUserGroups"]
+                   "path" => ["updateUser"]
                  }
                ]
              } = res
@@ -916,22 +980,21 @@ defmodule Api.UserResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: user2.id, groupIds: [schueler_group.id, lehrer_group.id]}
+          variables: %{id: user2.id, groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]}
         )
         |> json_response(200)
 
       assert %{
                "data" => %{
-                 "setUserGroups" => nil
+                 "updateUser" => nil
                },
                "errors" => [
                  %{
                    "message" => "Nur Administratoren dürfen Benutzern Gruppen zuweisen.",
-                   "path" => ["setUserGroups"]
+                   "path" => ["updateUser"]
                  }
                ]
              } = res
@@ -950,7 +1013,6 @@ defmodule Api.UserResolverTest do
     test "should update a users name and nickname", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -968,17 +1030,16 @@ defmodule Api.UserResolverTest do
              }
     end
 
-    test "should return an error when it the user is not logged in", %{user_jwt: user_jwt} do
+    test "should return an error when it the user is not logged in" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{user: %{name: "Neuer Name", nickname: "Dr New"}}
         )
         |> json_response(200)
 
-      assert res = %{
+      assert %{
                "errors" => [
                  %{
                    "message" => "Du bist nicht angemeldet.",
@@ -986,7 +1047,7 @@ defmodule Api.UserResolverTest do
                  }
                ],
                "data" => %{"updateProfile" => nil}
-             }
+             } = res
     end
   end
 
@@ -1001,7 +1062,6 @@ defmodule Api.UserResolverTest do
     test "should update a users password", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1017,14 +1077,12 @@ defmodule Api.UserResolverTest do
                }
              }
 
-      assert {:ok, _} =
-               AuthHelper.login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
+      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
     end
 
     test "should return an error when the current password is not correct", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1046,7 +1104,6 @@ defmodule Api.UserResolverTest do
     test "should return an error when the new password is too short", %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1067,135 +1124,116 @@ defmodule Api.UserResolverTest do
     end
   end
 
-  describe "setUserBlocked mutation" do
+  describe "destroy account mutation" do
     @query """
-    mutation setUserBlocked($id: ID!, $isBlocked: Boolean!) {
-      setUserBlocked(id: $id, isBlocked: $isBlocked) {
+    mutation DestroyAccountMutation($transferFileIds: [ID!]) {
+      destroyAccount(transferFileIds: $transferFileIds) {
         email
-        isBlocked
       }
     }
     """
-
-    test "should return blocked user when isBlocked is set to true and if user is admin, non-blocked user given",
-         %{admin_jwt: admin_jwt, user2: user2} do
+    test "should return an error when user is not logged in", %{user_relevant_file: file} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: user2.id, isBlocked: true})
+        |> post("/api",
+          query: @query,
+          variables: %{transferFileIds: [file.id]}
+        )
         |> json_response(200)
 
       assert res == %{
-               "data" => %{
-                 "setUserBlocked" => %{
-                   "email" => "mcurie@lotta.schule",
-                   "isBlocked" => true
+               "data" => %{"destroyAccount" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du bist nicht angemeldet.",
+                   "path" => ["destroyAccount"],
+                   "locations" => [%{"column" => 3, "line" => 2}]
                  }
-               }
+               ]
              }
     end
 
-    test "should return non-blocked user when isBlocked is set to false and if user is admin, non-blocked user given",
-         %{admin_jwt: admin_jwt, user2: user2} do
-      res =
-        build_conn()
-        |> put_req_header("tenant", "slug:web")
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: user2.id, isBlocked: false})
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "setUserBlocked" => %{
-                   "email" => "mcurie@lotta.schule",
-                   "isBlocked" => false
-                 }
-               }
-             }
-    end
-
-    test "should return blocked user when isBlocked is set to true and if user is admin, blocked user given",
-         %{admin_jwt: admin_jwt, evil_user: evil_user} do
-      res =
-        build_conn()
-        |> put_req_header("tenant", "slug:web")
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: true})
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "setUserBlocked" => %{
-                   "email" => "drevil@lotta.schule",
-                   "isBlocked" => true
-                 }
-               }
-             }
-    end
-
-    test "should return non-blocked user when isBlocked is set to false and if user is admin, blocked user given",
-         %{admin_jwt: admin_jwt, evil_user: evil_user} do
-      res =
-        build_conn()
-        |> put_req_header("tenant", "slug:web")
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: false})
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "setUserBlocked" => %{
-                   "email" => "drevil@lotta.schule",
-                   "isBlocked" => false
-                 }
-               }
-             }
-    end
-
-    test "should return an error if user is not an admin", %{
+    test "should successfully destroy the account without transferring files", %{
       user_jwt: user_jwt,
-      evil_user: evil_user
+      user: user
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: false})
+        |> post("/api", query: @query)
         |> json_response(200)
 
       assert %{
                "data" => %{
-                 "setUserBlocked" => nil
-               },
-               "errors" => [
-                 %{
-                   "message" => "Nur Administratoren dürfen Benutzer blocken.",
-                   "path" => ["setUserBlocked"]
+                 "destroyAccount" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
                  }
-               ]
+               }
              } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(User, user.id)
+      end
     end
 
-    test "should return an error if user does not exist", %{admin_jwt: admin_jwt} do
+    test "should successfully destroy the account, transferring files", %{
+      user_jwt: user_jwt,
+      user: user,
+      user_relevant_file: file
+    } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: 0, isBlocked: true})
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{transferFileIds: [file.id]}
+        )
         |> json_response(200)
 
       assert %{
                "data" => %{
-                 "setUserBlocked" => nil
-               },
-               "errors" => [
-                 %{
-                   "message" => "Nutzer mit der id 0 nicht gefunden.",
-                   "path" => ["setUserBlocked"]
+                 "destroyAccount" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
                  }
-               ]
+               }
              } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(User, user.id)
+      end
+
+      refetched_file = Repo.get!(File, file.id)
+      refute refetched_file.user_id
+    end
+
+    test "should successfully destroy the account, ignoring invalid file ids", %{
+      user_jwt: user_jwt,
+      user: user,
+      user_relevant_file: file
+    } do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{transferFileIds: [1, file.id]}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "destroyAccount" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
+                 }
+               }
+             } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(User, user.id)
+      end
+
+      refetched_file = Repo.get!(File, file.id)
+      refute refetched_file.user_id
     end
   end
 end

@@ -7,7 +7,8 @@ defmodule Api.Queue.EmailPublisher do
 
   use GenServer
   alias Api.Repo
-  alias Api.Tenants.Tenant
+  alias Api.Accounts
+  alias Api.System
   alias Api.Accounts.User
   alias Api.Content.{Article, ContentModule}
   alias Api.Services.EmailSendRequest
@@ -37,27 +38,16 @@ defmodule Api.Queue.EmailPublisher do
     email_send_request
   end
 
-  def send_feedback_email(content) do
-    send_email(%EmailSendRequest{
-      to: "kontakt@einsa.net",
-      subject: "Kontaktanfrage für lotta",
-      template: "default",
-      templatevars: %{
-        tenant: nil,
-        heading: "Kontaktanfrage für lotta",
-        content: content
-      }
-    })
-  end
+  def send_registration_email(%User{} = user) do
+    system = System.get_configuration()
 
-  def send_registration_email(%Tenant{} = tenant, %User{} = user) do
     send_email(%EmailSendRequest{
       to: user.email,
-      subject: "Deine Registrierung bei #{tenant.title}",
+      subject: "Deine Registrierung bei #{system.title}",
       template: "default",
       templatevars: %{
-        tenant: EmailSendRequest.get_tenant_info(tenant),
-        heading: "Deine Registrierung bei #{tenant.title}",
+        tenant: EmailSendRequest.get_tenant_info(),
+        heading: "Deine Registrierung bei #{system.title}",
         content:
           "Hallo #{user.name},<br />Du wurdest erfolgreich registriert.<br />" <>
             "Du kannst nun Beiträge erstellen.<br /> <br />"
@@ -65,7 +55,7 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_registration_email(%User{} = user) do
+  def send_registration_email(%User{} = user, nil) do
     send_email(%EmailSendRequest{
       to: user.email,
       subject: "Ihre Registrierung bei lotta",
@@ -78,46 +68,28 @@ defmodule Api.Queue.EmailPublisher do
     })
   end
 
-  def send_tenant_creation_email(%Tenant{} = tenant, %User{} = user) do
-    send_email(%EmailSendRequest{
-      to: user.email,
-      subject: "Ihr Lotta",
-      template: "default",
-      templatevars: %{
-        tenant: nil,
-        heading: "Ihr Lotta",
-        content:
-          "Hallo #{user.name},<br />Vielen Dank für Ihr Interessa an lotta.<br />" <>
-            "Ihr System steht nun zum Ausprobieren unter #{Tenant.get_main_url(tenant)} zur Verfügung. <br />" <>
-            "Sie können sich dort mit der Email-Adresse #{user.email} und Ihrem selbst gewählten Passwort anmelden.<br /><br />" <>
-            "Sollten Sie Hilfe brauchen, finden Sie auf https://info.lotta.schule viele Informationen und Anleitungen.<br /><br />" <>
-            "Sollten Sie dort nicht fündig werden, schreiben Sie uns doch eine Email an: kontakt@einsa.net<br /><br />" <>
-            "Viel Spaß!<br /><br />"
-      }
-    })
-  end
-
   def send_request_password_reset_email(
-        %Tenant{} = tenant,
         %User{} = user,
         email,
         token
       ) do
+    system = System.get_configuration()
+
     url =
       %{e: Base.encode64(email), t: token}
       |> URI.encode_query()
-      |> String.replace_prefix("", "#{Tenant.get_main_url(tenant)}/password/reset?")
+      |> String.replace_prefix("", "#{System.get_main_url()}/password/reset?")
 
     send_email(%EmailSendRequest{
       to: email,
-      sender_name: tenant.title,
+      sender_name: system.title,
       subject: "Passwort zurücksetzen",
       template: "default",
       templatevars: %{
-        tenant: EmailSendRequest.get_tenant_info(tenant),
+        tenant: EmailSendRequest.get_tenant_info(),
         heading: "Setz dein Passwort zurück",
         content:
-          "Hallo #{user.name},<br />über die Seite #{Tenant.get_main_url(tenant)} wurde eine Anfrage zum zurücksetzen deines Passworts gesendet.<br />" <>
+          "Hallo #{user.name},<br />über die Seite #{System.get_main_url()} wurde eine Anfrage zum zurücksetzen deines Passworts gesendet.<br />" <>
             "Dein Passwort kannst du über folgenden Link zurücksetzen: <a href='#{url}'>#{url}</a>.<br /><br />" <>
             "Solltest du die Anfrage nicht selbst versandt haben, kannst du diese Nachricht ignorieren."
       }
@@ -125,61 +97,50 @@ defmodule Api.Queue.EmailPublisher do
   end
 
   def send_password_changed_email(%User{} = user) do
-    tenant = Repo.preload(user, :tenant).tenant
+    system = System.get_configuration()
 
     send_email(%EmailSendRequest{
       to: user.email,
-      sender_name: tenant.title,
+      sender_name: system.title,
       subject: "Dein Passwort wurde geändert",
       template: "default",
       templatevars: %{
-        tenant: EmailSendRequest.get_tenant_info(tenant),
+        tenant: EmailSendRequest.get_tenant_info(),
         heading: "Dein Passwort",
         content:
-          "Hallo #{user.name},<br />Dein Passwort wurde über die Seite #{
-            Tenant.get_main_url(tenant)
-          } erfolgreich geändert.<br />"
+          "Hallo #{user.name},<br />Dein Passwort wurde über die Seite #{System.get_main_url()} erfolgreich geändert.<br />"
       }
     })
   end
 
   def send_article_is_ready_admin_notification(%Article{} = article) do
-    article = Repo.preload(article, :tenant)
-    tenant = article.tenant
+    system = System.get_configuration()
     article_url = Article.get_url(article)
 
-    tenant
-    |> Tenant.get_admin_users()
+    Accounts.get_admin_users()
     |> Enum.map(fn admin ->
       send_email(%EmailSendRequest{
         to: admin.email,
-        sender_name: tenant.title,
+        sender_name: system.title,
         subject: "Ein Artikel wurde fertig gestellt",
         template: "default",
         templatevars: %{
-          tenant: EmailSendRequest.get_tenant_info(tenant),
+          tenant: EmailSendRequest.get_tenant_info(),
           heading: "Artikel fertiggestellt",
           content:
             "Hallo #{admin.name},<br />" <>
               "Der Artikel <a href='#{article_url}'>#{article.title}</a> wurde auf #{
-                Tenant.get_main_url(tenant)
+                System.get_main_url()
               } als \"fertig\" markiert.<br />"
         }
       })
     end)
   end
 
-  def send_content_module_form_response(
-        %ContentModule{} = content_module,
-        %{} = responses
-      ) do
+  def send_content_module_form_response(%ContentModule{} = content_module, %{} = responses) do
+    system = System.get_configuration()
     content_module = Repo.preload(content_module, :article)
-
-    article =
-      content_module.article
-      |> Repo.preload(:tenant)
-
-    tenant = article.tenant
+    article = content_module.article
 
     responses_list =
       responses
@@ -191,11 +152,11 @@ defmodule Api.Queue.EmailPublisher do
 
     send_email(%EmailSendRequest{
       to: content_module.configuration["destination"],
-      sender_name: tenant.title,
+      sender_name: system.title,
       subject: "Formular im Beitrag \"#{article.title}\" wurde versendet",
       template: "default",
       templatevars: %{
-        tenant: EmailSendRequest.get_tenant_info(tenant),
+        tenant: EmailSendRequest.get_tenant_info(),
         heading: "Formular versendet",
         content:
           "Hallo,<br />" <>

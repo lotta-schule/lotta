@@ -13,15 +13,25 @@ config :api, Api.Repo,
   password: "lotta",
   database: "lotta",
   hostname: "postgres",
+  prefix: "tenant_2",
+  after_connect: {Api.Repo, :after_connect, ["tenant_2"]},
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
 config :api, :rabbitmq_url, "amqp://guest:guest@rabbitmq"
 
+config :api, :default_configuration, %{
+  slug: "ehrenberg",
+  title: "Ehrenberg-Gymnasium-Delitzsch",
+  custom_theme: %{}
+}
+
 config :api, :redis_connection,
   host: "redis",
   password: "lotta",
   name: :redix
+
+config :api, Api.Elasticsearch.Cluster, index_prefix: "tenant_2"
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
@@ -44,7 +54,7 @@ config :api, ApiWeb.Endpoint,
   check_origin: false,
   watchers: []
 
-config :api, Api.Guardian,
+config :api, ApiWeb.Auth.AccessToken,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 

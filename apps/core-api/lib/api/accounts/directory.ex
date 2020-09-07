@@ -10,7 +10,6 @@ defmodule Api.Accounts.Directory do
     field :name, :string
 
     belongs_to :user, Api.Accounts.User
-    belongs_to :tenant, Api.Tenants.Tenant
     belongs_to :parent_directory, Api.Accounts.Directory
     belongs_to :group, Api.Accounts.UserGroup
 
@@ -20,13 +19,15 @@ defmodule Api.Accounts.Directory do
     timestamps()
   end
 
+  @type t :: %__MODULE__{id: pos_integer(), name: String.t()}
+
   @doc false
-  def changeset(%Api.Accounts.Directory{} = directory, attrs) do
+  def changeset(%__MODULE__{} = directory, attrs) do
     directory
-    |> cast(attrs, [:name, :user_id, :tenant_id, :parent_directory_id])
-    |> validate_required([:name, :tenant_id])
+    |> cast(attrs, [:name, :user_id, :parent_directory_id])
+    |> validate_required([:name])
     |> unique_constraint(:name,
-      name: :directories_name_parent_directory_id_user_id_tenant_id_index
+      name: :directories_name_parent_directory_id_user_id_index
     )
   end
 end

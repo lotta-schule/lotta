@@ -37,7 +37,8 @@ defmodule ApiWeb.Schema.Accounts.User do
   end
 
   object :authresult do
-    field :token, :string
+    field :access_token, :string
+    field :refresh_token, :string
   end
 
   object :user do
@@ -50,7 +51,8 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :nickname, :string
     field :email, :string
     field :hide_full_name, :boolean
-    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
+    field :is_blocked, :boolean
+
     field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :articles, list_of(:article),
@@ -63,8 +65,6 @@ defmodule ApiWeb.Schema.Accounts.User do
 
     field :enrollment_tokens, list_of(:string),
       resolve: &Api.UserResolver.resolve_enrollment_tokens/3
-
-    field :is_blocked, :boolean, resolve: &Api.UserResolver.resolve_is_blocked/3
   end
 
   object :user_group do
@@ -74,7 +74,6 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :name, :string
     field :sort_key, :integer
     field :is_admin_group, :boolean
-    field :tenant, :tenant, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Tenants)
 
     field :enrollment_tokens, list_of(:group_enrollment_token),
       resolve: &Api.UserGroupResolver.resolve_enrollment_tokens/3

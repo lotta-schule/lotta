@@ -12,18 +12,23 @@ config :api,
 
 config :api, Api.Repo, start_apps_before_migration: [:httpoison]
 
+config :api, :live_view,
+  username: "admin",
+  password: "password"
+
 # Configures the endpoint
 config :api, ApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B",
   render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json)],
   pubsub_server: [name: Api.PubSub],
-  live_view: [signing_salt: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B"]
+  live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
 
 config :api, Api.Elasticsearch.Cluster,
   url: "http://elasticsearch:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
+  index_prefix: "",
   indexes: %{
     articles: %{
       settings: "priv/elasticsearch/articles.json",
@@ -39,7 +44,14 @@ config :api, Api.Elasticsearch.Cluster,
     hackney: [pool: :elasticsearch_pool]
   ]
 
+config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
+
+config :sentry, []
+
 # Configures Elixir's Logger
+config :logger,
+  backends: [:console, Sentry.LoggerBackend]
+
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]

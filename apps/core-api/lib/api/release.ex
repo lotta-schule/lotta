@@ -2,6 +2,7 @@ defmodule Api.Release do
   @moduledoc """
     Release tasks like database migrations
   """
+  alias Ecto.Migrator
 
   @app :api
 
@@ -10,18 +11,26 @@ defmodule Api.Release do
 
   def migrate do
     for repo <- repos() do
-      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+      {:ok, _, _} =
+        Migrator.with_repo(
+          repo,
+          &Migrator.run(&1, :up, all: true, prefix: database_prefix(repo))
+        )
     end
   end
 
   def drop do
     for repo <- repos() do
-      :ok = Ecto.Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
+      :ok = Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
     end
   end
 
   def rollback(repo, version) do
-    {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+    {:ok, _, _} =
+      Migrator.with_repo(
+        repo,
+        &Migrator.run(&1, :down, to: version, prefix: database_prefix(repo))
+      )
   end
 
   def build_elasticsearch_indexes do
@@ -31,6 +40,13 @@ defmodule Api.Release do
     Enum.each(@elasticsearch_clusters, fn cluster ->
       Enum.each(@elasticsearch_indexes, &Elasticsearch.Index.hot_swap(cluster, &1))
     end)
+  end
+
+  defp database_prefix(repo) do
+    Application.fetch_env!(@app, repo)
+    |> IO.inspect()
+    |> Keyword.get(:prefix)
+    |> IO.inspect()
   end
 
   defp repos do

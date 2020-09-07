@@ -6,20 +6,22 @@ defmodule Api.UserResolver do
 
   require Logger
 
-  alias Api.Repo
+  import Api.Accounts.Authentication
+  import Api.Accounts.Permissions
+  import ApiWeb.ErrorHelpers
+
   alias Ecto.NoResultsError
+  alias Api.Repo
   alias Api.Accounts
-  alias Api.Accounts.{AuthHelper, User}
+  alias Api.Accounts.User
   alias Api.Queue.EmailPublisher
-  alias ApiWeb.ErrorHelpers
 
   def resolve_name(user, _args, %{context: context}) do
     cond do
       context[:current_user] && context.current_user.id == user.id ->
         {:ok, user.name}
 
-      context[:current_user] && context[:tenant] &&
-          User.is_admin?(context.current_user, context.tenant) ->
+      context[:current_user] && user_is_admin?(context.current_user) ->
         {:ok, user.name}
 
       user.hide_full_name ->
@@ -35,20 +37,13 @@ defmodule Api.UserResolver do
       context[:current_user] && context.current_user.id == String.to_integer(user.id) ->
         {:ok, user.email}
 
-      context[:current_user] && context[:tenant] &&
-          User.is_admin?(context.current_user, context.tenant) ->
+      context[:current_user] && user_is_admin?(context.current_user) ->
         {:ok, user.email}
 
       true ->
         {:error, "Die Email des Nutzers ist geheim."}
     end
   end
-
-  def resolve_is_blocked(user, _args, %{context: %{tenant: tenant}}) do
-    {:ok, User.is_blocked?(user, tenant)}
-  end
-
-  def resolve_is_blocked(_user, _args, _context), do: {:ok, false}
 
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
@@ -58,14 +53,10 @@ defmodule Api.UserResolver do
     {:ok, nil}
   end
 
-  def resolve_groups(user, _args, %{context: %{tenant: tenant}}) do
-    {:ok, User.get_groups(user, tenant)}
-  end
+  def resolve_groups(user, _args, _info), do: {:ok, User.get_groups(user)}
 
-  def resolve_groups(user, _args, _context), do: {:ok, User.get_groups(user)}
-
-  def resolve_assigned_groups(user, _args, %{context: %{tenant: tenant}}) do
-    {:ok, User.get_assigned_groups(user, tenant)}
+  def resolve_assigned_groups(user, _args, _info) do
+    {:ok, User.get_assigned_groups(user)}
   end
 
   def resolve_enrollment_tokens(user, _args, _info) do
@@ -78,28 +69,29 @@ defmodule Api.UserResolver do
     {:ok, tokens}
   end
 
-  def all_with_groups(_args, %{context: %{tenant: tenant} = context}) do
-    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
-      true -> {:ok, Accounts.list_users_with_groups(tenant.id)}
-      _ -> {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+  def all_with_groups(_args, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
+      {:ok, Accounts.list_users_with_groups()}
+    else
+      {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
     end
   end
 
-  def search(%{searchtext: searchtext}, %{context: %{tenant: tenant} = context}) do
+  def search(%{searchtext: searchtext}, %{context: context}) do
     cond do
-      !context[:current_user] || !User.is_admin?(context.current_user, tenant) ->
+      !context[:current_user] || !user_is_admin?(context.current_user) ->
         {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
 
       String.length(searchtext) >= 2 ->
-        Accounts.search_user(searchtext, tenant)
+        {:ok, Accounts.search_user(searchtext)}
 
       true ->
         {:ok, []}
     end
   end
 
-  def get(%{id: id}, %{context: %{tenant: tenant} = context}) do
-    if context[:current_user] && User.is_admin?(context.current_user, tenant) do
+  def get(%{id: id}, %{context: context}) do
+    if context[:current_user] && user_is_admin?(context.current_user) do
       try do
         {:ok, Accounts.get_user!(String.to_integer(id))}
       rescue
@@ -110,67 +102,47 @@ defmodule Api.UserResolver do
     end
   end
 
-  def register(%{user: user_params} = args, %{context: context}) do
+  def register(%{user: user_params} = args, _info) do
     user_params =
-      case context do
-        %{tenant: tenant} ->
-          user_params
-          |> Map.put(:tenant_id, tenant.id)
-          |> Map.put(
-            :enrollment_tokens,
-            case args do
-              %{group_key: group_key} -> [group_key]
-              _ -> []
-            end
-          )
-
-        _ ->
-          user_params
-      end
-
-    case Accounts.register_user(user_params) do
-      {:ok, user} ->
-        {:ok, jwt} = User.get_signed_jwt(user)
-
-        case context do
-          %{tenant: tenant} ->
-            EmailPublisher.send_registration_email(tenant, user)
-
-          _ ->
-            EmailPublisher.send_registration_email(user)
+      user_params
+      |> Map.put(
+        :enrollment_tokens,
+        case args do
+          %{group_key: group_key} -> [group_key]
+          _ -> []
         end
+      )
 
-        {:ok, %{token: jwt}}
-
-      {:error, error} ->
+    with {:ok, user} <- Accounts.register_user(user_params),
+         {:ok, access_token, refresh_token} <- create_user_tokens(user) do
+      EmailPublisher.send_registration_email(user)
+      {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
+    else
+      {:error, reason} ->
         {:error,
          [
            message: "Registrierung fehlgeschlagen.",
-           details: ErrorHelpers.extract_error_details(error)
+           details: extract_error_details(reason)
          ]}
     end
   end
 
-  def login(%{username: username, password: password}, %{context: %{tenant: tenant}}) do
-    with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-         :ok <- AuthHelper.check_if_blocked(user, tenant),
-         {:ok, jwt} <- User.get_signed_jwt(user) do
-      {:ok, %{token: jwt}}
-    end
-  end
-
   def login(%{username: username, password: password}, _info) do
-    with {:ok, user} <- AuthHelper.login_with_username_pass(username, password),
-         {:ok, jwt} <- User.get_signed_jwt(user) do
-      {:ok, %{token: jwt}}
+    with {:ok, user} <- login_with_username_pass(username, password),
+         :ok <- ensure_user_is_not_blocked(user),
+         {:ok, access_token, refresh_token} <- create_user_tokens(user) do
+      {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
+    else
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
   def logout(_args, _info) do
-    {:ok, nil}
+    {:ok, %{sign_out_user: true}}
   end
 
-  def request_password_reset(%{email: email}, %{context: %{tenant: tenant}}) do
+  def request_password_reset(%{email: email}, _info) do
     token =
       :crypto.strong_rand_bytes(32)
       |> Base.url_encode64(padding: false)
@@ -179,11 +151,12 @@ defmodule Api.UserResolver do
     case Accounts.request_password_reset_token(email, token) do
       {:ok, user} ->
         Logger.info("user request password request - send mail to #{email}")
-        EmailPublisher.send_request_password_reset_email(tenant, user, email, token)
+        EmailPublisher.send_request_password_reset_email(user, email, token)
 
       error ->
         try do
-          Honeybadger.notify(error, %{tenant: tenant, email: email})
+          Sentry.capture_message(inspect(error), extra: %{email: email})
+
           Logger.error("Error setting request password reset token")
           Logger.error(inspect(error))
         rescue
@@ -198,8 +171,8 @@ defmodule Api.UserResolver do
   def reset_password(%{email: email, token: token, password: password}, _info) do
     with {:ok, user} <- Accounts.find_user_by_reset_token(email, token),
          {:ok, user} <- Accounts.update_password(user, password),
-         {:ok, jwt} <- User.get_signed_jwt(user) do
-      {:ok, %{token: jwt}}
+         {:ok, access_token, refresh_token} <- create_user_tokens(user) do
+      {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
       error ->
         if error, do: Logger.warn(inspect(error))
@@ -207,37 +180,30 @@ defmodule Api.UserResolver do
     end
   end
 
-  def set_user_groups(%{id: id, group_ids: group_ids}, %{
-        context: %{current_user: current_user, tenant: tenant}
-      }) do
-    case User.is_admin?(current_user, tenant) do
-      true ->
-        groups =
-          group_ids
-          |> Enum.map(fn group_id ->
-            try do
-              Accounts.get_user_group!(String.to_integer(group_id))
-            rescue
-              NoResultsError -> nil
-            end
-          end)
-          |> Enum.filter(fn group -> !is_nil(group) && group.tenant_id == tenant.id end)
+  def destroy_account(args, %{context: %{current_user: current_user}}) do
+    transfer_file_ids = args[:transfer_file_ids] || []
+    Accounts.transfer_files_by_ids(transfer_file_ids, current_user)
+    Accounts.delete_user(current_user)
+  end
 
-        try do
-          Accounts.get_user!(String.to_integer(id))
-          |> Accounts.set_user_groups(tenant, groups)
-        rescue
-          NoResultsError ->
-            {:error, "Nutzer mit der id #{id} nicht gefunden."}
-        end
+  def destroy_account(_args, _info), do: {:error, "Du bist nicht angemeldet."}
 
-      false ->
-        {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}
+  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
+    if user_is_admin?(current_user) do
+      try do
+        Accounts.get_user!(String.to_integer(id))
+        |> Accounts.update_user(args)
+      rescue
+        NoResultsError ->
+          {:error, "Nutzer mit der id #{id} nicht gefunden."}
+      end
+    else
+      {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}
     end
   end
 
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
-    case Accounts.update_user(current_user, user_params) do
+    case Accounts.update_profile(current_user, user_params) do
       {:ok, user} ->
         {:ok, user}
 
@@ -245,7 +211,7 @@ defmodule Api.UserResolver do
         {:error,
          [
            message: "Speichern fehlgeschlagen.",
-           details: ErrorHelpers.extract_error_details(error)
+           details: extract_error_details(error)
          ]}
     end
   end
@@ -255,7 +221,7 @@ defmodule Api.UserResolver do
   def update_password(%{current_password: password, new_password: new_password}, %{
         context: %{current_user: %{email: email}}
       }) do
-    with {:ok, user} <- AuthHelper.login_with_username_pass(email, password),
+    with {:ok, user} <- login_with_username_pass(email, password),
          {:ok, user} <- Accounts.update_password(user, new_password) do
       {:ok, user}
     else
@@ -266,24 +232,8 @@ defmodule Api.UserResolver do
         {:error,
          [
            message: "Passwort ändern fehlgeschlagen.",
-           details: ErrorHelpers.extract_error_details(error)
+           details: extract_error_details(error)
          ]}
-    end
-  end
-
-  def set_user_blocked(%{id: id, is_blocked: is_blocked}, %{context: %{tenant: tenant} = context}) do
-    case context[:current_user] && User.is_admin?(context.current_user, tenant) do
-      true ->
-        try do
-          Accounts.get_user!(String.to_integer(id))
-          |> Accounts.set_user_blocked(tenant, is_blocked)
-        rescue
-          NoResultsError ->
-            {:error, "Nutzer mit der id #{id} nicht gefunden."}
-        end
-
-      false ->
-        {:error, "Nur Administratoren dürfen Benutzer blocken."}
     end
   end
 end

@@ -4,7 +4,10 @@ defmodule Api.ContentModuleResolverTest do
   """
 
   use ApiWeb.ConnCase
+
   import Ecto.Query
+
+  alias ApiWeb.Auth.AccessToken
 
   setup do
     Api.Repo.Seeder.seed()
@@ -18,9 +21,9 @@ defmodule Api.ContentModuleResolverTest do
     user = Api.Repo.get_by!(Api.Accounts.User, email: "eike.wiewiorra@lotta.schule")
 
     {:ok, admin_jwt, _} =
-      Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
     {:ok,
      %{
@@ -43,7 +46,6 @@ defmodule Api.ContentModuleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
@@ -83,7 +85,6 @@ defmodule Api.ContentModuleResolverTest do
     test "sends form response and strips out unwanted fields", %{test_formular: test_formular} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> post("/api",
           query: @query,
           variables: %{
@@ -127,7 +128,6 @@ defmodule Api.ContentModuleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -177,7 +177,6 @@ defmodule Api.ContentModuleResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
@@ -205,7 +204,6 @@ defmodule Api.ContentModuleResolverTest do
     test "return an error user is not user", %{user_jwt: user_jwt, test_formular: test_formular} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
@@ -226,7 +224,6 @@ defmodule Api.ContentModuleResolverTest do
     test "return an error user is not logged in", %{test_formular: test_formular} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 

@@ -36,9 +36,17 @@ config :api, Api.Repo,
   password: "lotta",
   database: "api_test",
   hostname: db_host,
+  prefix: "public",
+  after_connect: {Api.Repo, :after_connect, ["public"]},
   ownership_timeout: 60_000,
   timeout: 60_000,
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :api, :default_configuration, %{
+  slug: "web",
+  title: "Web Beispiel",
+  custom_theme: %{}
+}
 
 config :api, :rabbitmq_url, "amqp://guest:guest@#{rabbitmq_host}"
 
@@ -60,7 +68,7 @@ config :ex_aws, :hackney_opts,
   follow_redirect: true,
   recv_timeout: 45_000
 
-config :api, Api.Guardian,
+config :api, ApiWeb.Auth.AccessToken,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 

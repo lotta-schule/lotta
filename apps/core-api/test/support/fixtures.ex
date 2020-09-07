@@ -1,28 +1,9 @@
 defmodule Api.Fixtures do
   @moduledoc false
   alias Api.Repo
-  alias Api.Tenants.{Tenant, Category}
-  alias Api.Accounts.{User, File}
+  alias Api.System.Category
+  alias Api.Accounts.{User, UserGroup, File}
   alias Api.Content.{Article}
-
-  # Tenant
-
-  def fixture(:valid_tenant_attrs) do
-    %{
-      id: 1,
-      slug: "test",
-      title: "Test Tenant"
-    }
-  end
-
-  def fixture(:tenant) do
-    {:ok, tenant} =
-      Tenant
-      |> struct(fixture(:valid_tenant_attrs))
-      |> Repo.insert(on_conflict: :nothing)
-
-    tenant
-  end
 
   def fixture(:valid_category_attrs) do
     %{
@@ -30,8 +11,7 @@ defmodule Api.Fixtures do
       sort_key: 10,
       is_sidenav: false,
       is_homepage: false,
-      hide_articles_from_homepage: false,
-      tenant_id: fixture(:tenant).id
+      hide_articles_from_homepage: false
     }
   end
 
@@ -55,21 +35,15 @@ defmodule Api.Fixtures do
   end
 
   def fixture(:user_group, is_admin_group: true) do
-    {:ok, group} =
-      fixture(:tenant)
-      |> Ecto.build_assoc(:groups, fixture(:valid_user_group_attrs, is_admin_group: true))
-      |> Repo.insert()
-
-    group
+    %UserGroup{}
+    |> Map.merge(fixture(:valid_user_group_attrs, is_admin_group: true))
+    |> Repo.insert!()
   end
 
   def fixture(:user_group) do
-    {:ok, group} =
-      fixture(:tenant)
-      |> Ecto.build_assoc(:groups, fixture(:valid_user_group_attrs, is_admin_group: false))
-      |> Repo.insert()
-
-    group
+    %UserGroup{}
+    |> Map.merge(fixture(:valid_user_group_attrs, is_admin_group: false))
+    |> Repo.insert!()
   end
 
   def fixture(:valid_user_attrs) do
@@ -78,8 +52,7 @@ defmodule Api.Fixtures do
       name: "Alberta Smith",
       nickname: "TheNick",
       class: "5",
-      password: "password",
-      tenant_id: fixture(:tenant).id
+      password: "password"
     }
   end
 
@@ -89,8 +62,7 @@ defmodule Api.Fixtures do
       name: "Admin Didang",
       nickname: "TheAdmin",
       class: "Wie",
-      password: "password",
-      tenant_id: fixture(:tenant).id
+      password: "password"
     }
   end
 
@@ -137,8 +109,7 @@ defmodule Api.Fixtures do
       filename: "some_filename",
       filesize: 42,
       mime_type: "some_mime_type",
-      remote_location: "some_remote_location",
-      tenant_id: fixture(:tenant).id
+      remote_location: "some_remote_location"
     }
   end
 
@@ -170,7 +141,6 @@ defmodule Api.Fixtures do
       topic: "Mein Thema",
       ready_to_publish: true,
       is_pinned_to_top: false,
-      tenant_id: fixture(:tenant).id,
       category: fixture(:category)
     }
   end

@@ -19,7 +19,6 @@ defmodule Api.Accounts.File do
 
     has_many :file_conversions, Api.Accounts.FileConversion
     belongs_to :user, Api.Accounts.User
-    belongs_to :tenant, Api.Tenants.Tenant
     belongs_to :parent_directory, Api.Accounts.Directory
 
     many_to_many(
@@ -46,8 +45,7 @@ defmodule Api.Accounts.File do
       :mime_type,
       :file_type,
       :parent_directory_id,
-      :user_id,
-      :tenant_id
+      :user_id
     ])
   end
 
@@ -55,19 +53,17 @@ defmodule Api.Accounts.File do
   def delete_attachment(file) do
     cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL") || " "
 
-    case String.starts_with?(file.remote_location, cdn_base_url) do
-      true ->
+    if String.starts_with?(file.remote_location, cdn_base_url) do
+      Task.start(fn ->
         file.remote_location
         |> String.replace_leading(cdn_base_url, "")
         |> String.replace_leading("/", "")
         |> String.split("/", parts: 2)
         |> List.last()
         |> UploadService.delete_from_space()
-
-        {:ok, file}
-
-      _ ->
-        {:ok, file}
+      end)
     end
+
+    {:ok, file}
   end
 end

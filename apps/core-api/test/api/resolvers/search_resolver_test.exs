@@ -3,31 +3,34 @@ defmodule Api.SearchResolverTest do
     Test Module for SearchResolver
   """
 
-  use ApiWeb.ConnCase
+  alias ApiWeb.Auth.AccessToken
+  alias Api.Repo
+  alias Api.Accounts.User
   alias Api.Content
 
-  setup do
-    Api.Repo.Seeder.seed()
-    Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
-    :timer.sleep(200)
-    Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
+  use ApiWeb.ConnCase
 
-    web_tenant = Api.Tenants.get_tenant_by_slug!("web")
-    admin = Api.Repo.get_by!(Api.Accounts.User, email: "alexis.rinaldoni@lotta.schule")
-    lehrer = Api.Repo.get_by!(Api.Accounts.User, email: "eike.wiewiorra@lotta.schule")
-    user = Api.Repo.get_by!(Api.Accounts.User, email: "doro@lotta.schule")
+  setup do
+    Repo.Seeder.seed()
+    Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
+    :timer.sleep(500)
+    Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")
+    :timer.sleep(500)
+
+    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
+    lehrer = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
+    user = Repo.get_by!(User, email: "doro@lotta.schule")
 
     {:ok, admin_jwt, _} =
-      Api.Guardian.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
     {:ok, lehrer_jwt, _} =
-      Api.Guardian.encode_and_sign(lehrer, %{email: lehrer.email, name: lehrer.name})
+      AccessToken.encode_and_sign(lehrer, %{email: lehrer.email, name: lehrer.name})
 
-    {:ok, user_jwt, _} = Api.Guardian.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
     {:ok,
      %{
-       web_tenant: web_tenant,
        admin_account: admin,
        admin_jwt: admin_jwt,
        lehrer_account: lehrer,
@@ -50,37 +53,25 @@ defmodule Api.SearchResolverTest do
     test "search for public articles should return them" do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> get("/api", query: @query, variables: %{searchText: "Nipple Jesus"})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
-                 "search" => [
-                   %{
-                     "preview" =>
-                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
-                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
-                   },
-                   %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
-                   %{
-                     "preview" =>
-                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-                     "title" => "Landesfinale Volleyball WK IV"
-                   },
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"}
-                 ]
+                 "search" => results
                }
-             }
+             } = res
+
+      assert Enum.any?(
+               results,
+               &(Map.get(&1, "title") == "„Nipple Jesus“- eine extreme Erfahrung")
+             )
     end
 
-    test "search for restricted articles should not returne them when user is not in the right group",
+    test "search for restricted articles should not return them when user is not in the right group",
          %{user_jwt: user_jwt} do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api",
           query: @query,
@@ -91,26 +82,16 @@ defmodule Api.SearchResolverTest do
         )
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
-                 "search" => [
-                   %{"preview" => "Hallo hallo hallo", "title" => "And the oskar goes to ..."},
-                   %{
-                     "preview" =>
-                       "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-                     "title" => "Landesfinale Volleyball WK IV"
-                   },
-                   %{
-                     "preview" =>
-                       "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
-                     "title" => "„Nipple Jesus“- eine extreme Erfahrung"
-                   },
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 1"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 2"},
-                   %{"preview" => "Lorem ipsum dolor sit amet.", "title" => "Beitrag Projekt 3"}
-                 ]
+                 "search" => results
                }
-             }
+             } = res
+
+      refute Enum.any?(
+               results,
+               &(Map.get(&1, "title") == "Der Podcast zum WB 2")
+             )
     end
 
     test "search for a restricted article should be returned when user is in the right groupe", %{
@@ -118,7 +99,6 @@ defmodule Api.SearchResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api",
           query: @query,
@@ -143,7 +123,6 @@ defmodule Api.SearchResolverTest do
     } do
       res =
         build_conn()
-        |> put_req_header("tenant", "slug:web")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api",
           query: @query,
@@ -172,7 +151,7 @@ defmodule Api.SearchResolverTest do
     test "updated article should be indexed" do
       {:ok, article} =
         Api.Content.Article
-        |> Api.Repo.get_by!(title: "Beitrag Projekt 1")
+        |> Repo.get_by!(title: "Beitrag Projekt 1")
         |> Content.update_article(%{title: "Neuer Artikel nur für die Suche"})
 
       {:ok, %{"_source" => %{"title" => title}}} =
@@ -184,7 +163,7 @@ defmodule Api.SearchResolverTest do
     test "deleted article should be deleted from index" do
       {:ok, %{id: id}} =
         Api.Content.Article
-        |> Api.Repo.get_by!(title: "Beitrag Projekt 1")
+        |> Repo.get_by!(title: "Beitrag Projekt 1")
         |> Content.delete_article()
 
       {result, _} = Elasticsearch.get(Api.Elasticsearch.Cluster, "/articles/_doc/#{id}")
