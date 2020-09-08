@@ -99,7 +99,7 @@ build docker image:production:
       --build-arg APP_ENVIRONMENT=production
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
-      --build-arg AUTH_URL="/api"
+      --build-arg API_URL="/api"
       --build-arg AUTH_URL="/auth"
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
