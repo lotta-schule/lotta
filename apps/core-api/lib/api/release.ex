@@ -38,7 +38,10 @@ defmodule Api.Release do
     IO.puts("Building indexes...")
 
     Enum.each(@elasticsearch_clusters, fn cluster ->
-      Enum.each(@elasticsearch_indexes, &Elasticsearch.Index.hot_swap(cluster, &1))
+      Enum.each(
+        @elasticsearch_indexes,
+        &Elasticsearch.Index.hot_swap(cluster, cluster.get_prefixed_index(&1))
+      )
     end)
   end
 
