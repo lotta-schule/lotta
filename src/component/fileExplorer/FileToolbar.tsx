@@ -123,29 +123,33 @@ export const FileToolbar = memo(() => {
                                     </IconButton>
                                 </Tooltip>
                             </Zoom>
+                        </>
+                    )}
+                    {File.canCreateDirectory(state.currentPath.slice(-1)[0] as DirectoryModel, currentUser!) && (
                             <Tooltip title="Ordner erstellen">
                                 <IconButton aria-label="Ordner erstellen" onClick={() => dispatch({ type: 'showCreateNewFolder' })} data-testid="FileExplorerToolbarCreateDirectoryButton">
                                     <CreateNewFolderOutlined color={'secondary'} />
                                 </IconButton>
                             </Tooltip>
-                            <Zoom in={state.currentPath.length > 1}>
-                                <Tooltip title="Dateien hochladen">
-                                    <IconButton aria-label="Dateien hochladen" data-testid="FileExplorerToolbarNewUploadButton">
-                                        <input
-                                            multiple
-                                            type={'file'}
-                                            className={styles.uploadButton}
-                                            onChange={e => {
-                                                if (e.target.files) {
-                                                    Array.from(e.target.files).forEach(file => createUpload(file, state.currentPath.slice(-1)[0] as DirectoryModel));
-                                                }
-                                            }}
-                                        />
-                                        <CloudUploadOutlined color={'secondary'} />
-                                    </IconButton>
-                                </Tooltip>
-                            </Zoom>
-                        </>
+                    )}
+                    {File.canEditDirectory(state.currentPath.slice(-1)[0] as DirectoryModel, currentUser!) && (
+                        <Zoom in={state.currentPath.length > 1}>
+                            <Tooltip title="Dateien hochladen">
+                                <IconButton aria-label="Dateien hochladen" data-testid="FileExplorerToolbarNewUploadButton">
+                                    <input
+                                        multiple
+                                        type={'file'}
+                                        className={styles.uploadButton}
+                                        onChange={e => {
+                                            if (e.target.files) {
+                                                Array.from(e.target.files).forEach(file => createUpload(file, state.currentPath.slice(-1)[0] as DirectoryModel));
+                                            }
+                                        }}
+                                    />
+                                    <CloudUploadOutlined color={'secondary'} />
+                                </IconButton>
+                            </Tooltip>
+                        </Zoom>
                     )}
                     {!isMobile && state.mode === FileExplorerMode.ViewAndEdit && (
                         <Zoom in={state.currentPath.length > 1}>
