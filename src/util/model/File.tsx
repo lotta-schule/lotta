@@ -107,5 +107,13 @@ export const File = {
 
     canEditDirectory(directory: DirectoryModel, user: UserModel | null) {
         return user && (directory.user?.id === user.id || User.isAdmin(user));
+    },
+
+    canCreateDirectory(directory: DirectoryModel, user: UserModel | null) {
+        if (directory.id === null) {
+            // root directory
+            return true;
+        }
+        return this.canEditDirectory(directory, user);
     }
 };

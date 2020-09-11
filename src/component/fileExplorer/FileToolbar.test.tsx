@@ -29,7 +29,7 @@ describe('component/fileExplorer/FileToolbar', () => {
       });
 
 
-      it('should show no buttons', async done => {
+      it('show only the CreateDirectoryButton for a non-admin user', async done => {
 
           const { queryByTestId, findByTestId } = render(
               (
@@ -44,7 +44,7 @@ describe('component/fileExplorer/FileToolbar', () => {
             expect(queryByTestId('FileExplorerToolbarNewUploadButton')).toBeNull();
             expect(queryByTestId('FileExplorerToolbarMoveFileButton')).toBeNull();
             expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeNull();
-            expect(queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeNull();
+            expect(queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
             expect(queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
           });
           done();
