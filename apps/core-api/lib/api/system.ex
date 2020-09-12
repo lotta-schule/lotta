@@ -166,13 +166,25 @@ defmodule Api.System do
   defp ensure_atom(value) when is_binary(value), do: String.to_atom(value)
 
   def get_main_url(options \\ []) do
-    config = get_configuration()
-    protocol = unless options[:skip_protocol], do: "https://", else: ""
-    "#{protocol}#{config[:slug]}#{Application.fetch_env!(:api, :base_url)}"
+    protocol =
+      unless options[:skip_protocol] do
+        "https://"
+      else
+        ""
+      end
+
+    case List.first(list_custom_domains()) do
+      nil ->
+        config = get_configuration()
+        "#{protocol}#{config[:slug]}#{Application.fetch_env!(:api, :base_url)}"
+
+      domain ->
+        "#{protocol}#{domain.host}"
+    end
   end
 
   def list_custom_domains() do
-    Repo.all(CustomDomain)
+    Repo.all(from c in CustomDomain, order_by: c.is_main_domain)
   end
 
   @doc """
