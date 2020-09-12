@@ -91,7 +91,7 @@ export const File = {
             } else {
                 const imageConversionFile = file.fileConversions?.find(fc => /^gif/.test(fc.format));
                 if (imageConversionFile) {
-                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${file.remoteLocation}`;
+                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${imageConversionFile.remoteLocation}`;
                 }
             }
         }
