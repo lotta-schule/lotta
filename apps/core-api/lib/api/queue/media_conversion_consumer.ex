@@ -19,9 +19,9 @@ defmodule Api.Queue.MediaConversionConsumer do
 
   def init(_args \\ []) do
     [
-      queue: @queue,
-      exchange: {:direct, @exchange},
-      routing_key: @queue,
+      queue: prefixed(@queue),
+      exchange: {:direct, prefixed(@exchange)},
+      routing_key: prefix,
       prefetch_count: "10",
       connection: rmq_uri()
     ]
@@ -131,6 +131,17 @@ defmodule Api.Queue.MediaConversionConsumer do
   defp add_metadata(file_or_conversion, _), do: file_or_conversion
 
   defp rmq_uri do
-    Application.fetch_env!(:api, :rabbitmq_url)
+    Keyword.fetch!(Application.fetch_env!(:api, :rabbitmq), :url)
+  end
+
+  defp prefix do
+    Keyword.get(Application.fetch_env!(:api, :rabbitmq), :prefix)
+  end
+
+  defp prefixed(name) do
+    case prefix() do
+      nil -> name
+      prefix -> "#{prefix()}_#{name}"
+    end
   end
 end
