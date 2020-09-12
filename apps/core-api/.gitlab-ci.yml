@@ -39,28 +39,41 @@ test:
     UGC_S3_COMPAT_SECRET_ACCESS_KEY: "${S3COMPAT_SECRET_ACCESS_KEY}"
     UGC_S3_COMPAT_ENDPOINT: mp4-dev-ugc.fra1.digitaloceanspaces.com
     UGC_S3_COMPAT_BUCKET: mp4-dev-ugc
-    # before_script:
-    #   - mix local.hex --force
-    #   - mix local.rebar --force
-    #   - mix deps.get --only test
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get --only test
   script:
     # gitlab k8s-runner has a problem with service hostname exposition
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
-    # - make tests-ci
-    - echo "do not forget to bring me back!"
+    - make tests-ci
   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
 
-build docker image:
+build docker image:production:
   stage: build
+  environment:
+    name: production
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
-    - if [ $CI_COMMIT_REF_NAME == "develop" ];
-        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:staging;
-        elif [ $CI_COMMIT_REF_NAME == "master" ];
-        then /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA --destination lotta/api:stable --destination lotta/api:latest;
-        else /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_SHA;
-        fi
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination lotta/api:$CI_COMMIT_TAG --destination lotta/api:stable --destination lotta/api:latest;
+  only:
+    - tags
+
+build docker image:staging:
+  stage: build
+  environment:
+    name: staging
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}, \"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --destination lotta/api:canary;
+  only:
+    refs:
+      - develop
