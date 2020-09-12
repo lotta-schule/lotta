@@ -65,6 +65,7 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
       @queue,
       prefix
     )
+    |> IO.inspect()
 
     AMQP.Channel.close(channel)
   end
