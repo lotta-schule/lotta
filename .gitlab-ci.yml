@@ -39,7 +39,7 @@ build docker image:
     name: staging
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY/lotta/web:$CI_COMMIT_SHA
+    - docker build -t $CI_REGISTRY/medienportal/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=staging
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
@@ -48,13 +48,12 @@ build docker image:
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg FILE_REPLACEMENT_URL .
-    - docker push $CI_REGISTRY/lotta/web
-    - docker build -t $CI_REGISTRY/lotta/web:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY/medienportal/web
     - |
       if [ $CI_COMMIT_REF_NAME == "develop" ]; then
         echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USER --password-stdin
-        docker tag $CI_REGISTRY/lotta/web:$CI_COMMIT_SHA lotta/web:canary
-        docker push lotta/web
+        docker tag $CI_REGISTRY/medienportal/web:$CI_COMMIT_SHA lotta/web:canary
+        docker push lotta/web:canary
       fi
   only:
     refs:
