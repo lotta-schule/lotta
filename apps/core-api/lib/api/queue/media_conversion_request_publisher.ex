@@ -59,10 +59,6 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
 
     AMQP.Queue.declare(channel, @queue, durable: true)
 
-    IO.inspect("@queue: #{@queue}")
-    IO.inspect("@exchange: #{prefixed(@exchange)}")
-    IO.inspect("prefix: #{prefix}")
-
     GenRMQ.Binding.bind_exchange_and_queue(
       channel,
       {:direct, prefixed(@exchange)},
