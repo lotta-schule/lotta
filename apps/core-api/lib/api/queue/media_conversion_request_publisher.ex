@@ -17,7 +17,7 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
 
     [
       queue: @queue,
-      exchange: {:direct, @exchange},
+      exchange: {:direct, prefixed(@exchange)},
       connection: rmq_uri()
     ]
   end
@@ -28,12 +28,29 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
 
   def send_conversion_request(%File{} = file) do
     {:ok, encoded_file} = Poison.encode(file)
-    GenRMQ.Publisher.publish(Api.Queue.MediaConversionRequestPublisher, encoded_file, @queue)
+
+    GenRMQ.Publisher.publish(
+      Api.Queue.MediaConversionRequestPublisher,
+      encoded_file,
+      prefix
+    )
+
     file
   end
 
   defp rmq_uri do
-    Application.fetch_env!(:api, :rabbitmq_url)
+    Keyword.fetch!(Application.fetch_env!(:api, :rabbitmq), :url)
+  end
+
+  defp prefix do
+    Keyword.get(Application.fetch_env!(:api, :rabbitmq), :prefix)
+  end
+
+  defp prefixed(name) do
+    case prefix() do
+      nil -> name
+      prefix -> "#{prefix()}_#{name}"
+    end
   end
 
   defp create_rmq_resources do
@@ -41,7 +58,13 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
     {:ok, channel} = AMQP.Channel.open(connection)
 
     AMQP.Queue.declare(channel, @queue, durable: true)
-    GenRMQ.Binding.bind_exchange_and_queue(channel, {:direct, @exchange}, @queue, @queue)
+
+    GenRMQ.Binding.bind_exchange_and_queue(
+      channel,
+      {:direct, prefixed(@exchange)},
+      @queue,
+      prefix
+    )
 
     AMQP.Channel.close(channel)
   end

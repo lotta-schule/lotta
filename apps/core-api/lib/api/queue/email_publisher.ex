@@ -168,7 +168,7 @@ defmodule Api.Queue.EmailPublisher do
   end
 
   defp rmq_uri do
-    Application.fetch_env!(:api, :rabbitmq_url)
+    Keyword.fetch!(Application.fetch_env!(:api, :rabbitmq), :url)
   end
 
   defp create_rmq_resources do

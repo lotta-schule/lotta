@@ -24,6 +24,7 @@ redis_host = System.fetch_env!("REDIS_HOST")
 redis_password = System.fetch_env!("REDIS_PASSWORD")
 # rabbitMQ
 rabbitmq_url = System.fetch_env!("RABBITMQ_URL")
+rabbitmq_prefix = System.get_env("RABBITMQ_PREFIX")
 # elasticsearch
 elasticsearch_host = System.fetch_env!("ELASTICSEARCH_HOST")
 elasticsearch_index_prefix = System.fetch_env!("ELASTICSEARCH_INDEX_PREFIX")
@@ -64,7 +65,9 @@ config :api, :default_configuration, %{
   custom_theme: %{}
 }
 
-config :api, :rabbitmq_url, rabbitmq_url
+config :api, :rabbitmq,
+  url: rabbitmq_url,
+  prefix: rabbitmq_prefix
 
 config :api, :redis_connection,
   host: redis_host,
@@ -110,13 +113,13 @@ config :ex_aws, :s3,
   scheme: "https://"
 
 config :sentry,
-  dsn: System.get_env("SENTRY_DSN"),
-  environment_name: String.to_atom(System.get_env("APP_ENVIRONMENT") || "staging"),
+  dsn: sentry_dsn,
+  environment_name: String.to_atom(sentry_environment || "staging"),
   included_environments: ~w(production staging),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!(),
   release:
-    (case(System.get_env("APP_ENVIRONMENT")) do
+    (case(sentry_environment) do
        "production" ->
          to_string(Application.spec(:my_app, :vsn))
 
