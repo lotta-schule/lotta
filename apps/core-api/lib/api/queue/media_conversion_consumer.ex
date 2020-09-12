@@ -21,7 +21,7 @@ defmodule Api.Queue.MediaConversionConsumer do
     [
       queue: prefixed(@queue),
       exchange: {:direct, prefixed(@exchange)},
-      routing_key: prefix,
+      routing_key: prefix(),
       prefetch_count: "10",
       connection: rmq_uri()
     ]
@@ -134,7 +134,7 @@ defmodule Api.Queue.MediaConversionConsumer do
     Keyword.fetch!(Application.fetch_env!(:api, :rabbitmq), :url)
   end
 
-  defp prefix do
+  defp prefix() do
     Keyword.get(Application.fetch_env!(:api, :rabbitmq), :prefix)
   end
 
