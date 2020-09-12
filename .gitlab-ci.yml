@@ -30,37 +30,7 @@ lint:
     - npm install
     - npm run lint -- --max-warnings=0
 
-
-build docker image:review:
-  image: docker:19.03.0
-  services:
-    - docker:19.03.0-dind
-  stage: build
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-  script:
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
-    - docker pull lotta/web:staging
-    - docker build -t lotta/web:$CI_COMMIT_SHA
-      --build-arg APP_ENVIRONMENT=review/$CI_COMMIT_REF_NAME
-      --build-arg APP_REVISION=$CI_COMMIT_SHA
-      --build-arg APP_BASE_DOMAIN=.$CI_ENVIRONMENT_SLUG.lotta.schule
-      --build-arg API_URL
-      --build-arg AUTH_URL
-      --build-arg AUTHENTICATION_TOKEN_NAME
-      --build-arg CLOUDIMG_TOKEN
-      --build-arg SENTRY_DSN
-      --build-arg MATOMO_URL=""
-      --build-arg MATOMO_SITEID=""
-      --build-arg FILE_REPLACEMENT_URL="" .
-    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:$CI_ENVIRONMENT_SLUG
-    - docker push lotta/web
-  except:
-    refs:
-      - develop
-      - master
-
-build docker image:staging:
+build docker image:
   image: docker:19.03.0
   services:
     - docker:19.03.0-dind
@@ -68,9 +38,8 @@ build docker image:staging:
   environment:
     name: staging
   script:
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
-    - docker pull lotta/web:staging
-    - docker build -t lotta/web:$CI_COMMIT_SHA
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY/lotta/web:$CI_COMMIT_SHA
       --build-arg APP_ENVIRONMENT=staging
       --build-arg APP_REVISION=$CI_COMMIT_SHA
       --build-arg APP_BASE_DOMAIN
@@ -79,8 +48,14 @@ build docker image:staging:
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg FILE_REPLACEMENT_URL .
-    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:staging
-    - docker push lotta/web
+    - docker push $CI_REGISTRY/lotta/web
+    - docker build -t $CI_REGISTRY/lotta/web:$CI_COMMIT_SHA .
+    - |
+      if [ $CI_COMMIT_REF_NAME == "develop" ]; then
+        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USER --password-stdin
+        docker tag $CI_REGISTRY/lotta/web:$CI_COMMIT_SHA lotta/web:canary
+        docker push lotta/web
+      fi
   only:
     refs:
       - develop
@@ -95,17 +70,16 @@ build docker image:production:
   script:
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
     - docker pull lotta/web:production
-    - docker build -t lotta/web:$CI_COMMIT_SHA
+    - docker build -t lotta/web:$CI_COMMIT_TAG
       --build-arg APP_ENVIRONMENT=production
-      --build-arg APP_REVISION=$CI_COMMIT_SHA
+      --build-arg APP_REVISION=$CI_COMMIT_TAG
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL="/api"
       --build-arg AUTH_URL="/auth"
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg FILE_REPLACEMENT_URL .
-    - docker tag lotta/web:$CI_COMMIT_SHA lotta/web:production
+    - docker tag lotta/web:$CI_COMMIT_TAG lotta/web:stable lotta/web:latest
     - docker push lotta/web
   only:
-    refs:
-      - master
+    - tags
