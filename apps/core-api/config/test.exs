@@ -48,7 +48,9 @@ config :api, :default_configuration, %{
   custom_theme: %{}
 }
 
-config :api, :rabbitmq_url, "amqp://guest:guest@#{rabbitmq_host}"
+config :api, :rabbitmq,
+  url: "amqp://guest:guest@#{rabbitmq_host}",
+  prefix: "test"
 
 config :api, :redis_connection,
   host: redis_host,
