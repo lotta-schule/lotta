@@ -57,7 +57,7 @@ config :api, Api.Repo,
   prefix: db_schema,
   after_connect: {Api.Repo, :after_connect, [db_schema]},
   show_sensitive_data_on_connection_error: false,
-  pool_size: 25
+  pool_size: 10
 
 config :api, :default_configuration, %{
   slug: slug,
