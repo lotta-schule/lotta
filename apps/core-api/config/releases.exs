@@ -41,7 +41,7 @@ base_url = System.get_env("BASE_URL") || ".lotta.schule"
 schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 # Sentry Error Logging
 sentry_dsn = System.get_env("SENTRY_DSN")
-sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || "prod"
+sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || System.get_env("APP_ENVIRONMENT") || "production"
 
 host =
   case System.get_env("APP_ENVIRONMENT") do
