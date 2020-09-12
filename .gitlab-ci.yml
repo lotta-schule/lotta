@@ -47,6 +47,7 @@ build docker image:
       --build-arg AUTH_URL="/auth"
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
+      --build-arg MATOMO_URL
       --build-arg FILE_REPLACEMENT_URL .
     - docker push $CI_REGISTRY_IMAGE
     - |
@@ -77,6 +78,7 @@ build docker image:production:
       --build-arg AUTH_URL="/auth"
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
+      --build-arg MATOMO_URL
       --build-arg FILE_REPLACEMENT_URL .
     - docker tag lotta/web:$CI_COMMIT_TAG lotta/web:stable lotta/web:latest
     - docker push lotta/web
