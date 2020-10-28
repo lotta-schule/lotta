@@ -14,7 +14,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         });
         render(
             <AdminLayout />,
-            {}, { defaultPathEntries: ['/admin/tenant/general'], onChangeLocation, useCache: true }
+            {}, { defaultPathEntries: ['/admin/system/general'], onChangeLocation, useCache: true }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -28,7 +28,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         });
         render(
             <AdminLayout />,
-            {}, { currentUser: SomeUser, defaultPathEntries: ['/admin/tenant/general'], onChangeLocation, useCache: true }
+            {}, { currentUser: SomeUser, defaultPathEntries: ['/admin/system/general'], onChangeLocation, useCache: true }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -42,7 +42,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
             <AdminLayout />,
             {}, {
                 currentUser: { ...SomeUser, groups: [adminGroup] },
-                defaultPathEntries: ['/admin/tenant/general'],
+                defaultPathEntries: ['/admin/system/general'],
                 additionalMocks: [{ request: { query: GetUnpublishedArticlesQuery }, result: { data: { articles: [] } } }],
                 onChangeLocation,
                 useCache: true,

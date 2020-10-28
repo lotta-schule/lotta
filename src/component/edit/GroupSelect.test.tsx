@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserGroupModel } from 'model';
 import { render, cleanup, waitFor, createEvent, fireEvent } from 'test/util';
-import { adminGroup, lehrerGroup, schuelerGroup, TestTenant, elternGroup } from 'test/fixtures';
+import { adminGroup, lehrerGroup, schuelerGroup, system, elternGroup } from 'test/fixtures';
 import { GroupSelect } from './GroupSelect';
 import userEvent from '@testing-library/user-event';
 
@@ -309,10 +309,10 @@ describe('component/edit/GroupSelect', () => {
         });
 
         describe('selecting a group', () => {
-            const tenantWith2AdminGroups = {
-                ...TestTenant,
+            const systemWith2AdminGroups = {
+                ...system,
                 groups: [
-                    ...TestTenant.groups,
+                    ...system.groups,
                     {
                         id: '87',
                         insertedAt: '2020-09-11 00:00',
@@ -320,7 +320,6 @@ describe('component/edit/GroupSelect', () => {
                         name: 'Administrator2',
                         sortKey: 1500,
                         isAdminGroup: true,
-                        tenant: TestTenant,
                         enrollmentTokens: [],
                     }
                 ]
@@ -334,7 +333,7 @@ describe('component/edit/GroupSelect', () => {
                 const screen = render(
                     <GroupSelect selectedGroups={[adminGroup, lehrerGroup]} onSelectGroups={callback} />,
                     {},
-                    { tenant: tenantWith2AdminGroups }
+                    { system: systemWith2AdminGroups }
                 );
 
                 await userEvent.click(await screen.findByRole('textbox'));
@@ -361,7 +360,7 @@ describe('component/edit/GroupSelect', () => {
                 const screen = render(
                     <GroupSelect selectedGroups={[lehrerGroup]} onSelectGroups={callback} />,
                     {}, {
-                        tenant: tenantWith2AdminGroups
+                        system: systemWith2AdminGroups
                     }
                 );
 
@@ -389,7 +388,7 @@ describe('component/edit/GroupSelect', () => {
                 const screen = render(
                     <GroupSelect selectedGroups={[adminGroup, lehrerGroup]} onSelectGroups={callback} />,
                     {},
-                    { tenant: tenantWith2AdminGroups }
+                    { system: systemWith2AdminGroups }
                 );
 
                 await userEvent.click(await screen.findByRole('textbox'));
@@ -417,7 +416,7 @@ describe('component/edit/GroupSelect', () => {
                 const screen = render(
                     <GroupSelect selectedGroups={[adminGroup, lehrerGroup]} onSelectGroups={callback} />,
                     {},
-                    { tenant: tenantWith2AdminGroups }
+                    { system: systemWith2AdminGroups }
                 );
 
                 await userEvent.click(await screen.findByRole('textbox'));

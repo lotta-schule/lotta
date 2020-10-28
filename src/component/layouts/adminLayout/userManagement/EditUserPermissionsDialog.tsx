@@ -7,11 +7,10 @@ import { UserAvatar } from 'component/user/UserAvatar';
 import { GetUserQuery } from 'api/query/GetUserQuery';
 import { useQuery, useMutation } from '@apollo/client';
 import { GroupSelect } from 'component/edit/GroupSelect';
-import { SetUserGroupsMutation } from 'api/mutation/SetUserGroupsMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useTenant } from 'util/client/useTenant';
-import { SetUserBlockedMutation } from 'api/mutation/SetUserBlockedMutation';
+import { useSystem } from 'util/client/useSystem';
+import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
 import { Block } from '@material-ui/icons';
 import clsx from 'clsx';
 import { useUserGroups } from 'util/client/useUserGroups';
@@ -44,7 +43,7 @@ export interface EditUserPermissionsDialogProps {
 
 export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDialogProps> = memo(({ user, onClose }) => {
     const styles = useStyles();
-    const tenant = useTenant();
+    const system = useSystem();
     const allUserGroups = useUserGroups();
 
     const { data, loading, error } = useQuery<{ user: UserModel }, { id: ID }>(GetUserQuery, {
@@ -52,30 +51,20 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'cache-first'
     });
-    const [setUserGroups, { error: setUserGroupsError }] = useMutation<{ user: UserModel }, { id: ID, groupIds: ID[] }>(
-        SetUserGroupsMutation, {
-            optimisticResponse: ({ id, groupIds }) => ({
+    const [updateUser, { error: updateUserError, loading: isLoadingUpdateUser }] = useMutation<{ user: UserModel }, { id: ID, groups?: { id: ID }[], isBlocked?: boolean }>(
+        UpdateUserMutation, {
+            optimisticResponse: ({ id, groups, isBlocked }) => ({
                 __typename: 'Mutation',
                 user: {
                     __typename: 'User',
                     id,
-                    groups: data?.user.groups.map(group => ({ ...group, __typename: 'UserGroup' })),
-                    assignedGroups: allUserGroups.filter(group => groupIds.indexOf(group.id) > -1).map(group => ({ id: group.id, name: group.name, __typename: 'UserGroup' }))
+                    ...groups && {
+                        groups: data?.user.groups.map(group => ({ ...group, __typename: 'UserGroup' })),
+                        assignedGroups: allUserGroups.filter(group => groups.map(g => g.id).indexOf(group.id) > -1).map(group => ({ id: group.id, name: group.name, __typename: 'UserGroup' })),
+                    },
+                    ...(isBlocked !== undefined) ? { isBlocked } : undefined
                 }
             } as any)
-        }
-    );
-    const [setUserBlocked, { loading: setUserBlockedLoading, error: setUserBlockedError }] = useMutation<{ user: UserModel }, { id: ID, isBlocked: boolean }>(
-        SetUserBlockedMutation, {
-            optimisticResponse: ({ id, isBlocked }) => ({
-                __typename: 'Mutation',
-                user: {
-                    __typename: 'User',
-                    id,
-                    isBlocked
-                }
-            } as any),
-            variables: { id: user.id, isBlocked: !data?.user.isBlocked }
         }
     );
 
@@ -85,7 +74,7 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
         <ResponsiveFullScreenDialog open={true} fullWidth>
             <DialogTitle data-testid="DialogTitle">{user.name}s Details</DialogTitle>
             <DialogContent>
-                <ErrorMessage error={error || setUserGroupsError || setUserBlockedError} />
+                <ErrorMessage error={error || updateUserError} />
                 <Grid container justify={'space-evenly'} className={styles.header}>
                     <Grid item xs={3}>
                         <UserAvatar user={user} size={200} />
@@ -123,7 +112,7 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                                 disableAdminGroupsExclusivity
                                 className={styles.margin}
                                 selectedGroups={data.user?.assignedGroups ?? []}
-                                onSelectGroups={groups => setUserGroups({ variables: { id: user.id, groupIds: groups.map(g => g.id) } })}
+                                onSelectGroups={groups => updateUser({ variables: { id: user.id, groups: groups.map(g => ({ id: g.id })) } })}
                                 label={'Gruppe zuweisen'}
                             />
                         </section>
@@ -144,8 +133,8 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                                 <Button
                                     data-testid="BlockButton"
                                     className={clsx(styles.blockButton, styles.disableBlockButton)}
-                                    disabled={setUserBlockedLoading}
-                                    onClick={() => setUserBlocked()}
+                                    disabled={isLoadingUpdateUser}
+                                    onClick={() => updateUser({ variables: { id: user.id, isBlocked: false } })}
                                 >
                                     Nutzer ist gesperrt. Nutzer wieder freischalten.
                                 </Button>
@@ -155,13 +144,13 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                                     <Button
                                         data-testid="BlockButton"
                                         className={clsx(styles.blockButton, styles.enableBlockButton)}
-                                        disabled={setUserBlockedLoading}
-                                        onClick={() => setUserBlocked()}
+                                        disabled={isLoadingUpdateUser}
+                                        onClick={() => updateUser({ variables: { id: user.id, isBlocked: true } })}
                                     >
                                         Nutzer sperren
                                     </Button>
                                     <Typography variant={'subtitle2'}>
-                                        Ein gesperrter Nutzer wird abgemeldet und kann sich nicht mehr auf der Seite von "{tenant!.title}" anmelden.
+                                        Ein gesperrter Nutzer wird abgemeldet und kann sich nicht mehr auf der Seite von "{system!.title}" anmelden.
                                     </Typography>
                                 </>
                             )}

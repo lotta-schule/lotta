@@ -32,15 +32,13 @@ if (process.env.REACT_APP_SENTRY_DSN) {
     });
 }
 
-Matomo.default().init(
-    '/',
-    document.location.hostname,
-    {
-        async: true,
-        srcUri: '/matana.js'
-    }
-);
-Matomo.default().push(['setTrackerUrl', '/matanb']);
+if (process.env.REACT_APP_MATOMO_URL) {
+    Matomo.default().init(
+        process.env.REACT_APP_MATOMO_URL,
+        document.location.hostname,
+        { async: true }
+    );
+}
 
 (async () => {
     ReactDOM.render(

@@ -4,9 +4,8 @@ import { GetUserQuery } from 'api/query/GetUserQuery';
 import { render, cleanup, waitFor } from 'test/util';
 import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
-import { SetUserGroupsMutation } from 'api/mutation/SetUserGroupsMutation';
+import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
 import userEvent from '@testing-library/user-event'
-import { SetUserBlockedMutation } from 'api/mutation/SetUserBlockedMutation';
 
 afterEach(cleanup);
 
@@ -72,7 +71,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const additionalMocks = [
                 ...mocks(user),
                 {
-                    request: { query: SetUserGroupsMutation, variables: { id: user.id, groupIds: [adminGroup.id, elternGroup.id] } },
+                    request: { query: UpdateUserMutation, variables: { id: user.id, groups: [adminGroup.id, elternGroup.id].map(id => ({ id })) } },
                     result: () => {
                         mutationHasBeenCalled = true;
                         return {
@@ -115,7 +114,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const additionalMocks = [
                 ...mocks(user),
                 {
-                    request: { query: SetUserGroupsMutation, variables: { id: SomeUser.id, groupIds: [adminGroup.id] } },
+                    request: { query: UpdateUserMutation, variables: { id: SomeUser.id, groups: [{ id: adminGroup.id }] } },
                     result: () => {
                         mutationHasBeenCalled = true;
                         return {
@@ -174,7 +173,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const additionalMocks = [
                 ...mocks(user),
                 {
-                    request: { query: SetUserBlockedMutation, variables: { id: SomeUser.id, isBlocked: true } },
+                    request: { query: UpdateUserMutation, variables: { id: SomeUser.id, isBlocked: true } },
                     result: () => {
                         mutationHasBeenCalled = true;
                         return {
@@ -209,7 +208,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const additionalMocks = [
                 ...mocks(user),
                 {
-                    request: { query: SetUserBlockedMutation, variables: { id: SomeUser.id, isBlocked: false } },
+                    request: { query: UpdateUserMutation, variables: { id: SomeUser.id, isBlocked: false } },
                     result: () => {
                         mutationHasBeenCalled = true;
                         return {

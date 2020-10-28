@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-export const GetTenantUsageQuery = gql`
-    query GetTenantUsage {
+export const GetSystemUsageQuery = gql`
+    query GetSystemUsage {
         usage {
             periodStart,
             periodEnd,

@@ -13,7 +13,6 @@ export const adminGroup = {
         name: 'Administrator',
         sortKey: 1000,
         isAdminGroup: true,
-        tenant: null!,
         enrollmentTokens: [],
 }
 
@@ -24,7 +23,6 @@ export const lehrerGroup = {
         name: 'Lehrer',
         sortKey: 2000,
         isAdminGroup: false,
-        tenant: null!,
         enrollmentTokens: [{ id: '764', insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uhfhurehwuehf'  }],
 }
 
@@ -35,7 +33,6 @@ export const elternGroup = {
         name: 'Eltern',
         sortKey: 3000,
         isAdminGroup: false,
-        tenant: null!,
         enrollmentTokens: [],
 }
 
@@ -45,7 +42,6 @@ export const schuelerGroup = {
         name: 'Schüler',
         sortKey: 2000,
         isAdminGroup: false,
-        tenant: null!,
         enrollmentTokens: [
             { id: '884', insertedAt: '2015-0b-01 14:15', updatedAt: '2015-02-01 14:15', token: 'ajf82j84h2h'  },
             { id: '892', insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uishfiji2j38f'  }

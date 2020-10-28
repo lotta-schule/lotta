@@ -1,5 +1,5 @@
-import { TestTenant, allCategories } from 'test/fixtures';
-import { GetTenantQuery } from 'api/query/GetTenantQuery';
+import { system, allCategories } from 'test/fixtures';
+import { GetSystemQuery } from 'api/query/GetSystemQuery';
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { ClientModel, UserModel } from 'model';
@@ -7,13 +7,13 @@ import { InMemoryCache } from '@apollo/client';
 
 export interface ApolloMocksOptions {
     currentUser?: UserModel;
-    tenant?: ClientModel;
+    system?: ClientModel;
 }
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
     const mocks = [
         {
-            request: { query: GetTenantQuery },
-            result: { data: { tenant: options.tenant ?? TestTenant } }
+            request: { query: GetSystemQuery },
+            result: { data: { system: { ...(options.system ?? system), id: 1 } } }
         },
         {
             request: { query: GetCurrentUserQuery },
@@ -25,7 +25,7 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
         }
     ];
     const cache = new InMemoryCache({ addTypename: false });
-    cache.writeQuery({ query: GetTenantQuery,  data: { tenant: options.tenant ?? TestTenant } });
+    cache.writeQuery({ query: GetSystemQuery,  data: { system: options.system ?? system } });
     if (options.currentUser) {
         cache.writeQuery({ query: GetCurrentUserQuery,  data: { currentUser: options.currentUser } });
     }

@@ -91,7 +91,7 @@ export const File = {
             } else {
                 const imageConversionFile = file.fileConversions?.find(fc => /^gif/.test(fc.format));
                 if (imageConversionFile) {
-                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${file.remoteLocation}`;
+                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${imageConversionFile.remoteLocation}`;
                 }
             }
         }
@@ -107,5 +107,13 @@ export const File = {
 
     canEditDirectory(directory: DirectoryModel, user: UserModel | null) {
         return user && (directory.user?.id === user.id || User.isAdmin(user));
+    },
+
+    canCreateDirectory(directory: DirectoryModel, user: UserModel | null) {
+        if (directory.id === null) {
+            // root directory
+            return true;
+        }
+        return this.canEditDirectory(directory, user);
     }
 };

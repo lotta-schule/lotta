@@ -4,7 +4,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { FileDetailView } from './FileDetailView';
 import { FileModel, FileModelType, UserModel } from 'model';
 import { GetFileDetailsQuery } from 'api/query/GetFileDetailsQuery';
-import { TestTenant, SomeUser, movieFile, schulweitDirectory } from 'test/fixtures';
+import { SomeUser, movieFile, schulweitDirectory } from 'test/fixtures';
 
 afterEach(cleanup);
 
@@ -12,7 +12,7 @@ describe('component/fileExplorer/FileDetailView', () => {
 
     const user: UserModel = SomeUser;
     const file: FileModel = {
-        id: 123,
+        id: '123',
         filename: 'Dateiname.jpg',
         filesize: 123123,
         fileType: FileModelType.Image,
@@ -23,7 +23,7 @@ describe('component/fileExplorer/FileDetailView', () => {
         userId: user.id,
         fileConversions: [],
         parentDirectory: {
-            id: 123,
+            id: '123',
             name: 'Bilder',
             insertedAt: '2000-01-01 18:00',
             updatedAt: '2000-01-01 18:00',
@@ -33,7 +33,7 @@ describe('component/fileExplorer/FileDetailView', () => {
 
     const mocks = [
         {
-            request: { query: GetFileDetailsQuery, variables: { id: 123 } },
+            request: { query: GetFileDetailsQuery, variables: { id: '123' } },
             result: {
                 data: {
                     file: {
@@ -48,7 +48,7 @@ describe('component/fileExplorer/FileDetailView', () => {
 
     const usedFile = {
         ...file,
-        id: 7132,
+        id: '7132',
         filename: 'ImportantImage.jpg',
         filesize: 412756,
         fileType: FileModelType.Image,
@@ -56,12 +56,12 @@ describe('component/fileExplorer/FileDetailView', () => {
         remoteLocation: 'https://localhost:3000/image.jpg'
     };
     const usedFileMocks = [{
-        request: { query: GetFileDetailsQuery, variables: { id: 7132 } },
+        request: { query: GetFileDetailsQuery, variables: { id: '7132' } },
         result: {
             data: {
                 file: {
                     ...usedFile,
-                        user,
+                    user,
                     usage: [
                         {
                             usage: 'preview',
@@ -84,7 +84,7 @@ describe('component/fileExplorer/FileDetailView', () => {
                         {
                             usage: 'avatar',
                             user: {
-                                id: 1123,
+                                id: '1123',
                                 nickname: 'Der Dieb',
                                 name: undefined,
                                 avatarImageFile: {
@@ -94,8 +94,7 @@ describe('component/fileExplorer/FileDetailView', () => {
                         },
                         {
                             usage: 'background',
-                            tenant: {
-                                ...TestTenant,
+                            system: {
                                 backgroundImageFile: {
                                     ...usedFile
                                 }
@@ -133,14 +132,14 @@ describe('component/fileExplorer/FileDetailView', () => {
         it('should show not show a previewImage for Pdf document without image preview', async done => {
             const pdfDocument = {
                 ...file,
-                id: 4544,
+                id: '4544',
                 filename: 'Dokument.pdf',
                 filesize: 5023123,
                 fileType: FileModelType.Pdf,
                 mimeType: 'application/pdf'
             };
             const pdfDocumentMocks = [{
-                request: { query: GetFileDetailsQuery, variables: { id: 4544 } },
+                request: { query: GetFileDetailsQuery, variables: { id: '4544' } },
                 result: {
                     data: {
                         file: {
@@ -167,7 +166,7 @@ describe('component/fileExplorer/FileDetailView', () => {
         it('should download more information', async done => {
             const pdfDocument = {
                 ...file,
-                id: 4544,
+                id: '4544',
                 filename: 'Dokument.pdf',
                 filesize: 5023123,
                 fileType: FileModelType.Pdf,
@@ -175,7 +174,7 @@ describe('component/fileExplorer/FileDetailView', () => {
             };
             let fileDetailsQueryCalled = false;
             const pdfDocumentMocks = [{
-                request: { query: GetFileDetailsQuery, variables: { id: 4544 } },
+                request: { query: GetFileDetailsQuery, variables: { id: '4544' } },
                 result: () => {
                     fileDetailsQueryCalled = true;
                     return {

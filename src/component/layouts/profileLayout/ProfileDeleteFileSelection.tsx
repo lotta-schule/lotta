@@ -77,7 +77,7 @@ export const ProfileDeleteFileSelection = memo<ProfileDeleteFileSelectionProps>(
 
                         const fileUsageCell = (() => (
                             <TableCell>
-                                {file.usage?.filter(u => u.tenant || u.category || u.article).map((usage, i) => {
+                                {file.usage?.filter(u => u.category || u.article).map((usage, i) => {
                                     const linkTarget = (() => {
                                         if (usage.category) {
                                             return Category.getPath(usage.category);
