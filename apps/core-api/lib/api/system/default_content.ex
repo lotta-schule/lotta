@@ -3,7 +3,10 @@ defmodule Api.System.DefaultContent do
   All the data for adding default content to a new instance
   """
 
+  require Logger
+
   import Ecto.Changeset
+
   alias Api.Repo
   alias Api.UploadService
   alias Api.System.Category
@@ -58,7 +61,8 @@ defmodule Api.System.DefaultContent do
               |> Map.put(:results, Enum.reverse([result | ctx.results]))
 
             {:error, reason} ->
-              Repo.rollback(reason)
+              # Repo.rollback(reason)
+              Logger.error(inspect(reason))
               ctx
           end
 
