@@ -34,7 +34,7 @@ defmodule Api.Release do
   end
 
   def init_default_content() do
-    Application.load(@app)
+    Application.ensure_all_started(@app)
 
     unless Api.Repo.aggregate(Api.Accounts.User, :count, :id) > 0 do
       Api.System.DefaultContent.create_default_content()
