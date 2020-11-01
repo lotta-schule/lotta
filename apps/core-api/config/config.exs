@@ -46,6 +46,14 @@ config :api, Api.Elasticsearch.Cluster,
 
 config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
 
+config :api, :default_user, %{
+  name: "Max Mustermann",
+  email: "maxmustermann@lotta.schule",
+  hide_full_name: false,
+  is_blocked: false,
+  password: "password"
+}
+
 config :sentry, []
 
 # Configures Elixir's Logger

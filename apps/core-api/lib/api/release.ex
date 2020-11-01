@@ -33,6 +33,14 @@ defmodule Api.Release do
       )
   end
 
+  def init_default_content() do
+    Application.load(@app)
+
+    unless Api.Repo.aggregate(Api.Accounts.User, :count, :id) > 0 do
+      Api.System.DefaultContent.create_default_content()
+    end
+  end
+
   def build_elasticsearch_indexes do
     Application.load(@app)
     IO.puts("Building indexes...")

@@ -83,6 +83,14 @@ config :api, :live_view,
   username: live_view_username,
   password: live_view_password
 
+config :api, :default_user, %{
+  name: System.fetch_env("DEFAULT_USER_NAME"),
+  email: System.fetch_env("DEFAULT_USER_EMAIL"),
+  hide_full_name: false,
+  is_blocked: false,
+  password: System.fetch_env("DEFAULT_USER_PASSWORD")
+}
+
 config :api, Api.Elasticsearch.Cluster,
   url: elasticsearch_host,
   index_prefix: elasticsearch_index_prefix
