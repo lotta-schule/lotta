@@ -100,12 +100,13 @@ defmodule Api.System.DefaultContent do
   end
 
   defp create_admin_user(%Context{} = ctx) do
+    user =
+      %User{}
+      |> User.registration_changeset(Application.fetch_env!(:api, :default_user))
+      |> Repo.insert!()
+
     ctx
-    |> Context.execute_change(
-      {:insert,
-       User.registration_changeset(%User{}, Application.fetch_env!(:api, :default_user))},
-      :user
-    )
+    |> Map.put(:user, user)
   end
 
   defp create_default_groups(%Context{user: user} = ctx) do
