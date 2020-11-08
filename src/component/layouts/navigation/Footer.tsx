@@ -3,6 +3,7 @@ import { makeStyles, Link, Typography } from '@material-ui/core';
 import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { CollisionLink } from 'component/general/CollisionLink';
+import { CategoryModel } from 'model';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -34,17 +35,27 @@ const useStyles = makeStyles(theme => ({
 export const Footer = memo(() => {
     const styles = useStyles();
     const categories = useCategories()[0].filter(category => category.isSidenav);
+    const destProps = (category: CategoryModel): { to?: string; href?: string; } => {
+        if (category.redirect && /^https?:\/\//.test(category.redirect)) {
+            return { href: category.redirect, to: void 0 };
+        } else {
+            return { to: category.redirect ? category.redirect : Category.getPath(category), href: void 0 };
+        }
+    };
     return (
         <div className={styles.root}>
             <Typography className={styles.font}>
-                {categories.map(category => (
-                    <React.Fragment key={category.id}>
-                        <Link data-testid="SidenavLink" component={CollisionLink} to={category.redirect ? category.redirect : Category.getPath(category)}>
-                            {category.title}
-                        </Link>
-                        &nbsp;|&nbsp;
-                    </React.Fragment>
-                ))}
+                {categories.map(category => {
+                    const destPropsObj = destProps(category);
+                    return (
+                        <React.Fragment key={category.id}>
+                            <Link data-testid="SidenavLink" component={destPropsObj.href ? 'a' : CollisionLink} {...destPropsObj}>
+                                {category.title}
+                            </Link>
+                            &nbsp;|&nbsp;
+                        </React.Fragment>
+                    );
+                })}
                 <Link data-testid="SidenavLink" component={CollisionLink} to={`/privacy`}>Datenschutz</Link>
             </Typography>
         </div>
