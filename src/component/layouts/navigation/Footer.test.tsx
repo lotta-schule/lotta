@@ -47,20 +47,58 @@ describe('component/layouts/Footer', () => {
             result: { data: { categories: allCategories } }
         }];
 
-        const { queryAllByTestId } = render(
-            <MockedProvider mocks={sidenavCategoriesMock}>
-                <Footer />
-            </MockedProvider>
-        );
+        const screen = render(
+            <Footer />
+        , {}, { additionalMocks: sidenavCategoriesMock });
 
         await waitFor(() => {
-            expect(queryAllByTestId('SidenavLink')).toHaveLength(3);
+            expect(screen.queryAllByTestId('SidenavLink')).toHaveLength(3);
         });
-        const sidenavLinks = queryAllByTestId('SidenavLink') as HTMLAnchorElement[];
+        const sidenavLinks = screen.queryAllByTestId('SidenavLink') as HTMLAnchorElement[];
         expect(sidenavLinks.find(l => l.getAttribute('href') === '/privacy')).toBeTruthy();
         expect(sidenavLinks.find(l => l.getAttribute('href') === '/c/4-Impressum')).toBeTruthy();
         expect(sidenavLinks.find(l => l.getAttribute('href') === '/c/5-Datenschutz')).toBeTruthy();
-        
+
+        done();
+    });
+
+    it('A sidenav category leading to an external site should be set accordingly', async done => {
+        const noSidenavCategoriesMock = [{
+            request: { query: GetCategoriesQuery },
+            result: () => {
+                categoriesHaveBeenFetched = true;
+                return {
+                    data: { categories: [
+                        ...allCategories,
+                        {
+                            id: '1999',
+                            sortKey: 0,
+                            title: 'External',
+                            isHomepage: false,
+                            isSidenav: true,
+                            hideArticlesFromHomepage: false,
+                            bannerImageFile: null,
+                            category: null,
+                            layoutName: null,
+                            redirect: 'https://google.com',
+                            groups: []
+                        }
+                    ]}
+                }
+            }
+        }];
+
+        const screen = render(
+            <MockedProvider mocks={noSidenavCategoriesMock}>
+                <Footer />
+            </MockedProvider>
+        );
+        await waitFor(() => {
+            expect(categoriesHaveBeenFetched).toEqual(true);
+        });
+        const link = screen.queryByRole('link', { name: /external/i });
+        expect(link).not.toBeNull();
+        expect(link).toHaveAttribute('href', 'https://google.com');
         done();
     });
 

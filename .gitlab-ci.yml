@@ -80,7 +80,8 @@ build docker image:production:
       --build-arg SENTRY_DSN
       --build-arg MATOMO_URL
       --build-arg FILE_REPLACEMENT_URL .
-    - docker tag lotta/web:$CI_COMMIT_TAG lotta/web:stable lotta/web:latest
+    - docker tag lotta/web:$CI_COMMIT_TAG lotta/web:stable
+    - docker tag lotta/web:$CI_COMMIT_TAG lotta/web:latest
     - docker push lotta/web
   only:
     - tags
