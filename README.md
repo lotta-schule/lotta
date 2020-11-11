@@ -46,7 +46,7 @@ npm start
 - Start the development Storyboard
 
 ``` bash
-npm start
+npm run storybook
 ```
 
 ### Possible Errors
