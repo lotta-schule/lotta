@@ -2,14 +2,14 @@ version: "3.7"
 
 services:
   app:
-    image: node:14
+    image: node:15
     volumes:
       - .:/usr/src/svc:delegated
       - /usr/src/app/node_modules
     working_dir: /usr/src/svc
     ports:
       - 3000:3000
-    command: bash -c "npm install && npm run start"
+    command: npm run start
     env_file: .env
     stdin_open: true
     tty: true
