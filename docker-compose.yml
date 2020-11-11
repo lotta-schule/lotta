@@ -9,7 +9,7 @@ services:
     working_dir: /usr/src/svc
     ports:
       - 3000:3000
-    command: npm run start
+    command: npm start
     env_file: .env
     stdin_open: true
     tty: true
