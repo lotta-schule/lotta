@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import * as React from 'react';
 import { ArticleModel, ID } from '../../../model';
 import { ArticleEditable as Article } from '../../article/ArticleEditable';
 import { EditArticleSidebar } from './EditArticleSidebar';
@@ -16,11 +16,11 @@ export interface ArticleLayoutProps {
     article: ArticleModel;
 }
 
-export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
+export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) => {
     const { history } = useRouter();
     const [currentUser] = useCurrentUser();
 
-    const [editedArticle, setEditedArticle] = useState(article);
+    const [editedArticle, setEditedArticle] = React.useState(article);
     const [saveArticle, { loading: isLoading }] = useMutation<{ article: ArticleModel }, { id: ID, article: any }>(UpdateArticleMutation, {
         onCompleted: ({ article }) => {
             if (article) {
@@ -29,7 +29,7 @@ export const EditArticleLayout = memo<ArticleLayoutProps>(({ article }) => {
         }
     });
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (!currentUser) {
             history.push(ArticleUtil.getPath(article));
         }

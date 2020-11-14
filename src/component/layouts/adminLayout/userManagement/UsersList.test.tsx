@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, SomeUserin, KeinErSieEsUser, adminGroup, lehrerGroup } from 'test/fixtures';
 import { UsersList } from './UsersList';

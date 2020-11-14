@@ -29,7 +29,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
     const createId = (): ID => String(-(new Date().getTime() + Math.random() * 1000));
 
     return (
-        <div className={styles.root}>
+        <div className={styles.root} data-testid="AddModuleBar">
             <Typography style={{ marginBottom: '1em' }}>Wähle ein Modul aus, das du zum Beitrag hinzufügen möchtest.</Typography>
             <Grid
                 container
