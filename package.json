@@ -5,8 +5,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen --reporters=default",
-    "test:ci": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-fifteen --reporters=jest-silent-reporter",
+    "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=default",
+    "test:ci": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=jest-silent-reporter",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src .",
     "lint:fix": "eslint --ext .ts,.tsx,.js,.jsx src . --fix",
     "apollo:schema:download": "apollo client:download-schema src/api/schema.json",
@@ -89,7 +89,7 @@
     "@types/slate-base64-serializer": "^0.2.2",
     "@types/testing-library__jest-dom": "^5.9.5",
     "@types/user-event": "^4.1.0",
-    "jest-environment-jsdom-fifteen": "^1.0.2",
+    "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-silent-reporter": "^0.3.0",
     "node-sass": "^4.0.0",
     "typescript": "^4.0.5"

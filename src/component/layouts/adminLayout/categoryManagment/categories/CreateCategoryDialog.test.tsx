@@ -12,33 +12,33 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
         render( <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
     });
 
-    it('should show the component if isOpen is true', async () => {
+    it('should show the component if isOpen is true', () => {
         render(<CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
         expect(screen.queryByRole('dialog')).toBeVisible();
     });
 
-    it('should not show the component if isOpen is false', async () => {
+    it('should not show the component if isOpen is false', () => {
         render(<CreateCategoryDialog isOpen={false} onConfirm={() => {}} onAbort={() => {}} />);
         expect(screen.queryByRole('dialog')).toBeNull();
     });
 
-    it('should have the focus on the input field and the submit button disabled when open', async () => {
+    it('should have the focus on the input field and the submit button disabled when open', () => {
         render(<CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
         expect(screen.queryByRole('textbox')).toBeVisible();
         expect(screen.queryByRole('textbox')).toHaveFocus();
     });
 
-    it('should start with a disabled submit button, but should enable the button when text has been entered', async () => {
+    it('should start with a disabled submit button, but should enable the button when text has been entered', () => {
         render(<CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
         expect(screen.getByRole('button', { name: /erstellen/ })).toBeDisabled();
-        await userEvent.type(screen.getByRole('textbox'), 'Test');
+        userEvent.type(screen.getByRole('textbox'), 'Test');
         expect(screen.getByRole('button', { name: /erstellen/ })).not.toBeDisabled();
     });
 
     it('should have the category selection disabled when the category should be a sidenav', async () => {
         render(<CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
-        await userEvent.type(screen.getByRole('textbox'), 'Test');
-        await userEvent.click(screen.getByRole('checkbox'));
+        userEvent.type(screen.getByRole('textbox'), 'Test');
+        userEvent.click(screen.getByRole('checkbox'));
         const categorySelect = screen.getByTestId('CategorySelect');
         await waitFor(() => {
             expect(getByRole(categorySelect, 'button')).toHaveAttribute('aria-disabled');
@@ -82,8 +82,8 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
                 <CreateCategoryDialog isOpen onConfirm={onConfirm} onAbort={() => {}} />,
                 {}, { currentUser: SomeUser, additionalMocks: createMocks() }
             );
-            await userEvent.type(screen.getByRole('textbox'), 'Test');
-            await userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+            userEvent.type(screen.getByRole('textbox'), 'Test');
+            userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
 
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();
@@ -101,9 +101,9 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
                 <CreateCategoryDialog isOpen onConfirm={onConfirm} onAbort={() => {}} />,
                 {}, { currentUser: SomeUser, additionalMocks: createMocks({ isSidenav: true }) }
             );
-            await userEvent.type(screen.getByRole('textbox'), 'Test');
-            await userEvent.click(screen.getByRole('checkbox'));
-            await userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
+            userEvent.type(screen.getByRole('textbox'), 'Test');
+            userEvent.click(screen.getByRole('checkbox'));
+            userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
 
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();
@@ -115,8 +115,8 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
             render(
                 <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={onAbort} />
             );
-            await userEvent.type(screen.getByRole('textbox'), 'Test');
-            await userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+            userEvent.type(screen.getByRole('textbox'), 'Test');
+            userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
 
             await waitFor(() => {
                 expect(onAbort).toHaveBeenCalled();
