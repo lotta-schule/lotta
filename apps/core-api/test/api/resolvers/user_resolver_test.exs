@@ -202,7 +202,7 @@ defmodule Api.UserResolverTest do
     """
     test "returns the user last seen for self", %{user: user, user_jwt: user_jwt} do
       user
-      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.from_iso8601!("2020-11-14T00:00:00")})
+      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
       |> Repo.update!()
 
       res =
@@ -222,7 +222,7 @@ defmodule Api.UserResolverTest do
 
     test "returns the user last_seen for admin", %{user: user, admin_jwt: admin_jwt} do
       user
-      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.from_iso8601!("2020-11-14T00:00:00")})
+      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
       |> Repo.update!()
 
       res =
@@ -242,7 +242,7 @@ defmodule Api.UserResolverTest do
 
     test "does not return the user last_seen for others", %{user2: user2, user_jwt: user_jwt} do
       user2
-      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.from_iso8601!("2020-11-14T00:00:00")})
+      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
       |> Repo.update!()
 
       res =
