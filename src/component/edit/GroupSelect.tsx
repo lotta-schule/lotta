@@ -132,12 +132,12 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
         disableCloseOnSelect: true,
         getOptionLabel: option => option.name,
         getOptionSelected: (option, value) => option.id === value.id,
-        onInputChange: (event, value, reason) => {
+        onInputChange: (_event, value, reason) => {
             if (reason !== 'reset') {
                 setSearchtext(value);
             }
         },
-        onChange: (event, value, reason, details) => {
+        onChange: (_event, value, reason, details) => {
             if (disableAdminGroupsExclusivity || !isAdminGroup(details?.option)) {
                 onSelectGroups(value);
             } else {
@@ -150,7 +150,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
                 }
             }
         },
-        onClose: (event, reason) => {
+        onClose: (_event, reason) => {
             if (reason === 'blur') {
                 setSearchtext('');
             }
@@ -208,6 +208,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
                             variant={'outlined'}
                             size={'small'}
                             placeholder={'Gruppe suchen'}
+                            inputProps={{ 'aria-label': 'Gruppe suchen' }}
                             {...getInputProps()}
                         />
                     </div>

@@ -103,7 +103,7 @@ describe('component/edit/GroupSelect', () => {
 
             const selection = await screen.findByLabelText(/alle sichtbar/i);
 
-            await userEvent.click(selection);
+            userEvent.click(selection);
 
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
@@ -121,7 +121,7 @@ describe('component/edit/GroupSelect', () => {
 
             const selection = await screen.findByLabelText(/alle sichtbar/i);
 
-            await userEvent.click(selection);
+            userEvent.click(selection);
 
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
@@ -182,7 +182,7 @@ describe('component/edit/GroupSelect', () => {
                 {}
             );
 
-            await userEvent.click(await screen.findByLabelText('Gruppe "Schüler" entfernen'));
+            userEvent.click(await screen.findByLabelText('Gruppe "Schüler" entfernen'));
 
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled()
@@ -197,7 +197,7 @@ describe('component/edit/GroupSelect', () => {
                 {}
             );
 
-            await userEvent.click(await screen.findByPlaceholderText(/gruppe suchen/i));
+            userEvent.click(await screen.findByPlaceholderText(/gruppe suchen/i));
 
             expect(screen.getByRole('option', { name: 'Administrator' })).toBeVisible();
             expect(screen.getByRole('option', { name: 'Lehrer' })).toBeVisible();
@@ -213,7 +213,7 @@ describe('component/edit/GroupSelect', () => {
                 {}
             );
 
-            await userEvent.type(await screen.findByRole('textbox'), 'Schü')
+            userEvent.type(await screen.findByRole('textbox'), 'Schü')
 
             await waitFor(() => {
                 expect(screen.getByRole('listbox')).toBeVisible();
@@ -234,7 +234,7 @@ describe('component/edit/GroupSelect', () => {
                 {}
             );
 
-            await userEvent.type(await screen.findByRole('textbox'), 'Schü')
+            userEvent.type(await screen.findByRole('textbox'), 'Schü')
 
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
@@ -258,7 +258,7 @@ describe('component/edit/GroupSelect', () => {
                 {}
             );
 
-            await userEvent.click(await screen.findByPlaceholderText(/gruppe suchen/i));
+            userEvent.click(await screen.findByPlaceholderText(/gruppe suchen/i));
 
             const selectedOption = screen.getByRole('option', { name: 'Lehrer', selected: true });
             expect(selectedOption).not.toBeNull();
@@ -271,7 +271,7 @@ describe('component/edit/GroupSelect', () => {
                 {}
             );
 
-            await userEvent.click(await screen.findByPlaceholderText(/gruppe suchen/i));
+            userEvent.click(await screen.findByPlaceholderText(/gruppe suchen/i));
 
             const selectedOption = screen.getByRole('option', { name: 'Schüler', selected: false });
             const icon = selectedOption.querySelector('svg');
@@ -306,14 +306,14 @@ describe('component/edit/GroupSelect', () => {
                     { system: systemWith2AdminGroups }
                 );
 
-                await userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(await screen.findByRole('textbox'));
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
                 });
                 const selectedOption = screen.getByRole('option', { name: 'Schüler', selected: false });
 
-                await userEvent.click(selectedOption);
+                userEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -332,14 +332,14 @@ describe('component/edit/GroupSelect', () => {
                     }
                 );
 
-                await userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(await screen.findByRole('textbox'));
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
                 });
                 const selectedOption = screen.getByRole('option', { name: 'Administrator', selected: false });
 
-                await userEvent.click(selectedOption);
+                userEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -357,7 +357,7 @@ describe('component/edit/GroupSelect', () => {
                     { system: systemWith2AdminGroups }
                 );
 
-                await userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(await screen.findByRole('textbox'));
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
@@ -365,7 +365,7 @@ describe('component/edit/GroupSelect', () => {
 
                 const selectedOption = screen.getByRole('option', { name: 'Lehrer', selected: true });
 
-                await userEvent.click(selectedOption);
+                userEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -383,7 +383,7 @@ describe('component/edit/GroupSelect', () => {
                     { system: systemWith2AdminGroups }
                 );
 
-                await userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(await screen.findByRole('textbox'));
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
@@ -391,7 +391,7 @@ describe('component/edit/GroupSelect', () => {
 
                 const selectedOption = screen.getByRole('option', { name: 'Administrator', selected: true });
 
-                await userEvent.click(selectedOption);
+                userEvent.click(selectedOption);
 
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
@@ -409,7 +409,7 @@ describe('component/edit/GroupSelect', () => {
                         {}
                     );
 
-                    await userEvent.click(await screen.findByRole('textbox'));
+                    userEvent.click(await screen.findByRole('textbox'));
 
                     await waitFor(() => {
                         expect(screen.getByRole('listbox')).toBeVisible();
@@ -417,7 +417,7 @@ describe('component/edit/GroupSelect', () => {
 
                     const selectedOption = screen.getByRole('option', { name: 'Schüler', selected: false });
 
-                    await userEvent.click(selectedOption);
+                    userEvent.click(selectedOption);
 
                     await waitFor(() => {
                         expect(callback).toHaveBeenCalled();
@@ -434,7 +434,7 @@ describe('component/edit/GroupSelect', () => {
                         {}
                     );
 
-                    await userEvent.click(await screen.findByRole('textbox'));
+                    userEvent.click(await screen.findByRole('textbox'));
 
                     await waitFor(() => {
                         expect(screen.getByRole('listbox')).toBeVisible();
@@ -442,7 +442,7 @@ describe('component/edit/GroupSelect', () => {
 
                     const selectedOption = screen.getByRole('option', { name: 'Administrator', selected: true });
 
-                    await userEvent.click(selectedOption);
+                    userEvent.click(selectedOption);
 
                     await waitFor(() => {
                         expect(callback).toHaveBeenCalled();

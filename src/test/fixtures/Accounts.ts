@@ -314,7 +314,8 @@ export const SomeUser = {
     enrollmentTokens: [],
     hideFullName: false,
     nickname: 'Che',
-    avatarImageFile: null
+    avatarImageFile: null,
+    isBlocked: false
 };
 
 export const SomeUserin = {
@@ -329,7 +330,8 @@ export const SomeUserin = {
     enrollmentTokens: [],
     hideFullName: true,
     nickname: 'Lui',
-    avatarImageFile: null
+    avatarImageFile: null,
+    isBlocked: false
 };
 
 export const KeinErSieEsUser = {
@@ -344,7 +346,8 @@ export const KeinErSieEsUser = {
     enrollmentTokens: [],
     hideFullName: false,
     nickname: 'Mich',
-    avatarImageFile: null
+    avatarImageFile: null,
+    isBlocked: false
 };
 
 export const getPrivateAndPublicFiles = (user: UserModel) => {

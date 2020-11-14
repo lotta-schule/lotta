@@ -10,7 +10,7 @@ export interface UsersListProps {
     onClickRemove?(user: UserModel): void;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
     avatar: {
         width: 50,
         height: 50

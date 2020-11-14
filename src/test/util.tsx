@@ -1,5 +1,5 @@
 import React, { Reducer, FC, Suspense, useReducer, useEffect } from 'react';
-import { unionBy, pick } from 'lodash';
+import { pick } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react'
@@ -30,11 +30,6 @@ export interface TestSetupOptions {
 
 const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
     const { cache, mocks: defaultMocks } = getDefaultApolloMocks(pick(options, ['currentUser', 'system']));
-    const mocks = unionBy(
-        options.additionalMocks ?? [],
-        defaultMocks,
-        ({ request: { query } }) => query
-    );
 
     const history = createMemoryHistory({ initialEntries: options.defaultPathEntries });
     if (options.onChangeLocation) {
@@ -51,7 +46,7 @@ const ProviderFactory = (options: TestSetupOptions): FC  => ({ children }) => {
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
                 <I18nextProvider i18n={i18n}>
                     <CloudimageProvider config={{ token: 'ABCDEF', lazyLoading: false }}>
-                        <MockedProvider mocks={mocks} addTypename={false} cache={options.useCache ? cache : undefined}>
+                        <MockedProvider mocks={[...defaultMocks, ...(options.additionalMocks || [])]} addTypename={false} cache={options.useCache ? cache : undefined}>
                             <UploadQueueProvider>
                                 <Suspense fallback={<span data-testid="LazyLoadIndicator">Lazy Load ES6 Module</span>}>
                                     <Router history={history}>

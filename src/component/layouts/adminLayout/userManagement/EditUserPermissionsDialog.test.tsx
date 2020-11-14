@@ -89,11 +89,11 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const assignedGroups = await screen.findByTestId('GroupSelectSelection');
             expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
-            await userEvent.click(await screen.findByRole('textbox'));
+            userEvent.click(await screen.findByRole('textbox'));
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
-            await userEvent.click(await screen.findByRole('option', { name: 'Eltern' }));
+            userEvent.click(await screen.findByRole('option', { name: 'Eltern' }));
 
             await waitFor(() => {
                 expect(mutationHasBeenCalled).toEqual(true);
@@ -130,11 +130,11 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const assignedGroups = await screen.findByTestId('GroupSelectSelection');
             expect(assignedGroups).toHaveTextContent('Administrator');
 
-            await userEvent.click(await screen.findByRole('textbox'));
+            userEvent.click(await screen.findByRole('textbox'));
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
-            await userEvent.click(await screen.findByRole('option', { name: 'Eltern' }));
+            userEvent.click(await screen.findByRole('option', { name: 'Eltern' }));
 
             await waitFor(() => {
                 expect(mutationHasBeenCalled).toEqual(true);
