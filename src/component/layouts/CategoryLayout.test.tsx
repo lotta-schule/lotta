@@ -18,7 +18,7 @@ describe('component/article/CategoryLayout', () => {
         const articles = [Klausurenplan, VivaLaRevolucion]
             .map(partialArticle => ({ ...partialArticle, users: [KeinErSieEsUser, SomeUser], category: MusikCategory}) as ArticleModel);
 
-        it('should render the category title', async done => {
+        it('should render the category title', async () => {
             const { queryByText } = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
                 {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
@@ -26,10 +26,9 @@ describe('component/article/CategoryLayout', () => {
             await waitFor(() => {
                 expect(queryByText('Musik')).toBeVisible();
             });
-            done();
         });
 
-        it('should render the category banner image', async done => {
+        it('should render the category banner image', async () => {
             const category = { ...MusikCategory, bannerImageFile: imageFile };
             const { findByTestId } = render(
                 <CategoryLayout category={category as any} articles={articles} />,
@@ -37,10 +36,9 @@ describe('component/article/CategoryLayout', () => {
             );
             const headerContent = await findByTestId('HeaderContent');
             expect(getComputedStyle(headerContent).backgroundImage).toContain('meinbild.jpg');
-            done();
         });
 
-        it('should render the widgets list', async done => {
+        it('should render the widgets list', async () => {
             const { queryByTestId } = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
                 {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
@@ -48,10 +46,9 @@ describe('component/article/CategoryLayout', () => {
             await waitFor(() => {
                 expect(queryByTestId('WidgetsList')).toBeVisible();
             });
-            done();
         });
 
-        it('should render an ArticlePreview', async done => {
+        it('should render an ArticlePreview', async () => {
             const screen = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
                 {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
@@ -62,7 +59,6 @@ describe('component/article/CategoryLayout', () => {
                     ...screen.queryAllByTestId('ArticlePreviewStandardLayout')
                 ]).toHaveLength(2);
             });
-            done();
         });
     });
 

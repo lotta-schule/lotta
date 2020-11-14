@@ -102,7 +102,7 @@ describe('component/article/ProfileDeleteFileSelection', () => {
     });
 
     describe('request selection change', () => {
-        it('should call change function including new file requested upon click', async done => {
+        it('should call change function including new file requested upon click', async () => {
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(4);
                 expect(newSelection.find(f => f.filename === 'Amelie.mp4')).toBeDefined();
@@ -128,10 +128,9 @@ describe('component/article/ProfileDeleteFileSelection', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should call change function without file unchecked upon click', async done => {
+        it('should call change function without file unchecked upon click', async () => {
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(2);
                 expect(newSelection.find(f => f.filename === 'Animiert.gif')).not.toBeDefined();
@@ -157,10 +156,9 @@ describe('component/article/ProfileDeleteFileSelection', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
-        });
+        }, 15_000);
 
-        it('should call change function requesting all files when "select all" checkbox is click in off state', async done => {
+        it('should call change function requesting all files when "select all" checkbox is click in off state', async () => {
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(7);
                 expect(newSelection.map(f => f.filename).sort()).toEqual([
@@ -185,10 +183,9 @@ describe('component/article/ProfileDeleteFileSelection', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should call change function requesting no files when "select all" checkbox is clicked in on state', async done => {
+        it('should call change function requesting no files when "select all" checkbox is clicked in on state', async () => {
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(0);
             });
@@ -204,10 +201,9 @@ describe('component/article/ProfileDeleteFileSelection', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should call change function requesting all files when "select all" checkbox is click in mixed state', async done => {
+        it('should call change function requesting all files when "select all" checkbox is click in mixed state', async () => {
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(7);
                 expect(newSelection.map(f => f.filename).sort()).toEqual([
@@ -232,7 +228,6 @@ describe('component/article/ProfileDeleteFileSelection', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
 
     });

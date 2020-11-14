@@ -27,14 +27,13 @@ describe('component/layouts/adminLayout/userManagment/CreateArticleDialog', () =
         expect(screen.queryByRole('textbox')).toHaveFocus();
     });
 
-    it('should start with a disabled submit button, but should enable the button when text has been entered', async done => {
+    it('should start with a disabled submit button, but should enable the button when text has been entered', async () => {
         render(<CreateArticleDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
         expect(screen.queryByRole('textbox')).toBeVisible();
         expect(screen.queryByRole('textbox')).toHaveFocus();
         expect(screen.getByRole('button', { name: /erstellen/ })).toBeDisabled();
         await userEvent.type(screen.getByRole('textbox'), 'Test');
         expect(screen.getByRole('button', { name: /erstellen/ })).not.toBeDisabled();
-        done();
     });
 
     describe('send form', () => {
@@ -60,7 +59,7 @@ describe('component/layouts/adminLayout/userManagment/CreateArticleDialog', () =
             }
         }];
 
-        it('should create an article with the given title', async done => {
+        it('should create an article with the given title', async () => {
             const onConfirm = jest.fn(createdArticle => {
                 expect(createdArticle.id).toEqual(666);
                 expect(createdArticle.title).toEqual('Test');
@@ -75,10 +74,9 @@ describe('component/layouts/adminLayout/userManagment/CreateArticleDialog', () =
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should clear the form and call onAbort when clicking the "Reset" button', async done => {
+        it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
             const onAbort = jest.fn();
             render(
                 <CreateArticleDialog isOpen onConfirm={() => {}} onAbort={onAbort} />
@@ -90,7 +88,6 @@ describe('component/layouts/adminLayout/userManagment/CreateArticleDialog', () =
                 expect(onAbort).toHaveBeenCalled();
             });
             expect(screen.queryByRole('textbox')).toHaveValue('');
-            done();
         });
 
     });

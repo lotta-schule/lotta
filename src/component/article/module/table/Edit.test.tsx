@@ -25,7 +25,7 @@ describe('component/article/module/table/Edit', () => {
     });
 
     describe('edit table cells', () => {
-        it('should edit a cell when entering text', async done => {
+        it('should edit a cell when entering text', async () => {
             const callback = jest.fn(cm => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -51,11 +51,10 @@ describe('component/article/module/table/Edit', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
 
         describe('navigate via enter key', () => {
-            it('should jump to next column', async done => {
+            it('should jump to next column', async () => {
                 const callback = jest.fn();
                 const screen = render(<Edit contentModule={tableContentModule} onUpdateModule={callback} />);
                 const input = screen.getByDisplayValue('Kürzel');
@@ -65,10 +64,9 @@ describe('component/article/module/table/Edit', () => {
                     expect(screen.getByDisplayValue('Name')).toHaveFocus();
                 });
                 expect(callback).toHaveBeenCalled();
-                done();
             });
 
-            it('should jump to next row', async done => {
+            it('should jump to next row', async () => {
                 const callback = jest.fn();
                 const screen = render(
                     <Edit contentModule={tableContentModule} onUpdateModule={callback} />
@@ -80,10 +78,9 @@ describe('component/article/module/table/Edit', () => {
                     expect(screen.getByDisplayValue('LAb')).toHaveFocus();
                 });
                 expect(callback).toHaveBeenCalled();
-                done();
             });
 
-            it('should create a new row when on last element', async done => {
+            it('should create a new row when on last element', async () => {
                 let contentModule = tableContentModule;
                 let didCallCallback = false;
                 const callback = jest.fn(cm => {
@@ -102,7 +99,6 @@ describe('component/article/module/table/Edit', () => {
                 });
                 screen.rerender(<Edit contentModule={contentModule} onUpdateModule={callback} />);
                 expect(screen.container.querySelector('[data-row="7"][data-column="0"]')).toHaveFocus();
-                done();
             });
         });
 
@@ -129,7 +125,7 @@ describe('component/article/module/table/Edit', () => {
                 expect(screen.getByRole('button', { name: /zeile entfernen/i })).toBeDisabled();
             });
 
-            it('should remove a column when clicking the button', async done => {
+            it('should remove a column when clicking the button', async () => {
                 const callback = jest.fn(cm => {
                     expect(cm.content).toEqual({
                         rows: [
@@ -146,10 +142,9 @@ describe('component/article/module/table/Edit', () => {
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
-                done();
             });
 
-            it('should insert a column when clicking the button', async done => {
+            it('should insert a column when clicking the button', async () => {
                 let contentModule = tableContentModule;
                 const callback = jest.fn(cm => {
                     cm.content.rows[0].length === 1;
@@ -163,10 +158,9 @@ describe('component/article/module/table/Edit', () => {
                 });
                 screen.rerender(<Edit contentModule={contentModule} onUpdateModule={callback} />);
                 expect(screen.container.querySelector('[data-row="0"][data-column="2"]')).toHaveFocus();
-                done();
             });
 
-            it('should remove a row when clicking the button', async done => {
+            it('should remove a row when clicking the button', async () => {
                 const callback = jest.fn(cm => {
                     expect(cm.content).toEqual({
                         rows: [
@@ -187,10 +181,9 @@ describe('component/article/module/table/Edit', () => {
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
-                done();
             });
 
-            it('should insert a row when clicking the button', async done => {
+            it('should insert a row when clicking the button', async () => {
                 let contentModule = tableContentModule;
                 const callback = jest.fn(cm => {
                     expect(cm.content.rows).toHaveLength(8);
@@ -206,14 +199,13 @@ describe('component/article/module/table/Edit', () => {
                 });
                 screen.rerender(<Edit contentModule={contentModule} onUpdateModule={callback} />);
                 expect(screen.container.querySelector('[data-row="7"][data-column="0"]')).toHaveFocus();
-                done();
             });
         });
     });
 
     describe('pasting from other application', () => {
 
-        it('should paste from excel to top-most upper-left corner', async done => {
+        it('should paste from excel to top-most upper-left corner', async () => {
             const callback = jest.fn(cm => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -236,10 +228,9 @@ describe('component/article/module/table/Edit', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should paste from numbers to top-most upper-left corner', async done => {
+        it('should paste from numbers to top-most upper-left corner', async () => {
             const callback = jest.fn(cm => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -262,10 +253,9 @@ describe('component/article/module/table/Edit', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should expand the current grid if pastet to the bottom right corner', async done => {
+        it('should expand the current grid if pastet to the bottom right corner', async () => {
             const callback = jest.fn(cm => {
                 expect(cm.content).toEqual({
                     rows: [
@@ -289,7 +279,6 @@ describe('component/article/module/table/Edit', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-            done();
         });
     });
 });

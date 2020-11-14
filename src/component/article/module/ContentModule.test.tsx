@@ -30,7 +30,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -43,10 +43,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -64,7 +63,6 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
         });
     });
@@ -90,7 +88,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -103,10 +101,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -124,10 +121,9 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
 
-            it('should show the title configuration', async done => {
+            it('should show the title configuration', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -141,7 +137,6 @@ describe('component/article/module/ContentModule', () => {
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
                 expect(screen.getByTestId('TitleContentModuleConfiguration')).toBeVisible();
-                done();
             });
 
         });
@@ -173,7 +168,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -186,10 +181,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -207,7 +201,6 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
         });
     });
@@ -238,7 +231,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -251,10 +244,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -272,10 +264,9 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
 
-            it('should show the configuration', async done => {
+            it('should show the configuration', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -289,7 +280,6 @@ describe('component/article/module/ContentModule', () => {
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
                 expect(screen.getByTestId('ImageCollectionContentModuleConfiguration')).toBeVisible();
-                done();
             });
         });
     });
@@ -320,7 +310,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -333,10 +323,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -354,7 +343,6 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
         });
     });
@@ -385,7 +373,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -398,10 +386,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -419,7 +406,6 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
         });
     });
@@ -450,7 +436,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -463,10 +449,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -484,10 +469,9 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
 
-            it('should show the configuration', async done => {
+            it('should show the configuration', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -501,7 +485,6 @@ describe('component/article/module/ContentModule', () => {
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
                 expect(screen.getByTestId('DownloadContentModuleConfiguration')).toBeVisible();
-                done();
             });
         });
     });
@@ -533,7 +516,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -551,10 +534,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -577,10 +559,9 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
 
-            it('should show the configuration', async done => {
+            it('should show the configuration', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -599,7 +580,6 @@ describe('component/article/module/ContentModule', () => {
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
                 expect(screen.getByTestId('FormContentModuleConfiguration')).toBeVisible();
-                done();
             });
         });
     });
@@ -632,7 +612,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async done => {
+            it('config bar should open a menu when clicking on settings button', async () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -645,10 +625,9 @@ describe('component/article/module/ContentModule', () => {
                 );
                 await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
                 expect(screen.getByRole('presentation')).toBeVisible();
-                done();
             });
 
-            it('should call the onRemoveContentModule callback when delete button is clicked', async done => {
+            it('should call the onRemoveContentModule callback when delete button is clicked', async () => {
                 const deleteCallback = jest.fn();
                 const screen = render(
                     <ContentModule
@@ -666,7 +645,6 @@ describe('component/article/module/ContentModule', () => {
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
-                done();
             });
         });
     });

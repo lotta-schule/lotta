@@ -17,7 +17,7 @@ describe('component/article/module/table/Edit', () => {
         expect(screen.getByRole('textbox')).toHaveValue('Na, wie war dein erster Tag?');
     });
 
-    it('should correctly call the onUpateModule prop', async done => {
+    it('should correctly call the onUpateModule prop', async () => {
         const callback = jest.fn(cm => {
             expect(cm.content.title).toEqual('Eine neue Überschrift');
         });
@@ -31,10 +31,9 @@ describe('component/article/module/table/Edit', () => {
             expect(callback).toHaveBeenCalled();
         });
         expect(input).toHaveValue('Eine neue Überschrift');
-        done();
     });
 
-    it('should reset title when clicking ESC', async done => {
+    it('should reset title when clicking ESC', async () => {
         const callback = jest.fn(cm => {
             expect(cm.content.title).toEqual('Na, wie war dein erster Tag?');
         });
@@ -47,7 +46,6 @@ describe('component/article/module/table/Edit', () => {
         });
         expect(callback).toHaveBeenCalled();
         expect(input).toHaveValue('Na, wie war dein erster Tag?');
-        done();
     });
 
 });

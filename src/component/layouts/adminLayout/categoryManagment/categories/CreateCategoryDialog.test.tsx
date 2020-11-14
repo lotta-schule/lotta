@@ -28,15 +28,14 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
         expect(screen.queryByRole('textbox')).toHaveFocus();
     });
 
-    it('should start with a disabled submit button, but should enable the button when text has been entered', async done => {
+    it('should start with a disabled submit button, but should enable the button when text has been entered', async () => {
         render(<CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
         expect(screen.getByRole('button', { name: /erstellen/ })).toBeDisabled();
         await userEvent.type(screen.getByRole('textbox'), 'Test');
         expect(screen.getByRole('button', { name: /erstellen/ })).not.toBeDisabled();
-        done();
     });
 
-    it('should have the category selection disabled when the category should be a sidenav', async done => {
+    it('should have the category selection disabled when the category should be a sidenav', async () => {
         render(<CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={() => {}} />);
         await userEvent.type(screen.getByRole('textbox'), 'Test');
         await userEvent.click(screen.getByRole('checkbox'));
@@ -44,7 +43,6 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
         await waitFor(() => {
             expect(getByRole(categorySelect, 'button')).toHaveAttribute('aria-disabled');
         });
-        done();
     });
 
     describe('send form', () => {
@@ -73,7 +71,7 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
             }
         }];
 
-        it('should create an article with the given title', async done => {
+        it('should create an article with the given title', async () => {
             const onConfirm = jest.fn(createdCategory => {
                 expect(createdCategory.id).toEqual(666);
                 expect(createdCategory.title).toEqual('Test');
@@ -90,10 +88,9 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should create an article as sidenav', async done => {
+        it('should create an article as sidenav', async () => {
             const onConfirm = jest.fn(createdCategory => {
                 expect(createdCategory.id).toEqual(666);
                 expect(createdCategory.title).toEqual('Test');
@@ -111,10 +108,9 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
             await waitFor(() => {
                 expect(onConfirm).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should clear the form and call onAbort when clicking the "Reset" button', async done => {
+        it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
             const onAbort = jest.fn();
             render(
                 <CreateCategoryDialog isOpen onConfirm={() => {}} onAbort={onAbort} />
@@ -126,7 +122,6 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
                 expect(onAbort).toHaveBeenCalled();
             });
             expect(screen.queryByRole('textbox')).toHaveValue('');
-            done();
         });
 
     });

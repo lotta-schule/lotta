@@ -19,15 +19,14 @@ describe('component/layouts/SearchLayout', () => {
             { request: { query: GetWidgetsQuery }, result: { data: { widgets } } }
         ];
         describe('show widgets state', () => {
-            it('should render the CategoryWidgetSelector', async done => {
+            it('should render the CategoryWidgetSelector', async () => {
                 render(
                     <CategoryWidgetSelector selectedWidgets={[]} setSelectedWidgets={() => {}} />,
                     {}, { additionalMocks: mocks }
                 );
-                done();
             });
 
-            it('should show all possible widgets in a list', async done => {
+            it('should show all possible widgets in a list', async () => {
                 render(
                     <CategoryWidgetSelector selectedWidgets={[]} setSelectedWidgets={() => {}} />,
                     {}, { additionalMocks: mocks }
@@ -39,10 +38,9 @@ describe('component/layouts/SearchLayout', () => {
                 expect(screen.getByLabelText('W Number 4')).toBeInTheDocument();
                 expect(screen.getByLabelText('W Number 5')).toBeInTheDocument();
 
-                done();
             });
 
-            it('should show the given "selectedWidgets" with an enabled switch', async done => {
+            it('should show the given "selectedWidgets" with an enabled switch', async () => {
                 render(
                     <CategoryWidgetSelector selectedWidgets={[widgets[2], widgets[4]]} setSelectedWidgets={() => {}} />,
                     {}, { additionalMocks: mocks }
@@ -60,11 +58,9 @@ describe('component/layouts/SearchLayout', () => {
                 expect(w2).toBeChecked();
                 expect(w3).not.toBeChecked();
                 expect(w4).toBeChecked();
-
-                done();
             });
 
-            it('should show have the "enable all widgets" toggle enabled when all widgets are enabled', async done => {
+            it('should show have the "enable all widgets" toggle enabled when all widgets are enabled', async () => {
                 render(
                     <CategoryWidgetSelector selectedWidgets={[...widgets]} setSelectedWidgets={() => {}} />,
                     {}, { additionalMocks: mocks }
@@ -77,13 +73,11 @@ describe('component/layouts/SearchLayout', () => {
                 expect(screen.queryByLabelText('WidgetThree')).toBeChecked();
                 expect(screen.queryByLabelText('W Number 4')).toBeChecked();
                 expect(screen.queryByLabelText('W Number 5')).toBeChecked();
-
-                done();
             });
         });
 
         describe('select widgets', () => {
-            it('should select a widget when clicked', async done => {
+            it('should select a widget when clicked', async () => {
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector selectedWidgets={[]} setSelectedWidgets={setSelectedWidgets} />,
@@ -95,11 +89,9 @@ describe('component/layouts/SearchLayout', () => {
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith([widgets[0]]);
                 });
-
-                done();
             });
 
-            it('should deselect when clicked but already selected', async done => {
+            it('should deselect when clicked but already selected', async () => {
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector selectedWidgets={[widgets[0]]} setSelectedWidgets={setSelectedWidgets} />,
@@ -111,11 +103,9 @@ describe('component/layouts/SearchLayout', () => {
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith([]);
                 });
-
-                done();
             });
 
-            it('should select all widgets when "toggle all" is clicked', async done => {
+            it('should select all widgets when "toggle all" is clicked', async () => {
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector selectedWidgets={[]} setSelectedWidgets={setSelectedWidgets} />,
@@ -127,11 +117,9 @@ describe('component/layouts/SearchLayout', () => {
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith(widgets);
                 });
-
-                done();
             });
 
-            it('should deselect all widgets when all are selected and "toggle all" is clicked', async done => {
+            it('should deselect all widgets when all are selected and "toggle all" is clicked', async () => {
                 const setSelectedWidgets = jest.fn();
                 render(
                     <CategoryWidgetSelector selectedWidgets={[...widgets]} setSelectedWidgets={setSelectedWidgets} />,
@@ -143,8 +131,6 @@ describe('component/layouts/SearchLayout', () => {
                 await waitFor(() => {
                     expect(setSelectedWidgets).toHaveBeenCalledWith([]);
                 });
-
-                done();
             });
         });
 

@@ -19,7 +19,7 @@ describe('component/article/module/Download/Config', () => {
         render(<Config contentModule={downloadContentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />);
     });
 
-    it('should render a unchecked checkbox field to toggle hidePreviews which can be checked', async done => {
+    it('should render a unchecked checkbox field to toggle hidePreviews which can be checked', async () => {
         const callback = jest.fn(cm => {
             expect(cm.configuration.hidePreviews).toEqual(true);
         });
@@ -34,10 +34,9 @@ describe('component/article/module/Download/Config', () => {
         await waitFor(() => {
             expect(callback).toHaveBeenCalled();
         });
-        done();
     });
 
-    it('should render a checked checkbox field to toggle hidePreviews which can be unchecked', async done => {
+    it('should render a checked checkbox field to toggle hidePreviews which can be unchecked', async () => {
         const callback = jest.fn(cm => {
             expect(cm.configuration.hidePreviews).toEqual(false);
         });
@@ -52,7 +51,6 @@ describe('component/article/module/Download/Config', () => {
         await waitFor(() => {
             expect(callback).toHaveBeenCalled();
         });
-        done();
     });
 
 });

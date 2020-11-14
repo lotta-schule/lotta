@@ -28,8 +28,6 @@ declare module 'material-ui-popup-state' {
 };
 
 declare module 'material-ui-popup-state/hooks' {
-    import { ComponentType, ReactNode } from 'react';
-
     export type EventOrAnchorElement = Event | HTMLElement;
 
     export interface PopupState {

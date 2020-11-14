@@ -27,16 +27,14 @@ const downloadContentModule = {
 
 describe('component/article/module/download/Download', () => {
 
-    it('should render the edit mode when editModeEnabled is given', async done => {
+    it('should render the edit mode when editModeEnabled is given', async () => {
         const screen = render(<Download isEditModeEnabled contentModule={downloadContentModule} onUpdateModule={() => {}} />);
         expect(await screen.findByRole('button', { name: /datei hinzufügen/i })).toBeInTheDocument();
-        done();
     });
 
-    it('should render the show mode when editModeEnabled is not given', async done => {
+    it('should render the show mode when editModeEnabled is not given', async () => {
         const screen = render(<Download contentModule={downloadContentModule} onUpdateModule={() => {}} />);
         expect(await screen.findAllByRole('link', { name: /download/i })).toHaveLength(3);
-        done();
     });
 
 });

@@ -35,7 +35,7 @@ describe('component/edit/GroupSelect', () => {
     });
 
     describe('disabled prop', () => {
-        it('should disable the input field', async done => {
+        it('should disable the input field', async () => {
             const screen = render(
                 <GroupSelect disabled selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
@@ -44,11 +44,9 @@ describe('component/edit/GroupSelect', () => {
             const input = await screen.findByRole('textbox');
             expect(input).toBeVisible();
             expect(input).toBeDisabled();
-
-            done();
         });
 
-        it('should disable the remove group button', async done => {
+        it('should disable the remove group button', async () => {
             const screen = render(
                 <GroupSelect disabled selectedGroups={[schuelerGroup]} onSelectGroups={() => {}} />,
                 {}
@@ -57,11 +55,9 @@ describe('component/edit/GroupSelect', () => {
             const removeButton = await screen.findByLabelText('Gruppe "Schüler" entfernen')
             expect(removeButton).toBeVisible();
             expect(removeButton).toBeDisabled();
-
-            done();
         });
 
-        it('should disable the publicly available checkbox', async done => {
+        it('should disable the publicly available checkbox', async () => {
             const screen = render(
                 <GroupSelect disabled selectedGroups={[schuelerGroup]} onSelectGroups={() => {}} />,
                 {}
@@ -70,13 +66,11 @@ describe('component/edit/GroupSelect', () => {
             const checkbox = await screen.findByRole('checkbox');
 
             expect(checkbox).toBeDisabled();
-
-            done();
         });
     });
 
     describe('publicly available checkbox', () => {
-        it('should be checked when no groups are selected', async done => {
+        it('should be checked when no groups are selected', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
@@ -85,11 +79,9 @@ describe('component/edit/GroupSelect', () => {
             const selection = await screen.findByLabelText(/alle sichtbar/i);
 
             expect(selection).toBeChecked();
-
-            done();
         });
 
-        it('should not be checked when a group is selected', async done => {
+        it('should not be checked when a group is selected', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[lehrerGroup]} onSelectGroups={() => {}} />,
                 {}
@@ -98,11 +90,9 @@ describe('component/edit/GroupSelect', () => {
             const selection = await screen.findByLabelText(/alle sichtbar/i);
 
             expect(selection).not.toBeChecked();
-
-            done();
         });
 
-        it('should add all groups when checkbox is unchecked', async done => {
+        it('should add all groups when checkbox is unchecked', async () => {
             const callback = jest.fn(newGroups => {
                 expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual(['Administrator', 'Lehrer', 'Schüler', 'Eltern']);
             });
@@ -118,11 +108,9 @@ describe('component/edit/GroupSelect', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-
-            done();
         });
 
-        it('should remove all groups when checkbox is checked', async done => {
+        it('should remove all groups when checkbox is checked', async () => {
             const callback = jest.fn(newGroups => {
                 expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual([]);
             });
@@ -138,8 +126,6 @@ describe('component/edit/GroupSelect', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
-
-            done();
         });
 
         it('should not show element when hidePublicGroupSelection prop is given', () => {
@@ -160,7 +146,7 @@ describe('component/edit/GroupSelect', () => {
     });
 
     describe ('selection display', () => {
-        it('should show selected group if one is selected', async done => {
+        it('should show selected group if one is selected', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[adminGroup]} onSelectGroups={() => {}} />,
                 {}
@@ -169,11 +155,9 @@ describe('component/edit/GroupSelect', () => {
             const selection = await screen.findByTestId('GroupSelectSelection');
 
             expect(selection).toHaveTextContent(/Administrator/i);
-
-            done();
         });
 
-        it('should show selected groups (in order) if multiple are selected', async done => {
+        it('should show selected groups (in order) if multiple are selected', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[lehrerGroup, schuelerGroup, adminGroup]} onSelectGroups={() => {}} />,
                 {}
@@ -182,13 +166,11 @@ describe('component/edit/GroupSelect', () => {
             const selection = await screen.findByTestId('GroupSelectSelection');
 
             expect(selection).toHaveTextContent(/AdministratorLehrerSchüler/i);
-
-            done();
         });
     });
 
     describe('should manipulate selected groups', () => {
-        it('should send deselection request when clicking on group\'s "X"', async done => {
+        it('should send deselection request when clicking on group\'s "X"', async () => {
             const callback = jest.fn(newGroups => {
                 expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual(['Administrator', 'Lehrer']);
             });
@@ -205,13 +187,11 @@ describe('component/edit/GroupSelect', () => {
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled()
             });
-
-            done();
         });
     });
 
     describe('listbox options', () => {
-        it('should provide all groups as options when clicking into the input field', async done => {
+        it('should provide all groups as options when clicking into the input field', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
@@ -225,11 +205,9 @@ describe('component/edit/GroupSelect', () => {
             expect(screen.getByRole('option', { name: 'Schüler' })).toBeVisible();
 
             await screen.findByRole('listbox');
-
-            done();
         });
 
-        it('should filter the groups when entering text into the search field', async done => {
+        it('should filter the groups when entering text into the search field', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
@@ -248,12 +226,9 @@ describe('component/edit/GroupSelect', () => {
             expect(screen.queryByRole('option', { name: 'Lehrer' })).toBeNull();
             expect(screen.queryByRole('option', { name: 'Eltern' })).toBeNull();
             expect(screen.queryByRole('option', { name: 'Schüler' })).toBeVisible();
-
-            done();
-
         });
 
-        it('should reset the search filter when searchfield is blurred', async done => {
+        it('should reset the search filter when searchfield is blurred', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
@@ -265,20 +240,19 @@ describe('component/edit/GroupSelect', () => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
 
-            await fireEvent(screen.getByRole('textbox'), createEvent.blur(screen.getByRole('textbox')));
+            const textbox = screen.getByRole('textbox');
 
-            await waitFor(() => {
-                expect(screen.queryByRole('listbox')).toBeNull();
-            });
+            fireEvent(textbox, createEvent.blur(screen.getByRole('textbox')));
+
             await waitFor(() => {
                 expect(screen.getByRole('textbox')).toHaveValue('');
             });
-
-            done();
-
+            await waitFor(() => {
+                expect(screen.queryByRole('listbox')).toBeNull();
+            });
         });
 
-        it('should show selected options with a checkmark', async done => {
+        it('should show selected options with a checkmark', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[lehrerGroup]} onSelectGroups={() => {}} />,
                 {}
@@ -289,11 +263,9 @@ describe('component/edit/GroupSelect', () => {
             const selectedOption = screen.getByRole('option', { name: 'Lehrer', selected: true });
             expect(selectedOption).not.toBeNull();
             expect(selectedOption).toBeVisible();
-
-            done();
         });
 
-        it('should not show checkmark when element is not selected', async done => {
+        it('should not show checkmark when element is not selected', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[lehrerGroup]} onSelectGroups={() => {}} />,
                 {}
@@ -304,8 +276,6 @@ describe('component/edit/GroupSelect', () => {
             const selectedOption = screen.getByRole('option', { name: 'Schüler', selected: false });
             const icon = selectedOption.querySelector('svg');
             expect(icon).toHaveStyle({color: 'transparent'});
-
-            done();
         });
 
         describe('selecting a group', () => {
@@ -325,7 +295,7 @@ describe('component/edit/GroupSelect', () => {
                 ]
             };
 
-            it('should select a group after having clicked on it', async done => {
+            it('should select a group after having clicked on it', async () => {
                 const callback = jest.fn(groups => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual(['Administrator', 'Lehrer', 'Schüler']);
                 });
@@ -348,11 +318,9 @@ describe('component/edit/GroupSelect', () => {
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
-
-                done();
             });
 
-            it('should select only all admin groups after having clicked on one', async done => {
+            it('should select only all admin groups after having clicked on one', async () => {
                 const callback = jest.fn(groups => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual(['Administrator', 'Administrator2']);
                 });
@@ -376,11 +344,9 @@ describe('component/edit/GroupSelect', () => {
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
-
-                done();
             });
 
-            it('should deselect a selected non-admin group after having clicked on it', async done => {
+            it('should deselect a selected non-admin group after having clicked on it', async () => {
                 const callback = jest.fn(groups => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual(['Administrator']);
                 });
@@ -404,11 +370,9 @@ describe('component/edit/GroupSelect', () => {
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
-
-                done();
             });
 
-            it('should deselect all selected groups after having clicked on a selected admin group', async done => {
+            it('should deselect all selected groups after having clicked on a selected admin group', async () => {
                 const callback = jest.fn(groups => {
                     expect(groups.map((g: UserGroupModel) => g.name)).toEqual([]);
                 });
@@ -432,12 +396,10 @@ describe('component/edit/GroupSelect', () => {
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
-
-                done();
             });
 
             describe('with disableGroupExclusivity enabled', () => {
-                it('should select a group after having clicked on it', async done => {
+                it('should select a group after having clicked on it', async () => {
                     const callback = jest.fn(groups => {
                         expect(groups.map((g: UserGroupModel) => g.name)).toEqual(['Administrator', 'Lehrer', 'Schüler']);
                     });
@@ -460,11 +422,9 @@ describe('component/edit/GroupSelect', () => {
                     await waitFor(() => {
                         expect(callback).toHaveBeenCalled();
                     });
-
-                    done();
                 });
 
-                it('should deselect a selected group after having clicked on it', async done => {
+                it('should deselect a selected group after having clicked on it', async () => {
                     const callback = jest.fn(groups => {
                         expect(groups.map((g: UserGroupModel) => g.name)).toEqual(['Lehrer']);
                     });
@@ -487,8 +447,6 @@ describe('component/edit/GroupSelect', () => {
                     await waitFor(() => {
                         expect(callback).toHaveBeenCalled();
                     });
-
-                    done();
                 });
             });
         });

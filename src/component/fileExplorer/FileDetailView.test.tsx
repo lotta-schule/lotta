@@ -108,17 +108,16 @@ describe('component/fileExplorer/FileDetailView', () => {
 
 
     describe('should show basic file information', () => {
-        it('should show the filename', async done => {
+        it('should show the filename', async () => {
             const { findByText } = render(
                 <MockedProvider mocks={mocks} addTypename={false}>
                     <FileDetailView file={file} />
                 </MockedProvider>
             );
             await findByText('Dateiname.jpg');
-            done();
         });
 
-        it('should show the previewImage for image files', async done => {
+        it('should show the previewImage for image files', async () => {
             const { findByTestId } = render(
                 <MockedProvider mocks={mocks} addTypename={false}>
                     <FileDetailView file={file} />
@@ -126,10 +125,9 @@ describe('component/fileExplorer/FileDetailView', () => {
             );
             const previewImage = await findByTestId('PreviewImage') as HTMLImageElement;
             expect(previewImage.src).toContain('https://fakes3/meinbild.jpg');
-            done();
         });
 
-        it('should show not show a previewImage for Pdf document without image preview', async done => {
+        it('should show not show a previewImage for Pdf document without image preview', async () => {
             const pdfDocument = {
                 ...file,
                 id: '4544',
@@ -157,13 +155,12 @@ describe('component/fileExplorer/FileDetailView', () => {
             );
             await findByText('Dokument.pdf');
             expect(queryByTestId('PreviewImage')).toBeNull();
-            done();
         });
 
     });
     describe('should download and show extended information', () => {
 
-        it('should download more information', async done => {
+        it('should download more information', async () => {
             const pdfDocument = {
                 ...file,
                 id: '4544',
@@ -199,10 +196,9 @@ describe('component/fileExplorer/FileDetailView', () => {
             });
             await findByTestId('AuthorsListItem');
 
-            done();
         });
 
-        it('should show the author of the file', async done => {
+        it('should show the author of the file', async () => {
             const { findByTestId, container } = render(
                 <MockedProvider mocks={mocks} addTypename={false}>
                     <FileDetailView file={file} />
@@ -212,10 +208,9 @@ describe('component/fileExplorer/FileDetailView', () => {
             await findByTestId('AuthorsListItem');
 
             expect(container).toHaveTextContent('Autor:Che');
-            done();
         });
 
-        it('should show the file\'s usage count', async done => {
+        it('should show the file\'s usage count', async () => {
 
             const { findByTestId } = render(
                 <FileDetailView file={usedFile} />,
@@ -224,11 +219,10 @@ describe('component/fileExplorer/FileDetailView', () => {
 
             const usageListItem = await findByTestId('UsageListItem');
             expect(usageListItem).toHaveTextContent('4x');
-            done();
         });
 
 
-        it('should show the file\'s conversions count', async done => {
+        it('should show the file\'s conversions count', async () => {
             const file: FileModel = {
                 ...movieFile,
                 userId: user.id,
@@ -255,7 +249,6 @@ describe('component/fileExplorer/FileDetailView', () => {
             const conversionsListItem = await findByTestId('FileConversionsListItem')
             expect(conversionsListItem).toBeDefined();
             expect(conversionsListItem).toHaveTextContent('7 Formate');
-            done();
         });
     });
 
