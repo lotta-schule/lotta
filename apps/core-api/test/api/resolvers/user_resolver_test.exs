@@ -202,7 +202,7 @@ defmodule Api.UserResolverTest do
     """
     test "returns the user last seen for self", %{user: user, user_jwt: user_jwt} do
       user
-      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
+      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.local_now()})
       |> Repo.update!()
 
       res =
@@ -211,13 +211,20 @@ defmodule Api.UserResolverTest do
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "user" => %{
-                   "last_seen" => "2020-11-14T00:00:00"
+                   "last_seen" => last_seen
                  }
                }
-             }
+             } = res
+
+      diff =
+        NaiveDateTime.local_now()
+        |> NaiveDateTime.diff(NaiveDateTime.from_iso8601!(last_seen), :second)
+
+      # difference must be less than 1 minute
+      assert diff < 60
     end
 
     test "returns the user last_seen for admin", %{user: user, admin_jwt: admin_jwt} do
