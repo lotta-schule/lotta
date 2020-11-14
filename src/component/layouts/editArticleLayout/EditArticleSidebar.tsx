@@ -94,7 +94,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
     }
 
     return (
-        <Card className={styles.root}>
+        <Card className={styles.root} data-testid="EditArticleSidebar">
             <CardContent>
                 <Typography variant="h6" align="center">
                     Beitrags-Einstellungen
