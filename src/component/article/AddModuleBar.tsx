@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import * as React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, Grid } from '@material-ui/core';
 import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined, Feedback, TableChart } from '@material-ui/icons';
@@ -21,7 +21,7 @@ export interface AddModuleBarProps {
     onAddModule(module: ContentModuleModel): void;
 }
 
-export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddModule }) => {
+export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
 
     const styles = useStyles();
     const [currentUser] = useCurrentUser();
@@ -30,7 +30,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
 
     return (
         <div className={styles.root}>
-            <Typography style={{ marginBottom: '1em' }}>Füge ein Modul zum Beitrag hinzu, indem du darauf klickst.</Typography>
+            <Typography style={{ marginBottom: '1em' }}>Wähle ein Modul aus, das du zum Beitrag hinzufügen möchtest.</Typography>
             <Grid
                 container
                 direction={'row'}
@@ -49,7 +49,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 sortKey: null!,
                                 type: ContentModuleType.TEXT,
                                 content: (() => {
-                                    return { nodes: [{ type: 'paragraph', children: [{ text: 'lorem ipsum ...' }] }] };
+                                    return { nodes: [{ type: 'paragraph', children: [{ text: 'Dein Text ...' }] }] };
                                 })(),
                                 files: [],
                             });
@@ -65,7 +65,7 @@ export const AddModuleBar: FunctionComponent<AddModuleBarProps> = memo(({ onAddM
                                 id: createId(),
                                 sortKey: null!,
                                 type: ContentModuleType.TITLE,
-                                content: { text: 'Titel' },
+                                content: { title: 'Deine Überschrift ...' },
                                 files: [],
                             });
                         }}
