@@ -1,11 +1,11 @@
-import { useCallback, useEffect } from 'react';
+import * as React from 'react';
 import throttle from 'lodash/throttle';
 
 export const useScrollEvent = (callback: (e: Event) => void, throttleThreshold: number = 250, dependencies: unknown[] = []) => {
 
-    const scrollCallback = useCallback(callback, dependencies);
+    const scrollCallback = React.useCallback(callback, [callback, ...dependencies]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         const throttledHandleScroll = throttle(scrollCallback, throttleThreshold);
         window.addEventListener('scroll', throttledHandleScroll);
         return () => window.removeEventListener('scroll', throttledHandleScroll);

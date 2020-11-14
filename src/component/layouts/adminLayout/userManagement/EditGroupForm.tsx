@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import * as React from 'react';
 import { UserGroupModel, ID, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/client/useUserGroups';
 import {
@@ -11,7 +11,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import { EnrollmentTokensEditor } from 'component/layouts/EnrollmentTokensEditor';
 
-export interface EditGroupForm {
+export interface EditGroupFormProps {
     group: UserGroupModel;
 }
 
@@ -31,15 +31,15 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
+export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
     const styles = useStyles();
     const groups = useUserGroups();
 
-    const [name, setName] = useState(group.name);
-    const [isAdminGroup, setIsAdminGroup] = useState(group.isAdminGroup);
-    const [enrollmentTokens, setEnrollmentTokens] = useState((group.enrollmentTokens || []).map(t => t.token));
+    const [name, setName] = React.useState(group.name);
+    const [isAdminGroup, setIsAdminGroup] = React.useState(group.isAdminGroup);
+    const [enrollmentTokens, setEnrollmentTokens] = React.useState((group.enrollmentTokens || []).map(t => t.token));
 
-    const [isDeleteUserGroupDialogOpen, setIsDeleteUserGroupDialogOpen] = useState(false);
+    const [isDeleteUserGroupDialogOpen, setIsDeleteUserGroupDialogOpen] = React.useState(false);
 
     const { data, loading: isLoading, error: loadDetailsError } = useQuery<{ group: UserGroupModel }, { id: ID }>(GetGroupQuery, {
         variables: {
@@ -48,7 +48,7 @@ export const EditGroupForm = memo<EditGroupForm>(({ group }) => {
     });
     const [updateGroup, { loading: isLoadingUpdateGroup, error: updateError }] = useMutation<{ group: UserGroupModel }, { id: ID, group: UserGroupInputModel }>(UpdateUserGroupMutation);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (data && data.group) {
             setName(data.group.name);
             setIsAdminGroup(data.group.isAdminGroup);
