@@ -8,7 +8,7 @@ afterEach(cleanup);
 
 describe('component/profile/ProfileArticles', () => {
 
-    it('should render a ProfileArticles without error', async done => {
+    it('should render a ProfileArticles without error', async () => {
         let didSendResponse = false;
         render(
             <ProfileArticles />,
@@ -34,7 +34,6 @@ describe('component/profile/ProfileArticles', () => {
         await waitFor(() => {
             expect(didSendResponse).toEqual(true);
         });
-        done();
     });
 
 });

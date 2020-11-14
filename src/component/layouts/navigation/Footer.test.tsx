@@ -13,7 +13,7 @@ afterEach(cleanup);
 
 describe('component/layouts/Footer', () => {
 
-    it('should render the privacy link in the footer when there are no sidenav categories', async done => {
+    it('should render the privacy link in the footer when there are no sidenav categories', async () => {
         const noSidenavCategoriesMock = [{
             request: { query: GetCategoriesQuery },
             result: () => {
@@ -38,10 +38,9 @@ describe('component/layouts/Footer', () => {
         const link = queryByTestId('SidenavLink');
         expect(link).not.toBeNull();
         expect(link).toHaveAttribute('href', '/privacy');
-        done();
     });
 
-    it('when present, should render sidenav category links next to privacy link', async done => {
+    it('when present, should render sidenav category links next to privacy link', async () => {
         const sidenavCategoriesMock = [{
             request: { query: GetCategoriesQuery },
             result: { data: { categories: allCategories } }
@@ -58,11 +57,9 @@ describe('component/layouts/Footer', () => {
         expect(sidenavLinks.find(l => l.getAttribute('href') === '/privacy')).toBeTruthy();
         expect(sidenavLinks.find(l => l.getAttribute('href') === '/c/4-Impressum')).toBeTruthy();
         expect(sidenavLinks.find(l => l.getAttribute('href') === '/c/5-Datenschutz')).toBeTruthy();
-
-        done();
     });
 
-    it('A sidenav category leading to an external site should be set accordingly', async done => {
+    it('A sidenav category leading to an external site should be set accordingly', async () => {
         const noSidenavCategoriesMock = [{
             request: { query: GetCategoriesQuery },
             result: () => {
@@ -99,7 +96,6 @@ describe('component/layouts/Footer', () => {
         const link = screen.queryByRole('link', { name: /external/i });
         expect(link).not.toBeNull();
         expect(link).toHaveAttribute('href', 'https://google.com');
-        done();
     });
 
 });

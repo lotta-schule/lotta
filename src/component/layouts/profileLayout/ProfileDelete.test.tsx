@@ -46,7 +46,7 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
 
     });
 
-    it('should be able to go to second page and see own articles when clicking on button', async done => {
+    it('should be able to go to second page and see own articles when clicking on button', async () => {
         const screen = await render(
             <ProfileDelete />,
             {},
@@ -84,11 +84,9 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep2Card')).toBeVisible();
         });
-
-        done();
     }, 10_000);
 
-    it('should be able to go to third page after having seen the first and the second one', async done => {
+    it('should be able to go to third page after having seen the first and the second one', async () => {
         const screen = await render(
             <ProfileDelete />,
             {},
@@ -129,10 +127,9 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep3Card')).toBeVisible();
         });
-        done();
     }, 10_000);
 
-    it('The third page should not show the ProfileDeleteFileSelection or the tab bar if user has no files', async done => {
+    it('The third page should not show the ProfileDeleteFileSelection or the tab bar if user has no files', async () => {
         const screen = await render(
             <ProfileDelete />,
             {},
@@ -173,10 +170,9 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         expect(screen.queryByRole('tablist')).toBeNull();
         expect(screen.queryByRole('tabpanel', { name: /dateien aus beiträgen übergeben/i})).toBeNull();
         expect(screen.queryByRole('tabpanel', { name: /alle dateien überprüfen/i})).toBeVisible();
-        done();
     }, 10_000);
 
-    it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async done => {
+    it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async () => {
         let didCallDeleteMutation = false;
         const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
@@ -238,8 +234,6 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         await waitFor(() => {
             expect(didCallDeleteMutation).toEqual(true);
         });
-
-        done();
     }, 25_000);
 
 });

@@ -9,44 +9,40 @@ import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 describe('component/layouts/profileLayout/ProfileData', () => {
 
     describe('show user data', () => {
-        it('should show an input with the username', async done => {
+        it('should show an input with the username', async () => {
             const screen = render(
                 <ProfileData />,
                 {}, { currentUser: SomeUser, useCache: true }
             );
             expect(await screen.findByLabelText(/vor- und nachname/i)).toHaveValue('Ernesto Guevara');
-            done();
         });
 
-        it('should show an input with the user\'s email', async done => {
+        it('should show an input with the user\'s email', async () => {
             const screen = render(
                 <ProfileData />,
                 {}, { currentUser: SomeUser, useCache: true }
             );
             expect(await screen.findByLabelText(/Email-Adresse/i)).toHaveValue('user@lotta.schule');
-            done();
         });
 
-        it('should show an input with the user\'s name, nickname and class', async done => {
+        it('should show an input with the user\'s name, nickname and class', async () => {
             const screen = render(
                 <ProfileData />,
                 {}, { currentUser: SomeUser, useCache: true }
             );
             expect(await screen.findByLabelText(/vor- und nachname/i)).toHaveValue('Ernesto Guevara');
             expect(await screen.findByLabelText(/spitzname/i)).toHaveValue('Che');
-            done();
         });
 
-        it('should check the corresponding checkbox if user is hiding his full name', async done => {
+        it('should check the corresponding checkbox if user is hiding his full name', async () => {
             const screen = render(
                 <ProfileData />,
                 {}, { currentUser: { ...SomeUser, hideFullName: true }, useCache: true }
             );
             expect(await screen.findByLabelText(/öffentlich verstecken/i)).toBeChecked();
-            done();
         });
 
-        it('should send a change request with the correct data', async done => {
+        it('should send a change request with the correct data', async () => {
             let didCallUpdateData = false;
             const mocks = [{
                 request: { query: UpdateProfileMutation, variables: { user: {
@@ -100,12 +96,11 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             await waitFor(() => {
                 expect(didCallUpdateData).toEqual(true);
             });
-            done();
         });
     });
 
     describe('User groups', () => {
-        it('should show all the user\'s groups', async done => {
+        it('should show all the user\'s groups', async () => {
             const screen = render(
                 <ProfileData />,
                 {}, { currentUser: { ...SomeUser, groups: [adminGroup, lehrerGroup, elternGroup], assignedGroups: [adminGroup, lehrerGroup] }, useCache: true }
@@ -115,12 +110,11 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             expect(groupsList).toHaveTextContent('Administrator');
             expect(groupsList).toHaveTextContent('Lehrer');
             expect(groupsList).toHaveTextContent('Eltern');
-            done();
         });
     });
 
     describe('Profile picture', () => {
-        it('should open the file selection dialog when "Change profile picture" is selected', async done => {
+        it('should open the file selection dialog when "Change profile picture" is selected', async () => {
             const screen = render(
                 <ProfileData />,
                 {},
@@ -139,12 +133,11 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             await waitFor(() => {
                 expect(getByText(document.body, /datei auswählen/i)).toBeInTheDocument();
             });
-            done();
         });
     });
 
     describe('Password', () => {
-        it('should open the change password dialog when the change password button is clicked', async done => {
+        it('should open the change password dialog when the change password button is clicked', async () => {
             const screen = render(
                 <ProfileData />,
                 {}, { currentUser: { ...SomeUser, hideFullName: true }, useCache: true }
@@ -155,7 +148,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             await waitFor(() => {
                 expect(getByRole(document.body, 'heading', { name: 'Passwort ändern' })).toBeInTheDocument();
             });
-            done();
         });
     });
 

@@ -16,14 +16,13 @@ describe('component/profile/ArticlesList', () => {
         );
     });
 
-    it('should sort the articles by date', async done => {
+    it('should sort the articles by date', async () => {
         const screen = render(
             <ArticlesList articles={allArticles} />,
             {}
         );
         const links = await screen.findAllByRole('link');
         expect(Array.from(links).map(link => link.textContent)).toEqual(['Weihnachtsmarkt', 'Klausurenplan', 'Schulfest', 'Viva La Revolucion', 'Computerexperten']);
-        done();
     });
 
     it('should show the article\'s preview image if one is available', () => {

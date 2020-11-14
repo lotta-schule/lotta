@@ -14,7 +14,7 @@ describe('component/fileExplorer/FileToolbar', () => {
 
     describe('in the root directory', () => {
 
-      it('should render the toolbar', async done => {
+      it('should render the toolbar', async () => {
 
           const { findByTestId } = render(
               (
@@ -25,11 +25,10 @@ describe('component/fileExplorer/FileToolbar', () => {
             { }, { currentUser: user }
           );
           await findByTestId('FileExplorerToolbarPath');
-          done();
       });
 
 
-      it('show only the CreateDirectoryButton for a non-admin user', async done => {
+      it('show only the CreateDirectoryButton for a non-admin user', async () => {
 
           const { queryByTestId, findByTestId } = render(
               (
@@ -47,10 +46,9 @@ describe('component/fileExplorer/FileToolbar', () => {
             expect(queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
             expect(queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
           });
-          done();
       });
 
-      it('show only the CreateDirectoryButton for a admin user', async done => {
+      it('show only the CreateDirectoryButton for a admin user', async () => {
 
           const { queryByTestId, findByTestId } = render(
               (
@@ -68,7 +66,6 @@ describe('component/fileExplorer/FileToolbar', () => {
               expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
               expect(queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
           });
-          done();
       });
 
     });
@@ -83,7 +80,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                 currentPath: [{ id: null }, directory]
             };
 
-      it('should render the toolbar and show the path', async done => {
+      it('should render the toolbar and show the path', async () => {
 
           const { queryByTestId } = render(
               (
@@ -97,11 +94,10 @@ describe('component/fileExplorer/FileToolbar', () => {
               expect(queryByTestId('FileExplorerToolbarPath')).toBeVisible();
               expect(queryByTestId('FileExplorerToolbarPath')).toHaveTextContent('/Logos');
           });
-          done();
       });
 
 
-      it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async done => {
+      it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
 
           const { queryByTestId } = render(
               (
@@ -119,10 +115,9 @@ describe('component/fileExplorer/FileToolbar', () => {
               expect(queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
               expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
           });
-          done();
       });
 
-      it('should not show the FileDetailInfo button if a file is being selected', async done => {
+      it('should not show the FileDetailInfo button if a file is being selected', async () => {
 
           const { queryByTestId } = render(
               (
@@ -140,7 +135,6 @@ describe('component/fileExplorer/FileToolbar', () => {
               expect(queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
               expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
           });
-          done();
       });
 
 
@@ -150,7 +144,7 @@ describe('component/fileExplorer/FileToolbar', () => {
               markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
           };
 
-          it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async done => {
+          it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
 
               const { queryByTestId } = render(
                   (
@@ -168,7 +162,6 @@ describe('component/fileExplorer/FileToolbar', () => {
                   expect(queryByTestId('FileExplorerToolbarMoveFileButton')).toBeVisible();
                   expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeVisible();
               });
-              done();
           });
 
       });
@@ -186,7 +179,7 @@ describe('component/fileExplorer/FileToolbar', () => {
 
         describe('as non-admin', () => {
 
-            it('should render the toolbar and show the path', async done => {
+            it('should render the toolbar and show the path', async () => {
 
                 const { queryByTestId } = render(
                     (
@@ -200,11 +193,10 @@ describe('component/fileExplorer/FileToolbar', () => {
                     expect(queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                     expect(queryByTestId('FileExplorerToolbarPath')).toHaveTextContent('/Schulweit');
                 });
-                done();
             });
 
 
-            it('should show the FileDetailInfo button, but hide the others', async done => {
+            it('should show the FileDetailInfo button, but hide the others', async () => {
 
                 const { queryByTestId } = render(
                     (
@@ -222,7 +214,6 @@ describe('component/fileExplorer/FileToolbar', () => {
                     expect(queryByTestId('FileExplorerToolbarMoveFileButton')).toBeNull();
                     expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeNull();
                 });
-                done();
             });
 
             describe('when a file is selected', () => {
@@ -231,7 +222,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                     markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
                 };
 
-                it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async done => {
+                it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
 
                     const { queryByTestId } = render(
                         (
@@ -249,7 +240,6 @@ describe('component/fileExplorer/FileToolbar', () => {
                         expect(queryByTestId('FileExplorerToolbarMoveFileButton')).toBeNull();
                         expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeNull();
                     });
-                    done();
                 });
 
             });
@@ -259,7 +249,7 @@ describe('component/fileExplorer/FileToolbar', () => {
 
             const adminUser = { ...user, groups: [adminGroup] };
 
-            it('should render the toolbar and show the path', async done => {
+            it('should render the toolbar and show the path', async () => {
 
                 const { queryByTestId } = render(
                     (
@@ -273,11 +263,10 @@ describe('component/fileExplorer/FileToolbar', () => {
                     expect(queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                     expect(queryByTestId('FileExplorerToolbarPath')).toHaveTextContent('/Schulweit');
                 });
-                done();
             });
 
 
-            it('should show the FileDetailInfo button, but hide the others', async done => {
+            it('should show the FileDetailInfo button, but hide the others', async () => {
 
                 const { queryByTestId } = render(
                     (
@@ -295,7 +284,6 @@ describe('component/fileExplorer/FileToolbar', () => {
                     expect(queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
                     expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
                 });
-                done();
             });
 
             describe('when a file is selected', () => {
@@ -304,7 +292,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                     markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
                 };
 
-                it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async done => {
+                it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
 
                     const { queryByTestId } = render(
                         (
@@ -322,7 +310,6 @@ describe('component/fileExplorer/FileToolbar', () => {
                         expect(queryByTestId('FileExplorerToolbarMoveFileButton')).toBeVisible();
                         expect(queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeVisible();
                     });
-                    done();
                 });
 
             });
