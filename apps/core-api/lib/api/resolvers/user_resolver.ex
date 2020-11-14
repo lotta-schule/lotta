@@ -16,15 +16,15 @@ defmodule Api.UserResolver do
   alias Api.Accounts.User
   alias Api.Queue.EmailPublisher
 
-  def resolve_name(user, _args, %{context: context}) do
+  def resolve_name(user, _args, %{context: %{current_user: current_user}}) do
     cond do
-      context[:current_user] && context.current_user.id == user.id ->
+      current_user.id == user.id ->
         {:ok, user.name}
 
-      context[:current_user] && user_is_admin?(context.current_user) ->
+      user_is_admin?(current_user) ->
         {:ok, user.name}
 
-      user.hide_full_name ->
+      !user.hide_full_name ->
         {:ok, user.name}
 
       true ->
@@ -32,18 +32,38 @@ defmodule Api.UserResolver do
     end
   end
 
-  def resolve_email(user, _args, %{context: context}) do
+  def resolve_name(_user, _args, _info), do: {:ok, nil}
+
+  def resolve_email(user, _args, %{context: %{current_user: current_user}}) do
     cond do
-      context[:current_user] && context.current_user.id == String.to_integer(user.id) ->
+      current_user.id == user.id ->
         {:ok, user.email}
 
-      context[:current_user] && user_is_admin?(context.current_user) ->
+      user_is_admin?(current_user) ->
         {:ok, user.email}
 
       true ->
         {:error, "Die Email des Nutzers ist geheim."}
     end
   end
+
+  def resolve_email(_user, _args, _info), do: {:error, "Die Email des Nutzers ist geheim."}
+
+  def resolve_last_seen(user, _args, %{context: %{current_user: current_user}}) do
+    cond do
+      current_user.id == user.id ->
+        {:ok, user.last_seen}
+
+      user_is_admin?(current_user) ->
+        {:ok, user.last_seen}
+
+      true ->
+        {:error, "Der Online-Status des Nutzers ist geheim."}
+    end
+  end
+
+  def resolve_last_seen(_user, _args, _info),
+    do: {:error, "Der Online-Status des Nutzers ist geheim."}
 
   def get_current(_args, %{context: %{current_user: current_user}}) do
     {:ok, current_user}
@@ -69,13 +89,15 @@ defmodule Api.UserResolver do
     {:ok, tokens}
   end
 
-  def all_with_groups(_args, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      {:ok, Accounts.list_users_with_groups()}
+  def all(_args, %{context: %{current_user: current_user}}) do
+    if user_is_admin?(current_user) do
+      {:ok, Accounts.list_users()}
     else
       {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
     end
   end
+
+  def all(_args, _info), do: {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
 
   def search(%{searchtext: searchtext}, %{context: context}) do
     cond do
@@ -90,17 +112,15 @@ defmodule Api.UserResolver do
     end
   end
 
-  def get(%{id: id}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      try do
-        {:ok, Accounts.get_user!(String.to_integer(id))}
-      rescue
-        NoResultsError -> {:ok, nil}
-      end
-    else
-      {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
+  def get(%{id: id}, %{context: %{current_user: current_user}}) when not is_nil(current_user) do
+    try do
+      {:ok, Accounts.get_user!(String.to_integer(id))}
+    rescue
+      NoResultsError -> {:ok, nil}
     end
   end
+
+  def get(_args, _info), do: {:error, "Nur angemeldete Nutzer dürfen Nutzer abrufen."}
 
   def register(%{user: user_params} = args, _info) do
     user_params =
@@ -175,7 +195,10 @@ defmodule Api.UserResolver do
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
       error ->
-        if error, do: Logger.warn(inspect(error))
+        if error do
+          Logger.warn(inspect(error))
+        end
+
         {:error, "Die Seite ist nicht mehr gültig. Starte den Vorgang erneut."}
     end
   end

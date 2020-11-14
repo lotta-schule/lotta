@@ -45,6 +45,229 @@ defmodule Api.UserResolverTest do
      }}
   end
 
+  describe "resolve name" do
+    @query """
+    query GetUser($id: ID!) {
+      user(id: $id) {
+        name
+      }
+    }
+    """
+    test "returns the user name for self", %{user: user, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "name" => "Eike Wiewiorra"
+                 }
+               }
+             }
+    end
+
+    test "returns the user name for admin", %{user: user, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "name" => "Eike Wiewiorra"
+                 }
+               }
+             }
+    end
+
+    test "returns the user name for others if user does not hide full name", %{
+      user2: user2,
+      user_jwt: user_jwt
+    } do
+      user2
+      |> Ecto.Changeset.change(%{hide_full_name: false})
+      |> Repo.update!()
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "name" => "Marie Curie"
+                 }
+               }
+             }
+    end
+
+    test "returns nil for others if user does hide full name", %{
+      user2: user2,
+      user_jwt: user_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "name" => nil
+                 }
+               }
+             }
+    end
+  end
+
+  describe "resolve email" do
+    @query """
+    query GetUser($id: ID!) {
+      user(id: $id) {
+        email
+      }
+    }
+    """
+    test "returns the user email for self", %{user: user, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
+                 }
+               }
+             }
+    end
+
+    test "returns the user email for admin", %{user: user, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
+                 }
+               }
+             }
+    end
+
+    test "does not return the user email for others", %{user2: user2, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "email" => nil
+                 }
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 5, "line" => 3}],
+                   "message" => "Die Email des Nutzers ist geheim.",
+                   "path" => ["user", "email"]
+                 }
+               ]
+             }
+    end
+  end
+
+  describe "resolve last seen" do
+    @query """
+    query GetUser($id: ID!) {
+      user(id: $id) {
+        last_seen
+      }
+    }
+    """
+    test "returns the user last seen for self", %{user: user, user_jwt: user_jwt} do
+      user
+      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.from_iso8601!("2020-11-14T00:00:00")})
+      |> Repo.update!()
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "last_seen" => "2020-11-14T00:00:00"
+                 }
+               }
+             }
+    end
+
+    test "returns the user last_seen for admin", %{user: user, admin_jwt: admin_jwt} do
+      user
+      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.from_iso8601!("2020-11-14T00:00:00")})
+      |> Repo.update!()
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "last_seen" => "2020-11-14T00:00:00"
+                 }
+               }
+             }
+    end
+
+    test "does not return the user last_seen for others", %{user2: user2, user_jwt: user_jwt} do
+      user2
+      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.from_iso8601!("2020-11-14T00:00:00")})
+      |> Repo.update!()
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "user" => %{
+                   "last_seen" => nil
+                 }
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 5, "line" => 3}],
+                   "message" => "Der Online-Status des Nutzers ist geheim.",
+                   "path" => ["user", "last_seen"]
+                 }
+               ]
+             }
+    end
+  end
+
   describe "currentUser query" do
     @query """
     {
@@ -112,6 +335,11 @@ defmodule Api.UserResolverTest do
                "data" => %{
                  "users" => [
                    %{
+                     "email" => "alexis.rinaldoni@einsa.net",
+                     "name" => "Alexis Rinaldoni",
+                     "nickname" => nil
+                   },
+                   %{
                      "email" => "alexis.rinaldoni@lotta.schule",
                      "name" => "Alexis Rinaldoni",
                      "nickname" => "Der Meister"
@@ -122,9 +350,29 @@ defmodule Api.UserResolverTest do
                      "nickname" => "Billy"
                    },
                    %{
+                     "email" => "doro@lotta.schule",
+                     "name" => "Dorothea Musterfrau",
+                     "nickname" => "Doro"
+                   },
+                   %{
+                     "email" => "drevil@lotta.schule",
+                     "name" => "Dr Evil",
+                     "nickname" => "drEvil"
+                   },
+                   %{
                      "email" => "eike.wiewiorra@lotta.schule",
                      "name" => "Eike Wiewiorra",
                      "nickname" => "Chef"
+                   },
+                   %{
+                     "email" => "mcurie@lotta.schule",
+                     "name" => "Marie Curie",
+                     "nickname" => "Polonium"
+                   },
+                   %{
+                     "email" => "maxi@lotta.schule",
+                     "name" => "Max Mustermann",
+                     "nickname" => "MaXi"
                    }
                  ]
                }
@@ -306,10 +554,8 @@ defmodule Api.UserResolverTest do
 
   describe "user query" do
     @query """
-    query user($id: ID!) {
+    query GetUser($id: ID!) {
       user(id: $id) {
-        email
-        name
         nickname
       }
     }
@@ -328,8 +574,6 @@ defmodule Api.UserResolverTest do
       assert res == %{
                "data" => %{
                  "user" => %{
-                   "email" => "eike.wiewiorra@lotta.schule",
-                   "name" => "Eike Wiewiorra",
                    "nickname" => "Chef"
                  }
                }
@@ -352,24 +596,23 @@ defmodule Api.UserResolverTest do
              }
     end
 
-    test "should return an error if user is not an admin", %{user_jwt: user_jwt} do
+    test "should return user with requested id if user is not an admin", %{
+      user: user,
+      user_jwt: user_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{id: 0})
+        |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
 
-      assert %{
+      assert res == %{
                "data" => %{
-                 "user" => nil
-               },
-               "errors" => [
-                 %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
-                   "path" => ["user"]
+                 "user" => %{
+                   "nickname" => "Chef"
                  }
-               ]
-             } = res
+               }
+             }
     end
 
     test "should return an error if user is not logged in" do
@@ -384,7 +627,7 @@ defmodule Api.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
+                   "message" => "Nur angemeldete Nutzer dürfen Nutzer abrufen.",
                    "path" => ["user"]
                  }
                ]

@@ -45,11 +45,11 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
-    field :last_seen, :naive_datetime
+    field :last_seen, :naive_datetime, resolve: &Api.UserResolver.resolve_last_seen/3
     field :name, :string, resolve: &Api.UserResolver.resolve_name/3
     field :class, :string
     field :nickname, :string
-    field :email, :string
+    field :email, :string, resolve: &Api.UserResolver.resolve_email/3
     field :hide_full_name, :boolean
     field :is_blocked, :boolean
 
