@@ -88,6 +88,7 @@ defmodule Api.Repo.Seeder do
       name: "Marie Curie",
       nickname: "Polonium",
       email: "mcurie@lotta.schule",
+      hide_full_name: true,
       password: "test456"
     })
 
