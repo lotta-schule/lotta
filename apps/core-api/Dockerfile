@@ -1,7 +1,7 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.11
+ARG ALPINE_VERSION=3.12
 
-FROM elixir:1.10.2-alpine AS builder
+FROM elixir:1.11.2-alpine AS builder
 
 ENV MIX_ENV=prod
 
@@ -13,8 +13,7 @@ RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache \
     git \
-    build-base \
-    erlang-inets
+    build-base
 
 # install hex + rebar
 RUN mix local.hex --force && \
@@ -50,7 +49,6 @@ RUN apk update && \
     bash \
     curl \
     openssl-dev \
-    erlang-crypto \
     libssl1.1
 
 RUN mkdir -p /app
