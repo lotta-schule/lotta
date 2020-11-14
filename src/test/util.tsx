@@ -1,5 +1,5 @@
 import React, { Reducer, FC, Suspense, useReducer, useEffect } from 'react';
-import { unionBy, pick } from 'lodash';
+import { pick } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react'
