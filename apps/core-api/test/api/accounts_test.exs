@@ -9,7 +9,7 @@ defmodule Api.AccountsTest do
   alias Api.Accounts.User
 
   describe "users" do
-    test "list_users_with_groups/1 returns the users with groups" do
+    test "list_users/0 returns all users" do
       user_group = Fixtures.fixture(:user_group)
       groups = [user_group]
       user = Fixtures.fixture(:registered_user)
@@ -21,7 +21,7 @@ defmodule Api.AccountsTest do
         |> put_assoc(:groups, groups)
         |> Repo.update!()
 
-      assert Enum.map(Accounts.list_users_with_groups(), fn u -> u.id end) == [user.id]
+      assert Enum.map(Accounts.list_users(), fn u -> u.id end) == [user.id]
     end
 
     test "get_user!/1 returns the user with given id" do

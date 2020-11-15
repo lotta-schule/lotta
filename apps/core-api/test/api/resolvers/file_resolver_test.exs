@@ -137,7 +137,7 @@ defmodule Api.FileResolverTest do
                    "filename" => "logo1.jpg",
                    "user" => %{
                      # full name not given to other users
-                     "name" => nil,
+                     "name" => "Alexis Rinaldoni",
                      "nickname" => "Der Meister"
                    },
                    "parentDirectory" => %{

@@ -15,7 +15,6 @@ defmodule Api.Accounts do
     User,
     UserGroup,
     GroupEnrollmentToken,
-    UserEnrollmentToken,
     Directory,
     File,
     FileConversion
@@ -34,30 +33,15 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> list_users_with_groups()
+      iex> list_users()
       [%User{}, ...]
 
   """
-  def list_users_with_groups() do
-    assigned_groups_query =
-      from u in User,
-        join: g in assoc(u, :groups),
-        distinct: true
-
-    dynamic_groups_query =
-      from u in User,
-        join: g in UserGroup,
-        join: ut in UserEnrollmentToken,
-        on: ut.user_id == u.id,
-        join: t in GroupEnrollmentToken,
-        on: g.id == t.group_id and t.token == ut.enrollment_token,
-        distinct: true
-
-    query =
-      from q in subquery(union(assigned_groups_query, ^dynamic_groups_query)),
-        order_by: [q.name, q.email]
-
-    Repo.all(query)
+  def list_users() do
+    from(u in User,
+      order_by: [u.name, u.email]
+    )
+    |> Repo.all()
   end
 
   def get_admin_users() do

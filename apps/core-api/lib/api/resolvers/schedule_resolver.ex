@@ -12,10 +12,15 @@ defmodule Api.ScheduleResolver do
 
     case widget.configuration do
       %{"username" => username, "password" => password, "schoolId" => school_id, "type" => type} ->
-        url =
-          "#{base_url}/schedule.json?class=#{class}&source=#{type}&schoolId=#{school_id}&username=#{
-            username
-          }&password=#{password}"
+        query_params = %{
+          class: class,
+          source: type,
+          schoolId: school_id,
+          username: username,
+          password: password
+        }
+
+        url = "#{base_url}/schedule.json?#{URI.encode_query(query_params)}"
 
         url =
           case args[:date] do

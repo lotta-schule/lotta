@@ -9,7 +9,7 @@ defmodule ApiWeb.Schema.Accounts do
     end
 
     field :users, list_of(:user) do
-      resolve(&Api.UserResolver.all_with_groups/2)
+      resolve(&Api.UserResolver.all/2)
     end
 
     field :search_users, list_of(:user) do
