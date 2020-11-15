@@ -4,7 +4,7 @@ defmodule Api.MixProject do
   def project do
     [
       app: :api,
-      version: "2.1.0",
+      version: "2.1.1",
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -71,7 +71,7 @@ defmodule Api.MixProject do
       {:comeonin, "~> 5.3.1"},
       {:bcrypt_elixir, "~> 2.2.0"},
       {:guardian, "~> 2.1.1"},
-      {:ex_aws, "~> 2.1.3"},
+      {:ex_aws, "~> 2.1.6"},
       {:ex_aws_s3, "~> 2.0.2"},
       {:hackney, "~> 1.15"},
       {:sweet_xml, "~> 0.6.6"},
