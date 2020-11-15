@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { makeStyles, Link, Typography } from '@material-ui/core';
 import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
@@ -32,16 +32,16 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const Footer = memo(() => {
+export const Footer = React.memo(() => {
     const styles = useStyles();
     const categories = useCategories()[0].filter(category => category.isSidenav);
-    const destProps = (category: CategoryModel): { to?: string; href?: string; } => {
+    const destProps = React.useCallback((category: CategoryModel): { to?: string; href?: string; } => {
         if (category.redirect && /^https?:\/\//.test(category.redirect)) {
             return { href: category.redirect, to: void 0 };
         } else {
             return { to: category.redirect ? category.redirect : Category.getPath(category), href: void 0 };
         }
-    };
+    }, []);
     return (
         <div className={styles.root}>
             <Typography className={styles.font}>

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import * as React from 'react';
 import { useTheme } from '@material-ui/core';
 import { ApolloError } from '@apollo/client';
 import { Message } from './Message';
@@ -9,16 +9,16 @@ export interface ErrorMessageProps {
     children?: any;
 }
 
-export const ErrorMessage = memo<ErrorMessageProps>(({ error, className, children }) => {
+export const ErrorMessage = React.memo<ErrorMessageProps>(({ error, className, children }) => {
     const theme = useTheme();
-    const errorMessage = useMemo(() => {
+    const errorMessage = React.useMemo(() => {
         const errorMessage = typeof error === 'string' ? error : error?.message;
         if (errorMessage) {
             return errorMessage.replace(/^GraphQL error: /, '');
         }
     }, [error]);
     return (
-        <Message color={theme.palette.error.main} message={errorMessage} className={className}>
+        <Message role={'alert'} color={theme.palette.error.main} message={errorMessage} className={className}>
             {children}
         </Message>
     )
