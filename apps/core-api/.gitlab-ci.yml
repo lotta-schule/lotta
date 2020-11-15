@@ -28,7 +28,7 @@ services:
 
 test:
   stage: test
-  image: elixir:1.10.2
+  image: elixir:1.11.2
   variables:
     MIX_ENV: test
     POSTGRES_PASSWORD: lotta
