@@ -176,7 +176,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ a
                     ))}
                 </Grid>
                 <Grid className={styles.mainSection}>
-                    <Typography gutterBottom className={styles.title}>
+                    <Typography gutterBottom className={styles.title} role={'heading'}>
                         {maybeLinked(article.title)}
                     </Typography>
                     <Typography className={styles.previewSection} variant={'subtitle2'}>
@@ -190,7 +190,12 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ a
                     <Grid container>
                         <Grid item xs={9} style={{ display: 'flex' }}>
                             <Grid item>
-                                <Typography className={styles.date} component={'div'} variant={'subtitle1'}>
+                                <Typography
+                                    className={clsx(styles.date, 'dt-updated')}
+                                    component={'time'}
+                                    variant={'subtitle1'}
+                                    dateTime={article.updatedAt}
+                                >
                                     {format(new Date(article.updatedAt), 'P', { locale: de }) + ' '}
                                 </Typography>
                             </Grid>
