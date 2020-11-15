@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { Typography, Link, Grid, makeStyles, Theme, Container, IconButton } from '@material-ui/core';
 import { Edit, Place } from '@material-ui/icons';
 import { fade } from '@material-ui/core/styles';
@@ -13,6 +13,7 @@ import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
 import { Article as ArticleUtil } from 'util/model/Article';
+import { useIsRetina } from 'util/useIsRetina';
 import clsx from 'clsx';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(theme => ({
@@ -137,8 +138,9 @@ interface ArticlePreviewProps {
     narrow?: boolean;
 }
 
-export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin, limitedHeight, isEmbedded, narrow }) => {
+export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin, isEmbedded, narrow }) => {
     const isMobile = useIsMobile();
+    const retinaMultiplier = useIsRetina() ? 2 : 1;
     const [currentUser] = useCurrentUser();
 
     const styles = useStyle({ isEmbedded, narrow });
@@ -167,7 +169,7 @@ export const ArticlePreviewStandardLayout = memo<ArticlePreviewProps>(({ article
                     {maybeLinked(article.previewImageFile && (
                         <img
                             className={styles.previewImage}
-                            src={`https://afdptjdxen.cloudimg.io/bound/400x300/foil1/${article.previewImageFile.remoteLocation}`}
+                            src={`https://afdptjdxen.cloudimg.io/bound/${400*retinaMultiplier}x${300*retinaMultiplier}/foil1/${article.previewImageFile.remoteLocation}`}
                             alt={`Vorschaubild zu ${article.title}`}
                         />
                     ))}
