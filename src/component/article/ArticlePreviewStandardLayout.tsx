@@ -141,6 +141,7 @@ interface ArticlePreviewProps {
 export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin, isEmbedded, narrow }) => {
     const isMobile = useIsMobile();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
+
     const [currentUser] = useCurrentUser();
 
     const styles = useStyle({ isEmbedded, narrow });
@@ -199,13 +200,13 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ a
                         </Grid>
                         {(!isMobile || isEmbedded) && (
                             <Grid item xs={3}>
-                                {(article.preview || showEditSection) && (
+                                {showEditSection && (
                                     <section>
                                         {showEditSection && (
                                             <div className={styles.buttonSection}>
-                                                {User.canEditArticle(currentUser, article) && (
+                                                {User.canEditArticle(currentUser, article) && !disableEdit && (
                                                     <IconButton
-                                                        aria-label="Edit"
+                                                        aria-label="Beitrag bearbeiten"
                                                         size="small"
                                                         className={clsx(styles.editButton, 'edit-button')}
                                                         component={CollisionLink}
@@ -214,9 +215,9 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ a
                                                         <Edit />
                                                     </IconButton>
                                                 )}
-                                                {User.isAdmin(currentUser) && (
+                                                {User.isAdmin(currentUser) && !disablePin && (
                                                     <IconButton
-                                                        aria-label="Pin"
+                                                        aria-label="Beitrag an der Kategorie anpinnen"
                                                         size="small"
                                                         className={clsx(styles.pinButton, { active: article.isPinnedToTop })}
                                                         onClick={() => toggleArticlePin()}
