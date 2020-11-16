@@ -81,7 +81,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
         ssr: false,
         onCompleted: (data) => {
             if (data.schedule) {
-                const newDateString = dateToDateString(parse(data.schedule.head.date.split(', ')[1], 'PPP', new Date(), { locale: de }));
+                const newDateString = dateToDateString(parse(data.schedule.head.date, 'PPPP', new Date(), { locale: de }));
                 if (!currentDate) {
                     client.writeQuery({ query: GetScheduleQuery, variables: { widgetId: widget.id, date: newDateString }, data, broadcast: false });
                 }
@@ -193,16 +193,16 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                 )}
                 <Typography variant={'caption'} className={styles.date}>
                     {lastScheduleData?.schedule ? (
-                        <Tooltip title={format(new Date(lastScheduleData.schedule.head.date), 'PP', { locale: de })}>
-                            <IconButton onClick={() => setCurrentDate(dateToDateString(lastScheduleData.schedule!.head.date))}>
+                        <Tooltip title={lastScheduleData.schedule.head.date}>
+                            <IconButton onClick={() => setCurrentDate(dateToDateString(parse(lastScheduleData.schedule!.head.date, 'PPPP', new Date(), { locale: de })))}>
                                 <ArrowBackIos />
                             </IconButton>
                         </Tooltip>
                     ) : <div style={{ width: 48 }} />}
                     <span>{currentScheduleData.schedule.head.date}</span>
                     {nextScheduleData?.schedule ? (
-                        <Tooltip title={format(new Date(nextScheduleData.schedule.head.date), 'PP', { locale: de })}>
-                            <IconButton onClick={() => setCurrentDate(dateToDateString(nextScheduleData.schedule!.head.date))}>
+                        <Tooltip title={nextScheduleData.schedule.head.date}>
+                            <IconButton onClick={() => setCurrentDate(dateToDateString(parse(nextScheduleData.schedule!.head.date, 'PPPP', new Date(), { locale: de })))}>
                                 <ArrowForwardIos />
                             </IconButton>
                         </Tooltip>
