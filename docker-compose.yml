@@ -5,11 +5,11 @@ services:
     image: node:15
     volumes:
       - .:/usr/src/svc:delegated
-      - /usr/src/app/node_modules
+      - /usr/src/svc/node_modules
     working_dir: /usr/src/svc
     ports:
       - 3000:3000
-    command: npm start
+    command: bash -c "npm install && npm run start"
     env_file: .env
     stdin_open: true
     tty: true
