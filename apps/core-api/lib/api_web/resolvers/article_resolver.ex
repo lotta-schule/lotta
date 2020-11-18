@@ -1,4 +1,4 @@
-defmodule Api.ArticleResolver do
+defmodule ApiWeb.ArticleResolver do
   @moduledoc """
     GraphQL Resolver Module for finding, creating, updating and deleting articles
   """

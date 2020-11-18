@@ -1,4 +1,4 @@
-defmodule Api.SystemResolver do
+defmodule ApiWeb.SystemResolver do
   @moduledoc """
     GraphQL Resolver Module for configuring system
   """

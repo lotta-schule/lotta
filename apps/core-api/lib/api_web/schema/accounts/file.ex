@@ -46,7 +46,8 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :parent_directory, :directory,
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
-    field :usage, list_of(:file_usage_location), resolve: &Api.FileResolver.resolve_file_usage/3
+    field :usage, list_of(:file_usage_location),
+      resolve: &ApiWeb.FileResolver.resolve_file_usage/3
   end
 
   object :file_conversion do

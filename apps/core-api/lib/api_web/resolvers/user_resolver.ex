@@ -1,4 +1,4 @@
-defmodule Api.UserResolver do
+defmodule ApiWeb.UserResolver do
   @moduledoc """
   GraphQL Resolver Module for finding, updating and deleting users.
   Takes care of login and registration, as well as password recovery functionality.

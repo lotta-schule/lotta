@@ -1,4 +1,4 @@
-defmodule Api.SearchResolverTest do
+defmodule ApiWeb.SearchResolverTest do
   @moduledoc """
     Test Module for SearchResolver
   """

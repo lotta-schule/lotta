@@ -1,4 +1,4 @@
-defmodule Api.ScheduleResolver do
+defmodule ApiWeb.ScheduleResolver do
   @moduledoc """
     GraphQL Resolver for requesting parsed schedule and timeline data for a given class.
     Is routed to schedule-provider microservice.

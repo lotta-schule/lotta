@@ -1,4 +1,4 @@
-defmodule Api.FileResolver do
+defmodule ApiWeb.FileResolver do
   @moduledoc """
     GraphQL Resolver Module for finding, creating, updating and deleting files
   """

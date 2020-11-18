@@ -1,4 +1,4 @@
-defmodule Api.UserGroupResolver do
+defmodule ApiWeb.UserGroupResolver do
   @moduledoc """
     GraphQL Resolver Module for finding, creating, updating and deleting user groups
   """

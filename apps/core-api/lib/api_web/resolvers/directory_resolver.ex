@@ -1,4 +1,4 @@
-defmodule Api.DirectoryResolver do
+defmodule ApiWeb.DirectoryResolver do
   @moduledoc """
     GraphQL Resolver Module for finding, creating, updating and deleting directories
   """

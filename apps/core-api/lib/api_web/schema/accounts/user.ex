@@ -45,11 +45,11 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :id, :id
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
-    field :last_seen, :naive_datetime, resolve: &Api.UserResolver.resolve_last_seen/3
-    field :name, :string, resolve: &Api.UserResolver.resolve_name/3
+    field :last_seen, :naive_datetime, resolve: &ApiWeb.UserResolver.resolve_last_seen/3
+    field :name, :string, resolve: &ApiWeb.UserResolver.resolve_name/3
     field :class, :string
     field :nickname, :string
-    field :email, :string, resolve: &Api.UserResolver.resolve_email/3
+    field :email, :string, resolve: &ApiWeb.UserResolver.resolve_email/3
     field :hide_full_name, :boolean
     field :is_blocked, :boolean
 
@@ -58,13 +58,13 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :articles, list_of(:article),
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
 
-    field :groups, list_of(:user_group), resolve: &Api.UserResolver.resolve_groups/3
+    field :groups, list_of(:user_group), resolve: &ApiWeb.UserResolver.resolve_groups/3
 
     field :assigned_groups, list_of(:user_group),
-      resolve: &Api.UserResolver.resolve_assigned_groups/3
+      resolve: &ApiWeb.UserResolver.resolve_assigned_groups/3
 
     field :enrollment_tokens, list_of(:string),
-      resolve: &Api.UserResolver.resolve_enrollment_tokens/3
+      resolve: &ApiWeb.UserResolver.resolve_enrollment_tokens/3
   end
 
   object :user_group do
@@ -76,7 +76,7 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :is_admin_group, :boolean
 
     field :enrollment_tokens, list_of(:group_enrollment_token),
-      resolve: &Api.UserGroupResolver.resolve_enrollment_tokens/3
+      resolve: &ApiWeb.UserGroupResolver.resolve_enrollment_tokens/3
   end
 
   object :group_enrollment_token do

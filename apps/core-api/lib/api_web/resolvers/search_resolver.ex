@@ -1,4 +1,4 @@
-defmodule Api.SearchResolver do
+defmodule ApiWeb.SearchResolver do
   @moduledoc """
     GraphQL Resolver Module for search requests.
   """

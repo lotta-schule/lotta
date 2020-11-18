@@ -1,4 +1,4 @@
-defmodule Api.FileResolverTest do
+defmodule ApiWeb.FileResolverTest do
   @moduledoc """
     Test Module for FileResolver
   """

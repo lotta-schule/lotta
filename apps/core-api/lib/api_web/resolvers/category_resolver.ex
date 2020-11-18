@@ -1,4 +1,4 @@
-defmodule Api.CategoryResolver do
+defmodule ApiWeb.CategoryResolver do
   @moduledoc """
     GraphQL Resolver Module for finding, creating, updating and deleting categories
   """

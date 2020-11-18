@@ -1,4 +1,4 @@
-defmodule Api.SitemapTest do
+defmodule ApiWeb.SitemapTest do
   use ApiWeb.ConnCase
 
   setup do

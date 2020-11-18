@@ -1,4 +1,4 @@
-defmodule Api.WidgetResolver do
+defmodule ApiWeb.WidgetResolver do
   @moduledoc """
     GraphQL Resolver Module for finding, creating, updating and deleting widgets
   """

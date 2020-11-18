@@ -1,4 +1,4 @@
-defmodule Api.WidgetResolverTest do
+defmodule ApiWeb.WidgetResolverTest do
   @moduledoc """
     Test Module for WidgetResolver
   """

@@ -1,4 +1,4 @@
-defmodule Api.CategoryResolverTest do
+defmodule ApiWeb.CategoryResolverTest do
   @moduledoc """
     Test Module for CategoryResolver
   """

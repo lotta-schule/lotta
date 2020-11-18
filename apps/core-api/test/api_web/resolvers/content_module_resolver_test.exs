@@ -1,4 +1,4 @@
-defmodule Api.ContentModuleResolverTest do
+defmodule ApiWeb.ContentModuleResolverTest do
   @moduledoc """
     Test Module for ContentModuleResolver
   """

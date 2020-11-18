@@ -5,50 +5,50 @@ defmodule ApiWeb.Schema.Accounts do
 
   object :accounts_queries do
     field :current_user, :user do
-      resolve(&Api.UserResolver.get_current/2)
+      resolve(&ApiWeb.UserResolver.get_current/2)
     end
 
     field :users, list_of(:user) do
-      resolve(&Api.UserResolver.all/2)
+      resolve(&ApiWeb.UserResolver.all/2)
     end
 
     field :search_users, list_of(:user) do
       arg(:searchtext, non_null(:string))
-      resolve(&Api.UserResolver.search/2)
+      resolve(&ApiWeb.UserResolver.search/2)
     end
 
     field :user, type: :user do
       arg(:id, non_null(:id))
-      resolve(&Api.UserResolver.get/2)
+      resolve(&ApiWeb.UserResolver.get/2)
     end
 
     field :group, type: :user_group do
       arg(:id, non_null(:id))
-      resolve(&Api.UserGroupResolver.get/2)
+      resolve(&ApiWeb.UserGroupResolver.get/2)
     end
 
     field :directory, :directory do
       arg(:id, :id)
-      resolve(&Api.DirectoryResolver.get/2)
+      resolve(&ApiWeb.DirectoryResolver.get/2)
     end
 
     field :directories, list_of(:directory) do
       arg(:parent_directory_id, :id)
-      resolve(&Api.DirectoryResolver.list/2)
+      resolve(&ApiWeb.DirectoryResolver.list/2)
     end
 
     field :file, :file do
       arg(:id, :id)
-      resolve(&Api.FileResolver.file/2)
+      resolve(&ApiWeb.FileResolver.file/2)
     end
 
     field :files, list_of(:file) do
       arg(:parent_directory_id, :id)
-      resolve(&Api.FileResolver.files/2)
+      resolve(&ApiWeb.FileResolver.files/2)
     end
 
     field :relevant_files_in_usage, list_of(:file) do
-      resolve(&Api.FileResolver.relevant_files_in_usage/2)
+      resolve(&ApiWeb.FileResolver.relevant_files_in_usage/2)
     end
   end
 
@@ -57,7 +57,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:user, non_null(:register_user_params))
       arg(:group_key, :string)
 
-      resolve(&Api.UserResolver.register/2)
+      resolve(&ApiWeb.UserResolver.register/2)
       middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
@@ -65,7 +65,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:username, :string)
       arg(:password, :string)
 
-      resolve(&Api.UserResolver.login/2)
+      resolve(&ApiWeb.UserResolver.login/2)
       middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
@@ -80,45 +80,45 @@ defmodule ApiWeb.Schema.Accounts do
     field :update_profile, type: :user do
       arg(:user, non_null(:update_user_params))
 
-      resolve(&Api.UserResolver.update_profile/2)
+      resolve(&ApiWeb.UserResolver.update_profile/2)
     end
 
     field :update_password, type: :user do
       arg(:current_password, non_null(:string))
       arg(:new_password, non_null(:string))
 
-      resolve(&Api.UserResolver.update_password/2)
+      resolve(&ApiWeb.UserResolver.update_password/2)
     end
 
     field :destroy_account, type: :user do
       arg(:transfer_file_ids, list_of(non_null(:id)))
 
-      resolve(&Api.UserResolver.destroy_account/2)
+      resolve(&ApiWeb.UserResolver.destroy_account/2)
     end
 
     field :create_user_group, type: :user_group do
       arg(:group, non_null(:user_group_input))
 
-      resolve(&Api.UserGroupResolver.create/2)
+      resolve(&ApiWeb.UserGroupResolver.create/2)
     end
 
     field :update_user_group, type: :user_group do
       arg(:id, non_null(:id))
       arg(:group, non_null(:user_group_input))
 
-      resolve(&Api.UserGroupResolver.update/2)
+      resolve(&ApiWeb.UserGroupResolver.update/2)
     end
 
     field :delete_user_group, type: :user_group do
       arg(:id, non_null(:id))
 
-      resolve(&Api.UserGroupResolver.delete/2)
+      resolve(&ApiWeb.UserGroupResolver.delete/2)
     end
 
     field :request_password_reset, type: :boolean do
       arg(:email, non_null(:string))
 
-      resolve(&Api.UserResolver.request_password_reset/2)
+      resolve(&ApiWeb.UserResolver.request_password_reset/2)
     end
 
     field :reset_password, type: :authresult do
@@ -126,7 +126,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:token, non_null(:string))
       arg(:password, non_null(:string))
 
-      resolve(&Api.UserResolver.reset_password/2)
+      resolve(&ApiWeb.UserResolver.reset_password/2)
       middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
@@ -134,7 +134,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:id, non_null(:id))
       arg(:is_blocked, :boolean)
       arg(:groups, list_of(non_null(:select_user_group_input)))
-      resolve(&Api.UserResolver.update/2)
+      resolve(&ApiWeb.UserResolver.update/2)
     end
 
     field :create_directory, type: :directory do
@@ -142,7 +142,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:parent_directory_id, :id)
       arg(:is_public, :boolean)
 
-      resolve(&Api.DirectoryResolver.create/2)
+      resolve(&ApiWeb.DirectoryResolver.create/2)
     end
 
     field :update_directory, type: :directory do
@@ -150,26 +150,26 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:name, :string)
       arg(:parent_directory_id, :id)
 
-      resolve(&Api.DirectoryResolver.update/2)
+      resolve(&ApiWeb.DirectoryResolver.update/2)
     end
 
     field :delete_directory, type: :directory do
       arg(:id, non_null(:id))
 
-      resolve(&Api.DirectoryResolver.delete/2)
+      resolve(&ApiWeb.DirectoryResolver.delete/2)
     end
 
     field :upload_file, type: :file do
       arg(:file, non_null(:upload))
       arg(:parent_directory_id, non_null(:id))
 
-      resolve(&Api.FileResolver.upload/2)
+      resolve(&ApiWeb.FileResolver.upload/2)
     end
 
     field :delete_file, type: :file do
       arg(:id, non_null(:id))
 
-      resolve(&Api.FileResolver.delete/2)
+      resolve(&ApiWeb.FileResolver.delete/2)
     end
 
     field :update_file, type: :file do
@@ -177,7 +177,7 @@ defmodule ApiWeb.Schema.Accounts do
       arg(:parent_directory_id, :id)
       arg(:filename, :string)
 
-      resolve(&Api.FileResolver.update/2)
+      resolve(&ApiWeb.FileResolver.update/2)
     end
   end
 end

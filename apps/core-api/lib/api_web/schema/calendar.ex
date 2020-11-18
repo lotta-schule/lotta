@@ -7,7 +7,7 @@ defmodule ApiWeb.Schema.Calendar do
     field :calendar, list_of(:calendar_event) do
       arg(:url, non_null(:string))
       arg(:days, :integer)
-      resolve(&Api.CalendarResolver.get/2)
+      resolve(&ApiWeb.CalendarResolver.get/2)
     end
   end
 

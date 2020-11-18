@@ -1,4 +1,4 @@
-defmodule Api.ContentModuleResolver do
+defmodule ApiWeb.ContentModuleResolver do
   @moduledoc """
     GraphQL Resolver Module for finding, creating, updating and deleting content modules
   """

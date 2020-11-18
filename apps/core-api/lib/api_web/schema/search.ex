@@ -7,7 +7,7 @@ defmodule ApiWeb.Schema.Search do
     field :search, list_of(:article) do
       arg(:search_text, non_null(:string))
       arg(:options, :search_options)
-      resolve(&Api.SearchResolver.search/2)
+      resolve(&ApiWeb.SearchResolver.search/2)
     end
   end
 

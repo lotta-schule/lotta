@@ -1,4 +1,4 @@
-defmodule Api.UserResolverTest do
+defmodule ApiWeb.UserResolverTest do
   @moduledoc """
     Test Module for UserResolver
   """

@@ -1,4 +1,4 @@
-defmodule Api.DirectoryResolverTest do
+defmodule ApiWeb.DirectoryResolverTest do
   @moduledoc """
     Test Module for DirectoryResolver
   """

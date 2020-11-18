@@ -1,4 +1,4 @@
-defmodule Api.CalendarResolver do
+defmodule ApiWeb.CalendarResolver do
   @moduledoc """
     GraphQL Resolver for requesting parsed calendar data for a given calendar
   """

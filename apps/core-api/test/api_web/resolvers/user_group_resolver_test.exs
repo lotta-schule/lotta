@@ -1,4 +1,4 @@
-defmodule Api.UserGroupResolverTest do
+defmodule ApiWeb.UserGroupResolverTest do
   @moduledoc """
     Test Module for UserGroupResolver
   """
