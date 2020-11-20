@@ -35,6 +35,10 @@ ugc_s3_compat_secret_access_key = System.fetch_env!("UGC_S3_COMPAT_SECRET_ACCESS
 ugc_s3_compat_bucket = System.fetch_env!("UGC_S3_COMPAT_BUCKET")
 ugc_s3_compat_region = System.fetch_env!("UGC_S3_COMPAT_REGION")
 ugc_s3_compat_cdn_base_url = System.fetch_env!("UGC_S3_COMPAT_CDN_BASE_URL")
+# Mailgun config
+mailgun_api_key = System.get_env("MAILGUN_API_KEY")
+mailgun_domain = System.get_env("MAILGUN_DOMAIN")
+mailer_default_sender = System.get_env("MAILER_DEFAULT_SENDER")
 # App base URL
 base_url = System.get_env("BASE_URL") || ".lotta.schule"
 # Schedule Provider
@@ -100,6 +104,13 @@ config :api, ApiWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base,
   live_view: [signing_salt: secret_signing_salt_live_view]
+
+config :api, Api.Mailer,
+  adapter: Bamboo.MailgunAdapter,
+  api_key: mailgun_api_key,
+  domain: mailgun_domain,
+  default_sender: mailer_default_sender,
+  base_uri: "https://api.eu.mailgun.net/v3"
 
 # ## Using releases (Elixir v1.9+)
 #

@@ -66,6 +66,8 @@ config :ex_aws, :s3,
   region: "fra1",
   scheme: "https://"
 
+config :api, Api.Mailer, adapter: Bamboo.TestAdapter
+
 config :ex_aws, :hackney_opts,
   follow_redirect: true,
   recv_timeout: 45_000

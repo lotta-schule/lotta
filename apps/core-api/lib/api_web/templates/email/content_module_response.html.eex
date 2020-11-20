@@ -1,0 +1,12 @@
+<p>Hallo,</p>
+<p>
+  Das Formular im Beitrag <%= @article.title %> wurde versendet.
+</p>
+<p>
+  Das sind die Antworten:
+</p>
+<ul>
+  <%= for {key, value} <- @responses do %>
+    <li><strong><%= key %></strong> <%= Poison.encode!(value) %></li>
+  <% end %>
+</ul>

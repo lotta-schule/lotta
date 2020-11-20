@@ -1,7 +1,5 @@
 defmodule Api.SystemTest do
-  @moduledoc """
-    Test Module for System Module
-  """
+  @moduledoc false
 
   use Api.DataCase, async: true
   alias Api.System

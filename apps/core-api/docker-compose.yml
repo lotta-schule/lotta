@@ -74,8 +74,6 @@ services:
     ports:
       - "15672:15672"
 
-
-
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
     volumes:

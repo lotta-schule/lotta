@@ -44,6 +44,8 @@ config :api, Api.Elasticsearch.Cluster,
     hackney: [pool: :elasticsearch_pool]
   ]
 
+config :api, Api.Mailer, default_sender: "mail@lotta.schule"
+
 config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
 
 config :api, :default_user, %{

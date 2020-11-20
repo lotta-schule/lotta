@@ -1,7 +1,5 @@
 defmodule Api.Accounts.AuthenticationTest do
-  @moduledoc """
-    Test Helper Module for Account Authentication
-  """
+  @moduledoc false
 
   use Api.DataCase
 

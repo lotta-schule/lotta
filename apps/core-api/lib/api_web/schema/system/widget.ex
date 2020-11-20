@@ -15,8 +15,10 @@ defmodule ApiWeb.Schema.System.Widget do
     field :title, :string
     field :type, :widget_type
     field :configuration, :json
+
     field :icon_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
-    field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
+
+    field :groups, list_of(:user_group), resolve: &ApiWeb.UserGroupResolver.resolve_model_groups/2
   end
 
   input_object :widget_input do

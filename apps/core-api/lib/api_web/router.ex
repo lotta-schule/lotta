@@ -8,46 +8,53 @@ defmodule ApiWeb.Router do
   import Phoenix.LiveDashboard.Router
 
   pipeline :auth do
-    plug ApiWeb.Auth.Pipeline
-    plug ApiWeb.Context
+    plug(ApiWeb.Auth.Pipeline)
+    plug(ApiWeb.Context)
   end
 
   pipeline :admin do
-    plug :basic_auth, Application.fetch_env!(:api, :live_view)
+    plug(:basic_auth, Application.fetch_env!(:api, :live_view))
   end
 
   pipeline :json_api do
-    plug :accepts, ~w(json)
+    plug(:accepts, ~w(json))
   end
 
   scope "/" do
     # add normal Guardian auth
-    pipe_through :admin
+    pipe_through(:admin)
     # pipe_through :browser
-    live_dashboard "/dashboard",
+    live_dashboard("/dashboard",
       metrics: ApiWeb.Telemetry
+    )
   end
 
   scope "/auth" do
-    pipe_through :json_api
+    pipe_through(:json_api)
 
-    post "/token/refresh", ApiWeb.Auth.TokenController, :refresh
+    post("/token/refresh", ApiWeb.Auth.TokenController, :refresh)
   end
 
   scope "/api" do
-    pipe_through :auth
+    pipe_through(:auth)
 
-    forward "/", Absinthe.Plug,
+    forward("/", Absinthe.Plug,
       schema: ApiWeb.Schema,
       before_send: {__MODULE__, :absinthe_before_send}
+    )
   end
 
   scope "/_debug" do
     # health endpoint
-    forward "/health", ApiWeb.HealthPlug
+    forward("/health", ApiWeb.HealthPlug)
+
+    if Mix.env() == :dev do
+      # If using Phoenix
+      forward("/mails", Bamboo.SentEmailViewerPlug)
+    end
   end
 
-  forward "/sitemap.xml", ApiWeb.SitemapPlug
+  forward("/sitemap.xml", ApiWeb.SitemapPlug)
 
   def absinthe_before_send(conn, %{execution: %{context: %{refresh_token: token}}}) do
     if is_nil(token) do

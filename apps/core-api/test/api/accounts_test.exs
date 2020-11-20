@@ -1,9 +1,9 @@
 defmodule Api.AccountsTest do
-  @moduledoc """
-    Test Module for Accounts functionality
-  """
+  @moduledoc false
 
   use Api.DataCase
+  use Bamboo.Test
+
   alias Api.Fixtures
   alias Api.Accounts
   alias Api.Accounts.User
@@ -24,9 +24,13 @@ defmodule Api.AccountsTest do
       assert Enum.map(Accounts.list_users(), fn u -> u.id end) == [user.id]
     end
 
-    test "get_user!/1 returns the user with given id" do
+    test "get_user/1 returns the user with given id" do
       user = Fixtures.fixture(:registered_user)
-      assert Accounts.get_user!(user.id) == user
+      assert Accounts.get_user(user.id) == user
+    end
+
+    test "get_user/1 returns nil if the user does not exist" do
+      assert is_nil(Accounts.get_user(0))
     end
 
     test "register_user/1 should normalize (email) input" do
@@ -65,13 +69,23 @@ defmodule Api.AccountsTest do
       assert {:error, %Ecto.Changeset{}} =
                Accounts.update_profile(user, Fixtures.fixture(:invalid_user_attrs))
 
-      assert user == Accounts.get_user!(user.id)
+      assert user == Accounts.get_user(user.id)
     end
 
     test "delete_user/1 deletes the user" do
       user = Fixtures.fixture(:registered_user)
       assert {:ok, %User{}} = Accounts.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
+      assert is_nil(Accounts.get_user(user.id))
+    end
+
+    test "update_password/2 changes password and sends out notification" do
+      {:ok, user} =
+        Fixtures.fixture(:registered_user)
+        |> Accounts.update_password("newpass")
+
+      assert Bcrypt.verify_pass("newpass", user.password_hash)
+
+      assert_delivered_email(Api.Email.password_changed_mail(user))
     end
   end
 

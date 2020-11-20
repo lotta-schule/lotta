@@ -47,7 +47,7 @@ defmodule ApiWeb.Schema.Contents.Article do
     field :preview_image_file, :file,
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
-    field :groups, list_of(:user_group), resolve: &Api.UserGroupResolver.resolve_model_groups/2
+    field :groups, list_of(:user_group), resolve: &ApiWeb.UserGroupResolver.resolve_model_groups/2
 
     field :content_modules, list_of(:content_module),
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)

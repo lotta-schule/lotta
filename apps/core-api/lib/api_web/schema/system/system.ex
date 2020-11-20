@@ -3,7 +3,7 @@ defmodule ApiWeb.Schema.System.System do
 
   use Absinthe.Schema.Notation
 
-  alias Api.{UserGroupResolver, SystemResolver}
+  alias ApiWeb.{UserGroupResolver, SystemResolver}
 
   object :system do
     field :id, :id

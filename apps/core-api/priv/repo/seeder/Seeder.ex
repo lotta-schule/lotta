@@ -2,12 +2,24 @@ defmodule Api.Repo.Seeder do
   alias Api.Repo
   alias Ecto.Changeset
   alias Api.Accounts
+  alias Api.System
   alias Api.Accounts.{Directory, File, UserGroup}
   alias Api.System.{Category, CustomDomain, Widget}
   alias Api.Content.{Article, ContentModule}
 
   def seed() do
     Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
+
+    system = System.get_configuration()
+
+    System.put_configuration(system, :custom_theme, %{
+      "palette" => %{
+        "primary" => %{"main" => "red"},
+        "secondary" => %{"main" => "green"}
+      }
+    })
+
+    System.put_configuration(system, :title, "Lotta")
 
     admin_group =
       Repo.insert!(%UserGroup{

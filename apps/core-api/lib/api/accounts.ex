@@ -9,7 +9,7 @@ defmodule Api.Accounts do
 
   alias Ecto.Changeset
   alias Api.Repo
-  alias Api.Queue.EmailPublisher
+  alias Api.Mailer
 
   alias Api.Accounts.{
     User,
@@ -37,6 +37,7 @@ defmodule Api.Accounts do
       [%User{}, ...]
 
   """
+  @spec list_users() :: [User.t()]
   def list_users() do
     from(u in User,
       order_by: [u.name, u.email]
@@ -44,7 +45,15 @@ defmodule Api.Accounts do
     |> Repo.all()
   end
 
-  def get_admin_users() do
+  @doc """
+  Returns list of all users that are member of at least one administrator group.
+
+  ## Examples
+    iex> list_admin_users()
+    [%User{}, ...]
+  """
+  @spec list_admin_users() :: [User.t()]
+  def list_admin_users() do
     from(u in User,
       join: ug in assoc(u, :groups),
       where: ug.is_admin_group == true,
@@ -57,19 +66,20 @@ defmodule Api.Accounts do
   @doc """
   Gets a single user.
 
-  Raises `Ecto.NoResultsError` if the User does not exist.
+  Returns nil if the User does not exist.
 
   ## Examples
 
-      iex> get_user!(123)
+      iex> get_user(123)
       %User{}
 
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_user(456)
+      nil
 
   """
-  def get_user!(id) do
-    Repo.get!(User, id)
+  @spec get_user(User.id()) :: User.t() | nil
+  def get_user(id) do
+    Repo.get(User, id)
   end
 
   @doc """
@@ -86,6 +96,7 @@ defmodule Api.Accounts do
       nil
 
   """
+  @spec get_user_by_email(User.email()) :: User.t() | nil
   def get_user_by_email(email) do
     Repo.get_by(User, email: email)
   end
@@ -98,6 +109,7 @@ defmodule Api.Accounts do
       iex> search_user("vader")
       [%User{}]
   """
+  @spec search_user(String.t()) :: [User.t()]
   def search_user(searchtext) do
     matching_searchtext = "%#{searchtext}%"
 
@@ -115,6 +127,7 @@ defmodule Api.Accounts do
   Updates a user by an admin.
   This is to assign groups or block user.
   See `Api.Accounts.update_profile/2` if you want to change your own user's data.
+  See `Api.Accounts.User.update_changeset/2` to see the changeset in use.
 
   ## Examples
 
@@ -125,6 +138,7 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_user(User.t(), map()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def update_user(%User{} = user, attrs) do
     user
     |> User.update_changeset(attrs)
@@ -132,8 +146,9 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  Updates a profile (user's own data)
+  Update a user's profile.
   This is for profile data like image, name, ...
+  See `Api.Accounts.User.update_profile_changeset/2` to see the changeset in use.
 
   ## Examples
 
@@ -144,20 +159,34 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_profile(User.t(), map()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def update_profile(%User{} = user, attrs) do
     user
     |> User.update_profile_changeset(attrs)
     |> Repo.update()
   end
 
+  @doc """
+  List all available user groups
+
+  ## Examples
+    iex> list_user_groups()
+    [%UserGroup{}, ...]
+  """
+  @spec list_user_groups() :: [UserGroup.t()]
   def list_user_groups() do
     Repo.all(UserGroup)
   end
 
   @doc """
   Get groups which have a given enrollment token
+
+  ## Examples
+    iex> list_groups_for_enrollment_token("token")
+    [%UserGroup{}, ...]
   """
-  def get_groups_by_enrollment_token(token) when is_binary(token) do
+  @spec list_groups_for_enrollment_token(String.t()) :: [%GroupEnrollmentToken{}]
+  def list_groups_for_enrollment_token(token) when is_binary(token) do
     from(g in UserGroup,
       join: t in GroupEnrollmentToken,
       on: g.id == t.group_id,
@@ -170,8 +199,12 @@ defmodule Api.Accounts do
   @doc """
   Get groups which have given enrollment tokens
 
+  ## Examples
+    iex> list_groups_for_enrollment_tokens(["token", "other-token"])
+    [%UserGroup{}, ...]
   """
-  def get_groups_by_enrollment_tokens(tokens) when is_list(tokens) do
+  @spec list_groups_for_enrollment_tokens([String.t()]) :: [%GroupEnrollmentToken{}]
+  def list_groups_for_enrollment_tokens(tokens) when is_list(tokens) do
     from(g in UserGroup,
       join: t in GroupEnrollmentToken,
       on: g.id == t.group_id,
@@ -193,6 +226,7 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec register_user(map()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def register_user(attrs) do
     changeset =
       %User{}
@@ -222,6 +256,7 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def delete_user(%User{} = user) do
     # delete every file manually so that the files are deleted
     # this should probably be merged to a genserver / bg job of some kind
@@ -232,53 +267,86 @@ defmodule Api.Accounts do
     Repo.delete(user)
   end
 
-  def request_password_reset_token(email, token) do
-    email =
-      email
-      |> String.downcase()
+  @doc """
+  Request a password reset.
+  If a user exists for the given email address,
+  this creates a reset token with 6 hours validity and sends it to the user.
+  If a user does not exist, {:error, :nouser} is returned.
+  If a user exists, {:ok, User} is returned.
+  Any error from redis is related.
+
+  # Examples
+  iex> request_password_reset("valid@email.com")
+  {:ok, %User{}}
+  iex> request_password_reset("invalid@email.com")
+  {:error, :nouser}
+  """
+  @spec request_password_reset(User.email()) :: {:ok, User.t()} | {:error, term()}
+  def request_password_reset(email) do
+    token =
+      :crypto.strong_rand_bytes(32)
+      |> Base.url_encode64(padding: false)
+      |> URI.encode()
 
     user =
-      Repo.one(
-        from u in User,
-          where: fragment("lower(?)", u.email) == ^email
+      from(u in User,
+        where: fragment("lower(?)", u.email) == ^String.downcase(email)
       )
+      |> Repo.one()
 
-    case user do
-      nil ->
-        {:error, "User not found"}
+    if is_nil(user) do
+      {:error, :nouser}
+    else
+      case Redix.command(:redix, [
+             "SET",
+             "user-email-verify-token-#{user.email}",
+             token,
+             "EX",
+             6 * 60 * 60
+           ]) do
+        {:ok, _} ->
+          Api.Email.request_password_reset_mail(user, token)
+          |> Mailer.deliver_now()
 
-      user ->
-        case Redix.command(:redix, [
-               "SET",
-               "user-email-verify-token-#{user.email}",
-               token,
-               "EX",
-               6 * 60 * 60
-             ]) do
-          {:ok, _} ->
-            {:ok, user}
+          {:ok, user}
 
-          error ->
-            error
-        end
+        error ->
+          error
+      end
     end
   end
 
+  @doc """
+  If a given token exists for a given email,
+  the corresponding user is returned and the token is invalidated so it cannot be reused.
+  Returns {:error, :invalid_token} if no valid email / token pair is found.
+  """
+  @spec find_user_by_reset_token(User.email(), String.t()) ::
+          {:ok, User.t()} | {:error, :invalid_token}
   def find_user_by_reset_token(email, token) do
-    with {:ok, reset_token} <- Redix.command(:redix, ["GET", "user-email-verify-token-#{email}"]),
-         false <- is_nil(token),
-         true <- token == reset_token,
-         user <- Repo.get_by(User, email: email),
-         false <- is_nil(user) do
-      Redix.command(:redix, ["DEL", "user-email-verify-token-#{email}"])
-      {:ok, user}
-    else
+    case Redix.command(:redix, ["GET", "user-email-verify-token-#{email}"]) do
+      {:ok, reset_token} when not is_nil(reset_token) ->
+        user = Repo.get_by(User, email: email)
+
+        if token == reset_token and not is_nil(user) do
+          Redix.command(:redix, ["DEL", "user-email-verify-token-#{email}"])
+          {:ok, user}
+        else
+          Logger.warn("User, token and reset token do not match for #{email}")
+          {:error, :invalid_token}
+        end
+
       error ->
-        Logger.error(inspect(error))
+        Sentry.capture_message(inspect(error), extra: %{email: email})
         {:error, :invalid_token}
     end
   end
 
+  @doc """
+  Update a user's password.
+  Notify the user if successfull.
+  """
+  @spec update_password(User.t(), String.t()) :: {:ok, User.t()} | {:error, Changeset.t()}
   def update_password(%User{} = user, password)
       when is_binary(password) and byte_size(password) > 0 do
     user =
@@ -287,17 +355,20 @@ defmodule Api.Accounts do
 
     case Repo.update(user) do
       {:ok, user} ->
-        EmailPublisher.send_password_changed_email(user)
+        Api.Email.password_changed_mail(user)
+        |> Mailer.deliver_now()
+
         {:ok, user}
 
-      error ->
-        error
+      result ->
+        result
     end
   end
 
   @doc """
   List root directories for a user
   """
+  @spec list_root_directories(User.t()) :: [Directory.t()]
   def list_root_directories(%User{} = user) do
     from(d in Directory,
       where:
@@ -309,9 +380,9 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  List directories for a user
-
+  List a directory's subdirectories
   """
+  @spec list_directories(Directory.t()) :: [Directory.t()]
   def list_directories(%Directory{} = directory) do
     from(d in Directory,
       where: d.parent_directory_id == ^directory.id,
@@ -328,29 +399,14 @@ defmodule Api.Accounts do
   ## Examples
 
       iex> get_directory(123)
-      %File{}
+      %Directory{}
 
       iex> get_directory(456)
       nil
 
   """
+  @spec get_directory(pos_integer()) :: Directory.t() | nil
   def get_directory(id), do: Repo.get(Directory, id)
-
-  @doc """
-  Gets a single file.
-
-  Raises `Ecto.NoResultsError` if the File does not exist.
-
-  ## Examples
-
-      iex> get_directory!(123)
-      %File{}
-
-      iex> get_directory!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_directory!(id), do: Repo.get!(Directory, id)
 
   @doc """
   Creates a Directory.
@@ -364,12 +420,17 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_directory(map()) :: {:ok, Directory.t()} | {:error, Changeset.t()}
   def create_directory(attrs) do
     %Directory{}
     |> Directory.changeset(attrs)
     |> Repo.insert()
   end
 
+  @doc """
+  Create the default directories for a new user
+  """
+  @spec create_new_user_directories(User.t()) :: [term()]
   def create_new_user_directories(%User{} = user) do
     ["Mein Profil", "Meine Bilder", "Meine Dokumente", "Meine Videos", "Meine Tondokumente"]
     |> Enum.map(fn name ->
@@ -389,6 +450,7 @@ defmodule Api.Accounts do
       {:ok, %Directory{}}
 
   """
+  @spec update_directory(Directory.t(), map()) :: {:ok, Directory.t()} | {:error, Changeset.t()}
   def update_directory(%Directory{} = directory, attrs) do
     directory
     |> Directory.changeset(attrs)
@@ -407,12 +469,13 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_directory(Directory.t()) :: {:ok, Directory.t()} | {:error, Changeset.t()}
   def delete_directory(%Directory{} = directory) do
     Repo.delete(directory)
   end
 
   @doc """
-  Returns the list of files.
+  Returns the list of files for a given directory
 
   ## Examples
 
@@ -420,6 +483,7 @@ defmodule Api.Accounts do
       [%File{}, ...]
 
   """
+  @spec list_files(Directory.t()) :: [Directory.t()]
   def list_files(%Directory{} = parent_directory) do
     from(f in File,
       where: f.parent_directory_id == ^parent_directory.id,
@@ -443,24 +507,6 @@ defmodule Api.Accounts do
 
   """
   def get_file!(id), do: Repo.get!(File, id)
-
-  @doc """
-  Creates a file.
-
-  ## Examples
-
-      iex> create_file(%{field: value})
-      {:ok, %File{}}
-
-      iex> create_file(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_file(attrs) do
-    %File{}
-    |> File.changeset(attrs)
-    |> Repo.insert()
-  end
 
   @doc """
   Updates a file.
@@ -562,84 +608,6 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking file changes.
-
-  ## Examples
-
-      iex> change_file(file)
-      %Ecto.Changeset{source: %File{}}
-
-  """
-  def change_file(%File{} = file) do
-    File.changeset(file, %{})
-  end
-
-  @doc """
-  Returns the list of file_conversions.
-
-  ## Examples
-
-      iex> list_file_conversions()
-      [%FileConversion{}, ...]
-
-  """
-  def list_file_conversions do
-    Repo.all(FileConversion)
-  end
-
-  @doc """
-  Gets a single file_conversion.
-
-  Raises `Ecto.NoResultsError` if the File conversion does not exist.
-
-  ## Examples
-
-      iex> get_file_conversion!(123)
-      %FileConversion{}
-
-      iex> get_file_conversion!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_file_conversion!(id), do: Repo.get!(FileConversion, id)
-
-  @doc """
-  Creates a file_conversion.
-
-  ## Examples
-
-      iex> create_file_conversion(%{field: value})
-      {:ok, %FileConversion{}}
-
-      iex> create_file_conversion(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_file_conversion(attrs \\ %{}) do
-    %FileConversion{}
-    |> FileConversion.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a file_conversion.
-
-  ## Examples
-
-      iex> update_file_conversion(file_conversion, %{field: new_value})
-      {:ok, %FileConversion{}}
-
-      iex> update_file_conversion(file_conversion, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_file_conversion(%FileConversion{} = file_conversion, attrs) do
-    file_conversion
-    |> FileConversion.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
   Deletes a FileConversion.
 
   ## Examples
@@ -657,19 +625,6 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking file_conversion changes.
-
-  ## Examples
-
-      iex> change_file_conversion(file_conversion)
-      %Ecto.Changeset{source: %FileConversion{}}
-
-  """
-  def change_file_conversion(%FileConversion{} = file_conversion) do
-    FileConversion.changeset(file_conversion, %{})
-  end
-
-  @doc """
   Gets a single user group.
 
   Raises `Ecto.NoResultsError` if the UserGroup does not exist.
@@ -683,8 +638,9 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user_group!(id) do
-    Repo.get!(UserGroup, id)
+  @spec get_user_group(pos_integer()) :: UserGroup.t() | nil
+  def get_user_group(id) do
+    Repo.get(UserGroup, id)
   end
 
   @doc """
@@ -699,6 +655,7 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_user_group(map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def create_user_group(attrs) do
     attrs =
       case attrs do
@@ -726,6 +683,7 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def update_user_group(%UserGroup{} = group, attrs) do
     group
     |> UserGroup.changeset(attrs)
@@ -744,6 +702,7 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def delete_user_group(%UserGroup{} = group) do
     Repo.delete(group)
   end
@@ -757,11 +716,12 @@ defmodule Api.Accounts do
       %User{}
 
   """
+  @spec see_user(User.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def see_user(%User{} = user) do
     user
     |> Ecto.Changeset.change(%{
       last_seen: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)
     })
-    |> Repo.update!()
+    |> Repo.update()
   end
 end
