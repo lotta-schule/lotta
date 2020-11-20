@@ -1,0 +1,4 @@
+<p>
+  Hallo <%= @user.name %>,<br />
+  Deine Registrierung bei <%= title() %> war erfolgreich.
+</p>

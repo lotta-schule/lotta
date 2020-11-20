@@ -1,9 +1,8 @@
 defmodule ApiWeb.ContentModuleResolverTest do
-  @moduledoc """
-    Test Module for ContentModuleResolver
-  """
+  @moduledoc false
 
   use ApiWeb.ConnCase
+  use Bamboo.Test
 
   import Ecto.Query
 
@@ -80,6 +79,40 @@ defmodule ApiWeb.ContentModuleResolverTest do
                  "transport" => "lieferung"
                }
              }
+    end
+
+    test "sends form response and sends them via mail", %{
+      test_formular: test_formular
+    } do
+      res =
+        build_conn()
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: test_formular.id,
+            response: "{
+          \"name\": \"Test\",
+          \"größe\": \"klein\",
+          \"feld3\": [\"käse\",\"pilze\"],
+          \"transport\": \"lieferung\",
+          \"beschreibung\": \"\"
+        }"
+          }
+        )
+        |> json_response(200)
+
+      assert res == %{"data" => %{"sendFormResponse" => true}}
+
+      results =
+        test_formular
+        |> Api.Repo.preload(:results)
+        |> Map.fetch!(:results)
+        |> List.last()
+
+      mail =
+        Api.Email.content_module_form_response_mail(test_formular, results.result["responses"])
+
+      assert_delivered_email(mail)
     end
 
     test "sends form response and strips out unwanted fields", %{test_formular: test_formular} do

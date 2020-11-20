@@ -12,12 +12,17 @@ defmodule ApiWeb.DirectoryResolver do
 
   def list(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
       when not is_nil(parent_directory_id) and byte_size(parent_directory_id) > 0 do
-    parent_directory = Accounts.get_directory!(parent_directory_id)
+    parent_directory = Accounts.get_directory(parent_directory_id)
 
-    if user_can_read_directory?(current_user, parent_directory) do
-      {:ok, Accounts.list_directories(parent_directory)}
-    else
-      {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+    cond do
+      is_nil(parent_directory) ->
+        {:error, "Ordner nicht gefunden"}
+
+      !user_can_read_directory?(current_user, parent_directory) ->
+        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+
+      true ->
+        {:ok, Accounts.list_directories(parent_directory)}
     end
   end
 
@@ -152,12 +157,16 @@ defmodule ApiWeb.DirectoryResolver do
   end
 
   def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
-    try do
+    directory = Accounts.get_directory(String.to_integer(id))
+
+    if directory do
       directory =
-        Accounts.get_directory!(String.to_integer(id))
+        directory
         |> Repo.preload([:parent_directory])
 
-      source_directory = directory.parent_directory
+      source_directory =
+        directory
+        |> Map.fetch!(:parent_directory)
 
       target_directory =
         case args do
@@ -165,7 +174,7 @@ defmodule ApiWeb.DirectoryResolver do
             nil
 
           %{parent_directory_id: target_directory_id} ->
-            Accounts.get_directory!(String.to_integer(target_directory_id))
+            Accounts.get_directory(String.to_integer(target_directory_id))
 
           _ ->
             source_directory
@@ -188,9 +197,8 @@ defmodule ApiWeb.DirectoryResolver do
       else
         {:error, "Du darfst diesen Ordner nicht bearbeiten."}
       end
-    rescue
-      Ecto.NoResultsError ->
-        {:error, "Datei oder Ordner nicht gefunden."}
+    else
+      {:error, "Datei oder Ordner nicht gefunden."}
     end
   end
 end

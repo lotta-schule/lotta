@@ -1,0 +1,2 @@
+Hallo <%= @user.name %>,
+Deine Registrierung bei <%= title() %> war erfolgreich.

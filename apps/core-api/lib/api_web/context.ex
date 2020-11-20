@@ -28,8 +28,9 @@ defmodule ApiWeb.Context do
   defp maybe_put_user(context, conn) do
     case ApiWeb.Auth.AccessToken.Plug.current_resource(conn) do
       user when not is_nil(user) ->
-        if System.get_env("APP_ENVIRONMENT") != "test",
-          do: Task.start(fn -> Accounts.see_user(user) end)
+        if System.get_env("APP_ENVIRONMENT") != "test" do
+          Task.start(fn -> Accounts.see_user(user) end)
+        end
 
         context
         |> Map.put(:current_user, user)

@@ -14,7 +14,7 @@ defmodule ApiWeb.UserResolver do
   alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.User
-  alias Api.Queue.EmailPublisher
+  alias Api.Mailer
 
   def resolve_name(user, _args, %{context: %{current_user: current_user}}) do
     cond do
@@ -113,11 +113,7 @@ defmodule ApiWeb.UserResolver do
   end
 
   def get(%{id: id}, %{context: %{current_user: current_user}}) when not is_nil(current_user) do
-    try do
-      {:ok, Accounts.get_user!(String.to_integer(id))}
-    rescue
-      NoResultsError -> {:ok, nil}
-    end
+    {:ok, Accounts.get_user(String.to_integer(id))}
   end
 
   def get(_args, _info), do: {:error, "Nur angemeldete Nutzer dürfen Nutzer abrufen."}
@@ -135,7 +131,9 @@ defmodule ApiWeb.UserResolver do
 
     with {:ok, user} <- Accounts.register_user(user_params),
          {:ok, access_token, refresh_token} <- create_user_tokens(user) do
-      EmailPublisher.send_registration_email(user)
+      Api.Email.registration_mail(user)
+      |> Mailer.deliver_now()
+
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
       {:error, reason} ->
@@ -163,26 +161,12 @@ defmodule ApiWeb.UserResolver do
   end
 
   def request_password_reset(%{email: email}, _info) do
-    token =
-      :crypto.strong_rand_bytes(32)
-      |> Base.url_encode64(padding: false)
-      |> URI.encode()
-
-    case Accounts.request_password_reset_token(email, token) do
+    case Accounts.request_password_reset(email) do
       {:ok, user} ->
-        Logger.info("user request password request - send mail to #{email}")
-        EmailPublisher.send_request_password_reset_email(user, email, token)
+        Logger.info("user request password request - send mail to #{user.email}")
 
       error ->
-        try do
-          Sentry.capture_message(inspect(error), extra: %{email: email})
-
-          Logger.error("Error setting request password reset token")
-          Logger.error(inspect(error))
-        rescue
-          e in RuntimeError ->
-            Logger.error(inspect(e))
-        end
+        Sentry.capture_message(inspect(error), extra: %{email: email})
     end
 
     {:ok, true}
@@ -213,12 +197,12 @@ defmodule ApiWeb.UserResolver do
 
   def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
     if user_is_admin?(current_user) do
-      try do
-        Accounts.get_user!(String.to_integer(id))
-        |> Accounts.update_user(args)
-      rescue
-        NoResultsError ->
+      case Accounts.get_user(String.to_integer(id)) do
+        nil ->
           {:error, "Nutzer mit der id #{id} nicht gefunden."}
+
+        user ->
+          Accounts.update_user(user, args)
       end
     else
       {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}

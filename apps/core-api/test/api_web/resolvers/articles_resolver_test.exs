@@ -1,7 +1,5 @@
 defmodule ApiWeb.ArticleResolverTest do
-  @moduledoc """
-    Test Module for ArticleResolver
-  """
+  @moduledoc false
 
   use ApiWeb.ConnCase, async: true
 

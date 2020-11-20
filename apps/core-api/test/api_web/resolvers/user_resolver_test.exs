@@ -1,9 +1,8 @@
 defmodule ApiWeb.UserResolverTest do
-  @moduledoc """
-    Test Module for UserResolver
-  """
+  @moduledoc false
 
   use ApiWeb.ConnCase
+  use Bamboo.Test
 
   import Ecto.Query
   import Api.Accounts.Authentication
@@ -716,6 +715,21 @@ defmodule ApiWeb.UserResolverTest do
       assert group_name == "Lehrer"
     end
 
+    test "register the user and send him a registration mail" do
+      build_conn()
+      |> post("/api",
+        query: @query,
+        variables: %{
+          user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123"}
+        }
+      )
+      |> json_response(200)
+
+      user = Repo.get_by!(User, email: "neuernutzer@example.com")
+      registration_mail = Api.Email.registration_mail(user)
+      assert_delivered_email(registration_mail)
+    end
+
     test "returns error when email is already taken" do
       res =
         build_conn()
@@ -958,6 +972,31 @@ defmodule ApiWeb.UserResolverTest do
                ])
 
       Redix.command(:redix, ["FLUSHALL"])
+    end
+
+    test "send the token via email" do
+      res =
+        build_conn()
+        |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule"})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "requestPasswordReset" => true
+               }
+             }
+
+      assert {:ok, token} =
+               Redix.command(:redix, [
+                 "GET",
+                 "user-email-verify-token-alexis.rinaldoni@lotta.schule"
+               ])
+
+      Redix.command(:redix, ["FLUSHALL"])
+
+      user = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
+      token_mail = Api.Email.request_password_reset_mail(user, token)
+      assert_delivered_email(token_mail)
     end
 
     test "returns true if the user does not exist" do

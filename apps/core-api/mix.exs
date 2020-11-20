@@ -77,6 +77,7 @@ defmodule Api.MixProject do
       {:sweet_xml, "~> 0.6.6"},
       {:poison, "~> 4.0.1"},
       {:uuid, "~> 1.1.8"},
+      {:bamboo, "~> 1.6"},
       {:gen_rmq, "~> 3.0.0"},
       {:ex_ical, "~> 0.2.0"},
       {:timex, "~> 3.0"},

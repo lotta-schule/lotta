@@ -77,9 +77,9 @@ defmodule Api.System do
 
   ## Examples
 
-    iex> get_configuration()
+    iex> Api.System.get_configuration()
     iex> |> put_configuration("title", "Meine Schule")
-    %{title: "Meine Schule"}
+    {:ok, %{title: "Meine Schule"}}
   """
   @doc since: "2.0.0"
 

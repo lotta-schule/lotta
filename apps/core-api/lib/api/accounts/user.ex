@@ -41,9 +41,11 @@ defmodule Api.Accounts.User do
     timestamps()
   end
 
+  @type id :: String.t()
+
   @type email :: String.t()
 
-  @type t :: %User{id: pos_integer(), email: email(), name: String.t()}
+  @type t :: %User{id: id, email: email(), name: String.t()}
 
   def get_assigned_groups(%User{} = user) do
     user
@@ -56,7 +58,7 @@ defmodule Api.Accounts.User do
     |> Repo.preload(:enrollment_tokens)
     |> Map.fetch!(:enrollment_tokens)
     |> Enum.map(& &1.enrollment_token)
-    |> Accounts.get_groups_by_enrollment_tokens()
+    |> Accounts.list_groups_for_enrollment_tokens()
   end
 
   def get_groups(%User{} = user) do

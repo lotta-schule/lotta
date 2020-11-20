@@ -1,7 +1,5 @@
 defmodule ApiWeb.SystemResolverTest do
-  @moduledoc """
-    Test Module for SystemResolver
-  """
+  @moduledoc false
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
@@ -59,7 +57,7 @@ defmodule ApiWeb.SystemResolverTest do
                "data" => %{
                  "system" => %{
                    "slug" => "web",
-                   "title" => "Web Beispiel"
+                   "title" => "Lotta"
                  }
                }
              }

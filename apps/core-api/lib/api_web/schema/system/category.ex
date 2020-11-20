@@ -17,7 +17,7 @@ defmodule ApiWeb.Schema.System.Category do
     field :banner_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
     field :category, :category, resolve: Absinthe.Resolution.Helpers.dataloader(Api.System)
     field :groups, list_of(:user_group), resolve: &ApiWeb.UserGroupResolver.resolve_model_groups/2
-    field :widgets, list_of(:widget), resolve: &ApiWeb.System.resolve_widgets/2
+    field :widgets, list_of(:widget), resolve: &Api.System.resolve_widgets/2
   end
 
   input_object :create_category_input do

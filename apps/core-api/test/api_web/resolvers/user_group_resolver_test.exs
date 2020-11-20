@@ -1,12 +1,9 @@
 defmodule ApiWeb.UserGroupResolverTest do
-  @moduledoc """
-    Test Module for UserGroupResolver
-  """
+  @moduledoc false
 
   use ApiWeb.ConnCase
 
   alias ApiWeb.Auth.AccessToken
-  alias Ecto.NoResultsError
   alias Api.Repo
   alias Api.Repo.Seeder
   alias Api.Accounts
@@ -267,9 +264,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                }
              }
 
-      assert_raise NoResultsError, fn ->
-        Accounts.get_user_group!(lehrer_group.id)
-      end
+      assert Accounts.get_user_group(lehrer_group.id) == nil
     end
 
     test "should return an error if user is admin, but requested id does not exist", %{

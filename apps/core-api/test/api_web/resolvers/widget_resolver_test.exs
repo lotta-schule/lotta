@@ -1,7 +1,5 @@
 defmodule ApiWeb.WidgetResolverTest do
-  @moduledoc """
-    Test Module for WidgetResolver
-  """
+  @moduledoc false
 
   use ApiWeb.ConnCase
 

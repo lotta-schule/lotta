@@ -1,7 +1,5 @@
 defmodule ApiWeb.DirectoryResolverTest do
-  @moduledoc """
-    Test Module for DirectoryResolver
-  """
+  @moduledoc false
 
   import Ecto.Query
 

@@ -26,7 +26,7 @@ defmodule ApiWeb.Auth.AccessToken do
   @spec resource_from_claims(Map.t()) :: {:ok, %User{}} | {:error, :user_not_found}
   def resource_from_claims(%{"sub" => subject_id}) do
     try do
-      {:ok, Accounts.get_user!(subject_id)}
+      {:ok, Accounts.get_user(subject_id)}
     rescue
       Ecto.NoResultsError ->
         {:error, :user_not_found}

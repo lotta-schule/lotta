@@ -1,7 +1,5 @@
 defmodule ApiWeb.FileResolverTest do
-  @moduledoc """
-    Test Module for FileResolver
-  """
+  @moduledoc false
 
   use ApiWeb.ConnCase
 

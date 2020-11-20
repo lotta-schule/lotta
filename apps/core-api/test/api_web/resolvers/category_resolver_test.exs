@@ -1,7 +1,5 @@
 defmodule ApiWeb.CategoryResolverTest do
-  @moduledoc """
-    Test Module for CategoryResolver
-  """
+  @moduledoc false
 
   use ApiWeb.ConnCase
 

@@ -6,6 +6,7 @@ defmodule ApiWeb.ContentModuleResolver do
   import Api.Accounts.Permissions
 
   alias Api.Repo
+  alias Api.Mailer
   alias Api.Content
 
   def send_form_response(%{content_module_id: content_module_id, response: response}, %{
@@ -22,8 +23,10 @@ defmodule ApiWeb.ContentModuleResolver do
           Map.put(acc, element["name"], response[element["name"]] || "(LEER)")
         end)
 
-      if !is_nil(configuration["destination"]) do
-        Api.Queue.EmailPublisher.send_content_module_form_response(content_module, responses)
+      if not is_nil(configuration["destination"]) do
+        content_module
+        |> Api.Email.content_module_form_response_mail(responses)
+        |> Mailer.deliver_now()
       end
 
       if !is_nil(configuration["save_internally"]) do

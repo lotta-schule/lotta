@@ -23,64 +23,53 @@ defmodule ApiWeb.FileResolver do
         context: %{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
-    parent_directory = Accounts.get_directory!(parent_directory_id)
+    parent_directory = Accounts.get_directory(parent_directory_id)
 
-    if user_can_read_directory?(current_user, parent_directory) do
-      categories =
-        from(c in Category,
-          where: c.banner_image_file_id == ^id,
-          order_by: [desc: :updated_at, asc: :title]
-        )
-        |> Repo.all()
-        |> Enum.map(&%{usage: "banner", category: &1})
+    cond do
+      is_nil(parent_directory) ->
+        {:error, "Ordner nicht gefunden."}
 
-      articles =
-        from(a in Article,
-          where: a.preview_image_file_id == ^id,
-          order_by: [desc: :updated_at, asc: :title]
-        )
-        |> Repo.all()
-        |> Enum.map(&%{usage: "preview", article: &1})
+      !user_can_read_directory?(current_user, parent_directory) ->
+        {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
 
-      content_modules =
-        from(cm in ContentModule,
-          join: cmf in "content_module_file",
-          on: cmf.content_module_id == cm.id,
-          preload: :article,
-          where: cmf.file_id == ^id,
-          order_by: [desc: cm.updated_at, desc: cm.inserted_at, desc: cm.id]
-        )
-        |> Repo.all()
-        |> Enum.map(&%{usage: "file", content_module: &1, article: &1.article})
+      true ->
+        categories =
+          from(c in Category,
+            where: c.banner_image_file_id == ^id,
+            order_by: [desc: :updated_at, asc: :title]
+          )
+          |> Repo.all()
+          |> Enum.map(&%{usage: "banner", category: &1})
 
-      users =
-        from(u in User,
-          where: u.avatar_image_file_id == ^id,
-          order_by: [:name, :nickname, :inserted_at]
-        )
-        |> Repo.all()
-        |> Enum.map(&%{usage: "avatar", user: &1})
+        articles =
+          from(a in Article,
+            where: a.preview_image_file_id == ^id,
+            order_by: [desc: :updated_at, asc: :title]
+          )
+          |> Repo.all()
+          |> Enum.map(&%{usage: "preview", article: &1})
 
-      # TODO: fetch from configuration
-      #
-      # tenants =
-      #   from(t in Tenant,
-      #     where: t.logo_image_file_id == ^id or t.background_image_file_id == ^id,
-      #     order_by: :slug
-      #   )
-      #   |> Repo.all()
-      #   |> Enum.map(
-      #     &%{
-      #       usage: if(&1.logo_image_file_id == id, do: "logo", else: "background"),
-      #       tenant: &1
-      #     }
-      #   )
+        content_modules =
+          from(cm in ContentModule,
+            join: cmf in "content_module_file",
+            on: cmf.content_module_id == cm.id,
+            preload: :article,
+            where: cmf.file_id == ^id,
+            order_by: [desc: cm.updated_at, desc: cm.inserted_at, desc: cm.id]
+          )
+          |> Repo.all()
+          |> Enum.map(&%{usage: "file", content_module: &1, article: &1.article})
 
-      # ++ tenants
-      usages = categories ++ articles ++ content_modules ++ users
-      {:ok, usages}
-    else
-      {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
+        users =
+          from(u in User,
+            where: u.avatar_image_file_id == ^id,
+            order_by: [:name, :nickname, :inserted_at]
+          )
+          |> Repo.all()
+          |> Enum.map(&%{usage: "avatar", user: &1})
+
+        usages = categories ++ articles ++ content_modules ++ users
+        {:ok, usages}
     end
   end
 
@@ -101,14 +90,17 @@ defmodule ApiWeb.FileResolver do
 
   def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
       when not is_nil(parent_directory_id) do
-    parent_directory = Accounts.get_directory!(parent_directory_id)
+    parent_directory = Accounts.get_directory(parent_directory_id)
 
-    case user_can_read_directory?(current_user, parent_directory) do
+    cond do
+      is_nil(parent_directory) ->
+        {:error, "Ordner nicht gefunden."}
+
+      !user_can_read_directory?(current_user, parent_directory) ->
+        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+
       true ->
         {:ok, Accounts.list_files(parent_directory)}
-
-      _ ->
-        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
     end
   end
 
@@ -175,13 +167,14 @@ defmodule ApiWeb.FileResolver do
       target_directory =
         case args do
           %{parent_directory_id: target_directory_id} ->
-            Accounts.get_directory!(target_directory_id)
+            Accounts.get_directory(target_directory_id)
 
           _ ->
             source_directory
         end
 
-      if user_can_write_directory?(current_user, source_directory) &&
+      if !is_nil(target_directory) &&
+           user_can_write_directory?(current_user, source_directory) &&
            user_can_write_directory?(current_user, target_directory) do
         Accounts.update_file(file, Map.take(args, [:filename, :parent_directory_id]))
       else

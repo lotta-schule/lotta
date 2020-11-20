@@ -5,7 +5,6 @@ defmodule ApiWeb.UserGroupResolver do
 
   import Api.Accounts.Permissions
 
-  alias Ecto.NoResultsError
   alias ApiWeb.ErrorHelpers
   alias Api.Repo
   alias Api.Accounts
@@ -36,17 +35,11 @@ defmodule ApiWeb.UserGroupResolver do
 
   def all(_args, _info), do: {:ok, Accounts.list_user_groups()}
 
-  def get(%{id: id}, %{context: context}) do
-    if context[:current_user] && context[:user_is_admin] do
-      try do
-        {:ok, Accounts.get_user_group!(id)}
-      rescue
-        NoResultsError -> {:ok, nil}
-      end
-    else
-      {:error, "Nur Administratoren dürfen Gruppen anzeigen."}
-    end
+  def get(%{id: id}, %{context: %{current_user: _user, user_is_admin: true}}) do
+    {:ok, Accounts.get_user_group(id)}
   end
+
+  def get(_args, _info), do: {:error, "Nur Administratoren dürfen Gruppen anzeigen."}
 
   def create(%{group: group_input}, %{context: context}) do
     if context[:current_user] && user_is_admin?(context.current_user) do
@@ -66,29 +59,31 @@ defmodule ApiWeb.UserGroupResolver do
     end
   end
 
-  def update(%{id: id, group: group_input}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      try do
-        Accounts.get_user_group!(id)
-        |> Accounts.update_user_group(group_input)
-      rescue
-        NoResultsError -> {:error, "Gruppe existiert nicht."}
-      end
-    else
-      {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
+  def update(%{id: id, group: group_input}, %{
+        context: %{current_user: _user, user_is_admin: true}
+      }) do
+    case Accounts.get_user_group(id) do
+      nil ->
+        {:error, "Gruppe existiert nicht."}
+
+      group ->
+        Accounts.update_user_group(group, group_input)
     end
   end
 
-  def delete(%{id: id}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      try do
-        Accounts.get_user_group!(id)
-        |> Accounts.delete_user_group()
-      rescue
-        NoResultsError -> {:error, "Gruppe existiert nicht."}
-      end
-    else
-      {:error, "Nur Administratoren dürfen Gruppen löschen."}
+  def update(_args, _info), do: {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
+
+  def delete(%{id: id}, %{
+        context: %{current_user: _user, user_is_admin: true}
+      }) do
+    case Accounts.get_user_group(id) do
+      nil ->
+        {:error, "Gruppe existiert nicht."}
+
+      group ->
+        Accounts.delete_user_group(group)
     end
   end
+
+  def delete(_args, _info), do: {:error, "Nur Administratoren dürfen Gruppen löschen."}
 end

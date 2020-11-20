@@ -1,7 +1,5 @@
 defmodule ApiWeb.SearchResolverTest do
-  @moduledoc """
-    Test Module for SearchResolver
-  """
+  @moduledoc false
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
