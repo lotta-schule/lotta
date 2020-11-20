@@ -124,7 +124,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                     }
                     return true;
                 })
-                .flatMap<JSX.Element>((line, index) => (
+                .map((line, index) => (
                     [
                         <TableRow key={index * 2}>
                             <TableCell>{line.lessonIndex}</TableCell>
