@@ -36,29 +36,27 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
         expect(screen.queryByLabelText('Wiederholung Neues Passwort:')).toHaveAttribute('autocomplete', 'new-password');
     });
 
-    it('should start with a disabled submit button, but should enable the button when passwords have been entered', async done => {
+    it('should start with a disabled submit button, but should enable the button when passwords have been entered', () => {
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
         expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
-        await userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
-        await userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
-        await userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), 'pw456');
+        userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
+        userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
+        userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), 'pw456');
         expect(screen.getByRole('button', { name: /ändern/ })).not.toBeDisabled();
-        done();
     });
 
-    it('should not enable submit button if new password and repetition do not match', async done => {
+    it('should not enable submit button if new password and repetition do not match', () => {
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
         expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
-        await userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
-        await userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
-        await userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), 'pw4567');
+        userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
+        userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
+        userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), 'pw4567');
         expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
-        done();
     });
 
     describe('send form', () => {
 
-        it('should create an article with the given title and then close the dialog', async done => {
+        it('should create an article with the given title and then close the dialog', async () => {
             let updateMutationCalled = false;
             const additionalMocks = [{
                 request: { query: UpdatePasswordMutation, variables: { currentPassword: 'pw123', newPassword: 'pw456' } },
@@ -74,10 +72,10 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
                 <UpdatePasswordDialog isOpen onRequestClose={onClose} />,
                 {}, { currentUser: SomeUser, additionalMocks }
             );
-            await userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
-            await userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
-            await userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), 'pw456');
-            await userEvent.click(screen.getByRole('button', { name: /ändern/ }));
+            userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
+            userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
+            userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), 'pw456');
+            userEvent.click(screen.getByRole('button', { name: /ändern/ }));
 
             await waitFor(() => {
                 expect(updateMutationCalled).toEqual(true);
@@ -85,18 +83,16 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
             await waitFor(() => {
                 expect(onClose).toHaveBeenCalled();
             });
-            done();
         });
 
-        it('should clear the form and call onAbort when clicking the "Reset" button', async done => {
+        it('should clear the form and call onAbort when clicking the "Reset" button', () => {
             render(
                 <UpdatePasswordDialog isOpen onRequestClose={() => {}} />
             );
-            await userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), '');
-            await userEvent.type(screen.getByLabelText('Neues Passwort:'), '');
-            await userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), '');
-            await userEvent.click(screen.getByRole('button', { name: /ändern/i }));
-            done();
+            userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), '');
+            userEvent.type(screen.getByLabelText('Neues Passwort:'), '');
+            userEvent.type(screen.getByLabelText('Wiederholung Neues Passwort:'), '');
+            userEvent.click(screen.getByRole('button', { name: /ändern/i }));
         });
 
     });

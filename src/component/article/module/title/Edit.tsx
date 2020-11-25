@@ -27,7 +27,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
     }, [title]);
 
     const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.keyCode === 27) { // ESC
+        if (e.key === 'Escape') {
             requestBlurRef.current = true;
             setTitle(contentModule.content?.title ?? ''); // reset to initial value
         }
@@ -45,7 +45,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
             onKeyDown={onKeyDown}
             onChange={(e: FormEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)}
             style={{ width: '100%', outline: 'none', border: 0 }}
-            onBlur={(e: FocusEvent<HTMLInputElement>) => {
+            onBlur={(_e: FocusEvent<HTMLInputElement>) => {
                 onUpdateModule({
                     ...contentModule,
                     content: { title }

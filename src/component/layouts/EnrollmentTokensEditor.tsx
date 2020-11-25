@@ -10,13 +10,13 @@ export interface EnrollmentTokensEditorProps {
 
 export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(({ disabled, tokens, setTokens }) => {
     return (
-        <Autocomplete<string>
+        <Autocomplete
             multiple
             disabled={disabled}
             id="tags-filled"
             options={[]}
             value={tokens}
-            onChange={(_, value) => setTokens(value)}
+            onChange={(_, value: string[]) => setTokens(value)}
             freeSolo
             onBlur={(ev: FocusEvent<HTMLInputElement>) => {
                 // automatically add current value on blur

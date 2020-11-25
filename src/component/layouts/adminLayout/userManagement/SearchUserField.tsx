@@ -8,7 +8,7 @@ import { useDebounce } from 'util/useDebounce';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { UserModel } from 'model';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
     avatar: {
         padding: '.25em',
         height: 50,
@@ -29,7 +29,6 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
     const [autocompleteOptions, setAutocompleteOptions] = useState<UserModel[]>([]);
     const debouncedSearchtext = useDebounce(searchtext, 500);
     const [execute, { data, loading: isLoading }] = useLazyQuery<{ users: UserModel[] }, { searchtext: string }>(SearchUsersQuery);
-
     const selectUser = (user: UserModel | null) => {
         if (user) {
             onSelectUser(user);
@@ -87,7 +86,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
                 />
             )}
             renderOption={user => (
-                <Grid container alignItems="center">
+                <Grid container alignItems="center" role={'option'}>
                     <Grid item>
                         <UserAvatar className={styles.avatar} user={user} size={100} />
                     </Grid>

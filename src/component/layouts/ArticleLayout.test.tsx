@@ -22,7 +22,7 @@ describe('component/article/ArticleLayout', () => {
         ]
     };
 
-    it('should show the correct title in the Browser header', async done => {
+    it('should show the correct title in the Browser header', async () => {
         const screen = render(
             <ArticleLayout articleId={Schulfest.id} />,
             { }, testSetupOptions
@@ -33,10 +33,9 @@ describe('component/article/ArticleLayout', () => {
             expect(getMetaTagValue('description')).toEqual('lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.');
             expect(getMetaTagValue('og:type')).toEqual('article');
         });
-        done();
     });
 
-    it('should not render the widgets list', async done => {
+    it('should not render the widgets list', async () => {
         const screen = render(
             <ArticleLayout articleId={Schulfest.id} />,
             { }, testSetupOptions
@@ -45,7 +44,6 @@ describe('component/article/ArticleLayout', () => {
         const sidebar = await screen.findByTestId('BaseLayoutSidebar');
         expect(sidebar).not.toBeNull();
         expect(sidebar).toHaveStyle({ width: 0 });
-        done();
     });
 
 });

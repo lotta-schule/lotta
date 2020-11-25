@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import * as React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Button, MobileStepper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
@@ -40,26 +40,26 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export interface ImageCarousel {
+export interface ImageCarouselProps {
     contentModule: ContentModuleModel;
 }
 
-export const ImageCarousel = memo<ImageCarousel>(({ contentModule }) => {
+export const ImageCarousel = React.memo<ImageCarouselProps>(({ contentModule }) => {
     const styles = useStyles();
     const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
     const filesConfiguration: { [id: string]: { caption: string; sortKey: number } } = contentModule.configuration?.files ?? {};
     const maxSteps = contentModule.files.length;
 
-    const handleNext = useCallback(() => {
+    const handleNext = React.useCallback(() => {
         setActiveStep(prevActiveStep => prevActiveStep + 1);
     }, []);
 
-    const handleBack = useCallback(() => {
+    const handleBack = React.useCallback(() => {
         setActiveStep(prevActiveStep => prevActiveStep - 1);
     }, []);
 
-    const handleStepChange = useCallback((step) => {
+    const handleStepChange = React.useCallback((step) => {
         setActiveStep(step);
     }, []);
 

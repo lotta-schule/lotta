@@ -1,17 +1,18 @@
-import React, { memo, useMemo, useState } from 'react';
+import * as React from 'react';
 import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { useUserGroups } from 'util/client/useUserGroups';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { VirtualizedTable } from 'component/general/VirtualizedTable';
 import { SearchUserField } from './SearchUserField';
 import { Block } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
+import { de } from 'date-fns/locale';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -50,36 +51,37 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export const UsersList = memo(() => {
+export const UsersList = React.memo(() => {
     const { t } = useTranslation();
     const [currentUser] = useCurrentUser();
-    const groups = useUserGroups();
 
-    const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
-    const [selectedGroupsFilter, setSelectedGroupsFilter] = useState<UserGroupModel[]>([...groups]);
-    const [filterText, setFilterText] = useState('');
-    const { data, loading } = useQuery<{ users: UserModel[] }>(GetUsersQuery);
+    const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(null);
+    const [selectedGroupsFilter, setSelectedGroupsFilter] = React.useState<UserGroupModel[]>([]);
+    const [filterText, setFilterText] = React.useState('');
+    const result = useQuery<{ users: UserModel[] }>(GetUsersQuery);
+    const { data, loading } = result;
 
     const styles = useStyles();
 
-    const rows = useMemo(() => {
+    const rows = React.useMemo(() => {
         return data?.users?.filter(user =>
-            user.groups.find(group => selectedGroupsFilter.find(g => g.id === group.id))
+            selectedGroupsFilter.length ? user.groups.find(group => selectedGroupsFilter.find(g => g.id === group.id)) : true
         )?.filter(user =>
-            !filterText ? true : new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name!)
+            filterText ? new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name!) : true
         )?.map(user =>
             ({
                 avatarImage: <UserAvatar className={styles.avatar} user={user} size={25} />,
                 name: <>{user.isBlocked && <Block color={'error'} />}{user.name}{user.nickname && <> &nbsp; (<strong>{user.nickname}</strong>)</>}</>,
                 groups: user.groups.map(g => g.name).join(', '),
-                user
+                lastSeen: user.lastSeen ? format(new Date(user.lastSeen), 'PPP', { locale: de }) : '',
+                user,
             })
         ) ?? [];
     }, [data, filterText, selectedGroupsFilter, styles.avatar]);
 
     if (loading) {
         return (
-            <CircularProgress />
+            <CircularProgress data-testid="loading" />
         );
     }
 
@@ -90,7 +92,7 @@ export const UsersList = memo(() => {
 
                 <Divider className={styles.divider} />
 
-                <Typography variant={'h5'} className={styles.headline}>In Gruppen eingetragene Nutzer</Typography>
+                <Typography variant={'h5'} className={styles.headline}>Angemeldete Nutzer</Typography>
                 <GroupSelect
                     row
                     hidePublicGroupSelection
@@ -109,6 +111,7 @@ export const UsersList = memo(() => {
                             onChange={e => setFilterText(e.target.value)}
                             placeholder={'Tabelle nach Name filtern'}
                             helperText={'"*"-Zeichen ersetzt beliebige Zeichen'}
+                            inputProps={{ 'aria-label': 'Nach Name filtern' }}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} className={styles.resultsGridItem}>
@@ -130,7 +133,7 @@ export const UsersList = memo(() => {
                     }}
                     columns={[
                         {
-                            width: 30,
+                            width: 45,
                             label: '',
                             dataKey: 'avatarImage',
                         },
@@ -142,7 +145,12 @@ export const UsersList = memo(() => {
                         {
                             label: 'Gruppen',
                             dataKey: 'groups',
-                        }
+                        },
+                        {
+                            width: 200,
+                            label: 'Zuletzt Online',
+                            dataKey: 'lastSeen',
+                        },
                     ]}
                 />
                 {selectedUser && (

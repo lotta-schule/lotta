@@ -12,7 +12,7 @@ describe('component/article/module/title/Config', () => {
         render(<Config contentModule={titleContentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />);
     });
 
-    it('should render a select field with 3 size options', async done => {
+    it('should render a select field with 3 size options', async () => {
         const screen = render(
             <Config contentModule={titleContentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />
         );
@@ -20,7 +20,6 @@ describe('component/article/module/title/Config', () => {
         const selectButton = screen.getByRole('button', { name: /groß/i });
         await userEvent.click(selectButton);
         expect(screen.queryAllByRole('option')).toHaveLength(3);
-        done();
     });
 
     it('should show the selected option', async () => {
@@ -37,7 +36,7 @@ describe('component/article/module/title/Config', () => {
         expect(screen.getByRole('button', { name: /klein/i })).toBeInTheDocument();
     });
 
-    it('should change the size configuration', async done => {
+    it('should change the size configuration', async () => {
         const callback = jest.fn(cm => {
             expect(cm.configuration.level).toEqual(6);
         });
@@ -51,6 +50,5 @@ describe('component/article/module/title/Config', () => {
         await waitFor(() => {
             expect(callback).toHaveBeenCalled();
         });
-        done();
     });
 });

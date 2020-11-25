@@ -79,7 +79,7 @@ export const CategoryRoute = memo<RouteComponentProps<{ id: string }>>(({ match 
     }, [data, fetchMore, isLoading, lastFetchedElementDate, nextFetchCount, FETCH_MORE_OFFSET]);
 
 
-    useScrollEvent(maybeFetchMoreArticles, 250, [maybeFetchMoreArticles]);
+    useScrollEvent(maybeFetchMoreArticles, 250);
 
     if (!called || isLoading || isLoadingCategories) {
         return (

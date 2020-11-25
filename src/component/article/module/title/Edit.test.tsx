@@ -17,37 +17,35 @@ describe('component/article/module/table/Edit', () => {
         expect(screen.getByRole('textbox')).toHaveValue('Na, wie war dein erster Tag?');
     });
 
-    it('should correctly call the onUpateModule prop', async done => {
+    it('should correctly call the onUpateModule prop', async () => {
         const callback = jest.fn(cm => {
             expect(cm.content.title).toEqual('Eine neue Überschrift');
         });
         const screen = render(<Edit contentModule={titleContentModule} onUpdateModule={callback} />);
         const input = screen.getByRole('textbox');
-        await userEvent.click(input);
-        await userEvent.clear(input);
-        await userEvent.type(input, 'Eine neue Überschrift');
-        await userEvent.click(document.body);
+        userEvent.click(input);
+        userEvent.clear(input);
+        userEvent.type(input, 'Eine neue Überschrift');
+        userEvent.click(document.body);
         await waitFor(() => {
             expect(callback).toHaveBeenCalled();
         });
         expect(input).toHaveValue('Eine neue Überschrift');
-        done();
     });
 
-    it('should reset title when clicking ESC', async done => {
+    it('should reset title when clicking ESC', async () => {
         const callback = jest.fn(cm => {
             expect(cm.content.title).toEqual('Na, wie war dein erster Tag?');
         });
         const screen = render(<Edit contentModule={titleContentModule} onUpdateModule={callback} />);
         const input = screen.getByRole('textbox');
-        await userEvent.clear(input);
-        await userEvent.type(input, 'Eine neue Überschr{esc}');
+        userEvent.clear(input);
+        userEvent.type(input, 'Eine neue Überschr{esc}');
         await waitFor(() => {
             expect(input).not.toHaveFocus();
         });
         expect(callback).toHaveBeenCalled();
         expect(input).toHaveValue('Na, wie war dein erster Tag?');
-        done();
     });
 
 });

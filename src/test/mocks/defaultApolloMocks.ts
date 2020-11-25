@@ -24,7 +24,9 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
             result: { data: { categories: allCategories } }
         }
     ];
-    const cache = new InMemoryCache({ addTypename: false });
+    const cache = new InMemoryCache({
+        addTypename: false
+    });
     cache.writeQuery({ query: GetSystemQuery,  data: { system: options.system ?? system } });
     if (options.currentUser) {
         cache.writeQuery({ query: GetCurrentUserQuery,  data: { currentUser: options.currentUser } });

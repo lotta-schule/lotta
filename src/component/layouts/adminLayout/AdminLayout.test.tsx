@@ -8,7 +8,7 @@ afterEach(cleanup);
 
 describe('component/layouts/adminLayout/AdminLayout', () => {
 
-    it('should redirect user to homepage when not logged in', async done => {
+    it('should redirect user to homepage when not logged in', async () => {
         const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
         });
@@ -19,10 +19,9 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
         });
-        done();
     });
 
-    it('should redirect user to homepage when not admin', async done => {
+    it('should redirect user to homepage when not admin', async () => {
         const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
         });
@@ -33,10 +32,9 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
         });
-        done();
     });
 
-    it('should show the page with title to user if he is admin', async done => {
+    it('should show the page with title to user if he is admin', async () => {
         const onChangeLocation = jest.fn();
         const { findByTestId } = render(
             <AdminLayout />,
@@ -50,7 +48,6 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         );
         await findByTestId('title');
         expect(onChangeLocation).not.toHaveBeenCalled();
-        done();
     });
 
 });

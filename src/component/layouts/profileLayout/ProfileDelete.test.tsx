@@ -46,8 +46,8 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
 
     });
 
-    it('should be able to go to second page and see own articles when clicking on button', async done => {
-        const screen = await render(
+    it('should be able to go to second page and see own articles when clicking on button', async () => {
+        const screen = render(
             <ProfileDelete />,
             {},
             {
@@ -77,19 +77,17 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         );
 
         expect(await screen.findByRole('heading', { name: /daten löschen/i })).toBeInTheDocument();
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
 
         expect(await screen.findByRole('progressbar')).toBeVisible();
 
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep2Card')).toBeVisible();
         });
-
-        done();
     }, 10_000);
 
-    it('should be able to go to third page after having seen the first and the second one', async done => {
-        const screen = await render(
+    it('should be able to go to third page after having seen the first and the second one', async () => {
+        const screen = render(
             <ProfileDelete />,
             {},
             {
@@ -122,18 +120,17 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
             }
         );
 
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
         expect(await screen.findByRole('progressbar')).toBeVisible();
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
         expect(await screen.findByRole('progressbar')).toBeVisible();
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep3Card')).toBeVisible();
         });
-        done();
     }, 10_000);
 
-    it('The third page should not show the ProfileDeleteFileSelection or the tab bar if user has no files', async done => {
-        const screen = await render(
+    it('The third page should not show the ProfileDeleteFileSelection or the tab bar if user has no files', async () => {
+        const screen = render(
             <ProfileDelete />,
             {},
             {
@@ -166,22 +163,21 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
             }
         );
 
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
         expect(await screen.findByRole('progressbar')).toBeVisible();
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
         expect(await screen.findByTestId('ProfileDeleteStep3Card')).toBeInTheDocument();
         expect(screen.queryByRole('tablist')).toBeNull();
         expect(screen.queryByRole('tabpanel', { name: /dateien aus beiträgen übergeben/i})).toBeNull();
         expect(screen.queryByRole('tabpanel', { name: /alle dateien überprüfen/i})).toBeVisible();
-        done();
     }, 10_000);
 
-    it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async done => {
+    it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async () => {
         let didCallDeleteMutation = false;
         const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
         });
-        const screen = await render(
+        const screen = render(
             <ProfileDelete />,
             {},
             {
@@ -223,23 +219,21 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
             }
         );
 
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
         expect(await screen.findByRole('progressbar')).toBeVisible();
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
         expect(await screen.findByTestId('ProfileDeleteStep3Card')).toBeInTheDocument();
-        await userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
+        userEvent.click(await screen.findByRole('button', { name: /weiter/i  }));
         expect(await screen.findByTestId('ProfileDeleteStep4Card')).toBeInTheDocument();
-        await userEvent.click(await screen.findByRole('button', { name: /endgültig löschen/i }));
+        userEvent.click(await screen.findByRole('button', { name: /endgültig löschen/i }));
 
         expect(await screen.findByRole('dialog')).toBeVisible();
 
-        await userEvent.click(await screen.findByRole('button', { name: /endgültig löschen/i }));
+        userEvent.click(await screen.findByRole('button', { name: /endgültig löschen/i }));
 
         await waitFor(() => {
             expect(didCallDeleteMutation).toEqual(true);
         });
-
-        done();
     }, 25_000);
 
 });
