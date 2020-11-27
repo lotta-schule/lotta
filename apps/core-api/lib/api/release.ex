@@ -3,6 +3,7 @@ defmodule Api.Release do
     Release tasks like database migrations
   """
   alias Ecto.Migrator
+  import Ecto.Query
 
   @app :api
 
@@ -50,6 +51,22 @@ defmodule Api.Release do
         @elasticsearch_indexes,
         &Elasticsearch.Index.hot_swap(cluster, cluster.get_prefixed_index(&1))
       )
+    end)
+  end
+
+  def check_unavailable_files do
+    Api.Repo.all(from(f in Api.Accounts.File, select: [f.id, f.remote_location]))
+    |> Enum.each(fn [id, remote_location] ->
+      case HTTPoison.head(remote_location) do
+        {:ok, %{headers: headers}} ->
+          # IO.inspect(headers)
+          nil
+
+        {:error, reason} ->
+          IO.inspect("error getting file ##{id} #{remote_location}: #{inspect(reason)}")
+      end
+
+      :timer.sleep(100)
     end)
   end
 
