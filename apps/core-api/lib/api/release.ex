@@ -60,12 +60,17 @@ defmodule Api.Release do
     Api.Repo.all(from(f in Api.Accounts.File, select: [f.id, f.remote_location]))
     |> Enum.each(fn [id, remote_location] ->
       case HTTPoison.head(remote_location) do
-        {:ok, %{headers: headers}} ->
+        {:ok, %{status_code: 200}} ->
           # IO.inspect(headers)
+          nil
+
+        {:ok, %{status_code: status_code}} ->
+          IO.inspect("Status Code #{status_code} getting file ##{id} #{remote_location}")
           nil
 
         {:error, reason} ->
           IO.inspect("error getting file ##{id} #{remote_location}: #{inspect(reason)}")
+          nil
       end
 
       :timer.sleep(100)
