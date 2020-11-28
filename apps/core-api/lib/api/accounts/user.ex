@@ -27,6 +27,8 @@ defmodule Api.Accounts.User do
     belongs_to :avatar_image_file, File, on_replace: :nilify
     has_many :files, File
     has_many :enrollment_tokens, UserEnrollmentToken, on_replace: :delete
+    has_many :sent_messages, Api.Messages.Message, foreign_key: :sender_user_id
+    has_many :received_messages, Api.Messages.Message, foreign_key: :recipient_user_id
 
     many_to_many :groups,
                  UserGroup,
@@ -41,7 +43,7 @@ defmodule Api.Accounts.User do
     timestamps()
   end
 
-  @type id :: String.t()
+  @type id :: pos_integer()
 
   @type email :: String.t()
 

@@ -136,12 +136,8 @@ defmodule ApiWeb.UserResolver do
 
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else
-      {:error, reason} ->
-        {:error,
-         [
-           message: "Registrierung fehlgeschlagen.",
-           details: extract_error_details(reason)
-         ]}
+      res ->
+        format_errors(res, "Registrierung fehlgeschlagen.")
     end
   end
 
@@ -210,17 +206,8 @@ defmodule ApiWeb.UserResolver do
   end
 
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
-    case Accounts.update_profile(current_user, user_params) do
-      {:ok, user} ->
-        {:ok, user}
-
-      {:error, error} ->
-        {:error,
-         [
-           message: "Speichern fehlgeschlagen.",
-           details: extract_error_details(error)
-         ]}
-    end
+    Accounts.update_profile(current_user, user_params)
+    |> format_errors("Speichern fehlgeschlagen.")
   end
 
   def update_profile(_args, _info), do: {:error, "Du bist nicht angemeldet."}
@@ -232,15 +219,8 @@ defmodule ApiWeb.UserResolver do
          {:ok, user} <- Accounts.update_password(user, new_password) do
       {:ok, user}
     else
-      {:error, message} when is_binary(message) ->
-        {:error, message}
-
-      {:error, error} ->
-        {:error,
-         [
-           message: "Passwort ändern fehlgeschlagen.",
-           details: extract_error_details(error)
-         ]}
+      res ->
+        format_errors(res, "Passwort ändern fehlgeschlagen.")
     end
   end
 end

@@ -1,10 +1,7 @@
 defmodule ApiWeb.WidgetResolver do
-  @moduledoc """
-    GraphQL Resolver Module for finding, creating, updating and deleting widgets
-  """
+  @moduledoc false
 
   import Api.Accounts.Permissions
-
   alias Ecto.NoResultsError
   alias Api.System
 

@@ -631,10 +631,10 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> get_user_group!(123)
+      iex> get_user_group(123)
       %UserGroup{}
 
-      iex> get_user_group!(456)
+      iex> get_user_group(456)
       ** (Ecto.NoResultsError)
 
   """

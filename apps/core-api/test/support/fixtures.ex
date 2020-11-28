@@ -4,8 +4,11 @@ defmodule Api.Fixtures do
   alias Api.System.Category
   alias Api.Accounts.{User, UserGroup, File}
   alias Api.Content.{Article}
+  alias Api.Messages.Message
 
-  def fixture(:valid_category_attrs) do
+  def fixture(name, params \\ %{})
+
+  def fixture(:valid_category_attrs, _) do
     %{
       title: "Meine Kategorie",
       sort_key: 10,
@@ -15,7 +18,7 @@ defmodule Api.Fixtures do
     }
   end
 
-  def fixture(:category) do
+  def fixture(:category, _) do
     {:ok, category} =
       Category
       |> struct(fixture(:valid_category_attrs))
@@ -40,23 +43,24 @@ defmodule Api.Fixtures do
     |> Repo.insert!()
   end
 
-  def fixture(:user_group) do
+  def fixture(:user_group, _) do
     %UserGroup{}
     |> Map.merge(fixture(:valid_user_group_attrs, is_admin_group: false))
     |> Repo.insert!()
   end
 
-  def fixture(:valid_user_attrs) do
+  def fixture(:valid_user_attrs, _) do
     %{
       email: "some@email.de",
       name: "Alberta Smith",
       nickname: "TheNick",
       class: "5",
-      password: "password"
+      password: "password",
+      hide_full_name: false
     }
   end
 
-  def fixture(:valid_admin_attrs) do
+  def fixture(:valid_admin_attrs, _) do
     %{
       email: "meineschule@lotta.schule",
       name: "Admin Didang",
@@ -66,7 +70,7 @@ defmodule Api.Fixtures do
     }
   end
 
-  def fixture(:updated_user_attrs) do
+  def fixture(:updated_user_attrs, _) do
     %{
       email: "some email",
       name: "Alberta Smithers",
@@ -75,7 +79,7 @@ defmodule Api.Fixtures do
     }
   end
 
-  def fixture(:invalid_user_attrs) do
+  def fixture(:invalid_user_attrs, _) do
     %{
       email: nil,
       name: nil,
@@ -83,16 +87,19 @@ defmodule Api.Fixtures do
     }
   end
 
-  def fixture(:registered_user) do
-    {:ok, user} =
-      User
-      |> struct(fixture(:valid_user_attrs))
-      |> Repo.insert()
+  def fixture(:registered_user, attrs) do
+    usr =
+      %User{}
+      |> Map.merge(fixture(:valid_user_attrs))
+      |> Map.merge(attrs)
 
-    Repo.get(User, user.id)
+    email = Map.get(usr, :email)
+
+    ((email && Repo.get_by(User, email: email)) || Repo.insert!(usr, returning: true))
+    |> Map.replace(:password, nil)
   end
 
-  def fixture(:admin_user) do
+  def fixture(:admin_user, _attrs) do
     {:ok, user} =
       User
       |> struct(fixture(:valid_admin_attrs))
@@ -103,7 +110,7 @@ defmodule Api.Fixtures do
     Repo.get(User, user.id)
   end
 
-  def fixture(:valid_file_attrs) do
+  def fixture(:valid_file_attrs, _) do
     %{
       file_type: "some_file_type",
       filename: "some_filename",
@@ -113,7 +120,7 @@ defmodule Api.Fixtures do
     }
   end
 
-  def fixture(:invalid_file_attrs) do
+  def fixture(:invalid_file_attrs, _) do
     %{
       file_type: nil,
       filename: nil,
@@ -134,7 +141,7 @@ defmodule Api.Fixtures do
 
   # Content
 
-  def fixture(:valid_article_attrs) do
+  def fixture(:valid_article_attrs, _) do
     %{
       title: "Mein Artikel",
       preview: "Kleine Artikel-Vorschau",
@@ -146,25 +153,35 @@ defmodule Api.Fixtures do
   end
 
   def fixture(:article, %User{} = user) do
-    {:ok, article} =
-      Article
-      |> struct(fixture(:valid_article_attrs))
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_assoc(:users, [user])
-      |> Repo.insert(on_conflict: :nothing)
-
-    article
+    %Article{}
+    |> Map.merge(fixture(:valid_article_attrs))
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:users, [user])
+    |> Repo.insert!()
   end
 
   def fixture(:unpublished_article, %User{} = user) do
-    {:ok, article} =
-      Article
-      |> struct(fixture(:valid_article_attrs))
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_assoc(:users, [user])
-      |> Ecto.Changeset.put_assoc(:category, nil)
-      |> Repo.insert(on_conflict: :nothing)
+    Article
+    |> struct(fixture(:valid_article_attrs))
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:users, [user])
+    |> Ecto.Changeset.put_assoc(:category, nil)
+    |> Repo.insert!(on_conflict: :nothing, returning: true)
+  end
 
-    article
+  # Messages
+
+  def fixture(:valid_message_attrs, params) do
+    %{
+      content: "Das ist die Nachricht",
+      sender_user_id: Keyword.fetch!(params, :from_id),
+      recipient_user_id: Keyword.fetch!(params, :to_id)
+    }
+  end
+
+  def fixture(:message, params) do
+    %Message{}
+    |> Map.merge(fixture(:valid_message_attrs, params))
+    |> Repo.insert!()
   end
 end

@@ -13,6 +13,8 @@ defmodule ApiWeb.Schema do
   import_types(__MODULE__.Accounts.{File, User})
   import_types(__MODULE__.Contents)
   import_types(__MODULE__.Contents.Article)
+  import_types(__MODULE__.Messages)
+  import_types(__MODULE__.Messages.Message)
   import_types(__MODULE__.Schedule)
   import_types(__MODULE__.Calendar)
   import_types(__MODULE__.Search)
@@ -21,6 +23,7 @@ defmodule ApiWeb.Schema do
     import_fields(:accounts_queries)
     import_fields(:system_queries)
     import_fields(:contents_queries)
+    import_fields(:messages_queries)
     import_fields(:schedule_queries)
     import_fields(:calendar_queries)
     import_fields(:search_queries)
@@ -28,6 +31,7 @@ defmodule ApiWeb.Schema do
 
   mutation do
     import_fields(:accounts_mutations)
+    import_fields(:messages_mutations)
     import_fields(:system_mutations)
     import_fields(:contents_mutations)
   end
@@ -46,6 +50,10 @@ defmodule ApiWeb.Schema do
   # def middleware(middleware, _field, %{identifier: :mutation}) do
   #   middleware ++ [ApiWeb.Schema.Middleware.HandleChangesetErrors]
   # end
+
+  def middleware(middleware, _field, %{identifier: :mutation}) do
+    middleware
+  end
 
   def middleware(middleware, _field, _object), do: middleware
 

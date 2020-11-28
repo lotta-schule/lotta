@@ -4,8 +4,9 @@ defmodule Api.Repo.Seeder do
   alias Api.Accounts
   alias Api.System
   alias Api.Accounts.{Directory, File, UserGroup}
-  alias Api.System.{Category, CustomDomain, Widget}
   alias Api.Content.{Article, ContentModule}
+  alias Api.Messages.Message
+  alias Api.System.{Category, CustomDomain, Widget}
 
   def seed() do
     Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
@@ -57,7 +58,7 @@ defmodule Api.Repo.Seeder do
         password: "test123"
       })
 
-    {:ok, _billy} =
+    {:ok, billy} =
       Accounts.register_user(%{
         name: "Christopher Bill",
         nickname: "Billy",
@@ -377,6 +378,52 @@ defmodule Api.Repo.Seeder do
         |> Map.put(:user_id, eike.id)
         |> Repo.insert!()
       end)
+
+    [
+      %Message{
+        sender_user_id: alexis.id,
+        recipient_user_id: eike.id,
+        inserted_at: ~N[2020-11-01 10:00:00],
+        updated_at: ~N[2020-11-01 10:00:00],
+        content: "OK, alles bereit?"
+      },
+      %Message{
+        sender_user_id: eike.id,
+        recipient_user_id: alexis.id,
+        inserted_at: ~N[2020-11-01 12:30:00],
+        updated_at: ~N[2020-11-01 12:30:00],
+        content: "Was meinst du damit?"
+      },
+      %Message{
+        sender_user_id: alexis.id,
+        recipient_user_id: eike.id,
+        inserted_at: ~N[2020-11-01 12:32:00],
+        updated_at: ~N[2020-11-01 12:32:00],
+        content: "Bereit für das Deployment"
+      },
+      %Message{
+        sender_user_id: eike.id,
+        recipient_user_id: alexis.id,
+        inserted_at: ~N[2020-11-01 13:12:00],
+        updated_at: ~N[2020-11-01 13:12:00],
+        content: "Ich frag mal in die Gruppe"
+      },
+      %Message{
+        sender_user_id: eike.id,
+        recipient_group_id: lehrer_group.id,
+        inserted_at: ~N[2020-11-01 13:12:46],
+        updated_at: ~N[2020-11-01 13:12:46],
+        content: "Alles bereit hier? Wir würden deployen."
+      },
+      %Message{
+        sender_user_id: billy.id,
+        recipient_user_id: alexis.id,
+        inserted_at: ~N[2020-11-01 21:01:44],
+        updated_at: ~N[2020-11-01 21:01:44],
+        content: "Bist du da?"
+      }
+    ]
+    |> Enum.map(&Repo.insert!(&1))
 
     homepage = Repo.insert!(%Category{title: "Start", is_homepage: true})
 

@@ -116,6 +116,25 @@ defmodule Api.Accounts.Permissions do
   def user_can_read_directory?(_, _), do: false
 
   @doc """
+  Wether a given user is member in a given set of groups
+
+  Returns true or false
+  """
+  @doc since: "2.2.0"
+
+  @spec user_is_in_groups_list?(User.t(), [pos_integer()]) :: boolean
+
+  def user_is_in_groups_list?(_user, []), do: false
+
+  def user_is_in_groups_list?(%User{} = user, [head | _] = group_ids) when is_number(head) do
+    user_group_ids =
+      User.get_groups(user)
+      |> Enum.map(& &1.id)
+
+    Enum.any?(group_ids, &Enum.member?(user_group_ids, &1))
+  end
+
+  @doc """
   Wether a given user has the permission to read files and directories underneath a given directory.
 
   Returns true or false
@@ -125,17 +144,12 @@ defmodule Api.Accounts.Permissions do
   @spec user_has_group_for_article?(User.t(), Article.t()) :: boolean
 
   def user_has_group_for_article?(%User{} = user, %Article{} = article) do
-    user_group_ids =
-      User.get_groups(user)
-      |> Enum.map(& &1.id)
-
     article_group_ids =
       article
       |> Repo.preload([:groups])
       |> Map.fetch!(:groups)
       |> Enum.map(& &1.id)
 
-    Enum.empty?(article_group_ids) ||
-      Enum.any?(article_group_ids, &Enum.member?(user_group_ids, &1))
+    Enum.empty?(article_group_ids) || user_is_in_groups_list?(user, article_group_ids)
   end
 end
