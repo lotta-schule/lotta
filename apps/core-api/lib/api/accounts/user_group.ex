@@ -9,14 +9,23 @@ defmodule Api.Accounts.UserGroup do
   import Ecto.Query
 
   alias Ecto.Changeset
-  alias Api.Accounts.{User, UserGroup}
+  alias Api.Accounts.{GroupEnrollmentToken, User, UserGroup}
+
+  @type id() :: pos_integer()
+
+  @type t() :: %__MODULE__{
+          id: id(),
+          name: String.t(),
+          sort_key: number(),
+          is_admin_group: boolean()
+        }
 
   schema "user_groups" do
     field :name, :string
     field :sort_key, :integer
     field :is_admin_group, :boolean
 
-    has_many :enrollment_tokens, Api.Accounts.GroupEnrollmentToken,
+    has_many :enrollment_tokens, GroupEnrollmentToken,
       foreign_key: :group_id,
       on_replace: :delete
 

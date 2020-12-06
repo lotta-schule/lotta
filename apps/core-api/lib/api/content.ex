@@ -4,11 +4,16 @@ defmodule Api.Content do
   """
 
   import Ecto.Query
-  import Ecto.Changeset
-  alias Api.Repo
 
-  alias Api.Content.{Article, ContentModule}
+  alias Api.Repo
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Content.{Article, ContentModule, ContentModuleResult}
   alias Api.System.Category
+
+  @type filter() :: %{
+          optional(:first) => pos_integer(),
+          optional(:updated_before) => NaiveDateTime.t()
+        }
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -19,16 +24,21 @@ defmodule Api.Content do
   end
 
   @doc """
-  Returns the list of articles for the start page
+  Returns the list of articles for a category page or start page,
+  given a user and an optional filter
 
   ## Examples
 
-      iex> list_articles()
+      iex> list_articles(nil, %User{id: 1}, [], false)
       [%Article{}, ...]
 
   """
-  def list_articles(category_id, user, user_group_ids, user_is_admin, filter) do
-    query = list_public_articles(user, user_group_ids, user_is_admin)
+  @doc since: "1.0.0"
+  @spec list_articles(Article.id(), User.t(), list(UserGroup.t()), boolean(), filter()) :: [
+          Article.t()
+        ]
+  def list_articles(category_id, user, user_groups, user_is_admin, filter) do
+    query = list_public_articles(user, user_groups, user_is_admin)
 
     case category_id do
       nil ->
@@ -41,8 +51,18 @@ defmodule Api.Content do
     |> Repo.all()
   end
 
-  def get_topics(user, user_group_ids, user_is_admin) do
-    query = list_public_articles(user, user_group_ids, user_is_admin)
+  @doc """
+  Get all the available topic
+
+  ## Examples
+      
+      iex> list_topics(nil, [], false)
+      ["Topic 1", "Topic 2", ...]
+  """
+  @doc since: "1.2.0"
+  @spec list_topics(User.t(), list(UserGroup.t()), boolean()) :: [String.t()]
+  def list_topics(user, groups, is_admin) do
+    query = list_public_articles(user, groups, is_admin)
 
     Ecto.Query.from([a, ...] in query,
       where: not is_nil(a.topic),
@@ -52,7 +72,7 @@ defmodule Api.Content do
   end
 
   @doc """
-  Returns the list of articles belonging to a topic.
+  Returns the list of articles belonging to a topic, regarding user.
 
   ## Examples
 
@@ -60,8 +80,11 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_articles_by_topic(user, user_group_ids, user_is_admin, topic) do
-    query = list_public_articles(user, user_group_ids, user_is_admin)
+  @doc since: "1.0.0"
+  @spec list_articles_by_topic(User.t(), list(UserGroup.t()), boolean(), String.t()) ::
+          list(Article.t())
+  def list_articles_by_topic(user, user_groups, user_is_admin, topic) do
+    query = list_public_articles(user, user_groups, user_is_admin)
 
     from(a in query,
       where: a.topic == ^topic,
@@ -71,14 +94,16 @@ defmodule Api.Content do
   end
 
   @doc """
-  Returns the list of unpublished articles.
+  Returns the list of all unpublished articles that are ready to publish but miss admin confirmation
 
   ## Examples
 
-      iex> list_unpublished_articles(topic)
+      iex> list_unpublished_articles()
       [%Article{}, ...]
 
   """
+  @doc since: "1.0.0"
+  @spec list_unpublished_articles() :: [Article.t()]
   def list_unpublished_articles() do
     Ecto.Query.from(a in Article,
       where: a.ready_to_publish == true and is_nil(a.category_id)
@@ -87,7 +112,7 @@ defmodule Api.Content do
   end
 
   @doc """
-  Returns the list of articles for a user
+  Returns the list of articles a given user is author or co-author
 
   ## Examples
 
@@ -95,17 +120,16 @@ defmodule Api.Content do
       [%Article{}, ...]
 
   """
-  def list_user_articles(%Api.Accounts.User{} = user) do
-    user_id = user.id
-
-    Repo.all(
-      Ecto.Query.from(a in Article,
-        join: au in "article_users",
-        on: au.article_id == a.id,
-        where: au.user_id == ^user_id,
-        order_by: :id
-      )
+  @doc since: "1.0.0"
+  @spec list_user_articles(User.t()) :: [Article.t()]
+  def list_user_articles(user) do
+    Ecto.Query.from(a in Article,
+      join: au in "article_users",
+      on: au.article_id == a.id,
+      where: au.user_id == ^user.id,
+      order_by: :id
     )
+    |> Repo.all()
   end
 
   @doc """
@@ -115,42 +139,36 @@ defmodule Api.Content do
 
   ## Examples
 
-      iex> get_article!(123)
+      iex> get_article(123)
       %Article{}
 
-      iex> get_article!(456)
+      iex> get_article(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_article!(id) do
-    Repo.get!(Article, id)
+  def get_article(id) do
+    Repo.get(Article, id)
   end
 
   @doc """
-  Creates a article.
+  Creates an article for a given user
 
   ## Examples
 
-      iex> create_article(%{field: value})
+      iex> create_article(%{field: value}, %User{id: 1})
       {:ok, %Article{}}
 
-      iex> create_article(%{field: bad_value})
+      iex> create_article(%{field: bad_value}, %User{id: 1})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_article(attrs \\ %{}, user) do
-    changeset =
-      %Article{}
-      |> Article.create_changeset(attrs)
-      |> put_assoc(:users, [user])
-
-    case Repo.insert(changeset) do
-      {:ok, article} ->
-        {:ok, article}
-
-      result ->
-        result
-    end
+  @doc since: "1.0.0"
+  @spec create_article(map(), User.t()) :: {:ok, Article.t()} | {:error, Ecto.Changeset.t()}
+  def create_article(attrs, user) do
+    %Article{}
+    |> Article.create_changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:users, [user])
+    |> Repo.insert()
   end
 
   @doc """
@@ -165,15 +183,16 @@ defmodule Api.Content do
       {:error, %Ecto.Changeset{}}
 
   """
+  @doc since: "1.0.0"
+  @spec update_article(Article.t(), map()) :: {:ok, Article.t()} | {:error, Ecto.Changeset.t()}
   def update_article(%Article{} = article, attrs) do
-    changeset =
-      article
-      |> Article.changeset(attrs)
-
-    case Repo.update(changeset) do
-      {:ok, article} ->
+    article
+    |> Article.changeset(attrs)
+    |> Repo.update()
+    |> case do
+      {:ok, article} = result ->
         Elasticsearch.put_document(Api.Elasticsearch.Cluster, article, "articles")
-        {:ok, article}
+        result
 
       result ->
         result
@@ -192,11 +211,13 @@ defmodule Api.Content do
       {:error, %Ecto.Changeset{}}
 
   """
+  @doc since: "1.0.0"
+  @spec delete_article(Article.t()) :: {:ok, Article.t()} | {:error, Ecto.Changeset.t()}
   def delete_article(%Article{} = article) do
     case Repo.delete(article) do
-      {:ok, article} ->
+      {:ok, article} = result ->
         Elasticsearch.delete_document(Api.Elasticsearch.Cluster, article, "articles")
-        {:ok, article}
+        result
 
       result ->
         result
@@ -204,129 +225,41 @@ defmodule Api.Content do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking article changes.
-
-  ## Examples
-
-      iex> change_article(article)
-      %Ecto.Changeset{source: %Article{}}
-
-  """
-  def change_article(%Article{} = article) do
-    Article.changeset(article, %{})
-  end
-
-  alias Api.Content.ContentModule
-
-  @doc """
-  Returns the list of content_modules.
-
-  ## Examples
-
-      iex> list_content_modules()
-      [%ContentModule{}, ...]
-
-  """
-  def list_content_modules do
-    Repo.all(ContentModule)
-  end
-
-  @doc """
   Gets a single content_module.
-
-  Raises `Ecto.NoResultsError` if the Content module does not exist.
+  Returns nil if no result is found.
 
   ## Examples
 
-      iex> get_content_module!(123)
+      iex> get_content_module(123)
       %ContentModule{}
 
-      iex> get_content_module!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_content_module(456)
+      nil
 
   """
-  def get_content_module!(id), do: Repo.get!(ContentModule, id)
+  @doc since: "1.0.0"
+  @spec get_content_module(ContentModule.t()) :: ContentModule.t() | nil
+  def get_content_module(id), do: Repo.get(ContentModule, id)
 
   @doc """
-  Creates a content_module.
-
-  ## Examples
-
-      iex> create_content_module(%{field: value})
-      {:ok, %ContentModule{}}
-
-      iex> create_content_module(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
+  Save a given result set for a given content module, optionally setting user
   """
-  def create_content_module(article_id, attrs \\ %{}) do
-    %ContentModule{}
-    |> ContentModule.changeset(Map.put(attrs, :article_id, article_id))
+  @doc since: "1.4.0"
+  @spec save_content_module_result(ContentModule.t(), map(), User.t() | nil) ::
+          {:ok, ContentModuleResult.t()} | {:error, Ecto.Changeset.t()}
+  def save_content_module_result(%ContentModule{} = content_module, result, user) do
+    content_module
+    |> Ecto.build_assoc(:results, %{result: result, user_id: user && user.id})
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a content_module.
-
-  ## Examples
-
-      iex> update_content_module(content_module, %{field: new_value})
-      {:ok, %ContentModule{}}
-
-      iex> update_content_module(content_module, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_content_module(%ContentModule{} = content_module, attrs) do
-    content_module
-    |> ContentModule.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a ContentModule.
-
-  ## Examples
-
-      iex> delete_content_module(content_module)
-      {:ok, %ContentModule{}}
-
-      iex> delete_content_module(content_module)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_content_module(%ContentModule{} = content_module) do
-    Repo.delete(content_module)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking content_module changes.
-
-  ## Examples
-
-      iex> change_content_module(content_module)
-      %Ecto.Changeset{source: %ContentModule{}}
-
-  """
-  def change_content_module(%ContentModule{} = content_module) do
-    ContentModule.changeset(content_module, %{})
-  end
-
-  def save_content_module_result!(%ContentModule{} = content_module, user, result) do
-    content_module
-    |> Ecto.build_assoc(:results, %{result: result, user_id: user && user.id})
-    |> Repo.insert!()
-  end
-
-  def toggle_article_pin(article_id) do
-    article = Repo.get(Article, article_id)
-
+  def toggle_article_pin(article) do
     article
-    |> Ecto.Changeset.cast(%{is_pinned_to_top: !article.is_pinned_to_top}, [:is_pinned_to_top])
+    |> Ecto.Changeset.change(%{is_pinned_to_top: !article.is_pinned_to_top})
     |> Repo.update()
   end
 
-  def list_public_articles(_user, user_group_ids, user_is_admin) do
+  def list_public_articles(_user, user_groups, user_is_admin) do
     from(a in Article,
       left_join: aug in "articles_user_groups",
       on: aug.article_id == a.id,
@@ -334,7 +267,8 @@ defmodule Api.Content do
       on: c.id == a.category_id,
       where:
         not is_nil(a.category_id) and
-          (is_nil(aug.group_id) or aug.group_id in ^user_group_ids or ^user_is_admin),
+          (is_nil(aug.group_id) or aug.group_id in ^Enum.map(user_groups, & &1.id) or
+             ^user_is_admin),
       distinct: true
     )
   end

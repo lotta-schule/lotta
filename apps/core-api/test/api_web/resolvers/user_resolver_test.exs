@@ -398,7 +398,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["users"]
                  }
                ]
@@ -531,7 +531,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["searchUsers"]
                  }
                ]
@@ -550,7 +550,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["searchUsers"]
                  }
                ]
@@ -633,7 +633,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur angemeldete Nutzer dürfen Nutzer abrufen.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["user"]
                  }
                ]
@@ -1282,7 +1282,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Benutzern Gruppen zuweisen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateUser"]
                  }
                ]
@@ -1331,7 +1331,7 @@ defmodule ApiWeb.UserResolverTest do
       assert %{
                "errors" => [
                  %{
-                   "message" => "Du bist nicht angemeldet.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["updateProfile"]
                  }
                ],
@@ -1434,7 +1434,7 @@ defmodule ApiWeb.UserResolverTest do
                "data" => %{"destroyAccount" => nil},
                "errors" => [
                  %{
-                   "message" => "Du bist nicht angemeldet.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["destroyAccount"],
                    "locations" => [%{"column" => 3, "line" => 2}]
                  }

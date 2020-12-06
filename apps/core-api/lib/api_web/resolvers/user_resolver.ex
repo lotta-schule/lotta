@@ -1,8 +1,5 @@
 defmodule ApiWeb.UserResolver do
-  @moduledoc """
-  GraphQL Resolver Module for finding, updating and deleting users.
-  Takes care of login and registration, as well as password recovery functionality.
-  """
+  @moduledoc false
 
   require Logger
 
@@ -10,7 +7,6 @@ defmodule ApiWeb.UserResolver do
   import Api.Accounts.Permissions
   import ApiWeb.ErrorHelpers
 
-  alias Ecto.NoResultsError
   alias Api.Repo
   alias Api.Accounts
   alias Api.Accounts.User
@@ -65,12 +61,12 @@ defmodule ApiWeb.UserResolver do
   def resolve_last_seen(_user, _args, _info),
     do: {:error, "Der Online-Status des Nutzers ist geheim."}
 
-  def get_current(_args, %{context: %{current_user: current_user}}) do
-    {:ok, current_user}
+  def get_current(_args, %{context: %{current_user: nil}}) do
+    {:ok, nil}
   end
 
-  def get_current(_args, _info) do
-    {:ok, nil}
+  def get_current(_args, %{context: %{current_user: current_user}}) do
+    {:ok, current_user}
   end
 
   def resolve_groups(user, _args, _info), do: {:ok, User.get_groups(user)}
@@ -79,44 +75,33 @@ defmodule ApiWeb.UserResolver do
     {:ok, User.get_assigned_groups(user)}
   end
 
-  def resolve_enrollment_tokens(user, _args, _info) do
-    user = Repo.preload(user, :enrollment_tokens)
-
+  def resolve_enrollment_tokens(user, _args, %{context: %{current_user: current_user}}) do
     tokens =
-      user.enrollment_tokens
-      |> Enum.map(& &1.enrollment_token)
+      if user.id == current_user.id do
+        user = Repo.preload(user, :enrollment_tokens)
+
+        user.enrollment_tokens
+        |> Enum.map(& &1.enrollment_token)
+      else
+        []
+      end
 
     {:ok, tokens}
   end
 
-  def all(_args, %{context: %{current_user: current_user}}) do
-    if user_is_admin?(current_user) do
-      {:ok, Accounts.list_users()}
-    else
-      {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
-    end
+  def all(_args, _info) do
+    {:ok, Accounts.list_users()}
   end
 
-  def all(_args, _info), do: {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
-
-  def search(%{searchtext: searchtext}, %{context: context}) do
-    cond do
-      !context[:current_user] || !user_is_admin?(context.current_user) ->
-        {:error, "Nur Administrator dürfen auf Benutzer auflisten."}
-
-      String.length(searchtext) >= 2 ->
-        {:ok, Accounts.search_user(searchtext)}
-
-      true ->
-        {:ok, []}
-    end
+  def search(%{searchtext: searchtext}, _info) when bit_size(searchtext) >= 16 do
+    {:ok, Accounts.search_user(searchtext)}
   end
 
-  def get(%{id: id}, %{context: %{current_user: current_user}}) when not is_nil(current_user) do
+  def search(_args, _info), do: {:ok, []}
+
+  def get(%{id: id}, _info) do
     {:ok, Accounts.get_user(String.to_integer(id))}
   end
-
-  def get(_args, _info), do: {:error, "Nur angemeldete Nutzer dürfen Nutzer abrufen."}
 
   def register(%{user: user_params} = args, _info) do
     user_params =
@@ -189,28 +174,23 @@ defmodule ApiWeb.UserResolver do
     Accounts.delete_user(current_user)
   end
 
-  def destroy_account(_args, _info), do: {:error, "Du bist nicht angemeldet."}
+  def update(%{id: id} = args, _info) do
+    user = Accounts.get_user(String.to_integer(id))
 
-  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
-    if user_is_admin?(current_user) do
-      case Accounts.get_user(String.to_integer(id)) do
-        nil ->
-          {:error, "Nutzer mit der id #{id} nicht gefunden."}
-
-        user ->
-          Accounts.update_user(user, args)
-      end
+    if is_nil(user) do
+      {:error, "Nutzer mit der id #{id} nicht gefunden."}
     else
-      {:error, "Nur Administratoren dürfen Benutzern Gruppen zuweisen."}
+      user
+      |> Accounts.update_user(args)
+      |> format_errors("Fehler beim Bearbeiten des Nutzers.")
     end
   end
 
   def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
-    Accounts.update_profile(current_user, user_params)
+    current_user
+    |> Accounts.update_profile(user_params)
     |> format_errors("Speichern fehlgeschlagen.")
   end
-
-  def update_profile(_args, _info), do: {:error, "Du bist nicht angemeldet."}
 
   def update_password(%{current_password: password, new_password: new_password}, %{
         context: %{current_user: %{email: email}}

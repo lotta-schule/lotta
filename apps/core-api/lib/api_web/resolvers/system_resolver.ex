@@ -1,9 +1,5 @@
 defmodule ApiWeb.SystemResolver do
-  @moduledoc """
-    GraphQL Resolver Module for configuring system
-  """
-
-  import Api.Accounts.Permissions
+  @moduledoc false
 
   alias Api.System
 
@@ -11,23 +7,13 @@ defmodule ApiWeb.SystemResolver do
     {:ok, System.get_configuration()}
   end
 
-  def update(%{system: system_input}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      {:ok, System.update_configuration(System.get_configuration(), system_input)}
-    else
-      {:error, "Nur Administratoren dürfen das."}
-    end
+  def update(%{system: system_input}, _info) do
+    {:ok, System.update_configuration(System.get_configuration(), system_input)}
   end
 
   def usage(_args, %{context: %{current_user: current_user}}) do
-    if user_is_admin?(current_user) do
-      System.Usage.get_usage()
-    else
-      {:error, "Nur Administratoren dürfen das."}
-    end
+    System.Usage.get_usage()
   end
-
-  def usage(_, _), do: {:error, "Nur Administratoren dürfen das."}
 
   def custom_domains(_, _), do: {:ok, System.list_custom_domains()}
 

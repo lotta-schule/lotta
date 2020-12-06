@@ -4,7 +4,7 @@ defmodule Api.Accounts.Permissions do
   """
 
   alias Api.Repo
-  alias Api.Accounts.{Directory, File, User}
+  alias Api.Accounts.{Directory, File, User, UserGroup}
   alias Api.Content.Article
 
   @doc """
@@ -77,16 +77,55 @@ defmodule Api.Accounts.Permissions do
   def user_is_author?(_, _), do: false
 
   @doc """
-  Wether a given user has the permission to write files and directories to a given directory.
-
-  Returns true or false
+  Wether a given user has read-access to a given object.
   """
-  @doc since: "2.0.0"
+  @doc since: "2.2.0"
+  @spec can_read?(User.t(), Article.t() | Directory.t()) :: boolean()
+  def can_read?(user, object)
 
-  @spec user_can_write_directory?(User.t(), Directory.t()) :: boolean()
+  def can_read?(user, %Article{} = article) do
+    can_write?(user, article) ||
+      (fn ->
+         groups =
+           article
+           |> Repo.preload(:groups)
+           |> Map.get(:groups, [])
 
-  def user_can_write_directory?(%User{} = user, %Directory{} = directory) do
-    directory = Repo.preload(directory, [:user])
+         Enum.empty?(groups) || user_is_in_groups_list?(user, groups)
+       end).()
+  end
+
+  def can_read?(user, %Directory{} = directory) do
+    directory =
+      directory
+      |> Repo.preload([:user])
+
+    user_is_author?(user, directory) || is_nil(directory.user)
+  end
+
+  def can_read?(user, %File{} = file) do
+    file =
+      file
+      |> Repo.preload([:user, :parent_directory])
+
+    user_is_author?(user, file) || can_read?(user, file.parent_directory)
+  end
+
+  @doc """
+  Wether a given user has write-access to a given object.
+  """
+  @doc since: "2.2.0"
+  @spec can_write?(User.t(), Article.t() | Directory.t()) :: boolean()
+  def can_write?(user, object)
+
+  def can_write?(user, %Article{} = article) do
+    user_is_admin?(user) || user_is_author?(user, article)
+  end
+
+  def can_write?(user, %Directory{} = directory) do
+    directory =
+      directory
+      |> Repo.preload([:user])
 
     user_is_author?(user, directory) ||
       if user_is_admin?(user) do
@@ -97,23 +136,15 @@ defmodule Api.Accounts.Permissions do
       end
   end
 
-  def user_can_write_directory?(_, _), do: false
+  def can_write?(user, %File{} = file) do
+    file =
+      file
+      |> Repo.preload([:user, :parent_directory])
 
-  @doc """
-  Wether a given user has the permission to read files and directories underneath a given directory.
-
-  Returns true or false
-  """
-  @doc since: "2.0.0"
-
-  @spec user_can_read_directory?(User.t(), Directory.t()) :: boolean()
-
-  def user_can_read_directory?(%User{} = user, %Directory{} = directory) do
-    directory = Repo.preload(directory, [:user])
-    user_is_author?(user, directory) || is_nil(directory.user)
+    user_is_author?(user, file) || can_write?(user, file.parent_directory)
   end
 
-  def user_can_read_directory?(_, _), do: false
+  def can_write?(_, _), do: false
 
   @doc """
   Wether a given user is member in a given set of groups
@@ -122,34 +153,27 @@ defmodule Api.Accounts.Permissions do
   """
   @doc since: "2.2.0"
 
-  @spec user_is_in_groups_list?(User.t(), [pos_integer()]) :: boolean
+  @spec user_is_in_groups_list?(User.t() | nil, [UserGroup.t() | pos_integer()]) :: boolean
 
-  def user_is_in_groups_list?(_user, []), do: false
-
-  def user_is_in_groups_list?(%User{} = user, [head | _] = group_ids) when is_number(head) do
+  def user_is_in_groups_list?(%User{} = user, groups) when length(groups) > 0 do
     user_group_ids =
-      User.get_groups(user)
+      user
+      |> User.get_groups()
       |> Enum.map(& &1.id)
 
-    Enum.any?(group_ids, &Enum.member?(user_group_ids, &1))
+    groups
+    |> Enum.map(fn
+      %UserGroup{id: id} ->
+        id
+
+      assume_id when is_bitstring(assume_id) ->
+        String.to_integer(assume_id)
+
+      assume_id ->
+        assume_id
+    end)
+    |> Enum.any?(&Enum.member?(user_group_ids, &1))
   end
 
-  @doc """
-  Wether a given user has the permission to read files and directories underneath a given directory.
-
-  Returns true or false
-  """
-  @doc since: "2.0.0"
-
-  @spec user_has_group_for_article?(User.t(), Article.t()) :: boolean
-
-  def user_has_group_for_article?(%User{} = user, %Article{} = article) do
-    article_group_ids =
-      article
-      |> Repo.preload([:groups])
-      |> Map.fetch!(:groups)
-      |> Enum.map(& &1.id)
-
-    Enum.empty?(article_group_ids) || user_is_in_groups_list?(user, article_group_ids)
-  end
+  def user_is_in_groups_list?(_, _), do: false
 end

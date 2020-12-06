@@ -5,15 +5,18 @@ defmodule ApiWeb.Schema.Messages do
 
   object :messages_queries do
     field :messages, list_of(:message) do
-      middleware(ApiWeb.Schema.Middleware.EnsureAuthenticated)
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
       resolve(&ApiWeb.MessagesResolver.all/2)
     end
   end
 
   object :messages_mutations do
     field :create_message, type: :message do
-      middleware(ApiWeb.Schema.Middleware.EnsureAuthenticated)
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
       arg(:message, non_null(:message_input))
+
       resolve(&ApiWeb.MessagesResolver.create/2)
     end
   end

@@ -13,6 +13,18 @@ defmodule Api.Content.Article do
   alias Api.Content.{Article, ContentModule}
   alias Api.System.Category
 
+  @type id() :: pos_integer()
+
+  @type topic() :: String.t()
+
+  @type t() :: %__MODULE__{
+          id: id(),
+          title: String.t(),
+          topic: topic(),
+          ready_to_publish: boolean(),
+          is_pinned_to_top: boolean()
+        }
+
   schema "articles" do
     field(:title, :string)
     field(:preview, :string)

@@ -1,55 +1,59 @@
 defmodule ApiWeb.WidgetResolver do
   @moduledoc false
 
-  import Api.Accounts.Permissions
-  alias Ecto.NoResultsError
+  import ApiWeb.ErrorHelpers
+
   alias Api.System
+  alias ApiWeb.Context
 
-  def all(%{category_id: category_id}, %{context: context}) do
-    System.list_widgets_by_category_id(
-      category_id,
-      context[:current_user],
-      context[:user_group_ids]
-    )
-  end
+  def all(%{category_id: category_id}, %{
+        context: %Context{current_user: current_user, all_groups: groups}
+      }) do
+    category = System.get_category(category_id)
 
-  def all(_args, %{context: context}) do
-    System.list_widgets(context[:current_user], context[:user_group_ids])
-  end
-
-  def create(%{title: title, type: type}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context[:current_user]) do
-      System.create_widget(%{title: title, type: type})
+    if category do
+      {:ok,
+       System.list_widgets_by_category(
+         category,
+         current_user,
+         groups
+       )}
     else
-      {:error, "Nur Administratoren dürfen Widgets erstellen."}
+      {:error, "Kategorie mit der id #{category_id} nicht gefunden."}
     end
   end
 
-  def update(%{id: id, widget: widget_params}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      try do
-        System.get_widget!(id)
-        |> System.update_widget(widget_params)
-      rescue
-        NoResultsError ->
-          {:error, "Marginale mit der id #{id} nicht gefunden."}
-      end
+  def all(_args, %{context: %Context{current_user: current_user, all_groups: groups}}) do
+    {:ok, System.list_widgets(current_user, groups)}
+  end
+
+  def create(args, _info) do
+    args
+    |> System.create_widget()
+    |> format_errors("Erstellen der Marginale fehlgeschlagen.")
+  end
+
+  def update(%{id: id, widget: widget_params}, _info) do
+    widget = System.get_widget(id)
+
+    if widget do
+      widget
+      |> System.update_widget(widget_params)
+      |> format_errors("Bearbeiten der Marginale fehlgeschlagen.")
     else
-      {:error, "Nur Administratoren dürfen Widgets bearbeiten."}
+      {:error, "Marginale mit der id #{id} nicht gefunden."}
     end
   end
 
-  def delete(%{id: id}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      try do
-        System.get_widget!(id)
-        |> System.delete_widget()
-      rescue
-        NoResultsError ->
-          {:error, "Marginale mit der id #{id} nicht gefunden."}
-      end
+  def delete(%{id: id}, _info) do
+    widget = System.get_widget(id)
+
+    if widget do
+      widget
+      |> System.delete_widget()
+      |> format_errors("Löschen der Marginale fehlgeschlagen.")
     else
-      {:error, "Nur Administratoren dürfen Marginalen löschen."}
+      {:error, "Marginale mit der id #{id} nicht gefunden."}
     end
   end
 end

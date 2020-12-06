@@ -1,11 +1,22 @@
 defmodule Api.Content.ContentModule do
-  @moduledoc """
-    Ecto Schema for content modules
-  """
+  @moduledoc false
 
   use Ecto.Schema
-  alias Api.Repo
+
   import Ecto.Changeset
+
+  alias Api.Repo
+
+  @type id() :: String.t()
+
+  @type t() :: %__MODULE__{
+          id: id(),
+          content: map(),
+          type: String.t(),
+          text: String.t(),
+          sort_key: number(),
+          configuration: map()
+        }
 
   schema "content_modules" do
     field :content, :map

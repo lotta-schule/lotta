@@ -1,11 +1,9 @@
 defmodule ApiWeb.UserGroupResolver do
-  @moduledoc """
-    GraphQL Resolver Module for finding, creating, updating and deleting user groups
-  """
+  @moduledoc false
 
   import Api.Accounts.Permissions
+  import ApiWeb.ErrorHelpers
 
-  alias ApiWeb.ErrorHelpers
   alias Api.Repo
   alias Api.Accounts
 
@@ -21,69 +19,47 @@ defmodule ApiWeb.UserGroupResolver do
   end
 
   def resolve_enrollment_tokens(user_group, _args, %{context: %{current_user: current_user}}) do
-    case user_is_admin?(current_user) do
-      true ->
-        {:ok,
-         user_group
-         |> Repo.preload(:enrollment_tokens)
-         |> Map.fetch!(:enrollment_tokens)}
-
-      _ ->
-        {:ok, []}
-    end
+    {:ok,
+     if user_is_admin?(current_user) do
+       user_group
+       |> Repo.preload(:enrollment_tokens)
+       |> Map.fetch!(:enrollment_tokens)
+     else
+       []
+     end}
   end
 
   def all(_args, _info), do: {:ok, Accounts.list_user_groups()}
 
-  def get(%{id: id}, %{context: %{current_user: _user, user_is_admin: true}}) do
+  def get(%{id: id}, _info) do
     {:ok, Accounts.get_user_group(id)}
   end
 
-  def get(_args, _info), do: {:error, "Nur Administratoren dürfen Gruppen anzeigen."}
+  def create(%{group: group_input}, _info) do
+    Accounts.create_user_group(group_input)
+    |> format_errors("Fehler beim Anlegen der Gruppe")
+  end
 
-  def create(%{group: group_input}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      case Accounts.create_user_group(group_input) do
-        {:ok, group} ->
-          {:ok, group}
+  def update(%{id: id, group: group_input}, _info) do
+    group = Accounts.get_user_group(id)
 
-        {:error, error} ->
-          {:error,
-           [
-             "Fehler beim Anlegen der Gruppe",
-             details: ErrorHelpers.extract_error_details(error)
-           ]}
-      end
+    if is_nil(group) do
+      {:error, "Gruppe mit der id #{id} existiert nicht."}
     else
-      {:error, "Nur Administratoren dürfen Gruppen erstellen."}
+      group
+      |> Accounts.update_user_group(group_input)
+      |> format_errors("Fehler beim Bearbeiten der Gruppe")
     end
   end
 
-  def update(%{id: id, group: group_input}, %{
-        context: %{current_user: _user, user_is_admin: true}
-      }) do
-    case Accounts.get_user_group(id) do
-      nil ->
-        {:error, "Gruppe existiert nicht."}
+  def delete(%{id: id}, _info) do
+    group = Accounts.get_user_group(id)
 
-      group ->
-        Accounts.update_user_group(group, group_input)
+    if is_nil(group) do
+      {:error, "Gruppe existiert nicht."}
+    else
+      Accounts.delete_user_group(group)
+      |> format_errors("Fehler beim Löschen  der Gruppe")
     end
   end
-
-  def update(_args, _info), do: {:error, "Nur Administratoren dürfen Gruppen bearbeiten."}
-
-  def delete(%{id: id}, %{
-        context: %{current_user: _user, user_is_admin: true}
-      }) do
-    case Accounts.get_user_group(id) do
-      nil ->
-        {:error, "Gruppe existiert nicht."}
-
-      group ->
-        Accounts.delete_user_group(group)
-    end
-  end
-
-  def delete(_args, _info), do: {:error, "Nur Administratoren dürfen Gruppen löschen."}
 end

@@ -124,7 +124,7 @@ defmodule ApiWeb.SystemResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen das.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["usage"]
                  }
                ]
@@ -143,7 +143,7 @@ defmodule ApiWeb.SystemResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen das.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["usage"]
                  }
                ]
@@ -199,7 +199,7 @@ defmodule ApiWeb.SystemResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen das.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateSystem"]
                  }
                ]
@@ -222,7 +222,7 @@ defmodule ApiWeb.SystemResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen das.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateSystem"]
                  }
                ]

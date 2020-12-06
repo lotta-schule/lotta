@@ -1,18 +1,18 @@
 defmodule ApiWeb.SearchResolver do
-  @moduledoc """
-    GraphQL Resolver Module for search requests.
-  """
+  @moduledoc false
 
   alias Api.Elasticsearch.Search
   alias Api.Content
   alias Api.Repo
 
-  def search(%{search_text: search_text}, %{context: context}) do
+  def search(%{search_text: search_text}, %{
+        context: %{current_user: current_user, is_admin: is_admin, all_groups: groups}
+      }) do
     articles =
       Content.list_public_articles(
-        context[:current_user],
-        context[:user_group_ids],
-        context[:user_is_admin]
+        current_user,
+        groups,
+        is_admin
       )
       |> Search.search_query_filter(search_text)
       |> Repo.all()

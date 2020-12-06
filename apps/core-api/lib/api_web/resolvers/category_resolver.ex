@@ -1,91 +1,52 @@
 defmodule ApiWeb.CategoryResolver do
-  @moduledoc """
-    GraphQL Resolver Module for finding, creating, updating and deleting categories
-  """
+  @moduledoc false
 
-  import Api.Accounts.Permissions
+  import ApiWeb.ErrorHelpers
 
-  alias ApiWeb.ErrorHelpers
   alias Api.System
 
-  def all(_args, %{context: %{current_user: current_user, user_group_ids: user_group_ids}}) do
+  def all(_args, %{
+        context: %ApiWeb.Context{
+          current_user: current_user,
+          all_groups: groups,
+          is_admin: is_admin
+        }
+      }) do
     {:ok,
      System.list_categories(
        current_user,
-       user_group_ids,
-       user_is_admin?(current_user)
+       groups,
+       is_admin
      )}
   end
 
-  def all(_args, _info) do
-    {:ok, System.list_categories(nil, [], false)}
-  end
+  def update(%{id: id, category: category_params}, _info) do
+    category = System.get_category(id)
 
-  def update(%{id: id, category: category_params}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      try do
-        category = System.get_category!(id)
-
-        case System.update_category(category, category_params) do
-          {:ok, category} ->
-            {:ok, category}
-
-          {:error, error} ->
-            {:error,
-             [
-               "Fehler beim Bearbeiten der Kategorie",
-               details: ErrorHelpers.extract_error_details(error)
-             ]}
-        end
-      rescue
-        Ecto.NoResultsError ->
-          {:error, "Kategorie mit der id #{id} nicht gefunden."}
-      end
+    if category do
+      category
+      |> System.update_category(category_params)
+      |> format_errors("Bearbeiten der Kategorie fehlgeschlagen.")
     else
-      {:error, "Nur Administrator dürfen Kategorien bearbeiten."}
+      {:error, "Kategorie mit der id #{id} nicht gefunden."}
     end
   end
 
-  def create(%{category: category_params}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      case System.create_category(category_params) do
-        {:ok, category} ->
-          {:ok, category}
-
-        {:error, error} ->
-          {:error,
-           [
-             "Fehler beim Erstellen der Kategorie",
-             details: ErrorHelpers.extract_error_details(error)
-           ]}
-      end
-    else
-      {:error, "Nur Administrator dürfen Kategorien erstellen."}
-    end
+  def create(%{category: category_params}, _info) do
+    category_params
+    |> System.create_category()
+    |> format_errors("Erstellen der Kategorie fehlgeschlagen.")
   end
 
-  def delete(%{id: id}, %{context: context}) do
-    if context[:current_user] && user_is_admin?(context.current_user) do
-      try do
-        category = System.get_category!(id)
+  def delete(%{id: id}, _info) do
+    category = System.get_category(id)
 
-        case System.delete_category(category) do
-          {:ok, category} ->
-            {:ok, category}
-
-          {:error, error} ->
-            {:error,
-             [
-               "Fehler beim Löschen der Kategorie",
-               details: ErrorHelpers.extract_error_details(error)
-             ]}
-        end
-      rescue
-        Ecto.NoResultsError ->
-          {:error, "Kategorie mit der id #{id} nicht gefunden."}
-      end
+    if category do
+      category
+      |> System.delete_category()
+      |> format_errors("Löschen der Kategorie fehlgeschlagen.")
     else
-      {:error, "Nur Administrator dürfen Kategorien löschen."}
+      {:error, "Kategorie mit der id #{id} nicht gefunden."}
     end
   end
 end

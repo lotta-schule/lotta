@@ -1,141 +1,131 @@
 defmodule ApiWeb.ArticleResolver do
-  @moduledoc """
-    GraphQL Resolver Module for finding, creating, updating and deleting articles
-  """
+  @moduledoc false
 
   import Api.Accounts.Permissions
+  import ApiWeb.ErrorHelpers
 
-  alias Api.Repo
   alias Api.Content
+  alias ApiWeb.Context
 
   def get(%{id: id}, %{context: %{current_user: current_user}}) do
-    article = Content.get_article!(String.to_integer(id))
+    article = Content.get_article(String.to_integer(id))
 
-    if user_is_author?(current_user, article) || user_is_admin?(current_user) do
-      {:ok, article}
-    else
-      case user_has_group_for_article?(current_user, article) do
-        true -> {:ok, article}
-        _ -> {:error, "Du hast keine Rechte diesen Beitrag anzusehen."}
-      end
-    end
-  end
-
-  def get(%{id: id}, _info) do
-    article = Repo.preload(Content.get_article!(String.to_integer(id)), :groups)
-
-    case article.groups do
-      [] ->
-        {:ok, article}
-
-      _ ->
-        {:error, "Du hast keine Rechte diesen Beitrag anzusehen."}
-    end
+    if can_read?(current_user, article),
+      do: {:ok, article},
+      else: {:error, "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
   end
 
   def get(_args, _info), do: {:error, "Beitrag nicht gefunden."}
 
-  def get_topics(_args, %{context: context}) do
+  # TODO: Needs Testing
+  def get_topics(_args, %{
+        context: %Context{
+          current_user: current_user,
+          all_groups: groups,
+          is_admin: is_admin
+        }
+      }) do
     {:ok,
-     Content.get_topics(
-       context[:current_user],
-       context[:user_group_ids],
-       context[:user_is_admin]
+     Content.list_topics(
+       current_user,
+       groups,
+       is_admin
      )}
   end
 
-  def all(args, %{context: context}) do
+  def all(args, %{
+        context: %Context{
+          current_user: current_user,
+          all_groups: groups,
+          is_admin: is_admin
+        }
+      }) do
     {:ok,
      Content.list_articles(
-       if(is_nil(args[:category_id]), do: nil, else: String.to_integer(args[:category_id])),
-       context[:current_user],
-       context[:user_group_ids],
-       context[:user_is_admin],
+       if args[:category_id] do
+         String.to_integer(args[:category_id])
+       end,
+       current_user,
+       groups,
+       is_admin,
        args[:filter]
      )}
   end
 
-  def all_unpublished(_args, %{context: context}) do
-    case context[:current_user] && context[:user_is_admin] do
-      true ->
-        {:ok, Content.list_unpublished_articles()}
-
-      _ ->
-        {:error, "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen."}
-    end
+  def all_unpublished(_args, _info) do
+    {:ok, Content.list_unpublished_articles()}
   end
 
-  def own(_args, %{context: %{current_user: current_user}}) do
+  def own(_args, %{context: %Context{current_user: current_user}}) do
     {:ok, Content.list_user_articles(current_user)}
   end
 
-  def own(_args, _info) do
-    {:error, "Nur angemeldete Nutzer können eigene Beiträge abrufen."}
-  end
-
-  def by_topic(%{topic: topic}, %{context: context}) do
+  # TODO: Needs Testing
+  def by_topic(%{topic: topic}, %{
+        context: %Context{
+          current_user: current_user,
+          all_groups: groups,
+          is_admin: is_admin
+        }
+      }) do
     {:ok,
      Content.list_articles_by_topic(
-       context[:current_user],
-       context[:user_group_ids],
-       context[:user_is_admin],
+       current_user,
+       groups,
+       is_admin,
        topic
      )}
   end
 
-  def create(%{article: article_input}, %{context: context}) do
-    case context[:current_user] do
-      nil ->
-        {:error, "Nur angemeldete Nutzer können Beiträge erstellen."}
-
-      user ->
-        article_input
-        |> Content.create_article(user)
-    end
+  def create(%{article: article_params}, %{context: %Context{current_user: user}}) do
+    article_params
+    |> Content.create_article(user)
+    |> format_errors("Erstellen des Beitrags fehlgeschlagen.")
   end
 
-  def update(%{id: id, article: article_input}, %{context: context}) do
-    article = Content.get_article!(String.to_integer(id))
+  def update(%{id: id, article: article_params}, %{context: %Context{current_user: current_user}}) do
+    article = Content.get_article(String.to_integer(id))
 
     cond do
-      is_nil(context[:current_user]) ->
-        {:error, "Du musst angemeldet sein um Beiträge zu bearbeiten."}
+      is_nil(article) ->
+        {:error, "Beitrag mit der id #{id} nicht gefunden."}
 
-      !user_is_admin?(context.current_user) &&
-          !user_is_author?(context.current_user, article) ->
-        {:error, "Nur Administratoren oder Autoren dürfen Beiträge bearbeiten."}
+      not can_write?(current_user, article) ->
+        {:error, "Du darfst diesen Beitrag nicht bearbeiten."}
 
       true ->
         article
-        |> Content.update_article(article_input)
+        |> Content.update_article(article_params)
+        |> format_errors("Bearbeiten des Beitrags fehlgeschlagen.")
     end
   end
 
-  def delete(%{id: id}, %{context: context}) do
-    article = Content.get_article!(String.to_integer(id))
+  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+    article = Content.get_article(String.to_integer(id))
 
     cond do
-      is_nil(context[:current_user]) ->
-        {:error, "Du musst angemeldet sein um Beiträge zu löschen."}
+      is_nil(article) ->
+        {:error, "Beitrag mit der id #{id} nicht gefunden."}
 
-      !user_is_admin?(context.current_user) && !user_is_author?(context.current_user, article) ->
-        {:error, "Nur Administratoren oder Autoren dürfen Beiträge löschen."}
+      not can_write?(current_user, article) ->
+        {:error, "Du darfst diesen Beitrag nicht bearbeiten."}
 
       true ->
         article
         |> Content.delete_article()
+        |> format_errors("Löschen des Beitrags fehlgeschlagen.")
     end
   end
 
-  def toggle_pin(%{id: article_id}, %{context: %{current_user: current_user}}) do
-    case user_is_admin?(current_user) do
-      true ->
-        Content.toggle_article_pin(String.to_integer(article_id))
+  def toggle_pin(%{id: id}, _info) do
+    article = Content.get_article(String.to_integer(id))
 
-      false ->
-        {:error, "Nur Administratoren dürfen Beiträge anpinnen."}
+    if article do
+      article
+      |> Content.toggle_article_pin()
+      |> format_errors("Beitrag konnte nicht angepinnt werden.")
+    else
+      {:error, "Beitrag mit der id #{id} nicht gefunden."}
     end
   end
-
-  def toggle_pin(_info, _args), do: {:error, "Nur Administratoren dürfen Beiträge anpinnen."}
 end

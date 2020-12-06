@@ -6,20 +6,26 @@ defmodule ApiWeb.Schema.Contents do
   object :contents_queries do
     field :article, :article do
       arg(:id, non_null(:id))
+
       resolve(&ApiWeb.ArticleResolver.get/2)
     end
 
     field :articles, list_of(:article) do
       arg(:category_id, :id)
       arg(:filter, :article_filter)
+
       resolve(&ApiWeb.ArticleResolver.all/2)
     end
 
     field :unpublished_articles, list_of(:article) do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
       resolve(&ApiWeb.ArticleResolver.all_unpublished/2)
     end
 
     field :own_articles, list_of(:article) do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
       resolve(&ApiWeb.ArticleResolver.own/2)
     end
 
@@ -28,24 +34,34 @@ defmodule ApiWeb.Schema.Contents do
     end
 
     field :topic, list_of(:article) do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
       arg(:topic, non_null(:string))
+
       resolve(&ApiWeb.ArticleResolver.by_topic/2)
     end
 
     field :content_module_results, list_of(:content_module_result) do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
       arg(:content_module_id, non_null(:id))
+
       resolve(&ApiWeb.ContentModuleResolver.get_responses/2)
     end
   end
 
   object :contents_mutations do
     field :create_article, type: :article do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
       arg(:article, non_null(:article_input))
 
       resolve(&ApiWeb.ArticleResolver.create/2)
     end
 
     field :update_article, type: :article do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
       arg(:id, non_null(:id))
       arg(:article, non_null(:article_input))
 
@@ -53,12 +69,16 @@ defmodule ApiWeb.Schema.Contents do
     end
 
     field :delete_article, type: :article do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
       arg(:id, non_null(:id))
 
       resolve(&ApiWeb.ArticleResolver.delete/2)
     end
 
     field :toggle_article_pin, type: :article do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
       arg(:id, non_null(:id))
 
       resolve(&ApiWeb.ArticleResolver.toggle_pin/2)

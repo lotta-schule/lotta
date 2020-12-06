@@ -150,7 +150,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du hast keine Rechte diesen Beitrag anzusehen.",
+                   "message" => "Du hast nicht die Rechte dir diesen Beitrag anzusehen.",
                    "path" => ["article"]
                  }
                ]
@@ -173,7 +173,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du hast keine Rechte diesen Beitrag anzusehen.",
+                   "message" => "Du hast nicht die Rechte dir diesen Beitrag anzusehen.",
                    "path" => ["article"]
                  }
                ]
@@ -194,7 +194,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du hast keine Rechte diesen Beitrag anzusehen.",
+                   "message" => "Du hast nicht die Rechte dir diesen Beitrag anzusehen.",
                    "path" => ["article"]
                  }
                ]
@@ -2503,7 +2503,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["unpublishedArticles"]
                  }
                ]
@@ -2522,7 +2522,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen unveröffentlichte Beiträge abrufen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["unpublishedArticles"]
                  }
                ]
@@ -2591,7 +2591,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur angemeldete Nutzer können eigene Beiträge abrufen.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["ownArticles"]
                  }
                ]
@@ -2771,7 +2771,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur angemeldete Nutzer können Beiträge erstellen.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["createArticle"]
                  }
                ]
@@ -2880,7 +2880,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren oder Autoren dürfen Beiträge bearbeiten.",
+                   "message" => "Du darfst diesen Beitrag nicht bearbeiten.",
                    "path" => ["updateArticle"]
                  }
                ]
@@ -2899,7 +2899,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du musst angemeldet sein um Beiträge zu bearbeiten.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["updateArticle"]
                  }
                ]
@@ -2961,7 +2961,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren oder Autoren dürfen Beiträge löschen.",
+                   "message" => "Du darfst diesen Beitrag nicht bearbeiten.",
                    "path" => ["deleteArticle"]
                  }
                ]
@@ -2980,7 +2980,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du musst angemeldet sein um Beiträge zu löschen.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["deleteArticle"]
                  }
                ]
@@ -3034,7 +3034,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Beiträge anpinnen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["toggleArticlePin"]
                  }
                ]
@@ -3053,7 +3053,7 @@ defmodule ApiWeb.ArticleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Beiträge anpinnen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["toggleArticlePin"]
                  }
                ]

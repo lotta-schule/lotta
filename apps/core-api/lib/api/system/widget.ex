@@ -10,6 +10,10 @@ defmodule Api.System.Widget do
   alias Api.Accounts.{File, UserGroup}
   alias Api.System.Category
 
+  @type id() :: pos_integer()
+
+  @type t() :: %__MODULE__{id: id(), type: String.t()}
+
   schema "widgets" do
     field :configuration, :map
     field :title, :string

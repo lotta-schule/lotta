@@ -2,8 +2,8 @@ defmodule Api.MessagesTest do
   @moduledoc false
 
   use Api.DataCase
+
   alias Api.Fixtures
-  alias Api.Content
   alias Api.Messages
   alias Api.Messages.Message
 
