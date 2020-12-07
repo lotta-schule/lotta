@@ -6,9 +6,8 @@ defmodule Api.Content do
   import Ecto.Query
 
   alias Api.Repo
-  alias Api.Accounts.{User, UserGroup}
+  alias Api.Accounts.User
   alias Api.Content.{Article, ContentModule, ContentModuleResult}
-  alias Api.System.Category
 
   @type filter() :: %{
           optional(:first) => pos_integer(),
@@ -34,18 +33,18 @@ defmodule Api.Content do
 
   """
   @doc since: "1.0.0"
-  @spec list_articles(Article.id(), User.t(), list(UserGroup.t()), boolean(), filter()) :: [
+  @spec list_articles(Article.id(), User.t(), filter()) :: [
           Article.t()
         ]
-  def list_articles(category_id, user, user_groups, user_is_admin, filter) do
-    query = list_public_articles(user, user_groups, user_is_admin)
+  def list_articles(category_id, user, filter) do
+    query =
+      user
+      |> Article.get_released_articles_query()
 
-    case category_id do
-      nil ->
-        from [..., c] in query, where: c.hide_articles_from_homepage != true
-
-      category_id ->
-        from a in query, where: a.category_id == ^category_id
+    if is_nil(category_id) do
+      from [..., c] in query, where: c.hide_articles_from_homepage != true
+    else
+      from a in query, where: a.category_id == ^category_id
     end
     |> filter_query(filter)
     |> Repo.all()
@@ -56,15 +55,15 @@ defmodule Api.Content do
 
   ## Examples
       
-      iex> list_topics(nil, [], false)
+      iex> list_topics(nil)
       ["Topic 1", "Topic 2", ...]
   """
   @doc since: "1.2.0"
-  @spec list_topics(User.t(), list(UserGroup.t()), boolean()) :: [String.t()]
-  def list_topics(user, groups, is_admin) do
-    query = list_public_articles(user, groups, is_admin)
+  @spec list_topics(User.t() | nil) :: [String.t()]
+  def list_topics(user) do
+    query = Article.get_released_articles_query(user)
 
-    Ecto.Query.from([a, ...] in query,
+    from([a, ...] in query,
       where: not is_nil(a.topic),
       select: a.topic
     )
@@ -81,10 +80,11 @@ defmodule Api.Content do
 
   """
   @doc since: "1.0.0"
-  @spec list_articles_by_topic(User.t(), list(UserGroup.t()), boolean(), String.t()) ::
-          list(Article.t())
-  def list_articles_by_topic(user, user_groups, user_is_admin, topic) do
-    query = list_public_articles(user, user_groups, user_is_admin)
+  @spec list_articles_by_topic(User.t() | nil, String.t()) :: list(Article.t())
+  def list_articles_by_topic(user, topic) do
+    query =
+      user
+      |> Article.get_released_articles_query()
 
     from(a in query,
       where: a.topic == ^topic,
@@ -257,20 +257,6 @@ defmodule Api.Content do
     article
     |> Ecto.Changeset.change(%{is_pinned_to_top: !article.is_pinned_to_top})
     |> Repo.update()
-  end
-
-  def list_public_articles(_user, user_groups, user_is_admin) do
-    from(a in Article,
-      left_join: aug in "articles_user_groups",
-      on: aug.article_id == a.id,
-      join: c in Category,
-      on: c.id == a.category_id,
-      where:
-        not is_nil(a.category_id) and
-          (is_nil(aug.group_id) or aug.group_id in ^Enum.map(user_groups, & &1.id) or
-             ^user_is_admin),
-      distinct: true
-    )
   end
 
   defp filter_query(query, filter) do

@@ -72,7 +72,7 @@ defmodule ApiWeb.FileResolver do
     end
   end
 
-  def file(%{id: id}, %{context: %{current_user: current_user}}) do
+  def file(%{id: id}, %{context: %Context{current_user: current_user}}) do
     file =
       Accounts.get_file(String.to_integer(id))
       |> Repo.preload(:parent_directory)
@@ -84,7 +84,9 @@ defmodule ApiWeb.FileResolver do
     end
   end
 
-  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
+  def files(%{parent_directory_id: parent_directory_id}, %{
+        context: %Context{current_user: current_user}
+      })
       when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory(parent_directory_id)
 
@@ -102,7 +104,7 @@ defmodule ApiWeb.FileResolver do
 
   def files(_, _), do: {:ok, []}
 
-  def relevant_files_in_usage(_args, %{context: %{current_user: current_user}}) do
+  def relevant_files_in_usage(_args, %{context: %Context{current_user: current_user}}) do
     category_files =
       from f in Accounts.File,
         join: c in Category,
@@ -133,7 +135,7 @@ defmodule ApiWeb.FileResolver do
   end
 
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
-        context: %{current_user: current_user}
+        context: %Context{current_user: current_user}
       }) do
     directory = Accounts.get_directory(parent_directory_id)
 
@@ -149,7 +151,7 @@ defmodule ApiWeb.FileResolver do
     end
   end
 
-  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
+  def update(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
     file =
       Accounts.get_file(String.to_integer(id))
       |> Repo.preload([:parent_directory])
@@ -179,7 +181,7 @@ defmodule ApiWeb.FileResolver do
     end
   end
 
-  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
+  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
     file =
       Accounts.get_file(String.to_integer(id))
       |> Repo.preload([:parent_directory])

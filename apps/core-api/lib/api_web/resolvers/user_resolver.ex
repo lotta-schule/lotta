@@ -4,20 +4,19 @@ defmodule ApiWeb.UserResolver do
   require Logger
 
   import Api.Accounts.Authentication
-  import Api.Accounts.Permissions
   import ApiWeb.ErrorHelpers
 
+  alias ApiWeb.Context
   alias Api.Repo
   alias Api.Accounts
-  alias Api.Accounts.User
   alias Api.Mailer
 
-  def resolve_name(user, _args, %{context: %{current_user: current_user}}) do
+  def resolve_name(user, _args, %{context: %Context{current_user: current_user}}) do
     cond do
       current_user.id == user.id ->
         {:ok, user.name}
 
-      user_is_admin?(current_user) ->
+      current_user.is_admin? ->
         {:ok, user.name}
 
       !user.hide_full_name ->
@@ -30,12 +29,12 @@ defmodule ApiWeb.UserResolver do
 
   def resolve_name(_user, _args, _info), do: {:ok, nil}
 
-  def resolve_email(user, _args, %{context: %{current_user: current_user}}) do
+  def resolve_email(user, _args, %{context: %Context{current_user: current_user}}) do
     cond do
       current_user.id == user.id ->
         {:ok, user.email}
 
-      user_is_admin?(current_user) ->
+      current_user.is_admin? ->
         {:ok, user.email}
 
       true ->
@@ -45,12 +44,12 @@ defmodule ApiWeb.UserResolver do
 
   def resolve_email(_user, _args, _info), do: {:error, "Die Email des Nutzers ist geheim."}
 
-  def resolve_last_seen(user, _args, %{context: %{current_user: current_user}}) do
+  def resolve_last_seen(user, _args, %{context: %Context{current_user: current_user}}) do
     cond do
       current_user.id == user.id ->
         {:ok, user.last_seen}
 
-      user_is_admin?(current_user) ->
+      current_user.is_admin? ->
         {:ok, user.last_seen}
 
       true ->
@@ -61,21 +60,25 @@ defmodule ApiWeb.UserResolver do
   def resolve_last_seen(_user, _args, _info),
     do: {:error, "Der Online-Status des Nutzers ist geheim."}
 
-  def get_current(_args, %{context: %{current_user: nil}}) do
-    {:ok, nil}
-  end
-
-  def get_current(_args, %{context: %{current_user: current_user}}) do
+  def get_current(_args, %{context: %Context{current_user: current_user}}) do
     {:ok, current_user}
   end
 
-  def resolve_groups(user, _args, _info), do: {:ok, User.get_groups(user)}
-
-  def resolve_assigned_groups(user, _args, _info) do
-    {:ok, User.get_assigned_groups(user)}
+  def resolve_groups(user, _args, _info) do
+    {:ok,
+     user.groups ++
+       (user
+        |> Repo.preload(:enrollment_tokens)
+        |> Map.fetch!(:enrollment_tokens)
+        |> Enum.map(& &1.enrollment_token)
+        |> Accounts.list_groups_for_enrollment_tokens())}
   end
 
-  def resolve_enrollment_tokens(user, _args, %{context: %{current_user: current_user}}) do
+  def resolve_assigned_groups(user, _args, _info) do
+    {:ok, Map.fetch!(user, :groups)}
+  end
+
+  def resolve_enrollment_tokens(user, _args, %{context: %Context{current_user: current_user}}) do
     tokens =
       if user.id == current_user.id do
         user = Repo.preload(user, :enrollment_tokens)
@@ -168,7 +171,7 @@ defmodule ApiWeb.UserResolver do
     end
   end
 
-  def destroy_account(args, %{context: %{current_user: current_user}}) do
+  def destroy_account(args, %{context: %Context{current_user: current_user}}) do
     transfer_file_ids = args[:transfer_file_ids] || []
     Accounts.transfer_files_by_ids(transfer_file_ids, current_user)
     Accounts.delete_user(current_user)
@@ -186,14 +189,14 @@ defmodule ApiWeb.UserResolver do
     end
   end
 
-  def update_profile(%{user: user_params}, %{context: %{current_user: current_user}}) do
+  def update_profile(%{user: user_params}, %{context: %Context{current_user: current_user}}) do
     current_user
     |> Accounts.update_profile(user_params)
     |> format_errors("Speichern fehlgeschlagen.")
   end
 
   def update_password(%{current_password: password, new_password: new_password}, %{
-        context: %{current_user: %{email: email}}
+        context: %Context{current_user: %{email: email}}
       }) do
     with {:ok, user} <- login_with_username_pass(email, password),
          {:ok, user} <- Accounts.update_password(user, new_password) do

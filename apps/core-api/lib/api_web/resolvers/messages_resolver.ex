@@ -3,9 +3,11 @@ defmodule ApiWeb.MessagesResolver do
 
   import ApiWeb.ErrorHelpers
   import Api.Accounts.Permissions
+
+  alias ApiWeb.Context
   alias Api.Messages
 
-  def all(_args, %{context: %{current_user: current_user}}) do
+  def all(_args, %{context: %Context{current_user: current_user}}) do
     {:ok, Messages.list_for_user(current_user)}
   end
 

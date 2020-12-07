@@ -3,21 +3,11 @@ defmodule ApiWeb.CategoryResolver do
 
   import ApiWeb.ErrorHelpers
 
+  alias ApiWeb.Context
   alias Api.System
 
-  def all(_args, %{
-        context: %ApiWeb.Context{
-          current_user: current_user,
-          all_groups: groups,
-          is_admin: is_admin
-        }
-      }) do
-    {:ok,
-     System.list_categories(
-       current_user,
-       groups,
-       is_admin
-     )}
+  def all(_args, %{context: %Context{current_user: current_user}}) do
+    {:ok, System.list_categories(current_user)}
   end
 
   def update(%{id: id, category: category_params}, _info) do

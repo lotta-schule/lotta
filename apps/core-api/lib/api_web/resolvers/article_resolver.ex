@@ -4,10 +4,10 @@ defmodule ApiWeb.ArticleResolver do
   import Api.Accounts.Permissions
   import ApiWeb.ErrorHelpers
 
-  alias Api.Content
   alias ApiWeb.Context
+  alias Api.Content
 
-  def get(%{id: id}, %{context: %{current_user: current_user}}) do
+  def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
     article = Content.get_article(String.to_integer(id))
 
     if can_read?(current_user, article),
@@ -17,37 +17,17 @@ defmodule ApiWeb.ArticleResolver do
 
   def get(_args, _info), do: {:error, "Beitrag nicht gefunden."}
 
-  # TODO: Needs Testing
-  def get_topics(_args, %{
-        context: %Context{
-          current_user: current_user,
-          all_groups: groups,
-          is_admin: is_admin
-        }
-      }) do
-    {:ok,
-     Content.list_topics(
-       current_user,
-       groups,
-       is_admin
-     )}
+  def get_topics(_args, %{context: %Context{current_user: current_user}}) do
+    {:ok, Content.list_topics(current_user)}
   end
 
-  def all(args, %{
-        context: %Context{
-          current_user: current_user,
-          all_groups: groups,
-          is_admin: is_admin
-        }
-      }) do
+  def all(args, %{context: %Context{current_user: current_user}}) do
     {:ok,
      Content.list_articles(
        if args[:category_id] do
          String.to_integer(args[:category_id])
        end,
        current_user,
-       groups,
-       is_admin,
        args[:filter]
      )}
   end
@@ -60,21 +40,8 @@ defmodule ApiWeb.ArticleResolver do
     {:ok, Content.list_user_articles(current_user)}
   end
 
-  # TODO: Needs Testing
-  def by_topic(%{topic: topic}, %{
-        context: %Context{
-          current_user: current_user,
-          all_groups: groups,
-          is_admin: is_admin
-        }
-      }) do
-    {:ok,
-     Content.list_articles_by_topic(
-       current_user,
-       groups,
-       is_admin,
-       topic
-     )}
+  def by_topic(%{topic: topic}, %{context: %Context{current_user: current_user}}) do
+    {:ok, Content.list_articles_by_topic(current_user, topic)}
   end
 
   def create(%{article: article_params}, %{context: %Context{current_user: user}}) do

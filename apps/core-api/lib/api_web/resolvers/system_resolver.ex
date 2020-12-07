@@ -1,6 +1,7 @@
 defmodule ApiWeb.SystemResolver do
   @moduledoc false
 
+  alias ApiWeb.Context
   alias Api.System
 
   def get(_args, _info) do
@@ -11,7 +12,7 @@ defmodule ApiWeb.SystemResolver do
     {:ok, System.update_configuration(System.get_configuration(), system_input)}
   end
 
-  def usage(_args, %{context: %{current_user: current_user}}) do
+  def usage(_args, _info) do
     System.Usage.get_usage()
   end
 

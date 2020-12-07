@@ -62,6 +62,28 @@ defmodule Api.Content.Article do
     )
   end
 
+  @doc """
+  Returns a query with all released articles a given user can see.
+  If no user is given, return a query returning only public articles.
+  """
+  @spec get_released_articles_query(User.t() | nil) :: Ecto.Queryable.t()
+  def get_released_articles_query(user \\ nil) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+
+    from(a in Article,
+      left_join: aug in "articles_user_groups",
+      on: aug.article_id == a.id,
+      join: c in Category,
+      on: c.id == a.category_id,
+      where:
+        not is_nil(a.category_id) and
+          (is_nil(aug.group_id) or aug.group_id in ^Enum.map(groups, & &1.id) or
+             ^is_admin),
+      distinct: true
+    )
+  end
+
   @doc false
   def create_changeset(article, attrs) do
     article

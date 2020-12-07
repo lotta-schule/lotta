@@ -1,9 +1,8 @@
 defmodule Api.System do
   import Ecto.Query
-  import Api.Accounts.Permissions
 
   alias Api.Repo
-  alias Api.Accounts.{File, User, UserGroup}
+  alias Api.Accounts.{File, User}
   alias Api.System.{Category, Configuration, CustomDomain, Widget}
 
   @allowed_configuration_keys [
@@ -25,7 +24,7 @@ defmodule Api.System do
 
   @doc false
   def resolve_widgets(_args, %{
-        context: %ApiWeb.Context{all_groups: groups, is_admin: is_admin},
+        context: %ApiWeb.Context{current_user: %User{all_groups: groups, is_admin?: is_admin}},
         source: %Category{} = category
       }) do
     widgets =
@@ -212,12 +211,15 @@ defmodule Api.System do
 
   """
   @doc since: "1.0.0"
-  @spec list_categories(User.t(), list(UserGroup.t()), boolean()) :: list(Category.t())
-  def list_categories(_user, groups, user_is_admin) do
+  @spec list_categories(User.t() | nil) :: list(Category.t())
+  def list_categories(user) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+
     from(c in Category,
       left_join: cug in "categories_user_groups",
       on: cug.category_id == c.id,
-      where: cug.group_id in ^Enum.map(groups, & &1.id) or is_nil(cug.group_id) or ^user_is_admin,
+      where: cug.group_id in ^Enum.map(groups, & &1.id) or is_nil(cug.group_id) or ^is_admin,
       order_by: [asc: :sort_key, asc: :category_id],
       distinct: true
     )
@@ -310,14 +312,17 @@ defmodule Api.System do
 
   """
   @doc since: "1.0.0"
-  @spec list_widgets(User.t() | nil, list(UserGroup.t())) :: list(Widget.t())
-  def list_widgets(user, user_groups) do
+  @spec list_widgets(User.t() | nil) :: list(Widget.t())
+  def list_widgets(user) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+
     from(w in Widget,
       left_join: wug in "widgets_user_groups",
       on: wug.widget_id == w.id,
       where:
-        wug.group_id in ^Enum.map(user_groups, & &1.id) or is_nil(wug.group_id) or
-          ^user_is_admin?(user),
+        wug.group_id in ^Enum.map(groups, & &1.id) or is_nil(wug.group_id) or
+          ^is_admin,
       distinct: w.id
     )
     |> Repo.all()
@@ -333,13 +338,12 @@ defmodule Api.System do
 
   """
   @doc since: "1.7.0"
-  @spec list_widgets_by_category(Category.t(), User.t() | nil, list(pos_integer())) ::
+  @spec list_widgets_by_category(Category.t(), User.t() | nil) ::
           list(Widget.t())
-  def list_widgets_by_category(
-        category,
-        user,
-        groups
-      ) do
+  def list_widgets_by_category(category, user) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+
     from(w in Widget,
       left_join: wug in "widgets_user_groups",
       on: wug.widget_id == w.id,
@@ -347,7 +351,7 @@ defmodule Api.System do
       on: cw.widget_id == w.id,
       where:
         cw.category_id == ^category.id and
-          (is_nil(wug.group_id) or ^user_is_admin?(user) or
+          (is_nil(wug.group_id) or ^is_admin or
              wug.group_id in ^Enum.map(groups, & &1.id)),
       distinct: w.id
     )

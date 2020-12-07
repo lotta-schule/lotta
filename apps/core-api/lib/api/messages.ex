@@ -13,10 +13,9 @@ defmodule Api.Messages do
   Returns a list of messages from or for a given user.
   """
   @spec list_for_user(User.t()) :: [Message.t()]
-  def list_for_user(%User{} = user) do
+  def list_for_user(%User{all_groups: groups} = user) do
     group_ids =
-      user
-      |> User.get_groups()
+      groups
       |> Enum.map(& &1.id)
 
     from(m in Message,

@@ -6,32 +6,24 @@ defmodule ApiWeb.Context do
 
   require Logger
 
-  import Api.Accounts.Permissions
-
   alias Api.Accounts
-  alias Api.Accounts.{User, UserGroup}
+  alias Api.Accounts.User
+  alias Api.Repo
 
   @behaviour Plug
 
   @type t() :: %{
-          :current_user => User.t(),
-          :all_groups => list(UserGroup.t()),
-          :is_admin => boolean()
+          :current_user => User.t()
         }
-  defstruct [:current_user, :all_groups, :is_admin, :is_blocked]
+  defstruct [:current_user]
 
   def init(opts), do: opts
 
   def call(conn, _blueprint) do
     context =
-      %__MODULE__{
-        current_user: nil,
-        all_groups: [],
-        is_admin: false,
-        is_blocked: false
-      }
+      %__MODULE__{}
       |> maybe_put_user(conn)
-      |> maybe_put_user_is_blocked()
+      |> set_virtual_user_fields()
 
     conn
     |> Absinthe.Plug.put_options(context: context)
@@ -42,30 +34,43 @@ defmodule ApiWeb.Context do
       conn
       |> ApiWeb.Auth.AccessToken.Plug.current_resource()
 
-    if user do
-      if System.get_env("APP_ENVIRONMENT") != "test" do
-        Task.start(fn -> Accounts.see_user(user) end)
+    user =
+      if not is_nil(user) do
+        if System.get_env("APP_ENVIRONMENT") != "test" do
+          Task.start(fn -> Accounts.see_user(user) end)
+        end
+
+        user
+        |> Repo.preload([:groups, :enrollment_tokens])
       end
 
-      context
-      |> Map.put(:current_user, user)
-      |> Map.put(:all_groups, User.get_groups(user))
-      |> Map.put(:is_admin, user_is_admin?(user))
-    else
-      context
-    end
+    context
+    |> Map.put(:current_user, user)
   end
 
-  defp maybe_put_user_is_blocked(%__MODULE__{} = context) do
-    case context do
-      %{current_user: %{email: email, is_blocked: true}} ->
-        Logger.warn("User #{email} is blocked.")
+  defp set_virtual_user_fields(%{current_user: user} = context) when not is_nil(user) do
+    groups =
+      user
+      |> all_user_groups()
 
-        context
-        |> Map.put(:is_blocked, true)
+    user =
+      user
+      |> Map.put(:all_groups, groups)
+      |> Map.put(:is_admin?, Enum.any?(groups, & &1.is_admin_group))
 
-      _ ->
-        context
-    end
+    context
+    |> Map.put(:current_user, user)
+  end
+
+  defp set_virtual_user_fields(context), do: context
+
+  defp get_dynamic_groups(%User{enrollment_tokens: enrollment_tokens}) do
+    enrollment_tokens
+    |> Enum.map(& &1.enrollment_token)
+    |> Accounts.list_groups_for_enrollment_tokens()
+  end
+
+  defp all_user_groups(%User{groups: assigned_groups} = user) do
+    assigned_groups ++ get_dynamic_groups(user)
   end
 end

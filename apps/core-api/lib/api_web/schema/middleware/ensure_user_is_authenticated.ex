@@ -3,10 +3,15 @@ defmodule ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated do
 
   @behaviour Absinthe.Middleware
 
+  alias ApiWeb.Context
+
   @doc false
 
-  def call(%{context: %{current_user: %{id: _id}, is_blocked: false}} = resolution, _config),
-    do: resolution
+  def call(
+        %{context: %Context{current_user: %{id: _id, is_blocked: false}}} = resolution,
+        _config
+      ),
+      do: resolution
 
   def call(resolution, _config) do
     resolution

@@ -1,11 +1,12 @@
 defmodule ApiWeb.UserGroupResolver do
   @moduledoc false
 
-  import Api.Accounts.Permissions
   import ApiWeb.ErrorHelpers
 
+  alias ApiWeb.Context
   alias Api.Repo
   alias Api.Accounts
+  alias Api.Accounts.User
 
   def resolve_model_groups(_args, %{source: model}) do
     groups =
@@ -18,15 +19,18 @@ defmodule ApiWeb.UserGroupResolver do
     {:ok, groups}
   end
 
-  def resolve_enrollment_tokens(user_group, _args, %{context: %{current_user: current_user}}) do
+  def resolve_enrollment_tokens(_user_group, _args, %{
+        context: %Context{current_user: %User{is_admin?: false}}
+      }),
+      do: []
+
+  def resolve_enrollment_tokens(user_group, _args, %{
+        context: %Context{current_user: %User{is_admin?: true}}
+      }) do
     {:ok,
-     if user_is_admin?(current_user) do
-       user_group
-       |> Repo.preload(:enrollment_tokens)
-       |> Map.fetch!(:enrollment_tokens)
-     else
-       []
-     end}
+     user_group
+     |> Repo.preload(:enrollment_tokens)
+     |> Map.fetch!(:enrollment_tokens)}
   end
 
   def all(_args, _info), do: {:ok, Accounts.list_user_groups()}

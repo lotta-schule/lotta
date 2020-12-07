@@ -3,9 +3,13 @@ defmodule ApiWeb.Schema.Middleware.EnsureUserIsAdministrator do
 
   @behaviour Absinthe.Middleware
 
+  alias ApiWeb.Context
+  alias Api.Accounts.User
+
   @doc false
 
-  def call(%{context: %{is_admin: true}} = resolution, _config), do: resolution
+  def call(%{context: %Context{current_user: %User{is_admin?: true}}} = resolution, _config),
+    do: resolution
 
   def call(resolution, _config) do
     resolution

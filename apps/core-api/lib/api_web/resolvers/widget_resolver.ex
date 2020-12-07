@@ -3,11 +3,11 @@ defmodule ApiWeb.WidgetResolver do
 
   import ApiWeb.ErrorHelpers
 
-  alias Api.System
   alias ApiWeb.Context
+  alias Api.System
 
   def all(%{category_id: category_id}, %{
-        context: %Context{current_user: current_user, all_groups: groups}
+        context: %Context{current_user: current_user}
       }) do
     category = System.get_category(category_id)
 
@@ -15,16 +15,15 @@ defmodule ApiWeb.WidgetResolver do
       {:ok,
        System.list_widgets_by_category(
          category,
-         current_user,
-         groups
+         current_user
        )}
     else
       {:error, "Kategorie mit der id #{category_id} nicht gefunden."}
     end
   end
 
-  def all(_args, %{context: %Context{current_user: current_user, all_groups: groups}}) do
-    {:ok, System.list_widgets(current_user, groups)}
+  def all(_args, %{context: %Context{current_user: current_user}}) do
+    {:ok, System.list_widgets(current_user)}
   end
 
   def create(args, _info) do

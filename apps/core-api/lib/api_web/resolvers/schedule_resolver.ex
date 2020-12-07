@@ -4,9 +4,10 @@ defmodule ApiWeb.ScheduleResolver do
     Is routed to schedule-provider microservice.
   """
 
+  alias ApiWeb.Context
   alias Api.System
 
-  def get(%{widget_id: widget_id} = args, %{context: %{current_user: %{class: class}}}) do
+  def get(%{widget_id: widget_id} = args, %{context: %Context{current_user: %{class: class}}}) do
     widget = System.get_widget(widget_id)
 
     base_url = Application.fetch_env!(:api, :schedule_provider_url)
@@ -50,7 +51,7 @@ defmodule ApiWeb.ScheduleResolver do
     end
   end
 
-  def get(%{widget_id: _}, %{context: %{current_user: _}}) do
+  def get(%{widget_id: _}, %{context: %Context{current_user: user}}) when not is_nil(user) do
     {:error, "Du hast keine Klasse eingestellt"}
   end
 

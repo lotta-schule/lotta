@@ -709,7 +709,15 @@ defmodule ApiWeb.UserResolverTest do
       {:ok, %{"sub" => _id, "email" => "neuernutzer@example.com"}} =
         AccessToken.decode_and_verify(access_token)
 
-      user_groups = User.get_groups(Repo.get_by!(User, email: "neuernutzer@example.com"))
+      user =
+        User
+        |> Repo.get_by!(email: "neuernutzer@example.com")
+        |> Repo.preload(:enrollment_tokens)
+
+      user_groups =
+        user.enrollment_tokens
+        |> Enum.map(& &1.enrollment_token)
+        |> Api.Accounts.list_groups_for_enrollment_tokens()
 
       [%{name: group_name}] = user_groups
       assert group_name == "Lehrer"

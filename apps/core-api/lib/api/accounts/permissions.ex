@@ -8,79 +8,36 @@ defmodule Api.Accounts.Permissions do
   alias Api.Content.Article
 
   @doc """
-  Wether a user has rights to administer the current and all other systems
-
-  Returns true or false
-  """
-  @doc since: "2.0.0"
-
-  @spec user_is_lotta_admin?(User.t()) :: boolean()
-
-  def user_is_lotta_admin?(%User{} = user) do
-    [
-      "alexis.rinaldoni@einsa.net",
-      "eike.wiewiorra@einsa.net",
-      "billy@einsa.net"
-    ]
-    |> Enum.any?(fn email ->
-      user.email == email
-    end)
-  end
-
-  @doc """
-  Wether a user has rights to control the system
-
-  Returns true or false
-  """
-  @doc since: "2.0.0"
-
-  @spec user_is_admin?(User.t()) :: boolean
-
-  def user_is_admin?(%User{} = user) do
-    user
-    |> User.get_groups()
-    |> Enum.any?(& &1.is_admin_group)
-  end
-
-  def user_is_admin?(_), do: false
-
-  @doc """
   Wether a given user is an author or the author of a given article, directory or file
 
   Returns true or false
   """
   @doc since: "2.0.0"
 
-  @spec user_is_author?(User.t(), Article.t() | Directory.t() | File.t()) :: boolean
+  @spec is_author?(User.t(), Article.t() | Directory.t() | File.t()) :: boolean
 
-  def user_is_author?(%User{} = user, %Article{} = article) do
+  def is_author?(%User{} = user, %Article{} = article) do
     article
     |> Repo.preload(:users)
     |> Map.get(:users)
     |> Enum.any?(fn u -> u.id == user.id end)
   end
 
-  def user_is_author?(%User{id: user_id}, %Directory{} = directory) do
-    case Repo.preload(directory, :user) do
-      %{user: %{id: id}} -> id == user_id
-      _ -> false
-    end
+  def is_author?(%User{id: user_id}, %Directory{} = directory) do
+    user_id == directory.user_id
   end
 
-  def user_is_author?(%User{id: user_id}, %File{} = file) do
-    case Repo.preload(file, :user) do
-      %{user: %{id: id}} -> id == user_id
-      _ -> false
-    end
+  def is_author?(%User{id: user_id}, %File{} = file) do
+    user_id == file.user_id
   end
 
-  def user_is_author?(_, _), do: false
+  def is_author?(nil, _), do: false
 
   @doc """
   Wether a given user has read-access to a given object.
   """
   @doc since: "2.2.0"
-  @spec can_read?(User.t(), Article.t() | Directory.t()) :: boolean()
+  @spec can_read?(User.t() | nil, Article.t() | Directory.t()) :: boolean()
   def can_read?(user, object)
 
   def can_read?(user, %Article{} = article) do
@@ -96,19 +53,15 @@ defmodule Api.Accounts.Permissions do
   end
 
   def can_read?(user, %Directory{} = directory) do
-    directory =
-      directory
-      |> Repo.preload([:user])
-
-    user_is_author?(user, directory) || is_nil(directory.user)
+    is_author?(user, directory) || is_nil(directory.user_id)
   end
 
   def can_read?(user, %File{} = file) do
     file =
       file
-      |> Repo.preload([:user, :parent_directory])
+      |> Repo.preload(:parent_directory)
 
-    user_is_author?(user, file) || can_read?(user, file.parent_directory)
+    is_author?(user, file) || can_read?(user, file.parent_directory)
   end
 
   @doc """
@@ -118,36 +71,25 @@ defmodule Api.Accounts.Permissions do
   @spec can_write?(User.t(), Article.t() | Directory.t()) :: boolean()
   def can_write?(user, object)
 
-  def can_write?(user, %Article{} = article) do
-    user_is_admin?(user) || user_is_author?(user, article)
-  end
+  def can_write?(%User{is_admin?: true}, %Article{}), do: true
+  def can_write?(%User{} = user, %Article{} = article), do: is_author?(user, article)
 
-  def can_write?(user, %Directory{} = directory) do
-    directory =
-      directory
-      |> Repo.preload([:user])
-
-    user_is_author?(user, directory) ||
-      if user_is_admin?(user) do
-        # check if directory is public
-        is_nil(directory.user)
-      else
-        false
-      end
+  def can_write?(%User{} = user, %Directory{} = directory) do
+    is_author?(user, directory) || (user.is_admin? && is_nil(directory.user_id))
   end
 
   def can_write?(user, %File{} = file) do
     file =
       file
-      |> Repo.preload([:user, :parent_directory])
+      |> Repo.preload(:parent_directory)
 
-    user_is_author?(user, file) || can_write?(user, file.parent_directory)
+    is_author?(user, file) || can_write?(user, file.parent_directory)
   end
 
-  def can_write?(_, _), do: false
+  def can_write?(nil, _target), do: false
 
   @doc """
-  Wether a given user is member in a given set of groups
+  Wether a given user is member in a given set of groups or group ids.
 
   Returns true or false
   """
@@ -155,10 +97,9 @@ defmodule Api.Accounts.Permissions do
 
   @spec user_is_in_groups_list?(User.t() | nil, [UserGroup.t() | pos_integer()]) :: boolean
 
-  def user_is_in_groups_list?(%User{} = user, groups) when length(groups) > 0 do
+  def user_is_in_groups_list?(%User{all_groups: user_groups}, groups) when length(groups) > 0 do
     user_group_ids =
-      user
-      |> User.get_groups()
+      user_groups
       |> Enum.map(& &1.id)
 
     groups

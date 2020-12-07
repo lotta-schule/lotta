@@ -6,6 +6,7 @@ defmodule ApiWeb.DirectoryResolver do
 
   alias ApiWeb.Context
   alias Api.Accounts
+  alias Api.Accounts.User
   alias Api.Repo
 
   def list(%{parent_directory_id: parent_directory_id}, %{
@@ -72,7 +73,9 @@ defmodule ApiWeb.DirectoryResolver do
     end
   end
 
-  def create(%{name: name, is_public: true}, %{context: %Context{is_admin: true}}) do
+  def create(%{name: name, is_public: true}, %{
+        context: %Context{current_user: %User{is_admin?: true}}
+      }) do
     Accounts.create_directory(%{
       name: name,
       user_id: nil
@@ -80,7 +83,9 @@ defmodule ApiWeb.DirectoryResolver do
     |> format_errors("Erstellen des Ordners fehlgeschlagen.")
   end
 
-  def create(%{name: _name, is_public: true}, %{context: %Context{is_admin: false}}) do
+  def create(%{name: _name, is_public: true}, %{
+        context: %Context{current_user: %User{is_admin?: false}}
+      }) do
     {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
   end
 
@@ -97,7 +102,7 @@ defmodule ApiWeb.DirectoryResolver do
     {:error, "Du kannst diesen Ordner nicht hierher verschieben."}
   end
 
-  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
+  def update(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
     directory = Accounts.get_directory(String.to_integer(id))
 
     if directory do
