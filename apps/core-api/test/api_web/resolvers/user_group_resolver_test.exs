@@ -97,7 +97,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["group"]
                  }
                ]
@@ -116,7 +116,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen anzeigen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["group"]
                  }
                ]
@@ -180,7 +180,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Gruppe existiert nicht.",
+                   "message" => "Gruppe mit der id 0 existiert nicht.",
                    "path" => ["UpdateUserGroup"]
                  }
                ]
@@ -209,7 +209,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["UpdateUserGroup"]
                  }
                ]
@@ -234,7 +234,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen bearbeiten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["UpdateUserGroup"]
                  }
                ]
@@ -305,7 +305,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen löschen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["deleteUserGroup"]
                  }
                ]
@@ -324,7 +324,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen löschen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["deleteUserGroup"]
                  }
                ]
@@ -389,7 +389,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen erstellen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["createUserGroup"]
                  }
                ]
@@ -414,7 +414,7 @@ defmodule ApiWeb.UserGroupResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Gruppen erstellen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["createUserGroup"]
                  }
                ]

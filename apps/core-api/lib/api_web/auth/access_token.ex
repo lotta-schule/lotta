@@ -13,7 +13,7 @@ defmodule ApiWeb.Auth.AccessToken do
 
   alias Api.Accounts
   alias Api.Accounts.User
-  alias Api.Accounts.Permissions
+  alias Api.Repo
   alias Api.System
 
   @spec subject_for_token(%User{}, Map.t()) :: {:ok, String.t()} | {:error, :token_not_valid}
@@ -37,14 +37,28 @@ defmodule ApiWeb.Auth.AccessToken do
           {:ok, map()} | {:error, term()}
 
   def build_claims(claims, user, _options) do
+    user =
+      user
+      |> Repo.preload([:groups, :enrollment_tokens])
+
+    all_groups =
+      user.groups ++
+        (user.enrollment_tokens
+         |> Enum.map(& &1.enrollment_token)
+         |> Accounts.list_groups_for_enrollment_tokens())
+
+    is_admin =
+      all_groups
+      |> Enum.any?(& &1.is_admin_group)
+
     claims =
       Map.merge(claims, %{
         email: user.email,
         aud: System.get_main_url(skip_protocol: true),
         iss: System.get_main_url(skip_protocol: true),
-        adm: Permissions.user_is_admin?(user),
-        gps: Enum.map(User.get_groups(user), &%{id: to_string(&1.id)}),
-        agp: Enum.map(User.get_assigned_groups(user), &%{id: to_string(&1.id)})
+        adm: is_admin,
+        gps: Enum.map(all_groups, &%{id: to_string(&1.id)}),
+        agp: Enum.map(user.groups, &%{id: to_string(&1.id)})
       })
 
     {:ok, claims}

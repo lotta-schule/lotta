@@ -247,7 +247,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Modul-Ergebnisse abrufen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["contentModuleResults"]
                  }
                ]
@@ -266,7 +266,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Modul-Ergebnisse abrufen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["contentModuleResults"]
                  }
                ]

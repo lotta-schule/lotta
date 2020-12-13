@@ -1,15 +1,14 @@
 defmodule ApiWeb.FileResolver do
-  @moduledoc """
-    GraphQL Resolver Module for finding, creating, updating and deleting files
-  """
+  @moduledoc false
 
   require Logger
 
   import Ecto.Query
   import Api.Accounts.Permissions
+  import ApiWeb.ErrorHelpers
 
   alias Ecto.Changeset
-  alias ApiWeb.ErrorHelpers
+  alias ApiWeb.Context
   alias Api.Accounts
   alias Api.Accounts.{Directory, User}
   alias Api.System.{Category}
@@ -20,7 +19,7 @@ defmodule ApiWeb.FileResolver do
   alias UUID
 
   def resolve_file_usage(%{parent_directory_id: parent_directory_id, id: id}, _args, %{
-        context: %{current_user: current_user}
+        context: %Context{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory(parent_directory_id)
@@ -29,7 +28,7 @@ defmodule ApiWeb.FileResolver do
       is_nil(parent_directory) ->
         {:error, "Ordner nicht gefunden."}
 
-      !user_can_read_directory?(current_user, parent_directory) ->
+      not can_read?(current_user, parent_directory) ->
         {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
 
       true ->
@@ -73,31 +72,30 @@ defmodule ApiWeb.FileResolver do
     end
   end
 
-  def file(%{id: id}, %{context: %{current_user: current_user}}) do
+  def file(%{id: id}, %{context: %Context{current_user: current_user}}) do
     file =
-      Accounts.get_file!(String.to_integer(id))
+      Accounts.get_file(String.to_integer(id))
       |> Repo.preload(:parent_directory)
 
-    case file.user_id == current_user.id ||
-           user_can_read_directory?(current_user, file.parent_directory) do
-      true ->
-        {:ok, file}
-
-      _ ->
-        {:error, "Du hast nicht die Berechtigung, diese Datei zu lesen."}
+    if can_read?(current_user, file.parent_directory) do
+      {:ok, file}
+    else
+      {:error, "Du hast nicht die Rechte, diese Datei zu lesen."}
     end
   end
 
-  def files(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
+  def files(%{parent_directory_id: parent_directory_id}, %{
+        context: %Context{current_user: current_user}
+      })
       when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory(parent_directory_id)
 
     cond do
       is_nil(parent_directory) ->
-        {:error, "Ordner nicht gefunden."}
+        {:error, "Ordner mit der id #{parent_directory_id} nicht gefunden."}
 
-      !user_can_read_directory?(current_user, parent_directory) ->
-        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+      not can_read?(current_user, parent_directory) ->
+        {:error, "Du hast nicht die Rechte, diesen Ordner zu lesen."}
 
       true ->
         {:ok, Accounts.list_files(parent_directory)}
@@ -106,7 +104,7 @@ defmodule ApiWeb.FileResolver do
 
   def files(_, _), do: {:ok, []}
 
-  def relevant_files_in_usage(_args, %{context: %{current_user: current_user}}) do
+  def relevant_files_in_usage(_args, %{context: %Context{current_user: current_user}}) do
     category_files =
       from f in Accounts.File,
         join: c in Category,
@@ -136,32 +134,31 @@ defmodule ApiWeb.FileResolver do
     {:ok, combined_files}
   end
 
-  def relevant_files_in_usage(_args, _context), do: {:error, "Du bist nicht angemeldet."}
-
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
-        context: %{current_user: current_user}
+        context: %Context{current_user: current_user}
       }) do
-    case Accounts.get_directory(parent_directory_id) do
-      directory when not is_nil(directory) ->
-        directory = Repo.preload(directory, [:user])
+    directory = Accounts.get_directory(parent_directory_id)
 
-        if user_can_write_directory?(current_user, directory) do
-          upload_file_to_directory(file, directory, current_user)
-        else
-          {:error, "Du darfst diesen Ordner hier nicht erstellen."}
-        end
+    cond do
+      is_nil(directory) ->
+        {:error, "Der Ordner mit der id #{parent_directory_id} wurde nicht gefunden."}
 
-      _ ->
-        {:error, "Der Ordner wurde nicht gefunden."}
+      not can_write?(current_user, directory) ->
+        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+
+      true ->
+        upload_file_to_directory(file, directory, current_user)
     end
   end
 
-  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
-    try do
-      file =
-        Accounts.get_file!(String.to_integer(id))
-        |> Repo.preload([:parent_directory])
+  def update(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
+    file =
+      Accounts.get_file(String.to_integer(id))
+      |> Repo.preload([:parent_directory])
 
+    if is_nil(file) do
+      {:error, "Die Datei mit der id #{id} wurde nicht gefunden."}
+    else
       source_directory = file.parent_directory
 
       target_directory =
@@ -174,32 +171,31 @@ defmodule ApiWeb.FileResolver do
         end
 
       if !is_nil(target_directory) &&
-           user_can_write_directory?(current_user, source_directory) &&
-           user_can_write_directory?(current_user, target_directory) do
+           can_write?(current_user, source_directory) &&
+           can_write?(current_user, target_directory) do
         Accounts.update_file(file, Map.take(args, [:filename, :parent_directory_id]))
+        |> format_errors("Fehler beim Bearbeiten der Datei.")
       else
-        {:error, "Du darfst diese Datei nicht bearbeiten."}
+        {:error, "Du hast nicht die Rechte, diese Datei zu bearbeiten."}
       end
-    rescue
-      Ecto.NoResultsError ->
-        {:error, "Datei oder Ordner nicht gefunden."}
     end
   end
 
-  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
-    try do
-      file =
-        Accounts.get_file!(String.to_integer(id))
-        |> Repo.preload([:parent_directory])
+  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+    file =
+      Accounts.get_file(String.to_integer(id))
+      |> Repo.preload([:parent_directory])
 
-      if user_can_write_directory?(current_user, file.parent_directory) do
+    cond do
+      is_nil(file) ->
+        {:error, "Datei mit der id #{id} nicht gefunden."}
+
+      not can_write?(current_user, file.parent_directory) ->
+        {:error, "Du hast nicht die Rechte, diesen Ordner zu bearbeiten."}
+
+      true ->
         Accounts.delete_file(file)
-      else
-        {:error, "Du darfst diese Datei nicht löschen."}
-      end
-    rescue
-      Ecto.NoResultsError ->
-        {:error, "Datei nicht gefunden."}
+        |> format_errors("Fehler beim Löschen der Datei.")
     end
   end
 
@@ -219,7 +215,7 @@ defmodule ApiWeb.FileResolver do
       file_name: uuid
     }
 
-    file = %Api.Accounts.File{
+    file = %Accounts.File{
       user_id: user.id,
       parent_directory_id: directory.id,
       filename: filename,

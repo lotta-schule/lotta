@@ -160,7 +160,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"file" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diese Datei zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diese Datei zu lesen.",
                    "path" => ["file"]
                  }
                ]
@@ -181,7 +181,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"file" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diese Datei zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diese Datei zu lesen.",
                    "path" => ["file"]
                  }
                ]
@@ -513,7 +513,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"files" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu lesen.",
                    "path" => ["files"]
                  }
                ]
@@ -540,7 +540,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"files" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu lesen.",
                    "path" => ["files"]
                  }
                ]
@@ -567,7 +567,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"relevantFilesInUsage" => nil},
                "errors" => [
                  %{
-                   "message" => "Du bist nicht angemeldet.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["relevantFilesInUsage"]
                  }
                ]
@@ -641,7 +641,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diese Datei nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diese Datei zu bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
@@ -665,7 +665,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diese Datei nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diese Datei zu bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
@@ -683,7 +683,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Datei oder Ordner nicht gefunden.",
+                   "message" => "Die Datei mit der id 0 wurde nicht gefunden.",
                    "path" => ["updateFile"]
                  }
                ]
@@ -733,7 +733,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diese Datei nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diese Datei zu bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
@@ -758,7 +758,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diese Datei nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diese Datei zu bearbeiten.",
                    "path" => ["updateFile"]
                  }
                ]
@@ -802,7 +802,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"deleteFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diese Datei nicht löschen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu bearbeiten.",
                    "path" => ["deleteFile"]
                  }
                ]
@@ -820,7 +820,7 @@ defmodule ApiWeb.FileResolverTest do
                "data" => %{"deleteFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Datei nicht gefunden.",
+                   "message" => "Datei mit der id 0 nicht gefunden.",
                    "path" => ["deleteFile"]
                  }
                ]
@@ -856,7 +856,7 @@ defmodule ApiWeb.FileResolverTest do
              "data" => %{"deleteFile" => nil},
              "errors" => [
                %{
-                 "message" => "Du darfst diese Datei nicht löschen.",
+                 "message" => "Du hast nicht die Rechte, diesen Ordner zu bearbeiten.",
                  "path" => ["deleteFile"]
                }
              ]

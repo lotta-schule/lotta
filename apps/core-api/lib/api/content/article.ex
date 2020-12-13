@@ -13,6 +13,18 @@ defmodule Api.Content.Article do
   alias Api.Content.{Article, ContentModule}
   alias Api.System.Category
 
+  @type id() :: pos_integer()
+
+  @type topic() :: String.t()
+
+  @type t() :: %__MODULE__{
+          id: id(),
+          title: String.t(),
+          topic: topic(),
+          ready_to_publish: boolean(),
+          is_pinned_to_top: boolean()
+        }
+
   schema "articles" do
     field(:title, :string)
     field(:preview, :string)
@@ -47,6 +59,28 @@ defmodule Api.Content.Article do
     |> String.replace_suffix(
       "",
       "/a/#{article.id}-#{Api.Slugifier.slugify_string(article.title)}"
+    )
+  end
+
+  @doc """
+  Returns a query with all released articles a given user can see.
+  If no user is given, return a query returning only public articles.
+  """
+  @spec get_released_articles_query(User.t() | nil) :: Ecto.Queryable.t()
+  def get_released_articles_query(user \\ nil) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+
+    from(a in Article,
+      left_join: aug in "articles_user_groups",
+      on: aug.article_id == a.id,
+      join: c in Category,
+      on: c.id == a.category_id,
+      where:
+        not is_nil(a.category_id) and
+          (is_nil(aug.group_id) or aug.group_id in ^Enum.map(groups, & &1.id) or
+             ^is_admin),
+      distinct: true
     )
   end
 

@@ -239,7 +239,7 @@ defmodule ApiWeb.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Widgets erstellen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["createWidget"]
                  }
                ]
@@ -258,7 +258,7 @@ defmodule ApiWeb.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Widgets erstellen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["createWidget"]
                  }
                ]
@@ -312,7 +312,7 @@ defmodule ApiWeb.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateWidget"]
                  }
                ]
@@ -334,7 +334,7 @@ defmodule ApiWeb.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Widgets bearbeiten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateWidget"]
                  }
                ]
@@ -380,7 +380,7 @@ defmodule ApiWeb.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Marginalen löschen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["deleteWidget"]
                  }
                ]
@@ -399,7 +399,7 @@ defmodule ApiWeb.WidgetResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Marginalen löschen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["deleteWidget"]
                  }
                ]

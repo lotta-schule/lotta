@@ -1,7 +1,5 @@
 defmodule ApiWeb.CalendarResolver do
-  @moduledoc """
-    GraphQL Resolver for requesting parsed calendar data for a given calendar
-  """
+  @moduledoc false
 
   def get(%{url: url} = args, _info) do
     result_body =

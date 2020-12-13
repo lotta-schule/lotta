@@ -4,10 +4,25 @@ defmodule Api.System.Category do
   """
 
   use Ecto.Schema
+
   import Ecto.{Changeset, Query}
+
   alias Api.Repo
   alias Api.Accounts.{File, UserGroup}
   alias Api.System.{Category, Widget}
+
+  @type id() :: pos_integer()
+
+  @type t() :: %__MODULE__{
+          id: id(),
+          title: String.t(),
+          sort_key: number(),
+          is_sidenav: boolean(),
+          is_homepage: boolean(),
+          layout_name: String.t(),
+          redirect: String.t(),
+          hide_articles_from_homepage: boolean()
+        }
 
   schema "categories" do
     field :title, :string

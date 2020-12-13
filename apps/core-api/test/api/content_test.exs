@@ -8,10 +8,10 @@ defmodule Api.ContentTest do
   describe "article" do
     alias Api.Content.Article
 
-    test "get_article!/1 returns the article with given id" do
+    test "get_article/1 returns the article with given id" do
       user = Fixtures.fixture(:registered_user)
       article = Fixtures.fixture(:article, user)
-      assert Api.Repo.preload(Content.get_article!(article.id), [:category, :users]) == article
+      assert Api.Repo.preload(Content.get_article(article.id), [:category, :users]) == article
     end
 
     test "list_users_articles/2 should return a users' visible articles" do

@@ -1,9 +1,8 @@
 defmodule Api.System do
   import Ecto.Query
-  import Api.Accounts.Permissions
 
   alias Api.Repo
-  alias Api.Accounts.File
+  alias Api.Accounts.{File, User}
   alias Api.System.{Category, Configuration, CustomDomain, Widget}
 
   @allowed_configuration_keys [
@@ -13,6 +12,8 @@ defmodule Api.System do
     "background_image_file"
   ]
 
+  @type get_url_options() :: [skip_protocol: boolean()]
+
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
@@ -21,10 +22,11 @@ defmodule Api.System do
     queryable
   end
 
-  def resolve_widgets(_args, %{context: context, source: category}) do
-    user_group_ids = context[:user_group_ids] || []
-    user_is_admin = context[:user_is_admin]
-
+  @doc false
+  def resolve_widgets(_args, %{
+        context: %ApiWeb.Context{current_user: %User{all_groups: groups, is_admin?: is_admin}},
+        source: %Category{} = category
+      }) do
     widgets =
       from(w in Widget,
         left_join: wug in "widgets_user_groups",
@@ -32,7 +34,7 @@ defmodule Api.System do
         join: cw in "categories_widgets",
         on: w.id == cw.widget_id,
         where:
-          (^user_is_admin or wug.group_id in ^user_group_ids or is_nil(wug.group_id)) and
+          (^is_admin or wug.group_id in ^Enum.map(groups, & &1.id) or is_nil(wug.group_id)) and
             cw.category_id == ^category.id,
         distinct: w.id
       )
@@ -114,8 +116,7 @@ defmodule Api.System do
 
   def put_configuration(_, name, _), do: {:error, "key #{name} is not allowed"}
 
-  @doc """
-  """
+  @doc false
   @doc since: "2.0.0"
 
   @spec update_configuration(map(), map()) :: map()
@@ -127,6 +128,7 @@ defmodule Api.System do
     end)
   end
 
+  @doc false
   @spec make_configuration_line(String.t() | atom(), Configuration.value()) :: Configuration.t()
 
   defp make_configuration_line(name, nil) do
@@ -160,35 +162,47 @@ defmodule Api.System do
     %Configuration{name: to_string(name), string_value: string}
   end
 
+  @doc false
   @spec ensure_atom(String.t() | atom()) :: atom()
-
   defp ensure_atom(value) when is_atom(value), do: value
   defp ensure_atom(value) when is_binary(value), do: String.to_atom(value)
 
+  @doc """
+  Return the main URL of this instance
+  """
+  @spec get_main_url(get_url_options() | nil) :: String.t()
   def get_main_url(options \\ []) do
     protocol =
-      unless options[:skip_protocol] do
-        "https://"
-      else
+      if options[:skip_protocol] do
         ""
+      else
+        "https://"
       end
 
-    case List.first(list_custom_domains()) do
-      nil ->
-        config = get_configuration()
-        "#{protocol}#{config[:slug]}#{Application.fetch_env!(:api, :base_url)}"
+    custom_domains = list_custom_domains()
 
-      domain ->
-        "#{protocol}#{domain.host}"
+    if length(custom_domains) > 0 do
+      [domain | _others] = custom_domains
+      protocol <> domain.host
+    else
+      config = get_configuration()
+      "#{protocol}#{config[:slug]}#{Application.fetch_env!(:api, :base_url)}"
     end
   end
 
+  @doc """
+  Return all the domains under which this instances is reachable that does not
+  rely on the <slug>.<base_url> scheme.
+  This will not stay!
+  TODO: Pass URL only by (env)-config
+  """
+  @spec list_custom_domains() :: [String.t()]
   def list_custom_domains() do
     Repo.all(from c in CustomDomain, order_by: c.is_main_domain)
   end
 
   @doc """
-  Returns the list of categories.
+  Returns the list of all categories accessible by the user.
 
   ## Examples
 
@@ -196,11 +210,16 @@ defmodule Api.System do
       [%Category{}, ...]
 
   """
-  def list_categories(_user, user_group_ids, user_is_admin) do
+  @doc since: "1.0.0"
+  @spec list_categories(User.t() | nil) :: list(Category.t())
+  def list_categories(user) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+
     from(c in Category,
       left_join: cug in "categories_user_groups",
       on: cug.category_id == c.id,
-      where: cug.group_id in ^user_group_ids or is_nil(cug.group_id) or ^user_is_admin,
+      where: cug.group_id in ^Enum.map(groups, & &1.id) or is_nil(cug.group_id) or ^is_admin,
       order_by: [asc: :sort_key, asc: :category_id],
       distinct: true
     )
@@ -209,19 +228,20 @@ defmodule Api.System do
 
   @doc """
   Gets a single category.
-
-  Raises `Ecto.NoResultsError` if the Category does not exist.
+  Returns `nil` if no result is found.
 
   ## Examples
 
-      iex> get_category!(123)
+      iex> get_category(123)
       %Category{}
 
-      iex> get_category!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_category(456)
+      nil
 
   """
-  def get_category!(id), do: Repo.get!(Category, id)
+  @doc since: "1.0.0"
+  @spec get_category(Category.id()) :: list(Category.t())
+  def get_category(id), do: Repo.get(Category, id)
 
   @doc """
   Creates a category.
@@ -235,8 +255,11 @@ defmodule Api.System do
       {:error, %Ecto.Changeset{}}
 
   """
+  @doc since: "1.0.0"
+  @spec create_category(map()) :: {:ok, Category.t()} | {:error, Ecto.Changeset.t()}
   def create_category(attrs \\ %{}) do
-    %Category{sort_key: Category.get_max_sort_key() + 10}
+    %Category{}
+    |> Map.put(:sort_key, Category.get_max_sort_key() + 10)
     |> Category.changeset(attrs)
     |> Repo.insert()
   end
@@ -253,6 +276,8 @@ defmodule Api.System do
       {:error, %Ecto.Changeset{}}
 
   """
+  @doc since: "1.0.0"
+  @spec update_category(Category.t(), map()) :: {:ok, Category.t()} | {:error, Ecto.Changeset.t()}
   def update_category(%Category{} = category, attrs) do
     category
     |> Category.changeset(attrs)
@@ -271,98 +296,84 @@ defmodule Api.System do
       {:error, %Ecto.Changeset{}}
 
   """
+  @doc since: "1.0.0"
+  @spec delete_category(Category.t()) :: {:ok, Category.t()} | {:error, Ecto.Changeset.t()}
   def delete_category(%Category{} = category) do
     Repo.delete(category)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking category changes.
+  Returns the list of widgets for a given user
 
   ## Examples
 
-      iex> change_category(category)
-      %Ecto.Changeset{source: %Category{}}
-
-  """
-  def change_category(%Category{} = category) do
-    Category.changeset(category, %{})
-  end
-
-  @doc """
-  Returns the list of widgets.
-
-  ## Examples
-
-      iex> list_widgets()
+      iex> list_widgets(%User{id: 1}, [])
       [%Category{}, ...]
 
   """
-  def list_widgets(user, user_group_ids) do
-    {
-      :ok,
-      from(w in Widget,
-        left_join: wug in "widgets_user_groups",
-        on: wug.widget_id == w.id,
-        where: wug.group_id in ^user_group_ids or is_nil(wug.group_id) or ^user_is_admin?(user),
-        distinct: w.id
-      )
-      |> Repo.all()
-    }
+  @doc since: "1.0.0"
+  @spec list_widgets(User.t() | nil) :: list(Widget.t())
+  def list_widgets(user) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
+
+    from(w in Widget,
+      left_join: wug in "widgets_user_groups",
+      on: wug.widget_id == w.id,
+      where:
+        wug.group_id in ^Enum.map(groups, & &1.id) or is_nil(wug.group_id) or
+          ^is_admin,
+      distinct: w.id
+    )
+    |> Repo.all()
   end
 
   @doc """
-  Returns the list of widgets for a given category id.
+  Returns the list of widgets for a category for a given user
 
   ## Examples
 
-      iex> list_widgets_by_category_id()
+      iex> list_widgets_by_category_id(%Category{id: 1}, %User{id: 1}, [])
       [%Category{}, ...]
 
   """
-  def list_widgets_by_category_id(
-        category_id,
-        user,
-        user_group_ids
-      ) do
-    category = get_category!(String.to_integer(category_id))
+  @doc since: "1.7.0"
+  @spec list_widgets_by_category(Category.t(), User.t() | nil) ::
+          list(Widget.t())
+  def list_widgets_by_category(category, user) do
+    groups = if user, do: user.all_groups, else: []
+    is_admin = if user, do: user.is_admin?, else: false
 
-    cond do
-      category == nil ->
-        {:error, "Die Kategorie existiert nicht."}
-
-      true ->
-        {
-          :ok,
-          from(w in Widget,
-            left_join: wug in "widgets_user_groups",
-            on: wug.widget_id == w.id,
-            join: cw in "categories_widgets",
-            on: cw.widget_id == w.id,
-            where:
-              cw.category_id == ^String.to_integer(category_id) and
-                (is_nil(wug.group_id) or ^user_is_admin?(user) or wug.group_id in ^user_group_ids),
-            distinct: w.id
-          )
-          |> Repo.all()
-        }
-    end
+    from(w in Widget,
+      left_join: wug in "widgets_user_groups",
+      on: wug.widget_id == w.id,
+      join: cw in "categories_widgets",
+      on: cw.widget_id == w.id,
+      where:
+        cw.category_id == ^category.id and
+          (is_nil(wug.group_id) or ^is_admin or
+             wug.group_id in ^Enum.map(groups, & &1.id)),
+      distinct: w.id
+    )
+    |> Repo.all()
   end
 
   @doc """
-  Gets a single widget.
-
-  Raises `Ecto.NoResultsError` if the Widget does not exist.
+  Gets a single widget by id.
+  Returns `nil` if the widget is not found.
 
   ## Examples
 
-      iex> get_widget!(123)
+      iex> get_widget(123)
       %Widget{}
 
-      iex> get_widget!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_widget(456)
+      nil
 
   """
-  def get_widget!(id), do: Repo.get!(Widget, id)
+  @doc since: "1.0.0"
+  @spec get_widget(Widget.id()) :: Widget.t()
+  def get_widget(id), do: Repo.get(Widget, id)
 
   @doc """
   Creates a widget.
@@ -376,6 +387,8 @@ defmodule Api.System do
       {:error, %Ecto.Changeset{}}
 
   """
+  @doc since: "1.0.0"
+  @spec create_widget(map()) :: {:ok, Widget.t()} | {:error, Ecto.Changeset.t()}
   def create_widget(attrs \\ %{}) do
     %Widget{}
     |> Widget.create_changeset(attrs)
@@ -383,7 +396,7 @@ defmodule Api.System do
   end
 
   @doc """
-  Updates a widget.
+  Updates a given widget.
 
   ## Examples
 
@@ -394,7 +407,9 @@ defmodule Api.System do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_widget(%Widget{} = widget, attrs) do
+  @doc since: "1.0.0"
+  @spec update_widget(Widget.t(), map()) :: {:ok, Widget.t()} | {:error, Ecto.Changeset.t()}
+  def update_widget(widget, attrs) do
     widget
     |> Widget.changeset(attrs)
     |> Repo.update()
@@ -412,20 +427,9 @@ defmodule Api.System do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_widget(%Widget{} = widget) do
+  @doc since: "1.0.0"
+  @spec delete_widget(Widget.t()) :: {:ok, Widget.t()} | {:error, Ecto.Changeset.t()}
+  def delete_widget(widget) do
     Repo.delete(widget)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking widget changes.
-
-  ## Examples
-
-      iex> change_widget(widget)
-      %Ecto.Changeset{source: %Widget{}}
-
-  """
-  def change_widget(%Widget{} = widget) do
-    Widget.changeset(widget, %{})
   end
 end

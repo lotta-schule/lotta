@@ -9,7 +9,6 @@ defmodule Api.Accounts.User do
 
   alias Api.Repo
   alias Ecto.Changeset
-  alias Api.Accounts
   alias Api.Accounts.{File, User, UserEnrollmentToken, UserGroup}
   alias Api.Content.Article
 
@@ -24,9 +23,14 @@ defmodule Api.Accounts.User do
     field :password, :string, virtual: true
     field :password_hash, :string
 
+    field :all_groups, {:array, UserGroup}, virtual: true, default: []
+    field :is_admin?, :boolean, virtual: true, default: false
+
     belongs_to :avatar_image_file, File, on_replace: :nilify
     has_many :files, File
     has_many :enrollment_tokens, UserEnrollmentToken, on_replace: :delete
+    has_many :sent_messages, Api.Messages.Message, foreign_key: :sender_user_id
+    has_many :received_messages, Api.Messages.Message, foreign_key: :recipient_user_id
 
     many_to_many :groups,
                  UserGroup,
@@ -41,29 +45,11 @@ defmodule Api.Accounts.User do
     timestamps()
   end
 
-  @type id :: String.t()
+  @type id :: pos_integer()
 
   @type email :: String.t()
 
   @type t :: %User{id: id, email: email(), name: String.t()}
-
-  def get_assigned_groups(%User{} = user) do
-    user
-    |> Repo.preload(:groups)
-    |> Map.fetch!(:groups)
-  end
-
-  def get_dynamic_groups(%User{} = user) do
-    user
-    |> Repo.preload(:enrollment_tokens)
-    |> Map.fetch!(:enrollment_tokens)
-    |> Enum.map(& &1.enrollment_token)
-    |> Accounts.list_groups_for_enrollment_tokens()
-  end
-
-  def get_groups(%User{} = user) do
-    get_assigned_groups(user) ++ get_dynamic_groups(user)
-  end
 
   def update_changeset(%User{} = user, params \\ %{}) do
     user

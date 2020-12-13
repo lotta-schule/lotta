@@ -1,7 +1,9 @@
 defmodule Api.Content.ContentModuleResult do
-  @moduledoc """
-    Ecto Schema for content module results
-  """
+  @moduledoc false
+
+  @type id() :: number()
+
+  @type t() :: %{id: id(), result: map()}
 
   use Ecto.Schema
 

@@ -15,6 +15,22 @@ defmodule ApiWeb.ErrorHelpers do
   def extract_error_details(error), do: error
 
   @doc """
+  Gets an {:ok, _} or {:error, _} tuple and returns it, setting up
+  error details on the way if possible
+  """
+  def format_errors(result, msg \\ nil)
+
+  def format_errors({:error, %Changeset{} = cs}, msg) do
+    {:error,
+     %{
+       message: msg,
+       details: extract_error_details(cs)
+     }}
+  end
+
+  def format_errors(res, _msg), do: res
+
+  @doc """
   Translates an error message using gettext.
   """
   def translate_error({msg, opts}) do

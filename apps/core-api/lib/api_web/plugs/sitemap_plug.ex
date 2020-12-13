@@ -7,7 +7,7 @@ defmodule ApiWeb.SitemapPlug do
   import Ecto.Query
   alias Api.Repo
   alias Api.System
-  alias Api.Content
+  alias Api.Content.Article
 
   def init(opts), do: opts
 
@@ -35,7 +35,7 @@ defmodule ApiWeb.SitemapPlug do
   end
 
   defp get_categories_body(conn) do
-    categories = System.list_categories(nil, [], false)
+    categories = System.list_categories(nil)
 
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <>
       "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n" <>
@@ -53,7 +53,7 @@ defmodule ApiWeb.SitemapPlug do
   end
 
   defp get_articles_body(conn, date) do
-    query = Content.list_public_articles(nil, [], false)
+    query = Article.get_released_articles_query()
 
     articles =
       from(

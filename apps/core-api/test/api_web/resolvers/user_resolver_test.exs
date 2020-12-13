@@ -398,7 +398,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["users"]
                  }
                ]
@@ -531,7 +531,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["searchUsers"]
                  }
                ]
@@ -550,7 +550,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen auf Benutzer auflisten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["searchUsers"]
                  }
                ]
@@ -633,7 +633,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur angemeldete Nutzer dürfen Nutzer abrufen.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["user"]
                  }
                ]
@@ -709,7 +709,15 @@ defmodule ApiWeb.UserResolverTest do
       {:ok, %{"sub" => _id, "email" => "neuernutzer@example.com"}} =
         AccessToken.decode_and_verify(access_token)
 
-      user_groups = User.get_groups(Repo.get_by!(User, email: "neuernutzer@example.com"))
+      user =
+        User
+        |> Repo.get_by!(email: "neuernutzer@example.com")
+        |> Repo.preload(:enrollment_tokens)
+
+      user_groups =
+        user.enrollment_tokens
+        |> Enum.map(& &1.enrollment_token)
+        |> Api.Accounts.list_groups_for_enrollment_tokens()
 
       [%{name: group_name}] = user_groups
       assert group_name == "Lehrer"
@@ -1282,7 +1290,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administratoren dürfen Benutzern Gruppen zuweisen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateUser"]
                  }
                ]
@@ -1331,7 +1339,7 @@ defmodule ApiWeb.UserResolverTest do
       assert %{
                "errors" => [
                  %{
-                   "message" => "Du bist nicht angemeldet.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["updateProfile"]
                  }
                ],
@@ -1434,7 +1442,7 @@ defmodule ApiWeb.UserResolverTest do
                "data" => %{"destroyAccount" => nil},
                "errors" => [
                  %{
-                   "message" => "Du bist nicht angemeldet.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["destroyAccount"],
                    "locations" => [%{"column" => 3, "line" => 2}]
                  }

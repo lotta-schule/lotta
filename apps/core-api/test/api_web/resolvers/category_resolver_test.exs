@@ -530,7 +530,7 @@ defmodule ApiWeb.CategoryResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen Kategorien bearbeiten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateCategory"]
                  }
                ]
@@ -553,7 +553,7 @@ defmodule ApiWeb.CategoryResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen Kategorien bearbeiten.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["updateCategory"]
                  }
                ]
@@ -607,7 +607,7 @@ defmodule ApiWeb.CategoryResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen Kategorien erstellen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["createCategory"]
                  }
                ]
@@ -630,7 +630,7 @@ defmodule ApiWeb.CategoryResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen Kategorien erstellen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["createCategory"]
                  }
                ]
@@ -736,7 +736,7 @@ defmodule ApiWeb.CategoryResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen Kategorien löschen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["deleteCategory"]
                  }
                ]
@@ -755,7 +755,7 @@ defmodule ApiWeb.CategoryResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Nur Administrator dürfen Kategorien löschen.",
+                   "message" => "Du musst Administrator sein um das zu tun.",
                    "path" => ["deleteCategory"]
                  }
                ]

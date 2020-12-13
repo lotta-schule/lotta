@@ -1,154 +1,100 @@
 defmodule ApiWeb.DirectoryResolver do
-  @moduledoc """
-    GraphQL Resolver Module for finding, creating, updating and deleting directories
-  """
+  @moduledoc false
 
+  import ApiWeb.ErrorHelpers
   import Api.Accounts.Permissions
 
-  alias ApiWeb.ErrorHelpers
+  alias ApiWeb.Context
   alias Api.Accounts
+  alias Api.Accounts.User
   alias Api.Repo
-  alias UUID
 
-  def list(%{parent_directory_id: parent_directory_id}, %{context: %{current_user: current_user}})
-      when not is_nil(parent_directory_id) and byte_size(parent_directory_id) > 0 do
+  def list(%{parent_directory_id: parent_directory_id}, %{
+        context: %Context{current_user: current_user}
+      })
+      when not is_nil(parent_directory_id) and bit_size(parent_directory_id) > 0 do
     parent_directory = Accounts.get_directory(parent_directory_id)
 
     cond do
       is_nil(parent_directory) ->
-        {:error, "Ordner nicht gefunden"}
+        {:error, "Ordner mit der id #{parent_directory_id} nicht gefunden."}
 
-      !user_can_read_directory?(current_user, parent_directory) ->
-        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+      not can_read?(current_user, parent_directory) ->
+        {:error, "Du hast nicht die Rechte, diesen Ordner anzusehen."}
 
       true ->
         {:ok, Accounts.list_directories(parent_directory)}
     end
   end
 
-  def list(_, %{context: %{current_user: current_user}}) do
+  def list(_, %{context: %Context{current_user: current_user}}) do
     {:ok, Accounts.list_root_directories(current_user)}
   end
 
-  def get(%{id: id}, %{context: %{current_user: current_user}}) do
+  def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
     directory = Accounts.get_directory(String.to_integer(id))
 
     cond do
       is_nil(directory) ->
-        {:error, "Ordner nicht gefunden."}
+        {:error, "Ordner mit der id #{id} nicht gefunden."}
 
-      !user_can_read_directory?(current_user, directory) ->
-        {:error, "Du hast nicht die Berechtigung, diesen Ordner zu lesen."}
+      not can_read?(current_user, directory) ->
+        {:error, "Du hast nicht die Rechte, diesen Ordner anzusehen."}
 
       true ->
         {:ok, directory}
     end
   end
 
+  def create(%{name: name}, _info) when not is_binary(name) and bit_size(name) > 0 do
+    {:error, "Der Name für den neuen Ordner ist ungültig."}
+  end
+
   def create(%{name: name, parent_directory_id: parent_directory_id}, %{
-        context: %{current_user: current_user}
+        context: %Context{current_user: current_user}
       })
-      when is_binary(name) and not is_nil(parent_directory_id) do
+      when not is_nil(parent_directory_id) do
     parent_directory = Accounts.get_directory(parent_directory_id)
 
     cond do
       is_nil(parent_directory) ->
-        {:error, "Ordner nicht gefunden."}
+        {:error, "Ordner mit der id #{parent_directory_id} nicht gefunden."}
 
-      !user_can_write_directory?(current_user, parent_directory) ->
-        {:error, "Du darfst diesen Ordner hier nicht erstellen."}
+      !can_write?(current_user, parent_directory) ->
+        {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
 
       true ->
-        attrs = %{
+        Accounts.create_directory(%{
           name: name,
           parent_directory_id: parent_directory.id,
           user_id: parent_directory.user_id
-        }
-
-        case Accounts.create_directory(attrs) do
-          {:ok, directory} ->
-            {:ok, directory}
-
-          {:error, error} ->
-            {:error,
-             [
-               "Fehler beim Anlegen des Ordners",
-               details: ErrorHelpers.extract_error_details(error)
-             ]}
-        end
+        })
+        |> format_errors("Erstellen des Ordners fehlgeschlagen")
     end
   end
 
-  def create(%{name: name, is_public: true}, %{context: %{current_user: current_user}})
-      when is_binary(name) do
-    if user_is_admin?(current_user) do
-      Accounts.create_directory(%{
-        name: name,
-        user_id: nil
-      })
-      |> case do
-        {:ok, directory} ->
-          {:ok, directory}
-
-        {:error, error} ->
-          {:error,
-           [
-             "Fehler beim Anlegen des Ordners",
-             details: ErrorHelpers.extract_error_details(error)
-           ]}
-      end
-    else
-      {:error, "Du darfst diesen Ordner hier nicht erstellen."}
-    end
-  end
-
-  def create(%{name: name}, %{context: %{current_user: current_user}})
-      when is_binary(name) do
-    attrs = %{
+  def create(%{name: name, is_public: true}, %{
+        context: %Context{current_user: %User{is_admin?: true}}
+      }) do
+    Accounts.create_directory(%{
       name: name,
-      user_id: current_user.id
-    }
-
-    case Accounts.create_directory(attrs) do
-      {:ok, directory} ->
-        {:ok, directory}
-
-      {:error, error} ->
-        {:error,
-         [
-           "Fehler beim Anlegen des Ordners",
-           details: ErrorHelpers.extract_error_details(error)
-         ]}
-    end
+      user_id: nil
+    })
+    |> format_errors("Erstellen des Ordners fehlgeschlagen.")
   end
 
-  def create(_, %{context: %{current_user: _}}),
-    do: {:error, "Der Name für den neuen Ordner ist ungültig."}
+  def create(%{name: _name, is_public: true}, %{
+        context: %Context{current_user: %User{is_admin?: false}}
+      }) do
+    {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
+  end
 
-  def create(_, _), do: {:error, "Nur angemeldete Nutzer dürfen Ordner erstellen."}
-
-  def delete(%{id: id}, %{context: %{current_user: current_user}}) do
-    directory = Accounts.get_directory(String.to_integer(id))
-
-    cond do
-      is_nil(directory) ->
-        {:error, "Ordner nicht gefunden."}
-
-      !user_can_write_directory?(current_user, directory) ->
-        {:error, "Du darfst diesen Ordner nicht löschen."}
-
-      directory
-      |> Repo.preload([:directories, :files])
-      |> Map.take([:directories, :files])
-      |> Map.values()
-      |> List.flatten()
-      |> Kernel.length() > 0 ->
-        {:error, "Es dürfen nur leere Ordner gelöscht werden."}
-
-      true ->
-        directory
-        |> Accounts.delete_directory()
-    end
+  def create(%{name: name}, %{context: %Context{current_user: %{id: user_id}}}) do
+    Accounts.create_directory(%{
+      name: name,
+      user_id: user_id
+    })
+    |> format_errors("Erstellen des Ordners fehlgeschlagen.")
   end
 
   def update(%{id: id, parent_directory_id: parent_directory_id}, _)
@@ -156,7 +102,7 @@ defmodule ApiWeb.DirectoryResolver do
     {:error, "Du kannst diesen Ordner nicht hierher verschieben."}
   end
 
-  def update(%{id: id} = args, %{context: %{current_user: current_user}}) do
+  def update(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
     directory = Accounts.get_directory(String.to_integer(id))
 
     if directory do
@@ -170,7 +116,7 @@ defmodule ApiWeb.DirectoryResolver do
 
       target_directory =
         case args do
-          %{parent_directory_id: target_directory_id} when is_nil(target_directory_id) ->
+          %{parent_directory_id: nil} ->
             nil
 
           %{parent_directory_id: target_directory_id} ->
@@ -180,25 +126,41 @@ defmodule ApiWeb.DirectoryResolver do
             source_directory
         end
 
-      if user_can_write_directory?(current_user, source_directory || directory) &&
-           user_can_write_directory?(current_user, target_directory || directory) do
-        Accounts.update_directory(directory, Map.take(args, [:name, :parent_directory_id]))
-        |> case do
-          {:ok, directory} ->
-            {:ok, directory}
-
-          {:error, error} ->
-            {:error,
-             [
-               "Fehler beim Bearbeiten des Ordners",
-               details: ErrorHelpers.extract_error_details(error)
-             ]}
-        end
+      if can_write?(current_user, source_directory || directory) &&
+           can_write?(current_user, target_directory || directory) do
+        directory
+        |> Accounts.update_directory(Map.take(args, [:name, :parent_directory_id]))
+        |> format_errors("Bearbeiten des Ordners fehlgeschlagen.")
       else
-        {:error, "Du darfst diesen Ordner nicht bearbeiten."}
+        {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
       end
     else
-      {:error, "Datei oder Ordner nicht gefunden."}
+      {:error, "Ordner mit der id #{id} nicht gefunden."}
+    end
+  end
+
+  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+    directory = Accounts.get_directory(String.to_integer(id))
+
+    cond do
+      is_nil(directory) ->
+        {:error, "Ordner mit der id #{id} nicht gefunden."}
+
+      not can_write?(current_user, directory) ->
+        {:error, "Du hast nicht die Rechte, diesen Ordner zu löschen."}
+
+      directory
+      |> Repo.preload([:directories, :files])
+      |> Map.take([:directories, :files])
+      |> Map.values()
+      |> List.flatten()
+      |> Kernel.length() > 0 ->
+        {:error, "Es dürfen nur leere Ordner gelöscht werden."}
+
+      true ->
+        directory
+        |> Accounts.delete_directory()
+        |> format_errors("Erstellen des Ordners fehlgeschlagen")
     end
   end
 end

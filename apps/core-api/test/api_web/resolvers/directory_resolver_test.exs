@@ -249,7 +249,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"directories" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner anzusehen.",
                    "path" => ["directories"]
                  }
                ]
@@ -276,7 +276,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"directories" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner anzusehen.",
                    "path" => ["directories"]
                  }
                ]
@@ -370,7 +370,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"directory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner anzusehen.",
                    "path" => ["directory"]
                  }
                ]
@@ -391,7 +391,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"directory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du hast nicht die Berechtigung, diesen Ordner zu lesen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner anzusehen.",
                    "path" => ["directory"]
                  }
                ]
@@ -476,7 +476,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["createDirectory"]
                  }
                ]
@@ -500,7 +500,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["createDirectory"]
                  }
                ]
@@ -563,7 +563,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["createDirectory"]
                  }
                ]
@@ -585,7 +585,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["createDirectory"]
                  }
                ]
@@ -606,7 +606,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Ordner nicht gefunden.",
+                   "message" => "Ordner mit der id 0 nicht gefunden.",
                    "path" => ["createDirectory"]
                  }
                ]
@@ -691,7 +691,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["updateDirectory"]
                  }
                ]
@@ -715,7 +715,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["updateDirectory"]
                  }
                ]
@@ -733,7 +733,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Datei oder Ordner nicht gefunden.",
+                   "message" => "Ordner mit der id 0 nicht gefunden.",
                    "path" => ["updateDirectory"]
                  }
                ]
@@ -801,7 +801,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["updateDirectory"]
                  }
                ]
@@ -826,7 +826,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner nicht bearbeiten.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu beschreiben.",
                    "path" => ["updateDirectory"]
                  }
                ]
@@ -887,7 +887,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner nicht löschen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu löschen.",
                    "path" => ["deleteDirectory"]
                  }
                ]
@@ -914,7 +914,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner nicht löschen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu löschen.",
                    "path" => ["deleteDirectory"]
                  }
                ]
@@ -932,7 +932,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Ordner nicht gefunden.",
+                   "message" => "Ordner mit der id 0 nicht gefunden.",
                    "path" => ["deleteDirectory"]
                  }
                ]
@@ -1043,7 +1043,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Du darfst diesen Ordner nicht löschen.",
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu löschen.",
                    "path" => ["deleteDirectory"]
                  }
                ]

@@ -1,9 +1,6 @@
 defmodule ApiWeb.Schema.Middleware.WriteTokensToContext do
-  @moduledoc """
-  Looks for "value: token: " in the absinthe response and writes it into context.
-  This is so we can later extract it from context and write it to cookie,
-  as we do not have access to the conn object in the Absinthe pipeline.
-  """
+  @moduledoc false
+
   @behaviour Absinthe.Middleware
 
   @doc false

@@ -494,19 +494,18 @@ defmodule Api.Accounts do
 
   @doc """
   Gets a single file.
-
-  Raises `Ecto.NoResultsError` if the File does not exist.
+  Returns `nil` if file is not found.
 
   ## Examples
 
-      iex> get_file!(123)
+      iex> get_file(123)
       %File{}
 
-      iex> get_file!(456)
+      iex> get_file(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_file!(id), do: Repo.get!(File, id)
+  def get_file(id), do: Repo.get(File, id)
 
   @doc """
   Updates a file.
@@ -631,10 +630,10 @@ defmodule Api.Accounts do
 
   ## Examples
 
-      iex> get_user_group!(123)
+      iex> get_user_group(123)
       %UserGroup{}
 
-      iex> get_user_group!(456)
+      iex> get_user_group(456)
       ** (Ecto.NoResultsError)
 
   """

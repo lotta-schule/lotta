@@ -540,5 +540,6 @@ defmodule Api.Slugifier do
     end)
     |> String.trim()
     |> String.replace(~r/[-\s]+/, "-", global: true)
+    |> String.replace(~r/\s+/, "-")
   end
 end
