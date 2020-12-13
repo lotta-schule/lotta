@@ -1,8 +1,6 @@
 import React from 'react';
-import { cleanup, render } from 'test/util';
+import { render } from 'test/util';
 import { CollisionLink } from './CollisionLink';
-
-afterEach(cleanup);
 
 describe('component/general/Link', () => {
     it('should render a Link', () => {

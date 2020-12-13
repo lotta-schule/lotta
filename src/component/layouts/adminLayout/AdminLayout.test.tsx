@@ -1,10 +1,8 @@
 import React from 'react';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup } from 'test/fixtures';
 import AdminLayout from './AdminLayout';
-
-afterEach(cleanup);
 
 describe('component/layouts/adminLayout/AdminLayout', () => {
 
@@ -36,7 +34,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
 
     it('should show the page with title to user if he is admin', async () => {
         const onChangeLocation = jest.fn();
-        const { findByTestId } = render(
+        const screen = render(
             <AdminLayout />,
             {}, {
                 currentUser: { ...SomeUser, groups: [adminGroup] },
@@ -46,7 +44,7 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
                 useCache: true,
             }
         );
-        await findByTestId('title');
+        await screen.findByTestId('title');
         expect(onChangeLocation).not.toHaveBeenCalled();
     });
 

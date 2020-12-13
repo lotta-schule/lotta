@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import ProfileLayout from './ProfileLayout';
 

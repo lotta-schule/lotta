@@ -1,11 +1,9 @@
 import React from 'react';
-import { render, cleanup, waitFor, getMetaTagValue } from 'test/util';
+import { render, waitFor, getMetaTagValue } from 'test/util';
 import { Schulfest, MusikCategory } from 'test/fixtures';
 import { ArticleLayout } from './ArticleLayout';
 import { GetTopicQuery } from 'api/query/GetTopicQuery';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
-
-afterEach(cleanup);
 
 describe('component/article/ArticleLayout', () => {
 

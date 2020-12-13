@@ -1,9 +1,7 @@
 import React from 'react';
-import { render, cleanup } from 'test/util';
+import { render } from 'test/util';
 import { ComputerExperten, VivaLaRevolucion, Schulfest, Weihnachtsmarkt, Klausurenplan, imageFile } from 'test/fixtures';
 import { ArticlesList } from './ArticlesList';
-
-afterEach(cleanup);
 
 describe('component/profile/ArticlesList', () => {
 
