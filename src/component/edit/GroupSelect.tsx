@@ -68,12 +68,12 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
         margin: theme.spacing(1, 0, 0),
         width: `calc(100% - ${theme.spacing(6)}px)`,
         padding: 0,
-        position: 'absolute',
+        position: 'fixed',
         listStyle: 'none',
         backgroundColor: theme.palette.background.paper,
         overflow: 'auto',
         maxHeight: 250,
-        zIndex: 1,
+        zIndex: 10000,
 
         '& li': {
             padding: theme.spacing(1, 2),

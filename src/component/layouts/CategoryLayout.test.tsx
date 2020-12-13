@@ -1,12 +1,10 @@
 import React from 'react';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { Klausurenplan, VivaLaRevolucion, MusikCategory, KeinErSieEsUser, SomeUser, imageFile } from 'test/fixtures';
 import { ArticleModel } from 'model';
 import { MockedResponse } from '@apollo/client/testing';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { CategoryLayout } from './CategoryLayout';
-
-afterEach(cleanup);
 
 describe('component/article/CategoryLayout', () => {
 
@@ -19,32 +17,32 @@ describe('component/article/CategoryLayout', () => {
             .map(partialArticle => ({ ...partialArticle, users: [KeinErSieEsUser, SomeUser], category: MusikCategory}) as ArticleModel);
 
         it('should render the category title', async () => {
-            const { queryByText } = render(
+            const screen = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
                 {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
             );
             await waitFor(() => {
-                expect(queryByText('Musik')).toBeVisible();
+                expect(screen.queryByText('Musik')).toBeVisible();
             });
         });
 
         it('should render the category banner image', async () => {
             const category = { ...MusikCategory, bannerImageFile: imageFile };
-            const { findByTestId } = render(
+            const screen = render(
                 <CategoryLayout category={category as any} articles={articles} />,
                 {}, { additionalMocks: [categoryWidgetsMock(category.id)]}
             );
-            const headerContent = await findByTestId('HeaderContent');
+            const headerContent = await screen.findByTestId('HeaderContent');
             expect(getComputedStyle(headerContent).backgroundImage).toContain('meinbild.jpg');
         });
 
         it('should render the widgets list', async () => {
-            const { queryByTestId } = render(
+            const screen = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
                 {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
             );
             await waitFor(() => {
-                expect(queryByTestId('WidgetsList')).toBeVisible();
+                expect(screen.queryByTestId('WidgetsList')).toBeVisible();
             });
         });
 

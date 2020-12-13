@@ -1,17 +1,16 @@
 import React from 'react';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { MockedProvider } from '@apollo/client/testing';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { Footer } from './Footer';
 import { allCategories } from 'test/fixtures';
 
-let categoriesHaveBeenFetched = false;
-beforeEach(() => {
-    categoriesHaveBeenFetched = false;
-});
-afterEach(cleanup);
-
 describe('component/layouts/Footer', () => {
+    let categoriesHaveBeenFetched = false;
+    beforeEach(() => {
+        categoriesHaveBeenFetched = false;
+    });
+
 
     it('should render the privacy link in the footer when there are no sidenav categories', async () => {
         const noSidenavCategoriesMock = [{
@@ -27,7 +26,7 @@ describe('component/layouts/Footer', () => {
             }
         }];
 
-        const { queryByTestId } = render(
+        const screen = render(
             <MockedProvider mocks={noSidenavCategoriesMock}>
                 <Footer />
             </MockedProvider>
@@ -35,7 +34,7 @@ describe('component/layouts/Footer', () => {
         await waitFor(() => {
             expect(categoriesHaveBeenFetched).toEqual(true);
         });
-        const link = queryByTestId('SidenavLink');
+        const link = screen.queryByTestId('SidenavLink');
         expect(link).not.toBeNull();
         expect(link).toHaveAttribute('href', '/privacy');
     });

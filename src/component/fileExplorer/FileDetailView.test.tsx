@@ -1,12 +1,10 @@
 import React from 'react';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { MockedProvider } from '@apollo/client/testing';
 import { FileDetailView } from './FileDetailView';
 import { FileModel, FileModelType, UserModel } from 'model';
 import { GetFileDetailsQuery } from 'api/query/GetFileDetailsQuery';
 import { SomeUser, movieFile, schulweitDirectory } from 'test/fixtures';
-
-afterEach(cleanup);
 
 describe('component/fileExplorer/FileDetailView', () => {
 
@@ -108,26 +106,26 @@ describe('component/fileExplorer/FileDetailView', () => {
 
 
     describe('should show basic file information', () => {
-        it('should show the filename', async () => {
-            const { findByText } = render(
+        it('should show the filename', () => {
+            const screen = render(
                 <MockedProvider mocks={mocks} addTypename={false}>
                     <FileDetailView file={file} />
                 </MockedProvider>
             );
-            await findByText('Dateiname.jpg');
+            expect(screen.getByText('Dateiname.jpg')).toBeInTheDocument();
         });
 
-        it('should show the previewImage for image files', async () => {
-            const { findByTestId } = render(
+        it('should show the previewImage for image files', () => {
+            const screen = render(
                 <MockedProvider mocks={mocks} addTypename={false}>
                     <FileDetailView file={file} />
                 </MockedProvider>
             );
-            const previewImage = await findByTestId('PreviewImage') as HTMLImageElement;
+            const previewImage = screen.getByTestId('PreviewImage') as HTMLImageElement;
             expect(previewImage.src).toContain('https://fakes3/meinbild.jpg');
         });
 
-        it('should show not show a previewImage for Pdf document without image preview', async () => {
+        it('should show not show a previewImage for Pdf document without image preview', () => {
             const pdfDocument = {
                 ...file,
                 id: '4544',
@@ -148,13 +146,13 @@ describe('component/fileExplorer/FileDetailView', () => {
                     }
                 }
             }];
-            const { findByText, queryByTestId } = render(
+            const screen = render(
                 <MockedProvider mocks={pdfDocumentMocks} addTypename={false}>
                     <FileDetailView file={pdfDocument} />
                 </MockedProvider>
             );
-            await findByText('Dokument.pdf');
-            expect(queryByTestId('PreviewImage')).toBeNull();
+            expect(screen.getByText('Dokument.pdf')).toBeInTheDocument();
+            expect(screen.queryByTestId('PreviewImage')).toBeNull();
         });
 
     });
@@ -185,7 +183,7 @@ describe('component/fileExplorer/FileDetailView', () => {
                     };
                 }
             }];
-            const { findByTestId } = render(
+            const screen = render(
                 <MockedProvider mocks={pdfDocumentMocks} addTypename={false}>
                     <FileDetailView file={pdfDocument} />
                 </MockedProvider>
@@ -194,31 +192,30 @@ describe('component/fileExplorer/FileDetailView', () => {
             await waitFor(() => {
                 expect(fileDetailsQueryCalled).toBeTruthy();
             });
-            await findByTestId('AuthorsListItem');
+            await screen.findByTestId('AuthorsListItem');
 
         });
 
         it('should show the author of the file', async () => {
-            const { findByTestId, container } = render(
+            const screen = render(
                 <MockedProvider mocks={mocks} addTypename={false}>
                     <FileDetailView file={file} />
                 </MockedProvider>
             );
 
-            await findByTestId('AuthorsListItem');
+            expect(await screen.findByTestId('AuthorsListItem')).toBeInTheDocument();
 
-            expect(container).toHaveTextContent('Autor:Che');
+            expect(screen.container).toHaveTextContent('Autor:Che');
         });
 
         it('should show the file\'s usage count', async () => {
 
-            const { findByTestId } = render(
+            const screen = render(
                 <FileDetailView file={usedFile} />,
                 {}, { currentUser: user, additionalMocks: usedFileMocks }
             );
 
-            const usageListItem = await findByTestId('UsageListItem');
-            expect(usageListItem).toHaveTextContent('4x');
+            expect(await screen.findByTestId('UsageListItem')).toHaveTextContent('4x');
         });
 
 
@@ -238,7 +235,7 @@ describe('component/fileExplorer/FileDetailView', () => {
                     return { data: { file: { ...file, user, usage: [] } } };
                 }
             }];
-            const { findByTestId } = render(
+            const screen = render(
                 <FileDetailView file={file} />,
                 {}, { additionalMocks }
             );
@@ -246,9 +243,7 @@ describe('component/fileExplorer/FileDetailView', () => {
             await waitFor(() => {
                 expect(detailsQueryResponded).toBeTruthy();
             });
-            const conversionsListItem = await findByTestId('FileConversionsListItem')
-            expect(conversionsListItem).toBeDefined();
-            expect(conversionsListItem).toHaveTextContent('7 Formate');
+            expect(await screen.findByTestId('FileConversionsListItem')).toHaveTextContent('7 Formate');
         });
     });
 

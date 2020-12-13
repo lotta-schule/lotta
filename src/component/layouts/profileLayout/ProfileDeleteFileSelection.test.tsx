@@ -1,11 +1,9 @@
 import React from 'react';
 import { FileModel } from 'model';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { SomeUser, getPrivateAndPublicFiles } from 'test/fixtures';
 import { ProfileDeleteFileSelection } from './ProfileDeleteFileSelection';
 import userEvent from '@testing-library/user-event';
-
-afterEach(cleanup);
 
 describe('component/article/ProfileDeleteFileSelection', () => {
 

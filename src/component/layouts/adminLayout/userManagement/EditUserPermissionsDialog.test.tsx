@@ -1,13 +1,11 @@
 import React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
 import { GetUserQuery } from 'api/query/GetUserQuery';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
 import userEvent from '@testing-library/user-event'
-
-afterEach(cleanup);
 
 describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
 
@@ -28,16 +26,16 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
     describe('show user basic information', () => {
         it('should show user information', async () => {
             const user = { ...SomeUser, groups: [], assignedGroups: [], isBlocked: false };
-            const { queryByTestId } = render(
+            const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks: mocks(user) }
             );
             await waitFor(() => {
                 expect(userInfoLoaded).toEqual(true);
             });
-            expect(queryByTestId('DialogTitle')).toHaveTextContent('Ernesto Guevara');
-            expect(queryByTestId('UserNickname')).toHaveTextContent('Che');
-            expect(queryByTestId('UserEmail')).toHaveTextContent('user@lotta.schule');
+            expect(screen.queryByTestId('DialogTitle')).toHaveTextContent('Ernesto Guevara');
+            expect(screen.queryByTestId('UserNickname')).toHaveTextContent('Che');
+            expect(screen.queryByTestId('UserEmail')).toHaveTextContent('user@lotta.schule');
         });
     });
 
@@ -147,13 +145,13 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
     describe('show and select user block status', () => {
         it('should show if the user is blocked', async () => {
             const user = { ...SomeUser, groups: [adminGroup, lehrerGroup], assignedGroups: [adminGroup], isBlocked: true };
-            const { queryByTestId } = render(
+            const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks: mocks(user) }
             );
             await waitFor(() => {
-                expect(queryByTestId('DialogTitle')).toHaveTextContent('Ernesto Guevara');
-                expect(queryByTestId('UserBlockedIcon')).not.toBeNull();
+                expect(screen.queryByTestId('DialogTitle')).toHaveTextContent('Ernesto Guevara');
+                expect(screen.queryByTestId('UserBlockedIcon')).not.toBeNull();
             });
         });
 
@@ -177,11 +175,11 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
                     }
                 }
             ];
-            const { findByTestId } = render(
+            const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks }
             );
-            const blockButton = await findByTestId('BlockButton');
+            const blockButton = await screen.findByTestId('BlockButton');
             await waitFor(() => {
                 expect(blockButton).toHaveTextContent('Nutzer sperren');
             });
@@ -211,11 +209,11 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
                     }
                 }
             ];
-            const { findByTestId } = render(
+            const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks }
             );
-            const blockButton = await findByTestId('BlockButton');
+            const blockButton = await screen.findByTestId('BlockButton');
             await waitFor(() => {
                 expect(blockButton).toHaveTextContent('Nutzer wieder freischalten.');
             });
