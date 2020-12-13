@@ -135,7 +135,7 @@ config :ex_aws, :s3,
 
 config :sentry,
   dsn: sentry_dsn,
-  environment_name: String.to_atom(sentry_environment || "staging"),
+  environment_name: sentry_environment || "staging",
   included_environments: ~w(production staging),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!(),

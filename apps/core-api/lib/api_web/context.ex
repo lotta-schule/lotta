@@ -11,6 +11,7 @@ defmodule ApiWeb.Context do
   alias Api.Repo
 
   @behaviour Plug
+  @behaviour Access
 
   @type t() :: %{
           :current_user => User.t()
@@ -28,6 +29,8 @@ defmodule ApiWeb.Context do
     conn
     |> Absinthe.Plug.put_options(context: context)
   end
+
+  def fetch(%__MODULE__{} = context, key), do: Map.fetch(context, key)
 
   defp maybe_put_user(%__MODULE__{} = context, conn) do
     user =
