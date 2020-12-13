@@ -10,8 +10,8 @@ defmodule ApiWeb.UserResolver do
   alias Api.Repo
   alias Api.Accounts
   alias Api.Mailer
-
-  def resolve_name(user, _args, %{context: %Context{current_user: current_user}}) do
+  alias Api.Accounts.User 
+  def resolve_name(%User{} = user, _args, %{context: %Context{current_user: current_user}}) when not is_nil(current_user) do
     cond do
       current_user.id == user.id ->
         {:ok, user.name}
