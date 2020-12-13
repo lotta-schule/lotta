@@ -86,7 +86,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
                 />
             )}
             renderOption={user => (
-                <Grid container alignItems="center" role={'option'}>
+                <Grid container alignItems="center">
                     <Grid item>
                         <UserAvatar className={styles.avatar} user={user} size={100} />
                     </Grid>

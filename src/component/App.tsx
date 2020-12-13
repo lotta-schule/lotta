@@ -23,6 +23,7 @@ const EditArticleRoute = lazy(() => import('./routes/EditArticleRoute'));
 const SearchLayout = lazy(() => import('./layouts/SearchLayout'));
 const PrivacyLayout = lazy(() => import('./layouts/PrivacyLayout'));
 const ProfileLayout = lazy(() => import('./layouts/profileLayout/ProfileLayout'));
+const MessagingLayout = lazy(() => import('./layouts/messagingLayout/MessagingLayout'));
 const ResetPasswordLayout = lazy(() => import('./layouts/ResetPasswordLayout'));
 const RequestPasswordResetLayout = lazy(() => import('./layouts/RequestPasswordResetLayout'));
 
@@ -68,6 +69,7 @@ export const App = memo(() => {
                             <Route path={'/article/:id'} component={ArticleRoute} />
                             <Route path={'/search'} component={SearchLayout} />
                             <Route path={'/profile'} component={ProfileLayout} />
+                            <Route path={'/messaging'} component={MessagingLayout} />
                             <Route path={'/admin'} component={AdminLayout} />
                             <Route path={'/privacy'} component={PrivacyLayout} />
 
