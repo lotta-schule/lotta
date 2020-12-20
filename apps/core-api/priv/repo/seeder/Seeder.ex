@@ -252,8 +252,8 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: irgendwas_directory.id,
           filename: "irgendwas.png",
-          remote_location: "http://a.de/08234980239",
-          filesize: 12288,
+          remote_location: "https://placeimg.com/5/5/any",
+          filesize: 713,
           file_type: "image",
           mime_type: "image/png"
         },
@@ -651,6 +651,14 @@ defmodule Api.Repo.Seeder do
               "name" => "name",
               "required" => true,
               "type" => "text"
+            },
+            %{
+              "descriptionText" => "Falls du ein Gutschein hast, fotografier ihn und füge ihn hier an.",
+              "element" => "file",
+              "label" => "Coupon",
+              "name" => "coupon",
+              "required" => true,
+              "maxSize" => 1024 * 1024
             },
             %{
               "descriptionText" => "",

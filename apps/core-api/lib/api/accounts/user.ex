@@ -9,7 +9,7 @@ defmodule Api.Accounts.User do
 
   alias Api.Repo
   alias Ecto.Changeset
-  alias Api.Accounts.{File, User, UserEnrollmentToken, UserGroup}
+  alias Api.Accounts.{File, UserEnrollmentToken, UserGroup}
   alias Api.Content.Article
 
   schema "users" do
@@ -49,16 +49,16 @@ defmodule Api.Accounts.User do
 
   @type email :: String.t()
 
-  @type t :: %User{id: id, email: email(), name: String.t()}
+  @type t :: %__MODULE__{id: id, email: email(), name: String.t()}
 
-  def update_changeset(%User{} = user, params \\ %{}) do
+  def update_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
     |> Repo.preload(:groups)
     |> cast(params, [:is_blocked])
     |> put_assoc_groups(params)
   end
 
-  def update_profile_changeset(%User{} = user, params \\ %{}) do
+  def update_profile_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
     |> Repo.preload([:avatar_image_file, :enrollment_tokens])
     |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
@@ -70,7 +70,7 @@ defmodule Api.Accounts.User do
     |> normalize_email()
   end
 
-  def registration_changeset(%User{} = user, params \\ %{}) do
+  def registration_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
     |> Repo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :hide_full_name])
@@ -84,7 +84,7 @@ defmodule Api.Accounts.User do
     |> put_pass_hash()
   end
 
-  def update_password_changeset(%User{} = user, password)
+  def update_password_changeset(%__MODULE__{} = user, password)
       when is_binary(password) and byte_size(password) > 0 do
     user
     |> Repo.preload(:enrollment_tokens)
