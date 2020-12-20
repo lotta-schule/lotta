@@ -106,7 +106,7 @@ defmodule ApiWeb.SystemResolverTest do
                },
                "storage" => %{
                  "filesTotal" => 25,
-                 "usedTotal" => 307_200
+                 "usedTotal" => 295_625
                }
              } = current_usage
     end
