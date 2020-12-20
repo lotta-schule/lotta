@@ -77,13 +77,26 @@ defmodule Api.Email do
       Repo.preload(content_module, :article)
       |> Map.fetch!(:article)
 
-    base_mail()
-    |> to(content_module.configuration["destination"])
-    |> subject("Formulareingabe in #{article.title}")
+    mail =
+      base_mail()
+      |> to(content_module.configuration["destination"])
+      |> subject("Formulareingabe in #{article.title}")
+
+    mail =
+      responses
+      |> Map.get("attachments", [])
+      |> Enum.reduce(mail, fn attachment, acc ->
+        acc
+        |> put_attachment(attachment)
+      end)
+
+    mail
     |> render(:content_module_response,
       content_module: content_module,
       article: article,
-      responses: responses
+      responses:
+        responses
+        |> Map.delete("attachments")
     )
   end
 
