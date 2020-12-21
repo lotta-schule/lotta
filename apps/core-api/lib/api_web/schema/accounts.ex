@@ -15,7 +15,7 @@ defmodule ApiWeb.Schema.Accounts do
     end
 
     field :search_users, list_of(:user) do
-      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAdministrator)
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:searchtext, non_null(:string))
 

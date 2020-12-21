@@ -33,7 +33,15 @@ defmodule ApiWeb.UserGroupResolver do
      |> Map.fetch!(:enrollment_tokens)}
   end
 
-  def all(_args, _info), do: {:ok, Accounts.list_user_groups()}
+  def all(_args, %{
+        context: %Context{current_user: %User{is_admin?: is_admin, all_groups: user_groups}}
+      }) do
+    all_groups = Accounts.list_user_groups()
+
+    {:ok, if(is_admin, do: all_groups, else: user_groups)}
+  end
+
+  def all(_args, _info), do: {:ok, []}
 
   def get(%{id: id}, _info) do
     {:ok, Accounts.get_user_group(id)}
