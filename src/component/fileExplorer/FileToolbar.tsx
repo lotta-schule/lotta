@@ -100,7 +100,7 @@ export const FileToolbar = memo(() => {
                                 <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })} data-testid="FileExplorerToolbarCurrentUploadsButton">
                                     <CircularProgress
                                         size={20}
-                                        variant={'static'}
+                                        variant={'determinate'}
                                         value={uploadTotalProgress}
                                     />
                                 </IconButton>
