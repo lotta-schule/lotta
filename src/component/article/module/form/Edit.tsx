@@ -168,7 +168,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 style={{ float: 'right' }}
                 startIcon={<Add />}
                 onClick={() => updateConfiguration({
-                    elements: [...configuration.elements, { name: `feld${configuration.elements.length}`, element: 'input', type: 'text' }]
+                    elements: [...configuration.elements, { name: `feld${configuration.elements.length + 1}`, element: 'input', type: 'text' }]
                 })}
             >
                 Feld hinzufügen

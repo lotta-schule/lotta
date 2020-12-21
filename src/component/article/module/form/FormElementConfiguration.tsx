@@ -29,10 +29,7 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
     const updateOption = (index: number, option: Partial<FormElementOption>) => updateElement({
         options: element.options?.map((o, i) => {
             if (i === index) {
-                return {
-                    ...o,
-                    ...option
-                };
+                return { ...o, ...option };
             }
             return o;
         })
@@ -43,6 +40,7 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                 fullWidth
                 className={styles.configurationProperty}
                 value={element.element}
+                label={'Art der Eingabe'}
                 onChange={e => updateElement({
                     element: (e.target.value as 'input' | 'selection' | 'file'),
                     type: e.target.value === 'input' ?
@@ -63,6 +61,7 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
             {element.element === 'input' && !element.multiline && (
                 <Select
                     fullWidth
+                    label={'Texteingabevariation'}
                     className={styles.configurationProperty}
                     value={element.type}
                     onChange={e => updateElement({ type: (e.target.value as string) })}
@@ -77,30 +76,17 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                     <MenuItem value={'password'}>Passwort</MenuItem>
                 </Select>
             )}
-            {element.element === 'selection' && !element.multiline && (
+            {element.element === 'selection' && (
                 <Select
                     fullWidth
                     className={styles.configurationProperty}
                     value={element.type}
+                    label={'Auswahlfeldvariation'}
                     onChange={e => updateElement({ type: (e.target.value as string) })}
                 >
                     <MenuItem value={'checkbox'}>Checkbox</MenuItem>
                     <MenuItem value={'radio'}>Radio-Buttons</MenuItem>
                     <MenuItem value={'select'}>Select-Feld</MenuItem>
-                </Select>
-            )}
-            {element.element === 'file' && (
-                <Select
-                    fullWidth
-                    className={styles.configurationProperty}
-                    value={element.maxSize ?? 1024^2}
-                    onChange={e => updateElement({ maxSize: e.target.value as number })}
-                    label={'maximale Dateigröße'}
-                >
-                    <MenuItem value={1024 * 1024}>1 MB</MenuItem>
-                    <MenuItem value={5 * 1024 * 1024}>5 MB</MenuItem>
-                    <MenuItem value={10 * 1024 * 1024}>10 MB</MenuItem>
-                    <MenuItem value={15 * 1024 * 1024}>15 MB</MenuItem>
                 </Select>
             )}
             <TextField

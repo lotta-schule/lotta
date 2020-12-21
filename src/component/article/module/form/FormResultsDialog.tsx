@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback } from 'react';
 import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { DialogTitle, DialogContent, CircularProgress, Button, Typography } from '@material-ui/core';
+import { DialogTitle, DialogContent, Button, Typography, LinearProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
 import { FormConfiguration } from './Form';
@@ -24,7 +24,7 @@ export const FormResultsDialog = memo<FormResultsDialogProps>(({ isOpen, onReque
         },
     );
     const downloadCsv = useCallback(() => {
-        const replacer = (key: string, value: unknown) => value === null ? '' : value;
+        const replacer = (_key: string, value: unknown) => value === null ? '' : value;
         const header = data?.contentModuleResults.reduce((acc: string[], contentModuleResult) => (
             [...acc, ...Object.keys(contentModuleResult.result.responses).filter(key => acc.indexOf(key) < 0)]
         ), []) ?? [];
@@ -45,7 +45,7 @@ export const FormResultsDialog = memo<FormResultsDialogProps>(({ isOpen, onReque
     const content = useMemo(() => {
         if (isLoading) {
             return (
-                <CircularProgress />
+                <LinearProgress />
             );
         }
         if (error) {

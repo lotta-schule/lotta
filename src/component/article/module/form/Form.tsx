@@ -24,7 +24,6 @@ export interface FormElement {
     label?: string;
     descriptionText?: string;
     placeholder?: string;
-    maxSize?: number;
     required?: boolean;
     multiline?: boolean;
     rows?: number;

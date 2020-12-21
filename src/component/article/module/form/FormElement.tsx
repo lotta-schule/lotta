@@ -66,6 +66,7 @@ export const FormElement = memo<FormElementProps>(({ element, isEditModeEnabled,
                                             <Radio
                                                 name={element.name}
                                                 value={option.value}
+                                                title={option.label ?? option.value}
                                                 color={'secondary'}
                                                 disabled={isEditModeEnabled}
                                             />
@@ -111,7 +112,7 @@ export const FormElement = memo<FormElementProps>(({ element, isEditModeEnabled,
             )
         }
         if (element.element === 'file') {
-            const maxSize = element.maxSize || 1024^2;
+            const maxSize = 15 * 1024 * 1024; // 15 MB
             return (
                 <>
                     <ButtonGroup disableElevation style={{ width: '100%' }} variant={'contained'} color={'primary'}>
@@ -126,7 +127,7 @@ export const FormElement = memo<FormElementProps>(({ element, isEditModeEnabled,
                                     const file = e.target.files?.item(0);
                                     if (file) {
                                         if (file.size > maxSize) {
-                                            alert(`Die Datei ist zu groß. Die Datei darf höchstens ${maxSize / 1024} MB groß sein.`);
+                                            alert(`Die Datei ist zu groß. Die Datei darf höchstens 15 MB groß sein.`);
                                         } else {
                                             onSetValue(`file-upload://${JSON.stringify({
                                                 filesize: file.size,
