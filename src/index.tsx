@@ -1,3 +1,4 @@
+import 'react-app-polyfill/stable';
 import './index.scss';
 import './i18n';
 import Matomo from 'matomo-ts';

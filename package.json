@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "2.0.7",
+  "version": "2.1.5",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
@@ -19,6 +19,7 @@
     "production": [
       ">1%",
       "not dead",
+      "safari >= 11.1",
       "not op_mini all"
     ],
     "development": [
@@ -42,7 +43,6 @@
     "@sentry/react": "^5.29.0",
     "apollo-v3-absinthe-upload-link": "^1.5.0",
     "axios": "^0.21.0",
-    "babel-loader": "^8.1.0",
     "clsx": "^1.1.1",
     "date-fns": "^2.16.1",
     "file-saver": "^2.0.5",
@@ -53,6 +53,7 @@
     "material-ui-popup-state": "^1.7.1",
     "matomo-ts": "^1.0.1",
     "react": "^16.13.1",
+    "react-app-polyfill": "^2.0.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-cloudimage-responsive": "^1.6.10",
     "react-dom": "^16.13.1",
@@ -81,7 +82,6 @@
     "@types/react": "^16.9.56",
     "@types/react-beautiful-dnd": "^13.0.0",
     "@types/react-dom": "^16.9.9",
-    "@types/react-dropzone": "^5.1.0",
     "@types/react-helmet": "^6.1.0",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-swipeable-views": "^0.13.0",

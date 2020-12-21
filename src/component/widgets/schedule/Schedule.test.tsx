@@ -112,8 +112,8 @@ describe('component/widgets/Schedule', () => {
                 expect(didLoadNextSchedule).toEqual(true);
             });
             expect(screen.getByText(/16\. november 2020/i)).toBeVisible();
-            expect(screen.getByRole('button', { name: /13\. nov\. 2020/i })).toBeVisible();
-            expect(screen.getByRole('button', { name: /18\. nov\. 2020/i })).toBeVisible();
+            expect(screen.getByRole('button', { name: /13\. november 2020/i })).toBeVisible();
+            expect(screen.getByRole('button', { name: /18\. november 2020/i })).toBeVisible();
         });
     });
 
@@ -145,8 +145,8 @@ describe('component/widgets/Schedule', () => {
             expect(didLoadLastSchedule).toEqual(true);
         });
         expect(screen.getByText(/16\. november 2020/i)).toBeVisible();
-        expect(screen.getByRole('button', { name: /13\. nov\. 2020/i })).toBeVisible();
-        expect(screen.queryByRole('button', { name: /18\. nov\. 2020/i })).toBeNull();
+        expect(screen.getByRole('button', { name: /13\. november 2020/i })).toBeVisible();
+        expect(screen.queryByRole('button', { name: /18\. november 2020/i })).toBeNull();
 
     });
 
@@ -172,8 +172,8 @@ describe('component/widgets/Schedule', () => {
             expect(didLoadCurrentSchedule).toEqual(true);
         });
         expect(screen.getByText(/16\. november 2020/i)).toBeVisible();
-        expect(screen.queryByRole('button', { name: /13\. nov\. 2020/i })).toBeNull();
-        expect(screen.getByRole('button', { name: /18\. nov\. 2020/i })).toBeVisible();
+        expect(screen.queryByRole('button', { name: /13\. november 2020/i })).toBeNull();
+        expect(screen.getByRole('button', { name: /18\. november 2020/i })).toBeVisible();
 
     });
 
