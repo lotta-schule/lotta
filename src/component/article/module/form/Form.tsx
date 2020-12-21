@@ -18,7 +18,7 @@ export interface FormElementOption {
 }
 
 export interface FormElement {
-    element: 'input' | 'selection';
+    element: 'input' | 'selection' | 'file';
     name: string;
     type?: string;
     label?: string;

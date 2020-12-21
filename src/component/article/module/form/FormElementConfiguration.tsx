@@ -29,10 +29,7 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
     const updateOption = (index: number, option: Partial<FormElementOption>) => updateElement({
         options: element.options?.map((o, i) => {
             if (i === index) {
-                return {
-                    ...o,
-                    ...option
-                };
+                return { ...o, ...option };
             }
             return o;
         })
@@ -43,9 +40,13 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                 fullWidth
                 className={styles.configurationProperty}
                 value={element.element}
+                label={'Art der Eingabe'}
                 onChange={e => updateElement({
-                    element: (e.target.value as 'input' | 'selection'),
-                    type: e.target.value === 'input' ? 'text' : 'checkbox',
+                    element: (e.target.value as 'input' | 'selection' | 'file'),
+                    type: e.target.value === 'input' ?
+                        'text' :
+                        e.target.value === 'file' ?
+                            '' : 'checkbox',
                     options: e.target.value === 'selection' ? [{
                         selected: false,
                         label: 'Auswahl Nummer 1',
@@ -53,12 +54,14 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                     }] : []
                 })}
             >
-                <MenuItem value={'input'}>Eingabefeld</MenuItem>
-                <MenuItem value={'selection'}>Auswahl</MenuItem>
+                <MenuItem value={'input'}>Texteingabefeld</MenuItem>
+                <MenuItem value={'selection'}>Auswahlbereich</MenuItem>
+                <MenuItem value={'file'}>Datei-Anhang</MenuItem>
             </Select>
             {element.element === 'input' && !element.multiline && (
                 <Select
                     fullWidth
+                    label={'Texteingabevariation'}
                     className={styles.configurationProperty}
                     value={element.type}
                     onChange={e => updateElement({ type: (e.target.value as string) })}
@@ -73,11 +76,12 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                     <MenuItem value={'password'}>Passwort</MenuItem>
                 </Select>
             )}
-            {element.element === 'selection' && !element.multiline && (
+            {element.element === 'selection' && (
                 <Select
                     fullWidth
                     className={styles.configurationProperty}
                     value={element.type}
+                    label={'Auswahlfeldvariation'}
                     onChange={e => updateElement({ type: (e.target.value as string) })}
                 >
                     <MenuItem value={'checkbox'}>Checkbox</MenuItem>

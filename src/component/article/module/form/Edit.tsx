@@ -150,7 +150,16 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                                     })}
                                 />
                             }
-                            label={'Formulardaten speichern'}
+                            label={(
+                                <div>
+                                    <span style={{ display: 'block' }}>Formulardaten speichern</span>
+                                    {!!configuration.elements.find(el => el.element === 'file') && (
+                                        <small>
+                                            Datei-Anhänge werden nur per Email versandt und nicht gespeichert.
+                                        </small>
+                                    )}
+                                </div>
+                            )}
                         />
                     </FormGroup>
                 </Grid>
@@ -159,7 +168,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                 style={{ float: 'right' }}
                 startIcon={<Add />}
                 onClick={() => updateConfiguration({
-                    elements: [...configuration.elements, { name: `feld${configuration.elements.length}`, element: 'input', type: 'text' }]
+                    elements: [...configuration.elements, { name: `feld${configuration.elements.length + 1}`, element: 'input', type: 'text' }]
                 })}
             >
                 Feld hinzufügen
