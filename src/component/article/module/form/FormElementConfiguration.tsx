@@ -44,8 +44,11 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                 className={styles.configurationProperty}
                 value={element.element}
                 onChange={e => updateElement({
-                    element: (e.target.value as 'input' | 'selection'),
-                    type: e.target.value === 'input' ? 'text' : 'checkbox',
+                    element: (e.target.value as 'input' | 'selection' | 'file'),
+                    type: e.target.value === 'input' ?
+                        'text' :
+                        e.target.value === 'file' ?
+                            '' : 'checkbox',
                     options: e.target.value === 'selection' ? [{
                         selected: false,
                         label: 'Auswahl Nummer 1',
@@ -53,8 +56,9 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                     }] : []
                 })}
             >
-                <MenuItem value={'input'}>Eingabefeld</MenuItem>
-                <MenuItem value={'selection'}>Auswahl</MenuItem>
+                <MenuItem value={'input'}>Texteingabefeld</MenuItem>
+                <MenuItem value={'selection'}>Auswahlbereich</MenuItem>
+                <MenuItem value={'file'}>Datei-Anhang</MenuItem>
             </Select>
             {element.element === 'input' && !element.multiline && (
                 <Select
@@ -83,6 +87,20 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(({ e
                     <MenuItem value={'checkbox'}>Checkbox</MenuItem>
                     <MenuItem value={'radio'}>Radio-Buttons</MenuItem>
                     <MenuItem value={'select'}>Select-Feld</MenuItem>
+                </Select>
+            )}
+            {element.element === 'file' && (
+                <Select
+                    fullWidth
+                    className={styles.configurationProperty}
+                    value={element.maxSize ?? 1024^2}
+                    onChange={e => updateElement({ maxSize: e.target.value as number })}
+                    label={'maximale Dateigröße'}
+                >
+                    <MenuItem value={1024 * 1024}>1 MB</MenuItem>
+                    <MenuItem value={5 * 1024 * 1024}>5 MB</MenuItem>
+                    <MenuItem value={10 * 1024 * 1024}>10 MB</MenuItem>
+                    <MenuItem value={15 * 1024 * 1024}>15 MB</MenuItem>
                 </Select>
             )}
             <TextField
