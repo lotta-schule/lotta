@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from 'test/util';
+import { render } from 'test/util';
 import { FormElementConfiguration } from './FormElementConfiguration';
 import { FormElement } from './Form';
 import userEvent from '@testing-library/user-event';
