@@ -36,6 +36,70 @@ defmodule ApiWeb.UserGroupResolverTest do
      }}
   end
 
+  describe "get all groups query" do
+    @query """
+    query system {
+      system {
+        groups {
+          name
+        }
+      }
+    }
+    """
+
+    test "anonymous user should get an empty list" do
+      res =
+        build_conn()
+        |> get("/api", query: @query)
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "system" => %{"groups" => []}
+               }
+             }
+    end
+
+    test "admin user should get all groups", %{admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api", query: @query)
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "system" => %{
+                   "groups" => [
+                     %{"name" => "Administration"},
+                     %{"name" => "Verwaltung"},
+                     %{"name" => "Lehrer"},
+                     %{"name" => "Schüler"}
+                   ]
+                 }
+               }
+             }
+    end
+
+    test "user should only get his own groups", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query)
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "system" => %{
+                   "groups" => [
+                     %{"name" => "Lehrer"}
+                   ]
+                 }
+               }
+             }
+    end
+  end
+
   describe "group query" do
     @query """
     query group($id: ID!) {

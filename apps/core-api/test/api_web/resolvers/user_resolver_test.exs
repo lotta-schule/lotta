@@ -518,26 +518,6 @@ defmodule ApiWeb.UserResolverTest do
              }
     end
 
-    test "should throw an error if user is not admin", %{user_jwt: user_jwt} do
-      res =
-        build_conn()
-        |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{searchtext: "De"})
-        |> json_response(200)
-
-      assert %{
-               "data" => %{
-                 "searchUsers" => nil
-               },
-               "errors" => [
-                 %{
-                   "message" => "Du musst Administrator sein um das zu tun.",
-                   "path" => ["searchUsers"]
-                 }
-               ]
-             } = res
-    end
-
     test "should throw an error if user is not logged in" do
       res =
         build_conn()
@@ -550,7 +530,7 @@ defmodule ApiWeb.UserResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["searchUsers"]
                  }
                ]
