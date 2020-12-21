@@ -92,11 +92,11 @@ describe('src/component/article/module/form/FormResultsDialog', () => {
         }).then(async () => {
             expect(filename).toEqual('formulardaten.csv');
             expect(data.type).toMatch(/text\/csv/);
-            expect((await new Response(data).text()).replace(/(\r|\n)/g, '')).toEqual(
+            expect((await new Response(data).text()).replace(/(\r|\n)/g, '').trim()).toMatch(
                 '"Datum","blub","bla","mail"' +
                 '"21.12.2020 08:24","Hallo","S,XL","ab@c.de"' +
                 '"21.12.2020 08:24","Test","","de@z.xy"' +
-                '"21.12.2020 08:24","Tschu tschu","XL","de@z.xy"'
+                '"21.12.2020 08:24","Tschu tschu","XL","de@z.xy"'.trim()
             );
 
         });
