@@ -9,7 +9,6 @@ export const SearchUsersQuery = gql`
             name
             class
             nickname
-            email
             avatarImageFile {
                 remoteLocation
             }

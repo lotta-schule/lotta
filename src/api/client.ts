@@ -1,9 +1,14 @@
 import { createLink } from 'apollo-v3-absinthe-upload-link';
 import { onError } from '@apollo/link-error';
-import { ApolloClient, ApolloLink, InMemoryCache, gql } from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache, gql, split } from '@apollo/client';
+import { Socket as PhoenixSocket } from 'phoenix';
+// @ts-ignore
+import { hasSubscription } from '@jumpn/utils-graphql';
 import { JWT } from 'util/auth/jwt';
 import { isAfter, sub } from 'date-fns';
 import axios, { AxiosRequestConfig } from 'axios';
+import { createAbsintheSocketLink } from './createAbsintheSocketLink';
+import * as AbsintheSocket from '@absinthe/socket';
 
 const sendRefreshRequest = async () => {
     try {
@@ -43,7 +48,7 @@ export const checkExpiredToken = async (firstRun: boolean = false) => {
     }
 };
 
-const customFetch = (url: string, options: any) => {
+const customFetch = async (url: string, options: any) => {
     const { headers, body, method, ...miscOptions } = options;
 
     const config: AxiosRequestConfig = {
@@ -55,12 +60,11 @@ const customFetch = (url: string, options: any) => {
         withCredentials: true,
     };
 
-    return axios(config).then(axiosResponse => {
-        return new Response(JSON.stringify(axiosResponse.data), {
-            headers: new Headers(axiosResponse.headers),
-            status: axiosResponse.status,
-            statusText: axiosResponse.statusText,
-        });
+    const axiosResponse = await axios(config);
+    return new Response(JSON.stringify(axiosResponse.data), {
+        headers: new Headers(axiosResponse.headers),
+        status: axiosResponse.status,
+        statusText: axiosResponse.statusText,
     });
 };
 
@@ -95,39 +99,65 @@ const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
     return obj;
 };
 
-const apolloClient = new ApolloClient({
-    link: ApolloLink.from([
-        onError(({ graphQLErrors, networkError }) => {
-            if (graphQLErrors) {
-                graphQLErrors.forEach(({ message, locations, path }) => {
-                    console.error(
-                        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-                    );
-                });
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors) {
+        graphQLErrors.forEach(({ message, locations, path }) => {
+            console.error(
+                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+        });
+    }
+    if (networkError) {
+        console.error(`[Network error]: ${networkError}`);
+    }
+});
+
+const authLink = new ApolloLink((operation, forward) => {
+    if (operation.variables) {
+        operation.variables = mutateVariableInputObject(operation.variables, '__typename');
+    }
+    const token = localStorage.getItem('id');
+    if (token) {
+        operation.setContext({
+            headers: {
+                Authorization: `Bearer ${token}`
             }
-            if (networkError) {
-                console.error(`[Network error]: ${networkError}`);
-            }
-        }),
-        new ApolloLink((operation, forward) => {
-            if (operation.variables) {
-                operation.variables = mutateVariableInputObject(operation.variables, '__typename');
-            }
+        });
+    }
+    return forward?.(operation);
+});
+
+const httpLink = createLink({
+    uri: process.env.REACT_APP_API_URL,
+    fetch: customFetch,
+});
+
+const phoenixSocket = process.env.REACT_APP_API_SOCKET_URL ?
+    new PhoenixSocket('ws://localhost:4000/api/user-socket', { // process.env.REACT_APP_API_SOCKET_URL, {
+        params: () => {
             const token = localStorage.getItem('id');
             if (token) {
-                operation.setContext({
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                return { token };
+            } else {
+                return {};
             }
-            return forward ? forward(operation) : null;
-        }),
-        createLink({
-            uri: process.env.REACT_APP_API_URL,
-            fetch: customFetch,
-        })
-    ]),
+        }
+    }) : null;
+
+const absintheSocket = phoenixSocket ? AbsintheSocket.create(phoenixSocket) : null;
+
+const websocketLink = absintheSocket ? createAbsintheSocketLink(absintheSocket) : null;
+
+const link =
+    websocketLink ?
+    split(
+        operation => hasSubscription(operation.query),
+        ApolloLink.from([errorLink, websocketLink]),
+        ApolloLink.from([errorLink, authLink, httpLink])
+    ) : ApolloLink.from([errorLink, authLink, httpLink]);
+
+const apolloClient = new ApolloClient({
+    link,
     resolvers: {},
     cache: new InMemoryCache({
         typePolicies: {

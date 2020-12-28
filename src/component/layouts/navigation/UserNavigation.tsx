@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import {
     AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined,
     FolderOutlined, SecurityOutlined, AccountCircle, SearchRounded, QuestionAnswer
@@ -14,6 +14,7 @@ import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { useQuery } from '@apollo/client';
 import { useOnLogout } from 'util/user/useOnLogout';
+import { useMessages } from '../messagingLayout/useMessages';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
@@ -71,6 +72,15 @@ export const UserNavigation = memo(() => {
     const { data: unpublishedArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery, {
         skip: !currentUser || !User.isAdmin(currentUser)
     });
+    const { data: messagesData } = useMessages();
+    const newMessagesBadgeNumber = useMemo(() => {
+        if (!currentUser) {
+            return 0;
+        }
+        return messagesData?.messages
+            .filter(msg => msg.senderUser.id !== currentUser.id && new Date(msg.insertedAt) >= new Date(currentUser.lastSeen))
+            .length || 0;
+    }, [messagesData, currentUser]);
 
     const onLogout = useOnLogout();
 
@@ -91,7 +101,18 @@ export const UserNavigation = memo(() => {
                 <Grid item xs={7} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                     <Button className={styles.button} size="small" startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
                     <Button className={styles.button} size="small" startIcon={<SearchRounded color={'secondary'} />} onClick={() => history.push('/search')}>Suche</Button>
-                    <Button className={styles.button} size="small" startIcon={<QuestionAnswer color={'secondary'} />} onClick={() => history.push('/messaging')}>Nachrichten</Button>
+                    <Button
+                        className={styles.button}
+                        size="small"
+                        startIcon={
+                            <Badge badgeContent={newMessagesBadgeNumber} color={'primary'}>
+                                <QuestionAnswer color={'secondary'} />
+                            </Badge>
+                        }
+                        onClick={() => history.push('/messaging')}
+                    >
+                        Nachrichten
+                    </Button>
                     <Button className={styles.button} size="small" startIcon={<AccountCircle color={'secondary'} />} onClick={(e: any) => {
                         e.preventDefault();
                         setProfileMenuAnchorEl(e.currentTarget);

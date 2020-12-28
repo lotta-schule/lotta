@@ -5,6 +5,7 @@ import { Autocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
 import { useDebounce } from 'util/useDebounce';
+import { User } from 'util/model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { UserModel } from 'model';
 
@@ -27,8 +28,8 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
     const [searchtext, setSearchtext] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [autocompleteOptions, setAutocompleteOptions] = useState<UserModel[]>([]);
-    const debouncedSearchtext = useDebounce(searchtext, 500);
     const [execute, { data, loading: isLoading }] = useLazyQuery<{ users: UserModel[] }, { searchtext: string }>(SearchUsersQuery);
+    const debouncedSearchtext = useDebounce(searchtext, 500);
     const selectUser = (user: UserModel | null) => {
         if (user) {
             onSelectUser(user);
@@ -63,7 +64,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
             onOpen={() => setIsOpen(true)}
             onClose={() => setIsOpen(false)}
             onChange={(_e: ChangeEvent<{}>, user: UserModel | null) => selectUser(user)}
-            getOptionLabel={option => option.name!}
+            getOptionLabel={user => User.getNickname(user) ?? '?'}
             options={autocompleteOptions}
             loading={isLoading}
             renderInput={params => (
@@ -92,11 +93,8 @@ export const SearchUserField = memo<SearchUserFieldProps>(({ className, onSelect
                     </Grid>
                     <Grid item xs>
                         <Typography variant="body1" color="textPrimary">
-                            {user.name}&nbsp;
+                            {user.name && <>{user.name}&nbsp;</>}
                             {user.nickname && <>(<strong>{user.nickname}</strong>)</>}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            {user.email}
                         </Typography>
                     </Grid>
                 </Grid>

@@ -10,6 +10,9 @@
 # testing
 /coverage
 
+# caches
+.eslintcache
+
 # production
 /build
 

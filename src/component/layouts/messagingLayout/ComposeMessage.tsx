@@ -65,7 +65,7 @@ export const ComposeMessage = memo<ComposeMessageProps>(({ threadRepresentation 
                     query: GetMessagesQuery,
                     data: {
                         messages: [
-                            ...readMessagesResult!.messages,
+                            ...readMessagesResult!.messages.filter(msg => msg.id !== data.message.id),
                             data.message
                         ]
                     }

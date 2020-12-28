@@ -16,6 +16,7 @@ export interface GroupSelectProps {
     label?: string | null;
     row?: boolean;
     disabled?: boolean;
+    filterSelection?(group: UserGroupModel, i: number, allGroups: UserGroupModel[]): boolean;
     onSelectGroups(groups: UserGroupModel[]): void;
 }
 
@@ -66,7 +67,7 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
     },
     listBox: {
         margin: theme.spacing(1, 0, 0),
-        width: `calc(100% - ${theme.spacing(6)}px)`,
+        width: 'auto',
         padding: 0,
         position: 'fixed',
         listStyle: 'none',
@@ -106,9 +107,9 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
     }
 }));
 
-export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, disabled, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, onSelectGroups }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ className, variant, label, disabled, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, filterSelection, onSelectGroups }) => {
     const styles = useStyles({ row });
-    const groups = useUserGroups();
+    const groups = useUserGroups().filter(filterSelection ?? (() => true));
 
     const [searchtext, setSearchtext] = useState('');
 
@@ -165,7 +166,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
 
     return (
         <NoSsr>
-            <div className={styles.root} data-testid="GroupSelect">
+            <div className={clsx(styles.root, className)} data-testid="GroupSelect">
                 <div {...getRootProps()} data-testid="GroupSelectSelection">
                     <Typography {...getInputLabelProps()}>{label ?? 'Sichtbarkeit:'}</Typography>
                     <div ref={setAnchorEl} className={clsx(styles.inputWrapper, { focused })}>
@@ -205,7 +206,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
                         <TextField
                             fullWidth
                             disabled={disabled}
-                            variant={'outlined'}
+                            variant={variant}
                             size={'small'}
                             placeholder={'Gruppe suchen'}
                             inputProps={{ 'aria-label': 'Gruppe suchen' }}
