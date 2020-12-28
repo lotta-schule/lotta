@@ -9,13 +9,13 @@ import useRouter from 'use-react-router';
 import bannerProfil from '../profileLayout/bannerProfil.png';
 
 export const MessagingLayout = memo(() => {
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const { history } = useRouter();
 
     const isMobile = useIsMobile();
 
     useEffect(() => {
-        if (!currentUser) {
+        if (currentUser === null) {
             history.replace('/');
         }
     }, [currentUser, history]);

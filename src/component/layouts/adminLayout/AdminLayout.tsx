@@ -16,10 +16,10 @@ import useRouter from 'use-react-router';
 import bannerAdmin from './bannerAdmin.png';
 
 export const AdminLayout = memo(() => {
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const { history } = useRouter();
     useEffect(() => {
-        if (!User.isAdmin(currentUser)) {
+        if (currentUser !== undefined && !User.isAdmin(currentUser)) {
             history.replace('/');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

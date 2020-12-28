@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
+import { LinearProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
@@ -53,13 +53,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const UsersList = React.memo(() => {
     const { t } = useTranslation();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(null);
     const [selectedGroupsFilter, setSelectedGroupsFilter] = React.useState<UserGroupModel[]>([]);
     const [filterText, setFilterText] = React.useState('');
-    const result = useQuery<{ users: UserModel[] }>(GetUsersQuery);
-    const { data, loading } = result;
+    const { data, loading } = useQuery<{ users: UserModel[] }>(GetUsersQuery);
 
     const styles = useStyles();
 
@@ -81,7 +80,7 @@ export const UsersList = React.memo(() => {
 
     if (loading) {
         return (
-            <CircularProgress data-testid="loading" />
+            <LinearProgress data-testid="loading" />
         );
     }
 

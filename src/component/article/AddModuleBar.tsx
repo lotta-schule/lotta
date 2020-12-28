@@ -24,7 +24,7 @@ export interface AddModuleBarProps {
 export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
 
     const styles = useStyles();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const createId = (): ID => String(-(new Date().getTime() + Math.random() * 1000));
 

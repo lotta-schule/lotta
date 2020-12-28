@@ -19,7 +19,7 @@ const useStyles = makeStyles<Theme>(theme => ({
 
 export const ArticleTitle = memo<ArticleTitleProps>(({ article }) => {
     const styles = useStyles();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const showEditSection = (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
     return (

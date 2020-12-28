@@ -1,15 +1,13 @@
 import { UserModel } from 'model';
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
-import { useQuery, QueryResult } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { configureScope } from '@sentry/react';
 import Matomo from 'matomo-ts';
 
-export const useCurrentUser = (): [UserModel | null, Omit<QueryResult, 'data'>] => {
-    const { data, ...otherOps } = useQuery<{ currentUser: UserModel | null }>(GetCurrentUserQuery);
+export const useCurrentUser = () => {
+    const { data, loading, called } = useQuery<{ currentUser: UserModel | null }>(GetCurrentUserQuery);
     const currentUser = data?.currentUser ?? null;
-
-    const currentUserId = currentUser?.id;
 
     useEffect(() => {
         // Sentry Error tracking
@@ -28,8 +26,10 @@ export const useCurrentUser = (): [UserModel | null, Omit<QueryResult, 'data'>] 
                 Matomo.default().resetUserId();
             }
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentUserId]);
+    }, [currentUser]);
 
-    return [currentUser, otherOps];
+    if (loading || !called) {
+        return undefined;
+    }
+    return data?.currentUser || null;
 }

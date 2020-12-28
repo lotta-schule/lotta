@@ -64,7 +64,7 @@ interface EditArticleSidebarProps {
 
 export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLoading, onUpdate, onSave }) => {
     const styles = useStyles();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const history = useHistory();
 
     const [isReadyToPublish, setIsReadyToPublish] = useState(article.readyToPublish || false);

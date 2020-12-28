@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 export const MessagingView = memo(() => {
     const styles = useStyles();
     const isMobile = useIsMobile();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const sectionElRef = useRef<HTMLElement>(null);
     useSetWindowHeight(sectionElRef);

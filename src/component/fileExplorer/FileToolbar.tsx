@@ -55,7 +55,7 @@ export const FileToolbar = memo(() => {
     const styles = useStyles();
     const isMobile = useIsMobile();
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const uploads = useUploads();
     const createUpload = useCreateUpload();
     const [state, dispatch] = useContext(fileExplorerContext);

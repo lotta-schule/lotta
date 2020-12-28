@@ -18,7 +18,7 @@ export interface CreateNewFolderDialogProps {
 
 export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogProps> = memo(({ basePath, open, onClose }) => {
     const parentDirectoryId = basePath?.[basePath.length - 1].id ?? null;
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const [name, setName] = useState('');
     const [isPublic, setIsPublic] = useState(false);
     const [isShowSuccess, setIsShowSuccess] = useState(false);

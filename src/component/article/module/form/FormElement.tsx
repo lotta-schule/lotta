@@ -17,7 +17,7 @@ export interface FormElementProps {
 }
 
 export const FormElement = memo<FormElementProps>(({ element, isEditModeEnabled, value, onSetValue }) => {
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const formElement = (() => {
         if (element.element === 'selection') {
             if (element.type === 'checkbox') {

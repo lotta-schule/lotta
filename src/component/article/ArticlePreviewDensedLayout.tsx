@@ -130,7 +130,7 @@ interface ArticlePreviewProps {
 
 export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(({ article, disableLink, disableEdit, disablePin, limitedHeight, isEmbedded }) => {
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const isMobile = useIsMobile();
     const styles = useStyle({ isEmbedded });

@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
 export const UserNavigation = memo(() => {
     const styles = useStyles();
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const { history } = useRouter();
     const { data: unpublishedArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery, {
         skip: !currentUser || !User.isAdmin(currentUser)

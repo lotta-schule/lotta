@@ -142,7 +142,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ a
     const isMobile = useIsMobile();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const styles = useStyle({ isEmbedded, narrow });
     const showEditSection = (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));

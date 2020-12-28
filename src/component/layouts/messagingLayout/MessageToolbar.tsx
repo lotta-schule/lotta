@@ -42,7 +42,7 @@ export const MessageToolbar = memo<MessageToolbarProps>(({ onToggle, onCreateMes
     const styles = useStyles();
     const isMobile = useIsMobile();
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const popupState = usePopupState({ variant: 'popover', popupId: 'create-message-thread' })
 
     const [newMessageType, setNewMessageType] = useState<ChatType>(ChatType.DirectMessage);

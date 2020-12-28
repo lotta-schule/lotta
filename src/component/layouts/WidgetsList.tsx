@@ -65,7 +65,7 @@ export const WidgetsList = memo<WidgetsListProps>(({ widgets, children }) => {
     const isMobile = useIsMobile();
     const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const currentCategoryId = useCurrentCategoryId();
     const isSecondNavigationOpen = useCategoriesAncestorsForItem(currentCategoryId || '0').length > 0;
 
