@@ -27,9 +27,8 @@ defmodule ApiWeb.Schema.Messages do
     field :receive_message, :message do
       config(fn
         args, %{context: %{current_user: %{id: user_id, all_groups: groups}}} ->
-          topics = ["messages:user:#{user_id}" | Enum.map(groups, &"messages:group:#{&1.id}")]
-          IO.inspect(topics)
-          {:ok, topic: topics}
+          {:ok,
+           topic: ["messages:user:#{user_id}" | Enum.map(groups, &"messages:group:#{&1.id}")]}
       end)
 
       # this tells Absinthe to run any subscriptions with this field every time
@@ -39,7 +38,8 @@ defmodule ApiWeb.Schema.Messages do
       trigger(:create_message,
         topic: fn message ->
           case message do
-            %Message{sender_user_id: sender_id, recipient_user_id: user_id} when not is_nil(user_id) ->
+            %Message{sender_user_id: sender_id, recipient_user_id: user_id}
+            when not is_nil(user_id) ->
               ["messages:user:#{sender_id}", "messages:user:#{user_id}"]
 
             %Message{recipient_group_id: group_id} when not is_nil(group_id) ->
