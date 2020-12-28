@@ -24,8 +24,7 @@ describe('component/layouts/adminLayout/userManagement/UsersList', () => {
         }
     });
 
-    let didCall = false,
-        didSearch = false;
+    let didCall = false;
     const mocks = [
         {
             request: { query: GetUsersQuery  },
@@ -39,14 +38,12 @@ describe('component/layouts/adminLayout/userManagement/UsersList', () => {
         {
             request: { query: SearchUsersQuery, variables: { searchtext: 'Michel' } },
             result: () => {
-                didSearch = true;
                 return { data: { users: [KeinErSieEsUser] } };
             }
         }
     ];
     beforeEach(() => {
         didCall = false;
-        didSearch = false;
     });
 
 
