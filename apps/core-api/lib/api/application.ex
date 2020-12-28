@@ -10,18 +10,16 @@ defmodule Api.Application do
 
     # List all child processes to be supervised
     children = [
-      # Start the Ecto repository
       Api.Repo,
-      # Start the PubSub Server
-      {Phoenix.PubSub, name: Api.PubSub},
       ApiWeb.Telemetry,
-      # Start the endpoint when the application starts
+      {Phoenix.PubSub, name: Api.PubSub, adapter: Phoenix.PubSub.PG2},
       ApiWeb.Endpoint,
+      {Absinthe.Subscription, ApiWeb.Endpoint},
+      {Redix, redis_config},
+      Api.Elasticsearch.Cluster,
       # Starts a worker by calling: Api.Worker.start_link(arg)
       {Api.Queue.MediaConversionRequestPublisher, []},
       {Api.Queue.MediaConversionConsumer, []},
-      {Redix, redis_config},
-      Api.Elasticsearch.Cluster,
       {ConCache,
        name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
     ]

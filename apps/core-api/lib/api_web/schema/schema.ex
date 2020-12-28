@@ -36,6 +36,10 @@ defmodule ApiWeb.Schema do
     import_fields(:contents_mutations)
   end
 
+  subscription do
+    import_fields(:messages_subscriptions)
+  end
+
   def context(ctx) do
     loader =
       Dataloader.new()
