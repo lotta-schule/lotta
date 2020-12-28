@@ -3,9 +3,8 @@ import { render, waitFor } from 'test/util';
 import { SomeUser, SomeUserin, KeinErSieEsUser, adminGroup, lehrerGroup } from 'test/fixtures';
 import { UsersList } from './UsersList';
 import { GetUsersQuery } from 'api/query/GetUsersQuery';
+import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
 import userEvent from '@testing-library/user-event';
-import {SearchUsersQuery} from 'api/query/SearchUsersQuery';
-import {GetUserQuery} from 'api/query/GetUserQuery';
 
 describe('component/layouts/adminLayout/userManagement/UsersList', () => {
 
@@ -41,17 +40,7 @@ describe('component/layouts/adminLayout/userManagement/UsersList', () => {
             request: { query: SearchUsersQuery, variables: { searchtext: 'Michel' } },
             result: () => {
                 didSearch = true;
-                return { data: { users: [KeinErSieEsUser]} };
-            }
-        },
-        {
-            request: { query: GetUserQuery, variables: { id: KeinErSieEsUser.id } },
-            result: { data: { searchUsers: KeinErSieEsUser } }
-        },
-        {
-            request: { query: GetUserQuery, variables: { id: SomeUserin.id } },
-            result: () => {
-                return { data: { searchUsers: SomeUserin } };
+                return { data: { users: [KeinErSieEsUser] } };
             }
         }
     ];
@@ -75,7 +64,7 @@ describe('component/layouts/adminLayout/userManagement/UsersList', () => {
                 <UsersList />, {}, { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
             );
             await waitFor(() => { expect(didCall).toEqual(true); });
-            expect(await screen.findByRole('heading', { name: /angemeldete nutzer/i })).toBeVisible();
+            expect(await screen.findByRole('heading', { name: /registrierte nutzer/i })).toBeVisible();
             expect(screen.getByRole('cell', { name: /ernesto guevara/i }));
             expect(screen.getByRole('cell', { name: /luisa drinalda/i }));
             expect(screen.getByRole('cell', { name: /michel dupond/i }));
@@ -122,12 +111,16 @@ describe('component/layouts/adminLayout/userManagement/UsersList', () => {
 
         it('should open a popup when selecting a user from the search', async () => {
             const screen = render(
-                <UsersList />, {}, { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
+                <UsersList />,
+                {}, { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
             );
-            await waitFor(() => { expect(didCall).toEqual(true); });
+            expect(screen.getByRole('textbox', { name: /nutzer suchen/i })).toBeVisible();
             userEvent.type(screen.getByRole('textbox', { name: /nutzer suchen/i }), 'Michel');
-            await waitFor(() => { expect(didSearch).toEqual(true); });
-            userEvent.click((await screen.findAllByRole('option', { name: /michel/i }))[0]);
+            expect(screen.getByRole('textbox', { name: /nutzer suchen/i })).toHaveFocus();
+            await waitFor(() => {
+                expect(screen.queryAllByRole('option')).toHaveLength(1);
+            });
+            userEvent.click(screen.getByRole('option', { name: /michel/i }));
             await waitFor(() => {
                 expect(screen.getByRole('dialog')).toBeVisible();
             });
