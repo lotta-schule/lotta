@@ -27,7 +27,7 @@ export const Article = memo<ArticleProps>(({ article, isEditModeEnabled, onUpdat
 
     return (
         <article className={styles.root} data-testid={'Article'}>
-            <ArticleTitle article={article} />
+            <ArticleTitle article={article} showEditButton={!isEditModeEnabled} />
             <section className={styles.contentModules}>
                 {[...article.contentModules].sort((cm1, cm2) => cm1.sortKey - cm2.sortKey).map((contentModule, index) => (
                     <ContentModule
