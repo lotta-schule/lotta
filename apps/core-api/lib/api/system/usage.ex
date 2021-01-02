@@ -52,9 +52,6 @@ defmodule Api.System.Usage do
       end)
       |> Enum.filter(&(!is_nil(&1)))
       |> Enum.map(&elem(&1, 1))
-      |> Enum.filter(fn %{period_start: start_date} ->
-        NaiveDateTime.compare(start_date, Timex.beginning_of_year(Timex.now())) == :gt
-      end)
 
     {:ok, usages}
   end
