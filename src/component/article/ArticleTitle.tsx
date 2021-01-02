@@ -8,20 +8,21 @@ import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
 
 export interface ArticleTitleProps {
     article: ArticleModel;
+    showEditButton?: boolean;
 }
 
-const useStyles = makeStyles<Theme>(theme => ({
+const useStyles = makeStyles<Theme>(() => ({
     container: {
         paddingLeft: 0,
         paddingRight: 0,
     },
 }));
 
-export const ArticleTitle = memo<ArticleTitleProps>(({ article }) => {
+export const ArticleTitle = memo<ArticleTitleProps>(({ article, showEditButton }) => {
     const styles = useStyles();
     const currentUser = useCurrentUser();
 
-    const showEditSection = (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
+    const showEditSection = showEditButton && (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
     return (
         <Container className={styles.container}>
             <Header>
