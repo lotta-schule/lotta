@@ -12,11 +12,11 @@ import useRouter from 'use-react-router';
 import bannerProfil from './bannerProfil.png';
 
 export const ProfileLayout = memo(() => {
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const { history } = useRouter();
 
     useEffect(() => {
-        if (!currentUser) {
+        if (currentUser === null) {
             history.replace('/');
         }
     }, [currentUser, history]);

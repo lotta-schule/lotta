@@ -44,7 +44,7 @@ export interface CategoryLayoutProps {
 
 export const CategoryLayout = memo<CategoryLayoutProps>(({ category, articles }) => {
     const styles = useStyles({ twoColumns: category.layoutName === '2-columns' });
-    const [user] = useCurrentUser();
+    const user = useCurrentUser();
 
     const { data: widgetsData, error: widgetsError, loading: isWidgetsLoading } = useQuery(GetCategoryWidgetsQuery, {
         variables: { categoryId: category.id }

@@ -69,7 +69,7 @@ const dateToDateString = (date: Date | string) => format(new Date(date), 'yyyy-
 
 export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
     const styles = useStyles();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const [isSelectCoursesDialogOpen, setIsSelectCoursesDialogOpen] = React.useState(false);
     const [selectedCourses, setSelectedCourses] = React.useState<string[] | null>(null);
     const [currentDate, setCurrentDate] = React.useState<DateString | undefined>();

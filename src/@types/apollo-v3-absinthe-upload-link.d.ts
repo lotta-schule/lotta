@@ -1,6 +1,6 @@
 declare module 'apollo-v3-absinthe-upload-link' {
 
-    import { ApolloLink } from 'apollo-link';
+    import { ApolloLink } from '@apollo/client';
 
     export type LinkOptions = {
         uri: string;

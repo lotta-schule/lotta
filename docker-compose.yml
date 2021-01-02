@@ -1,11 +1,17 @@
 version: "3.7"
 
+networks:
+  api_api:
+    external: true
+
 services:
-  app:
+  web:
     image: node:15
     volumes:
       - .:/usr/src/svc:delegated
     working_dir: /usr/src/svc
+    networks:
+      - api_api
     ports:
       - 3000:3000
     command: npm start

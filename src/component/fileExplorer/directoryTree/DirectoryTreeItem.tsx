@@ -15,7 +15,7 @@ export interface DirectoryTreeItemProps {
 }
 
 export const DirectoryTreeItem = memo<DirectoryTreeItemProps>(({ directory, showOnlyReadOnlyDirectories }) => {
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const [, selectDirectory] = useContext(SelectedDirectoryContext);
     const { data, loading: isLoading } = useQuery<{ directories: DirectoryModel[] }>(GetDirectoriesAndFilesQuery, {
         variables: {

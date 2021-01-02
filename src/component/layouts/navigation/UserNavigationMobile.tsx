@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
 export const UserNavigationMobile = memo(() => {
     const styles = useStyles();
     const history = useHistory();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const onLogout = useOnLogout();
 
     const { data: unpublishedArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery, {

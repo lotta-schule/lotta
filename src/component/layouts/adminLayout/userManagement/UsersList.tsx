@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CircularProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
+import { LinearProgress, Divider, TextField, Theme, Typography, makeStyles, Grid } from '@material-ui/core';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginBottom: theme.spacing(2),
     },
     inputField: {
-        maxWidth: 400
     },
     resultsGridItem: {
         display: 'flex',
@@ -38,7 +37,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         justifyContent: 'flex-end'
     },
     searchUserField: {
-        maxWidth: 400,
         backgroundColor: theme.palette.grey[200]
     },
     formControl: {
@@ -53,13 +51,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const UsersList = React.memo(() => {
     const { t } = useTranslation();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const [selectedUser, setSelectedUser] = React.useState<UserModel | null>(null);
     const [selectedGroupsFilter, setSelectedGroupsFilter] = React.useState<UserGroupModel[]>([]);
     const [filterText, setFilterText] = React.useState('');
-    const result = useQuery<{ users: UserModel[] }>(GetUsersQuery);
-    const { data, loading } = result;
+    const { data, loading: isLoading } = useQuery<{ users: UserModel[] }>(GetUsersQuery);
 
     const styles = useStyles();
 
@@ -79,90 +76,91 @@ export const UsersList = React.memo(() => {
         ) ?? [];
     }, [data, filterText, selectedGroupsFilter, styles.avatar]);
 
-    if (loading) {
-        return (
-            <CircularProgress data-testid="loading" />
-        );
-    }
+    return (
+        <>
+            <SearchUserField
+                className={clsx(styles.inputField, styles.searchUserField, styles.headline)}
+                onSelectUser={setSelectedUser}
+            />
 
-    if (data?.users) {
-        return (
-            <>
-                <SearchUserField className={clsx(styles.inputField, styles.searchUserField, styles.headline)} onSelectUser={setSelectedUser} />
+            {isLoading && (
+                <LinearProgress data-testid="loading" />
+            )}
 
-                <Divider className={styles.divider} />
+            {!isLoading && (
+                <>
+                    <Divider className={styles.divider} />
 
-                <Typography variant={'h5'} className={styles.headline}>Angemeldete Nutzer</Typography>
-                <GroupSelect
-                    row
-                    hidePublicGroupSelection
-                    disableAdminGroupsExclusivity
-                    label={null}
-                    selectedGroups={selectedGroupsFilter}
-                    onSelectGroups={setSelectedGroupsFilter}
-                />
-                <Grid container>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            className={styles.inputField}
-                            margin={'dense'}
-                            value={filterText}
-                            onChange={e => setFilterText(e.target.value)}
-                            placeholder={'Tabelle nach Name filtern'}
-                            helperText={'"*"-Zeichen ersetzt beliebige Zeichen'}
-                            inputProps={{ 'aria-label': 'Nach Name filtern' }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} className={styles.resultsGridItem}>
-                        <Typography variant={'body1'}>
-                            {t('administration.results', { count: rows.length })}
-                        </Typography>
-                    </Grid>
-                </Grid>
-                <VirtualizedTable
-                    className={styles.virtualizedTable}
-                    rowCount={rows.length}
-                    rowGetter={({ index }) => rows[index]}
-                    headerHeight={48}
-                    rowHeight={48}
-                    onRowClick={({ rowData: { user } }) => {
-                        if (user.id !== currentUser?.id) {
-                            setSelectedUser(user);
-                        }
-                    }}
-                    columns={[
-                        {
-                            width: 45,
-                            label: '',
-                            dataKey: 'avatarImage',
-                        },
-                        {
-                            width: 300,
-                            label: 'Name',
-                            dataKey: 'name',
-                        },
-                        {
-                            label: 'Gruppen',
-                            dataKey: 'groups',
-                        },
-                        {
-                            width: 200,
-                            label: 'Zuletzt Online',
-                            dataKey: 'lastSeen',
-                        },
-                    ]}
-                />
-                {selectedUser && (
-                    <EditUserPermissionsDialog
-                        onClose={() => setSelectedUser(null)}
-                        user={selectedUser}
+                    <Typography variant={'h5'} className={styles.headline}>Registrierte Nutzer</Typography>
+                    <GroupSelect
+                        row
+                        hidePublicGroupSelection
+                        disableAdminGroupsExclusivity
+                        label={null}
+                        selectedGroups={selectedGroupsFilter}
+                        onSelectGroups={setSelectedGroupsFilter}
                     />
-                )}
-            </>
-        );
-    } else {
-        return null;
-    }
+                    <Grid container>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                className={styles.inputField}
+                                margin={'dense'}
+                                value={filterText}
+                                onChange={e => setFilterText(e.target.value)}
+                                placeholder={'Tabelle nach Name filtern'}
+                                helperText={'"*"-Zeichen ersetzt beliebige Zeichen'}
+                                inputProps={{ 'aria-label': 'Nach Name filtern' }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} className={styles.resultsGridItem}>
+                            <Typography variant={'body1'}>
+                                {t('administration.results', { count: rows.length })}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <VirtualizedTable
+                        className={styles.virtualizedTable}
+                        rowCount={rows.length}
+                        rowGetter={({ index }) => rows[index]}
+                        headerHeight={48}
+                        rowHeight={48}
+                        onRowClick={({ rowData: { user } }) => {
+                            if (user.id !== currentUser?.id) {
+                                setSelectedUser(user);
+                            }
+                        }}
+                        columns={[
+                            {
+                                width: 45,
+                                label: '',
+                                dataKey: 'avatarImage',
+                            },
+                            {
+                                width: 300,
+                                label: 'Name',
+                                dataKey: 'name',
+                            },
+                            {
+                                label: 'Gruppen',
+                                dataKey: 'groups',
+                            },
+                            {
+                                width: 200,
+                                label: 'Zuletzt Online',
+                                dataKey: 'lastSeen',
+                            },
+                        ]}
+                    />
+                </>
+            )}
+            {selectedUser && (
+                <EditUserPermissionsDialog
+                    onClose={() => setSelectedUser(null)}
+                    user={selectedUser}
+                />
+            )}
+        </>
+    );
 
 });

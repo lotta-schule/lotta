@@ -15,7 +15,7 @@ export interface FileTableRowProps {
 }
 
 export const FileTableRow = memo<FileTableRowProps>(({ file, onMark }) => {
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const [editMenuAnchorEl, setEditMenuAnchorEl] = useState<null | HTMLElement>(null);
     const [isRenamingFile, setIsRenamingFile] = useState(false);
     const [state, dispatch] = useContext(fileExplorerContext);

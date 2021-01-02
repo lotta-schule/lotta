@@ -2,7 +2,7 @@ import React, { memo, Suspense, lazy } from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deDE } from '@material-ui/core/locale';
-import { CircularProgress } from '@material-ui/core';
+import { LinearProgress } from '@material-ui/core';
 import { ClientModel } from 'model';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -29,13 +29,13 @@ const RequestPasswordResetLayout = lazy(() => import('./layouts/RequestPasswordR
 
 export const App = memo(() => {
     const { data, loading: isLoadingSystem, error, called: calledSystem } = useQuery<{ system: ClientModel }>(GetSystemQuery);
-    const [, { called: calledCurrentUser, loading: isLoadingCurrentUser }] = useCurrentUser();
+    const isLoadingCurrentUser = useCurrentUser() === undefined;
     useCategories();
 
-    if (!calledSystem || !calledCurrentUser || isLoadingSystem || isLoadingCurrentUser) {
+    if (!calledSystem || isLoadingSystem || isLoadingCurrentUser) {
         return (
             <div>
-                <CircularProgress />
+                <LinearProgress />
             </div>
         );
     }

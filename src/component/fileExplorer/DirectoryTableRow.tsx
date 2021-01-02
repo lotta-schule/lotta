@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 export const DirectoryTableRow = memo<FileTableRowProps>(({ directory }) => {
     const styles = useStyles();
     const [state, dispatch] = useContext(fileExplorerContext);
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const [editMenuAnchorEl, setEditMenuAnchorEl] = useState<null | HTMLElement>(null);
     const [isRenamingFile, setIsRenamingFile] = useState(false);
 

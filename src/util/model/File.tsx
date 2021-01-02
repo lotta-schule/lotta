@@ -105,14 +105,13 @@ export const File = {
         return file.remoteLocation;
     },
 
-    canEditDirectory(directory: DirectoryModel, user: UserModel | null) {
+    canEditDirectory(directory: DirectoryModel, user: UserModel | null | undefined) {
         return user && (directory.user?.id === user.id || User.isAdmin(user));
     },
 
-    canCreateDirectory(directory: DirectoryModel, user: UserModel | null) {
+    canCreateDirectory(directory: DirectoryModel, user: UserModel | null | undefined) {
         if (directory.id === null) {
-            // root directory
-            return true;
+            return true; // Is a root directory
         }
         return this.canEditDirectory(directory, user);
     }

@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
 
 export const ThreadMessages = memo<ThreadMessagesProps>(({ messages }) => {
     const styles = useStyles();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const sortedMessages =
         messages.sort((message1, message2) => {

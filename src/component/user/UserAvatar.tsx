@@ -22,6 +22,8 @@ export const UserAvatar = memo<UserAvatarProps>(({ user, size, ...otherProps }) 
 });
 
 export const CurrentUserAvatar = memo<Omit<UserAvatarProps, 'user'>>(props => {
-    const [currentUser] = useCurrentUser();
-    return currentUser && <UserAvatar user={currentUser} {...props} />;
+    const currentUser = useCurrentUser();
+    return currentUser ?
+        <UserAvatar user={currentUser} {...props} /> :
+        null;
 });

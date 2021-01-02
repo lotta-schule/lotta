@@ -1,10 +1,8 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IconButton, LinearProgress, makeStyles, Typography } from '@material-ui/core';
-import { useQuery } from '@apollo/client';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { GetMessagesQuery } from 'api/query/GetMessagesQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { MessageModel, ChatType, ThreadRepresentation } from 'model';
+import { ChatType, ThreadRepresentation } from 'model';
 import { ThreadMessages } from './MessagesThread';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
@@ -12,6 +10,7 @@ import { ThreadPreview } from './ThreadPreview';
 import { MessageToolbar } from './MessageToolbar';
 import { Forum } from '@material-ui/icons';
 import { useIsMobile } from 'util/useIsMobile';
+import { useMessages } from './useMessages';
 import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
@@ -58,17 +57,17 @@ const useStyles = makeStyles(theme => ({
 export const MessagingView = memo(() => {
     const styles = useStyles();
     const isMobile = useIsMobile();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const sectionElRef = useRef<HTMLElement>(null);
     useSetWindowHeight(sectionElRef);
 
-    const { data, loading: isLoading, error } = useQuery<{ messages: MessageModel[] }>(GetMessagesQuery);
+    const { data, loading: isLoading, error } = useMessages();
 
     const [selectedThread, setSelectedThread] = useState<ThreadRepresentation | null>(null);
     const [newMessageThread, setNewMessageThread] = useState<ThreadRepresentation | null>(null);
 
-    const [isSidebarActive, setIsSidebarActive] = useState(false);
+    const [isSidebarActive, setIsSidebarActive] = useState(true);
 
     const threadRepresentations = useMemo(() => {
         return Array.from(data?.messages ?? [])
@@ -128,16 +127,11 @@ export const MessagingView = memo(() => {
             );
         return (
             <>
-                {isMobile && (
-                    <IconButton style={{ width: 40 }} onClick={() => setIsSidebarActive(true)}>
-                        <Forum />
-                    </IconButton>
-                )}
                 {messagesView}
                 <ComposeMessage threadRepresentation={selectedThread} />
             </>
         );
-    }, [getMessagesForThread, selectedThread, styles.noMessagesWrapper, isMobile]);
+    }, [getMessagesForThread, selectedThread, styles.noMessagesWrapper]);
 
     if (isLoading) {
         return (
@@ -176,6 +170,11 @@ export const MessagingView = memo(() => {
                 ))}
             </aside>
             <div className={styles.messageView}>
+                {isMobile && (
+                    <IconButton style={{ width: 40 }} onClick={() => setIsSidebarActive(true)}>
+                        <Forum />
+                    </IconButton>
+                )}
                 {mainView}
             </div>
         </section>
