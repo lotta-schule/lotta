@@ -22,10 +22,10 @@ defmodule ApiWeb.SitemapPlug do
     |> send_resp(
       200,
       case query_params do
-        %{"categories" => nil} ->
+        %{"categories" => ""} ->
           get_categories_body(conn)
 
-        %{"articles" => nil, "date" => date} ->
+        %{"articles" => "", "date" => date} ->
           get_articles_body(conn, Date.from_iso8601!(date))
 
         _ ->
