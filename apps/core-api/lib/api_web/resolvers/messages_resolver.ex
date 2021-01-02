@@ -11,7 +11,7 @@ defmodule ApiWeb.MessagesResolver do
     {:ok, Messages.list_for_user(current_user)}
   end
 
-  def create(%{message: message}, %{context: %{current_user: current_user}}) do
+  def create(%{message: message}, %{context: %Context{current_user: current_user}}) do
     fetch_id = fn key ->
       case message[key] do
         %{id: id} ->

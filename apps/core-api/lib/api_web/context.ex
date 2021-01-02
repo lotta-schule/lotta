@@ -24,13 +24,30 @@ defmodule ApiWeb.Context do
     context =
       %__MODULE__{}
       |> maybe_put_user(conn)
-      |> set_virtual_user_fields()
 
     conn
     |> Absinthe.Plug.put_options(context: context)
   end
 
   def fetch(%__MODULE__{} = context, key), do: Map.fetch(context, key)
+
+  @doc """
+  Set the virtual user_fields for a given user
+  """
+  @spec set_virtual_user_fields(User.t()) :: User.t()
+  def set_virtual_user_fields(%User{} = user) do
+    user =
+      user
+      |> Repo.preload([:groups, :enrollment_tokens])
+
+    groups =
+      user
+      |> all_user_groups()
+
+    user
+    |> Map.put(:all_groups, groups)
+    |> Map.put(:is_admin?, Enum.any?(groups, & &1.is_admin_group))
+  end
 
   defp maybe_put_user(%__MODULE__{} = context, conn) do
     user =
@@ -44,28 +61,12 @@ defmodule ApiWeb.Context do
         end
 
         user
-        |> Repo.preload([:groups, :enrollment_tokens])
+        |> set_virtual_user_fields()
       end
 
     context
     |> Map.put(:current_user, user)
   end
-
-  defp set_virtual_user_fields(%{current_user: user} = context) when not is_nil(user) do
-    groups =
-      user
-      |> all_user_groups()
-
-    user =
-      user
-      |> Map.put(:all_groups, groups)
-      |> Map.put(:is_admin?, Enum.any?(groups, & &1.is_admin_group))
-
-    context
-    |> Map.put(:current_user, user)
-  end
-
-  defp set_virtual_user_fields(context), do: context
 
   defp get_dynamic_groups(%User{enrollment_tokens: enrollment_tokens}) do
     enrollment_tokens

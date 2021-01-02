@@ -21,7 +21,7 @@ config :api, ApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B",
   render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json)],
-  pubsub_server: [name: Api.PubSub],
+  pubsub_server: Api.PubSub,
   live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
 
 config :api, Api.Elasticsearch.Cluster,

@@ -4,10 +4,10 @@ defmodule ApiWeb.Endpoint do
   """
 
   use Sentry.PlugCapture
-
   use Phoenix.Endpoint, otp_app: :api
+  use Absinthe.Phoenix.Endpoint
 
-  socket "/socket", ApiWeb.UserSocket,
+  socket "/api/user-socket", ApiWeb.UserSocket,
     websocket: true,
     longpoll: false
 
