@@ -132,8 +132,18 @@ const httpLink = createLink({
     fetch: customFetch,
 });
 
+const createAbsoluteSocketUrl = (urlString: string) => {
+    if (/^\//.test(urlString)) {
+        const url = new URL(window.location.href);
+        url.protocol = url.protocol.replace('http', 'ws');
+        url.pathname = urlString;
+        return url.toString();
+    }
+    return urlString;
+};
+
 const phoenixSocket = process.env.REACT_APP_API_SOCKET_URL ?
-    new PhoenixSocket('ws://localhost:4000/api/user-socket', { // process.env.REACT_APP_API_SOCKET_URL, {
+    new PhoenixSocket(createAbsoluteSocketUrl(process.env.REACT_APP_API_SOCKET_URL), {
         params: () => {
             const token = localStorage.getItem('id');
             if (token) {

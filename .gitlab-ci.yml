@@ -44,6 +44,7 @@ build docker image:
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL="/api"
       --build-arg AUTH_URL="/auth"
+      --build-arg API_SOCKET_URL="/api/user-socket"
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg MATOMO_URL
@@ -75,6 +76,7 @@ build docker image:production:
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL="/api"
       --build-arg AUTH_URL="/auth"
+      --build-arg API_SOCKET_URL="/api/user-socket"
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg MATOMO_URL
