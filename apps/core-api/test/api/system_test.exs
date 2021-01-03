@@ -9,12 +9,6 @@ defmodule Api.SystemTest do
   end
 
   describe "System domains" do
-    test "list_custom_domains() should return custom domains" do
-      assert [domain] = System.list_custom_domains()
-      assert domain.host == "lotta.web"
-      assert domain.is_main_domain == true
-    end
-
     test "get_main_url should return custom url set as main_domain" do
       assert System.get_main_url() == "https://lotta.web"
     end

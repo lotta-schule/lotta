@@ -179,26 +179,8 @@ defmodule Api.System do
         "https://"
       end
 
-    custom_domains = list_custom_domains()
-
-    if length(custom_domains) > 0 do
-      [domain | _others] = custom_domains
-      protocol <> domain.host
-    else
-      config = get_configuration()
-      "#{protocol}#{config[:slug]}#{Application.fetch_env!(:api, :base_url)}"
-    end
-  end
-
-  @doc """
-  Return all the domains under which this instances is reachable that does not
-  rely on the <slug>.<base_url> scheme.
-  This will not stay!
-  TODO: Pass URL only by (env)-config
-  """
-  @spec list_custom_domains() :: [String.t()]
-  def list_custom_domains() do
-    Repo.all(from c in CustomDomain, order_by: c.is_main_domain)
+    config = get_configuration()
+    "#{protocol}#{Application.fetch_env!(:api, :hostname)}"
   end
 
   @doc """

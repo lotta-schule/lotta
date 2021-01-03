@@ -16,7 +16,7 @@ defmodule ApiWeb.SystemResolver do
     System.Usage.get_usage()
   end
 
-  def custom_domains(_, _), do: {:ok, System.list_custom_domains()}
+  def custom_domains(_, _), do: []
 
   def host(_, _), do: {:ok, System.get_main_url(skip_protocol: true)}
 end

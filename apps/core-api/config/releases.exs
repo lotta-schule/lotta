@@ -9,7 +9,6 @@ secret_signing_salt_live_view = System.fetch_env!("LIVE_VIEW_SALT_SECRET")
 live_view_username = System.fetch_env!("LIVE_VIEW_USERNAME")
 live_view_password = System.fetch_env!("LIVE_VIEW_PASSWORD")
 
-hostname = System.get_env("HOSTNAME") || "api.lotta.schule"
 port = String.to_integer(System.get_env("PORT") || "4000")
 # database
 db_user = System.fetch_env!("POSTGRES_USER")
@@ -40,7 +39,7 @@ mailgun_api_key = System.get_env("MAILGUN_API_KEY")
 mailgun_domain = System.get_env("MAILGUN_DOMAIN")
 mailer_default_sender = System.get_env("MAILER_DEFAULT_SENDER")
 # App base URL
-base_url = System.get_env("BASE_URL") || ".lotta.schule"
+hostname = System.get_env("HOSTNAME") || "#{slug}.lotta.schule"
 # Schedule Provider
 schedule_provider_url = System.fetch_env!("SCHEDULE_PROVIDER_URL")
 # Sentry Error Logging
@@ -48,12 +47,6 @@ sentry_dsn = System.get_env("SENTRY_DSN")
 
 sentry_environment =
   System.get_env("SENTRY_ENVIRONMENT") || System.get_env("APP_ENVIRONMENT") || "production"
-
-host =
-  case System.get_env("APP_ENVIRONMENT") do
-    "staging" -> "api.staging.lotta.schule"
-    _ -> "api.lotta.schule"
-  end
 
 config :api, Api.Repo,
   username: db_user,
@@ -80,7 +73,7 @@ config :api, :redis_connection,
   password: redis_password,
   name: :redix
 
-config :api, :base_url, base_url
+config :api, :hostname, hostname
 config :api, :schedule_provider_url, schedule_provider_url
 
 config :api, :live_view,
@@ -100,7 +93,7 @@ config :api, Api.Elasticsearch.Cluster,
   index_prefix: elasticsearch_index_prefix
 
 config :api, ApiWeb.Endpoint,
-  url: [host: host],
+  url: [host: hostname],
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: secret_key_base,
   live_view: [signing_salt: secret_signing_salt_live_view]
