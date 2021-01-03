@@ -1,6 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
+import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Header } from '../../general/Header';
 import { MessagingView } from './MessagingView';
@@ -25,14 +26,17 @@ export const MessagingLayout = memo(() => {
     }
 
     return (
-        <BaseLayoutMainContent>
-            {!isMobile && (
-                <Header bannerImageUrl={bannerProfil}>
-                    <Typography variant={'h2'} data-testid={'title'}>Nachrichten</Typography>
-                </Header>
-            )}
-            <MessagingView />
-        </BaseLayoutMainContent>
+        <>
+            <BaseLayoutMainContent>
+                {!isMobile && (
+                    <Header bannerImageUrl={bannerProfil}>
+                        <Typography variant={'h2'} data-testid={'title'}>Nachrichten</Typography>
+                    </Header>
+                )}
+                <MessagingView />
+            </BaseLayoutMainContent>
+            <BaseLayoutSidebar isEmpty />
+        </>
     );
 });
 export default MessagingLayout;
