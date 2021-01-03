@@ -438,7 +438,7 @@ export const PrivacyLayout = memo(() => {
                 </Card>
 
             </BaseLayoutMainContent>
-            <BaseLayoutSidebar />
+            <BaseLayoutSidebar isEmpty />
         </>
     );
 });
