@@ -7,7 +7,7 @@ import { Header } from '../../general/Header';
 import { MessagingView } from './MessagingView';
 import { useIsMobile } from 'util/useIsMobile';
 import useRouter from 'use-react-router';
-import bannerProfil from '../profileLayout/bannerProfil.png';
+import bannerMessaging from './bannerMessaging.jpg';
 
 export const MessagingLayout = memo(() => {
     const currentUser = useCurrentUser();
@@ -29,7 +29,7 @@ export const MessagingLayout = memo(() => {
         <>
             <BaseLayoutMainContent>
                 {!isMobile && (
-                    <Header bannerImageUrl={bannerProfil}>
+                    <Header bannerImageUrl={bannerMessaging}>
                         <Typography variant={'h2'} data-testid={'title'}>Nachrichten</Typography>
                     </Header>
                 )}
