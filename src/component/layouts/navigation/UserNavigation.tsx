@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import {
     AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined,
     FolderOutlined, SecurityOutlined, AccountCircle, SearchRounded, QuestionAnswer
@@ -14,7 +14,7 @@ import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { useQuery } from '@apollo/client';
 import { useOnLogout } from 'util/user/useOnLogout';
-import { useMessages } from '../messagingLayout/useMessages';
+import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
@@ -72,16 +72,7 @@ export const UserNavigation = memo(() => {
     const { data: unpublishedArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery, {
         skip: !currentUser || !User.isAdmin(currentUser)
     });
-    const { data: messagesData } = useMessages();
-    const newMessagesBadgeNumber = useMemo(() => {
-        if (!currentUser) {
-            return 0;
-        }
-        return messagesData?.messages
-            .filter(msg => msg.senderUser.id !== currentUser.id && new Date(msg.insertedAt) >= new Date(currentUser.lastSeen))
-            .length || 0;
-    }, [messagesData, currentUser]);
-
+    const newMessagesBadgeNumber = useNewMessagesBadgeNumber();
     const onLogout = useOnLogout();
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);

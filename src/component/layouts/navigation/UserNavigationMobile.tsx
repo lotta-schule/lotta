@@ -7,6 +7,7 @@ import {
 } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import { useOnLogout } from 'util/user/useOnLogout';
+import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
 import { useQuery } from '@apollo/client';
 import { ArticleModel } from 'model';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
@@ -46,6 +47,7 @@ export const UserNavigationMobile = memo(() => {
     const styles = useStyles();
     const history = useHistory();
     const currentUser = useCurrentUser();
+    const newMessagesBadgeNumber = useNewMessagesBadgeNumber();
     const onLogout = useOnLogout();
 
     const { data: unpublishedArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery, {
@@ -86,7 +88,9 @@ export const UserNavigationMobile = memo(() => {
                         <Typography className={styles.label}>Meine Beiträge</Typography>
                     </ButtonBase>
                     <ButtonBase className={styles.button} onClick={() => { history.push('/messaging'); }} data-testid="MessagingButton">
-                        <QuestionAnswerOutlined color={'secondary'} />
+                        <Badge badgeContent={newMessagesBadgeNumber} className={styles.badge} color={'secondary'}>
+                            <QuestionAnswerOutlined color={'secondary'} />
+                        </Badge>
                         <Typography className={styles.label}>Nachrichten</Typography>
                     </ButtonBase>
                     {User.isAdmin(currentUser) && (

@@ -9,7 +9,7 @@ export const getSomeMessages = (from: UserModel, { to_user, to_group }: { to_use
             "content": "Hallo",
             "senderUser": from,
             "recipientUser": to_user,
-            "recipientGroup": to_group
+            "recipientGroup": to_group || null
         } as MessageModel,
         {
             "id": String(Math.floor(Math.random()*10_000)),
@@ -18,7 +18,7 @@ export const getSomeMessages = (from: UserModel, { to_user, to_group }: { to_use
             "content": "Hallo",
             "senderUser": from,
             "recipientUser": to_user,
-            "recipientGroup": to_group
+            "recipientGroup": to_group || null
         } as MessageModel,
         {
             "id": String(Math.floor(Math.random()*1000)),
@@ -27,7 +27,7 @@ export const getSomeMessages = (from: UserModel, { to_user, to_group }: { to_use
             "content": "Hallo",
             "senderUser": from,
             "recipientUser": to_user,
-            "recipientGroup": to_group
+            "recipientGroup": to_group || null
         } as MessageModel,
         {
             "id": String(Math.floor(Math.random()*10_000)),
@@ -36,7 +36,7 @@ export const getSomeMessages = (from: UserModel, { to_user, to_group }: { to_use
             "content": "Hallo",
             "senderUser": from,
             "recipientUser": to_user,
-            "recipientGroup": to_group
+            "recipientGroup": to_group || null
         } as MessageModel,
         {
             "id": String(Math.floor(Math.random()*10_000)),
@@ -45,7 +45,7 @@ export const getSomeMessages = (from: UserModel, { to_user, to_group }: { to_use
             "content": "Hallo Welt!",
             "senderUser": from,
             "recipientUser": to_user,
-            "recipientGroup": to_group
+            "recipientGroup": to_group || null
         } as MessageModel,
     ];
 }
