@@ -5,7 +5,7 @@ import { UserModel } from 'model';
 import { useCurrentUser } from './useCurrentUser';
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { SomeUser } from 'test/fixtures';
-import {omit} from 'lodash';
+import { omit } from 'lodash';
 
 describe('util/user/useCurrentUser', () => {
     const createWrapperForUser = ((currentUser: UserModel | null = null): FunctionComponent => {
