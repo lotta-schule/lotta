@@ -14,7 +14,7 @@ describe('component/layouts/messagingLayout/MessageBubble', () => {
     it('should render show the message and sender name', () => {
         const screen = render(<MessageBubble message={message} />);
         expect(screen.getByText('Hallo!')).toBeVisible();
-        expect(screen.getByText('Ernesto Guevara')).toBeVisible();
+        expect(screen.getByText('Che (Ernesto Guevara)')).toBeVisible();
     });
 
 });

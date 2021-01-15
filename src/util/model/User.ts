@@ -2,11 +2,14 @@ import { UserModel, ArticleModel } from 'model';
 
 export const User = {
     getName(user?: UserModel | null) {
-        return user?.name;
+        if (user?.name && user?.nickname) {
+            return `${user.nickname} (${user.name})`;
+        }
+        return user?.name ?? user?.nickname ?? '';
     },
 
     getNickname(user?: UserModel | null) {
-        return (user?.nickname || User.getName(user)) ?? '';
+        return user?.nickname || user?.name || '';
     },
 
     getAvatarUrl(user?: UserModel | null, size: number = 100) {
