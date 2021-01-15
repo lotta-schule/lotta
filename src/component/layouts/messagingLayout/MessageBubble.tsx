@@ -80,7 +80,7 @@ export const MessageBubble = memo<MessageBubbleProps>(props => {
             <Typography variant={'body2'} component={'div'} className={styles.messageInformation}>
                 <span className={styles.senderUser}>
                     <UserAvatar user={message.senderUser} className={styles.senderUserAvatar} size={20} />
-                    {User.getNickname(message.senderUser)}
+                    {User.getName(message.senderUser)}
                 </span>
                 {format(new Date(message.insertedAt), 'PPPpp', { locale: de })}
             </Typography>
