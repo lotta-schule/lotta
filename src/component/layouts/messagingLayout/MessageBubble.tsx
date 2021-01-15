@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { fade, makeStyles, Theme, Typography } from '@material-ui/core';
 import { MessageModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
+import { User } from 'util/model';
 import { format } from 'date-fns';
 import de from 'date-fns/locale/de';
 
