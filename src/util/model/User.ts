@@ -1,12 +1,8 @@
 import { UserModel, ArticleModel } from 'model';
 
 export const User = {
-    getName(user?: UserModel | null) {
-        return user?.name;
-    },
-
     getNickname(user?: UserModel | null) {
-        return (user?.nickname || User.getName(user)) ?? '';
+        return user?.nickname || user?.name || '';
     },
 
     getAvatarUrl(user?: UserModel | null, size: number = 100) {
