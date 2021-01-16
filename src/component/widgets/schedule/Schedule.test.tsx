@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { render, waitFor } from 'test/util';
 import { ScheduleResponse, SomeUserin, VPSchuelerWidget } from 'test/fixtures';
 import { Schedule } from './Schedule';
