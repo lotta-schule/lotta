@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useLayoutEffect, useRef } from 'react';
 import { MessageModel } from 'model';
 import { MessageBubble } from './MessageBubble';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -27,7 +27,7 @@ export const ThreadMessages = memo<ThreadMessagesProps>(({ messages }) => {
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (wrapperRef.current) {
             if (wrapperRef.current.clientHeight < wrapperRef.current.scrollHeight) {
                 wrapperRef.current.scroll?.({
