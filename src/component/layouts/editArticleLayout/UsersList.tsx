@@ -24,9 +24,9 @@ export const UsersList = memo<UsersListProps>(({ users, onClickRemove }) => {
         return null;
     }
     return (
-        <List>
+        <List aria-label={'Nutzer'}>
             {users.map(user => (
-                <ListItem key={user.id} dense>
+                <ListItem key={user.id} dense ContainerProps={{ 'aria-label': User.getNickname(user) }}>
                     <ListItemAvatar>
                         <UserAvatar className={styles.avatar} user={user} size={50} />
                     </ListItemAvatar>
