@@ -88,7 +88,6 @@ export const TestFileExplorerContextProvider: FC<TestFileExplorerContextProvider
     const [state, dispatch] = useReducer<Reducer<typeof defaultFileExplorerState, FileExploreerStateAction>>(fileExplorerStateReducer, {
         ...defaultFileExplorerState,
         ...defaultValue,
-        mode: FileExplorerMode.ViewAndEdit
     });
     // eslint-disable-next-line
     useEffect(() => { onUpdateState?.(state); }, [state]);
