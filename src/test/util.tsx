@@ -16,7 +16,7 @@ import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import { i18n } from 'i18n';
 import { reducer as fileExplorerStateReducer, Action as FileExploreerStateAction } from 'component/fileExplorer/context/reducer';
 import { createMuiTheme } from '@material-ui/core';
-import fileExplorerContext, { FileExplorerMode, defaultState as defaultFileExplorerState } from 'component/fileExplorer/context/FileExplorerContext';
+import fileExplorerContext, { defaultState as defaultFileExplorerState } from 'component/fileExplorer/context/FileExplorerContext';
 import DateFnsUtils from '@date-io/date-fns';
 
 export interface TestSetupOptions {
