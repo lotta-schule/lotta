@@ -12,55 +12,55 @@ describe('component/fileExplorer/FileToolbar', () => {
 
     describe('in the root directory', () => {
 
-      it('should render the toolbar', () => {
+        it('should render the toolbar', () => {
 
-          const screen = render(
-              (
-                  <TestFileExplorerContextProvider>
-                      <FileToolbar />
-                  </TestFileExplorerContextProvider>
-              ),
-            { }, { currentUser: user }
-          );
-          expect(screen.getByTestId('FileExplorerToolbarPath')).toBeInTheDocument();
-      });
+            const screen = render(
+                (
+                    <TestFileExplorerContextProvider>
+                        <FileToolbar />
+                    </TestFileExplorerContextProvider>
+                ),
+                { }, { currentUser: user }
+            );
+            expect(screen.getByTestId('FileExplorerToolbarPath')).toBeInTheDocument();
+        });
 
 
-      it('show only the CreateDirectoryButton for a non-admin user', () => {
+        it('show only the CreateDirectoryButton for a non-admin user', () => {
 
-          const screen = render(
-              (
-                  <TestFileExplorerContextProvider>
-                      <FileToolbar />
-                  </TestFileExplorerContextProvider>
-              ),
-            { }, { currentUser: user }
-          );
-          expect(screen.getByTestId('FileExplorerToolbarPath')).toBeInTheDocument();
-          expect(screen.queryByTestId('FileExplorerToolbarNewUploadButton')).toBeNull();
-          expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).toBeNull();
-          expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeNull();
-          expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
-      });
+            const screen = render(
+                (
+                    <TestFileExplorerContextProvider>
+                        <FileToolbar />
+                    </TestFileExplorerContextProvider>
+                ),
+                { }, { currentUser: user }
+            );
+            expect(screen.getByTestId('FileExplorerToolbarPath')).toBeInTheDocument();
+            expect(screen.queryByTestId('FileExplorerToolbarNewUploadButton')).toBeNull();
+            expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).toBeNull();
+            expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeNull();
+            expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
+            expect(screen.queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
+        });
 
-      it('show only the CreateDirectoryButton for a admin user', async () => {
+        it('show only the CreateDirectoryButton for a admin user', async () => {
 
-          const screen = render(
-              (
-                  <TestFileExplorerContextProvider>
-                      <FileToolbar />
-                  </TestFileExplorerContextProvider>
-              ),
-            { }, { currentUser: { ...user, groups: [adminGroup] } }
-          );
-          screen.getByTestId('FileExplorerToolbarPath');
-          expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
-          expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).not.toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
-          expect(screen.queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
-      });
+            const screen = render(
+                (
+                    <TestFileExplorerContextProvider>
+                        <FileToolbar />
+                    </TestFileExplorerContextProvider>
+                ),
+                { }, { currentUser: { ...user, groups: [adminGroup] } }
+            );
+            screen.getByTestId('FileExplorerToolbarPath');
+            expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
+            expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).not.toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
+            expect(screen.queryByTestId('FileExplorerDetailViewButton')).not.toBeVisible();
+        });
 
     });
 
@@ -74,83 +74,83 @@ describe('component/fileExplorer/FileToolbar', () => {
                 currentPath: [{ id: null }, directory]
             };
 
-      it('should render the toolbar and show the path', () => {
+        it('should render the toolbar and show the path', () => {
 
-          const screen = render(
-              (
-                  <TestFileExplorerContextProvider defaultValue={state}>
-                      <FileToolbar />
-                  </TestFileExplorerContextProvider>
-              ),
-            { }, { currentUser: user }
-          );
-          expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarPath')).toHaveTextContent('/Logos');
-      });
-
-
-      it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
-
-          const screen = render(
-              (
-                  <TestFileExplorerContextProvider defaultValue={state}>
-                      <FileToolbar />
-                  </TestFileExplorerContextProvider>
-              ),
-            { }, { currentUser: user }
-          );
-          expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
-          expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
-      });
-
-      it('should not show the FileDetailInfo button if a file is being selected', async () => {
-
-          const screen = render(
-              (
-                  <TestFileExplorerContextProvider defaultValue={{...state, mode: FileExplorerMode.Select }}>
-                      <FileToolbar />
-                  </TestFileExplorerContextProvider>
-              ),
-            { }, { currentUser: user }
-          );
-          expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
-          expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
-          expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
-      });
-
-
-      describe('when a file is selected', () => {
-          const stateWithFileSelected: typeof state = {
-              ...state,
-              markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
-          };
-
-          it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
-
-              const screen = render(
-                  (
-                      <TestFileExplorerContextProvider defaultValue={stateWithFileSelected}>
-                          <FileToolbar />
-                      </TestFileExplorerContextProvider>
-                  ),
+            const screen = render(
+                (
+                    <TestFileExplorerContextProvider defaultValue={state}>
+                        <FileToolbar />
+                    </TestFileExplorerContextProvider>
+                ),
                 { }, { currentUser: user }
-              );
-              expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
-              expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
-              expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
-              expect(screen.queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
-              expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).toBeVisible();
-              expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeVisible();
-          });
+            );
+            expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarPath')).toHaveTextContent('/Logos');
+        });
 
-      });
+
+        it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
+
+            const screen = render(
+                (
+                    <TestFileExplorerContextProvider defaultValue={state}>
+                        <FileToolbar />
+                    </TestFileExplorerContextProvider>
+                ),
+                { }, { currentUser: user }
+            );
+            expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
+            expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
+            expect(screen.queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
+        });
+
+        it('should not show the FileDetailInfo button if a file is being selected', async () => {
+
+            const screen = render(
+                (
+                    <TestFileExplorerContextProvider defaultValue={{...state, mode: FileExplorerMode.Select }}>
+                        <FileToolbar />
+                    </TestFileExplorerContextProvider>
+                ),
+                { }, { currentUser: user }
+            );
+            expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
+            expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
+            expect(screen.queryByTestId('FileExplorerDetailViewButton')).toBeNull();
+            expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).not.toBeVisible();
+            expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).not.toBeVisible();
+        });
+
+
+        describe('when a file is selected', () => {
+            const stateWithFileSelected: typeof state = {
+                ...state,
+                markedFiles: (filesAndDirectories.filter(f => (f as FileModel).filename ===  'Dateiname.jpg') as FileModel[])
+            };
+
+            it('should show the FileDetailInfo button, the upload button and the create directory button, but hide the others', async () => {
+
+                const screen = render(
+                    (
+                        <TestFileExplorerContextProvider defaultValue={stateWithFileSelected}>
+                            <FileToolbar />
+                        </TestFileExplorerContextProvider>
+                    ),
+                    { }, { currentUser: user }
+                );
+                expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
+                expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
+                expect(screen.queryByTestId('FileExplorerToolbarCreateDirectoryButton')).toBeVisible();
+                expect(screen.queryByTestId('FileExplorerDetailViewButton')).toBeVisible();
+                expect(screen.queryByTestId('FileExplorerToolbarMoveFileButton')).toBeVisible();
+                expect(screen.queryByTestId('FileExplorerToolbarDeleteFileButton')).toBeVisible();
+            });
+
+        });
 
 
     });
@@ -173,7 +173,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                             <FileToolbar />
                         </TestFileExplorerContextProvider>
                     ),
-                  { }, { currentUser: user }
+                    { }, { currentUser: user }
                 );
                 expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                 expect(screen.queryByTestId('FileExplorerToolbarPath')).toHaveTextContent('/Schulweit');
@@ -188,7 +188,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                             <FileToolbar />
                         </TestFileExplorerContextProvider>
                     ),
-                  { }, { currentUser: user }
+                    { }, { currentUser: user }
                 );
                 expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                 expect(screen.queryByTestId('FileExplorerToolbarNewUploadButton')).toBeNull();
@@ -212,7 +212,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                                 <FileToolbar />
                             </TestFileExplorerContextProvider>
                         ),
-                      { }, { currentUser: user }
+                        { }, { currentUser: user }
                     );
                     expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                     expect(screen.queryByTestId('FileExplorerToolbarNewUploadButton')).toBeNull();
@@ -237,7 +237,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                             <FileToolbar />
                         </TestFileExplorerContextProvider>
                     ),
-                  { }, { currentUser: adminUser }
+                    { }, { currentUser: adminUser }
                 );
                 expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                 expect(screen.queryByTestId('FileExplorerToolbarPath')).toHaveTextContent('/Schulweit');
@@ -250,9 +250,9 @@ describe('component/fileExplorer/FileToolbar', () => {
                     (
                         <TestFileExplorerContextProvider defaultValue={state}>
                             <FileToolbar />
-                        </TestFileExplorerContextProvider>
+                                </TestFileExplorerContextProvider>
                     ),
-                  { }, { currentUser: adminUser }
+                    { }, { currentUser: adminUser }
                 );
                 expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                 expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();
@@ -276,7 +276,7 @@ describe('component/fileExplorer/FileToolbar', () => {
                                 <FileToolbar />
                             </TestFileExplorerContextProvider>
                         ),
-                      { }, { currentUser: adminUser }
+                        { }, { currentUser: adminUser }
                     );
                     expect(screen.queryByTestId('FileExplorerToolbarPath')).toBeVisible();
                     expect(await screen.findByTestId('FileExplorerToolbarNewUploadButton')).toBeVisible();

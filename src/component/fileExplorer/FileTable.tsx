@@ -126,7 +126,19 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
             parentDirectoryId: state.currentPath[state.currentPath.length - 1].id ?? null
         }
     });
-    const files = data?.files ?? [];
+
+    const filteredSortedFiles = useMemo(() =>
+        data?.files
+        .filter(file => {
+            const byFileFilter = !fileFilter || fileFilter(file);
+            let bySearchFilter = true;
+            try {
+                bySearchFilter = !state.searchtext || new RegExp(state.searchtext, 'i').test(file.filename);
+            } catch { }
+            return byFileFilter && bySearchFilter;
+        })
+        .sort((f1, f2) => f1.filename.localeCompare(f2.filename)) ?? []
+    , [data, fileFilter, state.searchtext]);
 
     const uploadFile = useCreateUpload();
     const { getRootProps, draggedFiles, isDragAccept, isDragActive } = useDropzone({
@@ -165,14 +177,20 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
             }
         } else {
             if (e.shiftKey) {
-                const fileIndex = files.findIndex(f => f.id === file.id);
-                const markedFileIndexes = state.markedFiles.map(file => files.findIndex(f => f.id === file.id));
+                const fileIndex = filteredSortedFiles.findIndex(f => f.id === file.id);
+                const markedFileIndexes = state.markedFiles.map(file => filteredSortedFiles.findIndex(f => f.id === file.id));
                 const nearestIndex = findNearest(fileIndex, markedFileIndexes);
                 const indexesRange = [
                     ...range(Math.min(fileIndex, nearestIndex), Math.max(fileIndex, nearestIndex)),
                     ...(fileIndex > nearestIndex ? [fileIndex] : [])
                 ];
-                dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, ...indexesRange.map(findex => files[findex]).filter(f => !isMarked(f))] });
+                dispatch({
+                    type: 'setMarkedFiles',
+                    files: [
+                        ...state.markedFiles,
+                        ...indexesRange.map(findex => filteredSortedFiles[findex]).filter(f => !isMarked(f))
+                    ]
+                });
             } else if (e.metaKey) {
                 dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, file] });
             } else {
@@ -181,22 +199,9 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         }
     };
 
-    const filteredSortedFiles = useMemo(() =>
-        data?.files
-        .filter(file => {
-            const byFileFilter = !fileFilter || fileFilter(file);
-            let bySearchFilter = true;
-            try {
-                bySearchFilter = !state.searchtext || new RegExp(state.searchtext, 'i').test(file.filename);
-            } catch { }
-            return byFileFilter && bySearchFilter;
-        })
-        .sort((f1, f2) => f1.filename.localeCompare(f2.filename)) ?? []
-    , [data, fileFilter, state.searchtext]);
-
     const filteredSortedDirectories = useMemo(() =>
         data?.directories
-            .filter(d => true)
+            .filter(_directory => true)
             .sort((d1, d2) => d1.name.localeCompare(d2.name)) ?? []
     , [data]);
 
@@ -220,7 +225,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
     }, [state.markedFiles, filteredSortedFiles]);
 
     const onKeyDown = useCallback((e: KeyboardEvent) => {
-        if (e.keyCode === 38) { // key up
+        if (e.key === 'ArrowUp') {
             if (state.markedFiles.length) {
                 if (lowestSelectedFileIndex !== null && lowestSelectedFileIndex > 0) {
                     e.preventDefault();
@@ -232,9 +237,9 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                 }
             }
         }
-        if (e.keyCode === 40) { // key down
+        if (e.key === 'ArrowDown') {
             if (state.markedFiles.length) {
-                if (highestSelectedFileIndex !== null && highestSelectedFileIndex < filteredSortedFiles.length) {
+                if (highestSelectedFileIndex !== null && highestSelectedFileIndex < filteredSortedFiles.length - 1) {
                     e.preventDefault();
                     if (e.shiftKey) {
                         dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, filteredSortedFiles[highestSelectedFileIndex + 1]] });
@@ -273,15 +278,18 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                             {!isLoading && state.mode === FileExplorerMode.SelectMultiple && ((data?.files?.length ?? 0) > 0) && (
                                 <Checkbox
                                     style={{ padding: 0 }}
-                                    indeterminate={!every(files.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f)) && some(state.selectedFiles, selectedFile => files.includes(selectedFile))}
-                                    checked={every(files.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f))}
+                                    indeterminate={!every(filteredSortedFiles.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f)) && some(state.selectedFiles, selectedFile => filteredSortedFiles.includes(selectedFile))}
+                                    checked={every(filteredSortedFiles.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f))}
+                                    inputProps={{
+                                        "aria-label": 'Alle wählen'
+                                    }}
                                     onChange={(e, checked) => {
                                         e.preventDefault();
                                         dispatch({
                                             type: 'setSelectedFiles',
                                             files: checked ?
-                                                uniqBy([...state.selectedFiles, ...files], 'id') :
-                                                state.selectedFiles.filter(selectedFile => !files.includes(selectedFile))
+                                                uniqBy([...state.selectedFiles, ...filteredSortedFiles], 'id') :
+                                                state.selectedFiles.filter(selectedFile => !filteredSortedFiles.includes(selectedFile))
                                         });
                                     }}
                                 />
