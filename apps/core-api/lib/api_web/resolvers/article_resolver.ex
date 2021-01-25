@@ -10,9 +10,14 @@ defmodule ApiWeb.ArticleResolver do
   def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
     article = Content.get_article(String.to_integer(id))
 
-    if can_read?(current_user, article),
-      do: {:ok, article},
-      else: {:error, "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
+    cond do
+      is_nil(article) ->
+        {:error, "Beitrag nicht gefunden."}
+      not can_read?(current_user, article) ->
+        {:error, "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
+      true ->
+        {:ok, article}
+    end
   end
 
   def get(_args, _info), do: {:error, "Beitrag nicht gefunden."}
