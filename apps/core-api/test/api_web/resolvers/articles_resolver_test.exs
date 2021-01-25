@@ -200,6 +200,25 @@ defmodule ApiWeb.ArticleResolverTest do
                ]
              } = res
     end
+
+    test "returns an error if article id does not exist" do
+      res =
+        build_conn()
+        |> get("/api", query: @query, variables: %{id: 0})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "article" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Beitrag nicht gefunden.",
+                   "path" => ["article"]
+                 }
+               ]
+             } = res
+    end
   end
 
   describe "articles query" do
