@@ -12,6 +12,10 @@ export interface ApolloMocksOptions {
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
     const mocks = [
         {
+            request: { query: GetSystemQuery },
+            result: { data: { system: { ...(options.system ?? system), id: 1 } } }
+        },
+        {
             request: { query: GetCurrentUserQuery },
             result: { data: { currentUser: options.currentUser ?? null } }
         },
