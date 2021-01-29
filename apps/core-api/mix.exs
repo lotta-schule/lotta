@@ -4,7 +4,7 @@ defmodule Api.MixProject do
   def project do
     [
       app: :api,
-      version: "2.1.1",
+      version: "2.2.3",
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -60,7 +60,7 @@ defmodule Api.MixProject do
       {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.1"},
       {:ecto_sql, "~> 3.4.2"},
-      {:absinthe, "~> 1.5"},
+      {:absinthe, "~> 1.6", override: true},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},
       {:dataloader, "~> 1.0.7"},

@@ -21,7 +21,7 @@ defmodule ApiWeb.UserSocket do
   # performing token verification on connect.
   def connect(params, socket, _connect_info) do
     with %{"token" => token} <- params,
-         {:ok, user, _claims} = ApiWeb.Auth.AccessToken.resource_from_token(token) do
+         {:ok, user, _claims} <- ApiWeb.Auth.AccessToken.resource_from_token(token) do
       socket =
         socket
         |> Absinthe.Phoenix.Socket.put_opts(
