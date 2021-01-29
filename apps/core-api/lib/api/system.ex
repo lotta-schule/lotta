@@ -9,7 +9,8 @@ defmodule Api.System do
     "title",
     "custom_theme",
     "logo_image_file",
-    "background_image_file"
+    "background_image_file",
+    "user_max_storage_config"
   ]
 
   @type get_url_options() :: [skip_protocol: boolean()]
