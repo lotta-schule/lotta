@@ -12,5 +12,5 @@ export const useSystem = (): ClientModel => {
         customDomains: [],
         updatedAt: new Date().toISOString(),
         insertedAt: new Date().toISOString()
-    };
+    } as unknown as ClientModel;
 }
