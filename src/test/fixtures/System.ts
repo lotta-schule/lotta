@@ -7,13 +7,14 @@ import { CalendarWidgetConfig, ClientModel, ScheduleWidgetConfig, WidgetModel, W
  *
  */
 
-export const system: ClientModel = {
+export const system = {
     id: '1', // add ID for cache
     title: 'DerEineVonHier',
     slug: 'derdiedas',
     insertedAt: '2014-03-08 12:00',
     updatedAt: '2014-03-08 12:00',
     host: 'info.lotta.schule',
+    userMaxStorageConfig: 20,
     groups: [
         adminGroup,
         lehrerGroup,
