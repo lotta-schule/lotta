@@ -19,11 +19,11 @@ const useStyles = makeStyles(theme => ({
         },
         [theme.breakpoints.up('lg')]: {
             display: 'block',
-            top: '30vh',
+            top: '0',
             right: '-1em',
             position: 'absolute',
-            fontSize: '.9rem',
-            transform: 'rotate(270deg)',
+            fontSize: '.8rem',
+            transform: 'rotate(-90deg)',
             transformOrigin: 'right',
         }
     },
