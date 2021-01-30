@@ -29,6 +29,9 @@ const useStyles = makeStyles<Theme, MessageBubbleProps>(theme => {
             borderColor: withBaseColor(),
             borderRadius: theme.shape.borderRadius,
             backgroundColor: withBaseColor(bg => fade(bg, .15)),
+
+            overflow: 'hidden',
+
             '&:after': {
                 content: ({ active }) => active ? '""' : 'initial',
                 borderLeftWidth: 20,
