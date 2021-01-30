@@ -9,12 +9,12 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useQuery } from '@apollo/client';
 import { theme } from 'theme';
 import { useCategories } from 'util/categories/useCategories';
-import { ErrorMessage } from 'component/general/ErrorMessage';
 import { AppHead } from './AppHead';
 import { EmptyLoadingLayout } from './layouts/EmptyLoadingLayout';
 import { BaseLayout } from './layouts/BaseLayout';
 import { GetSystemQuery } from 'api/query/GetSystemQuery';
 import merge from 'lodash/merge';
+import ServerDownImage from './ServerDownImage.svg';
 
 const AdminLayout = lazy(() => import('./layouts/adminLayout/AdminLayout'));
 const ArticleRoute = lazy(() => import('./routes/ArticleRoute'));
@@ -42,7 +42,16 @@ export const App = memo(() => {
 
     if (error) {
         return (
-            <ErrorMessage error={error} />
+            <>
+                <h1 style={{ fontFamily: 'sans-serif', marginLeft: '1em' }}>Server nicht erreichbar</h1>
+                <div style={{ fontFamily: 'sans-serif', margin: '1em', textAlign: 'center' }}>
+                    <img style={{ display: 'inline-block', maxWidth: '80%', maxHeight: '70vh' }} src={ServerDownImage} alt={'Der Server ist nicht erreichbar'} />
+                    <p>
+                        Der Server hat einen unbekannten Fehler geworfen. Das Team wurde informiert. Versuch es in einigen Minuten nochmal. 
+                    </p>
+                    <p>{error.message}</p>
+                </div>
+            </>
         );
     }
 
