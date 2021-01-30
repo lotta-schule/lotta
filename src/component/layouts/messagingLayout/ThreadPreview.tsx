@@ -1,10 +1,11 @@
 import React, { memo } from 'react';
-import { makeStyles, Button, Typography } from '@material-ui/core';
+import { makeStyles, Button, Typography, Badge } from '@material-ui/core';
 import { UserModel, UserGroupModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { format } from 'date-fns';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
+import {useNewMessagesBadgeNumber} from '../navigation/useNewMessagesBadgeNumber';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -42,6 +43,7 @@ export interface ThreadPreviewProps {
 
 export const ThreadPreview = memo<ThreadPreviewProps>(({ selected, counterpart, date, onClick }) => {
     const styles = useStyles();
+    const newMessagesBadgeNumber = useNewMessagesBadgeNumber((counterpart as UserModel).avatarImageFile !== undefined ? { user: counterpart as UserModel } : { group: counterpart as UserGroupModel });
 
     return (
         <Button
@@ -50,7 +52,9 @@ export const ThreadPreview = memo<ThreadPreviewProps>(({ selected, counterpart, 
             classes={{ label: styles.buttonLabel }}
         >
             <Typography variant={'subtitle1'}>
-                {counterpart.name}
+                <Badge badgeContent={newMessagesBadgeNumber} color={'primary'}>
+                    {counterpart.name}
+                </Badge>
                 {(counterpart as UserModel).avatarImageFile && (
                     <UserAvatar user={counterpart as UserModel} size={50} classes={{ root: styles.userAvatar }} />
                 )}
