@@ -56,6 +56,9 @@ config :api, :default_user, %{
   password: "password"
 }
 
+config :argon2_elixir,
+  argon2_type: 1
+
 config :sentry, []
 
 # Configures Elixir's Logger

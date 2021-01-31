@@ -22,6 +22,7 @@ defmodule Api.Accounts.User do
     field :is_blocked, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string
+    field :password_hash_format, :integer
 
     field :all_groups, {:array, UserGroup}, virtual: true, default: []
     field :is_admin?, :boolean, virtual: true, default: false
@@ -97,7 +98,9 @@ defmodule Api.Accounts.User do
   defp put_pass_hash(changeset) do
     case changeset do
       %Changeset{valid?: true, changes: %{password: password}} ->
-        put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(password))
+        changeset
+        |> change(Argon2.add_hash(password))
+        |> put_change(:password_hash_format, 1)
 
       _ ->
         changeset

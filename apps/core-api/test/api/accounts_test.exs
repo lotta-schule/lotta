@@ -83,7 +83,7 @@ defmodule Api.AccountsTest do
         Fixtures.fixture(:registered_user)
         |> Accounts.update_password("newpass")
 
-      assert Bcrypt.verify_pass("newpass", user.password_hash)
+      assert Argon2.verify_pass("newpass", user.password_hash)
 
       assert_delivered_email(Api.Email.password_changed_mail(user))
     end

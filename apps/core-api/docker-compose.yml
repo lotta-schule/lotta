@@ -19,8 +19,8 @@ services:
   app:
     image: elixir:1.11.2
     volumes:
-      - .:/usr/src/svc
-      - elixir-mix:/root/.mix
+      - .:/usr/src/svc:delegated
+      - elixir-mix:/root/.mix:cached
     working_dir: /usr/src/svc
     ports:
       - 4000:4000
