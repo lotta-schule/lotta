@@ -1071,7 +1071,7 @@ defmodule ApiWeb.UserResolverTest do
       user = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
 
       assert String.valid?(res["data"]["resetPassword"]["access_token"])
-      assert Bcrypt.verify_pass("abcdef", user.password_hash)
+      assert Argon2.verify_pass("abcdef", user.password_hash)
       Redix.command(:redix, ["FLUSHALL"])
     end
 
