@@ -67,6 +67,20 @@ defmodule Api.Email do
   end
 
   @doc """
+  Send a notification about the system being ready to start.
+  """
+  @doc since: "2.3.0"
+
+  @spec lotta_ready_mail(User.t()) :: Bamboo.Email.t()
+  def lotta_ready_mail(%User{} = user) do
+    base_mail()
+    |> to(user.email)
+    |> subject("Lotta steht nun für #{system().title} bereit.")
+    |> put_attachment(Application.app_dir(:api, "priv/default_content/files/lotta_1x1.pdf"))
+    |> render(:lotta_ready, user: user)
+  end
+
+  @doc """
   Send content module form data
   """
   @doc since: "2.2.0"

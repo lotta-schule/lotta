@@ -74,7 +74,7 @@ defmodule Api.System.DefaultContent do
     end
 
     @doc """
-    Should be placen at the end of the manipulation pipeline
+    Should be placed at the end of the manipulation pipeline
     in order to return {:error, reason} or :ok
     """
     @spec terminate(%Context{}) :: :ok | {:error, term()}
@@ -96,6 +96,7 @@ defmodule Api.System.DefaultContent do
     |> create_default_categories()
     |> create_default_files()
     |> create_default_articles()
+    |> send_ready_email()
     |> Context.terminate()
   end
 
@@ -422,6 +423,13 @@ defmodule Api.System.DefaultContent do
 
     ctx
     |> Context.execute_change({:insert, welcome_article_changeset}, :article3)
+  end
+
+  defp send_ready_email(%Context{user: user} = ctx) do
+    Api.Mailer.deliver_later(
+      Api.Email.lotta_ready_mail(user)
+    )
+    ctx
   end
 
   defp available_assets() do
