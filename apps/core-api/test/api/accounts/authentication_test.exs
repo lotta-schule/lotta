@@ -41,6 +41,7 @@ defmodule Api.Accounts.AuthenticationTest do
         password_hash_format: 0
       })
       |> Repo.update()
+
       assert {:ok, _} = login_with_username_pass(user.email, "test123")
     end
 
@@ -51,13 +52,20 @@ defmodule Api.Accounts.AuthenticationTest do
         password_hash_format: 0
       })
       |> Repo.update!()
-      assert {:ok, saved_user} = maybe_migrate_password_hashing_format(Repo.get(User, user.id), "test123")
+
+      assert {:ok, saved_user} =
+               maybe_migrate_password_hashing_format(Repo.get(User, user.id), "test123")
+
       assert %{password_hash_format: 1} = saved_user
       refute user.updated_at == saved_user.updated_at
     end
 
-    test "should NOT migrate the password hash to argon2 hash if password is already argon2", %{user: user} do
-      assert {:ok, saved_user} = maybe_migrate_password_hashing_format(user, "blablapassiertnicht")
+    test "should NOT migrate the password hash to argon2 hash if password is already argon2", %{
+      user: user
+    } do
+      assert {:ok, saved_user} =
+               maybe_migrate_password_hashing_format(user, "blablapassiertnicht")
+
       assert %{password_hash_format: 1} = user
       assert user.updated_at == saved_user.updated_at
     end
@@ -69,16 +77,21 @@ defmodule Api.Accounts.AuthenticationTest do
         password_hash_format: 0
       })
       |> Repo.update!()
-      assert {:ok, login_user} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test123")
+
+      assert {:ok, login_user} =
+               login_with_username_pass("eike.wiewiorra@lotta.schule", "test123")
+
       assert %{password_hash_format: 1} = login_user
       refute user.updated_at == login_user.updated_at
     end
 
-    test "should NOT migrate the password hash to argon2 hash if password is already argon2 on login", %{user: user} do
-      assert {:ok, saved_user} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test123")
+    test "should NOT migrate the password hash to argon2 hash if password is already argon2 on login",
+         %{user: user} do
+      assert {:ok, saved_user} =
+               login_with_username_pass("eike.wiewiorra@lotta.schule", "test123")
+
       assert %{password_hash_format: 1} = saved_user
       assert user.updated_at == saved_user.updated_at
     end
-
   end
 end

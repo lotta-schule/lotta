@@ -31,5 +31,4 @@ defmodule ApiWeb.Schema.System.Widget do
   input_object :select_widget_input do
     field :id, :id
   end
-
 end

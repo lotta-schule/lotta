@@ -59,8 +59,10 @@ defmodule Api.Accounts.Authentication do
     cond do
       is_nil(user) ->
         false
+
       user.password_hash_format == 1 ->
         Argon2.verify_pass(password, user.password_hash)
+
       true ->
         Bcrypt.verify_pass(password, user.password_hash)
     end
