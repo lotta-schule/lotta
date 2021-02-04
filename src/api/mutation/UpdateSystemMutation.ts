@@ -7,6 +7,7 @@ export const UpdateSystemMutation = gql`
             title
             slug
             customTheme
+            userMaxStorageConfig
             logoImageFile {
                 id
                 remoteLocation

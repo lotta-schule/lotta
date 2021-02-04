@@ -56,12 +56,11 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean, narrow?: boolean }>(t
     title: {
         ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title),
         fontSize: '1.4rem',
+        wordBreak: 'break-word',
+        hyphens: 'auto',
         [theme.breakpoints.down('sm')]: {
             fontSize: '1.2rem',
-            lineHeight: 1.05,
-            wordBreak: 'break-word',
-            hyphens: 'auto'
-
+            lineHeight: 1.05
         }
     },
     previewSection: {
@@ -142,7 +141,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(({ a
     const isMobile = useIsMobile();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const styles = useStyle({ isEmbedded, narrow });
     const showEditSection = (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));

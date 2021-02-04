@@ -55,7 +55,7 @@ export const FileToolbar = memo(() => {
     const styles = useStyles();
     const isMobile = useIsMobile();
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const uploads = useUploads();
     const createUpload = useCreateUpload();
     const [state, dispatch] = useContext(fileExplorerContext);
@@ -100,7 +100,7 @@ export const FileToolbar = memo(() => {
                                 <IconButton aria-label={`${uploadLength} Dateien werden hochgeladen`} onClick={() => dispatch({ type: 'showActiveUploads' })} data-testid="FileExplorerToolbarCurrentUploadsButton">
                                     <CircularProgress
                                         size={20}
-                                        variant={'static'}
+                                        variant={'determinate'}
                                         value={uploadTotalProgress}
                                     />
                                 </IconButton>

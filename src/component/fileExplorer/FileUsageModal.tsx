@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 export const FileUsageModal = memo(() => {
     const styles = useStyles();
     const { t } = useTranslation();
-    const [current_user] = useCurrentUser();
+    const current_user = useCurrentUser();
     const [{ showFileUsage, markedFiles }, dispatch] = useContext(fileExplorerContext);
 
     const { data } = useQuery<{ file: FileModel }, { id: ID }>(GetFileDetailsQuery, {

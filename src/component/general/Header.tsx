@@ -23,7 +23,8 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
     },
     subheader: {
         minHeight: 120,
-        background: ({ bannerImageUrl }) => bannerImageUrl ?  `url(${bannerImageUrl})` : 'none',
+        backgroundImage: ({ bannerImageUrl }) => bannerImageUrl ?  `url(${bannerImageUrl})` : 'none',
+        backgroundSize: 'cover',
         width: '100%',
         [theme.breakpoints.down('sm')]: {
             maxWidth: 'initial'

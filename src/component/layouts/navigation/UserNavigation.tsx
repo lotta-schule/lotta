@@ -1,5 +1,8 @@
 import React, { memo, useState } from 'react';
-import { AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined, FolderOutlined, SecurityOutlined, AccountCircle, SearchRounded } from '@material-ui/icons';
+import {
+    AddCircle, KeyboardArrowDown, PersonOutlineOutlined, AssignmentOutlined, ExitToAppOutlined,
+    FolderOutlined, SecurityOutlined, AccountCircle, SearchRounded, QuestionAnswer
+} from '@material-ui/icons';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
 import { Grid, makeStyles, Button, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
@@ -11,6 +14,7 @@ import { RegisterDialog } from 'component/dialog/RegisterDialog';
 import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { useQuery } from '@apollo/client';
 import { useOnLogout } from 'util/user/useOnLogout';
+import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
@@ -63,12 +67,12 @@ const useStyles = makeStyles(theme => ({
 export const UserNavigation = memo(() => {
     const styles = useStyles();
 
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const { history } = useRouter();
     const { data: unpublishedArticlesData } = useQuery<{ articles: ArticleModel[] }>(GetUnpublishedArticlesQuery, {
         skip: !currentUser || !User.isAdmin(currentUser)
     });
-
+    const newMessagesBadgeNumber = useNewMessagesBadgeNumber();
     const onLogout = useOnLogout();
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
@@ -88,6 +92,18 @@ export const UserNavigation = memo(() => {
                 <Grid item xs={7} style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                     <Button className={styles.button} size="small" startIcon={<AddCircle color={'secondary'} />} onClick={() => setCreateArticleModalIsOpen(true)}>Neuer Beitrag</Button>
                     <Button className={styles.button} size="small" startIcon={<SearchRounded color={'secondary'} />} onClick={() => history.push('/search')}>Suche</Button>
+                    <Button
+                        className={styles.button}
+                        size="small"
+                        startIcon={
+                            <Badge badgeContent={newMessagesBadgeNumber} color={'primary'}>
+                                <QuestionAnswer color={'secondary'} />
+                            </Badge>
+                        }
+                        onClick={() => history.push('/messaging')}
+                    >
+                        Nachrichten
+                    </Button>
                     <Button className={styles.button} size="small" startIcon={<AccountCircle color={'secondary'} />} onClick={(e: any) => {
                         e.preventDefault();
                         setProfileMenuAnchorEl(e.currentTarget);

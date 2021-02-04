@@ -16,7 +16,7 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User, Category } from 'util/model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { DeleteArticleMutation } from 'api/mutation/UpdateArticleMutation copy';
+import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
 import { UsersList } from './UsersList';
 import { SelectTopicAutocomplete } from './SelectTopicAutocomplete';
 import { SaveButton } from 'component/general/SaveButton';
@@ -64,10 +64,11 @@ interface EditArticleSidebarProps {
 
 export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLoading, onUpdate, onSave }) => {
     const styles = useStyles();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
     const history = useHistory();
 
     const [isReadyToPublish, setIsReadyToPublish] = useState(article.readyToPublish || false);
+    const [isSelfRemovalDialogOpen, setIsSelfRemovalDialogOpen] = useState(false);
     const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const saveOptionsMenuAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -102,20 +103,23 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
             </CardContent>
             <CardContent>
                 <TextField
-                    label="Titel des Beitrags"
-                    placeholder="Placeholder"
+                    label={'Titel des Beitrags'}
+                    placeholder={'Placeholder'}
                     value={article.title}
                     onChange={e => onUpdate({ ...article, title: e.target.value })}
                     fullWidth
                     variant="outlined"
                     InputLabelProps={{
-                        shrink: true,
+                        shrink: true
+                    }}
+                    inputProps={{
+                        'aria-label': 'Titel des Beitrags'
                     }}
                 />
             </CardContent>
             <CardContent>
                 <TextField
-                    label="Vorschautext"
+                    label={'Vorschautext'}
                     placeholder="Füge hier einen kurzen Vorschautext ein"
                     value={article.preview || ''}
                     onChange={e => onUpdate({ ...article, preview: e.target.value })}
@@ -124,6 +128,9 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
                     multiline
                     InputLabelProps={{
                         shrink: true,
+                    }}
+                    inputProps={{
+                        'aria-label': 'Vorschautext'
                     }}
                 />
             </CardContent>
@@ -174,7 +181,13 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
                 )}
                 <UsersList
                     users={article.users}
-                    onClickRemove={user => onUpdate({ ...article, users: article.users.filter(articleUser => articleUser.id !== user.id) })}
+                    onClickRemove={user => {
+                        if (user.id === currentUser?.id) {
+                            setIsSelfRemovalDialogOpen(true);
+                        } else {
+                            onUpdate({ ...article, users: article.users.filter(articleUser => articleUser.id !== user.id) });
+                        }
+                    }}
                 />
             </CardContent>
             <CardContent>
@@ -284,8 +297,30 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(({ article, isLo
                         <p>Der Beitrag ist dann unwiederbringbar verloren und kann nicht wiederhergestellt werden.</p>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => setIsDeleteModalOpen(false)}>Abbrechen</Button>
-                        <Button color={'secondary'} onClick={() => deleteArticle()}>Löschen</Button>
+                        <Button onClick={() => setIsDeleteModalOpen(false)}>abbrechen</Button>
+                        <Button color={'secondary'} onClick={() => deleteArticle()}>endgültig löschen</Button>
+                    </DialogActions>
+                </ResponsiveFullScreenDialog>
+                <ResponsiveFullScreenDialog open={isSelfRemovalDialogOpen}>
+                    <DialogTitle>Dich selbst aus dem Beitrag entfernen</DialogTitle>
+                    <DialogContent>
+                        <p>Möchtest du dich selbst wirklich aus dem Beitrag "{article.title}" entfernen?</p>
+                        <p>Du wirst den Beitrag dann nicht mehr bearbeiten können und übergibst die Rechte den anderen Autoren oder Administratoren der Seite</p>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsSelfRemovalDialogOpen(false)}>abbrechen</Button>
+                        <Button
+                            color={'secondary'}
+                            onClick={() => {
+                                onUpdate({
+                                    ...article,
+                                    users: article.users.filter(articleUser => articleUser.id !== currentUser?.id)
+                                });
+                                setIsSelfRemovalDialogOpen(false)
+                            }}
+                        >
+                            endgültig entfernen
+                        </Button>
                     </DialogActions>
                 </ResponsiveFullScreenDialog>
             </CardContent>

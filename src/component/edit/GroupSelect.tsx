@@ -16,12 +16,14 @@ export interface GroupSelectProps {
     label?: string | null;
     row?: boolean;
     disabled?: boolean;
+    filterSelection?(group: UserGroupModel, i: number, allGroups: UserGroupModel[]): boolean;
     onSelectGroups(groups: UserGroupModel[]): void;
 }
 
 const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
     root: {
-        margin: theme.spacing(1, 0)
+        margin: theme.spacing(1, 0),
+        position: 'relative',
     },
     publicGroupSelectionLabel: {
         margin: 0
@@ -66,14 +68,16 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
     },
     listBox: {
         margin: theme.spacing(1, 0, 0),
-        width: `calc(100% - ${theme.spacing(6)}px)`,
+        width: '100%',
         padding: 0,
         position: 'absolute',
+        top: '100%',
+        left: 0,
         listStyle: 'none',
         backgroundColor: theme.palette.background.paper,
         overflow: 'auto',
         maxHeight: 250,
-        zIndex: 1,
+        zIndex: 10000,
 
         '& li': {
             padding: theme.spacing(1, 2),
@@ -106,9 +110,9 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
     }
 }));
 
-export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, disabled, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, onSelectGroups }) => {
+export const GroupSelect = memo<GroupSelectProps>(({ className, variant, label, disabled, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, filterSelection, onSelectGroups }) => {
     const styles = useStyles({ row });
-    const groups = useUserGroups();
+    const groups = useUserGroups().filter(filterSelection ?? (() => true));
 
     const [searchtext, setSearchtext] = useState('');
 
@@ -130,7 +134,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
         options: groups,
         multiple: true,
         disableCloseOnSelect: true,
-        getOptionLabel: option => option.name,
+        getOptionLabel: ({ name }) => name,
         getOptionSelected: (option, value) => option.id === value.id,
         onInputChange: (_event, value, reason) => {
             if (reason !== 'reset') {
@@ -165,7 +169,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
 
     return (
         <NoSsr>
-            <div className={styles.root} data-testid="GroupSelect">
+            <div className={clsx(styles.root, className)} data-testid="GroupSelect">
                 <div {...getRootProps()} data-testid="GroupSelectSelection">
                     <Typography {...getInputLabelProps()}>{label ?? 'Sichtbarkeit:'}</Typography>
                     <div ref={setAnchorEl} className={clsx(styles.inputWrapper, { focused })}>
@@ -205,7 +209,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ variant, className, label, 
                         <TextField
                             fullWidth
                             disabled={disabled}
-                            variant={'outlined'}
+                            variant={variant}
                             size={'small'}
                             placeholder={'Gruppe suchen'}
                             inputProps={{ 'aria-label': 'Gruppe suchen' }}

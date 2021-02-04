@@ -18,7 +18,7 @@ export interface ArticleLayoutProps {
 
 export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) => {
     const { history } = useRouter();
-    const [currentUser] = useCurrentUser();
+    const currentUser = useCurrentUser();
 
     const [editedArticle, setEditedArticle] = React.useState(article);
     const [saveArticle, { loading: isLoading }] = useMutation<{ article: ArticleModel }, { id: ID, article: any }>(UpdateArticleMutation, {

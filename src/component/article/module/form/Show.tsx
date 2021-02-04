@@ -44,7 +44,16 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
         // find initial data
         setFormData(configuration.elements.reduce((data, element) => ({
             ...data,
-            [element.name]: (element.element === 'selection' && (element.type === 'checkbox' ? element.options?.filter(op => op.selected)?.map(op => op.value) : element.options?.find(op => op.selected)?.value)) || (element.type === 'checkbox' ? [] : '')
+            [element.name]: (
+                element.element === 'selection' && (
+                    element.type === 'checkbox' ?
+                        element.options
+                            ?.filter(op => op.selected)
+                            ?.map(op => op.value) :
+                        element.options
+                        ?.find(op => op.selected)
+                    ?.value
+                )) || (element.type === 'checkbox' ? [] : '')
         }), {}))
     }, [configuration.elements]);
 
@@ -55,12 +64,40 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
             .every(el => Boolean(el));
     }, [configuration.elements, formData])
 
-    const onSubmitForm = (e: FormEvent<HTMLFormElement>) => {
+    const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
+        const blobTob64 = async (blobUrl: string) => {
+            const blob = await fetch(blobUrl).then(r => r.blob());
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+
+                reader.readAsDataURL(blob);
+            });
+        };
         e.preventDefault();
+        const transformedResponse: Record<string, string | string[]> = {};
+        const blobUrlsToDispense: string[] = [];
+        for (const key in formData) {
+            let value = formData[key];
+            if (typeof value === 'string') {
+                const matches = value.match(/^file-upload:\/\/(.+)/);
+                if (matches && matches.length > 1) {
+                    const file = JSON.parse(matches[1]);
+                    value = `file-upload://${JSON.stringify({ ...file, data: await blobTob64(file.blob) })}`;
+                    blobUrlsToDispense.push(file.blob);
+                }
+            }
+            transformedResponse[key] = value;
+        }
         sendFormResponse({
             variables: {
                 id: contentModule.id,
-                response: JSON.stringify(formData)
+                response: JSON.stringify(transformedResponse)
+            },
+            update() {
+                blobUrlsToDispense.forEach((url) => URL.revokeObjectURL(url));
             }
         });
     };

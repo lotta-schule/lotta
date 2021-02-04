@@ -1,10 +1,8 @@
 import React from 'react';
-import { render, cleanup, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { ComputerExperten, VivaLaRevolucion, Schulfest, Weihnachtsmarkt, Klausurenplan } from 'test/fixtures';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ProfileArticles } from './ProfileArticles';
-
-afterEach(cleanup);
 
 describe('component/profile/ProfileArticles', () => {
 

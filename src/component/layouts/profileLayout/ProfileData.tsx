@@ -56,7 +56,7 @@ export const useStyles = makeStyles(theme => ({
 export const ProfileData = memo(() => {
     const styles = useStyles();
 
-    const currentUser = useCurrentUser()[0] as UserModel;
+    const currentUser = useCurrentUser()!;
 
     const [classOrShortName, setClassOrShortName] = useState(currentUser.class);
     const [email, setEmail] = useState(currentUser.email);

@@ -24,7 +24,7 @@ export const ActiveUploadsModal = memo(() => {
                                     )}
                                     {!upload.error && (
                                         <CircularProgress
-                                            variant={'static'}
+                                            variant={'determinate'}
                                             value={upload.uploadProgress}
                                         />
                                     )}

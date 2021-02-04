@@ -1,11 +1,9 @@
 import React from 'react';
 import { UserGroupModel } from 'model';
-import { render, cleanup, waitFor, createEvent, fireEvent } from 'test/util';
+import { render, waitFor, createEvent, fireEvent } from 'test/util';
 import { adminGroup, lehrerGroup, schuelerGroup, system, elternGroup } from 'test/fixtures';
 import { GroupSelect } from './GroupSelect';
 import userEvent from '@testing-library/user-event';
-
-afterEach(cleanup);
 
 describe('component/edit/GroupSelect', () => {
 
