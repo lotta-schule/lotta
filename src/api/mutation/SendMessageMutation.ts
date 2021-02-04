@@ -9,6 +9,7 @@ export const SendMessageMutation = gql`
             senderUser {
                 id
                 name
+                nickname
                 avatarImageFile {
                     remoteLocation
                 }
@@ -16,6 +17,7 @@ export const SendMessageMutation = gql`
             recipientUser {
                 id
                 name
+                nickname
                 avatarImageFile {
                     remoteLocation
                 }
