@@ -3,9 +3,10 @@ import { makeStyles, Button, Typography, Badge } from '@material-ui/core';
 import { UserModel, UserGroupModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { format } from 'date-fns';
+import { useNewMessagesBadgeNumber } from '../navigation/useNewMessagesBadgeNumber';
+import { User } from 'util/model';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
-import {useNewMessagesBadgeNumber} from '../navigation/useNewMessagesBadgeNumber';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -53,7 +54,7 @@ export const ThreadPreview = memo<ThreadPreviewProps>(({ selected, counterpart, 
         >
             <Typography variant={'subtitle1'}>
                 <Badge badgeContent={newMessagesBadgeNumber} color={'primary'}>
-                    {counterpart.name}
+                    {User.getName(counterpart as UserModel)}
                 </Badge>
                 {(counterpart as UserModel).avatarImageFile && (
                     <UserAvatar user={counterpart as UserModel} size={50} classes={{ root: styles.userAvatar }} />
