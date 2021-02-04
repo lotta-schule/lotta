@@ -3,6 +3,7 @@ import { Paper, Tabs, Tab, makeStyles } from '@material-ui/core';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { UsersList } from './UsersList';
 import { GroupsList } from './GroupsList';
+import { Constraints } from './Constraints';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles(theme => ({
@@ -26,6 +27,7 @@ export const UserManagement = memo(() => {
             <Tabs value={location.pathname} indicatorColor={'primary'} textColor={'primary'} onChange={(_, pathname) => history.push(pathname)}>
                 <Tab value={'/admin/users/list'} label={'Nutzer'} />
                 <Tab value={'/admin/users/groups'} label={'Gruppen'} />
+                <Tab value={'/admin/users/constraints'} label={'Einstellungen'} />
             </Tabs>
             <section className={styles.content}>
                 <Switch>
@@ -34,6 +36,7 @@ export const UserManagement = memo(() => {
                     </Route>
                     <Route path='/admin/users/list' component={UsersList} />
                     <Route path='/admin/users/groups' component={GroupsList} />
+                    <Route path='/admin/users/constraints' component={Constraints} />
                 </Switch>
             </section>
         </Paper>

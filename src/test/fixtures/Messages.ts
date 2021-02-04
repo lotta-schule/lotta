@@ -8,44 +8,44 @@ export const getSomeMessages = (from: UserModel, { to_user, to_group }: { to_use
             "updatedAt": "2020-11-28T07:37:02",
             "content": "Hallo",
             "senderUser": from,
-            "recipientUser": to_user,
+            "recipientUser": to_user || null,
             "recipientGroup": to_group || null
-        } as MessageModel,
+        } as any,
         {
             "id": String(Math.floor(Math.random()*10_000)),
             "insertedAt": "2020-11-28T07:32:14",
             "updatedAt": "2020-11-28T07:32:14",
             "content": "Hallo",
             "senderUser": from,
-            "recipientUser": to_user,
+            "recipientUser": to_user || null,
             "recipientGroup": to_group || null
-        } as MessageModel,
+        } as any,
         {
             "id": String(Math.floor(Math.random()*1000)),
             "insertedAt": "2020-11-28T07:29:31",
             "updatedAt": "2020-11-28T07:29:31",
             "content": "Hallo",
             "senderUser": from,
-            "recipientUser": to_user,
+            "recipientUser": to_user || null,
             "recipientGroup": to_group || null
-        } as MessageModel,
+        } as any,
         {
             "id": String(Math.floor(Math.random()*10_000)),
             "insertedAt": "2020-11-28T07:19:17",
             "updatedAt": "2020-11-28T07:19:17",
             "content": "Hallo",
             "senderUser": from,
-            "recipientUser": to_user,
+            "recipientUser": to_user || null,
             "recipientGroup": to_group || null
-        } as MessageModel,
+        } as any,
         {
             "id": String(Math.floor(Math.random()*10_000)),
             "insertedAt": "2020-11-28T07:00:09",
             "updatedAt": "2020-11-28T07:00:09",
             "content": "Hallo Welt!",
             "senderUser": from,
-            "recipientUser": to_user,
+            "recipientUser": to_user || null,
             "recipientGroup": to_group || null
-        } as MessageModel,
+        } as any,
     ];
 }

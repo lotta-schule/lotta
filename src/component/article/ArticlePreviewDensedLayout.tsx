@@ -102,6 +102,8 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>(theme => ({
     },
     articleTitle: {
         ...(theme.overrides && (theme.overrides as any).LottaArticlePreview && (theme.overrides as any).LottaArticlePreview.title),
+        wordBreak: 'break-word',
+        hyphens: 'auto',
         [theme.breakpoints.down('sm')]: {
             fontSize: '1em',
             fontWeight: 'bolder',

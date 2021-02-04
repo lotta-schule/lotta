@@ -137,13 +137,17 @@ export const convertedDocumentFile = {
     fileConversions: [
         {
             id: '55451',
+            insertedAt: '2001-01-21 00:00',
+            updatedAt: '2001-01-21 00:00',
             fileType: FileModelType.Image,
             format: 'jpg:200',
             mimeType: 'image/jpg',
-            remoteLocation: 'https://fake3/bildband55451'
+            remoteLocation: 'https://fake3/bildband55451',
         },
         {
             id: '55452',
+            insertedAt: '2001-01-21 00:00',
+            updatedAt: '2001-01-21 00:00',
             fileType: FileModelType.Audio,
             format: 'texttospeech:mp3',
             mimeType: 'audio/mp3',
@@ -151,6 +155,8 @@ export const convertedDocumentFile = {
         },
         {
             id: '55453',
+            insertedAt: '2001-01-21 00:00',
+            updatedAt: '2001-01-21 00:00',
             fileType: FileModelType.Misc,
             format: 'ocr:txt',
             mimeType: 'plain/text',

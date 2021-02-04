@@ -8,6 +8,7 @@ export interface ClientModel {
     slug: string;
     title: string;
     host: string;
+    userMaxStorageConfig: number;
     customTheme?: any;
     groups: UserGroupModel[];
     logoImageFile?: FileModel | null;

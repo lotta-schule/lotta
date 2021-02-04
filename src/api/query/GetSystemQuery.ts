@@ -8,6 +8,7 @@ export const GetSystemQuery = gql`
             slug
             host
             customTheme
+            userMaxStorageConfig
             logoImageFile {
                 id
                 remoteLocation
