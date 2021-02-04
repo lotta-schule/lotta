@@ -14,6 +14,7 @@ defmodule ApiWeb.Schema.System.System do
     field :host, :string, resolve: &SystemResolver.host/2
     field :logo_image_file, :file
     field :background_image_file, :file
+    field :user_max_storage_config, :integer
 
     field :groups, list_of(:user_group), resolve: &UserGroupResolver.all/2
 
@@ -26,5 +27,13 @@ defmodule ApiWeb.Schema.System.System do
     field :is_main_domain, :boolean
     field :inserted_at, :naive_datetime
     field :updated_at, :naive_datetime
+  end
+
+  input_object :system_input do
+    field :title, :string
+    field :custom_theme, :json
+    field :logo_image_file, :select_file_input
+    field :background_image_file, :select_file_input
+    field :user_max_storage_config, :integer
   end
 end

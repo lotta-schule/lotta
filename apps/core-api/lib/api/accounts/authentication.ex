@@ -3,7 +3,6 @@ defmodule Api.Accounts.Authentication do
   Helper module for authentication purposes
   """
 
-  import Bcrypt
   import Ecto.Query
 
   alias ApiWeb.Auth.AccessToken
@@ -39,10 +38,60 @@ defmodule Api.Accounts.Authentication do
           where: fragment("lower(?)", u.email) == ^username
       )
 
-    if user && verify_pass(given_pass, user.password_hash) do
-      {:ok, user}
+    if verify_user_pass(user, given_pass) do
+      user
+      |> maybe_migrate_password_hashing_format(given_pass)
     else
       {:error, "Falsche Zugangsdaten."}
+    end
+  end
+
+  @doc """
+  Validates a password for a given user.
+
+  Returns true if the given password is valid, otherwise return false.
+  """
+  @doc since: "2.3.0"
+
+  @spec verify_user_pass(User.t() | nil, String.t()) :: boolean()
+
+  def verify_user_pass(user, password) do
+    cond do
+      is_nil(user) ->
+        false
+
+      user.password_hash_format == 1 ->
+        Argon2.verify_pass(password, user.password_hash)
+
+      true ->
+        Bcrypt.verify_pass(password, user.password_hash)
+    end
+  end
+
+  @doc """
+  Migrate the password to a newer format if one is in use
+
+  Returns {:ok, user} if the operation was successfull, otherwise return {:error, error}
+  """
+  @doc since: "2.3.0"
+
+  @spec maybe_migrate_password_hashing_format(User.t(), String.t()) ::
+          {:ok, User.t()} | {:error, term()}
+
+  def maybe_migrate_password_hashing_format(user, password) do
+    # PW Hashing formats:
+    # 0   :   BCrypt
+    # 1   :   Argon2
+    newest_password_hashing_format = 1
+
+    if not is_nil(user.password_hash) and not is_nil(user.password_hash_format) and
+         user.password_hash_format < newest_password_hashing_format do
+      user
+      |> Ecto.Changeset.change(Argon2.add_hash(password))
+      |> Ecto.Changeset.put_change(:password_hash_format, 1)
+      |> Repo.update()
+    else
+      {:ok, user}
     end
   end
 

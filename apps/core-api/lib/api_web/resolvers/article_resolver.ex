@@ -13,8 +13,10 @@ defmodule ApiWeb.ArticleResolver do
     cond do
       is_nil(article) ->
         {:error, "Beitrag nicht gefunden."}
+
       not can_read?(current_user, article) ->
         {:error, "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
+
       true ->
         {:ok, article}
     end

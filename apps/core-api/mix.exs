@@ -70,6 +70,7 @@ defmodule Api.MixProject do
       {:jason, "~> 1.2.0"},
       {:plug_cowboy, "~> 2.3.0"},
       {:comeonin, "~> 5.3.1"},
+      {:argon2_elixir, "~> 2.4.0"},
       {:bcrypt_elixir, "~> 2.2.0"},
       {:guardian, "~> 2.1.1"},
       {:ex_aws, "~> 2.1.6"},

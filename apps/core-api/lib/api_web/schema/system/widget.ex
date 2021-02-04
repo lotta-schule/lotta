@@ -31,11 +31,4 @@ defmodule ApiWeb.Schema.System.Widget do
   input_object :select_widget_input do
     field :id, :id
   end
-
-  input_object :system_input do
-    field :title, :string
-    field :custom_theme, :json
-    field :logo_image_file, :select_file_input
-    field :background_image_file, :select_file_input
-  end
 end
