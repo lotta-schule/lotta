@@ -22,7 +22,8 @@ export interface GroupSelectProps {
 
 const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
     root: {
-        margin: theme.spacing(1, 0)
+        margin: theme.spacing(1, 0),
+        position: 'relative',
     },
     publicGroupSelectionLabel: {
         margin: 0
@@ -67,9 +68,11 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
     },
     listBox: {
         margin: theme.spacing(1, 0, 0),
-        width: 'auto',
+        width: '100%',
         padding: 0,
-        position: 'fixed',
+        position: 'absolute',
+        top: '100%',
+        left: 0,
         listStyle: 'none',
         backgroundColor: theme.palette.background.paper,
         overflow: 'auto',
@@ -131,7 +134,7 @@ export const GroupSelect = memo<GroupSelectProps>(({ className, variant, label, 
         options: groups,
         multiple: true,
         disableCloseOnSelect: true,
-        getOptionLabel: option => option.name,
+        getOptionLabel: ({ name }) => name,
         getOptionSelected: (option, value) => option.id === value.id,
         onInputChange: (_event, value, reason) => {
             if (reason !== 'reset') {

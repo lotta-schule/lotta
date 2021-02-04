@@ -11,7 +11,8 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
-        margin: theme.spacing(1, 0)
+        margin: theme.spacing(1, 0),
+        position: 'relative'
     },
     inputWrapper: {
         color: 'inherit',
@@ -26,7 +27,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: theme.spacing(1, 0, 0),
         width: 'auto',
         padding: 0,
-        position: 'fixed',
+        position: 'absolute',
+        top: '100%',
+        left: 0,
         listStyle: 'none',
         backgroundColor: theme.palette.background.paper,
         overflow: 'auto',
