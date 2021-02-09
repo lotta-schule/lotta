@@ -30,6 +30,8 @@ rabbitmq_host = "rabbitmq"
 redis_host = "redis"
 elasticsearch_host = "elasticsearch"
 
+config :api, :environment, :test
+
 # Configure your database
 config :api, Api.Repo,
   username: "lotta",

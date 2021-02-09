@@ -1,4 +1,4 @@
-defmodule Api.SystemTest do
+defmodule Api.DefaultContentTest do
   @moduledoc false
 
   use Api.DataCase
@@ -8,11 +8,12 @@ defmodule Api.SystemTest do
   alias Api.Repo
   alias Api.Accounts.{File, Directory, User, UserGroup}
   alias Api.Content.Article
-  alias Api.System.Category
+  alias Api.System.{Category, DefaultContent}
   alias Api.Accounts.Authentication
 
   describe "default content" do
     test "should create a default admin user" do
+      DefaultContent.create_default_content()
       users = Repo.all(User)
       assert Enum.count(users) == 1
       user = List.first(users)
@@ -24,6 +25,7 @@ defmodule Api.SystemTest do
     end
 
     test "should create default groups" do
+      DefaultContent.create_default_content()
       groups = Repo.all(UserGroup)
       assert Enum.count(groups) == 3
       refute is_nil(Enum.find(groups, &(&1.is_admin_group and &1.name == "Administrator")))
@@ -32,17 +34,21 @@ defmodule Api.SystemTest do
     end
 
     test "should create a home page" do
+      DefaultContent.create_default_content()
       categories = Repo.all(Category)
       assert Enum.count(categories, & &1.is_homepage) == 1
     end
 
     test "should create content category" do
+      DefaultContent.create_default_content()
       categories = Repo.all(Category)
       assert Enum.count(categories) == 2
       refute is_nil(Enum.find(categories, &(&1.title == "Über lotta")))
     end
 
     test "should have three articles in help category" do
+      DefaultContent.create_default_content()
+
       articles =
         Article
         |> Repo.all()
@@ -56,6 +62,8 @@ defmodule Api.SystemTest do
     end
 
     test "default article about categories should have correct format" do
+      DefaultContent.create_default_content()
+
       article =
         Article
         |> Repo.get_by!(
@@ -68,6 +76,8 @@ defmodule Api.SystemTest do
     end
 
     test "default article about users and groups should have correct format" do
+      DefaultContent.create_default_content()
+
       article =
         Article
         |> Repo.get_by!(
@@ -84,6 +94,8 @@ defmodule Api.SystemTest do
     end
 
     test "default Welcome article should have correct format" do
+      DefaultContent.create_default_content()
+
       article =
         Article
         |> Repo.get_by!(title: "Willkommen")
@@ -94,6 +106,8 @@ defmodule Api.SystemTest do
     end
 
     test "there should be a public directory" do
+      DefaultContent.create_default_content()
+
       public_directory =
         from(d in Directory,
           where: is_nil(d.parent_directory_id) and is_nil(d.user_id)
