@@ -17,17 +17,16 @@ defmodule Api.Application do
       {Absinthe.Subscription, ApiWeb.Endpoint},
       {Redix, redis_config},
       Api.Elasticsearch.Cluster,
-      # Starts a worker by calling: Api.Worker.start_link(arg)
-      {Api.Queue.MediaConversionRequestPublisher, []},
-      {Api.Queue.MediaConversionConsumer, []},
+      Api.Queue.MediaConversionRequestPublisher,
+      Api.Queue.MediaConversionConsumer,
       {ConCache,
-       name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
+       name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)},
+      Api.System.DefaultContent
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Api.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one, name: Api.Supervisor)
   end
 
   # Tell Phoenix to update the endpoint configuration
