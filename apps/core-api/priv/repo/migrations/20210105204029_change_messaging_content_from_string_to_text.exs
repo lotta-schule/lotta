@@ -3,8 +3,7 @@ defmodule Api.Repo.Migrations.ChangeMessagingContentFromStringToText do
 
   def change do
     alter table(:messages) do
-      modify :content, :text,
-        from: :string
+      modify :content, :text, from: :string
     end
   end
 end

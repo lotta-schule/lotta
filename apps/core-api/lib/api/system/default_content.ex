@@ -3,6 +3,8 @@ defmodule Api.System.DefaultContent do
   All the data for adding default content to a new instance
   """
 
+  use Task, restart: :transient
+
   require Logger
 
   import Ecto.Changeset
@@ -84,6 +86,17 @@ defmodule Api.System.DefaultContent do
     def terminate(%Context{error: reason}), do: {:error, reason}
   end
 
+  @doc false
+  def start_link(_args \\ []) do
+    Task.start_link(fn ->
+      if Repo.aggregate(User, :count, :id) == 0 do
+        create_default_content()
+      else
+        :ok
+      end
+    end)
+  end
+
   @doc """
   Creates the default content for a new tenant.
   The tenant should already have been created, the user should be eligible to be administrator
@@ -156,10 +169,10 @@ defmodule Api.System.DefaultContent do
     |> Context.execute_change(
       {:insert,
        %Category{
-         title: "Startseite",
-         sort_key: 0,
+         title: "Über lotta",
+         sort_key: 10,
          is_sidenav: false,
-         is_homepage: true
+         is_homepage: false
        }},
       :content_category
     )
@@ -403,7 +416,7 @@ defmodule Api.System.DefaultContent do
         title: "Willkommen",
         is_pinned_to_top: true,
         topic: "Hilfe",
-        preview: "Ihre ersten Schritte in Lotta"
+        preview: "Ihre ersten Schritte mit Lotta"
       }
       |> change()
       |> put_assoc(:category, category)
@@ -426,9 +439,7 @@ defmodule Api.System.DefaultContent do
   end
 
   defp send_ready_email(%Context{user: user} = ctx) do
-    Api.Mailer.deliver_later(
-      Api.Email.lotta_ready_mail(user)
-    )
+    Api.Mailer.deliver_later(Api.Email.lotta_ready_mail(user))
     ctx
   end
 
