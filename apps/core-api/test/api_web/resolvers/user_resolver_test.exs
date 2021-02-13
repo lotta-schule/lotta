@@ -274,6 +274,149 @@ defmodule ApiWeb.UserResolverTest do
     end
   end
 
+  describe "resolve assigned_groups" do
+    @query """
+    query GetUser($id: ID!) {
+      user(id: $id) {
+        assigned_groups {
+          id
+          name
+        }
+      }
+    }
+    """
+    test "returns the user assigned_groups for self", %{user: user, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "assigned_groups" => [%{"id" => _id, "name" => "Lehrer"}]
+                 }
+               }
+             } = res
+    end
+
+    test "returns the user assigned_groups for admin", %{user: user, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "assigned_groups" => [%{"id" => _id, "name" => "Lehrer"}]
+                 }
+               }
+             } = res
+    end
+
+    test "does return the user assigned_groups for others", %{user2: user2, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "assigned_groups" => []
+                 }
+               }
+             } = res
+    end
+  end
+
+  describe "resolve groups" do
+    @query """
+    query GetUser($id: ID!) {
+      user(id: $id) {
+        groups {
+          id
+          name
+        }
+      }
+    }
+    """
+    test "returns the user groups for self", %{user: user, user_jwt: user_jwt} do
+      user
+      |> Ecto.build_assoc(:enrollment_tokens)
+      |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
+      |> Repo.insert!()
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "groups" => groups
+                 }
+               }
+             } = res
+
+      assert Enum.any?(groups, fn %{"name" => name} -> name == "Lehrer" end)
+      assert Enum.any?(groups, fn %{"name" => name} -> name == "Schüler" end)
+    end
+
+    test "returns the user groups for admin", %{user: user, admin_jwt: admin_jwt} do
+      user
+      |> Ecto.build_assoc(:enrollment_tokens)
+      |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
+      |> Repo.insert!()
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> get("/api", query: @query, variables: %{id: user.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "groups" => groups
+                 }
+               }
+             } = res
+
+      assert Enum.any?(groups, fn %{"name" => name} -> name == "Lehrer" end)
+      assert Enum.any?(groups, fn %{"name" => name} -> name == "Schüler" end)
+    end
+
+    test "does return the user groups for others", %{user2: user2, user_jwt: user_jwt} do
+      user2
+      |> Ecto.build_assoc(:enrollment_tokens)
+      |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
+      |> Repo.insert!()
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: user2.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "groups" => groups
+                 }
+               }
+             } = res
+
+      assert Enum.any?(groups, fn %{"name" => name} -> name == "Schüler" end)
+    end
+  end
+
   describe "currentUser query" do
     @query """
     {
