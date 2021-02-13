@@ -33,8 +33,18 @@ defmodule ApiWeb.Auth.AccessToken do
     end
   end
 
+  @doc """
+  Given a user, returns the claims to be encoded into the token.
+  Relevant informations that will be encoded into the token are:
+  - email
+  - wether the user is admin
+  - all the user's groups' ids
+  - the user's assigned groups' ids
+  """
+  @doc since: "1.0.0"
+
   @spec build_claims(Guardian.Token.claims(), User.t(), Guardian.options()) ::
-          {:ok, map()} | {:error, term()}
+          {:ok, map()} | {:error, atom()}
 
   def build_claims(claims, user, _options) do
     user =

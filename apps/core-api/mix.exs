@@ -22,7 +22,8 @@ defmodule Api.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
-      ]
+      ],
+      dialyzer: [plt_add_deps: :transitive]
     ]
   end
 
@@ -87,6 +88,8 @@ defmodule Api.MixProject do
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
       {:elasticsearch, "~> 1.0.0"},
+      # Development
+      {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
       # live dashboard
       {:telemetry_poller, "~> 0.5"},
       {:telemetry_metrics, "~> 0.5"},

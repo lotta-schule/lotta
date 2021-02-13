@@ -32,7 +32,7 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
     GenRMQ.Publisher.publish(
       Api.Queue.MediaConversionRequestPublisher,
       encoded_file,
-      prefix
+      prefix()
     )
 
     file
@@ -49,7 +49,7 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
   defp prefixed(name) do
     case prefix() do
       nil -> name
-      prefix -> "#{prefix()}_#{name}"
+      prefix -> "#{prefix}_#{name}"
     end
   end
 
@@ -63,7 +63,7 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
       channel,
       {:direct, prefixed(@exchange)},
       @queue,
-      prefix
+      prefix()
     )
     |> IO.inspect()
 

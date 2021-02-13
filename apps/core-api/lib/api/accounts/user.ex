@@ -52,6 +52,14 @@ defmodule Api.Accounts.User do
 
   @type t :: %__MODULE__{id: id, email: email(), name: String.t()}
 
+
+
+  @doc """
+  Returns a changeset for when the admin wants to update *another user*'s changeset.
+  """
+  @doc since: "1.0.0"
+
+  @spec update_changeset(t(), map()) :: Changeset.t()
   def update_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
     |> Repo.preload(:groups)
@@ -59,6 +67,14 @@ defmodule Api.Accounts.User do
     |> put_assoc_groups(params)
   end
 
+  @doc """
+  Returns a changeset for when the user wants to update *his own* changeset.
+  Updating the password is not part of this changeset. The password has to be
+  updated separatly (see `Api.Accounts.User.update_password_changeset/2`)
+  """
+  @doc since: "1.0.0"
+
+  @spec update_profile_changeset(t(), map()) :: Changeset.t()
   def update_profile_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
     |> Repo.preload([:avatar_image_file, :enrollment_tokens])
@@ -70,6 +86,13 @@ defmodule Api.Accounts.User do
     |> put_assoc_enrollment_tokens(params)
     |> normalize_email()
   end
+
+  @doc """
+  Returns a changeset for when the user wants to register.
+  """
+  @doc since: "1.0.0"
+
+  @spec registration_changeset(t(), map()) :: Changeset.t()
 
   def registration_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
@@ -85,6 +108,12 @@ defmodule Api.Accounts.User do
     |> put_pass_hash()
   end
 
+  @doc """
+  Returns a changeset for when the user wants to update *his own password*.
+  """
+  @doc since: "1.0.0"
+
+  @spec update_password_changeset(t(), map()) :: Changeset.t()
   def update_password_changeset(%__MODULE__{} = user, password)
       when is_binary(password) and byte_size(password) > 0 do
     user

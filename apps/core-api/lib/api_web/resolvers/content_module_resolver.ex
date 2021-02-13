@@ -112,7 +112,7 @@ defmodule ApiWeb.ContentModuleResolver do
              filename: filename
            }}
         else
-          res ->
+          _res ->
             {"(Datei nicht gültig)", nil}
         end
 

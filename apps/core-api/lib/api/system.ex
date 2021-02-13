@@ -3,7 +3,7 @@ defmodule Api.System do
 
   alias Api.Repo
   alias Api.Accounts.{File, User}
-  alias Api.System.{Category, Configuration, CustomDomain, Widget}
+  alias Api.System.{Category, Configuration, Widget}
 
   @allowed_configuration_keys [
     "title",
@@ -180,7 +180,6 @@ defmodule Api.System do
         "https://"
       end
 
-    config = get_configuration()
     "#{protocol}#{Application.fetch_env!(:api, :hostname)}"
   end
 
@@ -223,7 +222,9 @@ defmodule Api.System do
 
   """
   @doc since: "1.0.0"
-  @spec get_category(Category.id()) :: list(Category.t())
+
+  @spec get_category(Category.id()) :: Category.t() | nil
+
   def get_category(id), do: Repo.get(Category, id)
 
   @doc """
@@ -260,7 +261,9 @@ defmodule Api.System do
 
   """
   @doc since: "1.0.0"
+
   @spec update_category(Category.t(), map()) :: {:ok, Category.t()} | {:error, Ecto.Changeset.t()}
+
   def update_category(%Category{} = category, attrs) do
     category
     |> Category.changeset(attrs)
