@@ -18,6 +18,7 @@ db_name = System.fetch_env!("POSTGRES_DB")
 db_schema = System.fetch_env!("POSTGRES_SCHEMA")
 # config
 slug = System.fetch_env!("SHORT_TITLE")
+title = System.fetch_env!("TITLE")
 # redis
 redis_host = System.fetch_env!("REDIS_HOST")
 redis_password = System.fetch_env!("REDIS_PASSWORD")
@@ -60,7 +61,7 @@ config :api, Api.Repo,
 
 config :api, :default_configuration, %{
   slug: slug,
-  title: "",
+  title: title,
   custom_theme: %{}
 }
 

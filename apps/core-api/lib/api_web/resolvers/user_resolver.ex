@@ -72,15 +72,18 @@ defmodule ApiWeb.UserResolver do
       |> Repo.preload([:groups, :enrollment_tokens])
 
     {:ok,
-     Map.get(user, :groups, []) ++
-       (user
-        |> Map.get(:enrollment_tokens, [])
+     user.groups ++
+       (user.enrollment_tokens
         |> Enum.map(& &1.enrollment_token)
         |> Accounts.list_groups_for_enrollment_tokens())}
   end
 
   def resolve_assigned_groups(user, _args, _info) do
-    {:ok, Map.fetch!(user, :groups)}
+    user =
+      user
+      |> Repo.preload([:groups])
+
+    {:ok, user.groups}
   end
 
   def resolve_enrollment_tokens(user, _args, %{context: %Context{current_user: current_user}}) do

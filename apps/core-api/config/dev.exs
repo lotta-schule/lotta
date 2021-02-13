@@ -7,6 +7,8 @@ ugc_s3_compat_bucket = System.get_env("UGC_S3_COMPAT_BUCKET", "")
 ugc_s3_compat_region = System.get_env("UGC_S3_COMPAT_REGION", "")
 ugc_s3_compat_cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL", "")
 
+config :api, :environment, :development
+
 # Configure your database
 config :api, Api.Repo,
   username: "lotta",

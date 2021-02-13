@@ -22,7 +22,7 @@ defmodule Api.Release do
 
   def drop do
     for repo <- repos() do
-      :ok = Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
+      {:ok, _, _} = Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
     end
   end
 
@@ -32,14 +32,6 @@ defmodule Api.Release do
         repo,
         &Migrator.run(&1, :down, to: version, prefix: database_prefix(repo))
       )
-  end
-
-  def init_default_content() do
-    Application.ensure_all_started(@app)
-
-    unless Api.Repo.aggregate(Api.Accounts.User, :count, :id) > 0 do
-      Api.System.DefaultContent.create_default_content()
-    end
   end
 
   def build_elasticsearch_indexes do
