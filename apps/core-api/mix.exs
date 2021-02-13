@@ -5,6 +5,9 @@ defmodule Api.MixProject do
     [
       app: :api,
       version: "2.3.3",
+      name: "Lotta API Server",
+      source_url: "https://gitlab.com/medienportal/api-server",
+      homepage_url: "https://lotta.schule",
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -22,6 +25,11 @@ defmodule Api.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
+      ],
+      docs: [
+        main: "Api",
+        logo: "priv/static/logo.png",
+        extras: ["README.md"]
       ],
       dialyzer: [plt_add_deps: :transitive]
     ]
@@ -56,7 +64,6 @@ defmodule Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.5.3"},
       {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.1"},
@@ -94,6 +101,9 @@ defmodule Api.MixProject do
       {:telemetry_poller, "~> 0.5"},
       {:telemetry_metrics, "~> 0.5"},
       {:phoenix_live_dashboard, "~> 0.2.7"},
+      # Dev
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       # test
       {:excoveralls, "~> 0.12", only: :test}
     ]

@@ -42,7 +42,7 @@ test:
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get --only test
+    - mix deps.get
   script:
     # gitlab k8s-runner has a problem with service hostname exposition
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
@@ -74,6 +74,25 @@ build docker image:staging:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}, \"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKER_HUB_USER:$DOCKER_HUB_PASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --destination lotta/api:canary;
+  only:
+    refs:
+      - develop
+
+pages:
+  stage: build
+  environment:
+    name: production
+  image: elixir:1.11.2
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get
+  script:
+    - mix docs
+    - mv doc public
+  artifacts:
+    paths:
+      - "public"
   only:
     refs:
       - develop

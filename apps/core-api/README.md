@@ -7,7 +7,11 @@ Phoenix, Elixir & Absinthe
 ## Setup
 
 Make sure to have docker installed.
-Then, copy the `.env.sample` to `.env`, and replace the values by values for a real s3-compatible store (you can use s3 itself, or digitalocean for example. You could also start a minIO server via docker (TODO: that would be useful to add to standard developer setup))
+Then, copy the `.env.sample` to `.env`, and replace the values by values
+for a real s3-compatible store (you can use s3 itself,
+or digitalocean for example.
+You could also start a minIO server via docker
+(TODO: that would be useful to add to standard developer setup))
 
 Then, install dependencies:
 
@@ -29,8 +33,6 @@ make setup_db
 make start
 ```
 
-Now you can visit [`localhost:4000`](http://localhost:4000/graphiql) for GraphiQL browser.
-
 ## Develop
 
 ```bash
@@ -39,6 +41,9 @@ make start
 
 # execute tests
 make tests
+
+# execute tests
+mix doc
 
 # install dependencies
 make dependencies
