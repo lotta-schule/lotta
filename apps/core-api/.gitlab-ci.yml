@@ -26,28 +26,28 @@ services:
       - "-Ediscovery.type=single-node"
       - "-Expack.security.enabled=false"
 
-# test:
-#   stage: test
-#   image: elixir:1.11.2
-#   variables:
-#     MIX_ENV: test
-#     POSTGRES_PASSWORD: lotta
-#     POSTGRES_USER: lotta
-#     POSTGRES_DB: api_test
-#     REDIS_PASSWORD: lotta
-#     UGC_S3_COMPAT_ACCESS_KEY_ID: "${S3COMPAT_ACCESS_KEY_ID}"
-#     UGC_S3_COMPAT_SECRET_ACCESS_KEY: "${S3COMPAT_SECRET_ACCESS_KEY}"
-#     UGC_S3_COMPAT_ENDPOINT: mp4-dev-ugc.fra1.digitaloceanspaces.com
-#     UGC_S3_COMPAT_BUCKET: mp4-dev-ugc
-#   before_script:
-#     - mix local.hex --force
-#     - mix local.rebar --force
-#     - mix deps.get
-#   script:
-#     # gitlab k8s-runner has a problem with service hostname exposition
-#     # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
-#     - make tests-ci
-#   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
+test:
+  stage: test
+  image: elixir:1.11.2
+  variables:
+    MIX_ENV: test
+    POSTGRES_PASSWORD: lotta
+    POSTGRES_USER: lotta
+    POSTGRES_DB: api_test
+    REDIS_PASSWORD: lotta
+    UGC_S3_COMPAT_ACCESS_KEY_ID: "${S3COMPAT_ACCESS_KEY_ID}"
+    UGC_S3_COMPAT_SECRET_ACCESS_KEY: "${S3COMPAT_SECRET_ACCESS_KEY}"
+    UGC_S3_COMPAT_ENDPOINT: mp4-dev-ugc.fra1.digitaloceanspaces.com
+    UGC_S3_COMPAT_BUCKET: mp4-dev-ugc
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get
+  script:
+    # gitlab k8s-runner has a problem with service hostname exposition
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
+    - make tests-ci
+  coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
 
 build docker image:production:
   stage: build
@@ -89,7 +89,7 @@ pages:
     - mix deps.get
   script:
     - mix docs
-    - mv docs public
+    - mv doc public
   artifacts:
     paths:
       - "public"
