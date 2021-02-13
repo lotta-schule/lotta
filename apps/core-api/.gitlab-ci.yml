@@ -77,3 +77,16 @@ build docker image:staging:
   only:
     refs:
       - develop
+
+pages:
+  stage: build
+  environment:
+    name: production
+  image: elixir:1.11.2
+  script:
+    - mix docs
+    - mv docs public
+  artifacts:
+    paths:
+      - "public"
+
