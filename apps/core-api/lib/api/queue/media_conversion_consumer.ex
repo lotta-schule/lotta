@@ -141,7 +141,7 @@ defmodule Api.Queue.MediaConversionConsumer do
   defp prefixed(name) do
     case prefix() do
       nil -> name
-      prefix -> "#{prefix()}_#{name}"
+      prefix -> "#{prefix}_#{name}"
     end
   end
 end

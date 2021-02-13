@@ -4,8 +4,8 @@ defmodule Api.Messages do
   """
 
   import Ecto.Query
+
   alias Api.Repo
-  alias Api.Accounts
   alias Api.Accounts.User
   alias Api.Messages.Message
 

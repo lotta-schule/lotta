@@ -1,7 +1,6 @@
 defmodule ApiWeb.SystemResolver do
   @moduledoc false
 
-  alias ApiWeb.Context
   alias Api.System
 
   def get(_args, _info) do

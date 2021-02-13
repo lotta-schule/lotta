@@ -26,7 +26,7 @@ defmodule ApiWeb.Schema.Messages do
   object :messages_subscriptions do
     field :receive_message, :message do
       config(fn
-        args, %{context: %{current_user: %{id: user_id, all_groups: groups}}} ->
+        _args, %{context: %{current_user: %{id: user_id, all_groups: groups}}} ->
           {:ok,
            topic: ["messages:user:#{user_id}" | Enum.map(groups, &"messages:group:#{&1.id}")]}
       end)

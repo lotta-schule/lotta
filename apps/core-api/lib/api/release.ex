@@ -22,7 +22,7 @@ defmodule Api.Release do
 
   def drop do
     for repo <- repos() do
-      :ok = Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
+      {:ok, _, _} = Migrator.with_repo(repo, & &1.__adapter__.storage_down(&1.config))
     end
   end
 

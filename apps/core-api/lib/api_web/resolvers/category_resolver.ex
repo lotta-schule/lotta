@@ -13,7 +13,7 @@ defmodule ApiWeb.CategoryResolver do
   def update(%{id: id, category: category_params}, _info) do
     category = System.get_category(id)
 
-    if category do
+    if not is_nil(category) do
       category
       |> System.update_category(category_params)
       |> format_errors("Bearbeiten der Kategorie fehlgeschlagen.")

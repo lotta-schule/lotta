@@ -572,7 +572,10 @@ defmodule Api.Accounts do
   @spec ensure_archive_directory(String.t() | nil) :: [Directory.t()]
 
   defp ensure_archive_directory(path) do
-    ["archiv" | if(is_nil(path), do: [], else: String.split(path, "/"))]
+    [
+      "archiv"
+      | if(is_nil(path), do: [], else: String.split(path, "/"))
+    ]
     |> Enum.reduce([], fn dirname, dir_list ->
       parent_directory = List.last(dir_list)
 
