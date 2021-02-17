@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GetArticleQuery = gql`
-    query GetArticle($id: ID!) {
-        article(id: $id) {
+export const ArticleIsUpdatedSubscription = gql`
+    subscription ArticleIsUpdated($id: ID!) {
+        article: articleIsUpdated(id: $id) {
             id
             insertedAt
             updatedAt

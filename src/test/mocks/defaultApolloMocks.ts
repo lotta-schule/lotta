@@ -4,6 +4,7 @@ import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { ClientModel, UserModel } from 'model';
 import { InMemoryCache } from '@apollo/client';
+import { ReceiveMessageSubscription } from 'api/subscription/ReceiveMessageSubscription';
 
 export interface ApolloMocksOptions {
     currentUser?: UserModel;
@@ -22,7 +23,8 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
         {
             request: { query: GetCategoriesQuery, },
             result: { data: { categories: allCategories } }
-        }
+        },
+        { request: { query: ReceiveMessageSubscription }, result: {}}
     ];
     const cache = new InMemoryCache({
         addTypename: false
