@@ -2,6 +2,7 @@ import React, { FunctionComponent, memo } from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { Player, ControlBar } from 'video-react';
 import find from 'lodash/find';
+import { Typography } from '@material-ui/core';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 
 interface VideoVideoProps {
@@ -30,7 +31,15 @@ export const VideoVideo: FunctionComponent<VideoVideoProps> = memo(({ contentMod
                 width={'100%'}
                 height={350}
                 icon={'video'}
-                description={'Bitte habe etwas Geduld! Das Video wird nun für verschiedene Endgeräte optimiert. Der Prozess kann einige Minuten dauern.'}
+                description={(
+                    <Typography>
+                        Bitte klicken Sie jetzt auf "SPEICHERN". 
+                        <br /> 
+                        Ihr Video wird nun umgewandelt und für verschiedene Endgeräte optimiert. Der Prozess kann einige Minuten dauern und läuft im Hintergrund. 
+                        <br /> 
+                        Nach dem Speichern, können Sie die Seite verlassen.
+                    </Typography>)
+                    }
             />
         );
     }

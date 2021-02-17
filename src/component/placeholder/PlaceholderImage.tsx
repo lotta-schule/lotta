@@ -5,10 +5,10 @@ export interface PlaceholderImageProps {
     width: number | string;
     height: number | string;
     icon?: 'video' | 'image';
-    description?: string;
+    description?: string | React.ReactElement;
 }
 
-const useStyles = makeStyles<Theme, { iconSource: string, description?: string }>(theme => ({
+const useStyles = makeStyles<Theme, { iconSource: string, description?: string | React.ReactElement }>(theme => ({
     root: {
         backgroundImage: ({ iconSource }) => `url("${iconSource}")`,
         backgroundColor: theme.palette.grey[200],
@@ -29,7 +29,7 @@ export const PlaceholderImage: FunctionComponent<PlaceholderImageProps> = memo((
             style={{ width, height }}
             className={styles.root}
         >
-            <Typography variant={'h5'} style={{ marginBottom: '1em' }}>
+            <Typography variant={'h5'} style={{ margin: '1em auto', }}>
                 {description}
             </Typography>
         </div >
