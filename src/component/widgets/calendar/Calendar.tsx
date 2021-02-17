@@ -9,6 +9,7 @@ import { GetCalendarQuery } from 'api/query/GetCalendarQuery';
 import { CalendarEventModel } from 'model/CalendarEventModel';
 import { WidgetModel, CalendarWidgetConfig, CalendarWidgetCalendarConfig } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -23,7 +24,13 @@ const useStyles = makeStyles(theme => ({
     },
     listItemTextDate: {
         width: '7.5em',
-        flexShrink: 0
+        flexShrink: 0,
+        '&.has-dot': {
+            paddingLeft: '1em',
+            '& > svg': {
+                marginLeft: '-1em'
+            }
+        }
     },
     listItemTextEventDescription: {
         paddingLeft: '.5em',
@@ -41,11 +48,16 @@ const useStyles = makeStyles(theme => ({
         }
     },
     figcaption: {
-        textAlign: 'center',
+        display: 'flex',
+        flexWrap: 'wrap',
+        padding: theme.spacing(1),
         width: '100%',
         backgroundColor: theme.palette.background.paper,
-        '& > span': {
-            padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
+        '& > figure': {
+            display: 'inline-flex',
+            alignItems: 'center',
+            width: '50%',
+            padding: theme.spacing(.5),
         }
     }
 }));
@@ -119,7 +131,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                         return (
                             <React.Fragment key={i}>
                                 <ListItem className={styles.tableline} aria-label={`Ereignis: ${event.summary}`}>
-                                    <ListItemText className={styles.listItemTextDate}>
+                                    <ListItemText className={clsx([styles.listItemTextDate, { 'has-dot': calendars.length > 1 }])}>
                                         {calendars.length > 1 && (
                                             <FiberManualRecord fontSize={'inherit'} htmlColor={event.calendar.color || 'red'} className={styles.calendarColorDot} />
                                         )}

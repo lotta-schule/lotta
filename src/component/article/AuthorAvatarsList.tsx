@@ -3,8 +3,8 @@ import { UserModel } from 'model';
 import { makeStyles, Tooltip, Avatar } from '@material-ui/core';
 import { AvatarGroup } from '@material-ui/lab';
 import { User } from 'util/model';
-import clsx from 'clsx';
 import { theme } from 'theme';
+import clsx from 'clsx';
 
 export interface AuthorAvatarsListProps {
     users: UserModel[];
@@ -34,7 +34,7 @@ export const AuthorAvatarsList = memo<AuthorAvatarsListProps>(({ users, classNam
     return (
         <AvatarGroup max={max ?? 3} classes={{ root: clsx(styles.root, className), avatar: styles.authorAvatar }}>
             {users.map(user => (
-                <Tooltip title={User.getNickname(user)} key={user.id}>
+                <Tooltip title={User.getNickname(user)} key={user.id} enterTouchDelay={100}>
                     <Avatar src={User.getAvatarUrl(user, 40)} />
                 </Tooltip>
             ))}
