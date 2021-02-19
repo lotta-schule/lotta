@@ -1,27 +1,20 @@
 import * as React from 'react';
 import MockDate from 'mockdate';
-import { getRoles, render, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import { EditArticleLayout } from './EditArticleLayout';
+import { ArticleIsUpdatedSubscription } from 'api/subscription/GetArticleSubscription';
+import { ContentModuleType } from 'model';
 import userEvent from '@testing-library/user-event';
-import {ArticleIsUpdatedSubscription} from 'api/subscription/GetArticleSubscription';
-import {ContentModuleType} from 'model';
 
 describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
-
-    const mocks: any[] = [
-        // {
-        //     request: { query: GetUserQuery, variables: { id: KeinErSieEsUser.id } },
-        //     result: { data: { searchUsers: KeinErSieEsUser } }
-        // }
-    ];
 
     it('should render the EditArticleLayout without error', () => {
         render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
+            { currentUser: SomeUser, useCache: true }
         );
     });
 
@@ -29,7 +22,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         const screen = render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
+            { currentUser: SomeUser, useCache: true }
         );
         expect(screen.getByTestId('ArticleEditable')).toBeVisible();
     });
@@ -38,7 +31,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         const screen = render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
+            { currentUser: SomeUser, useCache: true }
         );
         expect(screen.getByTestId('EditArticleSidebar')).toBeVisible();
     });
@@ -48,7 +41,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
+                { currentUser: SomeUser, useCache: true }
             );
             expect(screen.getByTestId('AddModuleBar')).toBeVisible();
         });
@@ -56,7 +49,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         it('should add a contentmodule', () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, { currentUser: SomeUser, additionalMocks: mocks, useCache: true }
+                {}, { currentUser: SomeUser, useCache: true }
             );
             expect(screen.queryAllByTestId('ContentModule')).toHaveLength(3);
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
@@ -125,7 +118,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             await waitFor(() => {
                 expect(onSave).toHaveBeenCalled();
             });
-        }, 10000);
+        }, 20000);
 
         it('should redirect to article page after saving', async () => {
             const onChangeLocation = jest.fn(({ location }) => {
@@ -182,7 +175,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             await waitFor(() => {
                 expect(onChangeLocation).toHaveBeenCalled();
             });
-        }, 15000);
+        }, 20000);
     });
 
     describe('auto-update articles when in editing mode', () => {
@@ -217,7 +210,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             await waitFor(() => {
                 expect(screen.getByRole('textbox', { name: /vorschau/i })).toHaveValue('New Preview-Text');
             });
-        }, 15000);
+        }, 20000);
 
         it('should update basic information like the title when receiving update via subscription after adding a content module', async () => {
             const screen = render(
@@ -251,7 +244,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             await waitFor(() => {
                 expect(screen.getByRole('textbox', { name: /vorschau/i, hidden: true })).toHaveValue('New Preview-Text');
             });
-        }, 15000);
+        }, 20000);
 
         it('should show a dialog when receiving update including content-module change via subscription after adding a content module', async () => {
             const screen = render(
@@ -295,7 +288,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                 expect(screen.getByRole('presentation')).toBeInTheDocument();
                 expect(screen.getByRole('presentation')).toHaveTextContent(/beitrag.*aktualisiert/i);
             });
-        }, 15000);
+        }, 20000);
     });
 
 });
