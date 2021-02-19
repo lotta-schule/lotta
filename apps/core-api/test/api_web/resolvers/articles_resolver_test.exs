@@ -2736,7 +2736,7 @@ defmodule ApiWeb.ArticleResolverTest do
   end
 
   describe "createArticle mutation" do
-    @query """
+    @mutation """
     mutation createArticle($article: ArticleInput!) {
       createArticle(article: $article) {
         title
@@ -2755,7 +2755,7 @@ defmodule ApiWeb.ArticleResolverTest do
         build_conn()
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> post("/api",
-          query: @query,
+          query: @mutation,
           variables: %{
             article: %{
               title: "Ein neuer Artikel",
@@ -2781,7 +2781,7 @@ defmodule ApiWeb.ArticleResolverTest do
     test "return an error if user is not logged in" do
       res =
         build_conn()
-        |> post("/api", query: @query, variables: %{article: %{title: "ABC"}})
+        |> post("/api", query: @mutation, variables: %{article: %{title: "ABC"}})
         |> json_response(200)
 
       assert %{

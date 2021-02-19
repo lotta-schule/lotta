@@ -52,8 +52,6 @@ defmodule Api.Accounts.User do
 
   @type t :: %__MODULE__{id: id, email: email(), name: String.t()}
 
-
-
   @doc """
   Returns a changeset for when the admin wants to update *another user*'s changeset.
   """
