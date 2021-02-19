@@ -16,6 +16,8 @@ export const ComputerExperten = {
             files: [],
             sortKey: 0,
             type: ContentModuleType.TEXT,
+            insertedAt: '2015-05-01T12:00:00.000Z',
+            updatedAt: '2016-03-02T10:00:00.000Z',
             content: {
                 "nodes":{"document":{"data":{},"nodes":[{"data":{"src":"https://ugc.lotta.schule/ugc/55616b07-960a-5b40-85e2-df5463454a18"},"nodes":[{"marks":[],"object":"text","text":""}],"object":"block","type":"image"},{"data":{},"nodes":[{"marks":[],"object":"text","text":"Felix Grell gewann gemeinsam mit Sara Wohlschläger (r.) und Johanna Schischke als Schüler der Stufe 12 einen Preis beim Talentwettbewerb.Foto: Alexander Prautzsch"}],"object":"block","type":"paragraph"},{"data":{},"nodes":[{"marks":[],"object":"text","text":"Schwer e Entscheidungen für Publikum und Jury: In 29 Showeinlagen mit viel Musik und Schauspiel präsentierten sich am Donnerstagabend Schüler der fünften bis zwölften Klassen des Delitzscher Gymnasiums zum Talentwettbewerb „Kleinkunst“ auf der Bühne des Markt 20. Ob Sissi und Ka iser Franz als Moderatoren, eigenwillige Punkrocksongs, bewegende Kurzfilme oder ein Ausflug zu „Tanz der Vampire“ – endlos schienen die Einfälle der Delitzscher Talente. Bei den Zuschauern, die gleich mehrere Preise vergeben konnten, kamen besonders musikalische Einlagen gut an: Beispielsweise die des Gewinnertrios aus der Klassenstufe sieben, Laura Tornack, Melissa Moy und Niklas Uth mit dem Song „I love Rock ’n’ Roll“."}],"object":"block","type":"paragraph"},{"data":{},"nodes":[{"marks":[],"object":"text","text":"Zwei weitere Preise – für die Klassenstufen bis zur neunten beziehungsweise für die zehnten bis zwölften Klassen – vergab die Jury. Und diese zeigte sich besonders von Literaturperformances angetan. Beispielsweise von Friedrich Schillers „Die Räuber“ von Max Rohrberg und Lucas Schulze (Klasse 10). Auch das ergreifende Musikvideo zum Thema Magersucht von Madelaine Kunze und Jasmin Höpping (Klasse 12) begeisterte die Jurymitglieder. Sehr schwer nur konnten sie sich letztendlich für einen Preisträger entscheiden – weshalb sie schließlich erstmalig beide Beiträge mit dem beliebten Jurypreis in der Kategorie zehnte bis zwölfte Klasse prämierten."}],"object":"block","type":"paragraph"}],"object":"document"},"object":"value"}},
             
@@ -42,6 +44,8 @@ export const VivaLaRevolucion = {
             id: '99100',
             sortKey: 0,
             type: ContentModuleType.TEXT,
+            insertedAt: '2016-06-01T16:00:00.000Z',
+            updatedAt: '2016-05-03T04:00:00.000Z',
             files: [],
             configuration: {},
             content: {
@@ -70,6 +74,8 @@ export const Schulfest = {
             id: '100100',
             sortKey: 10,
             type: ContentModuleType.IMAGE_COLLECTION,
+            insertedAt: '2017-09-11T16:00:00.000Z',
+            updatedAt: '2017-10-11T04:00:00.000Z',
             files: [],
             configuration: {
                 imageStyle: 2
@@ -80,6 +86,8 @@ export const Schulfest = {
             id: '100101',
             sortKey: 0,
             type: ContentModuleType.TEXT,
+            insertedAt: '2017-09-11T16:00:00.000Z',
+            updatedAt: '2017-10-11T04:00:00.000Z',
             files: [],
             configuration: {},
             content: {
@@ -91,6 +99,8 @@ export const Schulfest = {
             id: '100102',
             sortKey: 30,
             type: ContentModuleType.VIDEO,
+            insertedAt: '2017-09-11T16:00:00.000Z',
+            updatedAt: '2017-10-11T04:00:00.000Z',
             content: { captions: ['Tino A und Betty B haben den Schnitt für dieses Video organisiert'] },
             configuration: {},
             files: [],
@@ -116,6 +126,8 @@ export const Weihnachtsmarkt = {
             id: '101100',
             sortKey: 20,
             type: ContentModuleType.IMAGE_COLLECTION,
+            insertedAt: '2019-06-01T16:00:00.000Z',
+            updatedAt: '2020-10-11T04:00:00.000Z',
             files: [],
             configuration: {
                 imageStyle: 2
@@ -125,6 +137,8 @@ export const Weihnachtsmarkt = {
             id: '101101',
             sortKey: 10,
             type: ContentModuleType.TEXT,
+            insertedAt: '2019-06-01T16:00:00.000Z',
+            updatedAt: '2020-10-11T04:00:00.000Z',
             files: [],
             configuration: {},
             content: {
@@ -136,6 +150,8 @@ export const Weihnachtsmarkt = {
             id: '101102',
             sortKey: 30,
             type: ContentModuleType.VIDEO,
+            insertedAt: '2019-06-01T16:00:00.000Z',
+            updatedAt: '2020-10-11T04:00:00.000Z',
             content: { captions: ['Tino A und Betty B haben den Schnitt für dieses Video organisiert'] },
             files: [],
             configuration: {},
@@ -161,6 +177,8 @@ export const Klausurenplan = {
             id: '10051',
             sortKey: 0,
             type: ContentModuleType.TITLE,
+            insertedAt: '2019-06-01T16:00:00.000Z',
+            updatedAt: '2020-10-11T04:00:00.000Z',
             content: { title: "Na, wie war dein erster Tag?" },
             configuration: {},
             files: []
@@ -169,6 +187,8 @@ export const Klausurenplan = {
             id: '10052',
             sortKey: 0,
             type: ContentModuleType.DOWNLOAD,
+            insertedAt: '2019-06-01T16:00:00.000Z',
+            updatedAt: '2020-10-11T04:00:00.000Z',
             configuration: {},
             files: []
         }
@@ -193,6 +213,8 @@ export const LehrerListe = {
             id: '10155',
             sortKey: 0,
             type: ContentModuleType.TABLE,
+            insertedAt: '2020-06-01T19:00:00.000Z',
+            updatedAt: '2020-07-11T20:00:00.000Z',
             content: {
                 rows: [
                     [{ text: 'Kürzel' }, { text: 'Name' }],

@@ -6,9 +6,9 @@ import { MessageModel, UserModel } from 'model';
 import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { GetMessagesQuery } from 'api/query/GetMessagesQuery';
-import { ReceiveMessageSubscription } from 'api/subscription/ReceiveMessageSubscription';
 import { getSomeMessages, KeinErSieEsUser, lehrerGroup, schuelerGroup, SomeUser, SomeUserin } from 'test/fixtures';
-import {InMemoryCache} from '@apollo/client';
+import { InMemoryCache } from '@apollo/client';
+import { ReceiveMessageSubscription } from 'api/subscription/ReceiveMessageSubscription';
 
 const user = {
     ...SomeUser,
@@ -23,9 +23,7 @@ describe('component/layouts/navigation/useNewMessagesBadgeNumber', () => {
         cache.writeQuery({ query: GetMessagesQuery, data: { messages } });
         return ({ children }) => (
             <MockedProvider
-                mocks={[
-                    { request: { query: ReceiveMessageSubscription }, result: {}},
-                ]}
+                mocks={[{ request: { query: ReceiveMessageSubscription }, result: {}}]}
                 cache={cache}
                 addTypename={false}
             >

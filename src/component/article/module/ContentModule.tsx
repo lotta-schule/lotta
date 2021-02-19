@@ -122,6 +122,7 @@ export const ContentModule = memo<ContentModuleProps>(({ isEditModeEnabled, cont
         <Card
             className={clsx(styles.card, { active: popupState.isOpen, dragging: isDragging })}
             component={'section'}
+            data-testid={'ContentModule'}
             {...cardProps}
         >
             <Suspense fallback={<CircularProgress />}>

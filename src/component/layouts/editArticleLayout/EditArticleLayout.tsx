@@ -7,8 +7,12 @@ import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
-import { useMutation } from '@apollo/client';
+import { useMutation, useSubscription } from '@apollo/client';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
+import { ArticleIsUpdatedSubscription } from 'api/subscription/GetArticleSubscription';
+import { GetArticleQuery } from 'api/query/GetArticleQuery';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import omit from 'lodash/omit';
 import useRouter from 'use-react-router';
 
@@ -21,10 +25,43 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
     const currentUser = useCurrentUser();
 
     const [editedArticle, setEditedArticle] = React.useState(article);
-    const [saveArticle, { loading: isLoading }] = useMutation<{ article: ArticleModel }, { id: ID, article: any }>(UpdateArticleMutation, {
+    const [isUpdatedArticleModalVisible, setIsUpdatedArticleModalVisible] = React.useState(false);
+    React.useEffect(() => {
+        if (article.id === editedArticle.id) {
+            setEditedArticle({
+                ...editedArticle,
+                ...article,
+                contentModules: editedArticle.contentModules
+            });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [article]);
+    const [saveArticle, { loading: isLoading, data: updatedArticleData }] = useMutation<{ article: ArticleModel }, { id: ID, article: any }>(UpdateArticleMutation, {
         onCompleted: ({ article }) => {
             if (article) {
                 history.push(ArticleUtil.getPath(article));
+            }
+        }
+    });
+    useSubscription<{ article: ArticleModel }, { id: ID }>(ArticleIsUpdatedSubscription, {
+        variables: { id: article.id },
+        skip: isLoading || !!updatedArticleData?.article,
+        onSubscriptionData: ({ client, subscriptionData: { data } }) => {
+            if (data) {
+                client.writeQuery({
+                    query: GetArticleQuery,
+                    variables: { id: article.id },
+                    data
+                });
+                const updatedContentModules =
+                    data.article.contentModules.filter(cm => {
+                        const existingModule = editedArticle.contentModules.find(_cm => _cm.id === cm.id);
+                        return existingModule && new Date(cm.updatedAt).getTime() > new Date(existingModule.updatedAt).getTime()
+                    });
+                const newContentModules = editedArticle.contentModules.filter(_cm => /^-/.test(_cm.id));
+                if (newContentModules.length || updatedContentModules.length) {
+                    setIsUpdatedArticleModalVisible(true);
+                }
             }
         }
     });
@@ -53,6 +90,8 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
                             {
                                 configuration: {},
                                 ...contentModule,
+                                insertedAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
                                 sortKey: editedArticle.contentModules.length ?
                                     Math.max(...editedArticle.contentModules.map(cm => cm.sortKey || 0)) + 10 :
                                     0,
@@ -60,6 +99,25 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
                         ]
                     });
                 }} />
+                <ResponsiveFullScreenDialog open={isUpdatedArticleModalVisible}>
+                    <DialogTitle>Beitrag wurde von einem anderen Nutzer aktualisiert.</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>Module des Beitrags von einem Nutzer verändert.</DialogContentText>
+                        <DialogContentText>Möchtest du den veränderten Beitrag laden? Allerdings gehen dadurch deine Änderungen verloren.</DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setIsUpdatedArticleModalVisible(false)}>Nichts tun</Button>
+                        <Button
+                            color={'primary'}
+                            onClick={() => {
+                                setEditedArticle(article);
+                                setIsUpdatedArticleModalVisible(false);
+                            }}
+                        >
+                            Änderungen laden
+                        </Button>
+                    </DialogActions>
+                </ResponsiveFullScreenDialog>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>
                 <EditArticleSidebar
@@ -83,7 +141,11 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
                                     ...omit(article, ['id']),
                                     contentModules: article.contentModules.map(cm =>
                                         ({
-                                            ...(/^-/.test(cm.id) ? omit(cm, ['id']) : cm),
+                                            ...omit(cm,
+                                                ...(/^-/.test(cm.id) ? ['id'] : []),
+                                                'updatedAt',
+                                                'insertedAt'
+                                            ),
                                             content: cm.content || null,
                                             files: cm.files?.map(({ id }) => ({ id }))
                                         })
