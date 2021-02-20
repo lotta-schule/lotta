@@ -135,7 +135,7 @@ defmodule Api.Content do
   @doc """
   Gets a single article.
 
-  Raises `Ecto.NoResultsError` if the Article does not exist.
+  Returns nil if article is not found
 
   ## Examples
 
@@ -143,9 +143,12 @@ defmodule Api.Content do
       %Article{}
 
       iex> get_article(456)
-      ** (Ecto.NoResultsError)
+      nil
 
   """
+
+  @spec get_article(Article.id()) :: Article.t() | nil
+
   def get_article(id) do
     Repo.get(Article, id)
   end

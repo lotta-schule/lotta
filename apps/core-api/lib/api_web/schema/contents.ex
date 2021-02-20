@@ -91,4 +91,22 @@ defmodule ApiWeb.Schema.Contents do
       resolve(&ApiWeb.ContentModuleResolver.send_form_response/2)
     end
   end
+
+  object :contents_subscriptions do
+    field :article_is_updated, type: :article do
+      arg(:id, non_null(:id))
+
+      config(&ApiWeb.ArticleResolver.article_is_updated_config/2)
+
+      trigger(:update_article,
+        topic: fn article ->
+          ["article:#{article.id}"]
+        end
+      )
+
+      resolve(fn article, _args, _info ->
+        {:ok, article}
+      end)
+    end
+  end
 end

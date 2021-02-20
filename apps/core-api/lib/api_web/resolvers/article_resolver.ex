@@ -102,4 +102,21 @@ defmodule ApiWeb.ArticleResolver do
       {:error, "Beitrag mit der id #{id} nicht gefunden."}
     end
   end
+
+  def article_is_updated_config(%{id: id}, %{context: %Context{current_user: current_user}}) do
+    with {id, _} <- Integer.parse(id, 10),
+         article when not is_nil(article) <- Api.Content.get_article(id),
+         true <- Api.Accounts.Permissions.can_read?(current_user, article) do
+      {:ok, topic: ["article:#{id}"]}
+    else
+      nil ->
+        {:error, "Beitrag nicht gefunden."}
+      false ->
+        {:error, "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
+      {:error, msg} ->
+        {:error, msg}
+      _ ->
+        {:error, "Unbekannter Fehler"}
+    end
+  end
 end
