@@ -125,7 +125,7 @@ defmodule Api.Accounts do
 
   @doc """
   Updates a user by an admin.
-  This is to assign groups or block user.
+  This is to assign groups.
   See `Api.Accounts.update_profile/2` if you want to change your own user's data.
   See `Api.Accounts.User.update_changeset/2` to see the changeset in use.
 

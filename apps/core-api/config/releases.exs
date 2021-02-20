@@ -85,7 +85,6 @@ config :api, :default_user, %{
   name: System.get_env("DEFAULT_USER_NAME"),
   email: System.get_env("DEFAULT_USER_EMAIL"),
   hide_full_name: false,
-  is_blocked: false,
   password: System.get_env("DEFAULT_USER_PASSWORD")
 }
 

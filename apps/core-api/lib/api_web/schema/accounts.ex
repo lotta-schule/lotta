@@ -169,7 +169,6 @@ defmodule ApiWeb.Schema.Accounts do
       middleware(ApiWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
       arg(:id, non_null(:id))
-      arg(:is_blocked, :boolean)
       arg(:groups, list_of(non_null(:select_user_group_input)))
 
       resolve(&ApiWeb.UserResolver.update/2)

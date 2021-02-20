@@ -8,7 +8,7 @@ defmodule ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated do
   @doc false
 
   def call(
-        %{context: %Context{current_user: %{id: _id, is_blocked: false}}} = resolution,
+        %{context: %Context{current_user: %{id: _id}}} = resolution,
         _config
       ),
       do: resolution
