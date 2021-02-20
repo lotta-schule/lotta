@@ -107,7 +107,6 @@ defmodule Api.Repo.Seeder do
 
     Accounts.update_user(alexis, %{groups: [admin_group]})
     Accounts.update_user(eike, %{groups: [lehrer_group]})
-    Accounts.update_user(dr_evil, %{is_blocked: true})
 
     # public files
     public_logos = %Directory{name: "logos"} |> Repo.insert!()

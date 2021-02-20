@@ -133,19 +133,4 @@ defmodule Api.Accounts.Authentication do
     end
   end
 
-  @doc """
-  Ensures a given user is not blocked for a given.
-  Returns `{:error, reason}` if the user is blocked.
-  Returns `:ok` if the user is fine.
-  """
-  @doc since: "2.0.0"
-
-  @spec ensure_user_is_not_blocked(User.t()) :: :ok | {:error, term()}
-
-  def ensure_user_is_not_blocked(%User{} = user) do
-    case user.is_blocked do
-      true -> {:error, "Du wurdest geblockt. Du darfst dich nicht anmelden."}
-      false -> :ok
-    end
-  end
 end

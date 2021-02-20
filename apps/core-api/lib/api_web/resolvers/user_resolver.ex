@@ -139,7 +139,6 @@ defmodule ApiWeb.UserResolver do
 
   def login(%{username: username, password: password}, _info) do
     with {:ok, user} <- login_with_username_pass(username, password),
-         :ok <- ensure_user_is_not_blocked(user),
          {:ok, access_token, refresh_token} <- create_user_tokens(user) do
       {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
     else

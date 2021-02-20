@@ -1054,27 +1054,6 @@ defmodule ApiWeb.UserResolverTest do
              } = res
     end
 
-    test "returns an error if the user is blocked" do
-      res =
-        build_conn()
-        |> post("/api",
-          query: @query,
-          variables: %{username: "drevil@lotta.schule", password: "test123"}
-        )
-        |> json_response(200)
-
-      assert %{
-               "data" => %{
-                 "login" => nil
-               },
-               "errors" => [
-                 %{
-                   "message" => "Du wurdest geblockt. Du darfst dich nicht anmelden.",
-                   "path" => ["login"]
-                 }
-               ]
-             } = res
-    end
   end
 
   describe "requestPasswordResetMutation" do
@@ -1285,10 +1264,9 @@ defmodule ApiWeb.UserResolverTest do
 
   describe "updateUser mutation" do
     @query """
-    mutation updateUser($id: ID!, $groups: [SelectUserGroupInput!], $isBlocked: Boolean) {
-      updateUser(id: $id, groups: $groups, isBlocked: $isBlocked) {
+    mutation updateUser($id: ID!, $groups: [SelectUserGroupInput!]) {
+      updateUser(id: $id, groups: $groups) {
         email
-        isBlocked
         groups {
           name
         }
@@ -1314,7 +1292,6 @@ defmodule ApiWeb.UserResolverTest do
                "data" => %{
                  "updateUser" => %{
                    "email" => "mcurie@lotta.schule",
-                   "isBlocked" => false,
                    "groups" => groups
                  }
                }
@@ -1322,47 +1299,6 @@ defmodule ApiWeb.UserResolverTest do
 
       assert Enum.any?(groups, &(Map.get(&1, "name") == "Schüler"))
       assert Enum.any?(groups, &(Map.get(&1, "name") == "Lehrer"))
-    end
-
-    test "should block a user", %{admin_jwt: admin_jwt, user2: user2} do
-      res =
-        build_conn()
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: user2.id, isBlocked: true})
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "updateUser" => %{
-                   "email" => "mcurie@lotta.schule",
-                   "isBlocked" => true,
-                   "groups" => []
-                 }
-               }
-             }
-
-      assert %User{is_blocked: true} = Repo.get!(User, user2.id)
-    end
-
-    test "should unblock a user",
-         %{admin_jwt: admin_jwt, evil_user: evil_user} do
-      res =
-        build_conn()
-        |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: evil_user.id, isBlocked: false})
-        |> json_response(200)
-
-      assert res == %{
-               "data" => %{
-                 "updateUser" => %{
-                   "email" => "drevil@lotta.schule",
-                   "isBlocked" => false,
-                   "groups" => []
-                 }
-               }
-             }
-
-      assert %User{is_blocked: false} = Repo.get!(User, evil_user.id)
     end
 
     test "should return an error if user does not exist", %{

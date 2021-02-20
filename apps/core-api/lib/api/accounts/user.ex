@@ -19,7 +19,6 @@ defmodule Api.Accounts.User do
     field :class, :string
     field :last_seen, :naive_datetime
     field :hide_full_name, :boolean
-    field :is_blocked, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string
     field :password_hash_format, :integer
@@ -61,7 +60,7 @@ defmodule Api.Accounts.User do
   def update_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
     |> Repo.preload(:groups)
-    |> cast(params, [:is_blocked])
+    |> Changeset.change()
     |> put_assoc_groups(params)
   end
 
