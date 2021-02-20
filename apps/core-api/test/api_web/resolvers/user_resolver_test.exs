@@ -1264,10 +1264,9 @@ defmodule ApiWeb.UserResolverTest do
 
   describe "updateUser mutation" do
     @query """
-    mutation updateUser($id: ID!, $groups: [SelectUserGroupInput!], $isBlocked: Boolean) {
-      updateUser(id: $id, groups: $groups, isBlocked: $isBlocked) {
+    mutation updateUser($id: ID!, $groups: [SelectUserGroupInput!]) {
+      updateUser(id: $id, groups: $groups) {
         email
-        isBlocked
         groups {
           name
         }
@@ -1293,7 +1292,6 @@ defmodule ApiWeb.UserResolverTest do
                "data" => %{
                  "updateUser" => %{
                    "email" => "mcurie@lotta.schule",
-                   "isBlocked" => false,
                    "groups" => groups
                  }
                }
