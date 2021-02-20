@@ -9,7 +9,6 @@ import { UserAvatar } from 'component/user/UserAvatar';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { VirtualizedTable } from 'component/general/VirtualizedTable';
 import { SearchUserField } from './SearchUserField';
-import { Block } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -28,8 +27,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     headline: {
         marginBottom: theme.spacing(2),
-    },
-    inputField: {
     },
     resultsGridItem: {
         display: 'flex',
@@ -67,8 +64,10 @@ export const UsersList = React.memo(() => {
             filterText ? new RegExp(filterText.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'igu').test(user.name!) : true
         )?.map(user =>
             ({
-                avatarImage: <UserAvatar className={styles.avatar} user={user} size={25} />,
-                name: <>{user.isBlocked && <Block color={'error'} />}{user.name}{user.nickname && <> &nbsp; (<strong>{user.nickname}</strong>)</>}</>,
+                avatarImage: (
+                    <UserAvatar className={styles.avatar} user={user} size={25} />
+                ),
+                name: <>{user.name}{user.nickname && <> &nbsp; (<strong>{user.nickname}</strong>)</>}</>,
                 groups: user.groups.map(g => g.name).join(', '),
                 lastSeen: user.lastSeen ? format(new Date(user.lastSeen), 'PPP', { locale: de }) : '',
                 user,
@@ -79,7 +78,7 @@ export const UsersList = React.memo(() => {
     return (
         <>
             <SearchUserField
-                className={clsx(styles.inputField, styles.searchUserField, styles.headline)}
+                className={clsx(styles.searchUserField, styles.headline)}
                 onSelectUser={setSelectedUser}
             />
 
@@ -104,7 +103,6 @@ export const UsersList = React.memo(() => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                className={styles.inputField}
                                 margin={'dense'}
                                 value={filterText}
                                 onChange={e => setFilterText(e.target.value)}

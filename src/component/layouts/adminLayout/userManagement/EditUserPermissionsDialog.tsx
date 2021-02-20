@@ -9,10 +9,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useSystem } from 'util/client/useSystem';
 import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
-import { Block } from '@material-ui/icons';
-import clsx from 'clsx';
 import { useUserGroups } from 'util/client/useUserGroups';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -22,17 +19,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: {
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
-    },
-    blockButton: {
-        marginTop: theme.spacing(3)
-    },
-    enableBlockButton: {
-        backgroundColor: theme.palette.error.main,
-        color: theme.palette.error.contrastText,
-    },
-    disableBlockButton: {
-        backgroundColor: theme.palette.success.main,
-        color: theme.palette.success.contrastText,
     }
 }));
 
@@ -43,7 +29,6 @@ export interface EditUserPermissionsDialogProps {
 
 export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDialogProps> = memo(({ user, onClose }) => {
     const styles = useStyles();
-    const system = useSystem();
     const allUserGroups = useUserGroups();
 
     const { data, loading, error } = useQuery<{ user: UserModel }, { id: ID }>(GetUserQuery, {
@@ -51,9 +36,9 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'cache-first'
     });
-    const [updateUser, { error: updateUserError, loading: isLoadingUpdateUser }] = useMutation<{ user: UserModel }, { id: ID, groups?: { id: ID }[], isBlocked?: boolean }>(
+    const [updateUser, { error: updateUserError }] = useMutation<{ user: UserModel }, { id: ID, groups?: { id: ID }[] }>(
         UpdateUserMutation, {
-            optimisticResponse: ({ id, groups, isBlocked }) => ({
+            optimisticResponse: ({ id, groups }) => ({
                 __typename: 'Mutation',
                 user: {
                     __typename: 'User',
@@ -62,7 +47,6 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                         groups: data?.user.groups.map(group => ({ ...group, __typename: 'UserGroup' })),
                         assignedGroups: allUserGroups.filter(group => groups.map(g => g.id).indexOf(group.id) > -1).map(group => ({ id: group.id, name: group.name, __typename: 'UserGroup' })),
                     },
-                    ...(isBlocked !== undefined) ? { isBlocked } : undefined
                 }
             } as any)
         }
@@ -81,7 +65,6 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                     </Grid>
                     <Grid item xs={9}>
                         <Typography variant="h6" data-testid="UserName">
-                            {(data?.user ?? user).isBlocked && <Block color={'error'} data-testid="UserBlockedIcon" />}
                             {user.name}
                         </Typography>
                         {user.nickname && (
@@ -127,34 +110,6 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                               ))}
                             </span>
                         )}
-                        <Divider />
-                        <section>
-                            {data.user.isBlocked && (
-                                <Button
-                                    data-testid="BlockButton"
-                                    className={clsx(styles.blockButton, styles.disableBlockButton)}
-                                    disabled={isLoadingUpdateUser}
-                                    onClick={() => updateUser({ variables: { id: user.id, isBlocked: false } })}
-                                >
-                                    Nutzer ist gesperrt. Nutzer wieder freischalten.
-                                </Button>
-                            )}
-                            {!data.user.isBlocked && (
-                                <>
-                                    <Button
-                                        data-testid="BlockButton"
-                                        className={clsx(styles.blockButton, styles.enableBlockButton)}
-                                        disabled={isLoadingUpdateUser}
-                                        onClick={() => updateUser({ variables: { id: user.id, isBlocked: true } })}
-                                    >
-                                        Nutzer sperren
-                                    </Button>
-                                    <Typography variant={'subtitle2'}>
-                                        Ein gesperrter Nutzer wird abgemeldet und kann sich nicht mehr auf der Seite von "{system!.title}" anmelden.
-                                    </Typography>
-                                </>
-                            )}
-                        </section>
                     </>
                 )}
             </DialogContent>

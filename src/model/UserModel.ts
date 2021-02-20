@@ -16,6 +16,5 @@ export interface UserModel {
     assignedGroups?: UserGroupModel[];
     groups: UserGroupModel[];
     avatarImageFile?: FileModel | null;
-    isBlocked?: boolean;
     enrollmentTokens?: string[];
 }
