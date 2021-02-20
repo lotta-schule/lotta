@@ -1,10 +1,10 @@
-import React, { memo, useLayoutEffect, useRef } from 'react';
+import * as React from 'react';
 import { MessageModel } from 'model';
 import { MessageBubble } from './MessageBubble';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { makeStyles } from '@material-ui/core';
 
-export interface ThreadMessagesProps {
+export interface MessagesThreadProps {
     messages: MessageModel[];
 }
 
@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-export const ThreadMessages = memo<ThreadMessagesProps>(({ messages }) => {
+export const MessagesThread = React.memo<MessagesThreadProps>(({ messages }) => {
     const styles = useStyles();
     const currentUser = useCurrentUser();
 
@@ -25,17 +25,25 @@ export const ThreadMessages = memo<ThreadMessagesProps>(({ messages }) => {
             return new Date(message1.insertedAt).getTime() - new Date(message2.insertedAt).getTime();
         });
 
-    const wrapperRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = React.useRef<HTMLDivElement>(null);
 
-    useLayoutEffect(() => {
+    React.useEffect(() => {
+        let n: number | null = null;
         if (wrapperRef.current) {
-            if (wrapperRef.current.clientHeight < wrapperRef.current.scrollHeight) {
-                wrapperRef.current.scroll?.({
-                    behavior: 'smooth',
-                    top: wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight
-                });
-            }
+            n = requestAnimationFrame(() => {
+                if (wrapperRef.current && wrapperRef.current.clientHeight < wrapperRef.current.scrollHeight) {
+                    wrapperRef.current.scroll?.({
+                        behavior: 'smooth',
+                        top: wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight
+                    });
+                }
+            });
         }
+        return () => {
+            if (n) {
+                cancelAnimationFrame(n);
+            }
+        };
     }, [messages]);
 
     return (

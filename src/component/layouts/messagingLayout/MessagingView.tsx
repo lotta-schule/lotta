@@ -3,7 +3,7 @@ import { IconButton, LinearProgress, makeStyles, Typography } from '@material-ui
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ChatType, ThreadRepresentation } from 'model';
-import { ThreadMessages } from './MessagesThread';
+import { MessagesThread } from './MessagesThread';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
 import { ThreadPreview } from './ThreadPreview';
@@ -118,7 +118,7 @@ export const MessagingView = memo(() => {
         }
         const messages = getMessagesForThread(selectedThread);
         const messagesView = messages?.length ?
-            <ThreadMessages messages={messages} /> : (
+            <MessagesThread messages={messages} /> : (
                 <div className={styles.noMessagesWrapper}>
                     <Typography variant={'body2'}>
                         Du hast noch keine Nachrichten mit {selectedThread.counterpart.name} ausgetauscht.
