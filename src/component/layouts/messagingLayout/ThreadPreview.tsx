@@ -3,9 +3,9 @@ import { makeStyles, Button, Typography, Badge } from '@material-ui/core';
 import { UserModel, UserGroupModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { format } from 'date-fns';
+import { useNewMessagesBadgeNumber } from '../navigation/useNewMessagesBadgeNumber';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
-import {useNewMessagesBadgeNumber} from '../navigation/useNewMessagesBadgeNumber';
 
 const useStyles = makeStyles(theme => ({
     root: {
