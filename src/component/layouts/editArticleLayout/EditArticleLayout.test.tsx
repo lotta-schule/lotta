@@ -291,4 +291,58 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         }, 20000);
     });
 
+    describe('issue warning when user navigates away', () => {
+        it('should show a prompt if user has made a change', async () => {
+            let called = false;
+            const spy = jest.spyOn(window, 'addEventListener');
+            spy.mockImplementation((eventName, callback) => {
+                if (eventName === 'beforeunload') {
+                    const event = new Event('beforeunload');
+                    if (typeof callback === 'function') {
+                        expect(callback(event)).toMatch(/möchtest du die seite wirklich verlassen/i);
+                        called = true;
+                    } else {
+                        expect(false).toBe(true);
+                    }
+                }
+            });
+            const screen = render(
+                <EditArticleLayout article={Weihnachtsmarkt} />,
+                {}, {
+                    currentUser: SomeUser,
+                    useCache: true,
+                }
+            );
+            userEvent.type(screen.getByRole('textbox', { name: /titel/i }), 'Bla');
+            window.location.href = '/';
+            await waitFor(() => {
+                expect(called).toBe(true);
+            });
+        });
+
+        it('should not show a prompt if user has not made changes', async () => {
+            let called = false;
+            const spy = jest.spyOn(window, 'addEventListener');
+            spy.mockImplementation((eventName, callback) => {
+                if (eventName === 'beforeunload') {
+                    const event = new Event('beforeunload');
+                    if (typeof callback === 'function') {
+                        expect(callback(event)).toBeNull();
+                        called = true;
+                    } else {
+                        expect(false).toBe(true);
+                    }
+                }
+            });
+            render(
+                <EditArticleLayout article={Weihnachtsmarkt} />,
+                {}, {
+                    currentUser: SomeUser,
+                    useCache: true,
+                }
+            );
+            window.location.href = '/';
+            expect(called).toBe(false);
+        });
+    });
 });

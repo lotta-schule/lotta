@@ -13,6 +13,7 @@ import { ArticleIsUpdatedSubscription } from 'api/subscription/GetArticleSubscri
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import { Prompt } from 'react-router-dom';
 import omit from 'lodash/omit';
 import useRouter from 'use-react-router';
 
@@ -24,6 +25,9 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
     const { history } = useRouter();
     const currentUser = useCurrentUser();
 
+    const BEFORE_LEAVE_MESSAGE = 'Möchtest du die Seite wirklich verlassen? Ungespeicherte Änderungen gehen verloren.';
+
+    const [isArticleDirty, setIsArticleDirty] = React.useState(false);
     const [editedArticle, setEditedArticle] = React.useState(article);
     const [isUpdatedArticleModalVisible, setIsUpdatedArticleModalVisible] = React.useState(false);
     React.useEffect(() => {
@@ -38,6 +42,7 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
     }, [article]);
     const [saveArticle, { loading: isLoading, data: updatedArticleData }] = useMutation<{ article: ArticleModel }, { id: ID, article: any }>(UpdateArticleMutation, {
         onCompleted: ({ article }) => {
+            setIsArticleDirty(false);
             if (article) {
                 history.push(ArticleUtil.getPath(article));
             }
@@ -67,23 +72,41 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
     });
 
     React.useEffect(() => {
+        const listener: OnBeforeUnloadEventHandler = e => {
+            e.preventDefault();
+            e.returnValue = true;
+            return BEFORE_LEAVE_MESSAGE;
+        };
+        if (isArticleDirty) {
+            window.addEventListener('beforeunload', listener);
+            return () => {
+                window.removeEventListener('beforeunload', listener);
+            };
+        }
+    }, [isArticleDirty]);
+
+    React.useEffect(() => {
         if (!currentUser) {
             history.push(ArticleUtil.getPath(article));
         }
     }, [article, currentUser, history]);
 
+    const changeArticle = (article: ArticleModel) => {
+        setIsArticleDirty(true);
+        setEditedArticle(article);
+    };
+
     return (
         <>
             <BaseLayoutMainContent>
+                <Prompt message={BEFORE_LEAVE_MESSAGE} when={isArticleDirty} />
                 <Article
                     isEditModeEnabled
                     article={editedArticle}
-                    onUpdateArticle={article => {
-                        setEditedArticle(article);
-                    }}
+                    onUpdateArticle={changeArticle}
                 />
                 <AddModuleBar onAddModule={async contentModule => {
-                    setEditedArticle({
+                    changeArticle({
                         ...editedArticle,
                         contentModules: [
                             ...editedArticle.contentModules,
@@ -110,7 +133,8 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
                         <Button
                             color={'primary'}
                             onClick={() => {
-                                setEditedArticle(article);
+                                changeArticle(article);
+                                setIsArticleDirty(false);
                                 setIsUpdatedArticleModalVisible(false);
                             }}
                         >
@@ -122,7 +146,7 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(({ article }) =>
             <BaseLayoutSidebar>
                 <EditArticleSidebar
                     article={editedArticle}
-                    onUpdate={setEditedArticle}
+                    onUpdate={changeArticle}
                     isLoading={isLoading}
                     onSave={additionalProps => {
                         const article = {
