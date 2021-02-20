@@ -1,4 +1,4 @@
-import React, { } from 'react';
+import * as React from 'react';
 import { omit } from 'lodash';
 import { render, waitFor } from 'test/util';
 import { KeinErSieEsUser, SomeUser, SomeUserin } from 'test/fixtures';
@@ -51,7 +51,7 @@ describe('component/layouts/userManagment/SearchUserField', () => {
                 expect(screen.getByRole('option', { name: /michel dupond/i })).toHaveTextContent('Michel Dupond');
             });
             userEvent.click(screen.getByRole('option', { name: /michel dupond/i }));
-            expect(selectUserFn).toHaveBeenCalledWith(omit(KeinErSieEsUser, ['email', 'enrollmentTokens', 'groups', 'hideFullName', 'isBlocked', 'lastSeen']));
+            expect(selectUserFn).toHaveBeenCalledWith(omit(KeinErSieEsUser, ['email', 'enrollmentTokens', 'groups', 'hideFullName', 'lastSeen']));
         });
 
     });

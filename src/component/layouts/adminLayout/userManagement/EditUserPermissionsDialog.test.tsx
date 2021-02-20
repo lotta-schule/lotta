@@ -25,7 +25,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
 
     describe('show user basic information', () => {
         it('should show user information', async () => {
-            const user = { ...SomeUser, groups: [], assignedGroups: [], isBlocked: false };
+            const user = { ...SomeUser, groups: [], assignedGroups: [] };
             const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks: mocks(user) }
@@ -41,7 +41,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
 
     describe('show and select correct groups', () => {
         it('should show assigned and dynamic groups', async () => {
-            const user = { ...SomeUser, groups: [adminGroup, lehrerGroup], assignedGroups: [adminGroup], isBlocked: false };
+            const user = { ...SomeUser, groups: [adminGroup, lehrerGroup], assignedGroups: [adminGroup] };
             const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
                 {}, { additionalMocks: mocks(user) }
@@ -61,8 +61,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const user = {
                 ...SomeUser,
                 groups: [adminGroup, lehrerGroup],
-                assignedGroups: [adminGroup],
-                isBlocked: false
+                assignedGroups: [adminGroup]
             };
             const additionalMocks = [
                 ...mocks(user),
@@ -103,8 +102,7 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const user = {
                 ...SomeUser,
                 groups: [adminGroup, lehrerGroup, elternGroup],
-                assignedGroups: [adminGroup, elternGroup],
-                isBlocked: false
+                assignedGroups: [adminGroup, elternGroup]
             };
             const additionalMocks = [
                 ...mocks(user),
@@ -140,88 +138,4 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
         });
 
     });
-
-
-    describe('show and select user block status', () => {
-        it('should show if the user is blocked', async () => {
-            const user = { ...SomeUser, groups: [adminGroup, lehrerGroup], assignedGroups: [adminGroup], isBlocked: true };
-            const screen = render(
-                <EditUserPermissionsDialog user={user} onClose={() => {}} />,
-                {}, { additionalMocks: mocks(user) }
-            );
-            await waitFor(() => {
-                expect(screen.queryByTestId('DialogTitle')).toHaveTextContent('Ernesto Guevara');
-                expect(screen.queryByTestId('UserBlockedIcon')).not.toBeNull();
-            });
-        });
-
-        it('should block user when click on \'block\' button', async () => {
-            let mutationHasBeenCalled = false;
-            const user = {
-                ...SomeUser,
-                groups: [adminGroup, lehrerGroup],
-                assignedGroups: [adminGroup],
-                isBlocked: false
-            };
-            const additionalMocks = [
-                ...mocks(user),
-                {
-                    request: { query: UpdateUserMutation, variables: { id: SomeUser.id, isBlocked: true } },
-                    result: () => {
-                        mutationHasBeenCalled = true;
-                        return {
-                            data: { user: { ...user, isBlocked: true } }
-                        };
-                    }
-                }
-            ];
-            const screen = render(
-                <EditUserPermissionsDialog user={user} onClose={() => {}} />,
-                {}, { additionalMocks }
-            );
-            const blockButton = await screen.findByTestId('BlockButton');
-            await waitFor(() => {
-                expect(blockButton).toHaveTextContent('Nutzer sperren');
-            });
-            userEvent.click(blockButton);
-            await waitFor(() => {
-                expect(mutationHasBeenCalled).toEqual(true);
-            });
-        });
-
-        it('should unblock user when click on \'unblock\' button', async () => {
-            let mutationHasBeenCalled = false;
-            const user = {
-                ...SomeUser,
-                groups: [adminGroup, lehrerGroup],
-                assignedGroups: [adminGroup],
-                isBlocked: true
-            };
-            const additionalMocks = [
-                ...mocks(user),
-                {
-                    request: { query: UpdateUserMutation, variables: { id: SomeUser.id, isBlocked: false } },
-                    result: () => {
-                        mutationHasBeenCalled = true;
-                        return {
-                            data: { user: { ...user, isBlocked: false } }
-                        };
-                    }
-                }
-            ];
-            const screen = render(
-                <EditUserPermissionsDialog user={user} onClose={() => {}} />,
-                {}, { additionalMocks }
-            );
-            const blockButton = await screen.findByTestId('BlockButton');
-            await waitFor(() => {
-                expect(blockButton).toHaveTextContent('Nutzer wieder freischalten.');
-            });
-            userEvent.click(blockButton);
-            await waitFor(() => {
-                expect(mutationHasBeenCalled).toEqual(true);
-            });
-        });
-    });
-
 });
