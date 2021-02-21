@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import { makeStyles, Theme, Table, TableHead, TableRow, TableCell, TableBody, Link } from '@material-ui/core';
 import { ArticleModel } from 'model';
-import { User, Article } from 'util/model';
+import { User, Article, Category } from 'util/model';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { UserAvatar } from 'component/user/UserAvatar';
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: theme.spacing(3, 2)
     },
-    articleLink: {
+    link: {
         display: 'inline-flex',
         alignItems: 'center'
     },
@@ -29,6 +29,35 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'inline-block',
         width: '1em',
         height: '1em'
+    },
+    responsiveTable: {
+        [theme.breakpoints.down('sm')]: {
+            '& thead': {
+                display: 'none'
+            },
+            '& tr': {
+                display: 'block',
+                marginBottom: theme.spacing(2),
+            },
+            '& td': {
+                display: 'block',
+                '&:first-child, &:nth-child(2)': {
+                    display: 'inline-block'
+                },
+                '&:nth-child(2)': {
+                    float: 'right',
+                },
+                '&:empty': {
+                    display: 'none'
+                },
+                '&:not(:last-child)': {
+                    border: 'none',
+                },
+                '&:last-child': {
+                    paddingBottom: theme.spacing(2)
+                }
+            }
+        }
     }
 }));
 
@@ -43,12 +72,13 @@ export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
     const articleSorter = useCallback((article1, article2) => (new Date(article2.updatedAt).getTime() - new Date(article1.updatedAt).getTime()), []);
 
     return (
-        <Table size={'small'} data-testid="ArticlesList">
+        <Table size={'small'} data-testid="ArticlesList" className={styles.responsiveTable}>
             <TableHead>
                 <TableRow>
                     <TableCell>Erstelldatum</TableCell>
                     <TableCell>Autoren</TableCell>
                     <TableCell>Titel</TableCell>
+                    <TableCell>Kategorie</TableCell>
                     <TableCell>Status</TableCell>
                 </TableRow>
             </TableHead>
@@ -56,7 +86,7 @@ export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
                 {[...articles].sort(articleSorter).map(article => (
                     <TableRow key={article.id}>
                         <TableCell>
-                            {format(new Date(article.insertedAt), 'PPP', { locale: de }) + ' '}
+                            {format(new Date(article.insertedAt), 'P', { locale: de }) + ' '}
                         </TableCell>
                         <TableCell>
                             <ul className={styles.usersList}>
@@ -71,7 +101,7 @@ export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
                         <TableCell>
                             <Link
                                 color={'secondary'}
-                                className={styles.articleLink}
+                                className={styles.link}
                                 title={`Beitrag "${article.title}" bearbeiten`}
                                 href={Article.getPath(article, { edit: true })}
                             >
@@ -84,6 +114,18 @@ export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
                                 )}
                                 {article.title}
                             </Link>
+                        </TableCell>
+                        <TableCell>
+                            {article.category && (
+                                <Link
+                                    color={'secondary'}
+                                    className={styles.link}
+                                    title={`${Category.getPath(article.category)} öffnen`}
+                                    href={Category.getPath(article.category)}
+                                >
+                                    {article.category.title}
+                                </Link>
+                            )}
                         </TableCell>
                         <TableCell>
                             {article.category && (
