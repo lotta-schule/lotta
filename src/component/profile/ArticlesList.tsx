@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from 'react';
 import { makeStyles, Theme, Table, TableHead, TableRow, TableCell, TableBody, Link } from '@material-ui/core';
 import { ArticleModel } from 'model';
-import { User, Article } from 'util/model';
+import { User, Article, Category } from 'util/model';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { UserAvatar } from 'component/user/UserAvatar';
@@ -78,6 +78,7 @@ export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
                     <TableCell>Erstelldatum</TableCell>
                     <TableCell>Autoren</TableCell>
                     <TableCell>Titel</TableCell>
+                    <TableCell>Kategorie</TableCell>
                     <TableCell>Status</TableCell>
                 </TableRow>
             </TableHead>
@@ -113,6 +114,18 @@ export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
                                 )}
                                 {article.title}
                             </Link>
+                        </TableCell>
+                        <TableCell>
+                            {article.category && (
+                                <Link
+                                    color={'secondary'}
+                                    className={styles.link}
+                                    title={`${Category.getPath(article.category)} öffnen`}
+                                    href={Category.getPath(article.category)}
+                                >
+                                    {article.category.title}
+                                </Link>
+                            )}
                         </TableCell>
                         <TableCell>
                             {article.category && (

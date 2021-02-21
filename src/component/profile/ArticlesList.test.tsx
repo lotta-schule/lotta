@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'test/util';
-import { ComputerExperten, VivaLaRevolucion, Schulfest, Weihnachtsmarkt, Klausurenplan, imageFile } from 'test/fixtures';
+import { ComputerExperten, VivaLaRevolucion, Schulfest, Weihnachtsmarkt, Klausurenplan, imageFile, KunstCategory } from 'test/fixtures';
 import { ArticlesList } from './ArticlesList';
 
 describe('component/profile/ArticlesList', () => {
@@ -21,6 +21,15 @@ describe('component/profile/ArticlesList', () => {
         );
         const links = await screen.findAllByRole('link');
         expect(Array.from(links).map(link => link.textContent)).toEqual(['Weihnachtsmarkt', 'Klausurenplan', 'Schulfest', 'Viva La Revolucion', 'Computerexperten']);
+    });
+
+    it('should show the article\'s article', () => {
+        const screen = render(
+            <ArticlesList articles={[{ ...Weihnachtsmarkt, category: KunstCategory }]} />,
+            {}
+        );
+
+        expect(screen.getByRole('cell', { name: /kunst/i })).toBeVisible();
     });
 
     it('should show the article\'s preview image if one is available', () => {

@@ -39,6 +39,7 @@ export const GetOwnArticlesQuery = gql`
             }
             category {
                 id
+                title
             }
             groups {
                 id
