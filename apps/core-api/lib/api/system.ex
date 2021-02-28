@@ -418,4 +418,25 @@ defmodule Api.System do
   def delete_widget(widget) do
     Repo.delete(widget)
   end
+
+  @doc """
+  Returrns the limit configured for *private* user folders content.
+  If no limit is set, returns -1.
+  If a limit is set, returrn the limit in bytes.
+  """
+
+  @doc since: "2.4.0"
+
+  @spec get_user_max_storage() :: -1 | pos_integer()
+
+  def get_user_max_storage() do
+    with config <- Api.System.get_configuration(),
+         {:ok, storage_mb} <- Map.fetch(config, :user_max_storage_config),
+         {storage_mb, _} <- Integer.parse(storage_mb) do
+      storage_mb * 1024 * 1024
+    else
+      _ ->
+        -1
+    end
+  end
 end
