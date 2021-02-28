@@ -10,8 +10,8 @@ defmodule ApiWeb.FileResolver do
   alias Ecto.Changeset
   alias ApiWeb.Context
   alias Api.Accounts
-  alias Api.Accounts.{Directory, User}
-  alias Api.System.{Category}
+  alias Api.System.Category
+  alias Api.Accounts.{Directory, FileManagment, User}
   alias Api.Content.{Article, ContentModule}
   alias Api.UploadService
   alias Api.Queue.MediaConversionRequestPublisher
@@ -137,9 +137,16 @@ defmodule ApiWeb.FileResolver do
   def upload(%{file: file, parent_directory_id: parent_directory_id}, %{
         context: %Context{current_user: current_user}
       }) do
+
     directory = Accounts.get_directory(parent_directory_id)
+    %{size: filesize} = File.stat!(file.path)
+
+    size_limit = Api.System.get_user_max_storage()
 
     cond do
+      size_limit > -1 && (FileManagment.total_user_files_size(current_user) + filesize >= size_limit) ->
+        {:error, "Kein freier Speicher mehr."}
+
       is_nil(directory) ->
         {:error, "Der Ordner mit der id #{parent_directory_id} wurde nicht gefunden."}
 

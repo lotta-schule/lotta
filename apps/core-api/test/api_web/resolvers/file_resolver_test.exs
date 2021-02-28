@@ -24,7 +24,6 @@ defmodule ApiWeb.FileResolverTest do
       AccessToken.encode_and_sign(user2, %{email: user2.email, name: user2.name})
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
-    admin_directory = Repo.get_by!(Directory, name: "irgendwas")
     user2_directory = Repo.get_by!(Directory, name: "ehrenberg-on-air")
     admin_file = Repo.get_by!(File, filename: "ich_schoen.jpg")
     user2_file = Repo.get_by!(File, filename: "wieartig1.jpg")
@@ -807,6 +806,29 @@ defmodule ApiWeb.FileResolverTest do
       assert %{"filename" => "image_file.png"} = res["data"]["uploadFile"]
     end
 
+    test "should return an error when user has reached quota", %{image_upload: image_upload, user2_directory: user2_directory, user2_jwt: user2_jwt} do
+      Api.System.get_configuration()
+      |> Api.System.put_configuration("user_max_storage_config", "0")
+
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: user2_directory.id},
+          file: image_upload
+        )
+        |> json_response(200)
+      refute res["data"]["uploadFile"]
+      assert res["errors"] == [
+        %{
+          "locations" => [%{"column" => 3, "line" => 2}],
+          "message" => "Kein freier Speicher mehr.",
+          "path" => ["uploadFile"]
+        }
+      ]
+    end
+
     test "should return an error when directtory does not exist", %{image_upload: image_upload, user2_jwt: user2_jwt} do
       res =
         build_conn()
@@ -821,7 +843,7 @@ defmodule ApiWeb.FileResolverTest do
       assert res["errors"] == [
         %{
           "locations" => [%{"column" => 3, "line" => 2}],
-          "message" => "Datei mit der id 0 nicht gefunden.",
+          "message" => "Der Ordner mit der id 0 wurde nicht gefunden.",
           "path" => ["uploadFile"]
         }
       ]
