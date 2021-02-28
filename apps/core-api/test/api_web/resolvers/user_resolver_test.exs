@@ -1053,7 +1053,6 @@ defmodule ApiWeb.UserResolverTest do
                ]
              } = res
     end
-
   end
 
   describe "requestPasswordResetMutation" do

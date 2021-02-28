@@ -111,10 +111,13 @@ defmodule ApiWeb.ArticleResolver do
     else
       nil ->
         {:error, "Beitrag nicht gefunden."}
+
       false ->
         {:error, "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}
+
       {:error, msg} ->
         {:error, msg}
+
       _ ->
         {:error, "Unbekannter Fehler"}
     end

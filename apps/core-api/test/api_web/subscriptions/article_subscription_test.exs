@@ -70,10 +70,11 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       }
     }
     """
-    test "subscribe to article changes if user is admin and send notification on article update", %{
-      admin_jwt: admin_jwt,
-      draft: draft
-    } do
+    test "subscribe to article changes if user is admin and send notification on article update",
+         %{
+           admin_jwt: admin_jwt,
+           draft: draft
+         } do
       {:ok, socket} = Phoenix.ChannelTest.connect(ApiWeb.UserSocket, %{token: admin_jwt})
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
@@ -96,6 +97,7 @@ defmodule ApiWeb.ArticleSubscriptionTest do
                result: %{data: %{"articleIsUpdated" => article}},
                subscriptionId: _subscription_id
              } = push
+
       assert Map.fetch!(article, "title") == "ABC"
     end
 
@@ -115,7 +117,10 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: vorausscheid.id})
-      assert_reply ref, :error, %{errors: [%{message: "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}]}
+
+      assert_reply ref, :error, %{
+        errors: [%{message: "Du hast nicht die Rechte dir diesen Beitrag anzusehen."}]
+      }
     end
 
     test "returns an error if article id does not exist", %{user_jwt: user_jwt} do

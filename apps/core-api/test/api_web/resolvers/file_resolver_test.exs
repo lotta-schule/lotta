@@ -55,7 +55,7 @@ defmodule ApiWeb.FileResolverTest do
        user2_file: user2_file,
        public_directory: public_directory,
        public_file: public_file,
-       image_upload: image_upload,
+       image_upload: image_upload
      }}
   end
 
@@ -780,7 +780,11 @@ defmodule ApiWeb.FileResolverTest do
       }
     }
     """
-    test "should upload a file to own directory", %{image_upload: image_upload, user2_directory: user2_directory, user2_jwt: user2_jwt} do
+    test "should upload a file to own directory", %{
+      image_upload: image_upload,
+      user2_directory: user2_directory,
+      user2_jwt: user2_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
@@ -790,10 +794,15 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       assert %{"filename" => "image_file.png"} = res["data"]["uploadFile"]
     end
 
-    test "admin should upload a file to public directory", %{image_upload: image_upload, public_directory: public_directory, admin_jwt: admin_jwt} do
+    test "admin should upload a file to public directory", %{
+      image_upload: image_upload,
+      public_directory: public_directory,
+      admin_jwt: admin_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
@@ -803,10 +812,15 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       assert %{"filename" => "image_file.png"} = res["data"]["uploadFile"]
     end
 
-    test "should return an error when user has reached quota", %{image_upload: image_upload, user2_directory: user2_directory, user2_jwt: user2_jwt} do
+    test "should return an error when user has reached quota", %{
+      image_upload: image_upload,
+      user2_directory: user2_directory,
+      user2_jwt: user2_jwt
+    } do
       Api.System.get_configuration()
       |> Api.System.put_configuration("user_max_storage_config", "0")
 
@@ -819,17 +833,22 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       refute res["data"]["uploadFile"]
+
       assert res["errors"] == [
-        %{
-          "locations" => [%{"column" => 3, "line" => 2}],
-          "message" => "Kein freier Speicher mehr.",
-          "path" => ["uploadFile"]
-        }
-      ]
+               %{
+                 "locations" => [%{"column" => 3, "line" => 2}],
+                 "message" => "Kein freier Speicher mehr.",
+                 "path" => ["uploadFile"]
+               }
+             ]
     end
 
-    test "should return an error when directtory does not exist", %{image_upload: image_upload, user2_jwt: user2_jwt} do
+    test "should return an error when directtory does not exist", %{
+      image_upload: image_upload,
+      user2_jwt: user2_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
@@ -839,17 +858,23 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       refute res["data"]["uploadFile"]
+
       assert res["errors"] == [
-        %{
-          "locations" => [%{"column" => 3, "line" => 2}],
-          "message" => "Der Ordner mit der id 0 wurde nicht gefunden.",
-          "path" => ["uploadFile"]
-        }
-      ]
+               %{
+                 "locations" => [%{"column" => 3, "line" => 2}],
+                 "message" => "Der Ordner mit der id 0 wurde nicht gefunden.",
+                 "path" => ["uploadFile"]
+               }
+             ]
     end
 
-    test "should return an error when user wants to upload to public directory", %{image_upload: image_upload, public_directory: public_directory, user2_jwt: user2_jwt} do
+    test "should return an error when user wants to upload to public directory", %{
+      image_upload: image_upload,
+      public_directory: public_directory,
+      user2_jwt: user2_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
@@ -859,17 +884,22 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       refute res["data"]["uploadFile"]
+
       assert res["errors"] == [
-        %{
-          "locations" => [%{"column" => 3, "line" => 2}],
-          "message" => "Du darfst diesen Ordner hier nicht erstellen.",
-          "path" => ["uploadFile"]
-        }
-      ]
+               %{
+                 "locations" => [%{"column" => 3, "line" => 2}],
+                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "path" => ["uploadFile"]
+               }
+             ]
     end
 
-    test "should return error when user is not logged in", %{image_upload: image_upload, user2_directory: user2_directory} do
+    test "should return error when user is not logged in", %{
+      image_upload: image_upload,
+      user2_directory: user2_directory
+    } do
       res =
         build_conn()
         |> post("/api",
@@ -878,16 +908,23 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       refute res["data"]["uploadFile"]
+
       assert res["errors"] == [
-        %{
-          "locations" => [%{"column" => 3, "line" => 2}],
-          "message" => "Du musst angemeldet sein um das zu tun.", "path" => ["uploadFile"]
-        }
-      ]
+               %{
+                 "locations" => [%{"column" => 3, "line" => 2}],
+                 "message" => "Du musst angemeldet sein um das zu tun.",
+                 "path" => ["uploadFile"]
+               }
+             ]
     end
 
-    test "should return an error when user wants to upload to other user's directory", %{image_upload: image_upload, user2_directory: user2_directory, user_jwt: user_jwt} do
+    test "should return an error when user wants to upload to other user's directory", %{
+      image_upload: image_upload,
+      user2_directory: user2_directory,
+      user_jwt: user_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user_jwt}")
@@ -897,17 +934,23 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       refute res["data"]["uploadFile"]
+
       assert res["errors"] == [
-        %{
-          "locations" => [%{"column" => 3, "line" => 2}],
-          "message" => "Du darfst diesen Ordner hier nicht erstellen.",
-          "path" => ["uploadFile"]
-        }
-      ]
+               %{
+                 "locations" => [%{"column" => 3, "line" => 2}],
+                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "path" => ["uploadFile"]
+               }
+             ]
     end
 
-    test "should return an error when admin wants to upload to other user's directory", %{image_upload: image_upload, user2_directory: user2_directory, admin_jwt: admin_jwt} do
+    test "should return an error when admin wants to upload to other user's directory", %{
+      image_upload: image_upload,
+      user2_directory: user2_directory,
+      admin_jwt: admin_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
@@ -917,14 +960,16 @@ defmodule ApiWeb.FileResolverTest do
           file: image_upload
         )
         |> json_response(200)
+
       refute res["data"]["uploadFile"]
+
       assert res["errors"] == [
-        %{
-          "locations" => [%{"column" => 3, "line" => 2}],
-          "message" => "Du darfst diesen Ordner hier nicht erstellen.",
-          "path" => ["uploadFile"]
-        }
-      ]
+               %{
+                 "locations" => [%{"column" => 3, "line" => 2}],
+                 "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+                 "path" => ["uploadFile"]
+               }
+             ]
     end
   end
 

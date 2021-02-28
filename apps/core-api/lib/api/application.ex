@@ -10,22 +10,44 @@ defmodule Api.Application do
 
     # List all child processes to be supervised
     children =
-      [
-        Api.Repo,
-        ApiWeb.Telemetry,
-        {Phoenix.PubSub, name: Api.PubSub, adapter: Phoenix.PubSub.PG2},
-        ApiWeb.Endpoint,
-        {Absinthe.Subscription, ApiWeb.Endpoint},
-        {Redix, Application.fetch_env!(:api, :redis_connection)},
-        Api.Elasticsearch.Cluster,
-        Api.Queue.MediaConversionRequestPublisher,
-        Api.Queue.MediaConversionConsumer,
-        {ConCache,
-         name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
-      ] ++
+      cond do
+        environment == :production ->
+          service_name = System.get_env("SERVICE_NAME")
+          app_name = System.get_env("APP_NAME")
+
+          # libcluster setting
+          topologies = [
+            k8s: [
+              strategy: Elixir.Cluster.Strategy.Kubernetes.DNS,
+              config: [
+                service: service_name,
+                application_name: app_name,
+                polling_interval: 5000
+              ]
+            ]
+          ]
+
+          [{Cluster.Supervisor, [topologies, [name: Api.ClusterSupervisor]]}]
+
+        true ->
+          []
+      end ++
+        [
+          ApiWeb.Telemetry,
+          {Phoenix.PubSub, name: Api.PubSub, adapter: Phoenix.PubSub.PG2},
+          Api.Repo,
+          ApiWeb.Endpoint,
+          {Absinthe.Subscription, ApiWeb.Endpoint},
+          {Redix, Application.fetch_env!(:api, :redis_connection)},
+          Api.Elasticsearch.Cluster,
+          Api.Queue.MediaConversionRequestPublisher,
+          Api.Queue.MediaConversionConsumer,
+          {ConCache,
+           name: :http_cache, ttl_check_interval: :timer.hours(1), global_ttl: :timer.hours(4)}
+        ] ++
         cond do
           environment == :development ->
-            [Api.System.DefaultContent]
+            []
 
           environment == :production ->
             [Api.System.DefaultContent]

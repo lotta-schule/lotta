@@ -27,7 +27,7 @@ defmodule Api.SystemTest do
       Api.System.get_configuration()
       |> Api.System.put_configuration("user_max_storage_config", "87")
 
-      assert System.get_user_max_storage() == 91226112
+      assert System.get_user_max_storage() == 91_226_112
     end
   end
 end
