@@ -1,6 +1,7 @@
-import React, { ChangeEvent, FocusEvent, memo, useEffect, useState } from 'react';
+import React, { ChangeEvent, memo, useEffect, useState } from 'react';
 import { Chip, makeStyles, NoSsr, TextField, Typography } from '@material-ui/core';
-import { useAutocomplete } from '@material-ui/lab';
+import { Transition } from 'react-spring/renderprops';
+import { animated } from 'react-spring';
 import { flatten, uniq } from 'lodash';
 
 export interface EnrollmentTokensEditorProps {
@@ -12,6 +13,7 @@ export interface EnrollmentTokensEditorProps {
 const useStyles = makeStyles(theme => ({
     tag: {
         width: '100%',
+        overflow: 'hidden',
         justifyContent: 'space-between',
         borderRadius: theme.shape.borderRadius,
         marginBottom: theme.spacing(1)
@@ -21,25 +23,8 @@ const useStyles = makeStyles(theme => ({
 export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(({ disabled, tokens, setTokens }) => {
     const styles = useStyles();
     const [inputValue, setInputValue] = useState('');
-    const {
-        getRootProps,
-        getInputLabelProps,
-        getInputProps,
-        setAnchorEl,
-        getTagProps,
-    } = useAutocomplete({
-        id: 'user-enrollment-tokens-input',
-        value: tokens,
-        inputValue,
-        multiple: true,
-        freeSolo: true,
-        options: [],
-        onChange: (_event, value, _reason, _details) => {
-            setTokens(value as string[]);
-        }
-    });
 
-    useEffect(() => {
+     useEffect(() => {
         if (tokens.length && tokens[tokens.length - 1] === inputValue) {
             setInputValue('');
         }
@@ -50,21 +35,28 @@ export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(({ disab
         <NoSsr>
             <div data-testid="UserEnrollmentTokensInput">
                 <ul>
-                    {tokens.map((option: string, index: number) => (
-                        <Chip
-                            variant="outlined"
-                            label={option}
-                            {...getTagProps({ index })}
-                            className={styles.tag}
-                            role={'listitem'}
-                        />
-                    ))}
+                    <Transition items={tokens} keys={t => t} config={{ tension: 2000, friction: 100, precision: 1 }} from={{ height: 0 as any }} enter={{ height: 'auto' }} leave={{ height: 0 }}>
+                        {token => props => (
+                                <Chip
+                                    key={token}
+                                    variant={'outlined'}
+                                    component={animated.div}
+                                    label={token}
+                                    className={styles.tag}
+                                    style={props}
+                                    role={'listitem'}
+                                    onDelete={() => {
+                                        setTokens(tokens.filter(t => t !== token));
+                                    }}
+                                />
+                        )}
+                    </Transition>
                 </ul>
-                <div {...getRootProps()}>
-                    <Typography component={'label'} htmlFor={'enter-new-enrollment-token'} {...getInputLabelProps()}>
+                <div>
+                    <Typography component={'label'} htmlFor={'enter-new-enrollment-token'}>
                         Neue Einschreibeschlüssel eintragen
                     </Typography>
-                    <div ref={setAnchorEl}>
+                    <div>
                         <TextField
                             fullWidth
                             id={'enter-new-enrollment-token'}
@@ -72,12 +64,27 @@ export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(({ disab
                             variant={'filled'}
                             size={'small'}
                             placeholder={'Neue Einschreibeschlüssel hier eintragen. Mehrere Schlüssel durch Komma trennen.'}
-                            {...getInputProps()}
-                            onBlur={(ev: FocusEvent<HTMLInputElement>) => {
-                                // automatically add current value on blur
-                                if (ev.target.value) {
-                                    setTokens([...tokens, ev.target.value]);
+                            value={inputValue}
+                            onKeyDown={e => {
+                                if (e.key === 'Escape') {
+                                    e.preventDefault();
+                                    setInputValue('');
                                 }
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const value = (e.target as HTMLInputElement).value;
+                                    if (value) {
+                                        setTokens(uniq([...tokens, value]));
+                                    }
+                                    setInputValue('');
+                                }
+                            }}
+                            onBlurCapture={e => {
+                                const value = (e.target as HTMLInputElement).value;
+                                if (value) {
+                                    setTokens(uniq([...tokens, value]));
+                                }
+                                setInputValue('');
                             }}
                             onChange={(ev: ChangeEvent<HTMLInputElement>) => {
                                 const { value } = ev.currentTarget;

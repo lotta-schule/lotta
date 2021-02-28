@@ -36,8 +36,6 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
     const groups = useUserGroups();
 
     const [name, setName] = React.useState(group.name);
-    const [isAdminGroup, setIsAdminGroup] = React.useState(group.isAdminGroup);
-    const [enrollmentTokens, setEnrollmentTokens] = React.useState((group.enrollmentTokens || []).map(t => t.token));
 
     const [isDeleteUserGroupDialogOpen, setIsDeleteUserGroupDialogOpen] = React.useState(false);
 
@@ -51,8 +49,6 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
     React.useEffect(() => {
         if (data && data.group) {
             setName(data.group.name);
-            setIsAdminGroup(data.group.isAdminGroup);
-            setEnrollmentTokens(data.group.enrollmentTokens.map(t => t.token));
         }
     }, [data]);
 
@@ -62,18 +58,11 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
         );
     }
 
-    const isSoleAdminGroup = isAdminGroup && groups.filter(g => g.isAdminGroup).length < 2;
+    const isSoleAdminGroup = data?.group.isAdminGroup && groups.filter(g => g.isAdminGroup).length < 2;
+    const enrollmentTokens = data?.group.enrollmentTokens?.map(t => t.token) ?? [];
 
     return (
-        <form className={styles.root} onSubmit={e => {
-            e.preventDefault();
-            updateGroup({
-                variables: {
-                    id: group.id,
-                    group: { name, isAdminGroup, enrollmentTokens }
-                }
-            })
-        }}>
+        <form className={styles.root} onSubmit={e => { e.preventDefault(); }}>
             <ErrorMessage error={loadDetailsError || updateError} />
             <FormControl>
                 <InputLabel htmlFor="group-name">Gruppenname</InputLabel>
@@ -83,6 +72,24 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                     disabled={isLoadingUpdateGroup}
                     value={name}
                     onChange={e => setName(e.target.value)}
+                    onBlur={() => {
+                        updateGroup({
+                            variables: {
+                                id: group.id,
+                                group: { isAdminGroup: group.isAdminGroup, enrollmentTokens, name }
+                            }
+                        });
+                    }}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                            updateGroup({
+                                variables: {
+                                    id: group.id,
+                                    group: { isAdminGroup: group.isAdminGroup, enrollmentTokens, name }
+                                }
+                            });
+                        }
+                    }}
                 />
                 <FormHelperText id="group-name-help-text">Gib der Gruppe einen verständlichen Namen</FormHelperText>
             </FormControl>
@@ -91,8 +98,15 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                     control={<Checkbox />}
                     disabled={isLoadingUpdateGroup || isSoleAdminGroup}
                     label={'Diese Gruppe hat universelle Administratorrechte'}
-                    checked={!!isAdminGroup}
-                    onChange={(_, checked) => setIsAdminGroup(checked)}
+                    checked={!!group.isAdminGroup}
+                    onChange={(_, checked) => {
+                        updateGroup({
+                            variables: {
+                                id: group.id,
+                                group: { name, enrollmentTokens, isAdminGroup: checked }
+                            }
+                        });
+                    }}
                 />
             </FormControl>
             <Typography variant={'caption'}>Einschreibeschlüssel</Typography>
@@ -102,16 +116,15 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
             <EnrollmentTokensEditor
                 disabled={isLoadingUpdateGroup}
                 tokens={enrollmentTokens}
-                setTokens={setEnrollmentTokens}
+                setTokens={enrollmentTokens => {
+                    updateGroup({
+                        variables: {
+                            id: group.id,
+                            group: { isAdminGroup: group.isAdminGroup, enrollmentTokens, name }
+                        }
+                    });
+                }}
             />
-            <Button
-                className={styles.saveButton}
-                variant={'contained'}
-                color={'secondary'}
-                type={'submit'}
-            >
-                Gruppe speichern
-            </Button>
             {!isSoleAdminGroup && (
                 <>
                     <Button
