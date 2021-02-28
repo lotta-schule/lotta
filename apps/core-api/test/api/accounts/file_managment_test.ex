@@ -3,7 +3,7 @@ defmodule Api.Accounts.FileManagmentTest do
 
   use Api.DataCase
 
-  alias Api.Accounts.{FileManagment,User}
+  alias Api.Accounts.{FileManagment, User}
 
   setup do
     Api.Repo.Seeder.seed()

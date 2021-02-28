@@ -2,7 +2,7 @@ defmodule Api.Accounts.FileManagment do
   @moduledoc """
   This module provides utilities for handling user files and directories.
   """
-  alias Api.Accounts.{Directory,File,User}
+  alias Api.Accounts.{Directory, File, User}
   alias Api.Repo
 
   import Ecto.Query
@@ -21,10 +21,10 @@ defmodule Api.Accounts.FileManagment do
   def total_user_files_size(%User{} = user) do
     from(
       f in File,
-      join: d in Directory, on: f.parent_directory_id == d.id,
+      join: d in Directory,
+      on: f.parent_directory_id == d.id,
       where: f.user_id == ^user.id and not is_nil(d.user_id)
     )
     |> Repo.aggregate(:sum, :filesize)
   end
-  
 end

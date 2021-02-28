@@ -95,15 +95,16 @@ defmodule Api.MixProject do
       {:redix, ">= 0.0.0"},
       {:con_cache, "~> 0.14"},
       {:elasticsearch, "~> 1.0.0"},
+      # Prod
+      {:libcluster, "~> 3.2"},
       # Development
       {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       # live dashboard
       {:telemetry_poller, "~> 0.5"},
       {:telemetry_metrics, "~> 0.5"},
       {:phoenix_live_dashboard, "~> 0.2.7"},
-      # Dev
-      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       # test
       {:excoveralls, "~> 0.12", only: :test}
     ]

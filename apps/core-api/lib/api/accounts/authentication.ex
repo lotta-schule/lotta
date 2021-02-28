@@ -132,5 +132,4 @@ defmodule Api.Accounts.Authentication do
         {:error, reason}
     end
   end
-
 end
