@@ -35,6 +35,12 @@ export const useStyles = makeStyles(theme => ({
             width: '100%'
         }
     },
+    groupList: {
+        marginBottom: 60
+    },
+    groupListItem: {
+        paddingTop: 0,
+    },
     dangerSection: {
         width: '100%',
         position: 'absolute',
@@ -109,7 +115,7 @@ export const ProfileData = memo(() => {
                             onSelect={(file: FileModel) => setAvatarImageFile(file)}
                         />
                         <Divider className={styles.divider} />
-                        <List subheader={<ListSubheader>Meine Gruppen</ListSubheader>} data-testid="ProfileData-GroupsList">
+                        <List className={styles.groupList} dense subheader={<ListSubheader>Meine Gruppen</ListSubheader>} data-testid="ProfileData-GroupsList">
                             {[...currentUser.groups].sort((g1, g2) => g2.sortKey - g1.sortKey).map(group => (
                                 <ListItem key={group.id}>
                                     <ListItemText>{group.name}</ListItemText>
