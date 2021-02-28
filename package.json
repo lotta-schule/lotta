@@ -67,6 +67,7 @@
     "react-i18next": "^11.8.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",
+    "react-spring": "^8.0.27",
     "react-swipeable-views": "^0.13.9",
     "react-virtualized": "^9.22.3",
     "slate": "^0.59.0",
@@ -106,5 +107,11 @@
     "node-sass": "^4.0.0",
     "react-test-renderer": "^17.0.1",
     "typescript": "^4.0.5"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "react-spring/renderprops": "<rootDir>/node_modules/react-spring/renderprops.cjs.js",
+      "react-spring": "<rootDir>/node_modules/react-spring/web.cjs.js"
+    }
   }
 }
