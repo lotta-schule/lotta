@@ -24,8 +24,9 @@ defmodule ApiWeb.FileResolverTest do
       AccessToken.encode_and_sign(user2, %{email: user2.email, name: user2.name})
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+    admin_directory = Repo.get_by!(Directory, name: "irgendwas")
+    user2_directory = Repo.get_by!(Directory, name: "ehrenberg-on-air")
     admin_file = Repo.get_by!(File, filename: "ich_schoen.jpg")
-    user_file = Repo.get_by!(File, filename: "ich_schoen.jpg")
     user2_file = Repo.get_by!(File, filename: "wieartig1.jpg")
 
     public_directory =
@@ -37,6 +38,11 @@ defmodule ApiWeb.FileResolverTest do
     public_file =
       Repo.get_by!(File, filename: "logo1.jpg", parent_directory_id: public_directory.id)
 
+    image_upload = %Plug.Upload{
+      path: "test/support/fixtures/image_file.png",
+      filename: "image_file.png"
+    }
+
     {:ok,
      %{
        admin_account: admin,
@@ -46,10 +52,11 @@ defmodule ApiWeb.FileResolverTest do
        user_account: user,
        user_jwt: user_jwt,
        admin_file: admin_file,
-       user_file: user_file,
+       user2_directory: user2_directory,
        user2_file: user2_file,
        public_directory: public_directory,
-       public_file: public_file
+       public_file: public_file,
+       image_upload: image_upload,
      }}
   end
 
@@ -766,8 +773,141 @@ defmodule ApiWeb.FileResolverTest do
     end
   end
 
+  describe "upload file mutation" do
+    @mutation """
+    mutation uploadFile($file: Upload, $parentDirectoryId: ID!) {
+      uploadFile(file: $file, parentDirectoryId: $parentDirectoryId) {
+        filename
+      }
+    }
+    """
+    test "should upload a file to own directory", %{image_upload: image_upload, user2_directory: user2_directory, user2_jwt: user2_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: user2_directory.id},
+          file: image_upload
+        )
+        |> json_response(200)
+      assert %{"filename" => "image_file.png"} = res["data"]["uploadFile"]
+    end
+
+    test "admin should upload a file to public directory", %{image_upload: image_upload, public_directory: public_directory, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: public_directory.id},
+          file: image_upload
+        )
+        |> json_response(200)
+      assert %{"filename" => "image_file.png"} = res["data"]["uploadFile"]
+    end
+
+    test "should return an error when directtory does not exist", %{image_upload: image_upload, user2_jwt: user2_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: 0},
+          file: image_upload
+        )
+        |> json_response(200)
+      refute res["data"]["uploadFile"]
+      assert res["errors"] == [
+        %{
+          "locations" => [%{"column" => 3, "line" => 2}],
+          "message" => "Datei mit der id 0 nicht gefunden.",
+          "path" => ["uploadFile"]
+        }
+      ]
+    end
+
+    test "should return an error when user wants to upload to public directory", %{image_upload: image_upload, public_directory: public_directory, user2_jwt: user2_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: public_directory.id},
+          file: image_upload
+        )
+        |> json_response(200)
+      refute res["data"]["uploadFile"]
+      assert res["errors"] == [
+        %{
+          "locations" => [%{"column" => 3, "line" => 2}],
+          "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+          "path" => ["uploadFile"]
+        }
+      ]
+    end
+
+    test "should return error when user is not logged in", %{image_upload: image_upload, user2_directory: user2_directory} do
+      res =
+        build_conn()
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: user2_directory.id},
+          file: image_upload
+        )
+        |> json_response(200)
+      refute res["data"]["uploadFile"]
+      assert res["errors"] == [
+        %{
+          "locations" => [%{"column" => 3, "line" => 2}],
+          "message" => "Du musst angemeldet sein um das zu tun.", "path" => ["uploadFile"]
+        }
+      ]
+    end
+
+    test "should return an error when user wants to upload to other user's directory", %{image_upload: image_upload, user2_directory: user2_directory, user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: user2_directory.id},
+          file: image_upload
+        )
+        |> json_response(200)
+      refute res["data"]["uploadFile"]
+      assert res["errors"] == [
+        %{
+          "locations" => [%{"column" => 3, "line" => 2}],
+          "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+          "path" => ["uploadFile"]
+        }
+      ]
+    end
+
+    test "should return an error when admin wants to upload to other user's directory", %{image_upload: image_upload, user2_directory: user2_directory, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api",
+          query: @mutation,
+          variables: %{file: "file", parentDirectoryId: user2_directory.id},
+          file: image_upload
+        )
+        |> json_response(200)
+      refute res["data"]["uploadFile"]
+      assert res["errors"] == [
+        %{
+          "locations" => [%{"column" => 3, "line" => 2}],
+          "message" => "Du darfst diesen Ordner hier nicht erstellen.",
+          "path" => ["uploadFile"]
+        }
+      ]
+    end
+  end
+
   describe "delete file mutation" do
-    @query """
+    @mutation """
     mutation deleteFile($id: ID!) {
       deleteFile(id: $id) {
         filename
@@ -778,7 +918,7 @@ defmodule ApiWeb.FileResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
-        |> post("/api", query: @query, variables: %{id: user2_file.id})
+        |> post("/api", query: @mutation, variables: %{id: user2_file.id})
         |> json_response(200)
 
       assert res == %{
@@ -795,7 +935,7 @@ defmodule ApiWeb.FileResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: user2_file.id})
+        |> post("/api", query: @mutation, variables: %{id: user2_file.id})
         |> json_response(200)
 
       assert %{
@@ -813,7 +953,7 @@ defmodule ApiWeb.FileResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: 0})
+        |> post("/api", query: @mutation, variables: %{id: 0})
         |> json_response(200)
 
       assert %{
@@ -826,40 +966,40 @@ defmodule ApiWeb.FileResolverTest do
                ]
              } = res
     end
-  end
 
-  test "deletes a public file as admin", %{public_file: public_file, admin_jwt: admin_jwt} do
-    res =
-      build_conn()
-      |> put_req_header("authorization", "Bearer #{admin_jwt}")
-      |> post("/api", query: @query, variables: %{id: public_file.id})
-      |> json_response(200)
+    test "deletes a public file as admin", %{public_file: public_file, admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @mutation, variables: %{id: public_file.id})
+        |> json_response(200)
 
-    assert res == %{
-             "data" => %{
-               "deleteFile" => %{"filename" => "logo1.jpg"}
-             }
-           }
-  end
-
-  test "returns error when trying to delete a public file as non-admin", %{
-    public_file: public_file,
-    user2_jwt: user2_jwt
-  } do
-    res =
-      build_conn()
-      |> put_req_header("authorization", "Bearer #{user2_jwt}")
-      |> post("/api", query: @query, variables: %{id: public_file.id})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{"deleteFile" => nil},
-             "errors" => [
-               %{
-                 "message" => "Du hast nicht die Rechte, diesen Ordner zu bearbeiten.",
-                 "path" => ["deleteFile"]
+      assert res == %{
+               "data" => %{
+                 "deleteFile" => %{"filename" => "logo1.jpg"}
                }
-             ]
-           } = res
+             }
+    end
+
+    test "returns error when trying to delete a public file as non-admin", %{
+      public_file: public_file,
+      user2_jwt: user2_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api", query: @mutation, variables: %{id: public_file.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"deleteFile" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du hast nicht die Rechte, diesen Ordner zu bearbeiten.",
+                   "path" => ["deleteFile"]
+                 }
+               ]
+             } = res
+    end
   end
 end
