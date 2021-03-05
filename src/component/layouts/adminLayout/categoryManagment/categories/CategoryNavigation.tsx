@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useCallback, useState } from 'react';
+import * as React from 'react';
 import { CategoryModel } from 'model';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, Accordion, AccordionSummary, AccordionDetails, List, ListItem } from '@material-ui/core';
@@ -53,18 +53,18 @@ export interface CategoryNavigationProps {
     onSelectCategory(categoryModel: CategoryModel): void;
 }
 
-export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCategory, onSelectCategory }) => {
+export const CategoryNavigation = React.memo<CategoryNavigationProps>(({ selectedCategory, onSelectCategory }) => {
     const styles = useStyles();
 
     const [categories] = useCategories();
 
-    const [expandedMainCategoryId, setExpandedMainCategoryId] = useState<ID | null>(null);
+    const [expandedMainCategoryId, setExpandedMainCategoryId] = React.useState<ID | null>(null);
 
     const homepageCategory = (categories || []).find(category => category.isHomepage);
-    const mainCategories = useMemo(() => categories.filter(category => !Boolean(category.category) && !category.isSidenav && !category.isHomepage), [categories]);
+    const mainCategories = React.useMemo(() => categories.filter(category => !Boolean(category.category) && !category.isSidenav && !category.isHomepage), [categories]);
     const sidenavCategories = categories.filter(c => c.isSidenav);
 
-    const getSubcategoriesForCategory = useCallback((category: Partial<CategoryModel>) => {
+    const getSubcategoriesForCategory = React.useCallback((category: Partial<CategoryModel>) => {
         return categories.filter(c => c.category && c.category.id === category.id);
     }, [categories]);
 
@@ -80,6 +80,16 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
             } as any;
         }
     });
+
+    React.useEffect(() => {
+        if (selectedCategory) {
+            if (selectedCategory.category?.id) {
+                setExpandedMainCategoryId(selectedCategory.category.id);
+            } else {
+                setExpandedMainCategoryId(selectedCategory.id);
+            }
+        }
+    }, [selectedCategory]);
 
     return (
         <>
@@ -135,7 +145,7 @@ export const CategoryNavigation = memo<CategoryNavigationProps>(({ selectedCateg
                                     {({ innerRef, dragHandleProps, draggableProps }) => (
                                         <Accordion
                                             expanded={Boolean(expandedMainCategoryId && expandedMainCategoryId === category.id)}
-                                            onChange={(e, expanded) => {
+                                            onChange={(_e, expanded) => {
                                                 if (expanded) {
                                                     setExpandedMainCategoryId(category.id);
                                                 }
