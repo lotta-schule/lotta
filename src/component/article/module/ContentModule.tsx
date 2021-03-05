@@ -25,6 +25,7 @@ const useStyles = makeStyles<Theme, { isEditModeEnabled: boolean }>(theme =>
             borderWidth: ({ isEditModeEnabled }) => isEditModeEnabled ? 1 : 0,
             borderColor: 'transparent',
             borderStyle: 'solid',
+            overflow: 'initial',
             '&.dragging': {
                 borderColor: theme.palette.secondary.main,
                 '& $dragbar': {
@@ -42,6 +43,7 @@ const useStyles = makeStyles<Theme, { isEditModeEnabled: boolean }>(theme =>
         dragbar: {
             opacity: 0,
             height: '2em',
+            width: '100%',
             backgroundColor: theme.palette.grey[200],
             display: 'flex',
             justifyContent: 'space-between',
