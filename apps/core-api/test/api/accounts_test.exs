@@ -42,13 +42,17 @@ defmodule Api.AccountsTest do
         |> Map.put(:password, "musik123")
         |> Accounts.register_user()
 
-      assert {:ok, %User{email: "DerLudwigVan@Beethoven.de"}} = user
+      assert {:ok, %User{email: "DerLudwigVan@Beethoven.de"}, _password} = user
     end
 
-    test "register_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Accounts.register_user(Fixtures.fixture(:valid_user_attrs))
+    test "register_user/1 with valid data creates a user with a password" do
+      assert {:ok, %User{} = user, password} =
+               Accounts.register_user(Fixtures.fixture(:valid_user_attrs))
+
       assert user.email == "some@email.de"
       assert user.name == "Alberta Smith"
+      refute is_nil(password)
+      assert Api.Accounts.Authentication.verify_user_pass(user, password)
     end
 
     test "register_user/1 with invalid data returns error changeset" do

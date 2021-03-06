@@ -215,19 +215,31 @@ defmodule Api.Accounts do
   end
 
   @doc """
-  Registers a user.
+  Registers a user, generating a first-time password.
+  If successfull, returns a user and a password.
 
   ## Examples
 
       iex> register_user(%{field: new_value})
-      {:ok, %User{}}
+      {:ok, %User{}, password}
 
       iex> register_user(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  @spec register_user(map()) :: {:ok, User.t()} | {:error, Changeset.t()}
+  @spec register_user(map()) :: {:ok, User.t(), String.t()} | {:error, Changeset.t()}
   def register_user(attrs) do
+    pw_length = 8
+
+    generated_pw =
+      :crypto.strong_rand_bytes(pw_length)
+      |> Base.url_encode64()
+      |> binary_part(0, pw_length)
+
+    attrs =
+      attrs
+      |> Map.put(:password, generated_pw)
+
     changeset =
       %User{}
       |> User.registration_changeset(attrs)
@@ -237,7 +249,7 @@ defmodule Api.Accounts do
         user
         |> create_new_user_directories()
 
-        {:ok, user}
+        {:ok, user, generated_pw}
 
       result ->
         result

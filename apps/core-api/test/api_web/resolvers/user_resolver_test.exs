@@ -767,36 +767,21 @@ defmodule ApiWeb.UserResolverTest do
   describe "register mutation" do
     @query """
     mutation register($user: RegisterUserParams!, $groupKey: String) {
-      register(user: $user, groupKey: $groupKey) {
-        access_token
-      }
+      register(user: $user, groupKey: $groupKey)
     }
     """
 
     test "register the user if data is entered correctly - user should have default directories" do
-      conn =
-        build_conn()
-        |> post("/api",
-          query: @query,
-          variables: %{
-            user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123"}
-          }
-        )
-        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
+      build_conn()
+      |> post("/api",
+        query: @query,
+        variables: %{
+          user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com"}
+        }
+      )
+      |> json_response(200)
 
-      res =
-        conn
-        |> json_response(200)
-
-      token = conn.cookies["SignInRefreshToken"]
-      assert String.valid?(token)
-      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
-      assert email == "neuernutzer@example.com"
-
-      access_token = res["data"]["register"]["access_token"]
-      assert String.valid?(access_token)
-
-      {:ok, %{"sub" => id}} = AccessToken.decode_and_verify(access_token)
+      %User{id: id} = Repo.get_by!(User, email: "neuernutzer@example.com")
 
       directories =
         from(d in Directory, where: d.user_id == ^id)
@@ -806,31 +791,15 @@ defmodule ApiWeb.UserResolverTest do
     end
 
     test "register the user and put him into groupkey's group" do
-      conn =
-        build_conn()
-        |> post("/api",
-          query: @query,
-          variables: %{
-            user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123"},
-            groupKey: "LEb0815Hp!1969"
-          }
-        )
-        |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
-
-      res =
-        conn
-        |> json_response(200)
-
-      token = conn.cookies["SignInRefreshToken"]
-      assert String.valid?(token)
-      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token)
-      assert email == "neuernutzer@example.com"
-
-      access_token = res["data"]["register"]["access_token"]
-      assert String.valid?(access_token)
-
-      {:ok, %{"sub" => _id, "email" => "neuernutzer@example.com"}} =
-        AccessToken.decode_and_verify(access_token)
+      build_conn()
+      |> post("/api",
+        query: @query,
+        variables: %{
+          user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com"},
+          groupKey: "LEb0815Hp!1969"
+        }
+      )
+      |> json_response(200)
 
       user =
         User
@@ -846,19 +815,25 @@ defmodule ApiWeb.UserResolverTest do
       assert group_name == "Lehrer"
     end
 
-    test "register the user and send him a registration mail" do
+    test "register the user and send him a registration mail with his password" do
       build_conn()
       |> post("/api",
         query: @query,
         variables: %{
-          user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com", password: "test123"}
+          user: %{name: "Neuer Nutzer", email: "neuernutzer@example.com"}
         }
       )
       |> json_response(200)
 
       user = Repo.get_by!(User, email: "neuernutzer@example.com")
-      registration_mail = Api.Email.registration_mail(user)
-      assert_delivered_email(registration_mail)
+
+      assert_delivered_email_matches(%{
+        to: [nil: "neuernutzer@example.com"],
+        text_body: text_body
+      })
+
+      [_matchingstring, password] = Regex.run(~r/Passwort: (.*)\n/, text_body)
+      assert Api.Accounts.Authentication.verify_user_pass(user, password)
     end
 
     test "returns error when email is already taken" do
@@ -869,8 +844,7 @@ defmodule ApiWeb.UserResolverTest do
           variables: %{
             user: %{
               name: "Neuer Nutzer",
-              email: "alexis.rinaldoni@lotta.schule",
-              password: "test123"
+              email: "alexis.rinaldoni@lotta.schule"
             },
             groupKey: "LEb0815Hp!1969"
           }
@@ -891,39 +865,13 @@ defmodule ApiWeb.UserResolverTest do
              } = res
     end
 
-    test "returns error when no password is given" do
-      res =
-        build_conn()
-        |> post("/api",
-          query: @query,
-          variables: %{
-            user: %{name: "Neuer Nutzer", email: "alexis.rinaldoni@lotta.schule", password: ""},
-            groupKey: "LEb0815Hp!1969"
-          }
-        )
-        |> json_response(200)
-
-      assert %{
-               "data" => %{
-                 "register" => nil
-               },
-               "errors" => [
-                 %{
-                   "message" => "Registrierung fehlgeschlagen.",
-                   "details" => %{"password" => ["darf nicht leer sein"]},
-                   "path" => ["register"]
-                 }
-               ]
-             } = res
-    end
-
     test "returns error when no name is given" do
       res =
         build_conn()
         |> post("/api",
           query: @query,
           variables: %{
-            user: %{name: "", email: "alexis.rinaldoni@lotta.schule", password: "test123"},
+            user: %{name: "", email: "alexis.rinaldoni@lotta.schule"},
             groupKey: "LEb0815Hp!1969"
           }
         )
@@ -952,7 +900,6 @@ defmodule ApiWeb.UserResolverTest do
             user: %{
               name: "Napoleon Bonaparte",
               email: "napoleon@bonaparte.fr",
-              password: "test123",
               hide_full_name: true
             }
           }

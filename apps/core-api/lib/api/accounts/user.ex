@@ -111,6 +111,7 @@ defmodule Api.Accounts.User do
   @doc since: "1.0.0"
 
   @spec update_password_changeset(t(), map()) :: Changeset.t()
+
   def update_password_changeset(%__MODULE__{} = user, password)
       when is_binary(password) and byte_size(password) > 0 do
     user

@@ -74,12 +74,11 @@ defmodule ApiWeb.Schema.Accounts do
   end
 
   object :accounts_mutations do
-    field :register, type: :authresult do
+    field :register, type: :boolean do
       arg(:user, non_null(:register_user_params))
       arg(:group_key, :string)
 
       resolve(&ApiWeb.UserResolver.register/2)
-      middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
     field :login, type: :authresult do
