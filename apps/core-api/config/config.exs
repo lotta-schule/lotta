@@ -53,8 +53,7 @@ config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
 config :api, :default_user, %{
   name: "Max Mustermann",
   email: "maxmustermann@lotta.schule",
-  hide_full_name: false,
-  password: "password"
+  hide_full_name: false
 }
 
 config :argon2_elixir,

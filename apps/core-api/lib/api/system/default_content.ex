@@ -114,13 +114,20 @@ defmodule Api.System.DefaultContent do
   end
 
   defp create_admin_user(%Context{} = ctx) do
-    user =
-      %User{}
-      |> User.registration_changeset(Application.fetch_env!(:api, :default_user))
-      |> Repo.insert!()
+    Application.fetch_env!(:api, :default_user)
+    |> Api.Accounts.register_user()
+    |> case do
+      {:ok, user, password} ->
+        user =
+          user
+          |> Map.put(:password, password)
+        ctx
+        |> Map.put(:user, user)
 
-    ctx
-    |> Map.put(:user, user)
+      {:error, changeset} ->
+        ctx
+        |> Map.put(:error, changeset)
+    end
   end
 
   defp create_default_groups(%Context{user: user} = ctx) do
@@ -439,7 +446,9 @@ defmodule Api.System.DefaultContent do
   end
 
   defp send_ready_email(%Context{user: user} = ctx) do
-    Api.Mailer.deliver_later(Api.Email.lotta_ready_mail(user))
+    user
+    |> Api.Email.lotta_ready_mail()
+    |> Api.Mailer.deliver_later()
     ctx
   end
 
