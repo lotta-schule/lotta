@@ -3,11 +3,12 @@ import {
     Checkbox, DialogTitle, DialogContent, DialogContentText, DialogActions,
     Button, TextField, Typography, Grid, makeStyles, Theme, FormGroup, FormControlLabel
 } from '@material-ui/core';
-import { useOnLogin } from 'util/user/useOnLogin';
 import { fade } from '@material-ui/core/styles';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+import { useMutation } from '@apollo/client';
+import { RegisterMutation } from 'api/mutation/RegisterMutation';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
@@ -23,11 +24,8 @@ export interface RegisterDialogProps {
     onRequestClose(): void;
 }
 
-export const RegisterDialog = memo<RegisterDialogProps>(({
-    isOpen,
-    onRequestClose
-}) => {
-    const [register, { error, loading: isLoading }] = useOnLogin('register', { redirect: '/profile', onCompleted: onRequestClose });
+export const RegisterDialog = memo<RegisterDialogProps>(({ isOpen, onRequestClose }) => {
+    const [register, { error, loading: isLoading, data }] = useMutation<{ register: boolean }>(RegisterMutation);
     const styles = useStyles();
 
     const getFieldError = useGetFieldError(error);
@@ -36,38 +34,47 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
     const [lastName, setLastName] = useState('');
     const [nickname, setNickname] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordRepetition, setPasswordRepetition] = useState('');
     const [groupKey, setGroupKey] = useState('');
     const [isHideFullName, setIsHideFullName] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
-    const resetForm = () => {
-        setPassword('');
-        setPasswordRepetition('');
-        setEmail('');
-    }
 
-    return (
-        <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+    const content =
+        data?.register ? (
+            <>
+                <DialogTitle>Anmeldung erfolgreich.</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Dein Benutzerkonto wurde erfolgreich eingerichtet.</DialogContentText>
+                    <DialogContentText>
+                        Melde dich mit dem Passwort, das du via E-Mail zugesandt bekommen hast, an.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            onRequestClose();
+                        }}
+                        color="secondary"
+                        variant="outlined"
+                    >
+                        Schließen
+                    </Button>
+                </DialogActions>
+            </>
+        ) : (
             <form onSubmit={e => {
                 e.preventDefault();
                 setFormError(null);
-                if (password !== passwordRepetition) {
-                    setFormError('Password und wiederholtes Passwort stimmen nicht überein');
-                } else {
-                    register({
-                        variables: {
-                            user: {
-                                email,
-                                name: `${firstName} ${lastName}`,
-                                password,
-                                nickname,
-                                hideFullName: isHideFullName
-                            },
-                            groupKey
-                        }
-                    });
-                }
+                register({
+                    variables: {
+                        user: {
+                            email,
+                            name: `${firstName} ${lastName}`,
+                            nickname,
+                            hideFullName: isHideFullName
+                        },
+                        groupKey
+                    }
+                });
             }}>
                 <DialogTitle>Auf der Website registrieren.</DialogTitle>
                 <DialogContent>
@@ -87,35 +94,6 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                         type="email"
                         error={!!getFieldError('email')}
                         helperText={getFieldError('email')}
-                        inputProps={{ maxLength: 100 }}
-                        fullWidth
-                        required
-                    />
-                    <TextField
-                        margin="dense"
-                        id="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        disabled={isLoading}
-                        label="Dein Passwort:"
-                        placeholder={'Passwort'}
-                        type="password"
-                        error={!!getFieldError('password')}
-                        helperText={getFieldError('password')}
-                        inputProps={{ minLength: 6, maxLength: 150 }}
-                        required
-                        fullWidth
-                    />
-                    <TextField
-                        margin="dense"
-                        id="password_repetition"
-                        value={passwordRepetition}
-                        onChange={e => setPasswordRepetition(e.target.value)}
-                        disabled={isLoading}
-                        label="Passwort wiederholen:"
-                        placeholder={'Passwort'}
-                        type="password"
-                        className={styles.margin}
                         inputProps={{ maxLength: 100 }}
                         fullWidth
                         required
@@ -180,7 +158,7 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                     />
                     <FormGroup>
                         <FormControlLabel
-                            control={<Checkbox checked={isHideFullName} onChange={(e, checked) => setIsHideFullName(checked)} />}
+                            control={<Checkbox checked={isHideFullName} onChange={(_e, checked) => setIsHideFullName(checked)} />}
                             label={'Deinen vollständen Namen öffentlich verstecken'}
                         />
                     </FormGroup>
@@ -211,7 +189,6 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                 <DialogActions>
                     <Button
                         onClick={() => {
-                            resetForm();
                             onRequestClose();
                         }}
                         color="secondary"
@@ -228,6 +205,11 @@ export const RegisterDialog = memo<RegisterDialogProps>(({
                     </Button>
                 </DialogActions>
             </form>
+        );
+
+    return (
+        <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+            {content}
         </ResponsiveFullScreenDialog>
     );
 });

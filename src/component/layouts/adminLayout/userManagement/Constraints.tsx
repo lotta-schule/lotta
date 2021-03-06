@@ -49,7 +49,7 @@ export const Constraints = memo(() => {
                             aria-labelledby={'user-storage-limit'}
                             step={50}
                             min={0}
-                            max={2_000}
+                            max={8192}
                             marks={true}
                         />
                     </Grid>
