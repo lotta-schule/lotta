@@ -3,7 +3,7 @@ defmodule Api.Repo.Seeder do
   alias Ecto.Changeset
   alias Api.Accounts
   alias Api.System
-  alias Api.Accounts.{Directory, File, UserGroup}
+  alias Api.Accounts.{Directory, File, User, UserGroup}
   alias Api.Content.{Article, ContentModule}
   alias Api.Messages.Message
   alias Api.System.{Category, CustomDomain, Widget}
@@ -43,22 +43,27 @@ defmodule Api.Repo.Seeder do
     |> Map.put(:token, "Seb034hP2?019")
     |> Repo.insert!()
 
-    {:ok, _lotta_admin} =
+    {:ok, lotta_admin, _pw} =
       Accounts.register_user(%{
         name: "Alexis Rinaldoni",
         email: "alexis.rinaldoni@einsa.net",
         password: "test123"
       })
+    lotta_admin
+    |> User.update_password_changeset("test123")
+    |> Repo.update!()
 
-    {:ok, alexis} =
+    {:ok, alexis, _pw} =
       Accounts.register_user(%{
         name: "Alexis Rinaldoni",
         nickname: "Der Meister",
-        email: "alexis.rinaldoni@lotta.schule",
-        password: "test123"
+        email: "alexis.rinaldoni@lotta.schule"
       })
+    alexis
+    |> User.update_password_changeset("test123")
+    |> Repo.update!()
 
-    {:ok, billy} =
+    {:ok, billy, _pw} =
       Accounts.register_user(%{
         name: "Christopher Bill",
         nickname: "Billy",
@@ -66,22 +71,29 @@ defmodule Api.Repo.Seeder do
         password: "test123",
         enrollment_tokens: ["Seb034hP2?019"]
       })
+    billy
+    |> User.update_password_changeset("test123")
+    |> Repo.update!()
 
-    {:ok, eike} =
+    {:ok, eike, _pw} =
       Accounts.register_user(%{
         name: "Eike Wiewiorra",
         nickname: "Chef",
-        email: "eike.wiewiorra@lotta.schule",
-        password: "test123"
+        email: "eike.wiewiorra@lotta.schule"
       })
+    eike
+    |> User.update_password_changeset("test123")
+    |> Repo.update!()
 
-    {:ok, dr_evil} =
+    {:ok, dr_evil, _pw} =
       Accounts.register_user(%{
         name: "Dr Evil",
         nickname: "drEvil",
-        email: "drevil@lotta.schule",
-        password: "test123"
+        email: "drevil@lotta.schule"
       })
+    dr_evil
+    |> User.update_password_changeset("test123")
+    |> Repo.update!()
 
     Accounts.register_user(%{
       name: "Max Mustermann",

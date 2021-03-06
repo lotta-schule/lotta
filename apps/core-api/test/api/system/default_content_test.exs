@@ -2,6 +2,7 @@ defmodule Api.DefaultContentTest do
   @moduledoc false
 
   use Api.DataCase
+  use Bamboo.Test
 
   import Ecto.Query
 
@@ -12,7 +13,7 @@ defmodule Api.DefaultContentTest do
   alias Api.Accounts.Authentication
 
   describe "default content" do
-    test "should create a default admin user" do
+    test "should create a default admin user and send him or her a mail with his or her password" do
       DefaultContent.create_default_content()
       users = Repo.all(User)
       assert Enum.count(users) == 1
@@ -20,8 +21,18 @@ defmodule Api.DefaultContentTest do
       refute is_nil(user)
       assert user.name == "Max Mustermann"
       assert user.email == "maxmustermann@lotta.schule"
-      assert Authentication.verify_user_pass(user, "password")
-      assert [%UserGroup{is_admin_group: true}] = Map.fetch!(Repo.preload(user, :groups), :groups)
+      assert [%UserGroup{is_admin_group: true}] =
+        user
+        |> Repo.preload(:groups)
+        |> Map.fetch!(:groups)
+
+      assert_delivered_email_matches(%{
+        to: [nil: "maxmustermann@lotta.schule"],
+        text_body: text_body
+      })
+
+      [_matchingstring, password] = Regex.run(~r/Passwort: (.*)\n/, text_body)
+      assert Authentication.verify_user_pass(user, password)
     end
 
     test "should create default groups" do

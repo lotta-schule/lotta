@@ -7,6 +7,13 @@
 <p>
   Das System steht nun für Sie unter der Adresse <%= link(main_url(), to: main_url()) %> zur Verfügung.
 </p>
+
+<p>
+Melden Sie sich mit folgenden Zugangsdaten an:<br />
+<strong>Nutzername:</strong> <%= @user.email %><br />
+<strong>Passwort:</strong> <%= @user.password %><br />
+</p>
+
 <p>
 Anleitungen und Inspiration finden Sie auf unserer Hilfeseite <%= link("https://info.lotta.schule", to: "https://info.lotta.schule") %>.
 Zusätzlich finden Sie als Anhang zu dieser Email eine Übersicht zum Aufbau von Lotta als PDF-Datei.

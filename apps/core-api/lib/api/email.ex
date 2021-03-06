@@ -10,16 +10,16 @@ defmodule Api.Email do
   alias Api.Content.{Article, ContentModule}
 
   @doc """
-  Send new user an email confirming their registration
+  Send new user an email confirming their registration and giving him or her his or her first password
   """
   @doc since: "2.2.0"
 
-  @spec registration_mail(User.t()) :: Bamboo.Email.t()
-  def registration_mail(%User{} = user) do
+  @spec registration_mail(User.t(), String.t()) :: Bamboo.Email.t()
+  def registration_mail(%User{} = user, password) do
     base_mail()
     |> to(user.email)
     |> subject("Deine Registrierung bei #{system().title}")
-    |> render(:registration, user: user)
+    |> render(:registration, user: user, password: password)
   end
 
   @doc """

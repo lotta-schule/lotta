@@ -125,13 +125,14 @@ defmodule ApiWeb.UserResolver do
         end
       )
 
-    with {:ok, user} <- Accounts.register_user(user_params),
-         {:ok, access_token, refresh_token} <- create_user_tokens(user) do
-      Api.Email.registration_mail(user)
-      |> Mailer.deliver_now()
+    case Accounts.register_user(user_params) do
+      {:ok, user, password} ->
+        user
+        |> Api.Email.registration_mail(password)
+        |> Mailer.deliver_now()
 
-      {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
-    else
+        {:ok, true}
+
       res ->
         format_errors(res, "Registrierung fehlgeschlagen.")
     end

@@ -8,7 +8,6 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :nickname, :string
     field :hide_full_name, :boolean
     field :email, :string
-    field :password, :string
   end
 
   input_object :update_user_params do

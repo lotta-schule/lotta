@@ -2,3 +2,11 @@
   Hallo <%= @user.name %>,<br />
   Deine Registrierung bei <%= title() %> war erfolgreich.
 </p>
+
+<p>
+  Du kannst dich unter <a href="<%= main_url() %>" title="<%= title() %>"><%= main_url() %></a> mit deinen Zugangsdaten anmelden:
+</p>
+<p>
+<em>Nutzername:</em> <pre><%= @user.email %><br />
+<em>Passwort:</em> <pre><%= @password %><br />
+</p>
