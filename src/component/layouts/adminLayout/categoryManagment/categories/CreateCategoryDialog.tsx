@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import {
-    Button, Checkbox, DialogTitle, DialogContent, DialogContentText, DialogActions, FormGroup, FormControlLabel, TextField
+    Button, DialogTitle, DialogContent, DialogActions, FormControlLabel, TextField, FormControl, FormLabel, RadioGroup, Radio, makeStyles, LinearProgress
 } from '@material-ui/core';
 import { CategoryModel } from 'model';
 import { CreateCategoryMutation } from 'api/mutation/CreateCategoryMutation';
@@ -9,6 +9,9 @@ import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { CategorySelect } from '../../../editArticleLayout/CategorySelect';
+import { animated, useSpring } from 'react-spring';
+
+enum CategoryPosition { Main, Sub, Side };
 
 export interface CreateCategoryDialogProps {
     isOpen: boolean;
@@ -16,13 +19,23 @@ export interface CreateCategoryDialogProps {
     onConfirm(category: CategoryModel): void;
 }
 
+const useStyles = makeStyles(theme => ({
+    categoryPositionSet: {
+        marginTop: theme.spacing(3),
+        width: '100%'
+    },
+    categorySelect: {
+        margin: theme.spacing(1, 0)
+    }
+}));
+
 export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> = memo(({
-    isOpen,
-    onAbort,
-    onConfirm
+    isOpen, onAbort, onConfirm
 }) => {
+    const styles = useStyles();
+
     const [title, setTitle] = useState('');
-    const [isSidenav, setIsSidenav] = useState(false);
+    const [categoryPosition, setCategoryPosition] = useState(CategoryPosition.Main);
     const [parentCategory, setParentCategory] = useState<CategoryModel | null>(null);
     const [createCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { category: any }>(CreateCategoryMutation, {
         update: (cache, { data }) => {
@@ -44,28 +57,34 @@ export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> 
             onConfirm(category);
         }
     });
+    const parentCategorySpringProps = useSpring({ overflow: 'hidden', height: categoryPosition === CategoryPosition.Sub ? 70 : 0 });
     const resetForm = () => {
         setTitle('');
     }
+
+    React.useEffect(() => {
+        resetForm();
+    }, [isOpen]);
+
     return (
         <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+            {isLoading && (
+                <LinearProgress />
+            )}
             <form onSubmit={(e) => {
                 e.preventDefault();
                 createCategory({
                     variables: {
                         category: {
                             title,
-                            isSidenav,
-                            category: (!isSidenav && parentCategory) ? { id: parentCategory.id } : null
+                            isSidenav: categoryPosition === CategoryPosition.Side,
+                            category: (categoryPosition !== CategoryPosition.Side && parentCategory) ? { id: parentCategory.id } : null
                         }
                     }
                 });
             }}>
                 <DialogTitle>Kategorie erstellen</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Erstelle eine neue Kategorie
-                    </DialogContentText>
                     <ErrorMessage error={error} />
                     <TextField
                         margin="dense"
@@ -80,18 +99,29 @@ export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> 
                         required
                         fullWidth
                     />
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<Checkbox disabled={isLoading} checked={isSidenav} onChange={(e, checked) => setIsSidenav(checked)} />}
-                            label={'Seitenleisten-Kategorie'}
-                        />
-                    </FormGroup>
+                    <FormControl className={styles.categoryPositionSet} component={'fieldset'}>
+                        <FormLabel component={'legend'}>Art der Kategorie</FormLabel>
+                        <RadioGroup
+                            aria-label={'Art der Kategorie'}
+                            value={categoryPosition}
+                            onChange={(_e, value) => setCategoryPosition(parseInt(value, 10))}
+                        >
+                            <FormControlLabel value={0} control={<Radio />} label={'Hauptkategorie'} />
+                            <FormControlLabel value={1} control={<Radio />} label={'Unterkategorie'} />
+                            <animated.div style={parentCategorySpringProps}>
+                                <CategorySelect
+                                    hideSubCategories
+                                    className={styles.categorySelect}
+                                    label={'Übergeordnete Kategorie'}
+                                    disabled={categoryPosition !== CategoryPosition.Sub && !isLoading}
+                                    selectedCategory={parentCategory}
+                                    onSelectCategory={setParentCategory}
+                                />
+                            </animated.div>
+                            <FormControlLabel value={2} control={<Radio />} label={'Seitenleistenkategorie'} />
+                        </RadioGroup>
+                    </FormControl>
 
-                    <CategorySelect
-                        disabled={isLoading || isSidenav}
-                        selectedCategory={parentCategory}
-                        onSelectCategory={setParentCategory}
-                    />
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -106,7 +136,7 @@ export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> 
                     </Button>
                     <Button
                         type={'submit'}
-                        disabled={!title || isLoading}
+                        disabled={!title || isLoading || (categoryPosition === CategoryPosition.Sub && !parentCategory)}
                         color="secondary"
                         variant="contained"
                     >
