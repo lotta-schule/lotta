@@ -10,6 +10,7 @@ import { Header } from '../general/Header';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { animated, useSpring } from 'react-spring';
 import { CategorySelect } from './editArticleLayout/CategorySelect';
+import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import searchBannerImage from './searchBanner.png';
 
 const useStyles = makeStyles(theme => ({
@@ -19,8 +20,12 @@ const useStyles = makeStyles(theme => ({
         paddingTop: theme.spacing(2),
         padding: '8px',
     },
+    advancedSettingsButton: {
+        float: 'right'
+    },
     advancedSettings: {
         overflow: 'hidden',
+        clear: 'right',
         '& h3': {
             fontSize: '1.4rem',
             marginBottom: theme.spacing(1)
@@ -72,8 +77,8 @@ const SearchLayout = React.memo(() => {
                         value={searchText}
                         onChange={e => setSearchText(e.target.value)}
                     />
-                    <Button onClick={() => setIsAdvancedSearchFormVisible(!isAdvancedSearchFormVisible)}>
-                        erweiterte Suche
+                    <Button className={styles.advancedSettingsButton} onClick={() => setIsAdvancedSearchFormVisible(!isAdvancedSearchFormVisible)}>
+                        {isAdvancedSearchFormVisible ? <ExpandLess /> : <ExpandMore />} erweiterte Suche
                     </Button>
                     <animated.div className={styles.advancedSettings} style={springProps}>
                         <Typography variant={'h3'}>Erweiterte Suche</Typography>
