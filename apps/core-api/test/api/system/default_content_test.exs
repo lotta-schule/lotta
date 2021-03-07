@@ -21,10 +21,11 @@ defmodule Api.DefaultContentTest do
       refute is_nil(user)
       assert user.name == "Max Mustermann"
       assert user.email == "maxmustermann@lotta.schule"
+
       assert [%UserGroup{is_admin_group: true}] =
-        user
-        |> Repo.preload(:groups)
-        |> Map.fetch!(:groups)
+               user
+               |> Repo.preload(:groups)
+               |> Map.fetch!(:groups)
 
       assert_delivered_email_matches(%{
         to: [nil: "maxmustermann@lotta.schule"],

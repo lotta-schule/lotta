@@ -6,14 +6,21 @@ defmodule ApiWeb.SearchResolver do
   alias Api.Content.Article
   alias Api.Repo
 
-  def search(%{search_text: search_text}, %{
+  def search(%{search_text: searchtext} = args, %{
         context: %Context{current_user: current_user}
       }) do
-    {:ok,
-     current_user
-     |> Article.get_released_articles_query()
-     |> Search.search_query_filter(search_text)
-     |> Repo.all()
-     |> Enum.uniq_by(& &1.id)}
+    current_user
+    |> Article.get_released_articles_query()
+    |> Search.search_query_filter(searchtext, args[:options])
+    |> case do
+      {:error, msg} ->
+        {:error, msg}
+
+      query ->
+        {:ok,
+         query
+         |> Repo.all()
+         |> Enum.uniq_by(& &1.id)}
+    end
   end
 end
