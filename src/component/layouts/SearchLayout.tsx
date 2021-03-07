@@ -1,13 +1,15 @@
-import React, { memo, useState } from 'react';
-import { CircularProgress, TextField, Typography, makeStyles } from '@material-ui/core';
+import * as React from 'react';
+import { CircularProgress, TextField, Typography, makeStyles, Button } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { ArticlePreviewDensedLayout } from 'component/article/ArticlePreviewDensedLayout';
-import { ArticleModel } from 'model';
+import { ArticleModel, CategoryModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
 import { SearchQuery } from 'api/query/SearchQuery';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { Header } from '../general/Header';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
+import { animated, useSpring } from 'react-spring';
+import { CategorySelect } from './editArticleLayout/CategorySelect';
 import searchBannerImage from './searchBanner.png';
 
 const useStyles = makeStyles(theme => ({
@@ -17,6 +19,13 @@ const useStyles = makeStyles(theme => ({
         paddingTop: theme.spacing(2),
         padding: '8px',
     },
+    advancedSettings: {
+        overflow: 'hidden',
+        '& h3': {
+            fontSize: '1.4rem',
+            marginBottom: theme.spacing(1)
+        }
+    },
     result: {
         marginTop: theme.spacing(1),
     },
@@ -25,13 +34,22 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const SearchLayout = memo(() => {
+const SearchLayout = React.memo(() => {
     const styles = useStyles();
 
-    const [searchText, setSearchText] = useState('');
+    const [searchText, setSearchText] = React.useState('');
+    const [isAdvancedSearchFormVisible, setIsAdvancedSearchFormVisible] = React.useState(false);
+    const [category, setCategory] = React.useState<CategoryModel | null>(null);
     const debouncedSearchtext = useDebounce(searchText, 500);
+    const springProps = useSpring({
+        maxHeight: isAdvancedSearchFormVisible ? 400 : 0,
+        opacity: isAdvancedSearchFormVisible ? 1 : 0
+    });
 
-    const { data, loading: isLoading } = useQuery(SearchQuery, { variables: { searchText: debouncedSearchtext }, skip: !debouncedSearchtext });
+    const { data, loading: isLoading } = useQuery(SearchQuery, {
+        variables: { searchText: debouncedSearchtext, options: { categoryId: category?.id ?? null } },
+        skip: !debouncedSearchtext
+    });
 
     return (
         <>
@@ -54,6 +72,13 @@ const SearchLayout = memo(() => {
                         value={searchText}
                         onChange={e => setSearchText(e.target.value)}
                     />
+                    <Button onClick={() => setIsAdvancedSearchFormVisible(!isAdvancedSearchFormVisible)}>
+                        erweiterte Suche
+                    </Button>
+                    <animated.div className={styles.advancedSettings} style={springProps}>
+                        <Typography variant={'h3'}>Erweiterte Suche</Typography>
+                        <CategorySelect selectedCategory={category} onSelectCategory={setCategory} />
+                    </animated.div>
                     <Typography variant={'body1'} component={'div'} className={styles.result}>
                         {isLoading && <span><CircularProgress style={{ height: '1em', width: '1em' }} /> Beiträge werden gesucht ...</span>}
                         {!isLoading && data && <span>Es wurden {data.results.length} Beiträge gefunden</span>}
