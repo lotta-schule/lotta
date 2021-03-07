@@ -40,7 +40,7 @@ defmodule ApiWeb.SearchResolverTest do
 
   describe "search query" do
     @query """
-    query Search($searchText: String!, options: SearchOptions){
+    query Search($searchText: String!, $options: SearchOptions){
       search(searchText: $searchText, options: $options) {
         title
         preview
