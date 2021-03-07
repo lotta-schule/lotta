@@ -13,8 +13,8 @@ describe('component/layouts/editArticleLayout/CategorySelect', () => {
     it('should select the category', async () => {
         const onSelectCategory = jest.fn();
         const screen =
-            render(<CategorySelect selectedCategory={FaecherCategory} onSelectCategory={onSelectCategory} />);
-        userEvent.click(screen.getByRole('button', { name: /fächer/i }));
+            render(<CategorySelect selectedCategory={null} onSelectCategory={onSelectCategory} />);
+        userEvent.click(screen.getByRole('button', { name: /wählen/i }));
         userEvent.click(await screen.findByRole('option', { name: /material/i }));
         expect(onSelectCategory).toHaveBeenCalledWith(MaterialCategory);
     });
