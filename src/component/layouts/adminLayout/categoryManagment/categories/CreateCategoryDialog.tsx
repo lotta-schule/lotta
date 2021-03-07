@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import * as React from 'react';
 import {
     Button, DialogTitle, DialogContent, DialogActions, FormControlLabel, TextField, FormControl, FormLabel, RadioGroup, Radio, makeStyles, LinearProgress
 } from '@material-ui/core';
@@ -29,14 +29,14 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const CreateCategoryDialog: FunctionComponent<CreateCategoryDialogProps> = memo(({
+export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(({
     isOpen, onAbort, onConfirm
 }) => {
     const styles = useStyles();
 
-    const [title, setTitle] = useState('');
-    const [categoryPosition, setCategoryPosition] = useState(CategoryPosition.Main);
-    const [parentCategory, setParentCategory] = useState<CategoryModel | null>(null);
+    const [title, setTitle] = React.useState('');
+    const [categoryPosition, setCategoryPosition] = React.useState(CategoryPosition.Main);
+    const [parentCategory, setParentCategory] = React.useState<CategoryModel | null>(null);
     const [createCategory, { loading: isLoading, error }] = useMutation<{ category: CategoryModel }, { category: any }>(CreateCategoryMutation, {
         update: (cache, { data }) => {
             let categories: CategoryModel[] = [];

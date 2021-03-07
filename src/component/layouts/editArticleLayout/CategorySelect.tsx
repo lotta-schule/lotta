@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import * as React from 'react';
 import { useCategories } from 'util/categories/useCategories';
 import { CategoryModel } from 'model';
 import { Select, MenuItem, FormControl, InputLabel, OutlinedInput } from '@material-ui/core';
@@ -9,13 +9,12 @@ export interface CategorySelectProps {
     label?: string;
     hideSubCategories?: boolean;
     hideSidenav?: boolean;
-    includeHomepage?: boolean;
     selectedCategory: CategoryModel | null;
     onSelectCategory(category: CategoryModel | null): void;
 }
 
-export const CategorySelect: FunctionComponent<CategorySelectProps> = memo((
-    { disabled, label, hideSubCategories, hideSidenav, includeHomepage, selectedCategory, onSelectCategory, className }
+export const CategorySelect = React.memo<CategorySelectProps>((
+    { disabled, label, hideSubCategories, hideSidenav, selectedCategory, onSelectCategory, className }
 ) => {
     const [categories] = useCategories();
 
@@ -27,10 +26,10 @@ export const CategorySelect: FunctionComponent<CategorySelectProps> = memo((
     }, []);
 
     const mainCategories = categories.filter(c =>
-        !c.category && (!c.isHomepage || includeHomepage) && (!c.isSidenav || !hideSidenav)
+        !c.category && !c.isHomepage && (!c.isSidenav || !hideSidenav)
     );
 
-    const getMenuItemForCategory = useCallback((category: CategoryModel) => (
+    const getMenuItemForCategory = React.useCallback((category: CategoryModel) => (
         <MenuItem key={category.id} value={category.id}>
             {(!category.category && !hideSubCategories) && <strong>{category.title}</strong>}
             {(category.category || hideSubCategories) && (
@@ -54,7 +53,7 @@ export const CategorySelect: FunctionComponent<CategorySelectProps> = memo((
             <Select
                 fullWidth
                 variant={'outlined'}
-                value={selectedCategory ? selectedCategory.id : 'null'}
+                value={selectedCategory?.id ?? 'null'}
                 onChange={e => onSelectCategory(
                     categories.find(cat => e.target.value !== 'null' && cat.id === e.target.value) || null
                 )}

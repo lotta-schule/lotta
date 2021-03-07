@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { FaecherCategory, SomeUser } from 'test/fixtures';
 import { CreateCategoryDialog } from './CreateCategoryDialog';
