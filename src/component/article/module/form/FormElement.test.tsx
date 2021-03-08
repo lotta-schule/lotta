@@ -11,13 +11,22 @@ describe('component/article/module/form/FormElement', () => {
             const setValueFn = jest.fn();
             const screen = render(
                 <FormElement
-                    element={{ element: 'input', name: 'blabla1', label: 'Bla Bla 1' }}
+                    element={{
+                        element: 'input',
+                        name: 'blabla1',
+                        label: 'Bla Bla 1',
+                    }}
                     value={''}
                     onSetValue={setValueFn}
                 />
             );
-            expect(screen.getByRole('textbox', { name: /Bla Bla 1/i })).toBeInTheDocument();
-            userEvent.type(screen.getByRole('textbox', { name: /Bla Bla 1/i }), 'A');
+            expect(
+                screen.getByRole('textbox', { name: /Bla Bla 1/i })
+            ).toBeInTheDocument();
+            userEvent.type(
+                screen.getByRole('textbox', { name: /Bla Bla 1/i }),
+                'A'
+            );
             expect(setValueFn).toHaveBeenLastCalledWith('A');
         });
 
@@ -25,13 +34,22 @@ describe('component/article/module/form/FormElement', () => {
             const setValueFn = jest.fn();
             const screen = render(
                 <FormElement
-                    element={{ element: 'input', type: 'email', name: 'blabla1', label: 'Bla Bla 1' }}
+                    element={{
+                        element: 'input',
+                        type: 'email',
+                        name: 'blabla1',
+                        label: 'Bla Bla 1',
+                    }}
                     value={''}
                     onSetValue={setValueFn}
                 />
             );
-            expect(screen.getByRole('textbox', { name: /Bla Bla 1/i })).toBeInTheDocument();
-            expect(screen.getByRole('textbox', { name: /Bla Bla 1/i })).toHaveProperty('type', 'email');
+            expect(
+                screen.getByRole('textbox', { name: /Bla Bla 1/i })
+            ).toBeInTheDocument();
+            expect(
+                screen.getByRole('textbox', { name: /Bla Bla 1/i })
+            ).toHaveProperty('type', 'email');
         });
     });
 
@@ -48,23 +66,33 @@ describe('component/article/module/form/FormElement', () => {
                             { value: 'A', label: 'Erster Buchstabe' },
                             { value: 'B', label: 'Zweiter Buchstabe' },
                             { value: 'C', label: 'Dritter Buchstabe' },
-                        ]
+                        ],
                     }}
                     value={['B']}
                     onSetValue={setValueFn}
                 />
             );
             expect(screen.getAllByRole('checkbox')).toHaveLength(3);
-            expect(screen.getByRole('checkbox', { name: /erster buchstabe/i })).not.toBeChecked();
-            expect(screen.getByRole('checkbox', { name: /zweiter buchstabe/i })).toBeChecked();
-            expect(screen.getByRole('checkbox', { name: /dritter buchstabe/i })).not.toBeChecked();
+            expect(
+                screen.getByRole('checkbox', { name: /erster buchstabe/i })
+            ).not.toBeChecked();
+            expect(
+                screen.getByRole('checkbox', { name: /zweiter buchstabe/i })
+            ).toBeChecked();
+            expect(
+                screen.getByRole('checkbox', { name: /dritter buchstabe/i })
+            ).not.toBeChecked();
 
             // select
-            userEvent.click(screen.getByRole('checkbox', { name: /dritter buchstabe/i }));
+            userEvent.click(
+                screen.getByRole('checkbox', { name: /dritter buchstabe/i })
+            );
             expect(setValueFn).toHaveBeenCalledWith(['B', 'C']);
 
             // de-select
-            userEvent.click(screen.getByRole('checkbox', { name: /zweiter buchstabe/i }));
+            userEvent.click(
+                screen.getByRole('checkbox', { name: /zweiter buchstabe/i })
+            );
             expect(setValueFn).toHaveBeenCalledWith([]);
         });
 
@@ -80,18 +108,26 @@ describe('component/article/module/form/FormElement', () => {
                             { value: 'A', label: 'Erster Buchstabe' },
                             { value: 'B', label: 'Zweiter Buchstabe' },
                             { value: 'C', label: 'Dritter Buchstabe' },
-                        ]
+                        ],
                     }}
                     value={'B'}
                     onSetValue={setValueFn}
                 />
             );
             expect(screen.getAllByRole('radio')).toHaveLength(3);
-            expect(screen.getByRole('radio', { name: /erster buchstabe/i })).not.toBeChecked();
-            expect(screen.getByRole('radio', { name: /zweiter buchstabe/i })).toBeChecked();
-            expect(screen.getByRole('radio', { name: /dritter buchstabe/i })).not.toBeChecked();
+            expect(
+                screen.getByRole('radio', { name: /erster buchstabe/i })
+            ).not.toBeChecked();
+            expect(
+                screen.getByRole('radio', { name: /zweiter buchstabe/i })
+            ).toBeChecked();
+            expect(
+                screen.getByRole('radio', { name: /dritter buchstabe/i })
+            ).not.toBeChecked();
 
-            userEvent.click(screen.getByRole('radio', { name: /dritter buchstabe/i }));
+            userEvent.click(
+                screen.getByRole('radio', { name: /dritter buchstabe/i })
+            );
             expect(setValueFn).toHaveBeenCalledWith('C');
         });
 
@@ -108,21 +144,33 @@ describe('component/article/module/form/FormElement', () => {
                             { value: 'A', label: 'Erster Buchstabe' },
                             { value: 'B', label: 'Zweiter Buchstabe' },
                             { value: 'C', label: 'Dritter Buchstabe' },
-                        ]
+                        ],
                     }}
                     value={'B'}
                     onSetValue={setValueFn}
                 />
             );
-            expect(screen.getByRole('button')).toHaveTextContent(/zweiter buchstabe/i);
-            expect(screen.getByRole('textbox', { hidden: true })).toHaveValue('B');
+            expect(screen.getByRole('button')).toHaveTextContent(
+                /zweiter buchstabe/i
+            );
+            expect(screen.getByRole('textbox', { hidden: true })).toHaveValue(
+                'B'
+            );
 
             userEvent.click(screen.getByRole('button'));
             expect(screen.getAllByRole('option')).toHaveLength(3);
-            expect(screen.getByRole('option', { name: /erster buchstabe/i })).toBeVisible();
-            expect(screen.getByRole('option', { name: /zweiter buchstabe/i })).toBeVisible();
-            expect(screen.getByRole('option', { name: /dritter buchstabe/i })).toBeVisible();
-            userEvent.click(screen.getByRole('option', { name: /erster buchstabe/i }));
+            expect(
+                screen.getByRole('option', { name: /erster buchstabe/i })
+            ).toBeVisible();
+            expect(
+                screen.getByRole('option', { name: /zweiter buchstabe/i })
+            ).toBeVisible();
+            expect(
+                screen.getByRole('option', { name: /dritter buchstabe/i })
+            ).toBeVisible();
+            userEvent.click(
+                screen.getByRole('option', { name: /erster buchstabe/i })
+            );
             expect(setValueFn).toHaveBeenCalledWith('A');
         });
     });
@@ -132,21 +180,36 @@ describe('component/article/module/form/FormElement', () => {
         let didCallFiles = false;
         const filesMocks = [
             {
-                request: { query: GetDirectoriesAndFilesQuery, variables: { parentDirectoryId: null } },
+                request: {
+                    query: GetDirectoriesAndFilesQuery,
+                    variables: { parentDirectoryId: null },
+                },
                 result: () => {
                     didCallFiles = true;
                     return {
                         data: {
-                            files: [{
-                                ...imageFile,
-                                userId: user.id,
-                                parentDirectory: { ...logosDirectory, user, parentDirectory: null }
-                            }],
-                            directories: [{ ...logosDirectory, user, parentDirectory: null }]
-                        }
+                            files: [
+                                {
+                                    ...imageFile,
+                                    userId: user.id,
+                                    parentDirectory: {
+                                        ...logosDirectory,
+                                        user,
+                                        parentDirectory: null,
+                                    },
+                                },
+                            ],
+                            directories: [
+                                {
+                                    ...logosDirectory,
+                                    user,
+                                    parentDirectory: null,
+                                },
+                            ],
+                        },
                     };
-                }
-            }
+                },
+            },
         ];
 
         beforeEach(() => {
@@ -160,17 +223,19 @@ describe('component/article/module/form/FormElement', () => {
                 <FormElement
                     element={{
                         element: 'file',
-                        name: 'blabla1'
+                        name: 'blabla1',
                     }}
                     value={''}
                     onSetValue={setValueFn}
                 />
             );
             expect(screen.getAllByRole('button')).toHaveLength(1);
-            expect(screen.getByRole('button')).toHaveTextContent(/datei hochladen/i);
+            expect(screen.getByRole('button')).toHaveTextContent(
+                /datei hochladen/i
+            );
             userEvent.upload(
                 document.querySelector('input[type=file]')!,
-                new File(['hello world'], 'hello.txt', { type: 'text/plain' }),
+                new File(['hello world'], 'hello.txt', { type: 'text/plain' })
             );
             await waitFor(() => {
                 expect(setValueFn).toHaveBeenCalledWith(
@@ -185,15 +250,21 @@ describe('component/article/module/form/FormElement', () => {
                 <FormElement
                     element={{
                         element: 'file',
-                        name: 'blabla1'
+                        name: 'blabla1',
                     }}
-                    value={'file-upload://{"filesize":11,"filename":"hello.txt","filetype":"text/plain","blob":"http://localhost/0"}'}
+                    value={
+                        'file-upload://{"filesize":11,"filename":"hello.txt","filetype":"text/plain","blob":"http://localhost/0"}'
+                    }
                     onSetValue={setValueFn}
                 />
             );
-            expect(screen.getByRole('button', { name: /datei hochladen/i })).toBeVisible();
+            expect(
+                screen.getByRole('button', { name: /datei hochladen/i })
+            ).toBeVisible();
             expect(screen.getByText('hello.txt')).toBeVisible();
-            userEvent.click(screen.getByRole('button', { name: /auswahl entfernen/i }));
+            userEvent.click(
+                screen.getByRole('button', { name: /auswahl entfernen/i })
+            );
             expect(setValueFn).toHaveBeenCalledWith('');
         });
 
@@ -204,28 +275,51 @@ describe('component/article/module/form/FormElement', () => {
                     element={{
                         element: 'file',
                         name: 'blabla1',
-                        maxSize: 1024*1024
+                        maxSize: 1024 * 1024,
                     }}
                     value={''}
                     onSetValue={setValueFn}
                 />,
-                {}, { useCache: true, currentUser: user, additionalMocks: filesMocks }
+                {},
+                {
+                    useCache: true,
+                    currentUser: user,
+                    additionalMocks: filesMocks,
+                }
             );
-            expect(screen.getByRole('button', { name: /datei hochladen/i })).toBeVisible();
-            expect(screen.getByRole('button', { name: /meine dateien/i })).toBeVisible();
-            userEvent.click(screen.getByRole('button', { name: /meine dateien/i }));
-            await waitFor(() => expect(screen.getByRole('presentation')).toBeVisible());
+            expect(
+                screen.getByRole('button', { name: /datei hochladen/i })
+            ).toBeVisible();
+            expect(
+                screen.getByRole('button', { name: /meine dateien/i })
+            ).toBeVisible();
+            userEvent.click(
+                screen.getByRole('button', { name: /meine dateien/i })
+            );
+            await waitFor(() =>
+                expect(screen.getByRole('presentation')).toBeVisible()
+            );
             await waitFor(() => expect(didCallFiles).toEqual(true));
-            await waitFor(() => expect(screen.getByRole('row', { name: /logos/i })).toBeVisible());
+            await waitFor(() =>
+                expect(
+                    screen.getByRole('row', { name: /logos/i })
+                ).toBeVisible()
+            );
             userEvent.click(screen.getByRole('row', { name: /logos/i }));
-            await waitFor(() => expect(screen.getByRole('row', { name: /dateiname\.jpg/i })).toBeVisible());
-            userEvent.click(screen.getByRole('row', { name: /dateiname\.jpg/i }));
+            await waitFor(() =>
+                expect(
+                    screen.getByRole('row', { name: /dateiname\.jpg/i })
+                ).toBeVisible()
+            );
+            userEvent.click(
+                screen.getByRole('row', { name: /dateiname\.jpg/i })
+            );
             userEvent.click(screen.getByRole('button', { name: /auswählen/ }));
             expect(setValueFn).toHaveBeenCalledWith(
                 'lotta-file-id://' +
-                '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15","filename":"Dateiname.jpg",' +
-                '"filesize":123123,"remoteLocation":"https://fakes3/meinbild.jpg","mimeType":"image/jpg","fileType":"IMAGE",' +
-                '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
+                    '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15","filename":"Dateiname.jpg",' +
+                    '"filesize":123123,"remoteLocation":"https://fakes3/meinbild.jpg","mimeType":"image/jpg","fileType":"IMAGE",' +
+                    '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
             );
         });
 
@@ -235,7 +329,7 @@ describe('component/article/module/form/FormElement', () => {
                 <FormElement
                     element={{
                         element: 'file',
-                        name: 'blabla1'
+                        name: 'blabla1',
                     }}
                     value={
                         'lotta-file-id://' +
@@ -246,11 +340,14 @@ describe('component/article/module/form/FormElement', () => {
                     onSetValue={setValueFn}
                 />
             );
-            expect(screen.getByRole('button', { name: /datei hochladen/i })).toBeVisible();
+            expect(
+                screen.getByRole('button', { name: /datei hochladen/i })
+            ).toBeVisible();
             expect(screen.getByText('Dateiname.jpg')).toBeVisible();
-            userEvent.click(screen.getByRole('button', { name: /auswahl entfernen/i }));
+            userEvent.click(
+                screen.getByRole('button', { name: /auswahl entfernen/i })
+            );
             expect(setValueFn).toHaveBeenCalledWith('');
         });
-
     });
 });

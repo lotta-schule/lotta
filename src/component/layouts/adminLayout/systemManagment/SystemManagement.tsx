@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         paddingBottom: theme.spacing(3),
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
-    }
+    },
 }));
 
 export const SystemManagement = memo(() => {
@@ -21,19 +21,39 @@ export const SystemManagement = memo(() => {
 
     return (
         <Paper>
-            <Tabs value={location.pathname} indicatorColor={'primary'} textColor={'primary'} onChange={(_, pathname) => history.push(pathname)}>
-                <Tab value={'/admin/system/general'} label={'Grundeinstellungen'} />
-                <Tab value={'/admin/system/presentation'} label={'Darstellung'} />
+            <Tabs
+                value={location.pathname}
+                indicatorColor={'primary'}
+                textColor={'primary'}
+                onChange={(_, pathname) => history.push(pathname)}
+            >
+                <Tab
+                    value={'/admin/system/general'}
+                    label={'Grundeinstellungen'}
+                />
+                <Tab
+                    value={'/admin/system/presentation'}
+                    label={'Darstellung'}
+                />
                 <Tab value={'/admin/system/usage'} label={'Nutzung'} />
             </Tabs>
             <section className={styles.content}>
                 <Switch>
-                    <Route exact path='/admin/system'>
+                    <Route exact path="/admin/system">
                         <Redirect to={'/admin/system/general'} />
                     </Route>
-                    <Route path='/admin/system/general' component={BasicSettings} />
-                    <Route path='/admin/system/presentation' component={PresentationSettings} />
-                    <Route path='/admin/system/usage' component={UsageOverview} />
+                    <Route
+                        path="/admin/system/general"
+                        component={BasicSettings}
+                    />
+                    <Route
+                        path="/admin/system/presentation"
+                        component={PresentationSettings}
+                    />
+                    <Route
+                        path="/admin/system/usage"
+                        component={UsageOverview}
+                    />
                 </Switch>
             </section>
         </Paper>

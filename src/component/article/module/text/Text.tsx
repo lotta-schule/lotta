@@ -10,7 +10,7 @@ export interface TextProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         margin: '0 16.6%',
         [theme.breakpoints.down('sm')]: {
@@ -18,29 +18,35 @@ const useStyles = makeStyles(theme => ({
         },
         '& a': {
             textDecoration: 'none',
-            color: theme.palette.secondary.main
+            color: theme.palette.secondary.main,
         },
         '& p, & ul, & ol': {
             marginTop: theme.spacing(1),
             marginBottom: theme.spacing(1),
         },
         '& ul, & ol': {
-            ...theme.typography.body1
-        }
-    }
+            ...theme.typography.body1,
+        },
+    },
 }));
 
-export const Text = memo<TextProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-    const styles = useStyles();
-    return (
-        <CardContent className={styles.root} data-testid="TextContentModule">
-            {isEditModeEnabled && onUpdateModule ?
-                (
-                    <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+export const Text = memo<TextProps>(
+    ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+        const styles = useStyles();
+        return (
+            <CardContent
+                className={styles.root}
+                data-testid="TextContentModule"
+            >
+                {isEditModeEnabled && onUpdateModule ? (
+                    <Edit
+                        contentModule={contentModule}
+                        onUpdateModule={onUpdateModule}
+                    />
                 ) : (
                     <Show contentModule={contentModule} />
-                )
-            }
-        </CardContent>
-    );
-});
+                )}
+            </CardContent>
+        );
+    }
+);

@@ -1,6 +1,6 @@
-import React, { FunctionComponent, memo, MouseEventHandler } from "react";
-import { makeStyles } from "@material-ui/styles";
-import { Theme, Typography, Button } from "@material-ui/core";
+import React, { FunctionComponent, memo, MouseEventHandler } from 'react';
+import { makeStyles } from '@material-ui/styles';
+import { Theme, Typography, Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -8,8 +8,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     buttonLabel: {
         display: 'flex',
-        flexDirection: 'column'
-    }
+        flexDirection: 'column',
+    },
 }));
 
 export interface AddModuleButtonProps {
@@ -18,14 +18,20 @@ export interface AddModuleButtonProps {
     onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
-export const AddModuleButton: FunctionComponent<AddModuleButtonProps> = memo(({ label, icon, onClick }) => {
+export const AddModuleButton: FunctionComponent<AddModuleButtonProps> = memo(
+    ({ label, icon, onClick }) => {
+        const styles = useStyles();
 
-    const styles = useStyles();
-
-    return (
-        <Button color={'secondary'} variant={'outlined'} classes={{ root: styles.root, label: styles.buttonLabel }} onClick={onClick}>
-            {icon}
-            <Typography>{label}</Typography>
-        </Button>
-    );
-});
+        return (
+            <Button
+                color={'secondary'}
+                variant={'outlined'}
+                classes={{ root: styles.root, label: styles.buttonLabel }}
+                onClick={onClick}
+            >
+                {icon}
+                <Typography>{label}</Typography>
+            </Button>
+        );
+    }
+);

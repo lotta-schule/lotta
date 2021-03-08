@@ -8,7 +8,10 @@ export interface EditToolbarMarkButtonProps {
     children?: any;
 }
 
-export const EditToolbarMarkButton: FC<EditToolbarMarkButtonProps> = (({ mark, children }) => {
+export const EditToolbarMarkButton: FC<EditToolbarMarkButtonProps> = ({
+    mark,
+    children,
+}) => {
     const editor = useSlate();
 
     return (
@@ -16,12 +19,12 @@ export const EditToolbarMarkButton: FC<EditToolbarMarkButtonProps> = (({ mark, c
             size={'small'}
             value={mark}
             selected={isMarkActive(editor, mark)}
-            onMouseDown={e => {
+            onMouseDown={(e) => {
                 e.preventDefault();
-                toggleMark(editor, mark)
+                toggleMark(editor, mark);
             }}
         >
             {children}
         </ToggleButton>
     );
-});
+};

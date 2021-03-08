@@ -1,5 +1,11 @@
 import React, { memo, useState } from 'react';
-import { Grid, InputAdornment, Slider, TextField, Typography } from '@material-ui/core';
+import {
+    Grid,
+    InputAdornment,
+    Slider,
+    TextField,
+    Typography,
+} from '@material-ui/core';
 import { SdStorage } from '@material-ui/icons';
 import { useSystem } from 'util/client/useSystem';
 import { SaveButton } from 'component/general/SaveButton';
@@ -12,13 +18,16 @@ export const Constraints = memo(() => {
     const [value, setValue] = useState(system.userMaxStorageConfig ?? 20);
     const [isShowSuccess, setIsShowSuccess] = useState(false);
 
-    const [updateSystem, { loading: isLoading, error }] = useMutation(UpdateSystemMutation, {
-        variables: { system: { userMaxStorageConfig: value } },
-        onCompleted: () => {
-            setIsShowSuccess(true);
-            setTimeout(() => setIsShowSuccess(false), 3000);
+    const [updateSystem, { loading: isLoading, error }] = useMutation(
+        UpdateSystemMutation,
+        {
+            variables: { system: { userMaxStorageConfig: value } },
+            onCompleted: () => {
+                setIsShowSuccess(true);
+                setTimeout(() => setIsShowSuccess(false), 3000);
+            },
         }
-    });
+    );
 
     return (
         <>
@@ -30,12 +39,14 @@ export const Constraints = memo(() => {
                 <ErrorMessage error={error} />
                 <Typography variant={'body2'} component={'div'}>
                     <p>
-                        Der freie Speicher für jeden Nutzer bestimmt, wie viel persönlicher Speicherplatz jeder Nutzer
-                        durch seine Anmeldung zur Verfügung gestellt bekommt.
+                        Der freie Speicher für jeden Nutzer bestimmt, wie viel
+                        persönlicher Speicherplatz jeder Nutzer durch seine
+                        Anmeldung zur Verfügung gestellt bekommt.
                     </p>
                     <p>
-                        Er bestimmt neben dem Speicher, den der Nutzer durch seine Gruppen zur Verfügung gestellt bekommt,
-                        wie viele Medien Nutzer online vorhalten können.
+                        Er bestimmt neben dem Speicher, den der Nutzer durch
+                        seine Gruppen zur Verfügung gestellt bekommt, wie viele
+                        Medien Nutzer online vorhalten können.
                     </p>
                 </Typography>
                 <Grid container spacing={2} alignItems="center">
@@ -63,7 +74,11 @@ export const Constraints = memo(() => {
                                 }
                             }}
                             InputProps={{
-                                startAdornment: <InputAdornment position={'start'}>MB</InputAdornment>,
+                                startAdornment: (
+                                    <InputAdornment position={'start'}>
+                                        MB
+                                    </InputAdornment>
+                                ),
                             }}
                             inputProps={{
                                 step: 50,
@@ -75,7 +90,11 @@ export const Constraints = memo(() => {
                         />
                     </Grid>
                 </Grid>
-                <SaveButton onClick={() => updateSystem()} isLoading={isLoading} isSuccess={isShowSuccess}>
+                <SaveButton
+                    onClick={() => updateSystem()}
+                    isLoading={isLoading}
+                    isSuccess={isShowSuccess}
+                >
                     Speichern
                 </SaveButton>
             </div>

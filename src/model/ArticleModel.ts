@@ -21,7 +21,10 @@ export interface ArticleModel {
     groups: UserGroupModel[];
 }
 
-export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
+export type ArticleModelInput = Omit<
+    ArticleModel,
+    'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'
+> & {
     contentModules: ContentModuleInput[];
     category: Partial<CategoryModel>;
 };

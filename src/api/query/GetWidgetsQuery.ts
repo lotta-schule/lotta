@@ -8,9 +8,9 @@ export const GetWidgetsQuery = gql`
             type
             configuration
             iconImageFile {
-                    id
-                    remoteLocation
-                }
+                id
+                remoteLocation
+            }
             groups {
                 id
                 sortKey

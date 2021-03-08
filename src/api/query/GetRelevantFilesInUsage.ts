@@ -21,23 +21,23 @@ export const GetRelevantFilesInUsageQuery = gql`
                 remoteLocation
             }
             usage {
-              ... on FileCategoryUsageLocation {
-                  usage
-                  category {
-                      id
-                      title
-                  }
-              }
-              ... on FileArticleUsageLocation {
-                  usage
-                  article {
-                      id
-                      title
-                      previewImageFile {
-                          remoteLocation
-                      }
-                  }
-              }
+                ... on FileCategoryUsageLocation {
+                    usage
+                    category {
+                        id
+                        title
+                    }
+                }
+                ... on FileArticleUsageLocation {
+                    usage
+                    article {
+                        id
+                        title
+                        previewImageFile {
+                            remoteLocation
+                        }
+                    }
+                }
             }
             parentDirectory {
                 id

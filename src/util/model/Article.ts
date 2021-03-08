@@ -3,10 +3,12 @@ import slugify from 'slugify';
 
 export const Article = {
     getPath(article: ArticleModel, options?: { edit?: boolean }) {
-        return `/a/${article.id}-${slugify(article.title)}${options?.edit ? '/edit' : ''}`;
+        return `/a/${article.id}-${slugify(article.title)}${
+            options?.edit ? '/edit' : ''
+        }`;
     },
 
     isVisible(article: ArticleModel) {
         return !!article.category;
-    }
+    },
 };

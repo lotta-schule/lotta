@@ -13,7 +13,7 @@ export const useDebounce = <T extends any>(value: T, delay: number): T => {
 
             // Return a cleanup function that will be called every time ...
             // ... useEffect is re-called. useEffect will only be re-called ...
-            // ... if value changes (see the inputs array below). 
+            // ... if value changes (see the inputs array below).
             // This is how we prevent debouncedValue from changing if value is ...
             // ... changed within the delay period. Timeout gets cleared and restarted.
             // To put it in context, if the user is typing within our app's ...
@@ -30,4 +30,4 @@ export const useDebounce = <T extends any>(value: T, delay: number): T => {
     );
 
     return debouncedValue;
-}
+};

@@ -4,9 +4,9 @@ import '@testing-library/jest-dom';
 // window.getSelection isn't in jsdom
 // https://github.com/tmpvar/jsdom/issues/937
 // @ts-ignore
-window.getSelection = function() { 
-  return { 
-    addRange: function() {}, 
-    removeAllRanges:function() {} 
-  };
+window.getSelection = function () {
+    return {
+        addRange: function () {},
+        removeAllRanges: function () {},
+    };
 };

@@ -12,18 +12,29 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
     size?: number;
 }
 
-export const UserAvatar = memo<UserAvatarProps>(({ user, size, ...otherProps }) => {
-    const retinaMultiplier = useIsRetina() ? 2 : 1;
-    const src = User.getAvatarUrl(user, size ? (size * retinaMultiplier) : undefined);
+export const UserAvatar = memo<UserAvatarProps>(
+    ({ user, size, ...otherProps }) => {
+        const retinaMultiplier = useIsRetina() ? 2 : 1;
+        const src = User.getAvatarUrl(
+            user,
+            size ? size * retinaMultiplier : undefined
+        );
 
-    return (
-        <Avatar src={src} alt={`Profilbild von ${User.getNickname(user)}`} {...otherProps} />
-    );
-});
+        return (
+            <Avatar
+                src={src}
+                alt={`Profilbild von ${User.getNickname(user)}`}
+                {...otherProps}
+            />
+        );
+    }
+);
 
-export const CurrentUserAvatar = memo<Omit<UserAvatarProps, 'user'>>(props => {
-    const currentUser = useCurrentUser();
-    return currentUser ?
-        <UserAvatar user={currentUser} {...props} /> :
-        null;
-});
+export const CurrentUserAvatar = memo<Omit<UserAvatarProps, 'user'>>(
+    (props) => {
+        const currentUser = useCurrentUser();
+        return currentUser ? (
+            <UserAvatar user={currentUser} {...props} />
+        ) : null;
+    }
+);

@@ -30,7 +30,9 @@ export const MessagingLayout = memo(() => {
             <BaseLayoutMainContent>
                 {!isMobile && (
                     <Header bannerImageUrl={bannerMessaging}>
-                        <Typography variant={'h2'} data-testid={'title'}>Nachrichten</Typography>
+                        <Typography variant={'h2'} data-testid={'title'}>
+                            Nachrichten
+                        </Typography>
                     </Header>
                 )}
                 <MessagingView />

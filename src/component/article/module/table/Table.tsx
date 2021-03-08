@@ -12,8 +12,7 @@ export interface TableContent {
     rows: TableCell[][];
 }
 
-export interface TableConfiguration {
-}
+export interface TableConfiguration {}
 
 export interface TableProps {
     contentModule: ContentModuleModel;
@@ -21,7 +20,7 @@ export interface TableProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         paddingTop: 30,
         paddingBottom: 0,
@@ -29,19 +28,27 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.down('sm')]: {
             margin: 0,
         },
-    }
+    },
 }));
 
-export const Table = memo<TableProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-    const styles = useStyles();
-    return (
-        <CardContent className={styles.root} data-testid="TableContentModule">
-            {isEditModeEnabled && onUpdateModule && (
-                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-            )}
-            {(!isEditModeEnabled || !onUpdateModule) && (
-                <Show contentModule={contentModule} />
-            )}
-        </CardContent>
-    );
-});
+export const Table = memo<TableProps>(
+    ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+        const styles = useStyles();
+        return (
+            <CardContent
+                className={styles.root}
+                data-testid="TableContentModule"
+            >
+                {isEditModeEnabled && onUpdateModule && (
+                    <Edit
+                        contentModule={contentModule}
+                        onUpdateModule={onUpdateModule}
+                    />
+                )}
+                {(!isEditModeEnabled || !onUpdateModule) && (
+                    <Show contentModule={contentModule} />
+                )}
+            </CardContent>
+        );
+    }
+);

@@ -1,6 +1,11 @@
 import React, { FunctionComponent, memo, useState } from 'react';
 import {
-    Paper, Typography, makeStyles, Theme, Button, Grid
+    Paper,
+    Typography,
+    makeStyles,
+    Theme,
+    Button,
+    Grid,
 } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import clsx from 'clsx';
@@ -40,14 +45,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     padding: {
         paddingRight: theme.spacing(4),
-    }
+    },
 }));
 
 export const CategoriesManagement: FunctionComponent = memo(() => {
     const styles = useStyles();
 
-    const [selectedCategory, setSelectedCategory] = useState<CategoryModel | null>(null);
-    const [isCreateCategoryDialogOpen, setIsCreateCategoryDialogOpen] = useState(false);
+    const [
+        selectedCategory,
+        setSelectedCategory,
+    ] = useState<CategoryModel | null>(null);
+    const [
+        isCreateCategoryDialogOpen,
+        setIsCreateCategoryDialogOpen,
+    ] = useState(false);
 
     return (
         <Paper className={styles.container}>
@@ -60,18 +71,26 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
                     className={styles.button}
                     onClick={() => setIsCreateCategoryDialogOpen(true)}
                 >
-                    <AddCircleIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
+                    <AddCircleIcon
+                        className={clsx(styles.leftIcon, styles.iconSmall)}
+                    />
                     Kategorie erstellen
                 </Button>
             </Typography>
 
             <Grid container>
-                <Grid item sm={5} className={styles.padding} >
-                    <CategoryNavigation selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+                <Grid item sm={5} className={styles.padding}>
+                    <CategoryNavigation
+                        selectedCategory={selectedCategory}
+                        onSelectCategory={setSelectedCategory}
+                    />
                 </Grid>
                 <Grid item sm={7}>
                     {selectedCategory && (
-                        <CategoryEditor selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+                        <CategoryEditor
+                            selectedCategory={selectedCategory}
+                            onSelectCategory={setSelectedCategory}
+                        />
                     )}
                 </Grid>
             </Grid>
@@ -79,7 +98,7 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
             <CreateCategoryDialog
                 isOpen={isCreateCategoryDialogOpen}
                 onAbort={() => setIsCreateCategoryDialogOpen(false)}
-                onConfirm={category => {
+                onConfirm={(category) => {
                     setIsCreateCategoryDialogOpen(false);
                     setSelectedCategory(category);
                 }}

@@ -8,7 +8,9 @@ export const ProfileLayoutNavigation = memo(() => {
         <Paper>
             <Tabs
                 value={location.pathname}
-                onChange={(_, value) => { history.push(value); }}
+                onChange={(_, value) => {
+                    history.push(value);
+                }}
                 orientation="vertical"
                 variant="scrollable"
                 aria-label="Admin Einstellungen"

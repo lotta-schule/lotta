@@ -2,14 +2,13 @@ import * as React from 'react';
 import MockDate from 'mockdate';
 import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
-import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
+import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import { EditArticleLayout } from './EditArticleLayout';
 import { ArticleIsUpdatedSubscription } from 'api/subscription/GetArticleSubscription';
 import { ContentModuleType } from 'model';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
-
     it('should render the EditArticleLayout without error', () => {
         render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
@@ -49,7 +48,8 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         it('should add a contentmodule', () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, { currentUser: SomeUser, useCache: true }
+                {},
+                { currentUser: SomeUser, useCache: true }
             );
             expect(screen.queryAllByTestId('ContentModule')).toHaveLength(3);
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
@@ -68,49 +68,61 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         });
 
         it('should call saveArticle endpoint with updated content modules', async () => {
-            const onSave = jest.fn(() => ({ data: { article: variables.article } }));
+            const onSave = jest.fn(() => ({
+                data: { article: variables.article },
+            }));
             const variables = {
                 id: Weihnachtsmarkt.id,
                 article: {
-                    contentModules:
-                        Weihnachtsmarkt.contentModules.map(cm => ({
+                    contentModules: Weihnachtsmarkt.contentModules
+                        .map((cm) => ({
                             id: cm.id,
                             type: cm.type as string,
                             sortKey: cm.sortKey,
                             files: cm.files,
-                            configuration: cm.configuration ? JSON.stringify(cm.configuration) : null,
-                            content: cm.content ? JSON.stringify(cm.content) : null
+                            configuration: cm.configuration
+                                ? JSON.stringify(cm.configuration)
+                                : null,
+                            content: cm.content
+                                ? JSON.stringify(cm.content)
+                                : null,
                         }))
-                        .concat([{
-                            configuration: '{}' as any,
-                            sortKey: 40, files:[],
-                            type: 'TITLE',
-                            content: '{"title":"Deine Überschrift ..."}'
-                        } as any]),
+                        .concat([
+                            {
+                                configuration: '{}' as any,
+                                sortKey: 40,
+                                files: [],
+                                type: 'TITLE',
+                                content: '{"title":"Deine Überschrift ..."}',
+                            } as any,
+                        ]),
                     users: [],
                     groups: [],
                     insertedAt: Weihnachtsmarkt.insertedAt,
                     updatedAt: date.toISOString(),
                     readyToPublish: true,
-                    title: "Weihnachtsmarkt",
+                    title: 'Weihnachtsmarkt',
                     preview: Weihnachtsmarkt.preview,
                     previewImageFile: null,
-                    topic: "La Revolucion",
-                    category: null
-                }
+                    topic: 'La Revolucion',
+                    category: null,
+                },
             };
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, {
+                {},
+                {
                     currentUser: SomeUser,
-                    additionalMocks: [{
-                        request: {
-                            query:  UpdateArticleMutation,
-                            variables: variables
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: UpdateArticleMutation,
+                                variables: variables,
+                            },
+                            result: onSave,
                         },
-                        result: onSave
-                    }],
-                    useCache: true
+                    ],
+                    useCache: true,
                 }
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
@@ -124,50 +136,62 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             const onChangeLocation = jest.fn(({ location }) => {
                 expect(location.pathname).toMatch(/^\/a\//);
             });
-            const onSave = jest.fn(() => ({ data: { article: variables.article } }));
+            const onSave = jest.fn(() => ({
+                data: { article: variables.article },
+            }));
             const variables = {
                 id: Weihnachtsmarkt.id,
                 article: {
-                    contentModules:
-                        Weihnachtsmarkt.contentModules.map(cm => ({
+                    contentModules: Weihnachtsmarkt.contentModules
+                        .map((cm) => ({
                             id: cm.id,
                             type: cm.type as string,
                             sortKey: cm.sortKey,
                             files: cm.files,
-                            configuration: cm.configuration ? JSON.stringify(cm.configuration) : null,
-                            content: cm.content ? JSON.stringify(cm.content) : null
+                            configuration: cm.configuration
+                                ? JSON.stringify(cm.configuration)
+                                : null,
+                            content: cm.content
+                                ? JSON.stringify(cm.content)
+                                : null,
                         }))
-                        .concat([{
-                            configuration: '{}' as any,
-                            sortKey: 40, files:[],
-                            type: 'TITLE',
-                            content: '{"title":"Deine Überschrift ..."}'
-                        } as any]),
+                        .concat([
+                            {
+                                configuration: '{}' as any,
+                                sortKey: 40,
+                                files: [],
+                                type: 'TITLE',
+                                content: '{"title":"Deine Überschrift ..."}',
+                            } as any,
+                        ]),
                     users: [],
                     groups: [],
                     insertedAt: Weihnachtsmarkt.insertedAt,
                     updatedAt: date.toISOString(),
                     readyToPublish: true,
-                    title: "Weihnachtsmarkt",
+                    title: 'Weihnachtsmarkt',
                     preview: Weihnachtsmarkt.preview,
                     previewImageFile: null,
-                    topic: "La Revolucion",
-                    category: null
-                }
+                    topic: 'La Revolucion',
+                    category: null,
+                },
             };
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, {
+                {},
+                {
                     currentUser: SomeUser,
-                    additionalMocks: [{
-                        request: {
-                            query:  UpdateArticleMutation,
-                            variables: variables
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: UpdateArticleMutation,
+                                variables: variables,
+                            },
+                            result: onSave,
                         },
-                        result: onSave
-                    }],
+                    ],
                     useCache: true,
-                    onChangeLocation
+                    onChangeLocation,
                 }
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
@@ -182,111 +206,145 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         it('should update basic information like the title when receiving update via subscription', async () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, {
+                {},
+                {
                     currentUser: SomeUser,
-                    additionalMocks: [{
-                        request: {
-                            query:  ArticleIsUpdatedSubscription,
-                            variables: { id: Weihnachtsmarkt.id }
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
+                            delay: 500,
+                            result: () => {
+                                const article = {
+                                    ...Weihnachtsmarkt,
+                                    preview: 'New Preview-Text',
+                                };
+                                setImmediate(() => {
+                                    screen.rerender(
+                                        <EditArticleLayout article={article} />
+                                    );
+                                });
+                                return { data: { article } };
+                            },
                         },
-                        delay: 500,
-                        result: () => {
-                            const article = {
-                                ...Weihnachtsmarkt,
-                                preview: 'New Preview-Text'
-                            };
-                            setImmediate(() => {
-                                screen.rerender(<EditArticleLayout article={article} />);
-                            });
-                            return { data: { article } };
-                        }
-                    }],
+                    ],
                     useCache: true,
                 }
             );
-            expect(screen.getByRole('textbox', { name: /vorschau/i })).toHaveValue(
+            expect(
+                screen.getByRole('textbox', { name: /vorschau/i })
+            ).toHaveValue(
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
             await waitFor(() => {
-                expect(screen.getByRole('textbox', { name: /vorschau/i })).toHaveValue('New Preview-Text');
+                expect(
+                    screen.getByRole('textbox', { name: /vorschau/i })
+                ).toHaveValue('New Preview-Text');
             });
         }, 20000);
 
         it('should update basic information like the title when receiving update via subscription after adding a content module', async () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, {
+                {},
+                {
                     currentUser: SomeUser,
-                    additionalMocks: [{
-                        request: {
-                            query:  ArticleIsUpdatedSubscription,
-                            variables: { id: Weihnachtsmarkt.id }
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
+                            delay: 500,
+                            result: () => {
+                                const article = {
+                                    ...Weihnachtsmarkt,
+                                    preview: 'New Preview-Text',
+                                };
+                                setImmediate(() => {
+                                    screen.rerender(
+                                        <EditArticleLayout article={article} />
+                                    );
+                                });
+                                return { data: { article } };
+                            },
                         },
-                        delay: 500,
-                        result: () => {
-                            const article = {
-                                ...Weihnachtsmarkt,
-                                preview: 'New Preview-Text'
-                            };
-                            setImmediate(() => {
-                                screen.rerender(<EditArticleLayout article={article} />);
-                            });
-                            return { data: { article } };
-                        }
-                    }],
+                    ],
                     useCache: true,
                 }
             );
-            expect(screen.getByRole('textbox', { name: /vorschau/i })).toHaveValue(
+            expect(
+                screen.getByRole('textbox', { name: /vorschau/i })
+            ).toHaveValue(
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
             await waitFor(() => {
-                expect(screen.getByRole('textbox', { name: /vorschau/i, hidden: true })).toHaveValue('New Preview-Text');
+                expect(
+                    screen.getByRole('textbox', {
+                        name: /vorschau/i,
+                        hidden: true,
+                    })
+                ).toHaveValue('New Preview-Text');
             });
         }, 20000);
 
         it('should show a dialog when receiving update including content-module change via subscription after adding a content module', async () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, {
+                {},
+                {
                     currentUser: SomeUser,
-                    additionalMocks: [{
-                        request: {
-                            query:  ArticleIsUpdatedSubscription,
-                            variables: { id: Weihnachtsmarkt.id }
+                    additionalMocks: [
+                        {
+                            request: {
+                                query: ArticleIsUpdatedSubscription,
+                                variables: { id: Weihnachtsmarkt.id },
+                            },
+                            delay: 500,
+                            result: () => {
+                                const article = {
+                                    ...Weihnachtsmarkt,
+                                    contentModules: Weihnachtsmarkt.contentModules.concat(
+                                        [
+                                            {
+                                                id: '9999999991111111110',
+                                                type: ContentModuleType.TITLE,
+                                                sortKey: 20,
+                                                insertedAt: new Date().toISOString(),
+                                                updatedAt: new Date().toISOString(),
+                                                files: [],
+                                                configuration: {},
+                                                content: {},
+                                            } as any,
+                                        ]
+                                    ),
+                                };
+                                setImmediate(() => {
+                                    screen.rerender(
+                                        <EditArticleLayout article={article} />
+                                    );
+                                });
+                                return { data: { article } };
+                            },
                         },
-                        delay: 500,
-                        result: () => {
-                            const article = {
-                                ...Weihnachtsmarkt,
-                                contentModules: Weihnachtsmarkt.contentModules.concat([{
-                                    id: '9999999991111111110',
-                                    type: ContentModuleType.TITLE,
-                                    sortKey: 20,
-                                    insertedAt: new Date().toISOString(),
-                                    updatedAt: new Date().toISOString(),
-                                    files: [],
-                                    configuration: {},
-                                    content: {},
-                                } as any])
-                            };
-                            setImmediate(() => {
-                                screen.rerender(<EditArticleLayout article={article} />);
-                            });
-                            return { data: { article } };
-                        }
-                    }],
+                    ],
                     useCache: true,
                 }
             );
-            expect(screen.getByRole('textbox', { name: /vorschau/i })).toHaveValue(
+            expect(
+                screen.getByRole('textbox', { name: /vorschau/i })
+            ).toHaveValue(
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
             await waitFor(() => {
                 expect(screen.getByRole('presentation')).toBeInTheDocument();
-                expect(screen.getByRole('presentation')).toHaveTextContent(/beitrag.*aktualisiert/i);
+                expect(screen.getByRole('presentation')).toHaveTextContent(
+                    /beitrag.*aktualisiert/i
+                );
             });
         }, 20000);
     });
@@ -299,7 +357,9 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                 if (eventName === 'beforeunload') {
                     const event = new Event('beforeunload');
                     if (typeof callback === 'function') {
-                        expect(callback(event)).toMatch(/möchtest du die seite wirklich verlassen/i);
+                        expect(callback(event)).toMatch(
+                            /möchtest du die seite wirklich verlassen/i
+                        );
                         called = true;
                     } else {
                         expect(false).toBe(true);
@@ -308,12 +368,16 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             });
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, {
+                {},
+                {
                     currentUser: SomeUser,
                     useCache: true,
                 }
             );
-            userEvent.type(screen.getByRole('textbox', { name: /titel/i }), 'Bla');
+            userEvent.type(
+                screen.getByRole('textbox', { name: /titel/i }),
+                'Bla'
+            );
             window.location.href = '/';
             await waitFor(() => {
                 expect(called).toBe(true);
@@ -336,7 +400,8 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             });
             render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
-                {}, {
+                {},
+                {
                     currentUser: SomeUser,
                     useCache: true,
                 }

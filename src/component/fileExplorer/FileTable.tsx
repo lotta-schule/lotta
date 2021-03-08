@@ -1,5 +1,24 @@
-import React, { MouseEvent, memo, useContext, useCallback, useEffect, useMemo } from 'react';
-import { Table, TableHead, TableRow, TableCell, TableBody, Theme, Checkbox, CircularProgress, IconButton, fade, Typography } from '@material-ui/core';
+import React, {
+    MouseEvent,
+    memo,
+    useContext,
+    useCallback,
+    useEffect,
+    useMemo,
+} from 'react';
+import {
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Theme,
+    Checkbox,
+    CircularProgress,
+    IconButton,
+    fade,
+    Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useQuery } from '@apollo/client';
 import { ArrowBackRounded } from '@material-ui/icons';
@@ -13,7 +32,9 @@ import { FileTableFooter } from './FileTableFooter';
 import { useCreateUpload } from './context/UploadQueueContext';
 import { EmptyDirectoryTableRow } from './EmptyDirectoryTableRow';
 import { useTranslation } from 'react-i18next';
-import fileExplorerContext, { FileExplorerMode } from './context/FileExplorerContext';
+import fileExplorerContext, {
+    FileExplorerMode,
+} from './context/FileExplorerContext';
 import some from 'lodash/some';
 import every from 'lodash/every';
 import uniqBy from 'lodash/uniqBy';
@@ -24,138 +45,165 @@ export interface FileTableProps {
     fileFilter?(file: FileModel): boolean;
 }
 
-const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>((theme: Theme) => ({
-    root: {
-        position: 'relative',
-        borderColor: '2px solid transparent',
-        transition: 'ease-out 250ms all',
-        border: '2px dashed transparent',
-        outline: 'none',
-        flexGrow: 1,
-        flexShrink: 1
-    },
-    isDragActive: {
-        backgroundColor: fade(theme.palette.secondary.main, .075),
-        border: '2px dashed',
-        borderColor: theme.palette.secondary.main,
-    },
-    dragHelpText: {
-        display: 'block',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        color: '#333',
-        fontSize: '1.2rem',
-        textShadow: '1px 1px 4px #f523'
-    },
-    table: {
-        display: 'flex',
-        flexDirection: 'column',
-        '& thead': {
-            display: 'flex',
-            width: '100%',
+const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>(
+    (theme: Theme) => ({
+        root: {
+            position: 'relative',
+            borderColor: '2px solid transparent',
+            transition: 'ease-out 250ms all',
+            border: '2px dashed transparent',
+            outline: 'none',
+            flexGrow: 1,
+            flexShrink: 1,
         },
-        '& tbody': {
+        isDragActive: {
+            backgroundColor: fade(theme.palette.secondary.main, 0.075),
+            border: '2px dashed',
+            borderColor: theme.palette.secondary.main,
+        },
+        dragHelpText: {
+            display: 'block',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: '#333',
+            fontSize: '1.2rem',
+            textShadow: '1px 1px 4px #f523',
+        },
+        table: {
             display: 'flex',
             flexDirection: 'column',
-            width: '100%',
-            overflowY: 'scroll',
-            height: 600,
-            maxHeight: '50vh',
-            '& tr': {
-                cursor: 'pointer'
-            }
-        },
-        '& tr': {
-            display: 'flex',
-            width: '100%',
-            flexShrink: 0,
-            boxSizing: 'border-box',
-            '&.selected, &.selected:hover': {
-                backgroundColor: theme.palette.action.selected
-            },
-            '& > td, & > th': {
-                userSelect: 'none',
-                padding: theme.spacing(1),
-                boxSizing: 'border-box',
-                '&:nth-child(1)': {
-                    width: '10%',
-                    display: ({ filesAreEditable }) => filesAreEditable ? 'none' : 'initial'
-                },
-                '&:nth-child(2)': {
-                    width: '2em',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingTop: 0,
-                    paddingBottom: 0
-                },
-                '&:nth-child(3)': {
-                    width: 'auto',
-                    flexGrow: 1,
-                    flexShrink: 1
-                },
-                '&:nth-child(5)': {
-                    width: '3em',
-                    paddingTop: 0,
-                    paddingBottom: 0
-                }
-            },
-            '& > td': {
+            '& thead': {
                 display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                flexGrow: 0,
-                flexShrink: 0
-            }
-        }
-    }
-}));
+                width: '100%',
+            },
+            '& tbody': {
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                overflowY: 'scroll',
+                height: 600,
+                maxHeight: '50vh',
+                '& tr': {
+                    cursor: 'pointer',
+                },
+            },
+            '& tr': {
+                display: 'flex',
+                width: '100%',
+                flexShrink: 0,
+                boxSizing: 'border-box',
+                '&.selected, &.selected:hover': {
+                    backgroundColor: theme.palette.action.selected,
+                },
+                '& > td, & > th': {
+                    userSelect: 'none',
+                    padding: theme.spacing(1),
+                    boxSizing: 'border-box',
+                    '&:nth-child(1)': {
+                        width: '10%',
+                        display: ({ filesAreEditable }) =>
+                            filesAreEditable ? 'none' : 'initial',
+                    },
+                    '&:nth-child(2)': {
+                        width: '2em',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                    },
+                    '&:nth-child(3)': {
+                        width: 'auto',
+                        flexGrow: 1,
+                        flexShrink: 1,
+                    },
+                    '&:nth-child(5)': {
+                        width: '3em',
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                    },
+                },
+                '& > td': {
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    flexGrow: 0,
+                    flexShrink: 0,
+                },
+            },
+        },
+    })
+);
 
 export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
     const { t } = useTranslation();
     const [state, dispatch] = useContext(fileExplorerContext);
-    const styles = useStyles({ filesAreEditable: state.mode === FileExplorerMode.ViewAndEdit });
-
-    const { data, error, loading: isLoading } = useQuery<{ directories: DirectoryModel[], files: FileModel[] }>(GetDirectoriesAndFilesQuery, {
-        variables: {
-            parentDirectoryId: state.currentPath[state.currentPath.length - 1].id ?? null
-        }
+    const styles = useStyles({
+        filesAreEditable: state.mode === FileExplorerMode.ViewAndEdit,
     });
 
-    const filteredSortedFiles = useMemo(() =>
-        data?.files
-        .filter(file => {
-            const byFileFilter = !fileFilter || fileFilter(file);
-            let bySearchFilter = true;
-            try {
-                bySearchFilter = !state.searchtext || new RegExp(state.searchtext, 'i').test(file.filename);
-            } catch { }
-            return byFileFilter && bySearchFilter;
-        })
-        .sort((f1, f2) => f1.filename.localeCompare(f2.filename)) ?? []
-    , [data, fileFilter, state.searchtext]);
+    const { data, error, loading: isLoading } = useQuery<{
+        directories: DirectoryModel[];
+        files: FileModel[];
+    }>(GetDirectoriesAndFilesQuery, {
+        variables: {
+            parentDirectoryId:
+                state.currentPath[state.currentPath.length - 1].id ?? null,
+        },
+    });
+
+    const filteredSortedFiles = useMemo(
+        () =>
+            data?.files
+                .filter((file) => {
+                    const byFileFilter = !fileFilter || fileFilter(file);
+                    let bySearchFilter = true;
+                    try {
+                        bySearchFilter =
+                            !state.searchtext ||
+                            new RegExp(state.searchtext, 'i').test(
+                                file.filename
+                            );
+                    } catch {}
+                    return byFileFilter && bySearchFilter;
+                })
+                .sort((f1, f2) => f1.filename.localeCompare(f2.filename)) ?? [],
+        [data, fileFilter, state.searchtext]
+    );
 
     const uploadFile = useCreateUpload();
-    const { getRootProps, draggedFiles, isDragAccept, isDragActive } = useDropzone({
-        onDrop: files => {
-            files.forEach(f => uploadFile(f, state.currentPath[state.currentPath.length - 1] as DirectoryModel));
+    const {
+        getRootProps,
+        draggedFiles,
+        isDragAccept,
+        isDragActive,
+    } = useDropzone({
+        onDrop: (files) => {
+            files.forEach((f) =>
+                uploadFile(
+                    f,
+                    state.currentPath[
+                        state.currentPath.length - 1
+                    ] as DirectoryModel
+                )
+            );
         },
         disabled: state.currentPath.length < 2,
         multiple: true,
         preventDropOnDocument: true,
-        noClick: true
+        noClick: true,
     });
 
     const isMarked = (file: FileModel) => {
         if (!file) {
             return false;
         }
-        return state.markedFiles.findIndex(f => f.id === file.id) > -1;
+        return state.markedFiles.findIndex((f) => f.id === file.id) > -1;
     };
 
     const findNearest = (number: number, listOfNumbers: number[]) => {
@@ -163,93 +211,170 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
             if (!prev) {
                 return value;
             }
-            return (Math.abs(value - number) < Math.abs(prev - number)) ? value : prev;
+            return Math.abs(value - number) < Math.abs(prev - number)
+                ? value
+                : prev;
         }, null) as number;
-    }
+    };
 
     const toggleFileMarked = (e: MouseEvent, file: FileModel) => {
         e.preventDefault();
         if (isMarked(file)) {
             if (e.metaKey) {
-                dispatch({ type: 'setMarkedFiles', files: state.markedFiles.filter(f => f.id !== file.id) });
+                dispatch({
+                    type: 'setMarkedFiles',
+                    files: state.markedFiles.filter((f) => f.id !== file.id),
+                });
             } else {
                 dispatch({ type: 'markSingleFile', file });
             }
         } else {
             if (e.shiftKey) {
-                const fileIndex = filteredSortedFiles.findIndex(f => f.id === file.id);
-                const markedFileIndexes = state.markedFiles.map(file => filteredSortedFiles.findIndex(f => f.id === file.id));
+                const fileIndex = filteredSortedFiles.findIndex(
+                    (f) => f.id === file.id
+                );
+                const markedFileIndexes = state.markedFiles.map((file) =>
+                    filteredSortedFiles.findIndex((f) => f.id === file.id)
+                );
                 const nearestIndex = findNearest(fileIndex, markedFileIndexes);
                 const indexesRange = [
-                    ...range(Math.min(fileIndex, nearestIndex), Math.max(fileIndex, nearestIndex)),
-                    ...(fileIndex > nearestIndex ? [fileIndex] : [])
+                    ...range(
+                        Math.min(fileIndex, nearestIndex),
+                        Math.max(fileIndex, nearestIndex)
+                    ),
+                    ...(fileIndex > nearestIndex ? [fileIndex] : []),
                 ];
                 dispatch({
                     type: 'setMarkedFiles',
                     files: [
                         ...state.markedFiles,
-                        ...indexesRange.map(findex => filteredSortedFiles[findex]).filter(f => !isMarked(f))
-                    ]
+                        ...indexesRange
+                            .map((findex) => filteredSortedFiles[findex])
+                            .filter((f) => !isMarked(f)),
+                    ],
                 });
             } else if (e.metaKey) {
-                dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, file] });
+                dispatch({
+                    type: 'setMarkedFiles',
+                    files: [...state.markedFiles, file],
+                });
             } else {
                 dispatch({ type: 'markSingleFile', file });
             }
         }
     };
 
-    const filteredSortedDirectories = useMemo(() =>
-        data?.directories
-            .filter(_directory => true)
-            .sort((d1, d2) => d1.name.localeCompare(d2.name)) ?? []
-    , [data]);
+    const filteredSortedDirectories = useMemo(
+        () =>
+            data?.directories
+                .filter((_directory) => true)
+                .sort((d1, d2) => d1.name.localeCompare(d2.name)) ?? [],
+        [data]
+    );
 
     const lowestSelectedFileIndex = useMemo(() => {
         if (!state.markedFiles.length) {
             return null;
         }
-        return state.markedFiles.reduce<number | null>((currentLowestIndex, file) => {
-            const currentIndex = filteredSortedFiles.findIndex(sortedFile => sortedFile.id === file.id);
-            return currentLowestIndex ? Math.min(currentLowestIndex, currentIndex) : currentIndex;
-        }, null);
+        return state.markedFiles.reduce<number | null>(
+            (currentLowestIndex, file) => {
+                const currentIndex = filteredSortedFiles.findIndex(
+                    (sortedFile) => sortedFile.id === file.id
+                );
+                return currentLowestIndex
+                    ? Math.min(currentLowestIndex, currentIndex)
+                    : currentIndex;
+            },
+            null
+        );
     }, [state.markedFiles, filteredSortedFiles]);
     const highestSelectedFileIndex = useMemo(() => {
         if (!state.markedFiles.length) {
             return null;
         }
-        return state.markedFiles.reduce<number | null>((currentHighestIndex, file) => {
-            const currentIndex = filteredSortedFiles.findIndex(sortedFile => sortedFile.id === file.id);
-            return currentHighestIndex ? Math.max(currentHighestIndex, currentIndex) : currentIndex;
-        }, null);
+        return state.markedFiles.reduce<number | null>(
+            (currentHighestIndex, file) => {
+                const currentIndex = filteredSortedFiles.findIndex(
+                    (sortedFile) => sortedFile.id === file.id
+                );
+                return currentHighestIndex
+                    ? Math.max(currentHighestIndex, currentIndex)
+                    : currentIndex;
+            },
+            null
+        );
     }, [state.markedFiles, filteredSortedFiles]);
 
-    const onKeyDown = useCallback((e: KeyboardEvent) => {
-        if (e.key === 'ArrowUp') {
-            if (state.markedFiles.length) {
-                if (lowestSelectedFileIndex !== null && lowestSelectedFileIndex > 0) {
-                    e.preventDefault();
-                    if (e.shiftKey) {
-                        dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, filteredSortedFiles[lowestSelectedFileIndex - 1]] });
-                    } else {
-                        dispatch({ type: 'markSingleFile', file: filteredSortedFiles[lowestSelectedFileIndex - 1] });
+    const onKeyDown = useCallback(
+        (e: KeyboardEvent) => {
+            if (e.key === 'ArrowUp') {
+                if (state.markedFiles.length) {
+                    if (
+                        lowestSelectedFileIndex !== null &&
+                        lowestSelectedFileIndex > 0
+                    ) {
+                        e.preventDefault();
+                        if (e.shiftKey) {
+                            dispatch({
+                                type: 'setMarkedFiles',
+                                files: [
+                                    ...state.markedFiles,
+                                    filteredSortedFiles[
+                                        lowestSelectedFileIndex - 1
+                                    ],
+                                ],
+                            });
+                        } else {
+                            dispatch({
+                                type: 'markSingleFile',
+                                file:
+                                    filteredSortedFiles[
+                                        lowestSelectedFileIndex - 1
+                                    ],
+                            });
+                        }
                     }
                 }
             }
-        }
-        if (e.key === 'ArrowDown') {
-            if (state.markedFiles.length) {
-                if (highestSelectedFileIndex !== null && highestSelectedFileIndex < filteredSortedFiles.length - 1) {
-                    e.preventDefault();
-                    if (e.shiftKey) {
-                        dispatch({ type: 'setMarkedFiles', files: [...state.markedFiles, filteredSortedFiles[highestSelectedFileIndex + 1]] });
-                    } else {
-                        dispatch({ type: 'markSingleFile', file: filteredSortedFiles[highestSelectedFileIndex + 1] });
+            if (e.key === 'ArrowDown') {
+                if (state.markedFiles.length) {
+                    if (
+                        highestSelectedFileIndex !== null &&
+                        highestSelectedFileIndex <
+                            filteredSortedFiles.length - 1
+                    ) {
+                        e.preventDefault();
+                        if (e.shiftKey) {
+                            dispatch({
+                                type: 'setMarkedFiles',
+                                files: [
+                                    ...state.markedFiles,
+                                    filteredSortedFiles[
+                                        highestSelectedFileIndex + 1
+                                    ],
+                                ],
+                            });
+                        } else {
+                            dispatch({
+                                type: 'markSingleFile',
+                                file:
+                                    filteredSortedFiles[
+                                        highestSelectedFileIndex + 1
+                                    ],
+                            });
+                        }
                     }
                 }
             }
-        }
-    }, [dispatch, filteredSortedFiles, highestSelectedFileIndex, lowestSelectedFileIndex, state.markedFiles]);
+        },
+        [
+            dispatch,
+            filteredSortedFiles,
+            highestSelectedFileIndex,
+            lowestSelectedFileIndex,
+            state.markedFiles,
+        ]
+    );
 
     useEffect(() => {
         document.addEventListener('keydown', onKeyDown);
@@ -259,7 +384,13 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
     }, [onKeyDown]);
 
     return (
-        <div {...getRootProps()} className={clsx(styles.root, { [styles.isDragActive]: isDragActive, [styles.isDragAccept]: isDragAccept })}>
+        <div
+            {...getRootProps()}
+            className={clsx(styles.root, {
+                [styles.isDragActive]: isDragActive,
+                [styles.isDragAccept]: isDragAccept,
+            })}
+        >
             {!isDragAccept && isDragActive && (
                 <Typography variant={'caption'} className={styles.dragHelpText}>
                     Dateien hierher ziehen
@@ -267,7 +398,9 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
             )}
             {isDragAccept && (
                 <Typography variant={'caption'} className={styles.dragHelpText}>
-                    {t('files.explorer.dropFilesToUpload', { count: draggedFiles.length })}
+                    {t('files.explorer.dropFilesToUpload', {
+                        count: draggedFiles.length,
+                    })}
                 </Typography>
             )}
             <ErrorMessage error={error} />
@@ -275,72 +408,138 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                 <TableHead>
                     <TableRow>
                         <TableCell>
-                            {!isLoading && state.mode === FileExplorerMode.SelectMultiple && ((data?.files?.length ?? 0) > 0) && (
-                                <Checkbox
-                                    style={{ padding: 0 }}
-                                    indeterminate={!every(filteredSortedFiles.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f)) && some(state.selectedFiles, selectedFile => filteredSortedFiles.includes(selectedFile))}
-                                    checked={every(filteredSortedFiles.filter(f => f.fileType !== FileModelType.Directory), f => state.selectedFiles.includes(f))}
-                                    inputProps={{
-                                        "aria-label": 'Alle wählen'
-                                    }}
-                                    onChange={(e, checked) => {
-                                        e.preventDefault();
-                                        dispatch({
-                                            type: 'setSelectedFiles',
-                                            files: checked ?
-                                                uniqBy([...state.selectedFiles, ...filteredSortedFiles], 'id') :
-                                                state.selectedFiles.filter(selectedFile => !filteredSortedFiles.includes(selectedFile))
-                                        });
-                                    }}
-                                />
-                            )}
+                            {!isLoading &&
+                                state.mode ===
+                                    FileExplorerMode.SelectMultiple &&
+                                (data?.files?.length ?? 0) > 0 && (
+                                    <Checkbox
+                                        style={{ padding: 0 }}
+                                        indeterminate={
+                                            !every(
+                                                filteredSortedFiles.filter(
+                                                    (f) =>
+                                                        f.fileType !==
+                                                        FileModelType.Directory
+                                                ),
+                                                (f) =>
+                                                    state.selectedFiles.includes(
+                                                        f
+                                                    )
+                                            ) &&
+                                            some(
+                                                state.selectedFiles,
+                                                (selectedFile) =>
+                                                    filteredSortedFiles.includes(
+                                                        selectedFile
+                                                    )
+                                            )
+                                        }
+                                        checked={every(
+                                            filteredSortedFiles.filter(
+                                                (f) =>
+                                                    f.fileType !==
+                                                    FileModelType.Directory
+                                            ),
+                                            (f) =>
+                                                state.selectedFiles.includes(f)
+                                        )}
+                                        inputProps={{
+                                            'aria-label': 'Alle wählen',
+                                        }}
+                                        onChange={(e, checked) => {
+                                            e.preventDefault();
+                                            dispatch({
+                                                type: 'setSelectedFiles',
+                                                files: checked
+                                                    ? uniqBy(
+                                                          [
+                                                              ...state.selectedFiles,
+                                                              ...filteredSortedFiles,
+                                                          ],
+                                                          'id'
+                                                      )
+                                                    : state.selectedFiles.filter(
+                                                          (selectedFile) =>
+                                                              !filteredSortedFiles.includes(
+                                                                  selectedFile
+                                                              )
+                                                      ),
+                                            });
+                                        }}
+                                    />
+                                )}
                         </TableCell>
                         <TableCell>
                             {isLoading && <CircularProgress size={'1rem'} />}
                             {!isLoading && state.currentPath.length > 1 && (
                                 <IconButton
                                     size={'small'}
-                                    onClick={() => dispatch({
-                                        type: 'setPath',
-                                        path: state.currentPath.slice(0, state.currentPath.length - 1)
-                                    })}
+                                    onClick={() =>
+                                        dispatch({
+                                            type: 'setPath',
+                                            path: state.currentPath.slice(
+                                                0,
+                                                state.currentPath.length - 1
+                                            ),
+                                        })
+                                    }
                                 >
                                     <ArrowBackRounded />
                                 </IconButton>
                             )}
                         </TableCell>
                         <TableCell>
-                            {!isLoading && state.currentPath.length < 2 && <strong>Wähle einen Ordner um Dateien hochzuladen.</strong>}
+                            {!isLoading && state.currentPath.length < 2 && (
+                                <strong>
+                                    Wähle einen Ordner um Dateien hochzuladen.
+                                </strong>
+                            )}
                             {state.currentPath.length > 1 && 'Dateiname'}
                         </TableCell>
-                        {state.mode === FileExplorerMode.ViewAndEdit && <TableCell>&nbsp;</TableCell>}
+                        {state.mode === FileExplorerMode.ViewAndEdit && (
+                            <TableCell>&nbsp;</TableCell>
+                        )}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {filteredSortedDirectories.map(directory => (
+                    {filteredSortedDirectories.map((directory) => (
                         <DirectoryTableRow
                             key={`dir-${directory.id}`}
                             directory={directory}
                         />
                     ))}
-                    {filteredSortedFiles.map(file => (
+                    {filteredSortedFiles.map((file) => (
                         <FileTableRow
                             key={`file-${file.id}`}
                             file={file}
-                            onMark={e => {
+                            onMark={(e) => {
                                 if (state.mode === FileExplorerMode.Select) {
-                                    dispatch({ type: 'setSelectedFiles', files: [file] });
-                                } else if (state.mode === FileExplorerMode.SelectMultiple) {
-                                    dispatch({ type: 'setSelectedFiles', files: uniqBy([...state.selectedFiles, file], 'id') });
+                                    dispatch({
+                                        type: 'setSelectedFiles',
+                                        files: [file],
+                                    });
+                                } else if (
+                                    state.mode ===
+                                    FileExplorerMode.SelectMultiple
+                                ) {
+                                    dispatch({
+                                        type: 'setSelectedFiles',
+                                        files: uniqBy(
+                                            [...state.selectedFiles, file],
+                                            'id'
+                                        ),
+                                    });
                                 } else {
                                     toggleFileMarked(e, file);
                                 }
                             }}
                         />
                     ))}
-                    {state.currentPath.length > 1 && data?.files.length === 0 && data?.directories.length === 0 && (
-                        <EmptyDirectoryTableRow />
-                    )}
+                    {state.currentPath.length > 1 &&
+                        data?.files.length === 0 &&
+                        data?.directories.length === 0 && (
+                            <EmptyDirectoryTableRow />
+                        )}
                 </TableBody>
             </Table>
             <FileTableFooter />

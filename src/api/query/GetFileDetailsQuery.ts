@@ -20,47 +20,47 @@ export const GetFileDetailsQuery = gql`
                 }
             }
             usage {
-              ... on FileCategoryUsageLocation {
-                  usage
-                  category {
-                      id
-                      title
-                  }
-              }
-              ... on FileArticleUsageLocation {
-                  usage
-                  article {
-                      id
-                      title
-                      previewImageFile {
-                          remoteLocation
-                      }
-                  }
-              }
-              ... on FileContentModuleUsageLocation {
-                  usage
-                  article {
-                      id
-                      title
-                      previewImageFile {
-                          remoteLocation
-                      }
-                  }
-              }
-              ... on FileSystemUsageLocation {
-                  usage
-              }
-              ... on FileUserUsageLocation {
-                  usage
-                  user {
-                      id
-                      name
-                      nickname
-                      avatarImageFile {
-                          remoteLocation
-                      }
-                  }
-              }
+                ... on FileCategoryUsageLocation {
+                    usage
+                    category {
+                        id
+                        title
+                    }
+                }
+                ... on FileArticleUsageLocation {
+                    usage
+                    article {
+                        id
+                        title
+                        previewImageFile {
+                            remoteLocation
+                        }
+                    }
+                }
+                ... on FileContentModuleUsageLocation {
+                    usage
+                    article {
+                        id
+                        title
+                        previewImageFile {
+                            remoteLocation
+                        }
+                    }
+                }
+                ... on FileSystemUsageLocation {
+                    usage
+                }
+                ... on FileUserUsageLocation {
+                    usage
+                    user {
+                        id
+                        name
+                        nickname
+                        avatarImageFile {
+                            remoteLocation
+                        }
+                    }
+                }
             }
             fileConversions {
                 id

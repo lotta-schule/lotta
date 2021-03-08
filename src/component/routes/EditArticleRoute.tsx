@@ -8,24 +8,29 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 
-export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(({ match }) => {
-    const id = match.params.id.replace(/^(\d+).*/, '$1'); // take only first digits
+export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(
+    ({ match }) => {
+        const id = match.params.id.replace(/^(\d+).*/, '$1'); // take only first digits
 
-    const { data, error, loading: isLoading } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id } });
+        const { data, error, loading: isLoading } = useQuery<
+            { article: ArticleModel },
+            { id: ID }
+        >(GetArticleQuery, { variables: { id } });
 
-    if (!data || isLoading) {
-        return <div><CircularProgress /></div>;
+        if (!data || isLoading) {
+            return (
+                <div>
+                    <CircularProgress />
+                </div>
+            );
+        }
+        if (error) {
+            return <ErrorMessage error={error} />;
+        }
+        if (data) {
+            return <EditArticleLayout article={data!.article} />;
+        }
+        return null;
     }
-    if (error) {
-        return (
-            <ErrorMessage error={error} />
-        );
-    }
-    if (data) {
-        return (
-            <EditArticleLayout article={data!.article} />
-        );
-    }
-    return null;
-});
+);
 export default EditArticleRoute;

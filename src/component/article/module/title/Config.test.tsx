@@ -7,14 +7,23 @@ import userEvent from '@testing-library/user-event';
 const titleContentModule = Klausurenplan.contentModules[0];
 
 describe('component/article/module/title/Config', () => {
-
     it('should render without an error', () => {
-        render(<Config contentModule={titleContentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />);
+        render(
+            <Config
+                contentModule={titleContentModule}
+                onUpdateModule={() => {}}
+                onRequestClose={() => {}}
+            />
+        );
     });
 
     it('should render a select field with 3 size options', async () => {
         const screen = render(
-            <Config contentModule={titleContentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />
+            <Config
+                contentModule={titleContentModule}
+                onUpdateModule={() => {}}
+                onRequestClose={() => {}}
+            />
         );
 
         const selectButton = screen.getByRole('button', { name: /groß/i });
@@ -26,22 +35,32 @@ describe('component/article/module/title/Config', () => {
         const contentModule = {
             ...titleContentModule,
             configuration: {
-                level: 6
-            }
+                level: 6,
+            },
         };
         const screen = render(
-            <Config contentModule={contentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />
+            <Config
+                contentModule={contentModule}
+                onUpdateModule={() => {}}
+                onRequestClose={() => {}}
+            />
         );
 
-        expect(screen.getByRole('button', { name: /klein/i })).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: /klein/i })
+        ).toBeInTheDocument();
     });
 
     it('should change the size configuration', async () => {
-        const callback = jest.fn(cm => {
+        const callback = jest.fn((cm) => {
             expect(cm.configuration.level).toEqual(6);
         });
         const screen = render(
-            <Config contentModule={titleContentModule} onUpdateModule={callback} onRequestClose={() => {}} />
+            <Config
+                contentModule={titleContentModule}
+                onUpdateModule={callback}
+                onRequestClose={() => {}}
+            />
         );
 
         const selectButton = screen.getByRole('button', { name: /groß/i });

@@ -1,4 +1,10 @@
-import React, { FunctionComponent, memo, useState, lazy, Suspense } from 'react';
+import React, {
+    FunctionComponent,
+    memo,
+    useState,
+    lazy,
+    Suspense,
+} from 'react';
 import { FileModel } from '../../model';
 import { EditOverlay } from './EditOverlay';
 import { DialogTitle, CircularProgress } from '@material-ui/core';
@@ -13,27 +19,41 @@ interface SelectFileOverlayProps {
     onSelectFile(file: FileModel | null): void;
 }
 
-export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo(({ children, label, allowDeletion, fileFilter, onSelectFile }) => {
-    const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(false);
-    const onClickRemove = allowDeletion ? (() => onSelectFile(null)) : undefined;
-    return (
-        <>
-            <EditOverlay label={label} onClick={() => setIsSelectFileDialogOpen(true)} onClickRemove={onClickRemove}>
-                {children}
-            </EditOverlay>
-            <ResponsiveFullScreenDialog open={isSelectFileDialogOpen} onClose={() => setIsSelectFileDialogOpen(false)} fullWidth>
-                <Suspense fallback={<CircularProgress />}>
-                    <DialogTitle>Datei auswählen</DialogTitle>
-                    <FileExplorer
-                        style={{ padding: '0 .5em' }}
-                        fileFilter={fileFilter}
-                        onSelect={(file: FileModel) => {
-                            setIsSelectFileDialogOpen(false);
-                            onSelectFile(file);
-                        }}
-                    />
-                </Suspense>
-            </ResponsiveFullScreenDialog>
-        </>
-    );
-});
+export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo(
+    ({ children, label, allowDeletion, fileFilter, onSelectFile }) => {
+        const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(
+            false
+        );
+        const onClickRemove = allowDeletion
+            ? () => onSelectFile(null)
+            : undefined;
+        return (
+            <>
+                <EditOverlay
+                    label={label}
+                    onClick={() => setIsSelectFileDialogOpen(true)}
+                    onClickRemove={onClickRemove}
+                >
+                    {children}
+                </EditOverlay>
+                <ResponsiveFullScreenDialog
+                    open={isSelectFileDialogOpen}
+                    onClose={() => setIsSelectFileDialogOpen(false)}
+                    fullWidth
+                >
+                    <Suspense fallback={<CircularProgress />}>
+                        <DialogTitle>Datei auswählen</DialogTitle>
+                        <FileExplorer
+                            style={{ padding: '0 .5em' }}
+                            fileFilter={fileFilter}
+                            onSelect={(file: FileModel) => {
+                                setIsSelectFileDialogOpen(false);
+                                onSelectFile(file);
+                            }}
+                        />
+                    </Suspense>
+                </ResponsiveFullScreenDialog>
+            </>
+        );
+    }
+);

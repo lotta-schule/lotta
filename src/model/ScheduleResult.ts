@@ -1,6 +1,6 @@
 export interface ScheduleResult {
     head: ScheduleResultHead;
-    body: ScheduleResultBody | null;
+    body: ScheduleResultBody | null;
     footer: ScheduleResultFooter;
 }
 
