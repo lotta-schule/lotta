@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import * as React from 'react';
 import { Tooltip, Typography, makeStyles, Link } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { format } from 'date-fns';
@@ -62,9 +62,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const FileDetailView = memo<FileDetailViewProps>(({ file }) => {
+export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
     const { t } = useTranslation();
-    const [, dispatch] = useContext(fileExplorerContext);
+    const [, dispatch] = React.useContext(fileExplorerContext);
     const styles = useStyles();
     const { data, error } = useQuery<{ file: FileModel }, { id: ID }>(
         GetFileDetailsQuery,
@@ -73,9 +73,10 @@ export const FileDetailView = memo<FileDetailViewProps>(({ file }) => {
         }
     );
 
-    // @ts-ignore
     const get = <T extends any = string>(prop: string): T =>
+        // @ts-ignore
         data?.file?.[prop] ?? file[prop];
+
     return (
         <div className={styles.root}>
             <Tooltip title={get('filename')}>
