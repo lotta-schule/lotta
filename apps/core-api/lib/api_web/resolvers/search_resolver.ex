@@ -10,7 +10,7 @@ defmodule ApiWeb.SearchResolver do
         context: %Context{current_user: current_user}
       }) do
     current_user
-    |> Article.get_released_articles_query()
+    |> Article.get_published_articles_query()
     |> Search.search_query_filter(searchtext, args[:options])
     |> case do
       {:error, msg} ->

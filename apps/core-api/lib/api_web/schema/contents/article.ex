@@ -9,6 +9,7 @@ defmodule ApiWeb.Schema.Contents.Article do
     field :title, non_null(:string)
     field :preview, :string
     field :ready_to_publish, :boolean
+    field :published, :boolean
     field :topic, :string
     field :preview_image_file, :select_file_input
     field :groups, list_of(:select_user_group_input)
@@ -42,6 +43,7 @@ defmodule ApiWeb.Schema.Contents.Article do
     field :preview, :string
     field :topic, :string
     field :ready_to_publish, :boolean
+    field :published, :boolean
     field :is_pinned_to_top, :boolean
 
     field :preview_image_file, :file,
