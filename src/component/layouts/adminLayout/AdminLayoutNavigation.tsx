@@ -29,8 +29,14 @@ export const AdminLayoutNavigation = memo(() => {
             >
                 <Tab label="Mein Lotta" value={'/admin/system'} />
                 <Tab label="Nutzer &amp; Gruppen" value={'/admin/users'} />
-                <Tab label="Kategorien &amp; Marginalen" value={'/admin/categories'} />
-                <Tab label="Freizugebende Beiträge" value={'/admin/unpublished'} />
+                <Tab
+                    label="Kategorien &amp; Marginalen"
+                    value={'/admin/categories'}
+                />
+                <Tab
+                    label="Freizugebende Beiträge"
+                    value={'/admin/unpublished'}
+                />
             </Tabs>
         </Paper>
     );

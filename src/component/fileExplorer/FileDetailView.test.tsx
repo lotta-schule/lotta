@@ -7,7 +7,6 @@ import { GetFileDetailsQuery } from 'api/query/GetFileDetailsQuery';
 import { SomeUser, movieFile, schulweitDirectory } from 'test/fixtures';
 
 describe('component/fileExplorer/FileDetailView', () => {
-
     const user: UserModel = SomeUser;
     const file: FileModel = {
         id: '123',
@@ -25,8 +24,8 @@ describe('component/fileExplorer/FileDetailView', () => {
             name: 'Bilder',
             insertedAt: '2000-01-01 18:00',
             updatedAt: '2000-01-01 18:00',
-            user
-        }
+            user,
+        },
     };
 
     const mocks = [
@@ -37,11 +36,11 @@ describe('component/fileExplorer/FileDetailView', () => {
                     file: {
                         ...file,
                         user,
-                        usage: []
-                    }
-                }
-            }
-        }
+                        usage: [],
+                    },
+                },
+            },
+        },
     ];
 
     const usedFile = {
@@ -51,59 +50,61 @@ describe('component/fileExplorer/FileDetailView', () => {
         filesize: 412756,
         fileType: FileModelType.Image,
         mimeType: 'image/jpg',
-        remoteLocation: 'https://localhost:3000/image.jpg'
+        remoteLocation: 'https://localhost:3000/image.jpg',
     };
-    const usedFileMocks = [{
-        request: { query: GetFileDetailsQuery, variables: { id: '7132' } },
-        result: {
-            data: {
-                file: {
-                    ...usedFile,
-                    user,
-                    usage: [
-                        {
-                            usage: 'preview',
-                            article: {
-                                title: 'Bild als Vorschaubild benutzt',
-                                previewImageFile: {
-                                    ...usedFile
-                                }
-                            }
-                        },
-                        {
-                            usage: 'banner',
-                            category: {
-                                title: 'Als Banner kann man das auch nehmen',
-                                bannerImageFile: {
-                                    ...usedFile
-                                }
+    const usedFileMocks = [
+        {
+            request: { query: GetFileDetailsQuery, variables: { id: '7132' } },
+            result: {
+                data: {
+                    file: {
+                        ...usedFile,
+                        user,
+                        usage: [
+                            {
+                                usage: 'preview',
+                                article: {
+                                    title: 'Bild als Vorschaubild benutzt',
+                                    previewImageFile: {
+                                        ...usedFile,
+                                    },
+                                },
                             },
-                        },
-                        {
-                            usage: 'avatar',
-                            user: {
-                                id: '1123',
-                                nickname: 'Der Dieb',
-                                name: undefined,
-                                avatarImageFile: {
-                                    ...usedFile
-                                }
-                            }
-                        },
-                        {
-                            usage: 'background',
-                            system: {
-                                backgroundImageFile: {
-                                    ...usedFile
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    }];
-
+                            {
+                                usage: 'banner',
+                                category: {
+                                    title:
+                                        'Als Banner kann man das auch nehmen',
+                                    bannerImageFile: {
+                                        ...usedFile,
+                                    },
+                                },
+                            },
+                            {
+                                usage: 'avatar',
+                                user: {
+                                    id: '1123',
+                                    nickname: 'Der Dieb',
+                                    name: undefined,
+                                    avatarImageFile: {
+                                        ...usedFile,
+                                    },
+                                },
+                            },
+                            {
+                                usage: 'background',
+                                system: {
+                                    backgroundImageFile: {
+                                        ...usedFile,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    ];
 
     describe('should show basic file information', () => {
         it('should show the filename', () => {
@@ -121,7 +122,9 @@ describe('component/fileExplorer/FileDetailView', () => {
                     <FileDetailView file={file} />
                 </MockedProvider>
             );
-            const previewImage = screen.getByTestId('PreviewImage') as HTMLImageElement;
+            const previewImage = screen.getByTestId(
+                'PreviewImage'
+            ) as HTMLImageElement;
             expect(previewImage.src).toContain('https://fakes3/meinbild.jpg');
         });
 
@@ -132,20 +135,25 @@ describe('component/fileExplorer/FileDetailView', () => {
                 filename: 'Dokument.pdf',
                 filesize: 5023123,
                 fileType: FileModelType.Pdf,
-                mimeType: 'application/pdf'
+                mimeType: 'application/pdf',
             };
-            const pdfDocumentMocks = [{
-                request: { query: GetFileDetailsQuery, variables: { id: '4544' } },
-                result: {
-                    data: {
-                        file: {
-                            ...pdfDocument,
+            const pdfDocumentMocks = [
+                {
+                    request: {
+                        query: GetFileDetailsQuery,
+                        variables: { id: '4544' },
+                    },
+                    result: {
+                        data: {
+                            file: {
+                                ...pdfDocument,
                                 user,
-                                usage: []
-                        }
-                    }
-                }
-            }];
+                                usage: [],
+                            },
+                        },
+                    },
+                },
+            ];
             const screen = render(
                 <MockedProvider mocks={pdfDocumentMocks} addTypename={false}>
                     <FileDetailView file={pdfDocument} />
@@ -154,10 +162,8 @@ describe('component/fileExplorer/FileDetailView', () => {
             expect(screen.getByText('Dokument.pdf')).toBeInTheDocument();
             expect(screen.queryByTestId('PreviewImage')).toBeNull();
         });
-
     });
     describe('should download and show extended information', () => {
-
         it('should download more information', async () => {
             const pdfDocument = {
                 ...file,
@@ -165,24 +171,29 @@ describe('component/fileExplorer/FileDetailView', () => {
                 filename: 'Dokument.pdf',
                 filesize: 5023123,
                 fileType: FileModelType.Pdf,
-                mimeType: 'application/pdf'
+                mimeType: 'application/pdf',
             };
             let fileDetailsQueryCalled = false;
-            const pdfDocumentMocks = [{
-                request: { query: GetFileDetailsQuery, variables: { id: '4544' } },
-                result: () => {
-                    fileDetailsQueryCalled = true;
-                    return {
-                        data: {
-                            file: {
-                                ...pdfDocument,
+            const pdfDocumentMocks = [
+                {
+                    request: {
+                        query: GetFileDetailsQuery,
+                        variables: { id: '4544' },
+                    },
+                    result: () => {
+                        fileDetailsQueryCalled = true;
+                        return {
+                            data: {
+                                file: {
+                                    ...pdfDocument,
                                     user,
-                                    usage: []
-                            }
-                        }
-                    };
-                }
-            }];
+                                    usage: [],
+                                },
+                            },
+                        };
+                    },
+                },
+            ];
             const screen = render(
                 <MockedProvider mocks={pdfDocumentMocks} addTypename={false}>
                     <FileDetailView file={pdfDocument} />
@@ -193,7 +204,6 @@ describe('component/fileExplorer/FileDetailView', () => {
                 expect(fileDetailsQueryCalled).toBeTruthy();
             });
             await screen.findByTestId('AuthorsListItem');
-
         });
 
         it('should show the author of the file', async () => {
@@ -203,48 +213,58 @@ describe('component/fileExplorer/FileDetailView', () => {
                 </MockedProvider>
             );
 
-            expect(await screen.findByTestId('AuthorsListItem')).toBeInTheDocument();
+            expect(
+                await screen.findByTestId('AuthorsListItem')
+            ).toBeInTheDocument();
 
             expect(screen.container).toHaveTextContent('Autor:Che');
         });
 
-        it('should show the file\'s usage count', async () => {
-
+        it("should show the file's usage count", async () => {
             const screen = render(
                 <FileDetailView file={usedFile} />,
-                {}, { currentUser: user, additionalMocks: usedFileMocks }
+                {},
+                { currentUser: user, additionalMocks: usedFileMocks }
             );
 
-            expect(await screen.findByTestId('UsageListItem')).toHaveTextContent('4x');
+            expect(
+                await screen.findByTestId('UsageListItem')
+            ).toHaveTextContent('4x');
         });
 
-
-        it('should show the file\'s conversions count', async () => {
+        it("should show the file's conversions count", async () => {
             const file: FileModel = {
                 ...movieFile,
                 userId: user.id,
                 parentDirectory: {
-                    ...schulweitDirectory
-                }
+                    ...schulweitDirectory,
+                },
             };
             let detailsQueryResponded = false;
-            const additionalMocks = [{
-                request: { query: GetFileDetailsQuery, variables: { id: file.id } },
-                result: () => {
-                    detailsQueryResponded = true;
-                    return { data: { file: { ...file, user, usage: [] } } };
-                }
-            }];
+            const additionalMocks = [
+                {
+                    request: {
+                        query: GetFileDetailsQuery,
+                        variables: { id: file.id },
+                    },
+                    result: () => {
+                        detailsQueryResponded = true;
+                        return { data: { file: { ...file, user, usage: [] } } };
+                    },
+                },
+            ];
             const screen = render(
                 <FileDetailView file={file} />,
-                {}, { additionalMocks }
+                {},
+                { additionalMocks }
             );
 
             await waitFor(() => {
                 expect(detailsQueryResponded).toBeTruthy();
             });
-            expect(await screen.findByTestId('FileConversionsListItem')).toHaveTextContent('7 Formate');
+            expect(
+                await screen.findByTestId('FileConversionsListItem')
+            ).toHaveTextContent('7 Formate');
         });
     });
-
 });

@@ -1,14 +1,26 @@
 import * as React from 'react';
 import { GetGroupQuery } from 'api/query/GetGroupQuery';
-import { adminGroup, elternGroup, lehrerGroup, schuelerGroup, system } from 'test/fixtures';
+import {
+    adminGroup,
+    elternGroup,
+    lehrerGroup,
+    schuelerGroup,
+    system,
+} from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { EditGroupForm } from './EditGroupForm';
 import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
 import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [
-    { request: { query: GetGroupQuery, variables: { id: adminGroup.id } }, result: { data: { group: adminGroup } } },
-    { request: { query: GetGroupQuery, variables: { id: lehrerGroup.id } }, result: { data: { group: lehrerGroup } } },
+    {
+        request: { query: GetGroupQuery, variables: { id: adminGroup.id } },
+        result: { data: { group: adminGroup } },
+    },
+    {
+        request: { query: GetGroupQuery, variables: { id: lehrerGroup.id } },
+        result: { data: { group: lehrerGroup } },
+    },
 ];
 
 describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
@@ -16,14 +28,17 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
         it('should be showing the title in a textbox', async () => {
             const screen = render(
                 <EditGroupForm group={lehrerGroup} />,
-                {}, { additionalMocks }
+                {},
+                { additionalMocks }
             );
-            expect(await screen.findByRole('textbox', { name: /gruppenname/i })).toHaveValue('Lehrer');
+            expect(
+                await screen.findByRole('textbox', { name: /gruppenname/i })
+            ).toHaveValue('Lehrer');
         });
 
         it('should update the title on blur', async () => {
             const saveCallback = jest.fn(() => ({
-                data: { group: { ...lehrerGroup, name: 'Neuer Name' } }
+                data: { group: { ...lehrerGroup, name: 'Neuer Name' } },
             }));
             const saveMock = {
                 request: {
@@ -33,17 +48,23 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
                         group: {
                             name: 'Neuer Name',
                             isAdminGroup: lehrerGroup.isAdminGroup,
-                            enrollmentTokens: lehrerGroup.enrollmentTokens.map(t => t.token)
-                        }
-                    }
+                            enrollmentTokens: lehrerGroup.enrollmentTokens.map(
+                                (t) => t.token
+                            ),
+                        },
+                    },
                 },
-                result: saveCallback
+                result: saveCallback,
             };
             const screen = render(
                 <EditGroupForm group={lehrerGroup} />,
-                {}, { additionalMocks: [...additionalMocks, saveMock] }
+                {},
+                { additionalMocks: [...additionalMocks, saveMock] }
             );
-            userEvent.type(await screen.findByRole('textbox', { name: /gruppenname/i }), '{selectall}Neuer Name');
+            userEvent.type(
+                await screen.findByRole('textbox', { name: /gruppenname/i }),
+                '{selectall}Neuer Name'
+            );
             userEvent.tab();
             await waitFor(() => {
                 expect(saveCallback).toHaveBeenCalled();
@@ -52,7 +73,7 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
 
         it('should update the title on ENTER', async () => {
             const saveCallback = jest.fn(() => ({
-                data: { group: { ...lehrerGroup, name: 'Neuer Name' } }
+                data: { group: { ...lehrerGroup, name: 'Neuer Name' } },
             }));
             const saveMock = {
                 request: {
@@ -62,17 +83,23 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
                         group: {
                             name: 'Neuer Name',
                             isAdminGroup: lehrerGroup.isAdminGroup,
-                            enrollmentTokens: lehrerGroup.enrollmentTokens.map(t => t.token)
-                        }
-                    }
+                            enrollmentTokens: lehrerGroup.enrollmentTokens.map(
+                                (t) => t.token
+                            ),
+                        },
+                    },
                 },
-                result: saveCallback
+                result: saveCallback,
             };
             const screen = render(
                 <EditGroupForm group={lehrerGroup} />,
-                {}, { additionalMocks: [...additionalMocks, saveMock] }
+                {},
+                { additionalMocks: [...additionalMocks, saveMock] }
             );
-            userEvent.type(await screen.findByRole('textbox', { name: /gruppenname/i }), '{selectall}Neuer Name{enter}');
+            userEvent.type(
+                await screen.findByRole('textbox', { name: /gruppenname/i }),
+                '{selectall}Neuer Name{enter}'
+            );
             await waitFor(() => {
                 expect(saveCallback).toHaveBeenCalled();
             });
@@ -80,23 +107,33 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
     });
 
     describe('admin setting', () => {
-        const otherAdminGroup = { ...adminGroup, name: 'Admin2', id: adminGroup.id + 'xxx' };
-        const groups = [
-            adminGroup, lehrerGroup, elternGroup, schuelerGroup
-        ];
+        const otherAdminGroup = {
+            ...adminGroup,
+            name: 'Admin2',
+            id: adminGroup.id + 'xxx',
+        };
+        const groups = [adminGroup, lehrerGroup, elternGroup, schuelerGroup];
         const groupsWithSecondAdmin = [...groups, otherAdminGroup];
-        const systemWithSecondAdmin = {...system, groups: groupsWithSecondAdmin};
+        const systemWithSecondAdmin = {
+            ...system,
+            groups: groupsWithSecondAdmin,
+        };
         it('should have the admin checkbox checked for a admin group', async () => {
             const screen = render(
                 <EditGroupForm group={adminGroup} />,
-                {}, { additionalMocks, system: systemWithSecondAdmin }
+                {},
+                { additionalMocks, system: systemWithSecondAdmin }
             );
-            expect(await screen.findByRole('checkbox', { name: /administratorrecht/i })).toBeChecked();
+            expect(
+                await screen.findByRole('checkbox', {
+                    name: /administratorrecht/i,
+                })
+            ).toBeChecked();
         });
 
         it('should update the admin setting', async () => {
             const saveCallback = jest.fn(() => ({
-                data: { group: { ...adminGroup, adminGroup: false } }
+                data: { group: { ...adminGroup, adminGroup: false } },
             }));
             const saveMock = {
                 request: {
@@ -106,17 +143,25 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
                         group: {
                             name: adminGroup.name,
                             isAdminGroup: false,
-                            enrollmentTokens: adminGroup.enrollmentTokens
-                        }
-                    }
+                            enrollmentTokens: adminGroup.enrollmentTokens,
+                        },
+                    },
                 },
-                result: saveCallback
+                result: saveCallback,
             };
             const screen = render(
                 <EditGroupForm group={adminGroup} />,
-                {}, { additionalMocks: [...additionalMocks, saveMock], system: systemWithSecondAdmin }
+                {},
+                {
+                    additionalMocks: [...additionalMocks, saveMock],
+                    system: systemWithSecondAdmin,
+                }
             );
-            userEvent.click(await screen.findByRole('checkbox', { name: /administratorrechte/i }));
+            userEvent.click(
+                await screen.findByRole('checkbox', {
+                    name: /administratorrechte/i,
+                })
+            );
             await waitFor(() => {
                 expect(saveCallback).toHaveBeenCalled();
             });
@@ -125,16 +170,21 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
         it('should disable the admin checkbox if there is only one admin available', async () => {
             const screen = render(
                 <EditGroupForm group={adminGroup} />,
-                {}, { additionalMocks }
+                {},
+                { additionalMocks }
             );
-            expect(await screen.findByRole('checkbox', { name: /administratorrecht/i })).toBeDisabled();
+            expect(
+                await screen.findByRole('checkbox', {
+                    name: /administratorrecht/i,
+                })
+            ).toBeDisabled();
         });
     });
 
     describe('update the enrollment tokens', () => {
         it('should update the enrollment tokens', async () => {
             const saveCallback = jest.fn(() => ({
-                data: { group: { ...lehrerGroup, name: 'Lehrer' } }
+                data: { group: { ...lehrerGroup, name: 'Lehrer' } },
             }));
             const saveMock = {
                 request: {
@@ -144,17 +194,23 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
                         group: {
                             name: 'Lehrer',
                             isAdminGroup: lehrerGroup.isAdminGroup,
-                            enrollmentTokens: lehrerGroup.enrollmentTokens.map(t => t.token).concat('NeuerToken')
-                        }
-                    }
+                            enrollmentTokens: lehrerGroup.enrollmentTokens
+                                .map((t) => t.token)
+                                .concat('NeuerToken'),
+                        },
+                    },
                 },
-                result: saveCallback
+                result: saveCallback,
             };
             const screen = render(
                 <EditGroupForm group={lehrerGroup} />,
-                {}, { additionalMocks: [...additionalMocks, saveMock] }
+                {},
+                { additionalMocks: [...additionalMocks, saveMock] }
             );
-            userEvent.type(await screen.findByPlaceholderText(/einschreibeschlüssel/i), 'NeuerToken{enter}');
+            userEvent.type(
+                await screen.findByPlaceholderText(/einschreibeschlüssel/i),
+                'NeuerToken{enter}'
+            );
             await waitFor(() => {
                 expect(saveCallback).toHaveBeenCalled();
             });
@@ -165,9 +221,12 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
         it('should show a delete button for a group and show dialog', async () => {
             const screen = render(
                 <EditGroupForm group={lehrerGroup} />,
-                {}, { additionalMocks }
+                {},
+                { additionalMocks }
             );
-            userEvent.click(await screen.findByRole('button', { name: /löschen/i }));
+            userEvent.click(
+                await screen.findByRole('button', { name: /löschen/i })
+            );
             await waitFor(() => {
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
@@ -176,10 +235,15 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
         it('delete button should be disabled when group is sole admin group', async () => {
             const screen = render(
                 <EditGroupForm group={adminGroup} />,
-                {}, { additionalMocks }
+                {},
+                { additionalMocks }
             );
-            expect(await screen.findByPlaceholderText(/einschreibeschlüssel/i)).toBeVisible();
-            expect(screen.queryByRole('button', { name: /löschen/i })).toBeNull();
+            expect(
+                await screen.findByPlaceholderText(/einschreibeschlüssel/i)
+            ).toBeVisible();
+            expect(
+                screen.queryByRole('button', { name: /löschen/i })
+            ).toBeNull();
         });
     });
 });

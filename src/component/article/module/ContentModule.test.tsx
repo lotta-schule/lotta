@@ -6,16 +6,18 @@ import { ContentModule } from './ContentModule';
 import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
 import userEvent from '@testing-library/user-event';
 
-
 describe('component/article/module/ContentModule', () => {
-
     describe('Text ContentModule', () => {
-
         const textContentModule = ComputerExperten.contentModules[0];
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={textContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={textContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('TextContentModule')).toBeVisible();
         });
@@ -23,7 +25,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={textContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={textContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -34,14 +42,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={textContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -50,16 +60,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={textContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -68,12 +82,16 @@ describe('component/article/module/ContentModule', () => {
     });
 
     describe('Title ContentModule', () => {
-
         const titleContentModule = Klausurenplan.contentModules[0];
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={titleContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={titleContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('TitleContentModule')).toBeVisible();
         });
@@ -81,7 +99,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={titleContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={titleContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -92,14 +116,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={titleContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -108,16 +134,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={titleContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -127,33 +157,40 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={titleContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                expect(screen.getByTestId('TitleContentModuleConfiguration')).toBeVisible();
+                expect(
+                    screen.getByTestId('TitleContentModuleConfiguration')
+                ).toBeVisible();
             });
-
         });
     });
 
     describe('Image ContentModule', () => {
-
         const imageContentModule = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.IMAGE,
-            files: []
+            files: [],
         };
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={imageContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={imageContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('ImageContentModule')).toBeVisible();
         });
@@ -161,7 +198,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={imageContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={imageContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -172,14 +215,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -188,16 +233,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -206,25 +255,37 @@ describe('component/article/module/ContentModule', () => {
     });
 
     describe('ImageCollection ContentModule', () => {
-
         const imageCollectionContentModule = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.IMAGE_COLLECTION,
-            files: []
+            files: [],
         };
 
         it('should render a imageCollection module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={imageCollectionContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={imageCollectionContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
-            expect(screen.getByTestId('ImageCollectionContentModule')).toBeVisible();
+            expect(
+                screen.getByTestId('ImageCollectionContentModule')
+            ).toBeVisible();
         });
 
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={imageCollectionContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={imageCollectionContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -235,14 +296,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageCollectionContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -251,16 +314,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageCollectionContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -270,32 +337,42 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageCollectionContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                expect(screen.getByTestId('ImageCollectionContentModuleConfiguration')).toBeVisible();
+                expect(
+                    screen.getByTestId(
+                        'ImageCollectionContentModuleConfiguration'
+                    )
+                ).toBeVisible();
             });
         });
     });
 
     describe('Video ContentModule', () => {
-
         const videoContentModule = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.VIDEO,
-            files: []
+            files: [],
         };
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={videoContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={videoContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('VideoContentModule')).toBeVisible();
         });
@@ -303,7 +380,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={videoContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={videoContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -314,14 +397,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -330,16 +415,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -348,17 +437,21 @@ describe('component/article/module/ContentModule', () => {
     });
 
     describe('Audio ContentModule', () => {
-
         const videoContentModule = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.AUDIO,
-            files: []
+            files: [],
         };
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={videoContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={videoContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('AudioContentModule')).toBeVisible();
         });
@@ -366,7 +459,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={videoContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={videoContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -377,14 +476,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -393,16 +494,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -411,17 +516,21 @@ describe('component/article/module/ContentModule', () => {
     });
 
     describe('Download ContentModule', () => {
-
         const downloadContentModule = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.DOWNLOAD,
-            files: []
+            files: [],
         };
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={downloadContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={downloadContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('DownloadContentModule')).toBeVisible();
         });
@@ -429,7 +538,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={downloadContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={downloadContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -440,14 +555,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={downloadContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -456,16 +573,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={downloadContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -475,33 +596,40 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={downloadContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                expect(screen.getByTestId('DownloadContentModuleConfiguration')).toBeVisible();
+                expect(
+                    screen.getByTestId('DownloadContentModuleConfiguration')
+                ).toBeVisible();
             });
         });
     });
 
-
     describe('Form ContentModule', () => {
-
         const formContentModule = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.FORM,
-            files: []
+            files: [],
         };
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={formContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={formContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('FormContentModule')).toBeVisible();
         });
@@ -509,7 +637,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={formContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={formContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -520,19 +654,30 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={formContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
-                    />, {}, {
-                        additionalMocks: [{
-                            request: { query: GetContentModuleResults, variables: { contentModuleId: formContentModule.id } },
-                            result: { data: { contentModuleResults: [] } }
-                        }]
+                    />,
+                    {},
+                    {
+                        additionalMocks: [
+                            {
+                                request: {
+                                    query: GetContentModuleResults,
+                                    variables: {
+                                        contentModuleId: formContentModule.id,
+                                    },
+                                },
+                                result: { data: { contentModuleResults: [] } },
+                            },
+                        ],
                     }
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -541,21 +686,34 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={formContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
-                    />, {}, {
-                        additionalMocks: [{
-                            request: { query: GetContentModuleResults, variables: { contentModuleId: formContentModule.id } },
-                            result: { data: { contentModuleResults: [] } }
-                        }]
+                    />,
+                    {},
+                    {
+                        additionalMocks: [
+                            {
+                                request: {
+                                    query: GetContentModuleResults,
+                                    variables: {
+                                        contentModuleId: formContentModule.id,
+                                    },
+                                },
+                                result: { data: { contentModuleResults: [] } },
+                            },
+                        ],
                     }
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });
@@ -565,39 +723,55 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={formContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
-                    />, {}, {
-                        additionalMocks: [{
-                            request: { query: GetContentModuleResults, variables: { contentModuleId: formContentModule.id } },
-                            result: { data: { contentModuleResults: [] } }
-                        }]
+                    />,
+                    {},
+                    {
+                        additionalMocks: [
+                            {
+                                request: {
+                                    query: GetContentModuleResults,
+                                    variables: {
+                                        contentModuleId: formContentModule.id,
+                                    },
+                                },
+                                result: { data: { contentModuleResults: [] } },
+                            },
+                        ],
                     }
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                expect(screen.getByTestId('FormContentModuleConfiguration')).toBeVisible();
+                expect(
+                    screen.getByTestId('FormContentModuleConfiguration')
+                ).toBeVisible();
             });
         });
     });
 
-
     describe('Table ContentModule', () => {
-
         const tableContentModule = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.TABLE,
             files: [],
-            content: {}
+            content: {},
         };
 
         it('should render module in show mode', () => {
             const screen = render(
-                <ContentModule contentModule={tableContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                <ContentModule
+                    contentModule={tableContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
             );
             expect(screen.getByTestId('TableContentModule')).toBeVisible();
         });
@@ -605,7 +779,13 @@ describe('component/article/module/ContentModule', () => {
         describe('when in edit mode', () => {
             it('should add an (invisible) config bar', () => {
                 const screen = render(
-                    <ContentModule isEditModeEnabled contentModule={tableContentModule} index={0} onUpdateModule={() => {}} onRemoveContentModule={() => {}} />
+                    <ContentModule
+                        isEditModeEnabled
+                        contentModule={tableContentModule}
+                        index={0}
+                        onUpdateModule={() => {}}
+                        onRemoveContentModule={() => {}}
+                    />
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
@@ -616,14 +796,16 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={tableContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
             });
 
@@ -632,16 +814,20 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: .8 } }}
+                        cardProps={{ style: { opacity: 0.8 } }}
                         contentModule={tableContentModule}
                         index={0}
                         onUpdateModule={() => {}}
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(screen.getByRole('button', { name: /einstellungen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /einstellungen/i })
+                );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(screen.getByRole('button', { name: /modul löschen/i }));
+                await userEvent.click(
+                    screen.getByRole('button', { name: /modul löschen/i })
+                );
                 await waitFor(() => {
                     expect(deleteCallback).toHaveBeenCalled();
                 });

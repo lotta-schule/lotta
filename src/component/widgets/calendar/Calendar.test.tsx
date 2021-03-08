@@ -5,11 +5,13 @@ import { Calendar } from './Calendar';
 import { GetCalendarQuery } from 'api/query/GetCalendarQuery';
 
 describe('component/widgets/Calendar', () => {
-
     const mocks = [
         {
-            request: { query: GetCalendarQuery, variables: { url: 'http://calendar', days: 14 } },
-            result: { data: CalendarResponse }
+            request: {
+                query: GetCalendarQuery,
+                variables: { url: 'http://calendar', days: 14 },
+            },
+            result: { data: CalendarResponse },
         },
     ];
 
@@ -21,7 +23,8 @@ describe('component/widgets/Calendar', () => {
         it('should show the correct number of entries', async () => {
             const screen = render(
                 <Calendar widget={CalendarKlassenarbeiten} />,
-                {}, { additionalMocks: mocks }
+                {},
+                { additionalMocks: mocks }
             );
             expect(await screen.findAllByRole('listitem')).toHaveLength(17);
         });
@@ -29,10 +32,13 @@ describe('component/widgets/Calendar', () => {
         it('should show the correct date for single-day event', async () => {
             const screen = render(
                 <Calendar widget={CalendarKlassenarbeiten} />,
-                {}, { additionalMocks: mocks }
+                {},
+                { additionalMocks: mocks }
             );
             expect(await screen.findAllByRole('listitem')).not.toHaveLength(0);
-            const row = screen.getByRole('listitem', { name: /berufsorientierung/i });
+            const row = screen.getByRole('listitem', {
+                name: /berufsorientierung/i,
+            });
             expect(row).toBeVisible();
             expect(row).toHaveTextContent(/17.03.2021/);
         });
@@ -40,10 +46,13 @@ describe('component/widgets/Calendar', () => {
         it('should show the correct date for multi-day event', async () => {
             const screen = render(
                 <Calendar widget={CalendarKlassenarbeiten} />,
-                {}, { additionalMocks: mocks }
+                {},
+                { additionalMocks: mocks }
             );
             expect(await screen.findAllByRole('listitem')).not.toHaveLength(0);
-            const row = screen.getAllByRole('listitem', { name: /b-woche/i })[0];
+            const row = screen.getAllByRole('listitem', {
+                name: /b-woche/i,
+            })[0];
             expect(row).toBeVisible();
             expect(row).toHaveTextContent(/18.01.2021-23.01.2021/);
         });
@@ -51,7 +60,8 @@ describe('component/widgets/Calendar', () => {
         it('should show the correct date', async () => {
             const screen = render(
                 <Calendar widget={CalendarKlassenarbeiten} />,
-                {}, { additionalMocks: mocks }
+                {},
+                { additionalMocks: mocks }
             );
             expect(await screen.findByTitle(/raum e 10/i)).toBeVisible();
         });
@@ -68,16 +78,17 @@ describe('component/widgets/Calendar', () => {
                         url: 'http://calendar',
                         color: 'green',
                         name: 'Kalender 2',
-                        days: 14
-                    }
-                ]
-            }
+                        days: 14,
+                    },
+                ],
+            },
         };
 
         it('should show the correct number of entries', async () => {
             const screen = render(
                 <Calendar widget={CalendarWidgetMultiple} />,
-                {}, { additionalMocks: mocks }
+                {},
+                { additionalMocks: mocks }
             );
             expect(await screen.findAllByRole('listitem')).toHaveLength(34);
         });
@@ -85,17 +96,26 @@ describe('component/widgets/Calendar', () => {
         it('should show a legend with calendar names and colors', async () => {
             const screen = render(
                 <Calendar widget={CalendarWidgetMultiple} />,
-                {}, { additionalMocks: mocks }
+                {},
+                { additionalMocks: mocks }
             );
             expect(await screen.findAllByRole('listitem')).not.toHaveLength(0);
-            expect(screen.getByRole('figure', { name: 'Legende: Kalender' })).toBeVisible();
-            expect(screen.getByRole('figure', { name: 'Legende: Kalender' }).querySelector<SVGElement>('svg'))
-                .toHaveAttribute('color', 'red');
-            expect(screen.getByRole('figure', { name: 'Legende: Kalender 2' })).toBeVisible();
-            expect(screen.getByRole('figure', { name: 'Legende: Kalender 2' }).querySelector<SVGElement>('svg'))
-                .toHaveAttribute('color', 'green');
+            expect(
+                screen.getByRole('figure', { name: 'Legende: Kalender' })
+            ).toBeVisible();
+            expect(
+                screen
+                    .getByRole('figure', { name: 'Legende: Kalender' })
+                    .querySelector<SVGElement>('svg')
+            ).toHaveAttribute('color', 'red');
+            expect(
+                screen.getByRole('figure', { name: 'Legende: Kalender 2' })
+            ).toBeVisible();
+            expect(
+                screen
+                    .getByRole('figure', { name: 'Legende: Kalender 2' })
+                    .querySelector<SVGElement>('svg')
+            ).toHaveAttribute('color', 'green');
         });
-
     });
-
 });

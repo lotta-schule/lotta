@@ -1,7 +1,17 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography, Grid } from '@material-ui/core';
-import { TextFormat, FormatAlignLeft, Image, BurstMode, Audiotrack, MovieCreation, FileCopyOutlined, Feedback, TableChart } from '@material-ui/icons';
+import {
+    TextFormat,
+    FormatAlignLeft,
+    Image,
+    BurstMode,
+    Audiotrack,
+    MovieCreation,
+    FileCopyOutlined,
+    Feedback,
+    TableChart,
+} from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType, ID } from 'model';
 import { AddModuleButton } from './AddModuleButton';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -12,9 +22,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: '0.5em 0 0 0',
         backgroundColor: theme.palette.background.paper,
         '& button': {
-            width: '100%'
-        }
-    }
+            width: '100%',
+        },
+    },
 }));
 
 export interface AddModuleBarProps {
@@ -22,24 +32,26 @@ export interface AddModuleBarProps {
 }
 
 export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
-
     const styles = useStyles();
     const currentUser = useCurrentUser();
 
-    const createId = (): ID => String(-(new Date().getTime() + Math.random() * 1000));
+    const createId = (): ID =>
+        String(-(new Date().getTime() + Math.random() * 1000));
 
     const createModule = (moduleProps: Partial<ContentModuleModel>) => {
         onAddModule({
             id: createId(),
             sortKey: null,
             files: [],
-            ...moduleProps
+            ...moduleProps,
         } as ContentModuleModel);
     };
 
     return (
         <div className={styles.root} data-testid="AddModuleBar">
-            <Typography style={{ marginBottom: '1em' }}>Wähle ein Modul aus, das du zum Beitrag hinzufügen möchtest.</Typography>
+            <Typography style={{ marginBottom: '1em' }}>
+                Wähle ein Modul aus, das du zum Beitrag hinzufügen möchtest.
+            </Typography>
             <Grid
                 container
                 direction={'row'}
@@ -56,8 +68,15 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                             createModule({
                                 type: ContentModuleType.TEXT,
                                 content: {
-                                    nodes: [{ type: 'paragraph', children: [{ text: 'Dein Text ...' }] }]
-                                }
+                                    nodes: [
+                                        {
+                                            type: 'paragraph',
+                                            children: [
+                                                { text: 'Dein Text ...' },
+                                            ],
+                                        },
+                                    ],
+                                },
                             });
                         }}
                     />
@@ -79,7 +98,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                         label={'Dateien'}
                         icon={<FileCopyOutlined />}
                         onClick={() => {
-                            createModule({ type: ContentModuleType.DOWNLOAD, });
+                            createModule({ type: ContentModuleType.DOWNLOAD });
                         }}
                     />
                 </Grid>
@@ -90,7 +109,11 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                         onClick={() => {
                             createModule({
                                 type: ContentModuleType.FORM,
-                                configuration: { destination: currentUser!.email, save_internally: true, elements: [] },
+                                configuration: {
+                                    destination: currentUser!.email,
+                                    save_internally: true,
+                                    elements: [],
+                                },
                             });
                         }}
                     />
@@ -103,13 +126,21 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                             createModule({
                                 type: ContentModuleType.TABLE,
                                 configuration: {
-                                    headRow: true
+                                    headRow: true,
                                 },
                                 content: {
                                     rows: [
-                                        [{ text: 'A' }, { text: 'B' }, { text: 'C' }],
-                                        [{ text: '1' }, { text: '2' }, { text: '3' }]
-                                    ]
+                                        [
+                                            { text: 'A' },
+                                            { text: 'B' },
+                                            { text: 'C' },
+                                        ],
+                                        [
+                                            { text: '1' },
+                                            { text: '2' },
+                                            { text: '3' },
+                                        ],
+                                    ],
                                 },
                             });
                         }}
@@ -120,7 +151,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                         label={'Bild'}
                         icon={<Image />}
                         onClick={() => {
-                            createModule({ type: ContentModuleType.IMAGE, });
+                            createModule({ type: ContentModuleType.IMAGE });
                         }}
                     />
                 </Grid>
@@ -129,7 +160,9 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                         label={'Galerie'}
                         icon={<BurstMode />}
                         onClick={() => {
-                            createModule({ type: ContentModuleType.IMAGE_COLLECTION, });
+                            createModule({
+                                type: ContentModuleType.IMAGE_COLLECTION,
+                            });
                         }}
                     />
                 </Grid>
@@ -138,7 +171,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                         label={'Video'}
                         icon={<MovieCreation />}
                         onClick={() => {
-                            createModule({ type: ContentModuleType.VIDEO, });
+                            createModule({ type: ContentModuleType.VIDEO });
                         }}
                     />
                 </Grid>
@@ -147,12 +180,11 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                         label={'Audio'}
                         icon={<Audiotrack />}
                         onClick={() => {
-                            createModule({ type: ContentModuleType.AUDIO, });
+                            createModule({ type: ContentModuleType.AUDIO });
                         }}
                     />
                 </Grid>
             </Grid>
         </div>
     );
-
 });

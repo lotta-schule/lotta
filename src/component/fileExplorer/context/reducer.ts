@@ -2,72 +2,81 @@ import { defaultState } from './FileExplorerContext';
 import { FileModel, DirectoryModel, ID } from '../../../model';
 
 export type Action =
-    | { type: 'setMode', mode: typeof defaultState.mode }
-    | { type: 'setSelectedFiles', files: FileModel[] }
+    | { type: 'setMode'; mode: typeof defaultState.mode }
+    | { type: 'setSelectedFiles'; files: FileModel[] }
     | { type: 'resetSelectedFiles' }
-    | { type: 'setMarkedFiles', files: FileModel[] }
+    | { type: 'setMarkedFiles'; files: FileModel[] }
     | { type: 'resetMarkedFiles' }
-    | { type: 'markSingleFile', file: FileModel }
-    | { type: 'setMarkedDirectories', directories: DirectoryModel[] }
+    | { type: 'markSingleFile'; file: FileModel }
+    | { type: 'setMarkedDirectories'; directories: DirectoryModel[] }
     | { type: 'resetMarkedDirectories' }
-    | { type: 'markSingleDirectory', directory: DirectoryModel }
-    | { type: 'setPath', path: ({ id: null } | { id: ID; name: string })[] }
-    | { type: 'setSearchFilter', searchtext: string }
-    | { type: 'showActiveUploads' } | { type: 'hideActiveUploads' }
-    | { type: 'showFileUsage' } | { type: 'hideFileUsage' }
-    | { type: 'showCreateNewFolder' } | { type: 'hideCreateNewFolder' }
-    | { type: 'showMoveFiles' } | { type: 'hideMoveFiles' }
-    | { type: 'showMoveDirectory' } | { type: 'hideMoveDirectory' }
-    | { type: 'showDeleteFiles' } | { type: 'hideDeleteFiles' }
-    | { type: 'toggleDetailSidebarEnabled' }
+    | { type: 'markSingleDirectory'; directory: DirectoryModel }
+    | { type: 'setPath'; path: ({ id: null } | { id: ID; name: string })[] }
+    | { type: 'setSearchFilter'; searchtext: string }
+    | { type: 'showActiveUploads' }
+    | { type: 'hideActiveUploads' }
+    | { type: 'showFileUsage' }
+    | { type: 'hideFileUsage' }
+    | { type: 'showCreateNewFolder' }
+    | { type: 'hideCreateNewFolder' }
+    | { type: 'showMoveFiles' }
+    | { type: 'hideMoveFiles' }
+    | { type: 'showMoveDirectory' }
+    | { type: 'hideMoveDirectory' }
+    | { type: 'showDeleteFiles' }
+    | { type: 'hideDeleteFiles' }
+    | { type: 'toggleDetailSidebarEnabled' };
 
-export const reducer = (state: typeof defaultState, action: Action): typeof defaultState => {
+export const reducer = (
+    state: typeof defaultState,
+    action: Action
+): typeof defaultState => {
     switch (action.type) {
         case 'setMode':
             return {
                 ...state,
-                mode: action.mode
+                mode: action.mode,
             };
         case 'setSelectedFiles':
             return {
                 ...state,
-                selectedFiles: action.files
+                selectedFiles: action.files,
             };
         case 'resetSelectedFiles':
             return {
                 ...state,
-                selectedFiles: []
+                selectedFiles: [],
             };
         case 'setMarkedFiles':
             return {
                 ...state,
-                markedFiles: action.files
+                markedFiles: action.files,
             };
         case 'resetMarkedFiles':
             return {
                 ...state,
-                markedFiles: []
+                markedFiles: [],
             };
         case 'markSingleFile':
             return {
                 ...state,
-                markedFiles: [action.file]
-            }
+                markedFiles: [action.file],
+            };
         case 'setMarkedDirectories':
             return {
                 ...state,
-                markedDirectories: action.directories
+                markedDirectories: action.directories,
             };
         case 'resetMarkedDirectories':
             return {
                 ...state,
-                markedDirectories: []
+                markedDirectories: [],
             };
         case 'markSingleDirectory':
             return {
                 ...state,
-                markedDirectories: [action.directory]
-            }
+                markedDirectories: [action.directory],
+            };
         case 'setPath':
             return {
                 ...state,
@@ -79,74 +88,74 @@ export const reducer = (state: typeof defaultState, action: Action): typeof defa
         case 'setSearchFilter':
             return {
                 ...state,
-                searchtext: action.searchtext
-            }
+                searchtext: action.searchtext,
+            };
         case 'showActiveUploads':
             return {
                 ...state,
-                showActiveUploads: true
-            }
+                showActiveUploads: true,
+            };
         case 'showFileUsage':
             return {
                 ...state,
-                showFileUsage: true
-            }
+                showFileUsage: true,
+            };
         case 'showCreateNewFolder':
             return {
                 ...state,
-                showCreateNewFolder: true
-            }
+                showCreateNewFolder: true,
+            };
         case 'showMoveFiles':
             return {
                 ...state,
-                showMoveFiles: true
-            }
+                showMoveFiles: true,
+            };
         case 'showMoveDirectory':
             return {
                 ...state,
-                showMoveDirectory: true
-            }
+                showMoveDirectory: true,
+            };
         case 'showDeleteFiles':
             return {
                 ...state,
-                showDeleteFiles: true
-            }
+                showDeleteFiles: true,
+            };
         case 'hideActiveUploads':
             return {
                 ...state,
-                showActiveUploads: false
-            }
+                showActiveUploads: false,
+            };
         case 'hideFileUsage':
             return {
                 ...state,
-                showFileUsage: false
-            }
+                showFileUsage: false,
+            };
         case 'hideCreateNewFolder':
             return {
                 ...state,
-                showCreateNewFolder: false
-            }
+                showCreateNewFolder: false,
+            };
         case 'hideMoveFiles':
             return {
                 ...state,
-                showMoveFiles: false
-            }
+                showMoveFiles: false,
+            };
         case 'hideMoveDirectory':
             return {
                 ...state,
-                showMoveDirectory: false
-            }
+                showMoveDirectory: false,
+            };
         case 'hideDeleteFiles':
             return {
                 ...state,
-                showDeleteFiles: false
-            }
+                showDeleteFiles: false,
+            };
         case 'toggleDetailSidebarEnabled':
             return {
                 ...state,
-                detailSidebarEnabled: !state.detailSidebarEnabled
-            }
+                detailSidebarEnabled: !state.detailSidebarEnabled,
+            };
         default:
             return state;
     }
-}
+};

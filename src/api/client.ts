@@ -1,13 +1,19 @@
 import { createLink } from 'apollo-v3-absinthe-upload-link';
 import { onError } from '@apollo/link-error';
-import { ApolloClient, ApolloLink, InMemoryCache, gql, split } from '@apollo/client';
+import {
+    ApolloClient,
+    ApolloLink,
+    InMemoryCache,
+    gql,
+    split,
+} from '@apollo/client';
 import { Socket as PhoenixSocket } from 'phoenix';
 // @ts-ignore
 import { hasSubscription } from '@jumpn/utils-graphql';
 import { JWT } from 'util/auth/jwt';
 import { isAfter, sub } from 'date-fns';
 import axios, { AxiosRequestConfig } from 'axios';
-import { createAbsintheSocketLink } from './createAbsintheSocketLink';
+import { createAbsintheSocketLink } from './createAbsintheSocketLink';
 import * as AbsintheSocket from '@absinthe/socket';
 
 const sendRefreshRequest = async () => {
@@ -70,29 +76,29 @@ const customFetch = async (url: string, options: any) => {
 
 const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
     if (obj instanceof Array) {
-        return [...obj.map(o => mutateVariableInputObject(o, propToDelete))];
+        return [...obj.map((o) => mutateVariableInputObject(o, propToDelete))];
     } else if (obj !== null && obj !== undefined && typeof obj === 'object') {
         return Object.keys(obj).reduce((newObj, key) => {
             if (key === 'configuration' && typeof obj[key] === 'object') {
                 return {
                     ...newObj,
-                    [key]: JSON.stringify(obj[key])
+                    [key]: JSON.stringify(obj[key]),
                 };
             }
             if (typeof obj[key] === 'object' && !(obj[key] instanceof File)) {
                 return {
                     ...newObj,
-                    [key]: mutateVariableInputObject(obj[key], propToDelete)
+                    [key]: mutateVariableInputObject(obj[key], propToDelete),
                 };
             }
             if (key !== propToDelete) {
                 return {
                     ...newObj,
-                    [key]: obj[key]
+                    [key]: obj[key],
                 };
             }
             return {
-                ...newObj
+                ...newObj,
             };
         }, {});
     }
@@ -114,14 +120,17 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 const authLink = new ApolloLink((operation, forward) => {
     if (operation.variables) {
-        operation.variables = mutateVariableInputObject(operation.variables, '__typename');
+        operation.variables = mutateVariableInputObject(
+            operation.variables,
+            '__typename'
+        );
     }
     const token = localStorage.getItem('id');
     if (token) {
         operation.setContext({
             headers: {
-                Authorization: `Bearer ${token}`
-            }
+                Authorization: `Bearer ${token}`,
+            },
         });
     }
     return forward?.(operation);
@@ -142,29 +151,37 @@ const createAbsoluteSocketUrl = (urlString: string) => {
     return urlString;
 };
 
-const phoenixSocket = process.env.REACT_APP_API_SOCKET_URL ?
-    new PhoenixSocket(createAbsoluteSocketUrl(process.env.REACT_APP_API_SOCKET_URL), {
-        params: () => {
-            const token = localStorage.getItem('id');
-            if (token) {
-                return { token };
-            } else {
-                return {};
-            }
-        }
-    }) : null;
+const phoenixSocket = process.env.REACT_APP_API_SOCKET_URL
+    ? new PhoenixSocket(
+          createAbsoluteSocketUrl(process.env.REACT_APP_API_SOCKET_URL),
+          {
+              params: () => {
+                  const token = localStorage.getItem('id');
+                  if (token) {
+                      return { token };
+                  } else {
+                      return {};
+                  }
+              },
+          }
+      )
+    : null;
 
-const absintheSocket = phoenixSocket ? AbsintheSocket.create(phoenixSocket) : null;
+const absintheSocket = phoenixSocket
+    ? AbsintheSocket.create(phoenixSocket)
+    : null;
 
-const websocketLink = absintheSocket ? createAbsintheSocketLink(absintheSocket) : null;
+const websocketLink = absintheSocket
+    ? createAbsintheSocketLink(absintheSocket)
+    : null;
 
-const link =
-    websocketLink ?
-    split(
-        operation => hasSubscription(operation.query),
-        ApolloLink.from([errorLink, websocketLink]),
-        ApolloLink.from([errorLink, authLink, httpLink])
-    ) : ApolloLink.from([errorLink, authLink, httpLink]);
+const link = websocketLink
+    ? split(
+          (operation) => hasSubscription(operation.query),
+          ApolloLink.from([errorLink, websocketLink]),
+          ApolloLink.from([errorLink, authLink, httpLink])
+      )
+    : ApolloLink.from([errorLink, authLink, httpLink]);
 
 const apolloClient = new ApolloClient({
     link,
@@ -172,16 +189,20 @@ const apolloClient = new ApolloClient({
     cache: new InMemoryCache({
         typePolicies: {
             System: {
-                keyFields: ['title']
-            }
-        }
+                keyFields: ['title'],
+            },
+        },
     }),
 });
 
 const writeDefaults = () => {
     apolloClient.writeQuery({
-        query: gql`{ isMobileDrawerOpen }`,
-        data: { isMobileDrawerOpen: false }
+        query: gql`
+            {
+                isMobileDrawerOpen
+            }
+        `,
+        data: { isMobileDrawerOpen: false },
     });
 };
 writeDefaults();

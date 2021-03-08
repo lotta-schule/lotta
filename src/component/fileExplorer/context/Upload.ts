@@ -25,36 +25,48 @@ export class Upload implements UploadModel {
         this.error = null;
     }
 
-    public startUploading(onProgress: (event: number) => void, onFinish: (file: FileModel) => void, onError: (error: Error) => void): Upload {
+    public startUploading(
+        onProgress: (event: number) => void,
+        onFinish: (file: FileModel) => void,
+        onError: (error: Error) => void
+    ): Upload {
         client
             .mutate<{ file: FileModel }>({
                 mutation: UploadFileMutation,
                 variables: {
                     parentDirectoryId: this.parentDirectory.id,
-                    file: this.file
+                    file: this.file,
                 },
                 update: (client, { data }) => {
-                    const cache = client.readQuery<{ files: FileModel[], directories: DirectoryModel[] }>({
+                    const cache = client.readQuery<{
+                        files: FileModel[];
+                        directories: DirectoryModel[];
+                    }>({
                         query: GetDirectoriesAndFilesQuery,
-                        variables: { parentDirectoryId: data?.file.parentDirectory?.id }
+                        variables: {
+                            parentDirectoryId: data?.file.parentDirectory?.id,
+                        },
                     });
                     client.writeQuery({
                         query: GetDirectoriesAndFilesQuery,
-                        variables: { parentDirectoryId: data?.file.parentDirectory?.id },
+                        variables: {
+                            parentDirectoryId: data?.file.parentDirectory?.id,
+                        },
                         data: {
                             files: [...(cache?.files ?? []), data?.file],
-                            directories: [...(cache?.directories ?? [])]
-                        }
-                    })
+                            directories: [...(cache?.directories ?? [])],
+                        },
+                    });
                 },
                 context: {
                     fetchOptions: {
                         onUploadProgress: (progress: ProgressEvent) => {
-                            this.uploadProgress = (progress.loaded / progress.total) * 100;
+                            this.uploadProgress =
+                                (progress.loaded / progress.total) * 100;
                             onProgress(this.uploadProgress);
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             })
             .then(({ data }) => {
                 this.uploadProgress = 100;
@@ -63,7 +75,7 @@ export class Upload implements UploadModel {
                 }
                 return onFinish(data.file);
             })
-            .catch(error => {
+            .catch((error) => {
                 this.error = error;
                 onError(error);
             });

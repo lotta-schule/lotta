@@ -14,24 +14,32 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
     const mocks = [
         {
             request: { query: GetSystemQuery },
-            result: { data: { system: { ...(options.system ?? system), id: 1 } } }
+            result: {
+                data: { system: { ...(options.system ?? system), id: 1 } },
+            },
         },
         {
             request: { query: GetCurrentUserQuery },
-            result: { data: { currentUser: options.currentUser ?? null } }
+            result: { data: { currentUser: options.currentUser ?? null } },
         },
         {
-            request: { query: GetCategoriesQuery, },
-            result: { data: { categories: allCategories } }
+            request: { query: GetCategoriesQuery },
+            result: { data: { categories: allCategories } },
         },
-        { request: { query: ReceiveMessageSubscription }, result: {}}
+        { request: { query: ReceiveMessageSubscription }, result: {} },
     ];
     const cache = new InMemoryCache({
-        addTypename: false
+        addTypename: false,
     });
-    cache.writeQuery({ query: GetSystemQuery,  data: { system: options.system ?? system } });
+    cache.writeQuery({
+        query: GetSystemQuery,
+        data: { system: options.system ?? system },
+    });
     if (options.currentUser) {
-        cache.writeQuery({ query: GetCurrentUserQuery,  data: { currentUser: options.currentUser } });
+        cache.writeQuery({
+            query: GetCurrentUserQuery,
+            data: { currentUser: options.currentUser },
+        });
     }
     return { cache, mocks };
-}
+};

@@ -1,4 +1,12 @@
-import React, { memo, useEffect, useRef, useState, KeyboardEvent, FocusEvent, FormEvent } from 'react';
+import React, {
+    memo,
+    useEffect,
+    useRef,
+    useState,
+    KeyboardEvent,
+    FocusEvent,
+    FormEvent,
+} from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { Typography } from '@material-ui/core';
 import get from 'lodash/get';
@@ -33,7 +41,10 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
         }
     };
 
-    const variant = `h${get(contentModule.configuration, 'level', 4)}` as 'h4' | 'h5' | 'h6';
+    const variant = `h${get(contentModule.configuration, 'level', 4)}` as
+        | 'h4'
+        | 'h5'
+        | 'h6';
 
     return (
         <Typography
@@ -43,12 +54,14 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
             ref={inputRef}
             value={title}
             onKeyDown={onKeyDown}
-            onChange={(e: FormEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)}
+            onChange={(e: FormEvent<HTMLInputElement>) =>
+                setTitle(e.currentTarget.value)
+            }
             style={{ width: '100%', outline: 'none', border: 0 }}
             onBlur={(_e: FocusEvent<HTMLInputElement>) => {
                 onUpdateModule({
                     ...contentModule,
-                    content: { title }
+                    content: { title },
                 });
             }}
         />

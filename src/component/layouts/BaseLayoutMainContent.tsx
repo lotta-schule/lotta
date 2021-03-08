@@ -6,12 +6,14 @@ export interface BaseLayoutMainContentProps {
     children?: ReactNode | ReactNodeArray;
 }
 
-export const BaseLayoutMainContent = memo<BaseLayoutMainContentProps>(({ children, style }) => {
-    return (
-        <Grid item xs>
-            <div style={{ ...style, width: '100%', height: '100%' }}>
-                {children}
-            </div>
-        </Grid>
-    );
-});
+export const BaseLayoutMainContent = memo<BaseLayoutMainContentProps>(
+    ({ children, style }) => {
+        return (
+            <Grid item xs>
+                <div style={{ ...style, width: '100%', height: '100%' }}>
+                    {children}
+                </div>
+            </Grid>
+        );
+    }
+);

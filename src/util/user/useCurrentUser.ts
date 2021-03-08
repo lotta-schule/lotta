@@ -6,16 +6,22 @@ import { configureScope } from '@sentry/react';
 import Matomo from 'matomo-ts';
 
 export const useCurrentUser = () => {
-    const { data, loading, called } = useQuery<{ currentUser: UserModel | null }>(GetCurrentUserQuery);
+    const { data, loading, called } = useQuery<{
+        currentUser: UserModel | null;
+    }>(GetCurrentUserQuery);
     const currentUser = data?.currentUser ?? null;
 
     useEffect(() => {
         // Sentry Error tracking
-        configureScope(scope => {
-            scope.setUser(currentUser ? {
-                id: currentUser.id,
-                username: currentUser.nickname ?? currentUser.name
-            } : null);
+        configureScope((scope) => {
+            scope.setUser(
+                currentUser
+                    ? {
+                          id: currentUser.id,
+                          username: currentUser.nickname ?? currentUser.name,
+                      }
+                    : null
+            );
         });
 
         // Matomo Site Analytics
@@ -32,4 +38,4 @@ export const useCurrentUser = () => {
         return undefined;
     }
     return data?.currentUser || null;
-}
+};

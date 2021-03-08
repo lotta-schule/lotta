@@ -38,13 +38,22 @@ export const AdminLayout = memo(() => {
                     </Typography>
                 </Header>
                 <Switch>
-                    <Route exact path='/admin'>
+                    <Route exact path="/admin">
                         <Redirect to={'/admin/system/general'} />
                     </Route>
-                    <Route path={'/admin/system'} component={SystemManagement} />
-                    <Route path={'/admin/categories'} component={CategoryManagement} />
+                    <Route
+                        path={'/admin/system'}
+                        component={SystemManagement}
+                    />
+                    <Route
+                        path={'/admin/categories'}
+                        component={CategoryManagement}
+                    />
                     <Route path={'/admin/users'} component={UserManagement} />
-                    <Route path={'/admin/unpublished'} component={UnpublishedArticles} />
+                    <Route
+                        path={'/admin/unpublished'}
+                        component={UnpublishedArticles}
+                    />
                 </Switch>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar>

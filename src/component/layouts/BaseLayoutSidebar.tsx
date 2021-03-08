@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         },
     },
     drawer: {
-        padding: 0
-    }
+        padding: 0,
+    },
 }));
 
 export interface BaseLayoutSidebarProps {
@@ -27,47 +27,78 @@ export interface BaseLayoutSidebarProps {
     children?: any;
 }
 
-export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(({ children, isEmpty }) => {
-    const styles = useStyles();
+export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(
+    ({ children, isEmpty }) => {
+        const styles = useStyles();
 
-    const isMobile = useIsMobile();
-    const client = useApolloClient();
+        const isMobile = useIsMobile();
+        const client = useApolloClient();
 
-    const { data } = useQuery<{ isMobileDrawerOpen: boolean }>(gql`{ isMobileDrawerOpen @client }`);
-    const isMobileDrawerOpen = !!data?.isMobileDrawerOpen;
-    const closeDrawer = useCallback(() => {
-        client.writeQuery({
-            query: gql`{ isMobileDrawerOpen }`,
-            data: { isMobileDrawerOpen: false }
-        });
-    }, [client]);
-
-    const { location: { pathname } } = useRouter();
-
-    useEffect(() => {
-        closeDrawer()
-    }, [closeDrawer, pathname]);
-
-    if (isMobile) {
-        return (
-            <Drawer data-testid="BaseLayoutSidebar" classes={{ paper: styles.drawer }} anchor={'right'} open={isMobileDrawerOpen} onClose={() => closeDrawer()}>
-                {isEmpty ? <WidgetsList widgets={[]} /> : children}
-                <Footer />
-            </Drawer>
+        const { data } = useQuery<{ isMobileDrawerOpen: boolean }>(
+            gql`
+                {
+                    isMobileDrawerOpen @client
+                }
+            `
         );
-    } else if (isEmpty) {
-        // there must be a relative container for footer positioning
-        return (
-            <div data-testid="BaseLayoutSidebar" style={{ position: 'relative', width: 0 }}>
-                <Footer />
-            </div>
-        );
-    } else {
-        return (
-            <Grid data-testid="BaseLayoutSidebar" className={styles.root} item component={'aside'} xs={12} md={3} xl={3}>
-                {children}
-                <Footer />
-            </Grid>
-        );
+        const isMobileDrawerOpen = !!data?.isMobileDrawerOpen;
+        const closeDrawer = useCallback(() => {
+            client.writeQuery({
+                query: gql`
+                    {
+                        isMobileDrawerOpen
+                    }
+                `,
+                data: { isMobileDrawerOpen: false },
+            });
+        }, [client]);
+
+        const {
+            location: { pathname },
+        } = useRouter();
+
+        useEffect(() => {
+            closeDrawer();
+        }, [closeDrawer, pathname]);
+
+        if (isMobile) {
+            return (
+                <Drawer
+                    data-testid="BaseLayoutSidebar"
+                    classes={{ paper: styles.drawer }}
+                    anchor={'right'}
+                    open={isMobileDrawerOpen}
+                    onClose={() => closeDrawer()}
+                >
+                    {isEmpty ? <WidgetsList widgets={[]} /> : children}
+                    <Footer />
+                </Drawer>
+            );
+        } else if (isEmpty) {
+            // there must be a relative container for footer positioning
+            return (
+                <div
+                    data-testid="BaseLayoutSidebar"
+                    style={{ position: 'relative', width: 0 }}
+                >
+                    <Footer />
+                </div>
+            );
+        } else {
+            return (
+                <Grid
+                    data-testid="BaseLayoutSidebar"
+                    className={styles.root}
+                    item
+                    component={'aside'}
+                    xs={12}
+                    md={3}
+                    xl={3}
+                >
+                    {children}
+                    <Footer />
+                </Grid>
+            );
+        }
     }
-});
+);

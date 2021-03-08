@@ -5,19 +5,21 @@ import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
-import userEvent from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
-
     let userInfoLoaded = false;
 
-    const mocks = (user: any) => [{
-        request: { query: GetUserQuery, variables: { id: user.id } },
-        result: () => {
-            userInfoLoaded = true;
-            return { data: { user } };
-        }
-    }] as MockedResponse[];
+    const mocks = (user: any) =>
+        [
+            {
+                request: { query: GetUserQuery, variables: { id: user.id } },
+                result: () => {
+                    userInfoLoaded = true;
+                    return { data: { user } };
+                },
+            },
+        ] as MockedResponse[];
 
     beforeEach(() => {
         userInfoLoaded = false;
@@ -28,32 +30,50 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const user = { ...SomeUser, groups: [], assignedGroups: [] };
             const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
-                {}, { additionalMocks: mocks(user) }
+                {},
+                { additionalMocks: mocks(user) }
             );
             await waitFor(() => {
                 expect(userInfoLoaded).toEqual(true);
             });
-            expect(screen.queryByTestId('DialogTitle')).toHaveTextContent('Ernesto Guevara');
-            expect(screen.queryByTestId('UserNickname')).toHaveTextContent('Che');
-            expect(screen.queryByTestId('UserEmail')).toHaveTextContent('user@lotta.schule');
+            expect(screen.queryByTestId('DialogTitle')).toHaveTextContent(
+                'Ernesto Guevara'
+            );
+            expect(screen.queryByTestId('UserNickname')).toHaveTextContent(
+                'Che'
+            );
+            expect(screen.queryByTestId('UserEmail')).toHaveTextContent(
+                'user@lotta.schule'
+            );
         });
     });
 
     describe('show and select correct groups', () => {
         it('should show assigned and dynamic groups', async () => {
-            const user = { ...SomeUser, groups: [adminGroup, lehrerGroup], assignedGroups: [adminGroup] };
+            const user = {
+                ...SomeUser,
+                groups: [adminGroup, lehrerGroup],
+                assignedGroups: [adminGroup],
+            };
             const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
-                {}, { additionalMocks: mocks(user) }
+                {},
+                { additionalMocks: mocks(user) }
             );
             await waitFor(() => {
-                expect(screen.queryByTestId('DialogTitle')).toHaveTextContent('Ernesto Guevara');
+                expect(screen.queryByTestId('DialogTitle')).toHaveTextContent(
+                    'Ernesto Guevara'
+                );
             });
 
-            const assignedGroups = await screen.findByTestId('GroupSelectSelection');
+            const assignedGroups = await screen.findByTestId(
+                'GroupSelectSelection'
+            );
             expect(assignedGroups).toHaveTextContent(/Administrator/);
 
-            expect(screen.queryByTestId('DynamicGroups')).toHaveTextContent(`Über Einschreibeschlüssel zugewiesene Gruppen:Lehrer`);
+            expect(screen.queryByTestId('DynamicGroups')).toHaveTextContent(
+                `Über Einschreibeschlüssel zugewiesene Gruppen:Lehrer`
+            );
         });
 
         it('should assign new group on click', async () => {
@@ -61,36 +81,58 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const user = {
                 ...SomeUser,
                 groups: [adminGroup, lehrerGroup],
-                assignedGroups: [adminGroup]
+                assignedGroups: [adminGroup],
             };
             const additionalMocks = [
                 ...mocks(user),
                 {
-                    request: { query: UpdateUserMutation, variables: { id: user.id, groups: [adminGroup.id, elternGroup.id].map(id => ({ id })) } },
+                    request: {
+                        query: UpdateUserMutation,
+                        variables: {
+                            id: user.id,
+                            groups: [
+                                adminGroup.id,
+                                elternGroup.id,
+                            ].map((id) => ({ id })),
+                        },
+                    },
                     result: () => {
                         mutationHasBeenCalled = true;
                         return {
-                            data: { user: { ...user, assignedGroups: [...user.assignedGroups, elternGroup] } }
+                            data: {
+                                user: {
+                                    ...user,
+                                    assignedGroups: [
+                                        ...user.assignedGroups,
+                                        elternGroup,
+                                    ],
+                                },
+                            },
                         };
-                    }
-                }
+                    },
+                },
             ];
             const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
-                {}, { additionalMocks }
+                {},
+                { additionalMocks }
             );
             await waitFor(() => {
                 expect(userInfoLoaded).toEqual(true);
             });
 
-            const assignedGroups = await screen.findByTestId('GroupSelectSelection');
+            const assignedGroups = await screen.findByTestId(
+                'GroupSelectSelection'
+            );
             expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
             userEvent.click(await screen.findByRole('textbox'));
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
-            userEvent.click(await screen.findByRole('option', { name: 'Eltern' }));
+            userEvent.click(
+                await screen.findByRole('option', { name: 'Eltern' })
+            );
 
             await waitFor(() => {
                 expect(mutationHasBeenCalled).toEqual(true);
@@ -102,40 +144,52 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
             const user = {
                 ...SomeUser,
                 groups: [adminGroup, lehrerGroup, elternGroup],
-                assignedGroups: [adminGroup, elternGroup]
+                assignedGroups: [adminGroup, elternGroup],
             };
             const additionalMocks = [
                 ...mocks(user),
                 {
-                    request: { query: UpdateUserMutation, variables: { id: SomeUser.id, groups: [{ id: adminGroup.id }] } },
+                    request: {
+                        query: UpdateUserMutation,
+                        variables: {
+                            id: SomeUser.id,
+                            groups: [{ id: adminGroup.id }],
+                        },
+                    },
                     result: () => {
                         mutationHasBeenCalled = true;
                         return {
-                            data: { user: { ...user, assignedGroups: [adminGroup] } }
+                            data: {
+                                user: { ...user, assignedGroups: [adminGroup] },
+                            },
                         };
-                    }
-                }
+                    },
+                },
             ];
             const screen = render(
                 <EditUserPermissionsDialog user={user} onClose={() => {}} />,
-                {}, { additionalMocks }
+                {},
+                { additionalMocks }
             );
             await waitFor(() => {
                 expect(userInfoLoaded).toEqual(true);
             });
-            const assignedGroups = await screen.findByTestId('GroupSelectSelection');
+            const assignedGroups = await screen.findByTestId(
+                'GroupSelectSelection'
+            );
             expect(assignedGroups).toHaveTextContent('Administrator');
 
             userEvent.click(await screen.findByRole('textbox'));
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
-            userEvent.click(await screen.findByRole('option', { name: 'Eltern' }));
+            userEvent.click(
+                await screen.findByRole('option', { name: 'Eltern' })
+            );
 
             await waitFor(() => {
                 expect(mutationHasBeenCalled).toEqual(true);
             });
         });
-
     });
 });

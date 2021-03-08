@@ -10,7 +10,7 @@ export const theme = createMuiTheme({
     palette: {
         primary: {
             main: primaryColor,
-            contrastText: '#fff'
+            contrastText: '#fff',
         },
         secondary: {
             main: deepOrange[500],
@@ -24,7 +24,7 @@ export const theme = createMuiTheme({
             disabledBackground: 'rgba(0, 0, 0, 0.12)',
         },
         error: {
-            main: errorColor
+            main: errorColor,
         },
         text: {
             primary: 'rgba(0, 0, 0, 0.87)',
@@ -33,11 +33,11 @@ export const theme = createMuiTheme({
             hint: disabledColor,
         },
         background: {
-            default: '#cacdd7'
-        }
+            default: '#cacdd7',
+        },
     },
     typography: {
-        fontFamily: 'Muli'
+        fontFamily: 'Muli',
     },
     shadows: [
         'none',
@@ -64,49 +64,49 @@ export const theme = createMuiTheme({
         'none',
         'none',
         'none',
-        'none'
+        'none',
     ],
     zIndex: {
         appBar: 2000,
         drawer: 3000,
         modal: 4000,
         snackbar: 5000,
-        tooltip: 6000
+        tooltip: 6000,
     },
     overrides: {
         MuiLink: {
             root: {
                 cursor: 'pointer',
                 textDecoration: 'none',
-            }
+            },
         },
         MuiAppBar: {
             root: {
                 boxShadow: 'initial',
-                overflow: 'auto'
-            }
+                overflow: 'auto',
+            },
         },
         MuiCard: {
             root: {
-                marginBottom: '.5em'
-            }
+                marginBottom: '.5em',
+            },
         },
         MuiAvatar: {
             root: {
                 width: 90,
                 height: 90,
-            }
+            },
         },
         MuiDrawer: {
             paper: {
                 width: '80vw',
                 paddingLeft: '0.5em',
-            }
+            },
         },
         MuiPaper: {
             rounded: {
                 borderRadius: 0,
-            }
+            },
         },
         MuiOutlinedInput: {
             root: {
@@ -132,38 +132,38 @@ export const theme = createMuiTheme({
                 },
             },
         },
-        ...{
+        ...({
             MuiPickersCalendarHeader: {
                 switchHeader: {
-                    color: '#333'
+                    color: '#333',
                 },
             },
             LottaArticlePreview: {
                 title: {
-                    fontFamily: '\'Schoolbell\', cursive'
-                }
-            }
-        } as any
+                    fontFamily: "'Schoolbell', cursive",
+                },
+            },
+        } as any),
     },
 });
 
 theme.typography.h4 = {
     ...theme.typography.h4,
     [theme.breakpoints.down('md')]: {
-        fontSize: '1.6rem'
-    }
+        fontSize: '1.6rem',
+    },
 };
 theme.typography.h5 = {
     ...theme.typography.h5,
     [theme.breakpoints.down('md')]: {
-        fontSize: '1.4rem'
-    }
+        fontSize: '1.4rem',
+    },
 };
 
 (theme.overrides as any).MuiContainer = {
     root: {
         [theme.breakpoints.down('md')]: {
             padding: theme.spacing(0),
-        }
-    }
-}
+        },
+    },
+};

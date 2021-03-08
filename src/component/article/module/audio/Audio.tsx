@@ -11,14 +11,17 @@ export interface AudioProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Audio = memo<AudioProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent data-testid="AudioContentModule">
-        {isEditModeEnabled && onUpdateModule ?
-            (
-                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+export const Audio = memo<AudioProps>(
+    ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
+        <CardContent data-testid="AudioContentModule">
+            {isEditModeEnabled && onUpdateModule ? (
+                <Edit
+                    contentModule={contentModule}
+                    onUpdateModule={onUpdateModule}
+                />
             ) : (
                 <Show contentModule={contentModule} />
-            )
-        }
-    </CardContent>
-));
+            )}
+        </CardContent>
+    )
+);

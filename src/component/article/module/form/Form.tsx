@@ -18,7 +18,7 @@ export interface FormElementOption {
 }
 
 export interface FormElement {
-    element: 'input' | 'selection' | 'file';
+    element: 'input' | 'selection' | 'file';
     name: string;
     type?: string;
     label?: string;
@@ -36,15 +36,18 @@ export interface FormConfiguration {
     elements: FormElement[];
 }
 
-export const Form = memo<FormProps>(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
-    return (
-        <CardContent data-testid="FormContentModule">
-            {isEditModeEnabled && (
-                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-            )}
-            {!isEditModeEnabled && (
-                <Show contentModule={contentModule} />
-            )}
-        </CardContent>
-    );
-});
+export const Form = memo<FormProps>(
+    ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+        return (
+            <CardContent data-testid="FormContentModule">
+                {isEditModeEnabled && (
+                    <Edit
+                        contentModule={contentModule}
+                        onUpdateModule={onUpdateModule}
+                    />
+                )}
+                {!isEditModeEnabled && <Show contentModule={contentModule} />}
+            </CardContent>
+        );
+    }
+);

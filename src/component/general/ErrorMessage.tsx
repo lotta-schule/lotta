@@ -9,17 +9,25 @@ export interface ErrorMessageProps {
     children?: any;
 }
 
-export const ErrorMessage = React.memo<ErrorMessageProps>(({ error, className, children }) => {
-    const theme = useTheme();
-    const errorMessage = React.useMemo(() => {
-        const errorMessage = typeof error === 'string' ? error : error?.message;
-        if (errorMessage) {
-            return errorMessage.replace(/^GraphQL error: /, '');
-        }
-    }, [error]);
-    return (
-        <Message role={'alert'} color={theme.palette.error.main} message={errorMessage} className={className}>
-            {children}
-        </Message>
-    )
-});
+export const ErrorMessage = React.memo<ErrorMessageProps>(
+    ({ error, className, children }) => {
+        const theme = useTheme();
+        const errorMessage = React.useMemo(() => {
+            const errorMessage =
+                typeof error === 'string' ? error : error?.message;
+            if (errorMessage) {
+                return errorMessage.replace(/^GraphQL error: /, '');
+            }
+        }, [error]);
+        return (
+            <Message
+                role={'alert'}
+                color={theme.palette.error.main}
+                message={errorMessage}
+                className={className}
+            >
+                {children}
+            </Message>
+        );
+    }
+);

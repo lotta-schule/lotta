@@ -1,25 +1,42 @@
 import React from 'react';
 import { render, waitFor } from 'test/util';
-import { Klausurenplan, VivaLaRevolucion, MusikCategory, KeinErSieEsUser, SomeUser, imageFile } from 'test/fixtures';
-import { ArticleModel } from 'model';
+import {
+    Klausurenplan,
+    VivaLaRevolucion,
+    MusikCategory,
+    KeinErSieEsUser,
+    SomeUser,
+    imageFile,
+} from 'test/fixtures';
+import { ArticleModel } from 'model';
 import { MockedResponse } from '@apollo/client/testing';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { CategoryLayout } from './CategoryLayout';
 
 describe('component/article/CategoryLayout', () => {
-
-    const categoryWidgetsMock = (categoryId: string): MockedResponse => (
-        { request: { query: GetCategoryWidgetsQuery, variables: { categoryId: MusikCategory.id } }, result: { data: [] } }
-    );
+    const categoryWidgetsMock = (categoryId: string): MockedResponse => ({
+        request: {
+            query: GetCategoryWidgetsQuery,
+            variables: { categoryId: MusikCategory.id },
+        },
+        result: { data: [] },
+    });
 
     describe('Standard Category', () => {
-        const articles = [Klausurenplan, VivaLaRevolucion]
-            .map(partialArticle => ({ ...partialArticle, users: [KeinErSieEsUser, SomeUser], category: MusikCategory}) as ArticleModel);
+        const articles = [Klausurenplan, VivaLaRevolucion].map(
+            (partialArticle) =>
+                ({
+                    ...partialArticle,
+                    users: [KeinErSieEsUser, SomeUser],
+                    category: MusikCategory,
+                } as ArticleModel)
+        );
 
         it('should render the category title', async () => {
             const screen = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
-                {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
+                {},
+                { additionalMocks: [categoryWidgetsMock(MusikCategory.id)] }
             );
             await waitFor(() => {
                 expect(screen.queryByText('Musik')).toBeVisible();
@@ -29,17 +46,24 @@ describe('component/article/CategoryLayout', () => {
         it('should render the category banner image', async () => {
             const category = { ...MusikCategory, bannerImageFile: imageFile };
             const screen = render(
-                <CategoryLayout category={category as any} articles={articles} />,
-                {}, { additionalMocks: [categoryWidgetsMock(category.id)]}
+                <CategoryLayout
+                    category={category as any}
+                    articles={articles}
+                />,
+                {},
+                { additionalMocks: [categoryWidgetsMock(category.id)] }
             );
             const headerContent = await screen.findByTestId('HeaderContent');
-            expect(getComputedStyle(headerContent).backgroundImage).toContain('meinbild.jpg');
+            expect(getComputedStyle(headerContent).backgroundImage).toContain(
+                'meinbild.jpg'
+            );
         });
 
         it('should render the widgets list', async () => {
             const screen = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
-                {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
+                {},
+                { additionalMocks: [categoryWidgetsMock(MusikCategory.id)] }
             );
             await waitFor(() => {
                 expect(screen.queryByTestId('WidgetsList')).toBeVisible();
@@ -49,15 +73,15 @@ describe('component/article/CategoryLayout', () => {
         it('should render an ArticlePreview', async () => {
             const screen = render(
                 <CategoryLayout category={MusikCategory} articles={articles} />,
-                {}, { additionalMocks: [categoryWidgetsMock(MusikCategory.id)]}
+                {},
+                { additionalMocks: [categoryWidgetsMock(MusikCategory.id)] }
             );
             await waitFor(() => {
                 expect([
                     ...screen.queryAllByTestId('ArticlePreviewDensedLayout'),
-                    ...screen.queryAllByTestId('ArticlePreviewStandardLayout')
+                    ...screen.queryAllByTestId('ArticlePreviewStandardLayout'),
                 ]).toHaveLength(2);
             });
         });
     });
-
 });

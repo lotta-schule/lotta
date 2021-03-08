@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-export const useLocalStorage = <T extends any>(key: string, initialValue: T): [T, (value: T) => void] => {
+export const useLocalStorage = <T extends any>(
+    key: string,
+    initialValue: T
+): [T, (value: T) => void] => {
     // State to store our value
     // Pass initial state function to useState so logic is only executed once
     const [storedValue, setStoredValue] = useState(() => {
@@ -22,7 +25,8 @@ export const useLocalStorage = <T extends any>(key: string, initialValue: T): [T
         try {
             // Allow value to be a function so we have same API as useState
             //@ts-ignore
-            const valueToStore = (value as any) instanceof Function ? value(storedValue) : value;
+            const valueToStore =
+                (value as any) instanceof Function ? value(storedValue) : value;
             // Save state
             setStoredValue(valueToStore);
             // Save to local storage
@@ -34,4 +38,4 @@ export const useLocalStorage = <T extends any>(key: string, initialValue: T): [T
     };
 
     return [storedValue, setValue];
-}
+};

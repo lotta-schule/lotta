@@ -8,26 +8,36 @@ const downloadContentModule = {
     ...Klausurenplan.contentModules[1],
     files: [],
     configuration: {
-        files: {}
-    }
+        files: {},
+    },
 };
 
-
 describe('component/article/module/Download/Config', () => {
-
     it('should render without an error', () => {
-        render(<Config contentModule={downloadContentModule} onUpdateModule={() => {}} onRequestClose={() => {}} />);
+        render(
+            <Config
+                contentModule={downloadContentModule}
+                onUpdateModule={() => {}}
+                onRequestClose={() => {}}
+            />
+        );
     });
 
     it('should render a unchecked checkbox field to toggle hidePreviews which can be checked', async () => {
-        const callback = jest.fn(cm => {
+        const callback = jest.fn((cm) => {
             expect(cm.configuration.hidePreviews).toEqual(true);
         });
         const screen = render(
-            <Config contentModule={downloadContentModule} onUpdateModule={callback} onRequestClose={() => {}} />
+            <Config
+                contentModule={downloadContentModule}
+                onUpdateModule={callback}
+                onRequestClose={() => {}}
+            />
         );
 
-        const checkbox = await screen.findByRole('checkbox', { name: /vorschaubilder anzeigen/i });
+        const checkbox = await screen.findByRole('checkbox', {
+            name: /vorschaubilder anzeigen/i,
+        });
         expect(checkbox).toBeChecked();
 
         await userEvent.click(checkbox);
@@ -37,14 +47,23 @@ describe('component/article/module/Download/Config', () => {
     });
 
     it('should render a checked checkbox field to toggle hidePreviews which can be unchecked', async () => {
-        const callback = jest.fn(cm => {
+        const callback = jest.fn((cm) => {
             expect(cm.configuration.hidePreviews).toEqual(false);
         });
         const screen = render(
-            <Config contentModule={{ ...downloadContentModule, configuration: { hidePreviews: true }}} onUpdateModule={callback} onRequestClose={() => {}} />
+            <Config
+                contentModule={{
+                    ...downloadContentModule,
+                    configuration: { hidePreviews: true },
+                }}
+                onUpdateModule={callback}
+                onRequestClose={() => {}}
+            />
         );
 
-        const checkbox = await screen.findByRole('checkbox', { name: /vorschaubilder anzeigen/i });
+        const checkbox = await screen.findByRole('checkbox', {
+            name: /vorschaubilder anzeigen/i,
+        });
         expect(checkbox).not.toBeChecked();
 
         await userEvent.click(checkbox);
@@ -52,5 +71,4 @@ describe('component/article/module/Download/Config', () => {
             expect(callback).toHaveBeenCalled();
         });
     });
-
 });

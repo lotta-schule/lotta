@@ -23,7 +23,7 @@ export enum FileSizeUnit {
     PetaBytes = 'P',
     ExaBytes = 'E',
     ZettaBytes = 'Z',
-    YottaBytes = 'Y'
+    YottaBytes = 'Y',
 }
 
 const units = [
@@ -35,7 +35,7 @@ const units = [
     FileSizeUnit.PetaBytes,
     FileSizeUnit.ExaBytes,
     FileSizeUnit.ZettaBytes,
-    FileSizeUnit.YottaBytes
+    FileSizeUnit.YottaBytes,
 ];
 
 const equals = (a: string, b: string): boolean => {
@@ -54,11 +54,14 @@ export class FileSize {
         this.options = {
             fixed: 2,
             spacer: ' ',
-            ...options
+            ...options,
         };
     }
 
-    public to(unit: FileSizeUnit = FileSizeUnit.Bytes, spec: FileSizeSpec = 'iec'): string {
+    public to(
+        unit: FileSizeUnit = FileSizeUnit.Bytes,
+        spec: FileSizeSpec = 'iec'
+    ): string {
         const algorithm = equals(spec, 'si') ? 1e3 : 1024;
 
         let position = units.indexOf(unit);
@@ -80,7 +83,8 @@ export class FileSize {
         const result = this.bytes / algorithm ** magnitude;
         const fixed = result.toFixed(this.options.fixed);
 
-        if (magnitude - 1 < 3 && !equals(spec, 'si') && equals(spec, 'jedec')) type[1] = 'B';
+        if (magnitude - 1 < 3 && !equals(spec, 'si') && equals(spec, 'jedec'))
+            type[1] = 'B';
 
         let suffix: string;
 
@@ -98,7 +102,10 @@ export class FileSize {
             magnitude,
             result,
             fixed,
-            bits: { result: result / 8, fixed: (result / 8).toFixed(this.options.fixed) }
+            bits: {
+                result: result / 8,
+                fixed: (result / 8).toFixed(this.options.fixed),
+            },
         };
     }
 

@@ -18,22 +18,27 @@ const useStyles = makeStyles<Theme>(() => ({
     },
 }));
 
-export const ArticleTitle = memo<ArticleTitleProps>(({ article, showEditButton }) => {
-    const styles = useStyles();
-    const currentUser = useCurrentUser();
+export const ArticleTitle = memo<ArticleTitleProps>(
+    ({ article, showEditButton }) => {
+        const styles = useStyles();
+        const currentUser = useCurrentUser();
 
-    const showEditSection = showEditButton && (User.canEditArticle(currentUser, article) || User.isAdmin(currentUser));
-    return (
-        <Container className={styles.container}>
-            <Header>
-                <ArticlePreviewStandardLayout
-                    article={article}
-                    isEmbedded
-                    disableLink
-                    disableEdit={!showEditSection}
-                    disablePin={!User.isAdmin(currentUser)}
-                />
-            </Header>
-        </Container>
-    )
-});
+        const showEditSection =
+            showEditButton &&
+            (User.canEditArticle(currentUser, article) ||
+                User.isAdmin(currentUser));
+        return (
+            <Container className={styles.container}>
+                <Header>
+                    <ArticlePreviewStandardLayout
+                        article={article}
+                        isEmbedded
+                        disableLink
+                        disableEdit={!showEditSection}
+                        disablePin={!User.isAdmin(currentUser)}
+                    />
+                </Header>
+            </Container>
+        );
+    }
+);

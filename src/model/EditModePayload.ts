@@ -2,7 +2,7 @@ import { ID } from './ID';
 
 export enum EditModeType {
     Page,
-    Article
+    Article,
 }
 
 export interface EditModePayloadModel {

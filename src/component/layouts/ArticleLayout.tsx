@@ -2,7 +2,12 @@ import React, { memo, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { Article } from '../article/Article';
 import { ArticleModel } from '../../model';
-import { CircularProgress, Typography, makeStyles, Theme } from '@material-ui/core';
+import {
+    CircularProgress,
+    Typography,
+    makeStyles,
+    Theme,
+} from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { RelatedArticlesList } from 'component/article/RelatedArticlesList';
@@ -22,7 +27,7 @@ const useStyle = makeStyles((theme: Theme) => ({
         color: theme.palette.primary.dark,
         backgroundColor: theme.palette.background.paper,
         textTransform: 'uppercase',
-    }
+    },
 }));
 
 export interface ArticleLayoutProps {
@@ -30,57 +35,83 @@ export interface ArticleLayoutProps {
     articleId: ID;
 }
 
-export const ArticleLayout = memo<ArticleLayoutProps>(({ articleId, title }) => {
-    const styles = useStyle();
-    const client = useSystem() || {};
+export const ArticleLayout = memo<ArticleLayoutProps>(
+    ({ articleId, title }) => {
+        const styles = useStyle();
+        const client = useSystem() || {};
 
-    const { data, loading: isLoading, error } = useQuery<{ article: ArticleModel }, { id: ID }>(GetArticleQuery, { variables: { id: articleId } });
+        const { data, loading: isLoading, error } = useQuery<
+            { article: ArticleModel },
+            { id: ID }
+        >(GetArticleQuery, { variables: { id: articleId } });
 
-    const mainContent = useMemo(() => {
-        if (isLoading) {
-            return <div><CircularProgress /></div>;
-        }
-        if (error) {
-            return (
-                <ErrorMessage error={error} />
-            );
-        }
+        const mainContent = useMemo(() => {
+            if (isLoading) {
+                return (
+                    <div>
+                        <CircularProgress />
+                    </div>
+                );
+            }
+            if (error) {
+                return <ErrorMessage error={error} />;
+            }
 
-        if (data && data.article) {
-            const { article } = data;
-            return (
-                <>
-                    <Helmet>
-                        <title>{article.title} &nbsp; {client.title}</title>
-                        <meta name={'description'} content={article.preview} />
-                        <meta property={'og:type'} content={'article'} />
-                        <meta property={'og:description'} content={article.preview} />
-                        <meta property={'twitter:card'} content={article.preview} />
-                        {article.previewImageFile && (
-                            <meta property={'og:image'} content={`https://afdptjdxen.cloudimg.io/cover/1800x945/foil1/${article.previewImageFile.remoteLocation}`} />
+            if (data && data.article) {
+                const { article } = data;
+                return (
+                    <>
+                        <Helmet>
+                            <title>
+                                {article.title} &nbsp; {client.title}
+                            </title>
+                            <meta
+                                name={'description'}
+                                content={article.preview}
+                            />
+                            <meta property={'og:type'} content={'article'} />
+                            <meta
+                                property={'og:description'}
+                                content={article.preview}
+                            />
+                            <meta
+                                property={'twitter:card'}
+                                content={article.preview}
+                            />
+                            {article.previewImageFile && (
+                                <meta
+                                    property={'og:image'}
+                                    content={`https://afdptjdxen.cloudimg.io/cover/1800x945/foil1/${article.previewImageFile.remoteLocation}`}
+                                />
+                            )}
+                            <meta
+                                property={'og:site_name'}
+                                content={client.title}
+                            />
+                        </Helmet>
+                        {title && (
+                            <Typography
+                                variant={'h3'}
+                                className={styles.siteTitle}
+                            >
+                                {title}
+                            </Typography>
                         )}
-                        <meta property={'og:site_name'} content={client.title} />
-                    </Helmet>
-                    {title && <Typography variant={'h3'} className={styles.siteTitle}>{title}</Typography>}
-                    <Article article={article} />
-                    {article.topic && (
-                        <RelatedArticlesList article={article} />
-                    )}
-                </>
-            );
-        }
+                        <Article article={article} />
+                        {article.topic && (
+                            <RelatedArticlesList article={article} />
+                        )}
+                    </>
+                );
+            }
+            return <ErrorMessage error={new Error('Beitrag nicht gefunden')} />;
+        }, [client.title, data, error, isLoading, styles.siteTitle, title]);
+
         return (
-            <ErrorMessage error={new Error('Beitrag nicht gefunden')} />
+            <>
+                <BaseLayoutMainContent>{mainContent}</BaseLayoutMainContent>
+                <BaseLayoutSidebar isEmpty />
+            </>
         );
-
-    }, [client.title, data, error, isLoading, styles.siteTitle, title]);
-
-    return (
-        <>
-            <BaseLayoutMainContent>
-                {mainContent}
-            </BaseLayoutMainContent>
-            <BaseLayoutSidebar isEmpty />
-        </>
-    );
-});
+    }
+);

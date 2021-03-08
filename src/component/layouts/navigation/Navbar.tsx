@@ -1,5 +1,12 @@
 import React, { memo, useCallback } from 'react';
-import { AppBar, Toolbar, Button, Theme, Grid, IconButton } from '@material-ui/core';
+import {
+    AppBar,
+    Toolbar,
+    Button,
+    Theme,
+    Grid,
+    IconButton,
+} from '@material-ui/core';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { makeStyles } from '@material-ui/styles';
 import { Menu } from '@material-ui/icons';
@@ -12,7 +19,7 @@ import { useApolloClient } from '@apollo/client';
 import clsx from 'clsx';
 import { gql } from '@apollo/client';
 
-const useStyles = makeStyles<Theme>(theme => ({
+const useStyles = makeStyles<Theme>((theme) => ({
     root: {
         position: 'sticky',
         top: 0,
@@ -20,19 +27,18 @@ const useStyles = makeStyles<Theme>(theme => ({
         '& a': {
             marginLeft: theme.spacing(2),
             marginRight: theme.spacing(2),
-
-        }
+        },
     },
     padding: {
         [theme.breakpoints.down('sm')]: {
-            paddingRight: '3em'
+            paddingRight: '3em',
         },
     },
     secondaryAppBar: {
         backgroundColor: fade(theme.palette.background.paper, 0.9),
         maxHeight: 40,
         borderTop: `1.5px solid ${theme.palette.secondary.main}`,
-        boxShadow: `0px 2px 2px ${fade(theme.palette.text.primary, .2)}`,
+        boxShadow: `0px 2px 2px ${fade(theme.palette.text.primary, 0.2)}`,
     },
     navButton: {
         flexGrow: 1,
@@ -40,12 +46,12 @@ const useStyles = makeStyles<Theme>(theme => ({
         color: theme.palette.primary.contrastText,
         border: `1px solid transparent`,
         '&:hover': {
-            backgroundColor: fade(theme.palette.background.paper, .08),
+            backgroundColor: fade(theme.palette.background.paper, 0.08),
         },
         '&.selected': {
             border: `1px solid ${theme.palette.secondary.main}`,
-            color: theme.palette.secondary.contrastText
-        }
+            color: theme.palette.secondary.contrastText,
+        },
     },
     navButtonSecond: {
         flexGrow: 1,
@@ -54,7 +60,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         '&.selected': {
             color: theme.palette.secondary.main,
             fontWeight: '600',
-        }
+        },
     },
     mobileBurgerMenuButton: {
         position: 'absolute',
@@ -67,11 +73,11 @@ const useStyles = makeStyles<Theme>(theme => ({
         zIndex: 2001,
         [theme.breakpoints.down('sm')]: {
             display: 'flex',
-            width: '3em'
+            width: '3em',
         },
     },
     iconButton: {
-        color: theme.palette.primary.contrastText
+        color: theme.palette.primary.contrastText,
     },
     placeholder: {
         display: 'none',
@@ -83,8 +89,8 @@ const useStyles = makeStyles<Theme>(theme => ({
         },
         menu: {
             color: theme.palette.primary.contrastText,
-        }
-    }
+        },
+    },
 }));
 
 export const Navbar = memo(() => {
@@ -93,20 +99,36 @@ export const Navbar = memo(() => {
     const apolloClient = useApolloClient();
     const [categories] = useCategories();
     const currentCategoryId = useCurrentCategoryId();
-    const categoriesAncestors = useCategoriesAncestorsForItem(currentCategoryId || '0');
+    const categoriesAncestors = useCategoriesAncestorsForItem(
+        currentCategoryId || '0'
+    );
 
     const openDrawer = useCallback(() => {
         apolloClient.writeQuery({
-            query: gql`{ isMobileDrawerOpen }`,
-            data: { isMobileDrawerOpen: true }
+            query: gql`
+                {
+                    isMobileDrawerOpen
+                }
+            `,
+            data: { isMobileDrawerOpen: true },
         });
     }, [apolloClient]);
 
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 
-    const homepageCategory = (categories || []).find(category => category.isHomepage);
-    const mainCategories = (categories || []).filter(category => !Boolean(category.category) && !category.isSidenav && !category.isHomepage);
-    const subcategories = (categories || []).filter(category => category.category && category.category.id === categoriesHierarchy[0]);
+    const homepageCategory = (categories || []).find(
+        (category) => category.isHomepage
+    );
+    const mainCategories = (categories || []).filter(
+        (category) =>
+            !Boolean(category.category) &&
+            !category.isSidenav &&
+            !category.isHomepage
+    );
+    const subcategories = (categories || []).filter(
+        (category) =>
+            category.category && category.category.id === categoriesHierarchy[0]
+    );
 
     return (
         <nav className={styles.root}>
@@ -121,20 +143,31 @@ export const Navbar = memo(() => {
                                     to={'/'}
                                     variant="text"
                                     size={'medium'}
-                                    className={clsx(styles.navButton, { selected: currentCategoryId === null })}
-                                    color='inherit'
+                                    className={clsx(styles.navButton, {
+                                        selected: currentCategoryId === null,
+                                    })}
+                                    color="inherit"
                                 >
                                     {homepageCategory.title}
                                 </Button>
                             )}
-                            {mainCategories.map(category => (
+                            {mainCategories.map((category) => (
                                 <Button
                                     variant="text"
                                     key={category.id}
                                     component={CollisionLink}
-                                    to={category.redirect ? category.redirect : Category.getPath(category)}
+                                    to={
+                                        category.redirect
+                                            ? category.redirect
+                                            : Category.getPath(category)
+                                    }
                                     size={'medium'}
-                                    className={clsx(styles.navButton, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                    className={clsx(styles.navButton, {
+                                        selected:
+                                            categoriesHierarchy.indexOf(
+                                                category.id
+                                            ) > -1,
+                                    })}
                                 >
                                     {category.title}
                                 </Button>
@@ -143,8 +176,18 @@ export const Navbar = memo(() => {
                         </Toolbar>
                     </AppBar>
                 </Grid>
-                <Grid item xs={2} sm={1} className={styles.mobileBurgerMenuButton}>
-                    <IconButton className={styles.iconButton} size={'small'} onClick={() => openDrawer()} style={{ margin: '0 auto' }}>
+                <Grid
+                    item
+                    xs={2}
+                    sm={1}
+                    className={styles.mobileBurgerMenuButton}
+                >
+                    <IconButton
+                        className={styles.iconButton}
+                        size={'small'}
+                        onClick={() => openDrawer()}
+                        style={{ margin: '0 auto' }}
+                    >
                         <Menu className={clsx(styles.menu)} />
                     </IconButton>
                 </Grid>
@@ -152,14 +195,23 @@ export const Navbar = memo(() => {
             {subcategories.length > 0 && (
                 <AppBar position={'sticky'} className={styles.secondaryAppBar}>
                     <Toolbar style={{ minHeight: '0', height: '40px' }}>
-                        {subcategories.map(category => (
+                        {subcategories.map((category) => (
                             <Button
                                 variant="text"
                                 key={category.id}
                                 component={CollisionLink}
-                                to={category.redirect ? category.redirect : Category.getPath(category)}
+                                to={
+                                    category.redirect
+                                        ? category.redirect
+                                        : Category.getPath(category)
+                                }
                                 size={'small'}
-                                className={clsx(styles.navButtonSecond, { selected: categoriesHierarchy.indexOf(category.id) > -1 })}
+                                className={clsx(styles.navButtonSecond, {
+                                    selected:
+                                        categoriesHierarchy.indexOf(
+                                            category.id
+                                        ) > -1,
+                                })}
                             >
                                 {category.title}
                             </Button>

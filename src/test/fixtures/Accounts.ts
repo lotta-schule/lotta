@@ -7,46 +7,64 @@ import { FileModelType, UserModel } from 'model';
  */
 
 export const adminGroup = {
-        id: '1',
-        insertedAt: '2015-01-01 00:00',
-        updatedAt:  '2015-01-01 00:00',
-        name: 'Administrator',
-        sortKey: 1000,
-        isAdminGroup: true,
-        enrollmentTokens: [],
-}
+    id: '1',
+    insertedAt: '2015-01-01 00:00',
+    updatedAt: '2015-01-01 00:00',
+    name: 'Administrator',
+    sortKey: 1000,
+    isAdminGroup: true,
+    enrollmentTokens: [],
+};
 
 export const lehrerGroup = {
-        id: '4',
-        insertedAt: '2015-01-01 00:00',
-        updatedAt:  '2015-01-01 00:00',
-        name: 'Lehrer',
-        sortKey: 2000,
-        isAdminGroup: false,
-        enrollmentTokens: [{ id: '764', insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uhfhurehwuehf'  }],
-}
+    id: '4',
+    insertedAt: '2015-01-01 00:00',
+    updatedAt: '2015-01-01 00:00',
+    name: 'Lehrer',
+    sortKey: 2000,
+    isAdminGroup: false,
+    enrollmentTokens: [
+        {
+            id: '764',
+            insertedAt: '2015-02-01 14:15',
+            updatedAt: '2015-02-01 14:15',
+            token: 'uhfhurehwuehf',
+        },
+    ],
+};
 
 export const elternGroup = {
-        id: '10',
-        insertedAt: '2015-01-10 11:00',
-        updatedAt:  '2015-01-12 14:00',
-        name: 'Eltern',
-        sortKey: 3000,
-        isAdminGroup: false,
-        enrollmentTokens: [],
-}
+    id: '10',
+    insertedAt: '2015-01-10 11:00',
+    updatedAt: '2015-01-12 14:00',
+    name: 'Eltern',
+    sortKey: 3000,
+    isAdminGroup: false,
+    enrollmentTokens: [],
+};
 
 export const schuelerGroup = {
-        id: '5',
-        insertedAt: '2015-01-01 07:45', updatedAt:  '2015-01-01 07:45',
-        name: 'Schüler',
-        sortKey: 2000,
-        isAdminGroup: false,
-        enrollmentTokens: [
-            { id: '884', insertedAt: '2015-0b-01 14:15', updatedAt: '2015-02-01 14:15', token: 'ajf82j84h2h'  },
-            { id: '892', insertedAt: '2015-02-01 14:15', updatedAt: '2015-02-01 14:15', token: 'uishfiji2j38f'  }
-        ],
-}
+    id: '5',
+    insertedAt: '2015-01-01 07:45',
+    updatedAt: '2015-01-01 07:45',
+    name: 'Schüler',
+    sortKey: 2000,
+    isAdminGroup: false,
+    enrollmentTokens: [
+        {
+            id: '884',
+            insertedAt: '2015-0b-01 14:15',
+            updatedAt: '2015-02-01 14:15',
+            token: 'ajf82j84h2h',
+        },
+        {
+            id: '892',
+            insertedAt: '2015-02-01 14:15',
+            updatedAt: '2015-02-01 14:15',
+            token: 'uishfiji2j38f',
+        },
+    ],
+};
 
 /*
  *
@@ -58,30 +76,29 @@ export const logosDirectory = {
     id: '8743',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
-    name: 'Logos'
+    name: 'Logos',
 };
-    
+
 export const profilDirectory = {
     id: '8744',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
-    name: 'Profil'
+    name: 'Profil',
 };
-    
+
 export const podcastsDirectory = {
     id: '8745',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
-    name: 'Profil'
+    name: 'Profil',
 };
-    
+
 export const schulweitDirectory = {
     id: '8745',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
-    name: 'Schulweit'
+    name: 'Schulweit',
 };
-    
 
 /*
  *
@@ -98,7 +115,7 @@ export const imageFile = {
     insertedAt: '2001-01-01 14:15',
     updatedAt: '2001-01-01 14:15',
     remoteLocation: 'https://fakes3/meinbild.jpg',
-    fileConversions: []
+    fileConversions: [],
 };
 
 export const otherImageFile = {
@@ -151,7 +168,7 @@ export const convertedDocumentFile = {
             fileType: FileModelType.Audio,
             format: 'texttospeech:mp3',
             mimeType: 'audio/mp3',
-            remoteLocation: 'https://fake3/bildband-tts'
+            remoteLocation: 'https://fake3/bildband-tts',
         },
         {
             id: '55453',
@@ -160,11 +177,10 @@ export const convertedDocumentFile = {
             fileType: FileModelType.Misc,
             format: 'ocr:txt',
             mimeType: 'plain/text',
-            remoteLocation: 'https://fake3/bildband-ocr'
-        }
+            remoteLocation: 'https://fake3/bildband-ocr',
+        },
     ],
 };
-
 
 export const movieFile = {
     id: '75000',
@@ -202,7 +218,6 @@ export const movieFile = {
             remoteLocation: 'https://fake3/kino75003',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
-
         },
         {
             id: '75004',
@@ -243,7 +258,6 @@ export const movieFile = {
     ],
 };
 
-
 export const audioFile = {
     id: '99000',
     filename: 'Kaenguru.wav',
@@ -272,9 +286,8 @@ export const audioFile = {
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
-    ]
+    ],
 };
-
 
 export const powerpointFile = {
     id: '20',
@@ -295,7 +308,7 @@ export const powerpointFile = {
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
-    ]
+    ],
 };
 
 /*
@@ -320,7 +333,7 @@ export const SomeUser = {
     enrollmentTokens: [],
     hideFullName: false,
     nickname: 'Che',
-    avatarImageFile: null
+    avatarImageFile: null,
 };
 
 export const SomeUserin = {
@@ -335,7 +348,7 @@ export const SomeUserin = {
     enrollmentTokens: [],
     hideFullName: true,
     nickname: 'Lui',
-    avatarImageFile: null
+    avatarImageFile: null,
 };
 
 export const KeinErSieEsUser = {
@@ -350,16 +363,19 @@ export const KeinErSieEsUser = {
     enrollmentTokens: [],
     hideFullName: false,
     nickname: 'Mich',
-    avatarImageFile: null
+    avatarImageFile: null,
 };
 
 export const getPrivateAndPublicFiles = (user: UserModel) => {
-    const directories =
-        [ logosDirectory, profilDirectory, podcastsDirectory, ]
-        .map(directory => ({ ...directory,  user }));
+    const directories = [
+        logosDirectory,
+        profilDirectory,
+        podcastsDirectory,
+    ].map((directory) => ({ ...directory, user }));
 
     return [
-        schulweitDirectory, ...directories,
+        schulweitDirectory,
+        ...directories,
         ...[
             { ...imageFile, parentDirectory: directories[0] },
             { ...otherImageFile, parentDirectory: directories[0] },
@@ -367,7 +383,7 @@ export const getPrivateAndPublicFiles = (user: UserModel) => {
             { ...convertedDocumentFile, parentDirectory: directories[1] },
             { ...movieFile, parentDirectory: directories[2] },
             { ...audioFile, parentDirectory: directories[2] },
-            { ...powerpointFile, parentDirectory: directories[1] }
-        ].map(fileOrDirectory => ({ ...fileOrDirectory, userId: user.id }))
+            { ...powerpointFile, parentDirectory: directories[1] },
+        ].map((fileOrDirectory) => ({ ...fileOrDirectory, userId: user.id })),
     ];
 };
