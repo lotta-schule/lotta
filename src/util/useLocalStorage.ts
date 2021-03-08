@@ -24,9 +24,11 @@ export const useLocalStorage = <T extends any>(
     const setValue = (value: T): void => {
         try {
             // Allow value to be a function so we have same API as useState
-            //@ts-ignore
             const valueToStore =
-                (value as any) instanceof Function ? value(storedValue) : value;
+                value === (value as any) instanceof Function
+                    ? //@ts-ignore
+                      value(storedValue)
+                    : value;
             // Save state
             setStoredValue(valueToStore);
             // Save to local storage
