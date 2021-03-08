@@ -130,9 +130,9 @@ export const TestFileExplorerContextProvider: FC<TestFileExplorerContextProvider
         ...defaultFileExplorerState,
         ...defaultValue,
     });
-    // eslint-disable-next-line
     useEffect(() => {
         onUpdateState?.(state);
+        // eslint-disable-next-line
     }, [state]);
     return (
         <fileExplorerContext.Provider value={[state, dispatch]}>
