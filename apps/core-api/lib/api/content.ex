@@ -7,7 +7,7 @@ defmodule Api.Content do
 
   alias Api.Repo
   alias Api.Accounts.User
-  alias Api.Content.{Article, ContentModule, ContentModuleResult}
+  alias Api.Content.{Article, Category, ContentModule, ContentModuleResult}
 
   @type filter() :: %{
           optional(:first) => pos_integer(),
@@ -33,13 +33,13 @@ defmodule Api.Content do
 
   """
   @doc since: "1.0.0"
-  @spec list_articles(Article.id(), User.t(), filter()) :: [
+  @spec list_articles(Category.id(), User.t(), filter()) :: [
           Article.t()
         ]
   def list_articles(category_id, user, filter) do
     query =
       user
-      |> Article.get_released_articles_query()
+      |> Article.get_published_articles_query()
 
     if is_nil(category_id) do
       from [..., c] in query, where: c.hide_articles_from_homepage != true
@@ -61,7 +61,7 @@ defmodule Api.Content do
   @doc since: "1.2.0"
   @spec list_topics(User.t() | nil) :: [String.t()]
   def list_topics(user) do
-    query = Article.get_released_articles_query(user)
+    query = Article.get_published_articles_query(user)
 
     from([a, ...] in query,
       where: not is_nil(a.topic),
@@ -84,7 +84,7 @@ defmodule Api.Content do
   def list_articles_by_topic(user, topic) do
     query =
       user
-      |> Article.get_released_articles_query()
+      |> Article.get_published_articles_query()
 
     from(a in query,
       where: a.topic == ^topic,
@@ -106,7 +106,7 @@ defmodule Api.Content do
   @spec list_unpublished_articles() :: [Article.t()]
   def list_unpublished_articles() do
     Ecto.Query.from(a in Article,
-      where: a.ready_to_publish == true and is_nil(a.category_id)
+      where: a.ready_to_publish == true and a.published == false
     )
     |> Repo.all()
   end

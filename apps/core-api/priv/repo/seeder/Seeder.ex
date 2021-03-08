@@ -49,6 +49,7 @@ defmodule Api.Repo.Seeder do
         email: "alexis.rinaldoni@einsa.net",
         password: "test123"
       })
+
     lotta_admin
     |> User.update_password_changeset("test123")
     |> Repo.update!()
@@ -59,6 +60,7 @@ defmodule Api.Repo.Seeder do
         nickname: "Der Meister",
         email: "alexis.rinaldoni@lotta.schule"
       })
+
     alexis
     |> User.update_password_changeset("test123")
     |> Repo.update!()
@@ -71,6 +73,7 @@ defmodule Api.Repo.Seeder do
         password: "test123",
         enrollment_tokens: ["Seb034hP2?019"]
       })
+
     billy
     |> User.update_password_changeset("test123")
     |> Repo.update!()
@@ -81,6 +84,7 @@ defmodule Api.Repo.Seeder do
         nickname: "Chef",
         email: "eike.wiewiorra@lotta.schule"
       })
+
     eike
     |> User.update_password_changeset("test123")
     |> Repo.update!()
@@ -91,6 +95,7 @@ defmodule Api.Repo.Seeder do
         nickname: "drEvil",
         email: "drevil@lotta.schule"
       })
+
     dr_evil
     |> User.update_password_changeset("test123")
     |> Repo.update!()
@@ -586,6 +591,7 @@ defmodule Api.Repo.Seeder do
     oskar_goes_to =
       Repo.insert!(%Article{
         category_id: profil.id,
+        published: true,
         title: "And the oskar goes to ...",
         preview: "Hallo hallo hallo",
         inserted_at: ~N[2019-09-01 10:08:00],
@@ -664,7 +670,8 @@ defmodule Api.Repo.Seeder do
               "type" => "text"
             },
             %{
-              "descriptionText" => "Falls du ein Gutschein hast, fotografier ihn und füge ihn hier an.",
+              "descriptionText" =>
+                "Falls du ein Gutschein hast, fotografier ihn und füge ihn hier an.",
               "element" => "file",
               "label" => "Coupon",
               "name" => "coupon",
@@ -743,7 +750,8 @@ defmodule Api.Repo.Seeder do
         preview:
           "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
         inserted_at: ~N[2019-09-01 10:09:00],
-        updated_at: ~N[2019-09-01 10:09:00]
+        updated_at: ~N[2019-09-01 10:09:00],
+        published: true
       })
 
     Repo.insert!(%ContentModule{
@@ -807,6 +815,7 @@ defmodule Api.Repo.Seeder do
         preview:
           "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
         topic: "KleinKunst 2018",
+        published: true,
         inserted_at: ~N[2019-09-01 10:11:00],
         updated_at: ~N[2019-09-01 10:11:00]
       })
@@ -874,6 +883,7 @@ defmodule Api.Repo.Seeder do
         preview:
           "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
         topic: "KleinKunst 2018",
+        published: true,
         inserted_at: ~N[2019-09-01 10:12:00],
         updated_at: ~N[2019-09-01 10:12:00]
       })
@@ -940,6 +950,7 @@ defmodule Api.Repo.Seeder do
         title: "„Nipple Jesus“- eine extreme Erfahrung",
         preview:
           "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
+        published: true,
         inserted_at: ~N[2019-09-01 10:13:00],
         updated_at: ~N[2019-09-01 10:13:00]
       })
@@ -1002,6 +1013,7 @@ defmodule Api.Repo.Seeder do
       category_id: projekt.id,
       title: "Beitrag Projekt 1",
       preview: "Lorem ipsum dolor sit amet.",
+      published: true,
       inserted_at: ~N[2019-09-01 10:14:00],
       updated_at: ~N[2019-09-01 10:14:00]
     })
@@ -1010,6 +1022,7 @@ defmodule Api.Repo.Seeder do
       category_id: projekt.id,
       title: "Beitrag Projekt 2",
       preview: "Lorem ipsum dolor sit amet.",
+      published: true,
       inserted_at: ~N[2019-09-01 10:15:00],
       updated_at: ~N[2019-09-01 10:15:00]
     })
@@ -1018,6 +1031,7 @@ defmodule Api.Repo.Seeder do
       category_id: projekt.id,
       title: "Beitrag Projekt 3",
       preview: "Lorem ipsum dolor sit amet.",
+      published: true,
       inserted_at: ~N[2019-09-01 10:16:00],
       updated_at: ~N[2019-09-01 10:16:00]
     })
@@ -1028,6 +1042,7 @@ defmodule Api.Repo.Seeder do
           category_id: projekt.id,
           title: "Beitrag Projekt #{i} - nur für Lehrer",
           preview: "Lorem ipsum dolor sit amet.",
+          published: true,
           inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
           updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
         })
@@ -1037,6 +1052,7 @@ defmodule Api.Repo.Seeder do
           category_id: projekt.id,
           title: "Beitrag Projekt #{i} - nur für Schüler",
           preview: "Lorem ipsum dolor sit amet.",
+          published: true,
           inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
           updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
         })

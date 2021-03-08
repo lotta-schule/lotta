@@ -4,9 +4,11 @@ defmodule Api.Content.Article do
   """
 
   use Ecto.Schema
-  alias Api.Repo
+
   import Ecto.Changeset
   import Ecto.Query
+
+  alias Api.Repo
   alias Api.Mailer
   alias Api.System
   alias Api.Accounts.{File, User, UserGroup}
@@ -22,6 +24,7 @@ defmodule Api.Content.Article do
           title: String.t(),
           topic: topic(),
           ready_to_publish: boolean(),
+          published: boolean(),
           is_pinned_to_top: boolean()
         }
 
@@ -30,6 +33,7 @@ defmodule Api.Content.Article do
     field(:preview, :string)
     field(:topic, :string)
     field(:ready_to_publish, :boolean)
+    field(:published, :boolean, default: false)
     field(:is_pinned_to_top, :boolean)
 
     belongs_to(:category, Category, on_replace: :nilify)
@@ -54,6 +58,14 @@ defmodule Api.Content.Article do
     timestamps()
   end
 
+  @doc """
+  Returns the absolute URL of a given article
+
+  ## Example
+      iex> get_url(article)
+      "https://example.lotta.schule/a/1"
+  """
+  @spec get_url(Article.t()) :: String.t()
   def get_url(%Article{} = article) do
     System.get_main_url()
     |> String.replace_suffix(
@@ -63,11 +75,11 @@ defmodule Api.Content.Article do
   end
 
   @doc """
-  Returns a query with all released articles a given user can see.
+  Returns a query with all published articles a given user can see.
   If no user is given, return a query returning only public articles.
   """
-  @spec get_released_articles_query(User.t() | nil) :: Ecto.Queryable.t()
-  def get_released_articles_query(user \\ nil) do
+  @spec get_published_articles_query(User.t() | nil) :: Ecto.Queryable.t()
+  def get_published_articles_query(user \\ nil) do
     groups = if user, do: user.all_groups, else: []
     is_admin = if user, do: user.is_admin?, else: false
 
@@ -77,7 +89,7 @@ defmodule Api.Content.Article do
       join: c in Category,
       on: c.id == a.category_id,
       where:
-        not is_nil(a.category_id) and
+        a.published == true and
           (is_nil(aug.group_id) or aug.group_id in ^Enum.map(groups, & &1.id) or
              ^is_admin),
       distinct: true
@@ -96,7 +108,15 @@ defmodule Api.Content.Article do
   def changeset(article, attrs) do
     article
     |> Repo.preload([:category, :groups, :users, :preview_image_file, :content_modules])
-    |> cast(attrs, [:title, :inserted_at, :updated_at, :ready_to_publish, :preview, :topic])
+    |> cast(attrs, [
+      :title,
+      :inserted_at,
+      :updated_at,
+      :ready_to_publish,
+      :published,
+      :preview,
+      :topic
+    ])
     |> validate_required([:title])
     |> put_assoc_users(attrs)
     |> put_assoc_category(attrs)

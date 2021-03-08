@@ -53,7 +53,7 @@ defmodule ApiWeb.SitemapPlug do
   end
 
   defp get_articles_body(conn, date) do
-    query = Article.get_released_articles_query()
+    query = Article.get_published_articles_query()
 
     articles =
       from(
