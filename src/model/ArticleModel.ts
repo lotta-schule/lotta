@@ -12,6 +12,7 @@ export interface ArticleModel {
     title: string;
     preview?: string;
     readyToPublish: boolean;
+    published: boolean;
     isPinnedToTop: boolean;
     topic?: string;
     previewImageFile?: FileModel | null;

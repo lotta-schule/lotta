@@ -1,11 +1,11 @@
 import * as React from 'react';
-import MockDate from 'mockdate';
 import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import { EditArticleLayout } from './EditArticleLayout';
 import { ArticleIsUpdatedSubscription } from 'api/subscription/GetArticleSubscription';
 import { ContentModuleType } from 'model';
+import MockDate from 'mockdate';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
@@ -101,6 +101,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                     insertedAt: Weihnachtsmarkt.insertedAt,
                     updatedAt: date.toISOString(),
                     readyToPublish: true,
+                    published: false,
                     title: 'Weihnachtsmarkt',
                     preview: Weihnachtsmarkt.preview,
                     previewImageFile: null,
@@ -169,6 +170,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                     insertedAt: Weihnachtsmarkt.insertedAt,
                     updatedAt: date.toISOString(),
                     readyToPublish: true,
+                    published: false,
                     title: 'Weihnachtsmarkt',
                     preview: Weihnachtsmarkt.preview,
                     previewImageFile: null,

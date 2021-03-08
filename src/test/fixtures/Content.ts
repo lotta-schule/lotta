@@ -183,6 +183,7 @@ export const VivaLaRevolucion = {
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     topic: '',
     category: null,
+    published: false,
 };
 
 export const Schulfest = {
@@ -299,6 +300,7 @@ export const Schulfest = {
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     topic: 'La Revolucion',
     category: null,
+    published: false,
 };
 
 export const Weihnachtsmarkt = {
@@ -414,6 +416,7 @@ export const Weihnachtsmarkt = {
     previewImageFile: null,
     topic: 'La Revolucion',
     category: null,
+    published: false,
 };
 
 export const Klausurenplan = {
@@ -451,6 +454,7 @@ export const Klausurenplan = {
     previewImageFile: null,
     topic: 'La Revolucion',
     category: null,
+    published: false,
 };
 
 export const LehrerListe = {
@@ -489,4 +493,5 @@ export const LehrerListe = {
     previewImageFile: null,
     topic: null,
     category: null,
+    published: false,
 };

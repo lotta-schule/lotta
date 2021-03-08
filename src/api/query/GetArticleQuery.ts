@@ -10,6 +10,7 @@ export const GetArticleQuery = gql`
             preview
             topic
             readyToPublish
+            published
             isPinnedToTop
             previewImageFile {
                 id
