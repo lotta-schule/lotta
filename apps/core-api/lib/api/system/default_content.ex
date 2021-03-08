@@ -121,6 +121,7 @@ defmodule Api.System.DefaultContent do
         user =
           user
           |> Map.put(:password, password)
+
         ctx
         |> Map.put(:user, user)
 
@@ -449,6 +450,7 @@ defmodule Api.System.DefaultContent do
     user
     |> Api.Email.lotta_ready_mail()
     |> Api.Mailer.deliver_later()
+
     ctx
   end
 
