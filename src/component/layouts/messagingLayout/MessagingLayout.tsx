@@ -7,7 +7,7 @@ import { Header } from '../../general/Header';
 import { MessagingView } from './MessagingView';
 import { useIsMobile } from 'util/useIsMobile';
 import useRouter from 'use-react-router';
-import bannerMessaging from './bannerMessaging.jpg';
+import bannerMessaging from './bannerMessaging.png';
 
 export const MessagingLayout = memo(() => {
     const currentUser = useCurrentUser();
