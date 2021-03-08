@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import {
     adminGroup,
@@ -296,6 +296,38 @@ describe('component/layouts/editArticleLayout/EditArticleSidebar', () => {
                 expect(
                     screen.queryByRole('textbox', { name: /freigeben/i })
                 ).toBeNull();
+            });
+        });
+
+        describe('publishing switch', () => {
+            it('should show as disabled for non-admin users', () => {
+                const screen = render(
+                    <EditArticleSidebar
+                        article={{ ...Weihnachtsmarkt }}
+                        onUpdate={() => {}}
+                        onSave={() => {}}
+                    />,
+                    {},
+                    { currentUser: { ...SomeUser }, useCache: true }
+                );
+                expect(
+                    screen.getByRole('checkbox', { name: /veröffentlichen/i })
+                ).toBeDisabled();
+            });
+
+            it('should show for admin users', () => {
+                const screen = render(
+                    <EditArticleSidebar
+                        article={{ ...Weihnachtsmarkt }}
+                        onUpdate={() => {}}
+                        onSave={() => {}}
+                    />,
+                    {},
+                    { currentUser: { ...SomeUserAdmin }, useCache: true }
+                );
+                expect(
+                    screen.getByRole('checkbox', { name: /veröffentlichen/i })
+                ).not.toBeDisabled();
             });
         });
     });

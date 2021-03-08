@@ -1,4 +1,4 @@
-import React, { memo, useState, useRef, MouseEvent } from 'react';
+import * as React from 'react';
 import {
     Card,
     CardContent,
@@ -84,21 +84,29 @@ interface EditArticleSidebarProps {
     onSave(additionalProps?: Partial<ArticleModel>): void;
 }
 
-export const EditArticleSidebar = memo<EditArticleSidebarProps>(
+export const EditArticleSidebar = React.memo<EditArticleSidebarProps>(
     ({ article, isLoading, onUpdate, onSave }) => {
         const styles = useStyles();
         const currentUser = useCurrentUser();
         const history = useHistory();
 
-        const [isReadyToPublish, setIsReadyToPublish] = useState(
+        const [isReadyToPublish, setIsReadyToPublish] = React.useState(
             article.readyToPublish || false
         );
-        const [isSelfRemovalDialogOpen, setIsSelfRemovalDialogOpen] = useState(
+        const [isPublished, setIsPublished] = React.useState(
+            article.published || false
+        );
+        const [
+            isSelfRemovalDialogOpen,
+            setIsSelfRemovalDialogOpen,
+        ] = React.useState(false);
+        const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = React.useState(
             false
         );
-        const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = useState(false);
-        const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-        const saveOptionsMenuAnchorRef = useRef<HTMLDivElement | null>(null);
+        const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+        const saveOptionsMenuAnchorRef = React.useRef<HTMLDivElement | null>(
+            null
+        );
 
         const [deleteArticle] = useMutation<
             { article: ArticleModel },
@@ -117,7 +125,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(
         });
 
         const handleCloseSaveOptionsMenu = (
-            event: MouseEvent<Document>
+            event: React.MouseEvent<Document>
         ): void => {
             if (
                 saveOptionsMenuAnchorRef.current &&
@@ -192,25 +200,23 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(
                         }
                     />
                 </CardContent>
+                <CardContent>
+                    <CategorySelect
+                        selectedCategory={article.category || null}
+                        onSelectCategory={(category) =>
+                            onUpdate({ ...article, category })
+                        }
+                    />
+                </CardContent>
                 {User.isAdmin(currentUser) && (
-                    <>
-                        <CardContent>
-                            <CategorySelect
-                                selectedCategory={article.category || null}
-                                onSelectCategory={(category) =>
-                                    onUpdate({ ...article, category })
-                                }
-                            />
-                        </CardContent>
-                        <CardContent>
-                            <SelectTopicAutocomplete
-                                value={article.topic ?? ''}
-                                onChange={(topic) =>
-                                    onUpdate({ ...article, topic })
-                                }
-                            />
-                        </CardContent>
-                    </>
+                    <CardContent>
+                        <SelectTopicAutocomplete
+                            value={article.topic ?? ''}
+                            onChange={(topic) =>
+                                onUpdate({ ...article, topic })
+                            }
+                        />
+                    </CardContent>
                 )}
                 <CardContent>
                     <SelectFileOverlay
@@ -297,6 +303,31 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(
                     </CardContent>
                 )}
                 <CardContent>
+                    <FormControl component={'fieldset'}>
+                        <FormLabel component={'legend'}>
+                            Nur von Administratoren veröffentlichte Beiträge
+                            werden auf der Seite angezeigt.
+                        </FormLabel>
+                        <FormControlLabel
+                            value={1}
+                            disabled={!User.isAdmin(currentUser)}
+                            control={<Switch color={'secondary'} />}
+                            checked={isPublished}
+                            onChange={(_, checked) => setIsPublished(checked)}
+                            label={
+                                article.published
+                                    ? isPublished
+                                        ? 'Beitrag ist veröffentlicht.'
+                                        : 'Veröffentlichung wird zurückgenommen.'
+                                    : isPublished
+                                    ? 'Beitrag wird veröffentlicht.'
+                                    : 'Beitrag veröffentlichen'
+                            }
+                            labelPlacement={'end'}
+                        />
+                    </FormControl>
+                </CardContent>
+                <CardContent>
                     <ButtonGroup
                         variant={'outlined'}
                         color={'secondary'}
@@ -312,6 +343,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(
                             onClick={() =>
                                 onSave({
                                     readyToPublish: isReadyToPublish,
+                                    published: isPublished,
                                     updatedAt: new Date().toISOString(),
                                 })
                             }
@@ -362,6 +394,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(
                                                 onClick={() =>
                                                     onSave({
                                                         readyToPublish: isReadyToPublish,
+                                                        published: isPublished,
                                                         updatedAt: new Date(
                                                             article.updatedAt
                                                         ).toISOString(),
@@ -374,6 +407,7 @@ export const EditArticleSidebar = memo<EditArticleSidebarProps>(
                                                 onClick={() =>
                                                     onSave({
                                                         readyToPublish: isReadyToPublish,
+                                                        published: isPublished,
                                                         updatedAt:
                                                             article.insertedAt,
                                                     })
