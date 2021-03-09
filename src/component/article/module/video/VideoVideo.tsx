@@ -37,7 +37,7 @@ export const VideoVideo: FunctionComponent<VideoVideoProps> = memo(({ contentMod
                         <br /> 
                         Ihr Video wird nun umgewandelt und für verschiedene Endgeräte optimiert. Der Prozess kann einige Minuten dauern und läuft im Hintergrund. 
                         <br /> 
-                        Nach dem Speichern, können Sie die Seite verlassen.
+                        Nach dem Speichern können Sie die Seite verlassen.
                     </Typography>
                 )}
             />
