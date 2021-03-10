@@ -148,6 +148,20 @@ defmodule ApiWeb.UserResolver do
     end
   end
 
+  def request_hisec_token(%{password: password}, %{context: %Context{current_user: current_user}}) do
+    with true <- verify_user_pass(current_user, password),
+         {:ok, hisec_token, _claims} <-
+           ApiWeb.Auth.AccessToken.encode_and_sign(current_user, %{}, token_type: "hisec") do
+      {:ok, hisec_token}
+    else
+      false ->
+        {:error, "Falsche Zugangsdaten."}
+
+      error ->
+        error
+    end
+  end
+
   def logout(_args, _info) do
     {:ok, %{sign_out_user: true}}
   end

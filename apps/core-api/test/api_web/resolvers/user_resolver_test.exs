@@ -1002,6 +1002,79 @@ defmodule ApiWeb.UserResolverTest do
     end
   end
 
+  describe "request hisec token mutation" do
+    @query """
+    mutation requestHisecToken($password: String!) {
+      requestHisecToken(password: $password)
+    }
+    """
+
+    test "returns the token if data is entered correctly", %{user_jwt: user_jwt} do
+      conn =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{password: "test123"}
+        )
+
+      res =
+        conn
+        |> json_response(200)
+
+      assert token = res["data"]["requestHisecToken"]
+
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token, %{"typ" => "hisec"})
+
+      assert email == "eike.wiewiorra@lotta.schule"
+    end
+
+    test "returns an error if the user is not logged in" do
+      res =
+        build_conn()
+        |> post("/api",
+          query: @query,
+          variables: %{password: "test123"}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "requestHisecToken" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Du musst angemeldet sein um das zu tun.",
+                   "path" => ["requestHisecToken"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns an error if the password is wrong", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{password: "abcdef999"}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "requestHisecToken" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Falsche Zugangsdaten.",
+                   "path" => ["requestHisecToken"]
+                 }
+               ]
+             } = res
+    end
+  end
+
   describe "requestPasswordResetMutation" do
     @query """
     mutation requestPasswordReset($email: String!) {

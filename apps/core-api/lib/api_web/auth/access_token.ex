@@ -8,7 +8,7 @@ defmodule ApiWeb.Auth.AccessToken do
     token_ttl: %{
       "access" => {20, :minutes},
       "refresh" => {3, :weeks},
-      "highsec" => {5, :minutes}
+      "hisec" => {2, :minutes}
     }
 
   alias Api.Accounts

@@ -89,6 +89,14 @@ defmodule ApiWeb.Schema.Accounts do
       middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
+    field :request_hisec_token, type: :string do
+      arg(:password, :string)
+
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      resolve(&ApiWeb.UserResolver.request_hisec_token/2)
+    end
+
     field :logout, type: :authresult do
       middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
