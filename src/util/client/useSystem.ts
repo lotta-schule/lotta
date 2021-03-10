@@ -11,7 +11,6 @@ export const useSystem = (): ClientModel => {
             host: '',
             slug: '',
             groups: [],
-            customDomains: [],
             updatedAt: new Date().toISOString(),
             insertedAt: new Date().toISOString(),
         } as unknown) as ClientModel)

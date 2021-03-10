@@ -23,10 +23,6 @@ export const GetSystemQuery = gql`
                 sortKey
                 isAdminGroup
             }
-            customDomains {
-                host
-                isMainDomain
-            }
         }
     }
 `;
