@@ -43,13 +43,11 @@ export const VideoVideo: FunctionComponent<VideoVideoProps> = memo(
                     icon={'video'}
                     description={
                         <Typography>
-                            Bitte klicken Sie jetzt auf "SPEICHERN".
-                            <br />
                             Ihr Video wird nun umgewandelt und für verschiedene
                             Endgeräte optimiert. Der Prozess kann einige Minuten
                             dauern und läuft im Hintergrund.
                             <br />
-                            Nach dem Speichern, können Sie die Seite verlassen.
+                            Sie können den Beitrag nun speichern.
                         </Typography>
                     }
                 />
