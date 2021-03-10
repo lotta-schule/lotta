@@ -11,7 +11,6 @@ import {
     WidgetModel,
     WidgetModelType,
 } from 'model';
-import { pick } from 'lodash';
 
 /**
  *
@@ -19,7 +18,7 @@ import { pick } from 'lodash';
  *
  */
 
-export const system = ({
+export const system = {
     id: '1', // add ID for cache
     title: 'DerEineVonHier',
     slug: 'derdiedas',
@@ -27,13 +26,11 @@ export const system = ({
     updatedAt: '2014-03-08 12:00',
     host: 'info.lotta.schule',
     userMaxStorageConfig: 20,
-    groups: [adminGroup, lehrerGroup, elternGroup, schuelerGroup].map(
-        (g) => pick(g, ['id', 'name', 'sortKey', 'isAdminGroup']) as any
-    ),
+    groups: [adminGroup, lehrerGroup, elternGroup, schuelerGroup],
     customTheme: {},
     logoImageFile: null,
     backgroundImageFile: null,
-} as unknown) as ClientModel;
+} as ClientModel;
 
 /**
  *
