@@ -9,13 +9,17 @@ export interface CarouselProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Carousel = memo<CarouselProps>(({ contentModule, isEditModeEnabled, onUpdateModule }) => {
-    if (isEditModeEnabled) {
-        return (
-            <Gallery contentModule={contentModule} isEditModeEnabled={isEditModeEnabled} onUpdateModule={onUpdateModule} />
-        );
+export const Carousel = memo<CarouselProps>(
+    ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+        if (isEditModeEnabled) {
+            return (
+                <Gallery
+                    contentModule={contentModule}
+                    isEditModeEnabled={isEditModeEnabled}
+                    onUpdateModule={onUpdateModule}
+                />
+            );
+        }
+        return <ImageCarousel contentModule={contentModule} />;
     }
-    return (
-        <ImageCarousel contentModule={contentModule} />
-    );
-});
+);

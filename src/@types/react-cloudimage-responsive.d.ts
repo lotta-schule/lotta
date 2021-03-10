@@ -1,5 +1,4 @@
 declare module 'react-cloudimage-responsive' {
-
     import { ComponentType, ImgHTMLAttributes } from 'react';
 
     export interface CloudimageProviderConfig {
@@ -24,11 +23,13 @@ declare module 'react-cloudimage-responsive' {
         lazyLoading?: boolean;
     }
 
-    export const CloudimageProvider: ComponentType<{ config: CloudimageProviderConfig }>;
+    export const CloudimageProvider: ComponentType<{
+        config: CloudimageProviderConfig;
+    }>;
 
     const Img: ComponentType<ImgProps>;
 
     export const BackgroundImg: ComponentType<ImgProps>;
 
     export default Img;
-};
+}

@@ -5,14 +5,18 @@ import { SomeUser, adminGroup } from 'test/fixtures';
 import AdminLayout from './AdminLayout';
 
 describe('component/layouts/adminLayout/AdminLayout', () => {
-
     it('should redirect user to homepage when not logged in', async () => {
         const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
         });
         render(
             <AdminLayout />,
-            {}, { defaultPathEntries: ['/admin/system/general'], onChangeLocation, useCache: true }
+            {},
+            {
+                defaultPathEntries: ['/admin/system/general'],
+                onChangeLocation,
+                useCache: true,
+            }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -25,7 +29,13 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         });
         render(
             <AdminLayout />,
-            {}, { currentUser: SomeUser, defaultPathEntries: ['/admin/system/general'], onChangeLocation, useCache: true }
+            {},
+            {
+                currentUser: SomeUser,
+                defaultPathEntries: ['/admin/system/general'],
+                onChangeLocation,
+                useCache: true,
+            }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -36,10 +46,16 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         const onChangeLocation = jest.fn();
         const screen = render(
             <AdminLayout />,
-            {}, {
+            {},
+            {
                 currentUser: { ...SomeUser, groups: [adminGroup] },
                 defaultPathEntries: ['/admin/system/general'],
-                additionalMocks: [{ request: { query: GetUnpublishedArticlesQuery }, result: { data: { articles: [] } } }],
+                additionalMocks: [
+                    {
+                        request: { query: GetUnpublishedArticlesQuery },
+                        result: { data: { articles: [] } },
+                    },
+                ],
                 onChangeLocation,
                 useCache: true,
             }
@@ -47,5 +63,4 @@ describe('component/layouts/adminLayout/AdminLayout', () => {
         await screen.findByTestId('title');
         expect(onChangeLocation).not.toHaveBeenCalled();
     });
-
 });

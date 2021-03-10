@@ -3,15 +3,15 @@ import { gql } from '@apollo/client';
 export const GetSystemUsageQuery = gql`
     query GetSystemUsage {
         usage {
-            periodStart,
-            periodEnd,
+            periodStart
+            periodEnd
             storage {
-                usedTotal,
+                usedTotal
                 filesTotal
-            },
+            }
             media {
-                mediaFilesTotal,
-                mediaFilesTotalDuration,
+                mediaFilesTotal
+                mediaFilesTotalDuration
                 mediaConversionCurrentPeriod
             }
         }

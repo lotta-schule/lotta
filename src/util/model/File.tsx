@@ -2,14 +2,21 @@ import React from 'react';
 import { User } from './User';
 import { FileModel, FileModelType, DirectoryModel, UserModel } from 'model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faFileAudio, faFileImage, faFileVideo, faFilePdf, faFolder, } from '@fortawesome/free-regular-svg-icons';
+import {
+    faFile,
+    faFileAudio,
+    faFileImage,
+    faFileVideo,
+    faFilePdf,
+    faFolder,
+} from '@fortawesome/free-regular-svg-icons';
 import { faUser, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from '@material-ui/core';
 
 export const File = {
     getIconForDirectory(directory: DirectoryModel) {
         const folderStyle = { fontSize: '1.45em' };
-        const innerIconStyle = { fontSize: '.6em', };
+        const innerIconStyle = { fontSize: '.6em' };
         if (!directory.parentDirectory && directory.user) {
             return (
                 <Tooltip title={'privater Ordner'}>
@@ -25,7 +32,10 @@ export const File = {
                 <Tooltip title={'privater Ordner'}>
                     <span className="fa-layers">
                         <FontAwesomeIcon icon={faFolder} style={folderStyle} />
-                        <FontAwesomeIcon icon={faGlobe} style={innerIconStyle} />
+                        <FontAwesomeIcon
+                            icon={faGlobe}
+                            style={innerIconStyle}
+                        />
                     </span>
                 </Tooltip>
             );
@@ -87,9 +97,11 @@ export const File = {
     getPreviewImageLocation(file?: FileModel, size: string = '200x200') {
         if (file) {
             if (file.fileType === FileModelType.Image) {
-                return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${file.remoteLocation}`
+                return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${file.remoteLocation}`;
             } else {
-                const imageConversionFile = file.fileConversions?.find(fc => /^gif/.test(fc.format));
+                const imageConversionFile = file.fileConversions?.find((fc) =>
+                    /^gif/.test(fc.format)
+                );
                 if (imageConversionFile) {
                     return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${imageConversionFile.remoteLocation}`;
                 }
@@ -100,19 +112,28 @@ export const File = {
 
     getSameOriginUrl(file: FileModel) {
         if (process.env.REACT_APP_FILE_REPLACEMENT_URL) {
-            return file.remoteLocation?.replace(new RegExp(`^${process.env.REACT_APP_FILE_REPLACEMENT_URL}`), '');
+            return file.remoteLocation?.replace(
+                new RegExp(`^${process.env.REACT_APP_FILE_REPLACEMENT_URL}`),
+                ''
+            );
         }
         return file.remoteLocation;
     },
 
-    canEditDirectory(directory: DirectoryModel, user: UserModel | null | undefined) {
+    canEditDirectory(
+        directory: DirectoryModel,
+        user: UserModel | null | undefined
+    ) {
         return user && (directory.user?.id === user.id || User.isAdmin(user));
     },
 
-    canCreateDirectory(directory: DirectoryModel, user: UserModel | null | undefined) {
+    canCreateDirectory(
+        directory: DirectoryModel,
+        user: UserModel | null | undefined
+    ) {
         if (directory.id === null) {
             return true; // Is a root directory
         }
         return this.canEditDirectory(directory, user);
-    }
+    },
 };

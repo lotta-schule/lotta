@@ -1,5 +1,14 @@
 import React, { memo, useState } from 'react';
-import { Checkbox, FormControlLabel, IconButton, NoSsr, TextField, Theme, Typography, makeStyles } from '@material-ui/core';
+import {
+    Checkbox,
+    FormControlLabel,
+    IconButton,
+    NoSsr,
+    TextField,
+    Theme,
+    Typography,
+    makeStyles,
+} from '@material-ui/core';
 import { useAutocomplete } from '@material-ui/lab';
 import { Check, Close } from '@material-ui/icons';
 import { useUserGroups } from 'util/client/useUserGroups';
@@ -16,23 +25,27 @@ export interface GroupSelectProps {
     label?: string | null;
     row?: boolean;
     disabled?: boolean;
-    filterSelection?(group: UserGroupModel, i: number, allGroups: UserGroupModel[]): boolean;
+    filterSelection?(
+        group: UserGroupModel,
+        i: number,
+        allGroups: UserGroupModel[]
+    ): boolean;
     onSelectGroups(groups: UserGroupModel[]): void;
 }
 
-const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
+const useStyles = makeStyles<Theme, { row?: boolean }>((theme) => ({
     root: {
         margin: theme.spacing(1, 0),
         position: 'relative',
     },
     publicGroupSelectionLabel: {
-        margin: 0
+        margin: 0,
     },
     inputWrapper: {
         color: 'inherit',
     },
     tag: {
-        display: ({ row }) => row ? 'inline-flex' : 'flex',
+        display: ({ row }) => (row ? 'inline-flex' : 'flex'),
         justifyContent: 'space-between',
         alignItems: 'center',
         height: 24,
@@ -47,7 +60,7 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
         overflow: 'hidden',
 
         '&.is-admin-group': {
-            fontStyle: 'italic'
+            fontStyle: 'italic',
         },
 
         '&:focus': {
@@ -64,7 +77,7 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
         '& svg': {
             fontSize: 12,
             cursor: 'pointer',
-        }
+        },
     },
     listBox: {
         margin: theme.spacing(1, 0, 0),
@@ -89,14 +102,14 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
 
             '& svg': {
                 color: 'transparent',
-                transition: 'color ease-in 250ms'
-            }
+                transition: 'color ease-in 250ms',
+            },
         },
 
         '& li[aria-selected="true"]': {
             '& svg': {
                 color: theme.palette.secondary.main,
-            }
+            },
         },
 
         '& li[data-focus="true"]': {
@@ -105,129 +118,203 @@ const useStyles = makeStyles<Theme, { row?: boolean }>(theme => ({
 
             '& svg': {
                 color: theme.palette.text.disabled,
-            }
-        }
-    }
+            },
+        },
+    },
 }));
 
-export const GroupSelect = memo<GroupSelectProps>(({ className, variant, label, disabled, row, hidePublicGroupSelection, publicGroupSelectionLabel, disableAdminGroupsExclusivity, selectedGroups, filterSelection, onSelectGroups }) => {
-    const styles = useStyles({ row });
-    const groups = useUserGroups().filter(filterSelection ?? (() => true));
+export const GroupSelect = memo<GroupSelectProps>(
+    ({
+        className,
+        variant,
+        label,
+        disabled,
+        row,
+        hidePublicGroupSelection,
+        publicGroupSelectionLabel,
+        disableAdminGroupsExclusivity,
+        selectedGroups,
+        filterSelection,
+        onSelectGroups,
+    }) => {
+        const styles = useStyles({ row });
+        const groups = useUserGroups().filter(filterSelection ?? (() => true));
 
-    const [searchtext, setSearchtext] = useState('');
+        const [searchtext, setSearchtext] = useState('');
 
-    const {
-        getRootProps,
-        getInputLabelProps,
-        getInputProps,
-        getTagProps,
-        getListboxProps,
-        getOptionProps,
-        groupedOptions,
-        value,
-        focused,
-        setAnchorEl,
-    } = useAutocomplete({
-        id: 'group-select',
-        value: [...selectedGroups],
-        inputValue: searchtext,
-        options: groups,
-        multiple: true,
-        disableCloseOnSelect: true,
-        getOptionLabel: ({ name }) => name,
-        getOptionSelected: (option, value) => option.id === value.id,
-        onInputChange: (_event, value, reason) => {
-            if (reason !== 'reset') {
-                setSearchtext(value);
-            }
-        },
-        onChange: (_event, value, reason, details) => {
-            if (disableAdminGroupsExclusivity || !isAdminGroup(details?.option)) {
-                onSelectGroups(value);
-            } else {
-                if (reason === 'select-option') {
-                    onSelectGroups(groups.filter(isAdminGroup));
-                } else if (reason === 'remove-option') {
-                    onSelectGroups([]);
-                } else {
-                    onSelectGroups(value);
+        const {
+            getRootProps,
+            getInputLabelProps,
+            getInputProps,
+            getTagProps,
+            getListboxProps,
+            getOptionProps,
+            groupedOptions,
+            value,
+            focused,
+            setAnchorEl,
+        } = useAutocomplete({
+            id: 'group-select',
+            value: [...selectedGroups],
+            inputValue: searchtext,
+            options: groups,
+            multiple: true,
+            disableCloseOnSelect: true,
+            getOptionLabel: ({ name }) => name,
+            getOptionSelected: (option, value) => option.id === value.id,
+            onInputChange: (_event, value, reason) => {
+                if (reason !== 'reset') {
+                    setSearchtext(value);
                 }
-            }
-        },
-        onClose: (_event, reason) => {
-            if (reason === 'blur') {
-                setSearchtext('');
-            }
-        }
-    });
+            },
+            onChange: (_event, value, reason, details) => {
+                if (
+                    disableAdminGroupsExclusivity ||
+                    !isAdminGroup(details?.option)
+                ) {
+                    onSelectGroups(value);
+                } else {
+                    if (reason === 'select-option') {
+                        onSelectGroups(groups.filter(isAdminGroup));
+                    } else if (reason === 'remove-option') {
+                        onSelectGroups([]);
+                    } else {
+                        onSelectGroups(value);
+                    }
+                }
+            },
+            onClose: (_event, reason) => {
+                if (reason === 'blur') {
+                    setSearchtext('');
+                }
+            },
+        });
 
-    const groupSorter = (group1: UserGroupModel, group2: UserGroupModel) => {
-        return (group1.sortKey ?? 0) - (group2.sortKey ?? 0);
-    };
+        const groupSorter = (
+            group1: UserGroupModel,
+            group2: UserGroupModel
+        ) => {
+            return (group1.sortKey ?? 0) - (group2.sortKey ?? 0);
+        };
 
-    const isAdminGroup = (group: UserGroupModel | null | undefined) => Boolean(group && groups.find(g => g.id === group.id)?.isAdminGroup);
+        const isAdminGroup = (group: UserGroupModel | null | undefined) =>
+            Boolean(
+                group && groups.find((g) => g.id === group.id)?.isAdminGroup
+            );
 
-    return (
-        <NoSsr>
-            <div className={clsx(styles.root, className)} data-testid="GroupSelect">
-                <div {...getRootProps()} data-testid="GroupSelectSelection">
-                    <Typography {...getInputLabelProps()}>{label ?? 'Sichtbarkeit:'}</Typography>
-                    <div ref={setAnchorEl} className={clsx(styles.inputWrapper, { focused })}>
-                        {hidePublicGroupSelection !== true && (
-                            <FormControlLabel
-                                label={<i>{publicGroupSelectionLabel ?? 'für alle sichtbar'}</i>}
-                                className={styles.publicGroupSelectionLabel}
+        return (
+            <NoSsr>
+                <div
+                    className={clsx(styles.root, className)}
+                    data-testid="GroupSelect"
+                >
+                    <div {...getRootProps()} data-testid="GroupSelectSelection">
+                        <Typography {...getInputLabelProps()}>
+                            {label ?? 'Sichtbarkeit:'}
+                        </Typography>
+                        <div
+                            ref={setAnchorEl}
+                            className={clsx(styles.inputWrapper, { focused })}
+                        >
+                            {hidePublicGroupSelection !== true && (
+                                <FormControlLabel
+                                    label={
+                                        <i>
+                                            {publicGroupSelectionLabel ??
+                                                'für alle sichtbar'}
+                                        </i>
+                                    }
+                                    className={styles.publicGroupSelectionLabel}
+                                    disabled={disabled}
+                                    control={
+                                        <Checkbox
+                                            disabled={disabled}
+                                            checked={
+                                                selectedGroups.length === 0
+                                            }
+                                            size={'small'}
+                                            onChange={(event) => {
+                                                if (event.target.checked) {
+                                                    onSelectGroups([]);
+                                                } else {
+                                                    onSelectGroups([...groups]);
+                                                }
+                                            }}
+                                        />
+                                    }
+                                />
+                            )}
+                            {value
+                                .sort(groupSorter)
+                                .map((option: UserGroupModel, i: number) => {
+                                    const {
+                                        className,
+                                        onDelete,
+                                        ...props
+                                    } = getTagProps({ index: i }) as any;
+                                    return (
+                                        <div
+                                            className={clsx(
+                                                styles.tag,
+                                                className,
+                                                {
+                                                    'is-admin-group': isAdminGroup(
+                                                        option
+                                                    ),
+                                                }
+                                            )}
+                                            {...props}
+                                        >
+                                            <Typography
+                                                variant={'body1'}
+                                                component={'span'}
+                                            >
+                                                {option.name}
+                                            </Typography>
+                                            <IconButton
+                                                aria-label={`Gruppe "${option.name}" entfernen`}
+                                                size={'small'}
+                                                onClick={onDelete}
+                                                disabled={disabled}
+                                            >
+                                                <Close />
+                                            </IconButton>
+                                        </div>
+                                    );
+                                })}
+
+                            <TextField
+                                fullWidth
                                 disabled={disabled}
-                                control={(
-                                    <Checkbox disabled={disabled} checked={selectedGroups.length === 0} size={'small'} onChange={event => {
-                                        if (event.target.checked) {
-                                            onSelectGroups([]);
-                                        } else {
-                                            onSelectGroups([...groups]);
-                                        }
-                                    }} />
-                                )}
+                                variant={variant}
+                                size={'small'}
+                                placeholder={'Gruppe suchen'}
+                                inputProps={{ 'aria-label': 'Gruppe suchen' }}
+                                {...getInputProps()}
                             />
-                        )}
-                        {value.sort(groupSorter).map((option: UserGroupModel, i: number) => {
-                            const { className, onDelete, ...props } = getTagProps({ index: i }) as any;
-                            return (
-                                <div  className={clsx(styles.tag, className, {'is-admin-group': isAdminGroup(option)})} {...props}>
-                                    <Typography variant={'body1'} component={'span'}>{option.name}</Typography>
-                                    <IconButton
-                                        aria-label={`Gruppe "${option.name}" entfernen`}
-                                        size={'small'}
-                                        onClick={onDelete}
-                                        disabled={disabled}
-                                    >
-                                        <Close />
-                                    </IconButton>
-                                </div>
-                            );
-                        })}
-
-                        <TextField
-                            fullWidth
-                            disabled={disabled}
-                            variant={variant}
-                            size={'small'}
-                            placeholder={'Gruppe suchen'}
-                            inputProps={{ 'aria-label': 'Gruppe suchen' }}
-                            {...getInputProps()}
-                        />
+                        </div>
                     </div>
+                    {groupedOptions.length > 0 ? (
+                        <ul
+                            className={styles.listBox}
+                            data-testid="GroupSelectSelection"
+                            {...getListboxProps()}
+                        >
+                            {groupedOptions.map((option, index) => (
+                                <li {...getOptionProps({ option, index })}>
+                                    <Typography
+                                        variant={'body1'}
+                                        component={'span'}
+                                    >
+                                        {option.name}
+                                    </Typography>
+                                    <Check fontSize={'small'} />
+                                </li>
+                            ))}
+                        </ul>
+                    ) : null}
                 </div>
-                {groupedOptions.length > 0 ? (
-                    <ul className={styles.listBox} data-testid="GroupSelectSelection" {...getListboxProps()}>
-                        {groupedOptions.map((option, index) => (
-                            <li {...getOptionProps({ option, index })}>
-                                <Typography variant={'body1'} component={'span'}>{option.name}</Typography>
-                                <Check fontSize={'small'} />
-                            </li>
-                        ))}
-                    </ul>
-                ) : null}
-            </div>
-        </NoSsr>
-    );
-});
+            </NoSsr>
+        );
+    }
+);

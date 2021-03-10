@@ -22,7 +22,11 @@ export const Config = memo<ConfigProps>(({ contentModule }) => {
             >
                 Daten ansehen
             </Button>
-            <FormResultsDialog contentModule={contentModule} isOpen={isResultsDialogOpen} onRequestClose={() => setIsResultsDialogOpen(false)} />
+            <FormResultsDialog
+                contentModule={contentModule}
+                isOpen={isResultsDialogOpen}
+                onRequestClose={() => setIsResultsDialogOpen(false)}
+            />
         </div>
     );
 });

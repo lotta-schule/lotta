@@ -7,15 +7,15 @@ interface ShowProps {
     contentModule: ContentModuleModel<{ captions: string[] }>;
 }
 
-const useStyles = makeStyles<Theme>(theme => ({
+const useStyles = makeStyles<Theme>((theme) => ({
     video: {
         margin: 0,
         paddingLeft: theme.spacing(1),
         paddingRight: theme.spacing(1),
         [theme.breakpoints.down('xs')]: {
             padding: 0,
-        }
-    }
+        },
+    },
 }));
 
 export const Show: FunctionComponent<ShowProps> = memo(({ contentModule }) => {

@@ -1,5 +1,13 @@
 import React, { memo } from 'react';
-import { Card, CardContent, Grid, Grow, Typography, makeStyles, LinearProgress } from '@material-ui/core';
+import {
+    Card,
+    CardContent,
+    Grid,
+    Grow,
+    Typography,
+    makeStyles,
+    LinearProgress,
+} from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useSystem } from 'util/client/useSystem';
 import { FileSize } from 'util/FileSize';
@@ -8,11 +16,11 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { GetSystemUsageQuery } from 'api/query/GetSystemUsageQuery';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     gridContainer: {
         textAlign: 'center',
         marginBottom: theme.spacing(3),
-    }
+    },
 }));
 
 export const UsageOverview = memo(() => {
@@ -21,16 +29,18 @@ export const UsageOverview = memo(() => {
 
     const { data, error, loading: isLoading } = useQuery(GetSystemUsageQuery);
 
-    const getMediaConversionTimeFormatted = ((usage: any) => {
+    const getMediaConversionTimeFormatted = (usage: any) => {
         if (!data?.usage) {
             return null;
         }
         if (usage.media.mediaConversionCurrentPeriod < 60) {
             return `${usage.media.mediaConversionCurrentPeriod} Sekunden`;
         } else {
-            return `${Math.round(usage.media.mediaConversionCurrentPeriod / 60)} Minuten`;
+            return `${Math.round(
+                usage.media.mediaConversionCurrentPeriod / 60
+            )} Minuten`;
         }
-    });
+    };
 
     return (
         <>
@@ -46,7 +56,7 @@ export const UsageOverview = memo(() => {
                     <Typography color={'textSecondary'}>
                         {system.insertedAt}
                     </Typography>
-                 </CardContent>
+                </CardContent>
             </Card>
             {/* Wär doch cool hier mal einen richtigen Grafen zu zeigen */}
             <Grow in={isLoading}>
@@ -64,11 +74,19 @@ export const UsageOverview = memo(() => {
                 </Grid>
             </Grid>
             {data?.usage?.map((usage: any, index: number) => (
-                <Grid container className={styles.gridContainer} key={usage.periodStart}>
+                <Grid
+                    container
+                    className={styles.gridContainer}
+                    key={usage.periodStart}
+                >
                     <Grid item xs={2}>
                         <Card>
                             <CardContent>
-                                {format(new Date(usage.periodStart), 'MMMM yyyy', { locale: de })}
+                                {format(
+                                    new Date(usage.periodStart),
+                                    'MMMM yyyy',
+                                    { locale: de }
+                                )}
                             </CardContent>
                         </Card>
                     </Grid>
@@ -76,8 +94,16 @@ export const UsageOverview = memo(() => {
                         <Card>
                             {index === 0 && (
                                 <CardContent>
-                                    <div>{new FileSize(usage.storage.usedTotal).humanize()}</div>
-                                    <div><small>({usage.storage.filesTotal} Dateien)</small></div>
+                                    <div>
+                                        {new FileSize(
+                                            usage.storage.usedTotal
+                                        ).humanize()}
+                                    </div>
+                                    <div>
+                                        <small>
+                                            ({usage.storage.filesTotal} Dateien)
+                                        </small>
+                                    </div>
                                 </CardContent>
                             )}
                         </Card>
@@ -85,12 +111,13 @@ export const UsageOverview = memo(() => {
                     <Grid item xs={5}>
                         <Card>
                             <CardContent>
-                                {getMediaConversionTimeFormatted(usage)} Audio/Video
+                                {getMediaConversionTimeFormatted(usage)}{' '}
+                                Audio/Video
                             </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
-                ))}
+            ))}
         </>
     );
 });

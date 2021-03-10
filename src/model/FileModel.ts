@@ -11,7 +11,7 @@ export interface DirectoryModel {
     updatedAt: string;
     name: string;
     user?: Partial<UserModel>;
-    parentDirectory?: Partial<DirectoryModel>
+    parentDirectory?: Partial<DirectoryModel>;
 }
 
 export enum FileModelType {
@@ -34,7 +34,7 @@ export interface FileModel {
     remoteLocation: string;
     mimeType: string;
     fileType: FileModelType;
-    parentDirectory: Partial<DirectoryModel>
+    parentDirectory: Partial<DirectoryModel>;
     fileConversions: FileConversion[];
     usage?: FileModelUsageLocation[];
 }
@@ -47,8 +47,7 @@ export interface FileConversion {
     remoteLocation: string;
 }
 
-export type FileModelUsageLocation =
-    Partial<FileModelSystemUsageLocation> &
+export type FileModelUsageLocation = Partial<FileModelSystemUsageLocation> &
     Partial<FileModelUserUsageLocation> &
     Partial<FileModelContentModuleUsageLocation> &
     Partial<FileModelArticleUsageLocation> &

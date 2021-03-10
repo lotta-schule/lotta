@@ -1,4 +1,12 @@
-import React, { FunctionComponent, memo, MouseEvent, useEffect, KeyboardEventHandler, KeyboardEvent, useCallback } from 'react';
+import React, {
+    FunctionComponent,
+    memo,
+    MouseEvent,
+    useEffect,
+    KeyboardEventHandler,
+    KeyboardEvent,
+    useCallback,
+} from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, IconButton, Typography } from '@material-ui/core';
 import { FileModel } from 'model';
@@ -22,8 +30,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         '& img': {
             border: '1px solid #bdbdbd',
             maxWidth: '80vw',
-            maxHeight: '80vh'
-        }
+            maxHeight: '80vh',
+        },
     },
     closeButton: {
         position: 'absolute',
@@ -42,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         position: 'absolute',
         bottom: '5%',
         textAlign: 'center',
-    }
+    },
 }));
 
 export interface ImageOverlayProps {
@@ -54,56 +62,82 @@ export interface ImageOverlayProps {
     onClose(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
 }
 
-export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(({ selectedFile, selectedUrl, caption, onPrevious, onNext, onClose }) => {
-    useLockBodyScroll();
-    const styles = useStyles();
-    const { innerHeight, innerWidth } = useWindowSize();
-    const retinaMultiplier = useIsRetina() ? 2 : 1;
-    const [width, height] = [innerWidth, innerHeight].map(px => Math.floor(px * .8 * retinaMultiplier));
+export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(
+    ({ selectedFile, selectedUrl, caption, onPrevious, onNext, onClose }) => {
+        useLockBodyScroll();
+        const styles = useStyles();
+        const { innerHeight, innerWidth } = useWindowSize();
+        const retinaMultiplier = useIsRetina() ? 2 : 1;
+        const [width, height] = [innerWidth, innerHeight].map((px) =>
+            Math.floor(px * 0.8 * retinaMultiplier)
+        );
 
-    const onKeyDown: KeyboardEventHandler<Window> = useCallback(event => {
-        if (event.keyCode === 27) { // ESC
-            onClose(event);
-        } else if (event.keyCode === 37 && onPrevious) { // <-
-            onPrevious(event);
-        } else if (event.keyCode === 39 && onNext) { // ->
-            onNext(event);
+        const onKeyDown: KeyboardEventHandler<Window> = useCallback(
+            (event) => {
+                if (event.keyCode === 27) {
+                    // ESC
+                    onClose(event);
+                } else if (event.keyCode === 37 && onPrevious) {
+                    // <-
+                    onPrevious(event);
+                } else if (event.keyCode === 39 && onNext) {
+                    // ->
+                    onNext(event);
+                }
+            },
+            [onClose, onNext, onPrevious]
+        );
+
+        useEffect(() => {
+            window.addEventListener('keydown', onKeyDown as any);
+            return () => {
+                window.removeEventListener('keydown', onKeyDown as any);
+            };
+        }, [onKeyDown]);
+
+        if (!selectedFile && !selectedUrl) {
+            return null;
         }
-    }, [onClose, onNext, onPrevious]);
-
-    useEffect(() => {
-        window.addEventListener('keydown', onKeyDown as any);
-        return () => {
-            window.removeEventListener('keydown', onKeyDown as any);
-        };
-
-    }, [onKeyDown]);
-
-    if (!selectedFile && !selectedUrl) {
-        return null;
+        const imgUrl = `https://afdptjdxen.cloudimg.io/bound/${width}x${height}/foil1/${
+            selectedFile?.remoteLocation ?? selectedUrl
+        }`;
+        return (
+            <div className={styles.root}>
+                <IconButton
+                    size="medium"
+                    color={'secondary'}
+                    className={styles.closeButton}
+                    onClick={onClose}
+                >
+                    <Close />
+                </IconButton>
+                {onPrevious && (
+                    <IconButton
+                        size={'small'}
+                        color={'secondary'}
+                        className={styles.leftButton}
+                        onClick={onPrevious}
+                    >
+                        <ChevronLeft />
+                    </IconButton>
+                )}
+                {onNext && (
+                    <IconButton
+                        size={'small'}
+                        color={'secondary'}
+                        className={styles.rightButton}
+                        onClick={onNext}
+                    >
+                        <ChevronRight />
+                    </IconButton>
+                )}
+                <img src={imgUrl} alt={''} />
+                {caption && (
+                    <Typography className={styles.subtitles}>
+                        {caption}
+                    </Typography>
+                )}
+            </div>
+        );
     }
-    const imgUrl = `https://afdptjdxen.cloudimg.io/bound/${width}x${height}/foil1/${selectedFile?.remoteLocation ?? selectedUrl}`;
-    return (
-        <div className={styles.root}>
-            <IconButton size="medium" color={'secondary'} className={styles.closeButton} onClick={onClose}>
-                <Close />
-            </IconButton>
-            {onPrevious && (
-                <IconButton size={'small'} color={'secondary'} className={styles.leftButton} onClick={onPrevious}>
-                    <ChevronLeft />
-                </IconButton>
-            )}
-            {onNext && (
-                <IconButton size={'small'} color={'secondary'} className={styles.rightButton} onClick={onNext}>
-                    <ChevronRight />
-                </IconButton>
-            )}
-            <img src={imgUrl} alt={''} />
-            {caption && (
-                <Typography className={styles.subtitles}>
-                    {caption}
-                </Typography>
-            )}
-        </div>
-    );
-});
+);

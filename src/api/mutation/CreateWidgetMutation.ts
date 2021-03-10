@@ -8,9 +8,9 @@ export const CreateWidgetMutation = gql`
             type
             configuration
             iconImageFile {
-                    id
-                    remoteLocation
-                }
+                id
+                remoteLocation
+            }
             groups {
                 id
                 sortKey

@@ -6,9 +6,9 @@ import get from 'lodash/get';
 
 const useStyles = makeStyles(() => ({
     formControl: {
-        width: '100%'
-    }
-}))
+        width: '100%',
+    },
+}));
 
 interface ConfigProps {
     contentModule: ContentModuleModel;
@@ -16,38 +16,45 @@ interface ConfigProps {
     onRequestClose(): void;
 }
 
-export const Config = memo<ConfigProps>(({ contentModule, onUpdateModule, onRequestClose }) => {
+export const Config = memo<ConfigProps>(
+    ({ contentModule, onUpdateModule, onRequestClose }) => {
+        const headingLevel: number = get(
+            contentModule.configuration,
+            'level',
+            4
+        );
+        const styles = useStyles();
 
-    const headingLevel: number = get(contentModule.configuration, 'level', 4);
-    const styles = useStyles();
-
-    return (
-        <form data-testid="TitleContentModuleConfiguration">
-            <FormControl className={styles.formControl}>
-                <InputLabel htmlFor="heading-level">Überschrifgrößen (1-3)</InputLabel>
-                <Select
-                    fullWidth
-                    value={headingLevel}
-                    onChange={event => {
-                        onUpdateModule({
-                            ...contentModule,
-                            configuration: {
-                                ...contentModule.configuration,
-                                level: event.target.value
-                            }
-                        });
-                        onRequestClose();
-                    }}
-                    inputProps={{
-                        name: 'heading-level',
-                        id: 'heading-level',
-                    }}
-                >
-                    <MenuItem value={4}>Überschrift groß</MenuItem>
-                    <MenuItem value={5}>Überschrift mittel</MenuItem>
-                    <MenuItem value={6}>Überschrift klein</MenuItem>
-                </Select>
-            </FormControl>
-        </form>
-    );
-});
+        return (
+            <form data-testid="TitleContentModuleConfiguration">
+                <FormControl className={styles.formControl}>
+                    <InputLabel htmlFor="heading-level">
+                        Überschrifgrößen (1-3)
+                    </InputLabel>
+                    <Select
+                        fullWidth
+                        value={headingLevel}
+                        onChange={(event) => {
+                            onUpdateModule({
+                                ...contentModule,
+                                configuration: {
+                                    ...contentModule.configuration,
+                                    level: event.target.value,
+                                },
+                            });
+                            onRequestClose();
+                        }}
+                        inputProps={{
+                            name: 'heading-level',
+                            id: 'heading-level',
+                        }}
+                    >
+                        <MenuItem value={4}>Überschrift groß</MenuItem>
+                        <MenuItem value={5}>Überschrift mittel</MenuItem>
+                        <MenuItem value={6}>Überschrift klein</MenuItem>
+                    </Select>
+                </FormControl>
+            </form>
+        );
+    }
+);

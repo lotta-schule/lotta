@@ -14,38 +14,61 @@ export interface DirectoryTreeItemProps {
     showOnlyReadOnlyDirectories?: boolean;
 }
 
-export const DirectoryTreeItem = memo<DirectoryTreeItemProps>(({ directory, showOnlyReadOnlyDirectories }) => {
-    const currentUser = useCurrentUser();
-    const [, selectDirectory] = useContext(SelectedDirectoryContext);
-    const { data, loading: isLoading } = useQuery<{ directories: DirectoryModel[] }>(GetDirectoriesAndFilesQuery, {
-        variables: {
-            parentDirectoryId: directory?.id ?? null
-        }
-    });
-    const icon = isLoading ?
-        <CircularProgress size={'1em'} /> :
-        directory === null ? <HomeOutlined fontSize={'small'} /> :
-            File.getIconForDirectory(directory);
+export const DirectoryTreeItem = memo<DirectoryTreeItemProps>(
+    ({ directory, showOnlyReadOnlyDirectories }) => {
+        const currentUser = useCurrentUser();
+        const [, selectDirectory] = useContext(SelectedDirectoryContext);
+        const { data, loading: isLoading } = useQuery<{
+            directories: DirectoryModel[];
+        }>(GetDirectoriesAndFilesQuery, {
+            variables: {
+                parentDirectoryId: directory?.id ?? null,
+            },
+        });
+        const icon = isLoading ? (
+            <CircularProgress size={'1em'} />
+        ) : directory === null ? (
+            <HomeOutlined fontSize={'small'} />
+        ) : (
+            File.getIconForDirectory(directory)
+        );
 
-    const label = directory === null ? icon : <>{icon}&nbsp;&nbsp; {directory.name}</>;
-    const directoryFilter = useCallback((directory: DirectoryModel) => {
-        if (showOnlyReadOnlyDirectories) {
-            return File.canEditDirectory(directory, currentUser);
-        }
-        return true;
-    }, [currentUser, showOnlyReadOnlyDirectories]);
-    return (
-        <TreeItem
-            nodeId={String(directory?.id ?? 'null')}
-            label={label}
-            onClick={e => {
-                e.preventDefault();
-                selectDirectory(directory);
-            }}
-        >
-            {data?.directories.filter(directoryFilter).map(directory => (
-                <DirectoryTreeItem key={directory.id} directory={directory} showOnlyReadOnlyDirectories={showOnlyReadOnlyDirectories} />
-            ))}
-        </TreeItem>
-    );
-});
+        const label =
+            directory === null ? (
+                icon
+            ) : (
+                <>
+                    {icon}&nbsp;&nbsp; {directory.name}
+                </>
+            );
+        const directoryFilter = useCallback(
+            (directory: DirectoryModel) => {
+                if (showOnlyReadOnlyDirectories) {
+                    return File.canEditDirectory(directory, currentUser);
+                }
+                return true;
+            },
+            [currentUser, showOnlyReadOnlyDirectories]
+        );
+        return (
+            <TreeItem
+                nodeId={String(directory?.id ?? 'null')}
+                label={label}
+                onClick={(e) => {
+                    e.preventDefault();
+                    selectDirectory(directory);
+                }}
+            >
+                {data?.directories.filter(directoryFilter).map((directory) => (
+                    <DirectoryTreeItem
+                        key={directory.id}
+                        directory={directory}
+                        showOnlyReadOnlyDirectories={
+                            showOnlyReadOnlyDirectories
+                        }
+                    />
+                ))}
+            </TreeItem>
+        );
+    }
+);
