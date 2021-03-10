@@ -5,12 +5,12 @@ export interface PlaceholderImageProps {
     width: number | string;
     height: number | string;
     icon?: 'video' | 'image';
-    description?: string;
+    description?: string | React.ReactElement;
 }
 
 const useStyles = makeStyles<
     Theme,
-    { iconSource: string; description?: string }
+    { iconSource: string; description?: string | React.ReactElement }
 >((theme) => ({
     root: {
         backgroundImage: ({ iconSource }) => `url("${iconSource}")`,
@@ -32,7 +32,7 @@ export const PlaceholderImage: FunctionComponent<PlaceholderImageProps> = memo(
         const styles = useStyles({ iconSource, description });
         return (
             <div style={{ width, height }} className={styles.root}>
-                <Typography variant={'h5'} style={{ marginBottom: '1em' }}>
+                <Typography variant={'h5'} style={{ margin: '1em auto' }}>
                     {description}
                 </Typography>
             </div>
