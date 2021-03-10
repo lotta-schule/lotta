@@ -104,17 +104,6 @@ export const BasicSettings = memo(() => {
                                     </Link>
                                 </TableCell>
                             </TableRow>
-                            {system.customDomains.map((customDomain) => (
-                                <TableRow key={customDomain.host}>
-                                    <TableCell>
-                                        <Link
-                                            href={`https://${customDomain.host}`}
-                                        >
-                                            {customDomain.host}
-                                        </Link>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
                         </TableBody>
                     </Table>
                 </Grid>

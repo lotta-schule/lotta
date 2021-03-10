@@ -1,6 +1,5 @@
 import { FileModel } from './FileModel';
 import { UserGroupModel } from './UserGroupModel';
-import { CustomDomainModel } from './CustomDomainModel';
 
 export interface ClientModel {
     insertedAt: string;
@@ -13,5 +12,4 @@ export interface ClientModel {
     groups: UserGroupModel[];
     logoImageFile?: FileModel | null;
     backgroundImageFile?: FileModel | null;
-    customDomains: CustomDomainModel[];
 }

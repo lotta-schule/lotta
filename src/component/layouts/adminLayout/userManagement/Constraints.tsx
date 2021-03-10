@@ -1,5 +1,7 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
+    Checkbox,
+    FormControlLabel,
     Grid,
     InputAdornment,
     Slider,
@@ -12,11 +14,28 @@ import { SaveButton } from 'component/general/SaveButton';
 import { useMutation } from '@apollo/client';
 import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { animated, useSpring } from 'react-spring';
 
-export const Constraints = memo(() => {
+export const Constraints = React.memo(() => {
     const system = useSystem();
-    const [value, setValue] = useState(system.userMaxStorageConfig ?? 20);
-    const [isShowSuccess, setIsShowSuccess] = useState(false);
+    const defaultLimitRef = React.useRef(20);
+    const [value, setValue] = React.useState(
+        system.userMaxStorageConfig ?? defaultLimitRef.current
+    );
+    const [isShowSuccess, setIsShowSuccess] = React.useState(false);
+
+    const isLimitSet = value >= 0;
+
+    const springProps = useSpring({
+        maxHeight: isLimitSet ? '10em' : '0em',
+        overflow: 'hidden',
+    });
+
+    React.useEffect(() => {
+        if (isLimitSet) {
+            defaultLimitRef.current = value;
+        }
+    }, [isLimitSet, value]);
 
     const [updateSystem, { loading: isLoading, error }] = useMutation(
         UpdateSystemMutation,
@@ -49,47 +68,81 @@ export const Constraints = memo(() => {
                         Medien Nutzer online vorhalten können.
                     </p>
                 </Typography>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item>
-                        <SdStorage />
-                    </Grid>
-                    <Grid item xs>
-                        <Slider
-                            value={value}
-                            onChange={(_e, value) => setValue(value as number)}
-                            aria-labelledby={'user-storage-limit'}
-                            step={50}
-                            min={0}
-                            max={8192}
-                            marks={true}
+
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={!isLimitSet}
+                            onChange={(_e, checked) =>
+                                setValue(checked ? -1 : defaultLimitRef.current)
+                            }
                         />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            label={''}
-                            value={value}
-                            onChange={({ currentTarget }) => {
-                                if (currentTarget.value) {
-                                    setValue(parseInt(currentTarget.value));
+                    }
+                    label={
+                        'Datenmenge, die Nutzer hochladen können, nicht begrenzen'
+                    }
+                />
+
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={isLimitSet}
+                            onChange={(_e, checked) =>
+                                setValue(checked ? defaultLimitRef.current : -1)
+                            }
+                        />
+                    }
+                    label={
+                        'Datenmenge, die Nutzer hochladen können, begrenzen auf:'
+                    }
+                />
+                <animated.div style={springProps}>
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                            <SdStorage />
+                        </Grid>
+                        <Grid item xs>
+                            <Slider
+                                value={value}
+                                onChange={(_e, value) =>
+                                    setValue(value as number)
                                 }
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position={'start'}>
-                                        MB
-                                    </InputAdornment>
-                                ),
-                            }}
-                            inputProps={{
-                                step: 50,
-                                min: 0,
-                                type: 'number',
-                                'aria-labelledby': 'user-storage-limit',
-                            }}
-                            variant="outlined"
-                        />
+                                aria-labelledby={'user-storage-limit'}
+                                step={50}
+                                min={0}
+                                max={8192}
+                                marks={true}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <TextField
+                                label={''}
+                                value={
+                                    isLimitSet ? value : defaultLimitRef.current
+                                }
+                                onChange={({ currentTarget }) => {
+                                    if (currentTarget.value) {
+                                        setValue(parseInt(currentTarget.value));
+                                    }
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position={'start'}>
+                                            MB
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                inputProps={{
+                                    step: 50,
+                                    min: 0,
+                                    type: 'number',
+                                    'aria-labelledby': 'user-storage-limit',
+                                }}
+                                variant="outlined"
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
+                </animated.div>
                 <SaveButton
                     onClick={() => updateSystem()}
                     isLoading={isLoading}

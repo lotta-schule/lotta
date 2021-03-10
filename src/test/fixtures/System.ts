@@ -27,15 +27,6 @@ export const system = {
     host: 'info.lotta.schule',
     userMaxStorageConfig: 20,
     groups: [adminGroup, lehrerGroup, elternGroup, schuelerGroup],
-    customDomains: [
-        {
-            host: 'chezmoi.fr',
-            insertedAt: '2014-12-24 18:00',
-            updatedAt: '2014-12-24 18:00',
-            id: '1',
-            isMainDomain: true,
-        },
-    ],
     customTheme: {},
     logoImageFile: null,
     backgroundImageFile: null,
