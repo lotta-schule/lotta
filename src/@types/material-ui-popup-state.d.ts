@@ -20,12 +20,14 @@ declare module 'material-ui-popup-state' {
         popupId: string;
     }
 
-    export default PopupState as ComponentType<PopupStateProps & { children(state: PopupState): ReactNode; }>;
+    export default PopupState as ComponentType<
+        PopupStateProps & { children(state: PopupState): ReactNode }
+    >;
 
     export function bindTrigger(state: PopupState): any;
     export function bindPopover(state: PopupState): any;
     export function bindMenu(state: PopupState): any;
-};
+}
 
 declare module 'material-ui-popup-state/hooks' {
     export type EventOrAnchorElement = Event | HTMLElement;
@@ -52,4 +54,4 @@ declare module 'material-ui-popup-state/hooks' {
     export function bindMenu(state: PopupState): any;
 
     export function usePopupState(options: PopupStateProps): PopupState;
-};
+}

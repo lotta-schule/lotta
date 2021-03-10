@@ -1,7 +1,22 @@
 import React, { createElement, memo, ComponentType } from 'react';
 import {
-    Lens, Bookmark, CalendarToday, AccountCircle, CheckCircle, Work, ChatBubble, Folder,
-    School, Cloud, MenuBook, Label, SportsSoccer, InsertDriveFile, Search, Extension, Favorite
+    Lens,
+    Bookmark,
+    CalendarToday,
+    AccountCircle,
+    CheckCircle,
+    Work,
+    ChatBubble,
+    Folder,
+    School,
+    Cloud,
+    MenuBook,
+    Label,
+    SportsSoccer,
+    InsertDriveFile,
+    Search,
+    Extension,
+    Favorite,
 } from '@material-ui/icons';
 import { WidgetIconModel } from 'model';
 import { Typography, makeStyles, SvgIconProps } from '@material-ui/core';
@@ -25,8 +40,8 @@ export const iconNameMapping: { [key: string]: ComponentType<SvgIconProps> } = {
     insertdrivefile: InsertDriveFile,
     search: Search,
     extension: Extension,
-    favorite: Favorite
-}
+    favorite: Favorite,
+};
 
 export interface WidgetIconProps {
     icon?: WidgetIconModel;
@@ -34,7 +49,10 @@ export interface WidgetIconProps {
     className?: string;
 }
 
-const useStyles = makeStyles<Theme, Pick<WidgetIconProps, 'size'> & { color?: string }>(theme => ({
+const useStyles = makeStyles<
+    Theme,
+    Pick<WidgetIconProps, 'size'> & { color?: string }
+>((theme) => ({
     root: {
         position: 'relative',
         height: ({ size }) => size,
@@ -53,7 +71,7 @@ const useStyles = makeStyles<Theme, Pick<WidgetIconProps, 'size'> & { color?: st
         padding: 5,
         width: 'auto',
         fontSize: '1em',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
     },
     overlayText: {
         display: 'flex',
@@ -66,13 +84,17 @@ const useStyles = makeStyles<Theme, Pick<WidgetIconProps, 'size'> & { color?: st
         height: '100%',
         width: '100%',
         '& span': {
-            color: ({ color }) => color ? ((theme.palette as any)[color] as any)?.main ?? theme.palette.background.paper : theme.palette.background.paper,
+            color: ({ color }) =>
+                color
+                    ? ((theme.palette as any)[color] as any)?.main ??
+                      theme.palette.background.paper
+                    : theme.palette.background.paper,
             verticalAlign: 'middle',
             fontWeight: 'bold',
             fontSize: '.3em',
             paddingTop: 2,
-            lineHeight: 1
-        }
+            lineHeight: 1,
+        },
     },
 }));
 
@@ -81,7 +103,10 @@ export const WidgetIcon = memo<WidgetIconProps>(({ icon, size, className }) => {
     return (
         <div className={clsx(styles.root, className)}>
             <div className={styles.icon}>
-                {createElement(iconNameMapping[icon?.iconName ?? 'lens'], { color: 'secondary', className: styles.iconSvg })}
+                {createElement(iconNameMapping[icon?.iconName ?? 'lens'], {
+                    color: 'secondary',
+                    className: styles.iconSvg,
+                })}
             </div>
             <div className={styles.overlayText}>
                 <Typography component={'span'}>{icon?.overlayText}</Typography>

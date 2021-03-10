@@ -5,12 +5,9 @@ import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { SomeUser, adminGroup } from 'test/fixtures';
 
 describe('component/layouts/UserNavigationMobile', () => {
-
     describe('logged out user', () => {
         it('should render a login and logout button', () => {
-            const screen = render(
-                <UserNavigationMobile />
-            );
+            const screen = render(<UserNavigationMobile />);
             expect(screen.queryAllByRole('button')).toHaveLength(3);
             expect(screen.queryByTestId('LoginButton')).not.toBeNull();
             expect(screen.queryByTestId('RegisterButton')).not.toBeNull();
@@ -27,7 +24,8 @@ describe('component/layouts/UserNavigationMobile', () => {
         it('should render profile and createArticle buttons, but not admin buttons', () => {
             const screen = render(
                 <UserNavigationMobile />,
-                {}, { currentUser: SomeUser, useCache: true }
+                {},
+                { currentUser: SomeUser, useCache: true }
             );
             expect(screen.queryAllByRole('button')).toHaveLength(7);
             expect(screen.queryByTestId('LoginButton')).toBeNull();
@@ -52,8 +50,13 @@ describe('component/layouts/UserNavigationMobile', () => {
                 {},
                 {
                     currentUser: { ...SomeUser, groups: [adminGroup] },
-                    additionalMocks: [{ request: { query: GetUnpublishedArticlesQuery }, result: { data: { articles: [] } } }],
-                    useCache: true
+                    additionalMocks: [
+                        {
+                            request: { query: GetUnpublishedArticlesQuery },
+                            result: { data: { articles: [] } },
+                        },
+                    ],
+                    useCache: true,
                 }
             );
             expect(screen.queryAllByRole('button')).toHaveLength(9);

@@ -29,4 +29,4 @@ export const useWindowSize = () => {
     }, [handleResize]);
 
     return windowSize;
-}
+};

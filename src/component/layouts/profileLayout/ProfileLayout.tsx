@@ -23,20 +23,28 @@ export const ProfileLayout = memo(() => {
     }, [currentUser, history]);
 
     if (!currentUser) {
-        return (<div></div>);
+        return <div></div>;
     }
 
     return (
         <>
             <BaseLayoutMainContent>
                 <Header bannerImageUrl={bannerProfil}>
-                    <Typography variant={'h2'} data-testid="title">Profil</Typography>
+                    <Typography variant={'h2'} data-testid="title">
+                        Profil
+                    </Typography>
                 </Header>
                 <Switch>
-                    <Route exact path='/profile' component={ProfileData} />
-                    <Route path='/profile/files' component={ProfileMediaFiles} />
-                    <Route path='/profile/articles' component={ProfileArticles} />
-                    <Route path='/profile/delete' component={ProfileDelete} />
+                    <Route exact path="/profile" component={ProfileData} />
+                    <Route
+                        path="/profile/files"
+                        component={ProfileMediaFiles}
+                    />
+                    <Route
+                        path="/profile/articles"
+                        component={ProfileArticles}
+                    />
+                    <Route path="/profile/delete" component={ProfileDelete} />
                 </Switch>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar isEmpty />

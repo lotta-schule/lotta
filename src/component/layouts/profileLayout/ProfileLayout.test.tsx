@@ -4,14 +4,18 @@ import { SomeUser } from 'test/fixtures';
 import ProfileLayout from './ProfileLayout';
 
 describe('component/layouts/adminLayout/ProfileLayout', () => {
-
     it('should redirect user to homepage when not logged in', async () => {
         const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
         });
         render(
             <ProfileLayout />,
-            {}, { defaultPathEntries: ['/profile'], onChangeLocation, useCache: true }
+            {},
+            {
+                defaultPathEntries: ['/profile'],
+                onChangeLocation,
+                useCache: true,
+            }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -22,15 +26,15 @@ describe('component/layouts/adminLayout/ProfileLayout', () => {
         const onChangeLocation = jest.fn();
         const { findByTestId } = render(
             <ProfileLayout />,
-            {}, {
+            {},
+            {
                 currentUser: SomeUser,
                 defaultPathEntries: ['/profile'],
                 useCache: true,
-                onChangeLocation
+                onChangeLocation,
             }
         );
         await findByTestId('title');
         expect(onChangeLocation).not.toHaveBeenCalled();
     });
-
 });

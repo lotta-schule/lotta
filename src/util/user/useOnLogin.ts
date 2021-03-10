@@ -4,14 +4,21 @@ import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { ResetPasswordMutation } from 'api/mutation/ResetPasswordMutation';
 import useRouter from 'use-react-router';
 
-export const useOnLogin = (fn: 'login' | 'register' | 'resetPassword', options?: { redirect?: string, onCompleted?(data?: unknown): void }): MutationTuple<any, any> => {
+export const useOnLogin = (
+    fn: 'login' | 'register' | 'resetPassword',
+    options?: { redirect?: string; onCompleted?(data?: unknown): void }
+): MutationTuple<any, any> => {
     const { history } = useRouter();
     const apolloClient = useApolloClient();
-    const mutation = fn === 'register' ? RegisterMutation :
-        fn === 'login' ? LoginMutation : ResetPasswordMutation;
+    const mutation =
+        fn === 'register'
+            ? RegisterMutation
+            : fn === 'login'
+            ? LoginMutation
+            : ResetPasswordMutation;
     const [login, mutationTuple] = useMutation(mutation, {
         errorPolicy: 'all',
-        onCompleted: data => {
+        onCompleted: (data) => {
             if (data[fn]) {
                 apolloClient.resetStore();
                 localStorage.setItem('id', data[fn].accessToken);
@@ -20,7 +27,7 @@ export const useOnLogin = (fn: 'login' | 'register' | 'resetPassword', options?:
                     history.push(options.redirect);
                 }
             }
-        }
+        },
     });
     return [login, mutationTuple];
 };

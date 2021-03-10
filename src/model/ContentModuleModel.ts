@@ -16,6 +16,8 @@ export enum ContentModuleType {
 export interface ContentModuleModel<C = any, T = any> {
     id: ID;
     type: ContentModuleType;
+    insertedAt: string;
+    updatedAt: string;
     sortKey: number;
     content?: C | null;
     files: FileModel[];

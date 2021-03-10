@@ -3,28 +3,41 @@ import { MockedProvider } from '@apollo/client/testing';
 import { waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { MessageModel, UserModel } from 'model';
-import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
+import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { GetMessagesQuery } from 'api/query/GetMessagesQuery';
+import {
+    getSomeMessages,
+    KeinErSieEsUser,
+    lehrerGroup,
+    schuelerGroup,
+    SomeUser,
+    SomeUserin,
+} from 'test/fixtures';
+import { InMemoryCache } from '@apollo/client';
 import { ReceiveMessageSubscription } from 'api/subscription/ReceiveMessageSubscription';
-import { getSomeMessages, KeinErSieEsUser, lehrerGroup, schuelerGroup, SomeUser, SomeUserin } from 'test/fixtures';
-import {InMemoryCache} from '@apollo/client';
 
 const user = {
     ...SomeUser,
     groups: [schuelerGroup],
-    lastSeen: '2019-01-01T01:00:00.000Z'
+    lastSeen: '2019-01-01T01:00:00.000Z',
 };
 
 describe('component/layouts/navigation/useNewMessagesBadgeNumber', () => {
-    const createWrapperForUserAndMessages = ((currentUser: UserModel | null, messages: MessageModel[] = []): FunctionComponent => {
+    const createWrapperForUserAndMessages = (
+        currentUser: UserModel | null,
+        messages: MessageModel[] = []
+    ): FunctionComponent => {
         const cache = new InMemoryCache({ addTypename: false });
         cache.writeQuery({ query: GetCurrentUserQuery, data: { currentUser } });
         cache.writeQuery({ query: GetMessagesQuery, data: { messages } });
         return ({ children }) => (
             <MockedProvider
                 mocks={[
-                    { request: { query: ReceiveMessageSubscription }, result: {}},
+                    {
+                        request: { query: ReceiveMessageSubscription },
+                        result: {},
+                    },
                 ]}
                 cache={cache}
                 addTypename={false}
@@ -32,11 +45,11 @@ describe('component/layouts/navigation/useNewMessagesBadgeNumber', () => {
                 <div>{children}</div>
             </MockedProvider>
         );
-    });
+    };
 
     it('should return 0 if the user not logged in', () => {
         const screen = renderHook(() => useNewMessagesBadgeNumber(), {
-            wrapper: createWrapperForUserAndMessages(null)
+            wrapper: createWrapperForUserAndMessages(null),
         });
         expect(screen.result.current).toEqual(0);
     });
@@ -48,15 +61,15 @@ describe('component/layouts/navigation/useNewMessagesBadgeNumber', () => {
             // these 5 must not count
             ...getSomeMessages(user, { to_user: SomeUserin }),
             // these 5 must not count
-            ...getSomeMessages(SomeUserin, { to_user: user }).map(msg => ({
+            ...getSomeMessages(SomeUserin, { to_user: user }).map((msg) => ({
                 ...msg,
                 insertedAt: '2018-11-28T07:00:09',
                 updatedAt: '2018-11-28T07:00:09',
-            }))
+            })),
         ];
 
         const screen = renderHook(() => useNewMessagesBadgeNumber(), {
-            wrapper: createWrapperForUserAndMessages(user, messages)
+            wrapper: createWrapperForUserAndMessages(user, messages),
         });
         await waitFor(() => {
             expect(screen.result.current).toEqual(5);
@@ -70,18 +83,21 @@ describe('component/layouts/navigation/useNewMessagesBadgeNumber', () => {
             // these 5 must not count
             ...getSomeMessages(user, { to_user: SomeUserin }),
             // these 5 must not count
-            ...getSomeMessages(SomeUserin, { to_user: user }).map(msg => ({
+            ...getSomeMessages(SomeUserin, { to_user: user }).map((msg) => ({
                 ...msg,
                 insertedAt: '2018-11-28T07:00:09',
                 updatedAt: '2018-11-28T07:00:09',
             })),
             // these 5 must not count
-            ...getSomeMessages(KeinErSieEsUser, { to_user: user })
+            ...getSomeMessages(KeinErSieEsUser, { to_user: user }),
         ];
 
-        const screen = renderHook(() => useNewMessagesBadgeNumber({ user: SomeUserin }), {
-            wrapper: createWrapperForUserAndMessages(user, messages)
-        });
+        const screen = renderHook(
+            () => useNewMessagesBadgeNumber({ user: SomeUserin }),
+            {
+                wrapper: createWrapperForUserAndMessages(user, messages),
+            }
+        );
         await waitFor(() => {
             expect(screen.result.current).toEqual(5);
         });
@@ -94,18 +110,23 @@ describe('component/layouts/navigation/useNewMessagesBadgeNumber', () => {
             // these 5 must not count
             ...getSomeMessages(user, { to_user: SomeUserin }),
             // these 5 must not count
-            ...getSomeMessages(SomeUserin, { to_group: schuelerGroup }).map(msg => ({
-                ...msg,
-                insertedAt: '2018-11-28T07:00:09',
-                updatedAt: '2018-11-28T07:00:09',
-            })),
+            ...getSomeMessages(SomeUserin, { to_group: schuelerGroup }).map(
+                (msg) => ({
+                    ...msg,
+                    insertedAt: '2018-11-28T07:00:09',
+                    updatedAt: '2018-11-28T07:00:09',
+                })
+            ),
             // these 5 must not count
-            ...getSomeMessages(KeinErSieEsUser, { to_group: lehrerGroup })
+            ...getSomeMessages(KeinErSieEsUser, { to_group: lehrerGroup }),
         ];
 
-        const screen = renderHook(() => useNewMessagesBadgeNumber({ group: schuelerGroup }), {
-            wrapper: createWrapperForUserAndMessages(user, messages)
-        });
+        const screen = renderHook(
+            () => useNewMessagesBadgeNumber({ group: schuelerGroup }),
+            {
+                wrapper: createWrapperForUserAndMessages(user, messages),
+            }
+        );
         await waitFor(() => {
             expect(screen.result.current).toEqual(5);
         });

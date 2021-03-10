@@ -12,6 +12,7 @@ export interface ArticleModel {
     title: string;
     preview?: string;
     readyToPublish: boolean;
+    published: boolean;
     isPinnedToTop: boolean;
     topic?: string;
     previewImageFile?: FileModel | null;
@@ -21,7 +22,10 @@ export interface ArticleModel {
     groups: UserGroupModel[];
 }
 
-export type ArticleModelInput = Omit<ArticleModel, 'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'> & {
+export type ArticleModelInput = Omit<
+    ArticleModel,
+    'id' | 'insertedAt' | 'updatedAt' | 'contentModules' | 'category'
+> & {
     contentModules: ContentModuleInput[];
     category: Partial<CategoryModel>;
 };

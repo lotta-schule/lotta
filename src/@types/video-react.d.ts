@@ -1,5 +1,4 @@
 declare module 'video-react' {
-
     import { ComponentType } from 'react';
 
     export interface PlayerProps {
@@ -56,7 +55,7 @@ declare module 'video-react' {
 
     export const PosterImage: ComponentType<PosterImageProps>;
 
-    export interface LoadingSpinnerProps { }
+    export interface LoadingSpinnerProps {}
 
     export const LoadingSpinner: ComponentType<LoadingSpinnerProps>;
 
@@ -69,13 +68,11 @@ declare module 'video-react' {
 
     export const ControlBar: ComponentType<ControlBarProps>;
 
-
     export interface PlayToggleProps {
         poster: string;
     }
 
     export const PlayToggle: ComponentType<PlayToggleProps>;
-
 
     export interface ReplayControlProps {
         seconds: 5 | 10 | 30;
@@ -101,7 +98,7 @@ declare module 'video-react' {
 
     export const PlaybackRateMenuButton: ComponentType<PlaybackRateMenuButtonProps>;
 
-    export interface ClosedCaptionButtonProps { }
+    export interface ClosedCaptionButtonProps {}
 
     export const ClosedCaptionButton: ComponentType<ClosedCaptionButtonProps>;
-};
+}

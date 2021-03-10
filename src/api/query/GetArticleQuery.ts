@@ -10,6 +10,7 @@ export const GetArticleQuery = gql`
             preview
             topic
             readyToPublish
+            published
             isPinnedToTop
             previewImageFile {
                 id
@@ -23,6 +24,8 @@ export const GetArticleQuery = gql`
                 content
                 sortKey
                 configuration
+                insertedAt
+                updatedAt
                 files {
                     id
                     remoteLocation

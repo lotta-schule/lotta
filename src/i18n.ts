@@ -13,12 +13,17 @@ const resources = {
                 formats_plural: '{{count}} Formate',
                 explorer: {
                     filesAreBeingUploaded: '$t(files.file) wird hochgeladen',
-                    filesAreBeingUploaded_plural: '$t(files.files, {"count": {{count}}}) werden hochgeladen',
+                    filesAreBeingUploaded_plural:
+                        '$t(files.files, {"count": {{count}}}) werden hochgeladen',
                     dropFilesToUpload: 'Loslassen, um Datei hochzuladen.',
-                    dropFilesToUpload_plural: 'Loslassen, um $t(files.files, {"count": {{count}}}) hochzuladen.',
-                    markedFiles: '$t(files.files, {"count": {{count}}}) von $t(files.files, {"count": {{total}}}) ausgewählt.',
-                    totalFiles: '$t(files.files, {"count": {{count}}}) im Ordner',
-                    selectFiles: '$t(files.files, {"count": {{count}}}) auswählen',
+                    dropFilesToUpload_plural:
+                        'Loslassen, um $t(files.files, {"count": {{count}}}) hochzuladen.',
+                    markedFiles:
+                        '$t(files.files, {"count": {{count}}}) von $t(files.files, {"count": {{total}}}) ausgewählt.',
+                    totalFiles:
+                        '$t(files.files, {"count": {{count}}}) im Ordner',
+                    selectFiles:
+                        '$t(files.files, {"count": {{count}}}) auswählen',
                 },
                 usage: {
                     preview: 'Vorschaubild',
@@ -26,7 +31,7 @@ const resources = {
                     file: 'Moduldatei',
                     avatar: 'Profilbild',
                     logo: 'Logo',
-                    background: 'Hintergrundbild'
+                    background: 'Hintergrundbild',
                 },
                 filetypes: {
                     PDF: 'PDF-Dokument',
@@ -34,8 +39,8 @@ const resources = {
                     VIDEO: 'Video',
                     AUDIO: 'Audio-Aufnahme',
                     MISC: 'Sonstiges',
-                    DIRECTORY: 'Ordner'
-                }
+                    DIRECTORY: 'Ordner',
+                },
             },
             widgets: {
                 widget: 'Marginale',
@@ -46,22 +51,20 @@ const resources = {
                 results: '{{count}} Ergebnis',
                 results_plural: '{{count}} Ergebnisse',
                 results_0: '0 Ergebnisse',
-            }
-        }
-    }
+            },
+        },
+    },
 };
 
-_i18n
-    .use(initReactI18next)
-    .init({
-        resources,
-        lng: 'de',
+_i18n.use(initReactI18next).init({
+    resources,
+    lng: 'de',
 
-        keySeparator: '.',
+    keySeparator: '.',
 
-        interpolation: {
-            escapeValue: false
-        }
-    });
+    interpolation: {
+        escapeValue: false,
+    },
+});
 
 export const i18n = _i18n;

@@ -1,5 +1,17 @@
 import React, { memo, useState } from 'react';
-import { Card, CardContent, Grid, Link, Table, TableBody, TableRow, TableCell, TextField, Typography, makeStyles } from '@material-ui/core';
+import {
+    Card,
+    CardContent,
+    Grid,
+    Link,
+    Table,
+    TableBody,
+    TableRow,
+    TableCell,
+    TextField,
+    Typography,
+    makeStyles,
+} from '@material-ui/core';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -9,10 +21,10 @@ import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
 import { SaveButton } from 'component/general/SaveButton';
 import Img from 'react-cloudimage-responsive';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     gridContainer: {
         marginBottom: theme.spacing(3),
-    }
+    },
 }));
 
 export const BasicSettings = memo(() => {
@@ -22,54 +34,65 @@ export const BasicSettings = memo(() => {
     const [logo, setLogo] = useState(system.logoImageFile);
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
-    const [updateSystem, { loading: isLoading, error }] = useMutation(UpdateSystemMutation, {
-        onCompleted: () => {
-            setIsShowSuccess(true);
-            setTimeout(() => setIsShowSuccess(false), 3000);
+    const [updateSystem, { loading: isLoading, error }] = useMutation(
+        UpdateSystemMutation,
+        {
+            onCompleted: () => {
+                setIsShowSuccess(true);
+                setTimeout(() => setIsShowSuccess(false), 3000);
+            },
         }
-    });
+    );
 
     return (
         <>
             <ErrorMessage error={error} />
-            <Typography variant={'h6'}>
-                Name der Seite
-            </Typography>
+            <Typography variant={'h6'}>Name der Seite</Typography>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={6}>
-                    <TextField fullWidth value={title} onChange={e => setTitle(e.target.value)} />
+                    <TextField
+                        fullWidth
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
                 </Grid>
             </Grid>
 
-            <Typography variant={'h6'}>
-                Logo der Seite
-            </Typography>
+            <Typography variant={'h6'}>Logo der Seite</Typography>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={6}>
                     <Card>
                         <CardContent>
-                            <SelectFileOverlay label={'Logo ändern'} onSelectFile={logo => setLogo(logo)} allowDeletion>
+                            <SelectFileOverlay
+                                label={'Logo ändern'}
+                                onSelectFile={(logo) => setLogo(logo)}
+                                allowDeletion
+                            >
                                 {logo ? (
-                                  <Img
-                                    operation={'height'}
-                                    size={'80'}
-                                    src={logo.remoteLocation}
-                                  />
-                                ) : <PlaceholderImage width={'100%'} height={80} />}
+                                    <Img
+                                        operation={'height'}
+                                        size={'80'}
+                                        src={logo.remoteLocation}
+                                    />
+                                ) : (
+                                    <PlaceholderImage
+                                        width={'100%'}
+                                        height={80}
+                                    />
+                                )}
                             </SelectFileOverlay>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid item sm={6}>
                     <Typography>
-                        Für eine optimale Darstellung sollte das Logo eine Höhe von mindestens 160 Pixeln haben.
+                        Für eine optimale Darstellung sollte das Logo eine Höhe
+                        von mindestens 160 Pixeln haben.
                     </Typography>
                 </Grid>
             </Grid>
 
-            <Typography variant={'h6'}>
-                Domains
-            </Typography>
+            <Typography variant={'h6'}>Domains</Typography>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={12}>
                     <Table size={'small'}>
@@ -81,10 +104,12 @@ export const BasicSettings = memo(() => {
                                     </Link>
                                 </TableCell>
                             </TableRow>
-                            {system.customDomains.map(customDomain => (
+                            {system.customDomains.map((customDomain) => (
                                 <TableRow key={customDomain.host}>
                                     <TableCell>
-                                        <Link href={`https://${customDomain.host}`}>
+                                        <Link
+                                            href={`https://${customDomain.host}`}
+                                        >
                                             {customDomain.host}
                                         </Link>
                                     </TableCell>
@@ -101,7 +126,16 @@ export const BasicSettings = memo(() => {
                         fullWidth
                         isLoading={isLoading}
                         isSuccess={isShowSuccess}
-                        onClick={() => updateSystem({ variables: { system: { title, logoImageFile: logo && { id: logo.id } } } })}
+                        onClick={() =>
+                            updateSystem({
+                                variables: {
+                                    system: {
+                                        title,
+                                        logoImageFile: logo && { id: logo.id },
+                                    },
+                                },
+                            })
+                        }
                     >
                         speichern
                     </SaveButton>

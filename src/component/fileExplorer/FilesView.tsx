@@ -7,8 +7,8 @@ const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
         flexDirection: 'row',
-        overflow: 'auto'
-    }
+        overflow: 'auto',
+    },
 }));
 
 export const FilesView = memo(() => {

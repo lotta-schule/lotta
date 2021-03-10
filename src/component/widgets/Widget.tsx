@@ -9,7 +9,7 @@ export interface WidgetProps {
     widget: WidgetModel;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         height: `calc(100% - ${theme.spacing(2)}px)`,
         display: 'flex',
@@ -17,19 +17,17 @@ const useStyles = makeStyles(theme => ({
         boxSizing: 'border-box',
         '& > *': {
             boxSizing: 'border-box',
-        }
+        },
     },
     heading: {
         textAlign: 'center',
-    }
+    },
 }));
 
 export const Widget = memo<WidgetProps>(({ widget }) => {
     const styles = useStyles();
     if (widget.type === WidgetModelType.UserNavigationMobile) {
-        return (
-            <UserNavigationMobile />
-        );
+        return <UserNavigationMobile />;
     }
     return (
         <Paper className={styles.root}>
@@ -43,5 +41,5 @@ export const Widget = memo<WidgetProps>(({ widget }) => {
                 <Schedule widget={widget} />
             )}
         </Paper>
-    )
+    );
 });

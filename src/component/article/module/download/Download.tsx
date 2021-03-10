@@ -11,7 +11,7 @@ export interface DownloadProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles((theme) => ({
     downloadItemWrapper: {
         marginBottom: theme.spacing(2),
         marginLeft: '16.6%',
@@ -21,16 +21,16 @@ export const useStyles = makeStyles(theme => ({
             marginLeft: 0,
         },
         '&:last-child $downloadItemDivider': {
-            display: 'none'
-        }
+            display: 'none',
+        },
     },
     downloadItemDivider: {
-        width: '100%'
+        width: '100%',
     },
     downloadWrapperHeader: {
         display: 'flex',
         alignItems: 'flex-start',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     downloadDescription: {
         fontSize: theme.typography.pxToRem(15),
@@ -46,19 +46,24 @@ export const useStyles = makeStyles(theme => ({
         padding: theme.spacing(1),
         resize: 'inherit',
         color: 'inherit',
-        font: 'inherit'
+        font: 'inherit',
     },
     filename: {
         fontSize: theme.typography.pxToRem(15),
-    }
+    },
 }));
-export const Download = memo<DownloadProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent data-testid="DownloadContentModule">
-        {isEditModeEnabled && onUpdateModule && (
-            <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-        )}
-        {(!isEditModeEnabled || !onUpdateModule) && (
-            <Show contentModule={contentModule} />
-        )}
-    </CardContent>
-));
+export const Download = memo<DownloadProps>(
+    ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
+        <CardContent data-testid="DownloadContentModule">
+            {isEditModeEnabled && onUpdateModule && (
+                <Edit
+                    contentModule={contentModule}
+                    onUpdateModule={onUpdateModule}
+                />
+            )}
+            {(!isEditModeEnabled || !onUpdateModule) && (
+                <Show contentModule={contentModule} />
+            )}
+        </CardContent>
+    )
+);
