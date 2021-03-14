@@ -125,7 +125,8 @@ const authLink = new ApolloLink((operation, forward) => {
             '__typename'
         );
     }
-    const token = localStorage.getItem('id');
+    const token =
+        operation.getContext().authToken ?? localStorage.getItem('id');
     if (token) {
         operation.setContext({
             headers: {
