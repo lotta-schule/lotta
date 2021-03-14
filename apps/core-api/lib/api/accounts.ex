@@ -378,6 +378,19 @@ defmodule Api.Accounts do
   end
 
   @doc """
+  Update a user's email.
+  Notify the user if successfull.
+  """
+  @doc since: "2.4.0"
+  @spec update_email(User.t(), String.t()) :: {:ok, User.t()} | {:error, Changeset.t()}
+  def update_email(%User{} = user, email)
+      when is_binary(email) and byte_size(email) > 0 do
+    user
+    |> User.update_email_changeset(email)
+    |> Repo.update()
+  end
+
+  @doc """
   List root directories for a user
   """
   @spec list_root_directories(User.t()) :: [Directory.t()]

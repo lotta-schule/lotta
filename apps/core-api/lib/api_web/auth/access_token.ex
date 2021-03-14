@@ -73,4 +73,23 @@ defmodule ApiWeb.Auth.AccessToken do
 
     {:ok, claims}
   end
+
+  @callback verify_claims(claims :: Guardian.Token.claims(), options :: keyword()) ::
+              {:ok, Guardian.Token.claims()} | {:error, atom}
+  def verify_claims(claims, opts) do
+    if Keyword.has_key?(opts, :verify_type_one_of) do
+      opts
+      |> Keyword.fetch!(:verify_type_one_of)
+      |> Enum.any?(&(Map.get(claims, "typ") == &1))
+      |> case do
+        true ->
+          {:ok, claims}
+
+        false ->
+          {:error, :invalid_token}
+      end
+    else
+      {:ok, claims}
+    end
+  end
 end

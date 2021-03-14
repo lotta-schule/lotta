@@ -217,15 +217,19 @@ defmodule ApiWeb.UserResolver do
     |> format_errors("Speichern fehlgeschlagen.")
   end
 
-  def update_password(%{current_password: password, new_password: new_password}, %{
-        context: %Context{current_user: %{email: email}}
+  def update_password(%{new_password: new_password}, %{
+        context: %Context{current_user: user}
       }) do
-    with {:ok, user} <- login_with_username_pass(email, password),
-         {:ok, user} <- Accounts.update_password(user, new_password) do
-      {:ok, user}
-    else
-      res ->
-        format_errors(res, "Passwort ändern fehlgeschlagen.")
-    end
+    user
+    |> Accounts.update_password(new_password)
+    |> format_errors("Passwort ändern fehlgeschlagen.")
+  end
+
+  def update_email(%{new_email: new_email}, %{
+        context: %Context{current_user: user}
+      }) do
+    user
+    |> Accounts.update_email(new_email)
+    |> format_errors("Email ändern fehlgeschlagen.")
   end
 end

@@ -8,7 +8,7 @@ defmodule ApiWeb.Auth.Pipeline do
     error_handler: ApiWeb.Auth.ErrorHandler,
     module: ApiWeb.Auth.AccessToken
 
-  plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
+  plug Guardian.Plug.VerifyHeader, verify_type_one_of: ["access", "hisec"]
 
   plug Guardian.Plug.LoadResource, allow_blank: true
 end

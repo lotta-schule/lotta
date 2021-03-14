@@ -116,12 +116,19 @@ defmodule ApiWeb.Schema.Accounts do
     end
 
     field :update_password, type: :user do
-      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsHisec)
 
-      arg(:current_password, non_null(:string))
       arg(:new_password, non_null(:string))
 
       resolve(&ApiWeb.UserResolver.update_password/2)
+    end
+
+    field :update_email, type: :user do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsHisec)
+
+      arg(:new_email, non_null(:string))
+
+      resolve(&ApiWeb.UserResolver.update_email/2)
     end
 
     field :destroy_account, type: :user do
