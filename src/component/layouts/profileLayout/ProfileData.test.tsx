@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, waitFor, getByText, getByRole } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
 import { ProfileData } from './ProfileData';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
-import userEvent from '@testing-library/user-event';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
+import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/profileLayout/ProfileData', () => {
     describe('show user data', () => {
@@ -19,7 +19,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             ).toHaveValue('Ernesto Guevara');
         });
 
-        it("should show an input with the user's email", async () => {
+        it("should show a disabled input with the user's email", async () => {
             const screen = render(
                 <ProfileData />,
                 {},
@@ -28,6 +28,9 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             expect(await screen.findByLabelText(/Email-Adresse/i)).toHaveValue(
                 'user@lotta.schule'
             );
+            expect(
+                await screen.findByLabelText(/Email-Adresse/i)
+            ).toBeDisabled();
         });
 
         it("should show an input with the user's name, nickname and class", async () => {
@@ -70,7 +73,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                                 nickname: 'Spitzi',
                                 class: '5/1',
                                 hideFullName: true,
-                                email: 'neue-email@adresse.de',
                                 avatarImageFile: null,
                                 enrollmentTokens: [],
                             },
@@ -118,18 +120,16 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 'Deine Klasse / Dein Kürzel:'
             ) as HTMLInputElement;
 
-            await userEvent.clear(emailField);
-            await userEvent.clear(nicknameField);
-            await userEvent.clear(classField);
+            userEvent.clear(emailField);
+            userEvent.clear(nicknameField);
+            userEvent.clear(classField);
 
-            await userEvent.type(emailField, 'neue-email@adresse.de');
-            await userEvent.type(nicknameField, 'Spitzi');
-            await userEvent.click(publishNameCheckbox);
-            await userEvent.type(classField, '5/1');
+            userEvent.type(emailField, 'neue-email@adresse.de');
+            userEvent.type(nicknameField, 'Spitzi');
+            userEvent.click(publishNameCheckbox);
+            userEvent.type(classField, '5/1');
 
-            await userEvent.click(
-                screen.getByRole('button', { name: 'Speichern' })
-            );
+            userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
             await waitFor(() => {
                 expect(didCallUpdateData).toEqual(true);
@@ -184,10 +184,10 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 await screen.findAllByText('Profilbild ändern')
             )[0];
             expect(profilePictureButton).toBeVisible();
-            await userEvent.click(profilePictureButton);
+            userEvent.click(profilePictureButton);
             await waitFor(() => {
                 expect(
-                    getByText(document.body, /datei auswählen/i)
+                    screen.getByText(/datei auswählen/i)
                 ).toBeInTheDocument();
             });
         });
@@ -207,11 +207,34 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 await screen.findAllByText('Passwort ändern')
             )[0];
             expect(changePasswordButton).toBeVisible();
-            await userEvent.click(changePasswordButton);
+            userEvent.click(changePasswordButton);
             await waitFor(() => {
                 expect(
-                    getByRole(document.body, 'heading', {
+                    screen.getByRole('heading', {
                         name: 'Passwort ändern',
+                    })
+                ).toBeInTheDocument();
+            });
+        });
+    });
+
+    describe('Email', () => {
+        it('should open the change email dialog when the change email button is clicked', async () => {
+            const screen = render(
+                <ProfileData />,
+                {},
+                {
+                    currentUser: SomeUser,
+                    useCache: true,
+                }
+            );
+            const changeEmailButton = await screen.findByText('Email ändern');
+            expect(changeEmailButton).toBeVisible();
+            userEvent.click(changeEmailButton);
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('heading', {
+                        name: 'Email ändern',
                     })
                 ).toBeInTheDocument();
             });

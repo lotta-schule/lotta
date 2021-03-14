@@ -22,6 +22,7 @@ import {
 import { useMutation } from '@apollo/client';
 import { Clear } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
+import { UpdateEmailDialog } from 'component/dialog/UpdateEmailDialog';
 import { User } from 'util/model';
 import { FileModelType, UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -81,7 +82,6 @@ export const ProfileData = memo(() => {
     const currentUser = useCurrentUser()!;
 
     const [classOrShortName, setClassOrShortName] = useState(currentUser.class);
-    const [email, setEmail] = useState(currentUser.email);
     const [name, setName] = useState(currentUser.name);
     const [nickname, setNickname] = useState(currentUser.nickname);
     const [isHideFullName, setIsHideFullName] = useState(
@@ -98,6 +98,10 @@ export const ProfileData = memo(() => {
         isShowUpdatePasswordDialog,
         setIsShowUpdatePasswordDialog,
     ] = useState(false);
+
+    const [isShowUpdateEmailDialog, setIsShowUpdateEmailDialog] = useState(
+        false
+    );
 
     const [isShowSuccess, setIsShowSuccess] = useState(false);
     const [updateProfile, { error, loading: isLoading }] = useMutation<{
@@ -191,25 +195,37 @@ export const ProfileData = memo(() => {
                     <Grid item md={8}>
                         <TextField
                             autoFocus
+                            disabled
                             fullWidth
                             margin="dense"
                             id="email"
                             label="Deine Email-Adresse:"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={currentUser.email}
                             placeholder="beispiel@medienportal.org"
                             type="email"
-                            error={!!getFieldError('email')}
-                            helperText={getFieldError('email')}
-                            disabled={isLoading}
                             inputProps={{ maxLength: 100 }}
                         />
-                        <Button
-                            onClick={() => setIsShowUpdatePasswordDialog(true)}
-                            style={{ float: 'right' }}
-                        >
-                            Passwort ändern
-                        </Button>
+                        <Grid container>
+                            <Grid item sm={6}>
+                                <Button
+                                    onClick={() =>
+                                        setIsShowUpdateEmailDialog(true)
+                                    }
+                                >
+                                    Email ändern
+                                </Button>
+                            </Grid>
+                            <Grid item sm={6}>
+                                <Button
+                                    onClick={() =>
+                                        setIsShowUpdatePasswordDialog(true)
+                                    }
+                                    style={{ float: 'right' }}
+                                >
+                                    Passwort ändern
+                                </Button>
+                            </Grid>
+                        </Grid>
                         <TextField
                             autoFocus
                             fullWidth
@@ -246,7 +262,7 @@ export const ProfileData = memo(() => {
                                 control={
                                     <Checkbox
                                         checked={isHideFullName!}
-                                        onChange={(e, checked) =>
+                                        onChange={(_e, checked) =>
                                             setIsHideFullName(checked)
                                         }
                                     />
@@ -309,7 +325,6 @@ export const ProfileData = memo(() => {
                                             nickname,
                                             class: classOrShortName,
                                             hideFullName: isHideFullName,
-                                            email,
                                             avatarImageFile: avatarImageFile
                                                 ? { id: avatarImageFile.id }
                                                 : null,
@@ -325,6 +340,12 @@ export const ProfileData = memo(() => {
                             isOpen={isShowUpdatePasswordDialog}
                             onRequestClose={() =>
                                 setIsShowUpdatePasswordDialog(false)
+                            }
+                        />
+                        <UpdateEmailDialog
+                            isOpen={isShowUpdateEmailDialog}
+                            onRequestClose={() =>
+                                setIsShowUpdateEmailDialog(false)
                             }
                         />
                     </Grid>

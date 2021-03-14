@@ -7,37 +7,32 @@ import {
     Button,
     TextField,
 } from '@material-ui/core';
-import { UpdatePasswordMutation } from 'api/mutation/UpdatePasswordMutation';
+import { UpdateEmailMutation } from 'api/mutation/UpdateEmailMutation';
 import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 
-export interface UpdatePasswordDialogProps {
+export interface UpdateEmailDialogProps {
     isOpen: boolean;
     onRequestClose(): void;
 }
 
-export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
+export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
     ({ isOpen, onRequestClose }) => {
         const [
             showRequestHisecToken,
             setShowRequestHisecToken,
         ] = React.useState(false);
-        const [newPassword, setNewPassword] = React.useState('');
-        const [
-            newPasswordRepetition,
-            setNewPasswordRepetition,
-        ] = React.useState('');
+        const [newEmail, setNewEmail] = React.useState('');
         const resetForm = () => {
-            setNewPassword('');
-            setNewPasswordRepetition('');
+            setNewEmail('');
         };
-        const [updatePassword, { loading: isLoading, error }] = useMutation<
-            { updatePassword: boolean },
-            { newPassword: string }
-        >(UpdatePasswordMutation, {
-            variables: { newPassword },
+        const [updateEmail, { loading: isLoading, error }] = useMutation<
+            { updateEmail: boolean },
+            { newEmail: string }
+        >(UpdateEmailMutation, {
+            variables: { newEmail },
             onCompleted: () => {
                 resetForm();
                 onRequestClose();
@@ -52,41 +47,25 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                             e.preventDefault();
                             setShowRequestHisecToken(true);
                         }}
-                        data-testid="UpdatePasswordDialog"
+                        data-testid="UpdateEmailDialog"
                     >
-                        <DialogTitle>Passwort ändern</DialogTitle>
+                        <DialogTitle>Email ändern</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Identifiziere dich mit deinem aktuellen
-                                Passwort, wähle dann ein neues Passwort und
-                                bestätige es.
+                                Wähle eine neue Email-Adresse.
                             </DialogContentText>
                             <ErrorMessage error={error} />
                             <TextField
                                 margin="dense"
-                                id="new-password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
+                                id="new-email"
+                                value={newEmail}
+                                onChange={(e) => setNewEmail(e.target.value)}
                                 disabled={isLoading}
-                                label={'Neues Passwort:'}
-                                placeholder={'Neues Passwort'}
-                                type="password"
-                                autoComplete={'new-password'}
+                                label={'Neue Email:'}
+                                placeholder={'Neue Email'}
+                                type="email"
+                                autoComplete={'new-email'}
                                 autoFocus
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                id="new-password-repetition"
-                                value={newPasswordRepetition}
-                                onChange={(e) =>
-                                    setNewPasswordRepetition(e.target.value)
-                                }
-                                disabled={isLoading}
-                                label={'Wiederholung Neues Passwort:'}
-                                placeholder={'Neues Passwort'}
-                                type="password"
-                                autoComplete={'new-password'}
                                 fullWidth
                             />
                         </DialogContent>
@@ -103,15 +82,11 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                             </Button>
                             <Button
                                 type={'submit'}
-                                disabled={
-                                    !newPassword ||
-                                    newPassword !== newPasswordRepetition ||
-                                    isLoading
-                                }
+                                disabled={!newEmail || isLoading}
                                 color="secondary"
                                 variant="contained"
                             >
-                                Passwort ändern
+                                Email ändern
                             </Button>
                         </DialogActions>
                     </form>
@@ -121,7 +96,7 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                     onRequestClose={(authToken) => {
                         setShowRequestHisecToken(false);
                         if (authToken) {
-                            updatePassword({
+                            updateEmail({
                                 context: { authToken },
                             });
                         }

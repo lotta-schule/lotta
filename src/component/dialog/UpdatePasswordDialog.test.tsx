@@ -1,8 +1,10 @@
-import React from 'react';
+import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import { UpdatePasswordMutation } from 'api/mutation/UpdatePasswordMutation';
+import { RequestHisecTokenMutation } from 'api/mutation/RequestHisecTokenMutation';
+import { MockedResponse } from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => {
@@ -24,22 +26,15 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
 
     it('should have the focus on the input field and the submit button disabled when open', () => {
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
-        expect(
-            screen.queryByLabelText('Aktuelles Passwort:')
-        ).toBeInTheDocument();
         expect(screen.queryByLabelText('Neues Passwort:')).toBeInTheDocument();
         expect(
             screen.queryByLabelText('Wiederholung Neues Passwort:')
         ).toBeInTheDocument();
-        expect(screen.queryByLabelText('Aktuelles Passwort:')).toHaveFocus();
+        expect(screen.queryByLabelText('Neues Passwort:')).toHaveFocus();
     });
 
     it('should have the autocomplete props on the inputs', () => {
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
-        expect(screen.queryByLabelText('Aktuelles Passwort:')).toHaveAttribute(
-            'autocomplete',
-            'current-password'
-        );
         expect(screen.queryByLabelText('Neues Passwort:')).toHaveAttribute(
             'autocomplete',
             'new-password'
@@ -52,7 +47,6 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
     it('should start with a disabled submit button, but should enable the button when passwords have been entered', () => {
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
         expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
-        userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
         userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
         userEvent.type(
             screen.getByLabelText('Wiederholung Neues Passwort:'),
@@ -66,7 +60,6 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
     it('should not enable submit button if new password and repetition do not match', () => {
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
         expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
-        userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), 'pw123');
         userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
         userEvent.type(
             screen.getByLabelText('Wiederholung Neues Passwort:'),
@@ -78,12 +71,11 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
     describe('send form', () => {
         it('should create an article with the given title and then close the dialog', async () => {
             let updateMutationCalled = false;
-            const additionalMocks = [
+            const additionalMocks: MockedResponse[] = [
                 {
                     request: {
                         query: UpdatePasswordMutation,
                         variables: {
-                            currentPassword: 'pw123',
                             newPassword: 'pw456',
                         },
                     },
@@ -94,6 +86,15 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
                         };
                     },
                 },
+                {
+                    request: {
+                        query: RequestHisecTokenMutation,
+                        variables: {
+                            password: 'pw123',
+                        },
+                    },
+                    result: { data: { token: 'abc' } },
+                },
             ];
             const onClose = jest.fn();
             render(
@@ -101,16 +102,19 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(
-                screen.getByLabelText('Aktuelles Passwort:'),
-                'pw123'
-            );
             userEvent.type(screen.getByLabelText('Neues Passwort:'), 'pw456');
             userEvent.type(
                 screen.getByLabelText('Wiederholung Neues Passwort:'),
                 'pw456'
             );
             userEvent.click(screen.getByRole('button', { name: /ändern/ }));
+            await waitFor(() => {
+                expect(
+                    screen.getByTestId('RequestHisecTokenDialog')
+                ).toBeVisible();
+            });
+            userEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
+            userEvent.click(screen.getByRole('button', { name: /senden/i }));
 
             await waitFor(() => {
                 expect(updateMutationCalled).toEqual(true);
@@ -122,7 +126,6 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
 
         it('should clear the form and call onAbort when clicking the "Reset" button', () => {
             render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
-            userEvent.type(screen.getByLabelText('Aktuelles Passwort:'), '');
             userEvent.type(screen.getByLabelText('Neues Passwort:'), '');
             userEvent.type(
                 screen.getByLabelText('Wiederholung Neues Passwort:'),
