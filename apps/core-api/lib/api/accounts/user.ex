@@ -25,6 +25,7 @@ defmodule Api.Accounts.User do
 
     field :all_groups, {:array, UserGroup}, virtual: true, default: []
     field :is_admin?, :boolean, virtual: true, default: false
+    field :access_level, :string, virtual: true
 
     belongs_to :avatar_image_file, File, on_replace: :nilify
     has_many :files, File
@@ -75,13 +76,14 @@ defmodule Api.Accounts.User do
   def update_profile_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
     |> Repo.preload([:avatar_image_file, :enrollment_tokens])
-    |> cast(params, [:name, :class, :nickname, :email, :hide_full_name], [:password])
+    |> cast(params, [:name, :class, :nickname, :hide_full_name])
+    |> normalize_email()
     |> validate_required([:name, :email])
     |> unique_constraint(:email, name: :users__lower_email_index)
+    |> validate_length(:email, min: 4, max: 100)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_assoc_avatar_image_file(params)
     |> put_assoc_enrollment_tokens(params)
-    |> normalize_email()
   end
 
   @doc """
@@ -95,13 +97,14 @@ defmodule Api.Accounts.User do
     user
     |> Repo.preload(:enrollment_tokens)
     |> cast(params, [:name, :class, :nickname, :email, :password, :hide_full_name])
+    |> normalize_email()
     |> validate_required([:name, :email, :password])
+    |> validate_length(:email, min: 4, max: 100)
     |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_assoc_enrollment_tokens(params)
-    |> normalize_email()
     |> put_pass_hash()
   end
 
@@ -110,16 +113,32 @@ defmodule Api.Accounts.User do
   """
   @doc since: "1.0.0"
 
-  @spec update_password_changeset(t(), map()) :: Changeset.t()
+  @spec update_password_changeset(t(), String.t()) :: Changeset.t()
 
   def update_password_changeset(%__MODULE__{} = user, password)
       when is_binary(password) and byte_size(password) > 0 do
     user
-    |> Repo.preload(:enrollment_tokens)
     |> Changeset.change(%{password: password})
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
     |> put_pass_hash()
+  end
+
+  @doc """
+  Returns a changeset for when the user wants to update *his own email*.
+  """
+  @doc since: "2.4.0"
+
+  @spec update_email_changeset(t(), String.t()) :: Changeset.t()
+
+  def update_email_changeset(%__MODULE__{} = user, email)
+      when is_binary(email) and byte_size(email) > 0 do
+    user
+    |> Changeset.change(%{email: email})
+    |> normalize_email()
+    |> validate_required(:email)
+    |> validate_length(:email, min: 4, max: 100)
+    |> unique_constraint(:email, name: :users__lower_email_index)
   end
 
   defp put_pass_hash(changeset) do

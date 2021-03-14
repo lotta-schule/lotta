@@ -89,6 +89,14 @@ defmodule ApiWeb.Schema.Accounts do
       middleware(ApiWeb.Schema.Middleware.WriteTokensToContext)
     end
 
+    field :request_hisec_token, type: :string do
+      arg(:password, :string)
+
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      resolve(&ApiWeb.UserResolver.request_hisec_token/2)
+    end
+
     field :logout, type: :authresult do
       middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
@@ -108,12 +116,19 @@ defmodule ApiWeb.Schema.Accounts do
     end
 
     field :update_password, type: :user do
-      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsHisec)
 
-      arg(:current_password, non_null(:string))
       arg(:new_password, non_null(:string))
 
       resolve(&ApiWeb.UserResolver.update_password/2)
+    end
+
+    field :update_email, type: :user do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsHisec)
+
+      arg(:new_email, non_null(:string))
+
+      resolve(&ApiWeb.UserResolver.update_email/2)
     end
 
     field :destroy_account, type: :user do

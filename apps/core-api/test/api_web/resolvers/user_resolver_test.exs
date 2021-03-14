@@ -27,6 +27,9 @@ defmodule ApiWeb.UserResolverTest do
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
+    {:ok, user_hisec_jwt, _} =
+      AccessToken.encode_and_sign(user, %{email: user.email, name: user.name}, token_type: "hisec")
+
     schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
     lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
 
@@ -38,6 +41,7 @@ defmodule ApiWeb.UserResolverTest do
        user2: user2,
        evil_user: evil_user,
        user_jwt: user_jwt,
+       user_hisec_jwt: user_hisec_jwt,
        schueler_group: schueler_group,
        lehrer_group: lehrer_group,
        user_relevant_file: user_relevant_file
@@ -1002,6 +1006,79 @@ defmodule ApiWeb.UserResolverTest do
     end
   end
 
+  describe "request hisec token mutation" do
+    @query """
+    mutation requestHisecToken($password: String!) {
+      requestHisecToken(password: $password)
+    }
+    """
+
+    test "returns the token if data is entered correctly", %{user_jwt: user_jwt} do
+      conn =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{password: "test123"}
+        )
+
+      res =
+        conn
+        |> json_response(200)
+
+      assert token = res["data"]["requestHisecToken"]
+
+      {:ok, %{"email" => email}} = AccessToken.decode_and_verify(token, %{"typ" => "hisec"})
+
+      assert email == "eike.wiewiorra@lotta.schule"
+    end
+
+    test "returns an error if the user is not logged in" do
+      res =
+        build_conn()
+        |> post("/api",
+          query: @query,
+          variables: %{password: "test123"}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "requestHisecToken" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Du musst angemeldet sein um das zu tun.",
+                   "path" => ["requestHisecToken"]
+                 }
+               ]
+             } = res
+    end
+
+    test "returns an error if the password is wrong", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{password: "abcdef999"}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "requestHisecToken" => nil
+               },
+               "errors" => [
+                 %{
+                   "message" => "Falsche Zugangsdaten.",
+                   "path" => ["requestHisecToken"]
+                 }
+               ]
+             } = res
+    end
+  end
+
   describe "requestPasswordResetMutation" do
     @query """
     mutation requestPasswordReset($email: String!) {
@@ -1353,21 +1430,21 @@ defmodule ApiWeb.UserResolverTest do
     end
   end
 
-  describe "a user can update his profile" do
+  describe "a user can update his password" do
     @query """
-    mutation updatePassword($currentPassword: String!, $newPassword: String!) {
-      updatePassword(currentPassword: $currentPassword, newPassword: $newPassword) {
+    mutation updatePassword($newPassword: String!) {
+      updatePassword(newPassword: $newPassword) {
         name
       }
     }
     """
-    test "should update a users password", %{user_jwt: user_jwt} do
+    test "should update a users password", %{user_hisec_jwt: user_hisec_jwt} do
       res =
         build_conn()
-        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{currentPassword: "test123", newPassword: "test456"}
+          variables: %{newPassword: "test456"}
         )
         |> json_response(200)
 
@@ -1382,20 +1459,22 @@ defmodule ApiWeb.UserResolverTest do
       assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
     end
 
-    test "should return an error when the current password is not correct", %{user_jwt: user_jwt} do
+    test "should return an error when the user uses an access token instead of an hisec token", %{
+      user_jwt: user_jwt
+    } do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{currentPassword: "test000", newPassword: "test456"}
+          variables: %{newPassword: "test456"}
         )
         |> json_response(200)
 
       assert %{
                "errors" => [
                  %{
-                   "message" => "Falsche Zugangsdaten.",
+                   "message" => "Du musst die Anfrage gesondert bestätigen, um das zu tun.",
                    "path" => ["updatePassword"]
                  }
                ],
@@ -1403,13 +1482,15 @@ defmodule ApiWeb.UserResolverTest do
              } = res
     end
 
-    test "should return an error when the new password is too short", %{user_jwt: user_jwt} do
+    test "should return an error when the new password is too short", %{
+      user_hisec_jwt: user_hisec_jwt
+    } do
       res =
         build_conn()
-        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{currentPassword: "test123", newPassword: "abc"}
+          variables: %{newPassword: "abc"}
         )
         |> json_response(200)
 
@@ -1420,6 +1501,81 @@ defmodule ApiWeb.UserResolverTest do
                    "details" => %{"password" => ["sollte mindestens 6 Zeichen lang sein"]},
                    "message" => "Passwort ändern fehlgeschlagen.",
                    "path" => ["updatePassword"]
+                 }
+               ]
+             } = res
+    end
+  end
+
+  describe "a user can update his or her email" do
+    @query """
+    mutation updateEmail($newEmail: String!) {
+      updateEmail(newEmail: $newEmail) {
+        email
+      }
+    }
+    """
+    test "should update a user's email", %{user_hisec_jwt: user_hisec_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{newEmail: "ab@cd.ef"}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "updateEmail" => %{
+                   "email" => "ab@cd.ef"
+                 }
+               }
+             }
+    end
+
+    test "should return an error when the user uses an access token instead of an hisec token", %{
+      user_jwt: user_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{newEmail: "ab@cd.ef"}
+        )
+        |> json_response(200)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "message" => "Du musst die Anfrage gesondert bestätigen, um das zu tun.",
+                   "path" => ["updateEmail"]
+                 }
+               ],
+               "data" => %{"updateEmail" => nil}
+             } = res
+    end
+
+    test "should return an error when the new email is empty", %{
+      user_hisec_jwt: user_hisec_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{newEmail: "a"}
+        )
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"updateEmail" => nil},
+               "errors" => [
+                 %{
+                   "details" => %{"email" => ["sollte mindestens 4 Zeichen lang sein"]},
+                   "message" => "Email ändern fehlgeschlagen.",
+                   "path" => ["updateEmail"]
                  }
                ]
              } = res

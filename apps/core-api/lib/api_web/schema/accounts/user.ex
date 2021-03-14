@@ -12,7 +12,6 @@ defmodule ApiWeb.Schema.Accounts.User do
 
   input_object :update_user_params do
     field :name, :string
-    field :email, :string
     field :class, :string
     field :nickname, :string
     field :hide_full_name, :boolean

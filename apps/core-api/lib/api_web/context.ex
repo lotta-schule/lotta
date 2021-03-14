@@ -50,6 +50,17 @@ defmodule ApiWeb.Context do
   end
 
   defp maybe_put_user(%__MODULE__{} = context, conn) do
+    access_level =
+      conn
+      |> ApiWeb.Auth.AccessToken.Plug.current_claims()
+      |> case do
+        %{"typ" => token_type} ->
+          token_type
+
+        _ ->
+          nil
+      end
+
     user =
       conn
       |> ApiWeb.Auth.AccessToken.Plug.current_resource()
@@ -62,6 +73,7 @@ defmodule ApiWeb.Context do
 
         user
         |> set_virtual_user_fields()
+        |> Map.put(:access_level, access_level)
       end
 
     context

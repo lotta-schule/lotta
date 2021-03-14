@@ -148,6 +148,20 @@ defmodule ApiWeb.UserResolver do
     end
   end
 
+  def request_hisec_token(%{password: password}, %{context: %Context{current_user: current_user}}) do
+    with true <- verify_user_pass(current_user, password),
+         {:ok, hisec_token, _claims} <-
+           ApiWeb.Auth.AccessToken.encode_and_sign(current_user, %{}, token_type: "hisec") do
+      {:ok, hisec_token}
+    else
+      false ->
+        {:error, "Falsche Zugangsdaten."}
+
+      error ->
+        error
+    end
+  end
+
   def logout(_args, _info) do
     {:ok, %{sign_out_user: true}}
   end
@@ -203,15 +217,19 @@ defmodule ApiWeb.UserResolver do
     |> format_errors("Speichern fehlgeschlagen.")
   end
 
-  def update_password(%{current_password: password, new_password: new_password}, %{
-        context: %Context{current_user: %{email: email}}
+  def update_password(%{new_password: new_password}, %{
+        context: %Context{current_user: user}
       }) do
-    with {:ok, user} <- login_with_username_pass(email, password),
-         {:ok, user} <- Accounts.update_password(user, new_password) do
-      {:ok, user}
-    else
-      res ->
-        format_errors(res, "Passwort ändern fehlgeschlagen.")
-    end
+    user
+    |> Accounts.update_password(new_password)
+    |> format_errors("Passwort ändern fehlgeschlagen.")
+  end
+
+  def update_email(%{new_email: new_email}, %{
+        context: %Context{current_user: user}
+      }) do
+    user
+    |> Accounts.update_email(new_email)
+    |> format_errors("Email ändern fehlgeschlagen.")
   end
 end
