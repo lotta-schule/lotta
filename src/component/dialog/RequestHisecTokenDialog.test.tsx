@@ -114,13 +114,41 @@ describe('component/dialog/RequestHisecToken', () => {
                 },
             ];
             const onClose = jest.fn();
-            render(
+            const screen = render(
                 <RequestHisecTokenDialog isOpen onRequestClose={onClose} />,
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
             userEvent.type(screen.getByLabelText(/passwort/i), 'pw123');
             userEvent.click(screen.getByRole('button', { name: /senden/ }));
+
+            await waitFor(() => {
+                expect(onClose).toHaveBeenCalledWith('abc');
+            });
+        });
+
+        it('should send the form automatically and return the token when the pw is given', async () => {
+            const additionalMocks = [
+                {
+                    request: {
+                        query: RequestHisecTokenMutation,
+                        variables: {
+                            password: 'pw123',
+                        },
+                    },
+                    result: { data: { token: 'abc' } },
+                },
+            ];
+            const onClose = jest.fn();
+            render(
+                <RequestHisecTokenDialog
+                    isOpen
+                    withCurrentPassword={'pw123'}
+                    onRequestClose={onClose}
+                />,
+                {},
+                { currentUser: SomeUser, additionalMocks }
+            );
 
             await waitFor(() => {
                 expect(onClose).toHaveBeenCalledWith('abc');

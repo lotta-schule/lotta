@@ -15,11 +15,13 @@ import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 
 export interface UpdatePasswordDialogProps {
     isOpen: boolean;
+    isFirstPasswordChange?: boolean;
+    withCurrentPassword?: string;
     onRequestClose(): void;
 }
 
 export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
-    ({ isOpen, onRequestClose }) => {
+    ({ isOpen, onRequestClose, withCurrentPassword }) => {
         const [
             showRequestHisecToken,
             setShowRequestHisecToken,
@@ -57,9 +59,19 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                         <DialogTitle>Passwort ändern</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Identifiziere dich mit deinem aktuellen
-                                Passwort, wähle dann ein neues Passwort und
-                                bestätige es.
+                                {!withCurrentPassword && (
+                                    <>
+                                        Wähle ein neues Passwort und bestätige
+                                        es.
+                                    </>
+                                )}
+                                {withCurrentPassword && (
+                                    <>
+                                        Du meldest dich zum ersten Mal. Wähle
+                                        ein sicheres Passwort dass du in Zukunft
+                                        nutzen kannst.
+                                    </>
+                                )}
                             </DialogContentText>
                             <ErrorMessage error={error} />
                             <TextField
@@ -118,6 +130,7 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                 </ResponsiveFullScreenDialog>
                 <RequestHisecTokenDialog
                     isOpen={showRequestHisecToken}
+                    withCurrentPassword={withCurrentPassword}
                     onRequestClose={(authToken) => {
                         setShowRequestHisecToken(false);
                         if (authToken) {

@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import {
     Button,
@@ -10,10 +10,12 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
-import { useOnLogin } from 'util/user/useOnLogin';
 import { useLocationSearchQuery } from 'util/useLocationSearchQuery';
 import { CollisionLink } from 'component/general/CollisionLink';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { useHistory } from 'react-router-dom';
+import { ResetPasswordMutation } from 'api/mutation/ResetPasswordMutation';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
     helpText: {
@@ -28,17 +30,32 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const ResetPasswordLayout = memo(() => {
+export const ResetPasswordLayout = React.memo(() => {
     const styles = useStyles();
 
-    const [data, setData] = useState();
-    const [
-        sendResetPassword,
-        { error: mutationError, loading: isLoading },
-    ] = useOnLogin('resetPassword', { redirect: '/', onCompleted: setData });
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState<string | null>(null);
-    const [passwordRepetition, setPasswordRepetition] = useState('');
+    const [data, setData] = React.useState();
+    const { replace } = useHistory();
+    const apolloClient = useApolloClient();
+    const [sendResetPassword, { error, loading: isLoading }] = useMutation(
+        ResetPasswordMutation,
+        {
+            errorPolicy: 'all',
+            onCompleted: (data) => {
+                if (data['resetPassword']) {
+                    apolloClient.resetStore();
+                    localStorage.setItem(
+                        'id',
+                        data['resetPassword'].accessToken
+                    );
+                    setData(data);
+                    replace('/');
+                }
+            },
+        }
+    );
+    const [password, setPassword] = React.useState('');
+    const [mutationError, setError] = React.useState<string | null>(null);
+    const [passwordRepetition, setPasswordRepetition] = React.useState('');
     const { e, t: token } = useLocationSearchQuery<{ e: string; t: string }>();
     const email = e && atob(e);
 
