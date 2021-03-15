@@ -21,7 +21,12 @@ export interface UpdatePasswordDialogProps {
 }
 
 export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
-    ({ isOpen, onRequestClose, withCurrentPassword }) => {
+    ({
+        isOpen,
+        onRequestClose,
+        isFirstPasswordChange,
+        withCurrentPassword,
+    }) => {
         const [
             showRequestHisecToken,
             setShowRequestHisecToken,
@@ -59,13 +64,13 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                         <DialogTitle>Passwort ändern</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                {!withCurrentPassword && (
+                                {!isFirstPasswordChange && (
                                     <>
                                         Wähle ein neues Passwort und bestätige
                                         es.
                                     </>
                                 )}
-                                {withCurrentPassword && (
+                                {isFirstPasswordChange && (
                                     <>
                                         Du meldest dich zum ersten Mal. Wähle
                                         ein sicheres Passwort dass du in Zukunft
@@ -103,16 +108,18 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button
-                                onClick={() => {
-                                    resetForm();
-                                    onRequestClose();
-                                }}
-                                color="secondary"
-                                variant="outlined"
-                            >
-                                Abbrechen
-                            </Button>
+                            {!isFirstPasswordChange && (
+                                <Button
+                                    onClick={() => {
+                                        resetForm();
+                                        onRequestClose();
+                                    }}
+                                    color="secondary"
+                                    variant="outlined"
+                                >
+                                    Abbrechen
+                                </Button>
+                            )}
                             <Button
                                 type={'submit'}
                                 disabled={

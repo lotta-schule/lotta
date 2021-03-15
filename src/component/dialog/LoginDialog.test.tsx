@@ -2,7 +2,6 @@ import * as React from 'react';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { render, waitFor } from 'test/util';
 import { LoginDialog } from './LoginDialog';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { SomeUser } from 'test/fixtures';
 import userEvent from '@testing-library/user-event';
 
@@ -73,7 +72,7 @@ describe('component/dialog/LoginDialog', () => {
                     additionalMocks,
                     currentUser: {
                         ...SomeUser,
-                        hasChangedDefaultPassword: true,
+                        hasChangedDefaultPassword: false,
                     },
                 }
             );
@@ -83,9 +82,6 @@ describe('component/dialog/LoginDialog', () => {
             );
             userEvent.type(screen.getByLabelText(/passwort/i), 'password');
             userEvent.click(screen.getByRole('button', { name: /anmelden/i }));
-            await waitFor(() => {
-                expect(onRequestClose).toHaveBeenCalled();
-            });
             await waitFor(() => {
                 expect(
                     screen.queryByRole('heading', { name: /passwort ändern/i })
