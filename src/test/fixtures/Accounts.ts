@@ -334,6 +334,7 @@ export const SomeUser = {
     hideFullName: false,
     nickname: 'Che',
     avatarImageFile: null,
+    hasChangedDefaultPassword: true,
 };
 
 export const SomeUserin = {
@@ -349,6 +350,7 @@ export const SomeUserin = {
     hideFullName: true,
     nickname: 'Lui',
     avatarImageFile: null,
+    hasChangedDefaultPassword: true,
 };
 
 export const KeinErSieEsUser = {
@@ -364,6 +366,7 @@ export const KeinErSieEsUser = {
     hideFullName: false,
     nickname: 'Mich',
     avatarImageFile: null,
+    hasChangedDefaultPassword: true,
 };
 
 export const getPrivateAndPublicFiles = (user: UserModel) => {
