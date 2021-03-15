@@ -1,8 +1,8 @@
-import userEvent from '@testing-library/user-event';
-import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import * as React from 'react';
+import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { render, waitFor } from 'test/util';
 import { RegisterDialog } from './RegisterDialog';
+import userEvent from '@testing-library/user-event';
 
 describe('component/dialog/RegisterDialog', () => {
     it('should render login dialog without errors', () => {

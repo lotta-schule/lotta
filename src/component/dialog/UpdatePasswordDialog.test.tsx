@@ -68,6 +68,21 @@ describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () 
         expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
     });
 
+    describe('first login', () => {
+        it('should not show the abort button', async () => {
+            const screen = render(
+                <UpdatePasswordDialog
+                    isFirstPasswordChange
+                    isOpen
+                    onRequestClose={() => {}}
+                />
+            );
+            expect(
+                screen.queryByRole('button', { name: /abbrechen/i })
+            ).toBeNull();
+        });
+    });
+
     describe('send form', () => {
         it('should create an article with the given title and then close the dialog', async () => {
             let updateMutationCalled = false;

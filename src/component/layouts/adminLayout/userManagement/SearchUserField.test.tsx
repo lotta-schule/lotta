@@ -80,6 +80,7 @@ describe('component/layouts/userManagment/SearchUserField', () => {
                     'groups',
                     'hideFullName',
                     'lastSeen',
+                    'hasChangedDefaultPassword',
                 ])
             );
         });

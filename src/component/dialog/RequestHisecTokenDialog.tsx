@@ -14,11 +14,12 @@ import { RequestHisecTokenMutation } from 'api/mutation/RequestHisecTokenMutatio
 
 export interface RequestHisecTokenDialogProps {
     isOpen: boolean;
+    withCurrentPassword?: string;
     onRequestClose(token: string | null): void;
 }
 
 export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
-    ({ isOpen, onRequestClose }) => {
+    ({ isOpen, onRequestClose, withCurrentPassword }) => {
         const [password, setPassword] = React.useState('');
         const [requestHisecToken, { loading: isLoading, error }] = useMutation<
             { token: string },
@@ -32,9 +33,19 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
         React.useEffect(() => {
             setPassword('');
         }, [isOpen]);
+        React.useEffect(() => {
+            if (isOpen && withCurrentPassword) {
+                requestHisecToken({
+                    variables: { password: withCurrentPassword },
+                });
+            }
+        }, [withCurrentPassword, requestHisecToken, isOpen]);
 
         return (
-            <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+            <ResponsiveFullScreenDialog
+                open={isOpen && !withCurrentPassword}
+                fullWidth
+            >
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();

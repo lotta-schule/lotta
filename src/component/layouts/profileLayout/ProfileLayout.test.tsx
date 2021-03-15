@@ -24,7 +24,7 @@ describe('component/layouts/adminLayout/ProfileLayout', () => {
 
     it('should show the page with title to user if he is admin', async () => {
         const onChangeLocation = jest.fn();
-        const { findByTestId } = render(
+        const screen = render(
             <ProfileLayout />,
             {},
             {
@@ -34,7 +34,9 @@ describe('component/layouts/adminLayout/ProfileLayout', () => {
                 onChangeLocation,
             }
         );
-        await findByTestId('title');
+        await waitFor(() => {
+            expect(screen.getByTestId('title')).toBeVisible();
+        });
         expect(onChangeLocation).not.toHaveBeenCalled();
     });
 });

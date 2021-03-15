@@ -108,8 +108,9 @@ export const UserNavigation = memo(() => {
         setProfileMenuAnchorEl,
     ] = useState<HTMLElement | null>(null);
 
+    let nav;
     if (currentUser) {
-        return (
+        nav = (
             <Grid container className={styles.root}>
                 <Grid item xs={5} className={styles.avatarContainer}>
                     <CurrentUserAvatar
@@ -273,7 +274,7 @@ export const UserNavigation = memo(() => {
             </Grid>
         );
     } else {
-        return (
+        nav = (
             <Grid
                 container
                 direction={'column'}
@@ -292,12 +293,6 @@ export const UserNavigation = memo(() => {
                 <Button size="small" onClick={() => history.push('/search')}>
                     Suche
                 </Button>
-                <LoginDialog
-                    isOpen={loginModalIsOpen}
-                    onRequestClose={() => {
-                        setLoginModalIsOpen(false);
-                    }}
-                />
                 <RegisterDialog
                     isOpen={registerModalIsOpen}
                     onRequestClose={() => {
@@ -307,4 +302,15 @@ export const UserNavigation = memo(() => {
             </Grid>
         );
     }
+    return (
+        <>
+            {nav}
+            <LoginDialog
+                isOpen={loginModalIsOpen}
+                onRequestClose={() => {
+                    setLoginModalIsOpen(false);
+                }}
+            />
+        </>
+    );
 });
