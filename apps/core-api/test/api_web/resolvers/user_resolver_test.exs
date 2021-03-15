@@ -775,7 +775,7 @@ defmodule ApiWeb.UserResolverTest do
     }
     """
 
-    test "register the user if data is entered correctly - user should have default directories" do
+    test "register the user if data is entered correctly - user should have default directories and 'has_changed_default_password' false" do
       build_conn()
       |> post("/api",
         query: @query,
@@ -785,7 +785,10 @@ defmodule ApiWeb.UserResolverTest do
       )
       |> json_response(200)
 
-      %User{id: id} = Repo.get_by!(User, email: "neuernutzer@example.com")
+      %User{id: id, has_changed_default_password: has_changed_default_password} =
+        Repo.get_by!(User, email: "neuernutzer@example.com")
+
+      refute has_changed_default_password
 
       directories =
         from(d in Directory, where: d.user_id == ^id)
@@ -1457,6 +1460,25 @@ defmodule ApiWeb.UserResolverTest do
              }
 
       assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
+    end
+
+    test "should set has_changed_default_password to true", %{
+      user: user,
+      user_hisec_jwt: user_hisec_jwt
+    } do
+      user
+      |> Ecto.Changeset.change(%{has_changed_default_password: false})
+      |> Repo.update!()
+
+      build_conn()
+      |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
+      |> post("/api",
+        query: @query,
+        variables: %{newPassword: "test456"}
+      )
+      |> json_response(200)
+
+      assert %{has_changed_default_password: true} = Repo.get!(User, user.id)
     end
 
     test "should return an error when the user uses an access token instead of an hisec token", %{

@@ -22,6 +22,7 @@ defmodule Api.Accounts.User do
     field :password, :string, virtual: true
     field :password_hash, :string
     field :password_hash_format, :integer
+    field :has_changed_default_password, :boolean
 
     field :all_groups, {:array, UserGroup}, virtual: true, default: []
     field :is_admin?, :boolean, virtual: true, default: false
@@ -122,6 +123,7 @@ defmodule Api.Accounts.User do
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
     |> put_pass_hash()
+    |> put_change(:has_changed_default_password, true)
   end
 
   @doc """

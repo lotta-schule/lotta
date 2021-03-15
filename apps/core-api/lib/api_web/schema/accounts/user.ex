@@ -49,6 +49,7 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :nickname, :string
     field :email, :string, resolve: &ApiWeb.UserResolver.resolve_email/3
     field :hide_full_name, :boolean
+    field :has_changed_default_password, :boolean
 
     field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 

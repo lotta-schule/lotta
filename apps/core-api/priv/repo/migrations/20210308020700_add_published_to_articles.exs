@@ -17,6 +17,8 @@ defmodule Api.Repo.Migrations.AddPublishedToArticles do
   end
 
   def down do
-    remove(:published)
+    alter table(:articles) do
+      remove(:published)
+    end
   end
 end
