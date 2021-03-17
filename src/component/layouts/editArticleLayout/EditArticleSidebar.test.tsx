@@ -300,21 +300,6 @@ describe('component/layouts/editArticleLayout/EditArticleSidebar', () => {
         });
 
         describe('publishing switch', () => {
-            it('should show as disabled for non-admin users', () => {
-                const screen = render(
-                    <EditArticleSidebar
-                        article={{ ...Weihnachtsmarkt }}
-                        onUpdate={() => {}}
-                        onSave={() => {}}
-                    />,
-                    {},
-                    { currentUser: { ...SomeUser }, useCache: true }
-                );
-                expect(
-                    screen.getByRole('checkbox', { name: /veröffentlichen/i })
-                ).toBeDisabled();
-            });
-
             it('should show for admin users', () => {
                 const screen = render(
                     <EditArticleSidebar
@@ -328,6 +313,53 @@ describe('component/layouts/editArticleLayout/EditArticleSidebar', () => {
                 expect(
                     screen.getByRole('checkbox', { name: /veröffentlichen/i })
                 ).not.toBeDisabled();
+            });
+
+            it('should not show for non-admin users', () => {
+                const screen = render(
+                    <EditArticleSidebar
+                        article={{ ...Weihnachtsmarkt }}
+                        onUpdate={() => {}}
+                        onSave={() => {}}
+                    />,
+                    {},
+                    { currentUser: { ...SomeUser }, useCache: true }
+                );
+                expect(
+                    screen.queryByRole('checkbox', { name: /veröffentlichen/i })
+                ).toBeNull();
+            });
+
+            describe('for non-admin users', () => {
+                it('should show a green bubble with information "article is published"', () => {
+                    const screen = render(
+                        <EditArticleSidebar
+                            article={{ ...Weihnachtsmarkt, published: true }}
+                            onUpdate={() => {}}
+                            onSave={() => {}}
+                        />,
+                        {},
+                        { currentUser: { ...SomeUser }, useCache: true }
+                    );
+                    expect(
+                        screen.getByText(/beitrag ist veröffentlicht/i)
+                    ).toBeVisible();
+                });
+
+                it('should show a red bubble with information "article is not published"', () => {
+                    const screen = render(
+                        <EditArticleSidebar
+                            article={{ ...Weihnachtsmarkt, published: false }}
+                            onUpdate={() => {}}
+                            onSave={() => {}}
+                        />,
+                        {},
+                        { currentUser: { ...SomeUser }, useCache: true }
+                    );
+                    expect(
+                        screen.getByText(/beitrag ist nicht veröffentlicht/i)
+                    ).toBeVisible();
+                });
             });
         });
     });

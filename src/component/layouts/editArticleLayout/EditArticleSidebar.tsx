@@ -30,6 +30,7 @@ import { GroupSelect } from '../../edit/GroupSelect';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import {
     ArrowDropDown as ArrowDropDownIcon,
+    FiberManualRecord,
     Warning,
 } from '@material-ui/icons';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
@@ -71,6 +72,12 @@ const useStyles = makeStyles((theme) => ({
     },
     searchUserField: {
         border: `1px solid ${theme.palette.divider}`,
+    },
+    isPublishedInformation: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: theme.spacing(1),
     },
     popper: {
         zIndex: 1,
@@ -308,23 +315,48 @@ export const EditArticleSidebar = React.memo<EditArticleSidebarProps>(
                             Nur von Administratoren veröffentlichte Beiträge
                             werden auf der Seite angezeigt.
                         </FormLabel>
-                        <FormControlLabel
-                            value={1}
-                            disabled={!User.isAdmin(currentUser)}
-                            control={<Switch color={'secondary'} />}
-                            checked={isPublished}
-                            onChange={(_, checked) => setIsPublished(checked)}
-                            label={
-                                article.published
-                                    ? isPublished
-                                        ? 'Beitrag ist veröffentlicht.'
-                                        : 'Veröffentlichung wird zurückgenommen.'
-                                    : isPublished
-                                    ? 'Beitrag wird veröffentlicht.'
-                                    : 'Beitrag veröffentlichen'
-                            }
-                            labelPlacement={'end'}
-                        />
+                        {User.isAdmin(currentUser) && (
+                            <FormControlLabel
+                                value={1}
+                                disabled={!User.isAdmin(currentUser)}
+                                control={<Switch color={'secondary'} />}
+                                checked={isPublished}
+                                onChange={(_, checked) =>
+                                    setIsPublished(checked)
+                                }
+                                label={
+                                    article.published
+                                        ? isPublished
+                                            ? 'Beitrag ist veröffentlicht.'
+                                            : 'Veröffentlichung wird zurückgenommen.'
+                                        : isPublished
+                                        ? 'Beitrag wird veröffentlicht.'
+                                        : 'Beitrag veröffentlichen'
+                                }
+                                labelPlacement={'end'}
+                            />
+                        )}
+                        {!User.isAdmin(currentUser) && (
+                            <div className={styles.isPublishedInformation}>
+                                <FiberManualRecord
+                                    fontSize={'inherit'}
+                                    htmlColor={
+                                        article.published ? 'green' : 'red'
+                                    }
+                                />
+                                <Typography
+                                    variant={'body1'}
+                                    component={'span'}
+                                >
+                                    {article.published && (
+                                        <>Beitrag ist veröffentlicht</>
+                                    )}
+                                    {!article.published && (
+                                        <>Beitrag ist nicht veröffentlicht</>
+                                    )}
+                                </Typography>
+                            </div>
+                        )}
                     </FormControl>
                 </CardContent>
                 <CardContent>
