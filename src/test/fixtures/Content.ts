@@ -93,6 +93,7 @@ export const ComputerExperten = {
         'Hallo, wir sind die Computerexperten. Experten deshalb, weil wir wirklich experten sind und nicht nur so tun. Wir lieben FOSS.',
     topic: '',
     category: null,
+    published: true,
 };
 
 export const VivaLaRevolucion = {

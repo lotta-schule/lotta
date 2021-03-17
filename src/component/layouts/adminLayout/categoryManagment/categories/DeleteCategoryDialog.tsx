@@ -1,11 +1,11 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import {
-    CircularProgress,
+    Button,
     DialogTitle,
     DialogContent,
     DialogContentText,
-    Button,
     DialogActions,
+    LinearProgress,
 } from '@material-ui/core';
 import { ArticleModel, CategoryModel, ID } from 'model';
 import { useQuery, useMutation } from '@apollo/client';
@@ -26,7 +26,7 @@ export interface DeleteCategoryDialogProps {
     onConfirm(): void;
 }
 
-export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(
+export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
     ({ isOpen, categoryToDelete, onClose, onConfirm }) => {
         const [categories] = useCategories();
         const { data: articlesData, loading: isLoadingArticles } = useQuery<
@@ -54,9 +54,15 @@ export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(
                     cache.writeQuery<{ categories: CategoryModel[] }>({
                         query: GetCategoriesQuery,
                         data: {
-                            categories: [...categories].filter(
-                                (c) => c.id !== data.category.id
-                            ),
+                            categories: [...categories]
+                                .filter((c) => c.id !== data.category.id)
+                                .map((c) => ({
+                                    ...c,
+                                    category:
+                                        c.category?.id === data.category.id
+                                            ? null
+                                            : c.category,
+                                })),
                         },
                     });
                 }
@@ -72,6 +78,7 @@ export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(
                 onClose={onClose}
                 aria-labelledby="delete-category-dialog"
             >
+                {isLoading && <LinearProgress />}
                 <DialogTitle id="delete-category-dialog-title">
                     Kategorie löschen
                 </DialogTitle>
@@ -83,12 +90,13 @@ export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(
                     </DialogContentText>
                     <DialogContentText>
                         Alle Beiträge, die dieser Kategorie zugeordnet sind,
-                        sind dann ohne Kategorie und damit nicht mehr sichtbar.
+                        sind dann ohne Kategorie und nur über direkten Link
+                        erreichbar.
                         <br />
                         <em>
-                            Beiträge:{' '}
+                            Beiträge:&nbsp;
                             {isLoadingArticles ? (
-                                <CircularProgress />
+                                <LinearProgress />
                             ) : (
                                 articlesData && articlesData.articles.length
                             )}
@@ -100,7 +108,7 @@ export const DeleteCategoryDialog = memo<DeleteCategoryDialogProps>(
                             waren, werden zu Hauptkategorien.
                             <br />
                             <em>
-                                Unterkategorien:{' '}
+                                Unterkategorien:&nbsp;
                                 {
                                     categories.filter(
                                         (cat) =>
