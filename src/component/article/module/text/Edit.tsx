@@ -1,8 +1,14 @@
 import React, { memo, useState, useMemo, useEffect } from 'react';
-import { ContentModuleModel, } from '../../../../model';
+import { ContentModuleModel } from '../../../../model';
 import { Slate, withReact, Editable } from 'slate-react';
 import { Node, createEditor } from 'slate';
-import { renderElement, renderLeaf, withImages, withLinks, getNormalizedSlateState } from './SlateUtils';
+import {
+    renderElement,
+    renderLeaf,
+    withImages,
+    withLinks,
+    getNormalizedSlateState,
+} from './SlateUtils';
 import { EditToolbar } from './EditToolbar';
 
 interface EditProps {
@@ -11,11 +17,15 @@ interface EditProps {
 }
 
 export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
-
-    const [editorState, setEditorState] = useState<Node[]>(getNormalizedSlateState(contentModule.content?.nodes ?? []));
+    const [editorState, setEditorState] = useState<Node[]>(
+        getNormalizedSlateState(contentModule.content?.nodes ?? [])
+    );
     const [isSaveRequested, setIsSaveRequested] = useState(false);
 
-    const editor = useMemo(() => withImages(withLinks(withReact(createEditor()))), []);
+    const editor = useMemo(
+        () => withImages(withLinks(withReact(createEditor()))),
+        []
+    );
 
     useEffect(() => {
         if (isSaveRequested) {
@@ -28,12 +38,16 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
     const saveStateToContentModule = () => {
         onUpdateModule({
             ...contentModule,
-            content: { nodes: editorState }
+            content: { nodes: editorState },
         });
     };
 
     return (
-        <Slate editor={editor} value={editorState} onChange={value => setEditorState(value)}>
+        <Slate
+            editor={editor}
+            value={editorState}
+            onChange={(value) => setEditorState(value)}
+        >
             <EditToolbar onRequestSave={() => setIsSaveRequested(true)} />
             <Editable
                 renderElement={renderElement}

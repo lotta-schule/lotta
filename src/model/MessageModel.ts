@@ -4,7 +4,7 @@ import { ID } from './ID';
 
 export enum ChatType {
     DirectMessage = 'DM',
-    GroupChat = 'GC'
+    GroupChat = 'GC',
 }
 
 interface MessageToUser {
@@ -29,9 +29,10 @@ interface MessageWithoutDestination {
     senderUser: UserModel;
 }
 
-export type MessageModel = MessageWithoutDestination & MessageToEitherUserOrGroup;
+export type MessageModel = MessageWithoutDestination &
+    MessageToEitherUserOrGroup;
 
 export interface ThreadRepresentation {
     messageType: ChatType;
-    counterpart: UserModel | UserGroupModel;
+    counterpart: UserModel | UserGroupModel;
 }

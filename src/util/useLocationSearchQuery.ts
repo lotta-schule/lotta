@@ -1,6 +1,8 @@
 import useRouter from 'use-react-router';
 
-export const useLocationSearchQuery = <T extends { [key: string]: string | true } = any>() => {
+export const useLocationSearchQuery = <
+    T extends { [key: string]: string | true } = any
+>() => {
     const { location } = useRouter();
     return location.search
         .replace(/^\?/, '')
@@ -9,7 +11,7 @@ export const useLocationSearchQuery = <T extends { [key: string]: string | true 
             const [key, val] = keyValuePair.split('=');
             return {
                 ...prev,
-                [key]: val ? decodeURIComponent(val) : true
+                [key]: val ? decodeURIComponent(val) : true,
             };
         }, {}) as Partial<T>;
 };

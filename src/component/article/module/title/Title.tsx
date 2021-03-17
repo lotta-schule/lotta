@@ -10,7 +10,7 @@ export interface TitleProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         paddingTop: 30,
         paddingBottom: 0,
@@ -18,19 +18,27 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.down('sm')]: {
             margin: 0,
         },
-    }
+    },
 }));
 
-export const Title = memo<TitleProps>(({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-    const styles = useStyles();
-    return (
-        <CardContent className={styles.root} data-testid="TitleContentModule">
-            {isEditModeEnabled && onUpdateModule && (
-                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
-            )}
-            {(!isEditModeEnabled || !onUpdateModule) && (
-                <Show contentModule={contentModule} />
-            )}
-        </CardContent>
-    );
-});
+export const Title = memo<TitleProps>(
+    ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
+        const styles = useStyles();
+        return (
+            <CardContent
+                className={styles.root}
+                data-testid="TitleContentModule"
+            >
+                {isEditModeEnabled && onUpdateModule && (
+                    <Edit
+                        contentModule={contentModule}
+                        onUpdateModule={onUpdateModule}
+                    />
+                )}
+                {(!isEditModeEnabled || !onUpdateModule) && (
+                    <Show contentModule={contentModule} />
+                )}
+            </CardContent>
+        );
+    }
+);

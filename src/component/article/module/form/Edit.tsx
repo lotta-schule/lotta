@@ -1,6 +1,16 @@
 import React, { memo } from 'react';
 import { Add, DragHandle, Delete } from '@material-ui/icons';
-import { IconButton, Button, Grid, TextField, makeStyles, Checkbox, FormGroup, FormControlLabel, Divider } from '@material-ui/core';
+import {
+    IconButton,
+    Button,
+    Grid,
+    TextField,
+    makeStyles,
+    Checkbox,
+    FormGroup,
+    FormControlLabel,
+    Divider,
+} from '@material-ui/core';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
@@ -12,104 +22,170 @@ export interface EditProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles((theme) => ({
     downloadItemWrapper: {
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
     },
     downloadWrapperHeader: {
         display: 'flex',
         alignItems: 'flex-start',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     inputWrapper: {
         '& > div': {
-            padding: theme.spacing(1)
-        }
+            padding: theme.spacing(1),
+        },
     },
     inputSettings: {
         borderLeftColor: theme.palette.grey[200],
         borderLeftWidth: theme.spacing(1),
         borderLeftStyle: 'solid',
-        borderRadius: theme.spacing(1)
-    }
+        borderRadius: theme.spacing(1),
+    },
 }));
 
 export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
     const styles = useStyles();
 
-    const configuration: FormConfiguration = { destination: '', elements: [], ...contentModule.configuration };
+    const configuration: FormConfiguration = {
+        destination: '',
+        elements: [],
+        ...contentModule.configuration,
+    };
     const updateConfiguration = (partialConfig: Partial<FormConfiguration>) =>
-        onUpdateModule({ ...contentModule, configuration: { ...configuration, ...partialConfig } });
+        onUpdateModule({
+            ...contentModule,
+            configuration: { ...configuration, ...partialConfig },
+        });
 
     return (
         <>
-            <DragDropContext onDragEnd={({ destination, source }) => {
-                if (!destination) {
-                    return;
-                }
+            <DragDropContext
+                onDragEnd={({ destination, source }) => {
+                    if (!destination) {
+                        return;
+                    }
 
-                if (
-                    destination.droppableId === source.droppableId &&
-                    destination.index === source.index
-                ) {
-                    return;
-                }
+                    if (
+                        destination.droppableId === source.droppableId &&
+                        destination.index === source.index
+                    ) {
+                        return;
+                    }
 
-                const elements = [...configuration.elements];
-                const sourceElement = elements[source.index];
-                elements.splice(source.index, 1);
-                elements.splice(destination.index, 0, sourceElement);
-                updateConfiguration({ elements });
-            }}>
+                    const elements = [...configuration.elements];
+                    const sourceElement = elements[source.index];
+                    elements.splice(source.index, 1);
+                    elements.splice(destination.index, 0, sourceElement);
+                    updateConfiguration({ elements });
+                }}
+            >
                 <Droppable droppableId={`form-${contentModule.id}`}>
-                    {provided => (
-                        <section {...provided.droppableProps} ref={provided.innerRef}>
-                            {configuration.elements.map((element: any, index) => (
-                                <Draggable key={index} draggableId={String(index)} index={index}>{draggableProvided => (
-                                    <div
-                                        className={styles.downloadItemWrapper}
-                                        ref={draggableProvided.innerRef}
-                                        {...draggableProvided.draggableProps}
+                    {(provided) => (
+                        <section
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                        >
+                            {configuration.elements.map(
+                                (element: any, index) => (
+                                    <Draggable
+                                        key={index}
+                                        draggableId={String(index)}
+                                        index={index}
                                     >
-                                        <div className={styles.downloadWrapperHeader}>
-                                            <span {...draggableProvided.dragHandleProps}>
-                                                <DragHandle />
-                                            </span>
-                                            <IconButton onClick={() =>
-                                                updateConfiguration({ elements: configuration.elements.filter((_el, i) => i !== index) })
-                                            }>
-                                                <Delete />
-                                            </IconButton>
-                                        </div>
-                                        <Grid container className={styles.inputWrapper}>
-                                            <Grid item xs={5}>
-                                                <FormElement
-                                                    element={element}
-                                                    isEditModeEnabled
-                                                    value={''}
-                                                    onSetValue={() => { }}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={7} className={styles.inputSettings}>
-                                                <FormElementConfiguration
-                                                    element={element}
-                                                    updateElement={updatedElementOptions => updateConfiguration({
-                                                        elements: configuration.elements.map((el, i) => {
-                                                            if (i === index) {
-                                                                return {
-                                                                    ...element,
-                                                                    ...updatedElementOptions
-                                                                };
+                                        {(draggableProvided) => (
+                                            <div
+                                                className={
+                                                    styles.downloadItemWrapper
+                                                }
+                                                ref={draggableProvided.innerRef}
+                                                {...draggableProvided.draggableProps}
+                                            >
+                                                <div
+                                                    className={
+                                                        styles.downloadWrapperHeader
+                                                    }
+                                                >
+                                                    <span
+                                                        {...draggableProvided.dragHandleProps}
+                                                    >
+                                                        <DragHandle />
+                                                    </span>
+                                                    <IconButton
+                                                        onClick={() =>
+                                                            updateConfiguration(
+                                                                {
+                                                                    elements: configuration.elements.filter(
+                                                                        (
+                                                                            _el,
+                                                                            i
+                                                                        ) =>
+                                                                            i !==
+                                                                            index
+                                                                    ),
+                                                                }
+                                                            )
+                                                        }
+                                                    >
+                                                        <Delete />
+                                                    </IconButton>
+                                                </div>
+                                                <Grid
+                                                    container
+                                                    className={
+                                                        styles.inputWrapper
+                                                    }
+                                                >
+                                                    <Grid item xs={5}>
+                                                        <FormElement
+                                                            element={element}
+                                                            isEditModeEnabled
+                                                            value={''}
+                                                            onSetValue={() => {}}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={7}
+                                                        className={
+                                                            styles.inputSettings
+                                                        }
+                                                    >
+                                                        <FormElementConfiguration
+                                                            element={element}
+                                                            updateElement={(
+                                                                updatedElementOptions
+                                                            ) =>
+                                                                updateConfiguration(
+                                                                    {
+                                                                        elements: configuration.elements.map(
+                                                                            (
+                                                                                el,
+                                                                                i
+                                                                            ) => {
+                                                                                if (
+                                                                                    i ===
+                                                                                    index
+                                                                                ) {
+                                                                                    return {
+                                                                                        ...element,
+                                                                                        ...updatedElementOptions,
+                                                                                    };
+                                                                                }
+                                                                                return el;
+                                                                            }
+                                                                        ),
+                                                                    }
+                                                                )
                                                             }
-                                                            return el;
-                                                        })
-                                                    })}
-                                                />
-                                            </Grid>
-                                        </Grid>
-                                    </div>
-                                )}</Draggable>
-                            ))}
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                )
+                            )}
                             {provided.placeholder}
                         </section>
                     )}
@@ -117,17 +193,25 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
             </DragDropContext>
             <Grid container className={styles.inputWrapper}>
                 <Grid item xs={5}>
-                    <Button color={'primary'} type={'submit'} disabled>Senden</Button>
+                    <Button color={'primary'} type={'submit'} disabled>
+                        Senden
+                    </Button>
                 </Grid>
                 <Grid item xs={7}>
                     <FormGroup>
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={configuration.destination !== undefined}
-                                    onChange={(_e, checked) => updateConfiguration({
-                                        destination: checked ? '' : undefined
-                                    })}
+                                    checked={
+                                        configuration.destination !== undefined
+                                    }
+                                    onChange={(_e, checked) =>
+                                        updateConfiguration({
+                                            destination: checked
+                                                ? ''
+                                                : undefined,
+                                        })
+                                    }
                                 />
                             }
                             label={'Formulardaten per Email versenden'}
@@ -138,28 +222,41 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                             label={'Formular an folgende Email senden:'}
                             value={configuration.destination ?? ''}
                             disabled={configuration.destination === undefined}
-                            onChange={e => updateConfiguration({ destination: e.target.value })}
+                            onChange={(e) =>
+                                updateConfiguration({
+                                    destination: e.target.value,
+                                })
+                            }
                         />
                         <Divider />
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={configuration.save_internally === true}
-                                    onChange={(_e, checked) => updateConfiguration({
-                                        save_internally: checked
-                                    })}
+                                    checked={
+                                        configuration.save_internally === true
+                                    }
+                                    onChange={(_e, checked) =>
+                                        updateConfiguration({
+                                            save_internally: checked,
+                                        })
+                                    }
                                 />
                             }
-                            label={(
+                            label={
                                 <div>
-                                    <span style={{ display: 'block' }}>Formulardaten speichern</span>
-                                    {!!configuration.elements.find(el => el.element === 'file') && (
+                                    <span style={{ display: 'block' }}>
+                                        Formulardaten speichern
+                                    </span>
+                                    {!!configuration.elements.find(
+                                        (el) => el.element === 'file'
+                                    ) && (
                                         <small>
-                                            Datei-Anhänge werden nur per Email versandt und nicht gespeichert.
+                                            Datei-Anhänge werden nur per Email
+                                            versandt und nicht gespeichert.
                                         </small>
                                     )}
                                 </div>
-                            )}
+                            }
                         />
                     </FormGroup>
                 </Grid>
@@ -167,9 +264,20 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
             <Button
                 style={{ float: 'right' }}
                 startIcon={<Add />}
-                onClick={() => updateConfiguration({
-                    elements: [...configuration.elements, { name: `feld${configuration.elements.length + 1}`, element: 'input', type: 'text' }]
-                })}
+                onClick={() =>
+                    updateConfiguration({
+                        elements: [
+                            ...configuration.elements,
+                            {
+                                name: `feld${
+                                    configuration.elements.length + 1
+                                }`,
+                                element: 'input',
+                                type: 'text',
+                            },
+                        ],
+                    })
+                }
             >
                 Feld hinzufügen
             </Button>

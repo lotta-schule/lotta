@@ -7,7 +7,7 @@ export interface HeaderProps {
     children?: any;
 }
 
-const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
+const useStyles = makeStyles<Theme, HeaderProps>((theme) => ({
     root: {
         borderRadius: 0,
         boxShadow: 'none',
@@ -18,30 +18,33 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
             padding: theme.spacing(1),
             fontSize: '1.5rem',
             letterSpacing: 5,
-            textTransform: 'uppercase'
-        }
+            textTransform: 'uppercase',
+        },
     },
     subheader: {
         minHeight: 120,
-        backgroundImage: ({ bannerImageUrl }) => bannerImageUrl ?  `url(${bannerImageUrl})` : 'none',
+        backgroundImage: ({ bannerImageUrl }) =>
+            bannerImageUrl ? `url(${bannerImageUrl})` : 'none',
         backgroundSize: 'cover',
         width: '100%',
         [theme.breakpoints.down('sm')]: {
-            maxWidth: 'initial'
+            maxWidth: 'initial',
         },
         flexShrink: 1,
         flexGrow: 1,
         position: 'relative',
         '&::after': {
             position: 'absolute',
-            display: ({ bannerImageUrl }) => bannerImageUrl ? 'block' : 'none',
+            display: ({ bannerImageUrl }) =>
+                bannerImageUrl ? 'block' : 'none',
             content: `''`,
             left: 0,
             top: 0,
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(to right, #ffffff00 75%, #ffffffff 98%)'
-        }
+            background:
+                'linear-gradient(to right, #ffffff00 75%, #ffffffff 98%)',
+        },
     },
     bannerheading: {
         textTransform: 'uppercase',
@@ -54,9 +57,9 @@ const useStyles = makeStyles<Theme, HeaderProps>(theme => ({
     userNavigationGridItem: {
         paddingLeft: theme.spacing(1),
         [theme.breakpoints.down('sm')]: {
-            display: 'none'
-        }
-    }
+            display: 'none',
+        },
+    },
 }));
 
 export const Header = memo<HeaderProps>(({ children, bannerImageUrl }) => {
@@ -64,10 +67,21 @@ export const Header = memo<HeaderProps>(({ children, bannerImageUrl }) => {
 
     return (
         <Grid container className={styles.root} data-testid="Header">
-            <Grid item xs={12} sm={8} className={styles.subheader} data-testid="HeaderContent">
+            <Grid
+                item
+                xs={12}
+                sm={8}
+                className={styles.subheader}
+                data-testid="HeaderContent"
+            >
                 {children}
             </Grid>
-            <Grid item xs={false} sm={4} className={styles.userNavigationGridItem}>
+            <Grid
+                item
+                xs={false}
+                sm={4}
+                className={styles.userNavigationGridItem}
+            >
                 <UserNavigation />
             </Grid>
         </Grid>

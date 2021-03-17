@@ -1,6 +1,14 @@
 import React, { memo, useState } from 'react';
 import {
-    Paper, Typography, makeStyles, Theme, Button, Grid, CircularProgress, Menu, MenuItem
+    Paper,
+    Typography,
+    makeStyles,
+    Theme,
+    Button,
+    Grid,
+    CircularProgress,
+    Menu,
+    MenuItem,
 } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { WidgetModel, WidgetModelType } from 'model';
@@ -26,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     addButton: {
         float: 'right',
-        marginTop: theme.spacing(1)
+        marginTop: theme.spacing(1),
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -35,102 +43,136 @@ const useStyles = makeStyles((theme: Theme) => ({
         fontSize: 20,
     },
     navigationWrapper: {
-        paddingRight: theme.spacing(4)
-    }
+        paddingRight: theme.spacing(4),
+    },
 }));
 
 export const WidgetsManagement = memo(() => {
     const styles = useStyles();
 
-    const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null);
+    const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(
+        null
+    );
 
-    const { data, loading: isLoading, error } = useQuery<{ widgets: WidgetModel[] }>(GetWidgetsQuery);
-    const [createWidget, { loading: isLoadingCreateWidget, error: errorCreateWidget }] = useMutation<{ widget: WidgetModel }, { title: string; type: WidgetModelType }>(CreateWidgetMutation, {
+    const { data, loading: isLoading, error } = useQuery<{
+        widgets: WidgetModel[];
+    }>(GetWidgetsQuery);
+    const [
+        createWidget,
+        { loading: isLoadingCreateWidget, error: errorCreateWidget },
+    ] = useMutation<
+        { widget: WidgetModel },
+        { title: string; type: WidgetModelType }
+    >(CreateWidgetMutation, {
         onCompleted: ({ widget }) => {
             setSelectedWidget(widget);
-        }
+        },
     });
 
     const onClickCreateWidget = (title: string, type: WidgetModelType) => {
         createWidget({
             variables: {
                 title,
-                type
+                type,
             },
             update: (cache, { data }) => {
-                const { widgets } = cache.readQuery<{ widgets: WidgetModel[] }>({ query: GetWidgetsQuery }) || { widgets: [] };
+                const { widgets } = cache.readQuery<{ widgets: WidgetModel[] }>(
+                    { query: GetWidgetsQuery }
+                ) || { widgets: [] };
                 cache.writeQuery({
                     query: GetWidgetsQuery,
-                    data: { widgets: widgets.concat([data!.widget]) }
+                    data: { widgets: widgets.concat([data!.widget]) },
                 });
             },
-        })
+        });
     };
 
     if (isLoading) {
-        return (
-            <CircularProgress />
-        );
+        return <CircularProgress />;
     }
 
     if (error) {
-        return (
-            <ErrorMessage error={error} />
-        );
+        return <ErrorMessage error={error} />;
     }
 
     return (
         <Paper className={styles.root}>
             <Typography variant={'h4'} className={styles.headline}>
                 Marginalen
-
-                <PopupState variant={'popover'} popupId={'addWidgetButtonPopup'}>{popupState => (
-                    <>
-                        <Button
-                            size={'small'}
-                            variant={'contained'}
-                            color={'secondary'}
-                            className={styles.addButton}
-                            disabled={isLoadingCreateWidget}
-                            {...bindTrigger(popupState)}
-                        >
-                            <AddCircleIcon className={clsx(styles.leftIcon, styles.iconSmall)} />
-                            Widget erstellen
-                        </Button>
-                        <Menu {...bindMenu(popupState)}>
-                            <MenuItem
-                                onClick={() => {
-                                    onClickCreateWidget('Kalender', WidgetModelType.Calendar);
-                                    popupState.close();
-                                }}
+                <PopupState
+                    variant={'popover'}
+                    popupId={'addWidgetButtonPopup'}
+                >
+                    {(popupState) => (
+                        <>
+                            <Button
+                                size={'small'}
+                                variant={'contained'}
+                                color={'secondary'}
+                                className={styles.addButton}
+                                disabled={isLoadingCreateWidget}
+                                {...bindTrigger(popupState)}
                             >
-                                {Widget.getIconForType(WidgetModelType.Calendar)} &nbsp;
-                                Kalender-Widget erstellen
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => {
-                                    onClickCreateWidget('VPlan', WidgetModelType.Schedule);
-                                    popupState.close();
-                                }}
-                            >
-                                {Widget.getIconForType(WidgetModelType.Schedule)} &nbsp;
-                                VPlan-Widget erstellen
-                            </MenuItem>
-                        </Menu>
-                    </>
-                )}</PopupState>
+                                <AddCircleIcon
+                                    className={clsx(
+                                        styles.leftIcon,
+                                        styles.iconSmall
+                                    )}
+                                />
+                                Widget erstellen
+                            </Button>
+                            <Menu {...bindMenu(popupState)}>
+                                <MenuItem
+                                    onClick={() => {
+                                        onClickCreateWidget(
+                                            'Kalender',
+                                            WidgetModelType.Calendar
+                                        );
+                                        popupState.close();
+                                    }}
+                                >
+                                    {Widget.getIconForType(
+                                        WidgetModelType.Calendar
+                                    )}{' '}
+                                    &nbsp; Kalender-Widget erstellen
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        onClickCreateWidget(
+                                            'VPlan',
+                                            WidgetModelType.Schedule
+                                        );
+                                        popupState.close();
+                                    }}
+                                >
+                                    {Widget.getIconForType(
+                                        WidgetModelType.Schedule
+                                    )}{' '}
+                                    &nbsp; VPlan-Widget erstellen
+                                </MenuItem>
+                            </Menu>
+                        </>
+                    )}
+                </PopupState>
             </Typography>
             <ErrorMessage error={errorCreateWidget} />
             <Grid container>
-                <Grid item xs={12} sm={5} className={styles.navigationWrapper} >
-                    <WidgetNavigation widgets={data!.widgets} selectedWidget={selectedWidget} onSelectWidget={setSelectedWidget} />
+                <Grid item xs={12} sm={5} className={styles.navigationWrapper}>
+                    <WidgetNavigation
+                        widgets={data!.widgets}
+                        selectedWidget={selectedWidget}
+                        onSelectWidget={setSelectedWidget}
+                    />
                 </Grid>
                 <Grid item xs={12} sm={7}>
                     {selectedWidget && (
-                        <WidgetEditor selectedWidget={selectedWidget} onSelectWidget={setSelectedWidget} />
+                        <WidgetEditor
+                            selectedWidget={selectedWidget}
+                            onSelectWidget={setSelectedWidget}
+                        />
                     )}
                 </Grid>
             </Grid>
-        </Paper >
+        </Paper>
     );
 });

@@ -3,7 +3,6 @@ export * from './ArticleModel';
 export * from './CategoryModel';
 export * from './ClientModel';
 export * from './ContentModuleModel';
-export * from './CustomDomainModel';
 export * from './EditModePayload';
 export * from './FileModel';
 export * from './GroupEnrollmentTokenModel';

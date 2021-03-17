@@ -6,7 +6,13 @@ import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 export const EmptyLoadingLayout: FunctionComponent = memo(() => {
     return (
         <>
-            <BaseLayoutMainContent style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BaseLayoutMainContent
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
                 <CircularProgress />
             </BaseLayoutMainContent>
             <BaseLayoutSidebar />

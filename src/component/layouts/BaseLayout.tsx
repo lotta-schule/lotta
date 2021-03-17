@@ -1,5 +1,11 @@
 import React, { memo } from 'react';
-import { Grid, Container, Theme, Typography, makeStyles } from '@material-ui/core';
+import {
+    Grid,
+    Container,
+    Theme,
+    Typography,
+    makeStyles,
+} from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { useIsMobile } from 'util/useIsMobile';
 import { useIsRetina } from 'util/useIsRetina';
@@ -7,18 +13,20 @@ import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
 import { useSystem } from 'util/client/useSystem';
 import { ClientModel } from 'model';
 
-const useStyles = makeStyles<Theme, { system: ClientModel }>(theme => ({
+const useStyles = makeStyles<Theme, { system: ClientModel }>((theme) => ({
     '@global': {
         '*': {
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
         },
         body: {
             '&:after': {
                 // taken from https://stackoverflow.com/questions/24154666/background-size-cover-not-working-on-ios/31445503#31445503
                 content: "''",
-                position: 'fixed', /* stretch a fixed position to the whole screen */
+                position:
+                    'fixed' /* stretch a fixed position to the whole screen */,
                 top: 0,
-                height: '100vh', /* fix for mobile browser address bar appearing disappearing */
+                height:
+                    '100vh' /* fix for mobile browser address bar appearing disappearing */,
                 left: 0,
                 right: 0,
                 zIndex: -1,
@@ -26,10 +34,13 @@ const useStyles = makeStyles<Theme, { system: ClientModel }>(theme => ({
                 backgroundAttachment: 'scroll',
                 backgroundSize: 'cover',
                 [theme.breakpoints.up('md')]: {
-                    backgroundImage: ({ system }) => system.backgroundImageFile ? `url(${system.backgroundImageFile.remoteLocation})` : undefined,
-                }
+                    backgroundImage: ({ system }) =>
+                        system.backgroundImageFile
+                            ? `url(${system.backgroundImageFile.remoteLocation})`
+                            : undefined,
+                },
             },
-        }
+        },
     },
     header: {
         minWidth: '100%',
@@ -40,7 +51,7 @@ const useStyles = makeStyles<Theme, { system: ClientModel }>(theme => ({
     main: {
         marginTop: '.5em',
         maxWidth: '100%',
-        paddingBottom: '1em'
+        paddingBottom: '1em',
     },
     logoGridItem: {
         display: 'flex',
@@ -48,7 +59,7 @@ const useStyles = makeStyles<Theme, { system: ClientModel }>(theme => ({
         justifyContent: 'flex-start',
         paddingLeft: theme.spacing(2),
         [theme.breakpoints.down('sm')]: {
-            display: 'none'
+            display: 'none',
         },
     },
     titleGridItem: {
@@ -57,13 +68,12 @@ const useStyles = makeStyles<Theme, { system: ClientModel }>(theme => ({
         justifyContent: 'flex-end',
         paddingRight: theme.spacing(2),
         paddingLeft: theme.spacing(2),
-        margin: 'auto 0'
+        margin: 'auto 0',
     },
     logo: {
         maxHeight: 80,
-    }
+    },
 }));
-
 
 export const BaseLayout = memo(({ children }) => {
     usePiwikAnalytics();
@@ -78,20 +88,33 @@ export const BaseLayout = memo(({ children }) => {
                     <Grid item md={3} className={styles.logoGridItem}>
                         {system.logoImageFile && (
                             <img
-                                src={`https://afdptjdxen.cloudimg.io/height/${80 * retinaMultiplier}/foil1/${system.logoImageFile.remoteLocation}`}
+                                src={`https://afdptjdxen.cloudimg.io/height/${
+                                    80 * retinaMultiplier
+                                }/foil1/${system.logoImageFile.remoteLocation}`}
                                 alt={`Logo ${system.title}`}
                                 className={styles.logo}
                             />
                         )}
                     </Grid>
                     <Grid item md={9} className={styles.titleGridItem}>
-                        <Typography variant="h5" style={{ marginBottom: 0, }} gutterBottom>{system.title}</Typography>
+                        <Typography
+                            variant="h5"
+                            style={{ marginBottom: 0 }}
+                            gutterBottom
+                        >
+                            {system.title}
+                        </Typography>
                     </Grid>
                 </Grid>
             </header>
             <Navbar />
             <main className={styles.main}>
-                <Grid container justify={'flex-start'} direction={isMobile ? 'column-reverse' : 'row'} wrap={'nowrap'}>
+                <Grid
+                    container
+                    justify={'flex-start'}
+                    direction={isMobile ? 'column-reverse' : 'row'}
+                    wrap={'nowrap'}
+                >
                     {children}
                 </Grid>
             </main>

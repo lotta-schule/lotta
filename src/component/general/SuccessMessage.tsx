@@ -7,9 +7,15 @@ export interface SuccessMessageProps {
     className?: string;
 }
 
-export const SuccessMessage = memo<SuccessMessageProps>(({ message, className }) => {
-    const theme = useTheme();
-    return (
-        <Message color={theme.palette.success.main} message={message} className={className} />
-    )
-});
+export const SuccessMessage = memo<SuccessMessageProps>(
+    ({ message, className }) => {
+        const theme = useTheme();
+        return (
+            <Message
+                color={theme.palette.success.main}
+                message={message}
+                className={className}
+            />
+        );
+    }
+);

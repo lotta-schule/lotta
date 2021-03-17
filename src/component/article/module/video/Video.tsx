@@ -10,14 +10,17 @@ export interface VideoProps {
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const Video: FunctionComponent<VideoProps> = memo(({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-    <CardContent style={{ padding: 0, }} data-testid="VideoContentModule">
-        {isEditModeEnabled && onUpdateModule ?
-            (
-                <Edit contentModule={contentModule} onUpdateModule={onUpdateModule} />
+export const Video: FunctionComponent<VideoProps> = memo(
+    ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
+        <CardContent style={{ padding: 0 }} data-testid="VideoContentModule">
+            {isEditModeEnabled && onUpdateModule ? (
+                <Edit
+                    contentModule={contentModule}
+                    onUpdateModule={onUpdateModule}
+                />
             ) : (
                 <Show contentModule={contentModule} />
-            )
-        }
-    </CardContent>
-));
+            )}
+        </CardContent>
+    )
+);

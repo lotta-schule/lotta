@@ -1,9 +1,21 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { IconButton, LinearProgress, makeStyles, Typography } from '@material-ui/core';
+import React, {
+    memo,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
+import {
+    IconButton,
+    LinearProgress,
+    makeStyles,
+    Typography,
+} from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ChatType, ThreadRepresentation } from 'model';
-import { ThreadMessages } from './MessagesThread';
+import { MessagesThread } from './MessagesThread';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
 import { ThreadPreview } from './ThreadPreview';
@@ -13,7 +25,7 @@ import { useIsMobile } from 'util/useIsMobile';
 import { useMessages } from './useMessages';
 import clsx from 'clsx';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
         flexDirection: 'row',
@@ -28,9 +40,9 @@ const useStyles = makeStyles(theme => ({
             display: 'none',
             '&.active': {
                 display: 'block',
-                marginRight: theme.spacing(1)
-            }
-        }
+                marginRight: theme.spacing(1),
+            },
+        },
     },
     messageView: {
         marginLeft: theme.spacing(2),
@@ -41,8 +53,8 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         [theme.breakpoints.down('sm')]: {
-            marginLeft: 0
-        }
+            marginLeft: 0,
+        },
     },
     noMessagesWrapper: {
         display: 'flex',
@@ -50,8 +62,8 @@ const useStyles = makeStyles(theme => ({
         flexShrink: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        color: theme.palette.text.disabled
-    }
+        color: theme.palette.text.disabled,
+    },
 }));
 
 export const MessagingView = memo(() => {
@@ -64,37 +76,69 @@ export const MessagingView = memo(() => {
 
     const { data, loading: isLoading, error } = useMessages();
 
-    const [selectedThread, setSelectedThread] = useState<ThreadRepresentation | null>(null);
-    const [newMessageThread, setNewMessageThread] = useState<ThreadRepresentation | null>(null);
+    const [
+        selectedThread,
+        setSelectedThread,
+    ] = useState<ThreadRepresentation | null>(null);
+    const [
+        newMessageThread,
+        setNewMessageThread,
+    ] = useState<ThreadRepresentation | null>(null);
 
     const [isSidebarActive, setIsSidebarActive] = useState(true);
 
     const threadRepresentations = useMemo(() => {
         return Array.from(data?.messages ?? [])
             .sort((msg1, msg2) => msg2.updatedAt.localeCompare(msg1.updatedAt))
-            .reduce((reps, message) => {
-                const representation: ThreadRepresentation & { date: Date } = {
-                    messageType: message.recipientUser ? ChatType.DirectMessage : ChatType.GroupChat,
-                    counterpart: message.recipientGroup ?
-                        message.recipientGroup :
-                        message.senderUser.id !== currentUser!.id ? message.senderUser : message.recipientUser,
-                    date: new Date(message.updatedAt)
-                };
-                if (!representation.counterpart || reps.find(({ messageType, counterpart }) => messageType === representation.messageType && counterpart?.id === representation.counterpart?.id)) {
-                    return reps;
-                } else {
-                    return [...reps, representation];
-                }
-            }, [...(newMessageThread ? [newMessageThread] : [])] as (ThreadRepresentation & { date: Date })[]);
+            .reduce(
+                (reps, message) => {
+                    const representation: ThreadRepresentation & {
+                        date: Date;
+                    } = {
+                        messageType: message.recipientUser
+                            ? ChatType.DirectMessage
+                            : ChatType.GroupChat,
+                        counterpart: message.recipientGroup
+                            ? message.recipientGroup
+                            : message.senderUser.id !== currentUser!.id
+                            ? message.senderUser
+                            : message.recipientUser,
+                        date: new Date(message.updatedAt),
+                    };
+                    if (
+                        !representation.counterpart ||
+                        reps.find(
+                            ({ messageType, counterpart }) =>
+                                messageType === representation.messageType &&
+                                counterpart?.id ===
+                                    representation.counterpart?.id
+                        )
+                    ) {
+                        return reps;
+                    } else {
+                        return [...reps, representation];
+                    }
+                },
+                [
+                    ...(newMessageThread ? [newMessageThread] : []),
+                ] as (ThreadRepresentation & { date: Date })[]
+            );
     }, [data, currentUser, newMessageThread]);
 
-    const getMessagesForThread = useCallback((thread: ThreadRepresentation) => {
-        return data?.messages.filter(msg =>
-            (thread.messageType === ChatType.DirectMessage) ?
-            msg.recipientUser?.id === thread.counterpart.id || ((msg.senderUser.id === thread.counterpart.id) && !msg.recipientGroup) :
-            msg.recipientGroup?.id === thread.counterpart.id
-        ) ?? [];
-    }, [data]);
+    const getMessagesForThread = useCallback(
+        (thread: ThreadRepresentation) => {
+            return (
+                data?.messages.filter((msg) =>
+                    thread.messageType === ChatType.DirectMessage
+                        ? msg.recipientUser?.id === thread.counterpart.id ||
+                          (msg.senderUser.id === thread.counterpart.id &&
+                              !msg.recipientGroup)
+                        : msg.recipientGroup?.id === thread.counterpart.id
+                ) ?? []
+            );
+        },
+        [data]
+    );
 
     useEffect(() => {
         if (!selectedThread && threadRepresentations.length) {
@@ -108,23 +152,27 @@ export const MessagingView = memo(() => {
         }
     }, [selectedThread, newMessageThread]);
 
-    useEffect(() => { if (selectedThread) { setIsSidebarActive(false); } }, [selectedThread]);
+    useEffect(() => {
+        if (selectedThread) {
+            setIsSidebarActive(false);
+        }
+    }, [selectedThread]);
 
     const mainView = useMemo(() => {
         if (!selectedThread) {
-            return (
-                null
-            );
+            return null;
         }
         const messages = getMessagesForThread(selectedThread);
-        const messagesView = messages?.length ?
-            <ThreadMessages messages={messages} /> : (
-                <div className={styles.noMessagesWrapper}>
-                    <Typography variant={'body2'}>
-                        Du hast noch keine Nachrichten mit {selectedThread.counterpart.name} ausgetauscht.
-                    </Typography>
-                </div>
-            );
+        const messagesView = messages?.length ? (
+            <MessagesThread messages={messages} />
+        ) : (
+            <div className={styles.noMessagesWrapper}>
+                <Typography variant={'body2'}>
+                    Du hast noch keine Nachrichten mit{' '}
+                    {selectedThread.counterpart.name} ausgetauscht.
+                </Typography>
+            </div>
+        );
         return (
             <>
                 {messagesView}
@@ -134,34 +182,34 @@ export const MessagingView = memo(() => {
     }, [getMessagesForThread, selectedThread, styles.noMessagesWrapper]);
 
     if (isLoading) {
-        return (
-            <LinearProgress />
-        );
+        return <LinearProgress />;
     }
 
     if (error) {
-        return (
-            <ErrorMessage error={error} />
-        );
+        return <ErrorMessage error={error} />;
     }
 
     return (
         <section ref={sectionElRef} className={styles.root}>
-            <aside className={clsx(styles.sideView, { active: isSidebarActive })}>
+            <aside
+                className={clsx(styles.sideView, { active: isSidebarActive })}
+            >
                 <MessageToolbar
                     onToggle={() => setIsSidebarActive(false)}
-                    onCreateMessageThread={newMsgThread => {
+                    onCreateMessageThread={(newMsgThread) => {
                         setNewMessageThread(newMsgThread);
                         setSelectedThread(newMsgThread);
                     }}
                 />
-                {threadRepresentations.map(thread => (
+                {threadRepresentations.map((thread) => (
                     <ThreadPreview
                         key={thread.messageType + thread.counterpart.id}
                         selected={Boolean(
                             selectedThread &&
-                            selectedThread.messageType === thread.messageType &&
-                            selectedThread.counterpart.id === thread.counterpart.id
+                                selectedThread.messageType ===
+                                    thread.messageType &&
+                                selectedThread.counterpart.id ===
+                                    thread.counterpart.id
                         )}
                         counterpart={thread.counterpart}
                         date={thread.date}
@@ -171,7 +219,10 @@ export const MessagingView = memo(() => {
             </aside>
             <div className={styles.messageView}>
                 {isMobile && (
-                    <IconButton style={{ width: 40 }} onClick={() => setIsSidebarActive(true)}>
+                    <IconButton
+                        style={{ width: 40 }}
+                        onClick={() => setIsSidebarActive(true)}
+                    >
                         <Forum />
                     </IconButton>
                 )}

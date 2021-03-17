@@ -4,14 +4,18 @@ import { SomeUser } from 'test/fixtures';
 import MessagingLayout from './MessagingLayout';
 
 describe('component/layouts/adminLayout/MessagingLayout', () => {
-
     it('should redirect user to homepage when not logged in', async () => {
         const onChangeLocation = jest.fn(({ location }) => {
             expect(location.pathname).toEqual('/');
         });
         render(
             <MessagingLayout />,
-            {}, { defaultPathEntries: ['/messaging'], onChangeLocation, useCache: true }
+            {},
+            {
+                defaultPathEntries: ['/messaging'],
+                onChangeLocation,
+                useCache: true,
+            }
         );
         await waitFor(() => {
             expect(onChangeLocation).toHaveBeenCalled();
@@ -22,15 +26,15 @@ describe('component/layouts/adminLayout/MessagingLayout', () => {
         const onChangeLocation = jest.fn();
         const screen = render(
             <MessagingLayout />,
-            {}, {
+            {},
+            {
                 currentUser: SomeUser,
                 defaultPathEntries: ['/messaging'],
                 useCache: true,
-                onChangeLocation
+                onChangeLocation,
             }
         );
         expect(onChangeLocation).not.toHaveBeenCalled();
         expect(screen.getByTestId('title')).toBeVisible();
     });
-
 });

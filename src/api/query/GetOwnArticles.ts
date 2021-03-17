@@ -10,6 +10,7 @@ export const GetOwnArticlesQuery = gql`
             preview
             topic
             readyToPublish
+            published
             isPinnedToTop
             previewImageFile {
                 id
@@ -39,6 +40,7 @@ export const GetOwnArticlesQuery = gql`
             }
             category {
                 id
+                title
             }
             groups {
                 id

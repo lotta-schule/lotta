@@ -7,21 +7,37 @@ import userEvent from '@testing-library/user-event';
 const titleContentModule = Klausurenplan.contentModules[0];
 
 describe('component/article/module/table/Edit', () => {
-
     it('should render without an error', () => {
-        render(<Edit contentModule={titleContentModule} onUpdateModule={() => {}} />);
+        render(
+            <Edit
+                contentModule={titleContentModule}
+                onUpdateModule={() => {}}
+            />
+        );
     });
 
     it('should display the correct title', () => {
-        const screen = render(<Edit contentModule={titleContentModule} onUpdateModule={() => {}} />);
-        expect(screen.getByRole('textbox')).toHaveValue('Na, wie war dein erster Tag?');
+        const screen = render(
+            <Edit
+                contentModule={titleContentModule}
+                onUpdateModule={() => {}}
+            />
+        );
+        expect(screen.getByRole('textbox')).toHaveValue(
+            'Na, wie war dein erster Tag?'
+        );
     });
 
     it('should correctly call the onUpateModule prop', async () => {
-        const callback = jest.fn(cm => {
+        const callback = jest.fn((cm) => {
             expect(cm.content.title).toEqual('Eine neue Überschrift');
         });
-        const screen = render(<Edit contentModule={titleContentModule} onUpdateModule={callback} />);
+        const screen = render(
+            <Edit
+                contentModule={titleContentModule}
+                onUpdateModule={callback}
+            />
+        );
         const input = screen.getByRole('textbox');
         userEvent.click(input);
         userEvent.clear(input);
@@ -34,10 +50,15 @@ describe('component/article/module/table/Edit', () => {
     });
 
     it('should reset title when clicking ESC', async () => {
-        const callback = jest.fn(cm => {
+        const callback = jest.fn((cm) => {
             expect(cm.content.title).toEqual('Na, wie war dein erster Tag?');
         });
-        const screen = render(<Edit contentModule={titleContentModule} onUpdateModule={callback} />);
+        const screen = render(
+            <Edit
+                contentModule={titleContentModule}
+                onUpdateModule={callback}
+            />
+        );
         const input = screen.getByRole('textbox');
         userEvent.clear(input);
         userEvent.type(input, 'Eine neue Überschr{esc}');
@@ -47,5 +68,4 @@ describe('component/article/module/table/Edit', () => {
         expect(callback).toHaveBeenCalled();
         expect(input).toHaveValue('Na, wie war dein erster Tag?');
     });
-
 });

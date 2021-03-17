@@ -1,9 +1,9 @@
-import React, { } from 'react';
+import * as React from 'react';
 import { omit } from 'lodash';
-import { render, waitFor } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { KeinErSieEsUser, SomeUser, SomeUserin } from 'test/fixtures';
 import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
-import { SearchUserField } from './SearchUserField';
+import { SearchUserField } from './SearchUserField';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/userManagment/SearchUserField', () => {
@@ -14,26 +14,40 @@ describe('component/layouts/userManagment/SearchUserField', () => {
     it('should disable the text input when prop "disabled" is passed', () => {
         const screen = render(
             <SearchUserField disabled onSelectUser={() => {}} />,
-            {}, {}
+            {},
+            {}
         );
-        expect(screen.getByRole('textbox', { name: /nutzer suchen/i })).toBeDisabled();
+        expect(
+            screen.getByRole('textbox', { name: /nutzer suchen/i })
+        ).toBeDisabled();
     });
 
     describe('searching users', () => {
-        const additionalMocks =
-        [{
-            request: { query: SearchUsersQuery, variables: { searchtext: 'Michel' } },
-            result: { data: { users: [KeinErSieEsUser, SomeUserin] } }
-        }];
+        const additionalMocks = [
+            {
+                request: {
+                    query: SearchUsersQuery,
+                    variables: { searchtext: 'Michel' },
+                },
+                result: { data: { users: [KeinErSieEsUser, SomeUserin] } },
+            },
+        ];
 
         it('should show the correct search results for a search term', async () => {
             const [{ request, result }] = additionalMocks;
             const networkFn = jest.fn(() => ({ ...result }));
             const screen = render(
                 <SearchUserField onSelectUser={() => {}} />,
-                {}, { currentUser: SomeUser, additionalMocks: [{ request, result: networkFn }] }
+                {},
+                {
+                    currentUser: SomeUser,
+                    additionalMocks: [{ request, result: networkFn }],
+                }
             );
-            userEvent.type(screen.getByRole('textbox', { name: /nutzer suchen/i }), 'Michel');
+            userEvent.type(
+                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                'Michel'
+            );
             await waitFor(() => {
                 expect(networkFn).toHaveBeenCalled();
             });
@@ -44,15 +58,31 @@ describe('component/layouts/userManagment/SearchUserField', () => {
             const selectUserFn = jest.fn();
             const screen = render(
                 <SearchUserField onSelectUser={selectUserFn} />,
-                {}, { currentUser: SomeUser, additionalMocks }
+                {},
+                { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(screen.getByRole('textbox', { name: /nutzer suchen/i }), 'Michel');
+            userEvent.type(
+                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                'Michel'
+            );
             await waitFor(() => {
-                expect(screen.getByRole('option', { name: /michel dupond/i })).toHaveTextContent('Michel Dupond');
+                expect(
+                    screen.getByRole('option', { name: /michel dupond/i })
+                ).toHaveTextContent('Michel Dupond');
             });
-            userEvent.click(screen.getByRole('option', { name: /michel dupond/i }));
-            expect(selectUserFn).toHaveBeenCalledWith(omit(KeinErSieEsUser, ['email', 'enrollmentTokens', 'groups', 'hideFullName', 'isBlocked', 'lastSeen']));
+            userEvent.click(
+                screen.getByRole('option', { name: /michel dupond/i })
+            );
+            expect(selectUserFn).toHaveBeenCalledWith(
+                omit(KeinErSieEsUser, [
+                    'email',
+                    'enrollmentTokens',
+                    'groups',
+                    'hideFullName',
+                    'lastSeen',
+                    'hasChangedDefaultPassword',
+                ])
+            );
         });
-
     });
 });

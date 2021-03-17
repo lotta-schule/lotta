@@ -10,7 +10,7 @@ export const useOnLogout = () => {
             history.push('/');
             localStorage.clear();
             apolloClient.resetStore();
-        }
+        },
     });
 
     return logout;

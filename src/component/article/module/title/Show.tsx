@@ -8,9 +8,14 @@ interface ShowProps {
 }
 
 export const Show = memo<ShowProps>(({ contentModule }) => {
-    const variant = `h${get(contentModule.configuration, 'level', 4)}` as 'h4' | 'h5' | 'h6';
+    const variant = `h${get(contentModule.configuration, 'level', 4)}` as
+        | 'h4'
+        | 'h5'
+        | 'h6';
 
     return (
-        <Typography component={variant} variant={variant}>{contentModule.content?.title}</Typography>
+        <Typography component={variant} variant={variant}>
+            {contentModule.content?.title}
+        </Typography>
     );
 });

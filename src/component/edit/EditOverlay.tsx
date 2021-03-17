@@ -8,11 +8,11 @@ const useStyles = makeStyles((theme: Theme) => ({
         border: `2px solid ${theme.palette.secondary.main}`,
         position: 'relative',
         '&:hover > div': {
-            display: 'flex'
-        }
+            display: 'flex',
+        },
     },
     overlay: {
-        backgroundColor: fade(theme.palette.grey[200], .4),
+        backgroundColor: fade(theme.palette.grey[200], 0.4),
         backdropFilter: 'blur(10px)',
         position: 'absolute',
         width: '100%',
@@ -20,13 +20,13 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'none',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 100
+        zIndex: 100,
     },
     removeButton: {
         position: 'absolute',
         top: theme.spacing(1),
-        right: theme.spacing(1)
-    }
+        right: theme.spacing(1),
+    },
 }));
 
 interface EditOverlayProps {
@@ -36,19 +36,32 @@ interface EditOverlayProps {
     children?: any;
 }
 
-export const EditOverlay = memo<EditOverlayProps>(({ children, label, onClickRemove, onClick }) => {
-    const styles = useStyles();
-    return (
-        <div className={styles.root}>
-            <div className={styles.overlay}>
-                {!!onClickRemove && (
-                    <IconButton aria-label={'remove'} className={styles.removeButton} size={'small'} onClick={onClickRemove}>
-                        <Clear fontSize={'inherit'} />
-                    </IconButton>
-                )}
-                <Button variant={'contained'} color={'secondary'} onClick={onClick}>{label}</Button>
+export const EditOverlay = memo<EditOverlayProps>(
+    ({ children, label, onClickRemove, onClick }) => {
+        const styles = useStyles();
+        return (
+            <div className={styles.root}>
+                <div className={styles.overlay}>
+                    {!!onClickRemove && (
+                        <IconButton
+                            aria-label={'remove'}
+                            className={styles.removeButton}
+                            size={'small'}
+                            onClick={onClickRemove}
+                        >
+                            <Clear fontSize={'inherit'} />
+                        </IconButton>
+                    )}
+                    <Button
+                        variant={'contained'}
+                        color={'secondary'}
+                        onClick={onClick}
+                    >
+                        {label}
+                    </Button>
+                </div>
+                {children}
             </div>
-            {children}
-        </div>
-    );
-});
+        );
+    }
+);

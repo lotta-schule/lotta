@@ -1,6 +1,11 @@
 import React from 'react';
 import { render } from 'test/util';
-import { Klausurenplan, imageFile, otherImageFile, documentFile } from 'test/fixtures';
+import {
+    Klausurenplan,
+    imageFile,
+    otherImageFile,
+    documentFile,
+} from 'test/fixtures';
 import { Download } from './Download';
 
 const downloadContentModule = {
@@ -11,30 +16,43 @@ const downloadContentModule = {
         files: {
             [imageFile.id]: {
                 sortKey: 0,
-                description: 'An Image File'
+                description: 'An Image File',
             },
             [otherImageFile.id]: {
                 sortKey: 10,
-                description: 'Another Image File'
+                description: 'Another Image File',
             },
             [documentFile.id]: {
                 sortKey: 20,
-                description: 'A Document File'
-            }
-        }
-    }
+                description: 'A Document File',
+            },
+        },
+    },
 };
 
 describe('component/article/module/download/Download', () => {
-
     it('should render the edit mode when editModeEnabled is given', async () => {
-        const screen = render(<Download isEditModeEnabled contentModule={downloadContentModule} onUpdateModule={() => {}} />);
-        expect(await screen.findByRole('button', { name: /datei hinzufügen/i })).toBeInTheDocument();
+        const screen = render(
+            <Download
+                isEditModeEnabled
+                contentModule={downloadContentModule}
+                onUpdateModule={() => {}}
+            />
+        );
+        expect(
+            await screen.findByRole('button', { name: /datei hinzufügen/i })
+        ).toBeInTheDocument();
     });
 
     it('should render the show mode when editModeEnabled is not given', async () => {
-        const screen = render(<Download contentModule={downloadContentModule} onUpdateModule={() => {}} />);
-        expect(await screen.findAllByRole('link', { name: /download/i })).toHaveLength(3);
+        const screen = render(
+            <Download
+                contentModule={downloadContentModule}
+                onUpdateModule={() => {}}
+            />
+        );
+        expect(
+            await screen.findAllByRole('link', { name: /download/i })
+        ).toHaveLength(3);
     });
-
 });
