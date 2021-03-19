@@ -15,7 +15,10 @@ export const EditArticleRoute = memo<RouteComponentProps<{ id: string }>>(
         const { data, error, loading: isLoading } = useQuery<
             { article: ArticleModel },
             { id: ID }
-        >(GetArticleQuery, { variables: { id } });
+        >(GetArticleQuery, {
+            variables: { id },
+            fetchPolicy: 'cache-and-network',
+        });
 
         if (!data || isLoading) {
             return (
