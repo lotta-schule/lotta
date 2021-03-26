@@ -2,14 +2,12 @@ import { ArticleModel } from 'model';
 import { ID } from 'model/ID';
 import { useQuery } from '@apollo/client';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
-import useRouter from 'use-react-router';
+import { useLocation } from 'react-router-dom';
 
 export const useCurrentCategoryId = (): ID | null => {
-    const { location } = useRouter();
-    const matchesCategoryUrl = location.pathname.match(
-        /^\/c(?:ategory)?\/(\d*)/
-    );
-    const matchesArticleUrl = location.pathname.match(/^\/a(?:rticle)?\/(\d*)/);
+    const { pathname } = useLocation();
+    const matchesCategoryUrl = pathname?.match(/^\/c(?:ategory)?\/(\d*)/);
+    const matchesArticleUrl = pathname?.match(/^\/a(?:rticle)?\/(\d*)/);
     const { data } = useQuery<{ article: ArticleModel }, { id: ID }>(
         GetArticleQuery,
         {
