@@ -39,7 +39,7 @@ const ProviderFactory = (options: TestSetupOptions): FC => ({ children }) => {
     );
 
     const history = createMemoryHistory({
-        initialEntries: options.defaultPathEntries,
+        initialEntries: options.defaultPathEntries || ['/'],
     });
     if (options.onChangeLocation) {
         history.listen((...args) => {

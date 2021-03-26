@@ -1,9 +1,9 @@
-import useRouter from 'use-react-router';
 import Matomo from 'matomo-ts';
+import { useLocation } from 'react-router-dom';
 
 export const usePiwikAnalytics = () => {
-    const { location } = useRouter();
+    const { pathname } = useLocation();
     if (window._paq) {
-        Matomo.default().trackPageView(location.pathname);
+        Matomo.default().trackPageView(pathname);
     }
 };
