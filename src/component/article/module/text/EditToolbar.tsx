@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { Toolbar, createStyles, makeStyles, Theme } from '@material-ui/core';
 import { ToggleButtonGroup } from '@material-ui/lab';
 import {
@@ -15,12 +15,14 @@ import { EditToolbarLinkButton } from './EditToolbarLinkButton';
 import { EditToolbarBlockButton } from './EditToolbarBlockButton';
 import { EditToolbarImageButton } from './EditToolbarImageButton';
 import { useSpring, animated } from 'react-spring';
+import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
+import { useCategory } from 'util/categories/useCategory';
+import { useCategories } from 'util/categories/useCategories';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         toolbar: {
             position: 'sticky',
-            top: 64,
             backgroundColor: theme.palette.background.paper,
             padding: theme.spacing(1),
         },
@@ -36,7 +38,10 @@ export interface EditToolbarProps {
 
 const AnimatedToolbar = animated(Toolbar);
 
-export const EditToolbar = memo<EditToolbarProps>(({ onRequestSave }) => {
+export const EditToolbar = React.memo<EditToolbarProps>(({ onRequestSave }) => {
+    const currentCategoryId = useCurrentCategoryId();
+    const [allCategories] = useCategories();
+    const currentCategory = useCategory(currentCategoryId ?? undefined);
     const isFocused = useFocused();
 
     const props = useSpring({
@@ -45,6 +50,12 @@ export const EditToolbar = memo<EditToolbarProps>(({ onRequestSave }) => {
         tension: 2000,
         mass: 0.5,
         friction: 15,
+        top:
+            currentCategory?.category ||
+            allCategories.filter((c) => c.category?.id === currentCategoryId)
+                .length
+                ? 104
+                : 64,
     });
     const styles = useStyles();
 
