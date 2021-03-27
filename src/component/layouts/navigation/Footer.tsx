@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
             fontSize: '.8rem',
             transform: 'rotate(-90deg)',
             transformOrigin: 'right',
+            width: 'max-content',
         },
     },
     font: {
