@@ -131,7 +131,6 @@ describe('component/layouts/adminLayout/categoryManagment/CategoryEditor', () =>
                                 variables: {
                                     id: FaecherCategory.id,
                                     category: {
-                                        sortKey: 1,
                                         title: 'Neue Fächer',
                                         bannerImageFile: null,
                                         groups: [],

@@ -111,7 +111,6 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                 variables: {
                     id: selectedCategory.id,
                     category: {
-                        sortKey: selectedCategory.sortKey,
                         title: category.title,
                         bannerImageFile: category.bannerImageFile && {
                             id: category.bannerImageFile.id,
