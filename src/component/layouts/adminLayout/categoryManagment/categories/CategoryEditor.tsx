@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import {
     Divider,
     Typography,
@@ -57,22 +57,24 @@ export interface CategoryEditorProps {
     onSelectCategory(category: CategoryModel | null): void;
 }
 
-export const CategoryEditor = memo<CategoryEditorProps>(
+export const CategoryEditor = React.memo<CategoryEditorProps>(
     ({ selectedCategory, onSelectCategory }) => {
         const styles = useStyles();
 
         const [categories] = useCategories();
 
-        const [category, setCategory] = useState<CategoryModel | null>(null);
+        const [category, setCategory] = React.useState<CategoryModel | null>(
+            null
+        );
         const [
             isDeleteCategoryDialogOpen,
             setIsDeleteCategoryDialogOpen,
-        ] = useState(false);
+        ] = React.useState(false);
 
-        const [isShowSuccess, setIsShowSuccess] = useState(false);
-        const [selectedWidgets, setSelectedWidgets] = useState<WidgetModel[]>(
-            []
-        );
+        const [isShowSuccess, setIsShowSuccess] = React.useState(false);
+        const [selectedWidgets, setSelectedWidgets] = React.useState<
+            WidgetModel[]
+        >([]);
         const [mutateCategory, { loading: isLoading, error }] = useMutation<
             { category: CategoryModel },
             { id: ID; category: any }
@@ -95,13 +97,13 @@ export const CategoryEditor = memo<CategoryEditorProps>(
             variables: { categoryId: category?.id ?? null },
             skip: !category?.id,
         });
-        useEffect(() => {
+        React.useEffect(() => {
             if (currentWidgetsData) {
                 setSelectedWidgets(currentWidgetsData.widgets);
             }
         }, [currentWidgetsData]);
 
-        const updateCategory = useCallback(async () => {
+        const updateCategory = React.useCallback(async () => {
             if (!selectedCategory || !category) {
                 return null;
             }
@@ -129,7 +131,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(
             });
         }, [category, mutateCategory, selectedCategory, selectedWidgets]);
 
-        useEffect(() => {
+        React.useEffect(() => {
             if (selectedCategory === null && category !== null) {
                 setCategory(null);
             } else if (selectedCategory) {
@@ -152,9 +154,10 @@ export const CategoryEditor = memo<CategoryEditorProps>(
                 </Typography>
                 <ErrorMessage error={error || currentWidgetsError} />
                 <TextField
-                    className={styles.input}
                     fullWidth
-                    label="Name der Kategorie"
+                    className={styles.input}
+                    label={'Name der Kategorie'}
+                    inputProps={{ 'aria-label': 'Name der Kategorie' }}
                     value={category.title}
                     onChange={(e) =>
                         setCategory({ ...category, title: e.target.value })
@@ -219,7 +222,7 @@ export const CategoryEditor = memo<CategoryEditorProps>(
                 )}
 
                 <FormControl className={styles.input}>
-                    <InputLabel htmlFor={'category-redirect'}>
+                    <InputLabel htmlFor={'category-layout'}>
                         Layout für die Kategorie wählen
                     </InputLabel>
                     <Select
