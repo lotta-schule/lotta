@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     Button,
     Accordion,
@@ -29,14 +29,16 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const GroupsList = memo(() => {
+export const GroupsList = React.memo(() => {
     const styles = useStyles();
     const groups = useUserGroups();
-    const [expandedGroupId, setExpandedGroupId] = useState<ID | null>(null);
+    const [expandedGroupId, setExpandedGroupId] = React.useState<ID | null>(
+        null
+    );
     const [
         isCreateUserGroupDialogOpen,
         setIsCreateUserGroupDialogOpen,
-    ] = useState(false);
+    ] = React.useState(false);
 
     const [updateGroup, { error }] = useMutation<
         { group: UserGroupModel },
@@ -98,14 +100,22 @@ export const GroupsList = memo(() => {
                         0,
                         groups[source.index]
                     );
-                    newGroupsArray.forEach((group, index) => {
+                    const from =
+                        source.index < destination.index
+                            ? source.index
+                            : destination.index;
+                    const to =
+                        destination.index > source.index
+                            ? destination.index + 1
+                            : source.index + 1;
+                    newGroupsArray.slice(from, to).forEach((group, index) => {
                         if (group) {
                             updateGroup({
                                 variables: {
                                     id: group.id,
                                     group: {
                                         name: group.name,
-                                        sortKey: index * 10 + 10,
+                                        sortKey: (from + index) * 10 + 10,
                                     },
                                 },
                             });
