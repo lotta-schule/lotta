@@ -6,7 +6,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=default",
-    "test:ci": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=jest-silent-reporter",
+    "test:ci": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=jest-junit  --ci --testResultsProcessor='jest-junit'",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src .",
     "apollo:schema:download": "apollo client:download-schema src/api/schema.json",
     "eject": "react-scripts eject"
@@ -118,7 +118,7 @@
     "http-proxy-middleware": "^1.0.6",
     "husky": "^5.1.3",
     "jest-environment-jsdom-sixteen": "^1.0.3",
-    "jest-silent-reporter": "^0.4.0",
+    "jest-junit": "^12.0.0",
     "lint-staged": "^10.5.4",
     "mockdate": "^3.0.2",
     "node-sass": "^4.0.0",
