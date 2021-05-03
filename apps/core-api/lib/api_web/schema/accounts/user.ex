@@ -51,7 +51,7 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :hide_full_name, :boolean
     field :has_changed_default_password, :boolean
 
-    field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :articles, list_of(:article),
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)

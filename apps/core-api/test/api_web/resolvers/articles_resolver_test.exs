@@ -5,7 +5,8 @@ defmodule ApiWeb.ArticleResolverTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Accounts.{File, User}
+  alias Api.Accounts.User
+  alias Api.Storage.File
   alias Api.Content.Article
   alias Api.System.Category
 

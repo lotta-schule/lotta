@@ -11,8 +11,9 @@ defmodule Api.Content.Article do
   alias Api.Repo
   alias Api.Mailer
   alias Api.System
-  alias Api.Accounts.{File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
   alias Api.Content.{Article, ContentModule}
+  alias Api.Storage.File
   alias Api.System.Category
 
   @type id() :: pos_integer()
@@ -36,9 +37,13 @@ defmodule Api.Content.Article do
     field(:published, :boolean, default: false)
     field(:is_pinned_to_top, :boolean)
 
-    belongs_to(:category, Category, on_replace: :nilify)
-    belongs_to(:preview_image_file, File, on_replace: :nilify)
-    has_many(:content_modules, ContentModule, on_replace: :delete)
+    belongs_to :category, Category, on_replace: :nilify
+
+    belongs_to :preview_image_file, File,
+      on_replace: :nilify,
+      type: :binary_id
+
+    has_many :content_modules, ContentModule, on_replace: :delete
 
     many_to_many(
       :groups,

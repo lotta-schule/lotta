@@ -46,8 +46,7 @@ defmodule ApiWeb.Schema.Contents.Article do
     field :published, :boolean
     field :is_pinned_to_top, :boolean
 
-    field :preview_image_file, :file,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :preview_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :groups, list_of(:user_group), resolve: &ApiWeb.UserGroupResolver.resolve_model_groups/2
 
@@ -64,7 +63,7 @@ defmodule ApiWeb.Schema.Contents.Article do
     field :updated_at, :naive_datetime
     field :type, :content_module_type
     field :content, :json
-    field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
     field :sort_key, :integer
     field :configuration, :json
   end

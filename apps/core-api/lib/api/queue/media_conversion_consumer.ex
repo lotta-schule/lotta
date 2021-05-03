@@ -8,7 +8,7 @@ defmodule Api.Queue.MediaConversionConsumer do
   alias GenRMQ.Message
   alias Ecto.Changeset
   alias Api.Repo
-  alias Api.Accounts.{File, FileConversion}
+  alias Api.Storage.{File, FileConversion}
 
   use GenServer
 

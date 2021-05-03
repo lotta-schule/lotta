@@ -25,7 +25,7 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :parent_directory, :directory,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
   end
 
   object :file do
@@ -41,10 +41,10 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :file_conversions, list_of(:file_conversion),
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :parent_directory, :directory,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :usage, list_of(:file_usage_location),
       resolve: &ApiWeb.FileResolver.resolve_file_usage/3

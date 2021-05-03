@@ -2,7 +2,8 @@ defmodule Api.Accounts.FileManagment do
   @moduledoc """
   This module provides utilities for handling user files and directories.
   """
-  alias Api.Accounts.{Directory, File, User}
+  alias Api.Accounts.User
+  alias Api.Storage.{Directory, File}
   alias Api.Repo
 
   import Ecto.Query
@@ -15,9 +16,7 @@ defmodule Api.Accounts.FileManagment do
   Files uploaded into public folders do not count.
   Returns a size in bytes.
   """
-
   @spec total_user_files_size(User.t()) :: pos_integer()
-
   def total_user_files_size(%User{} = user) do
     from(
       f in File,

@@ -10,7 +10,8 @@ defmodule ApiWeb.UserResolverTest do
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Repo.Seeder
-  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.{Directory, File}
 
   setup do
     Seeder.seed()
@@ -1696,7 +1697,7 @@ defmodule ApiWeb.UserResolverTest do
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{transferFileIds: [1, file.id]}
+          variables: %{transferFileIds: ["00000000-0000-0000-0000-000000000001", file.id]}
         )
         |> json_response(200)
 

@@ -1,11 +1,17 @@
-defmodule Api.Accounts.File do
+defmodule Api.Storage.File do
   @moduledoc """
     Ecto Schema for user files
   """
 
   use Ecto.Schema
-  alias Api.UploadService
+
   import Ecto.Changeset
+
+  alias Api.Accounts.User
+  alias Api.Content.ContentModule
+  alias Api.Storage.{Directory, FileConversion, RemoteStorageEntity}
+
+  @primary_key {:id, :binary_id, read_after_writes: true}
 
   schema "files" do
     field :mime_type, :string
@@ -17,13 +23,14 @@ defmodule Api.Accounts.File do
     field :media_duration, :float
     field :remote_location, :string
 
-    has_many :file_conversions, Api.Accounts.FileConversion
-    belongs_to :user, Api.Accounts.User
-    belongs_to :parent_directory, Api.Accounts.Directory
+    has_many :file_conversions, FileConversion
+    belongs_to :remote_storage_entity, RemoteStorageEntity
+    belongs_to :user, User
+    belongs_to :parent_directory, Directory, type: :binary_id
 
     many_to_many(
       :content_modules,
-      Api.Content.ContentModule,
+      ContentModule,
       join_through: "content_module_file",
       on_replace: :delete
     )
@@ -47,23 +54,5 @@ defmodule Api.Accounts.File do
       :parent_directory_id,
       :user_id
     ])
-  end
-
-  @doc false
-  def delete_attachment(file) do
-    cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL") || " "
-
-    if String.starts_with?(file.remote_location, cdn_base_url) do
-      Task.start(fn ->
-        file.remote_location
-        |> String.replace_leading(cdn_base_url, "")
-        |> String.replace_leading("/", "")
-        |> String.split("/", parts: 2)
-        |> List.last()
-        |> UploadService.delete_from_space()
-      end)
-    end
-
-    {:ok, file}
   end
 end

@@ -1,20 +1,27 @@
-defmodule Api.Accounts.Directory do
+defmodule Api.Storage.Directory do
   @moduledoc """
     Ecto Schema for user file directories
   """
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.File
+
+  @primary_key {:id, :binary_id, read_after_writes: true}
 
   schema "directories" do
     field :name, :string
 
-    belongs_to :user, Api.Accounts.User
-    belongs_to :parent_directory, Api.Accounts.Directory
-    belongs_to :group, Api.Accounts.UserGroup
+    belongs_to :user, User
+    belongs_to :parent_directory, __MODULE__, type: :binary_id
+    belongs_to :group, UserGroup
 
-    has_many :directories, Api.Accounts.Directory, foreign_key: :parent_directory_id
-    has_many :files, Api.Accounts.File, foreign_key: :parent_directory_id
+    has_many :directories, __MODULE__, foreign_key: :parent_directory_id
+
+    has_many :files, File, foreign_key: :parent_directory_id
 
     timestamps()
   end

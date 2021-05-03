@@ -2,11 +2,14 @@ defmodule ApiWeb.EmailViewTest do
   @moduledoc false
 
   use Api.DataCase
+
+  alias Api.Repo
   alias Api.System
+  alias Api.Storage.File
   alias ApiWeb.EmailView
 
   setup do
-    Api.Repo.Seeder.seed()
+    Repo.Seeder.seed()
     {:ok, %{}}
   end
 
@@ -33,10 +36,10 @@ defmodule ApiWeb.EmailViewTest do
 
     test "should return its url if a file is set as logo" do
       file =
-        from(f in Api.Accounts.File,
+        from(f in File,
           where: f.filename == "logo1.jpg"
         )
-        |> Api.Repo.one!()
+        |> Repo.one!()
 
       System.get_configuration()
       |> System.put_configuration(:logo_image_file, file)

@@ -8,21 +8,26 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
   alias ApiWeb.Auth.AccessToken
 
+  alias Api.Repo
+  alias Api.Accounts.User
+  alias Api.Content.ContentModule
+  alias Api.Storage.File
+
   setup do
     Api.Repo.Seeder.seed()
 
     query =
-      from cm in Api.Content.ContentModule,
+      from cm in ContentModule,
         where: fragment("?->>? = ?", cm.content, "value", "Pizza Test-Formular")
 
-    test_formular = Api.Repo.one!(query)
-    admin = Api.Repo.get_by!(Api.Accounts.User, email: "alexis.rinaldoni@lotta.schule")
-    user = Api.Repo.get_by!(Api.Accounts.User, email: "eike.wiewiorra@lotta.schule")
+    test_formular = Repo.one!(query)
+    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
+    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
 
     {:ok, admin_jwt, _} =
       AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
 
-    admin_file = Api.Repo.get_by!(Api.Accounts.File, filename: "irgendwas.png")
+    admin_file = Repo.get_by!(File, filename: "irgendwas.png")
 
     {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
 
@@ -67,7 +72,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
       results =
         test_formular
-        |> Api.Repo.preload(:results)
+        |> Repo.preload(:results)
         |> Map.fetch!(:results)
 
       assert length(results) == 2
@@ -109,7 +114,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
       results =
         test_formular
-        |> Api.Repo.preload(:results)
+        |> Repo.preload(:results)
         |> Map.fetch!(:results)
         |> List.last()
 
@@ -142,7 +147,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
       results =
         test_formular
-        |> Api.Repo.preload(:results)
+        |> Repo.preload(:results)
         |> Map.fetch!(:results)
 
       assert length(results) == 2
@@ -186,7 +191,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
       results =
         test_formular
-        |> Api.Repo.preload(:results)
+        |> Repo.preload(:results)
         |> Map.fetch!(:results)
 
       assert length(results) == 2
@@ -247,7 +252,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
       results =
         test_formular
-        |> Api.Repo.preload(:results)
+        |> Repo.preload(:results)
         |> Map.fetch!(:results)
 
       assert length(results) == 2
@@ -308,7 +313,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
       results =
         test_formular
-        |> Api.Repo.preload(:results)
+        |> Repo.preload(:results)
         |> Map.fetch!(:results)
 
       assert length(results) == 2
@@ -364,7 +369,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
 
       results =
         test_formular
-        |> Api.Repo.preload(:results)
+        |> Repo.preload(:results)
         |> Map.fetch!(:results)
 
       assert length(results) == 2

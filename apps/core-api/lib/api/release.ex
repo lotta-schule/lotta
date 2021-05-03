@@ -49,7 +49,7 @@ defmodule Api.Release do
   def check_unavailable_files do
     Application.ensure_all_started(@app)
 
-    Api.Repo.all(from(f in Api.Accounts.File, select: [f.id, f.remote_location]))
+    Api.Repo.all(from(f in Api.Storage.File, select: [f.id, f.remote_location]))
     |> Enum.each(fn [id, remote_location] ->
       case HTTPoison.head(remote_location) do
         {:ok, %{status_code: 200}} ->

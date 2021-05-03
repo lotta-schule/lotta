@@ -2,7 +2,8 @@ defmodule Api.Fixtures do
   @moduledoc false
   alias Api.Repo
   alias Api.System.Category
-  alias Api.Accounts.{User, UserGroup, File}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.File
   alias Api.Content.{Article}
   alias Api.Messages.Message
 

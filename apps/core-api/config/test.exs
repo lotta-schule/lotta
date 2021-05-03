@@ -25,10 +25,17 @@ elasticsearch_host =
     _ -> "127.0.0.1"
   end
 
+minio_host =
+  case System.get_env("CI") do
+    nil -> "minio"
+    _ -> "127.0.0.1"
+  end
+
 db_host = "postgres"
 rabbitmq_host = "rabbitmq"
 redis_host = "redis"
 elasticsearch_host = "elasticsearch"
+minio_host = "minio"
 
 config :api, :environment, :test
 
@@ -80,6 +87,14 @@ config :api, ApiWeb.Auth.AccessToken,
 
 config :api, Api.Elasticsearch.Cluster, url: "http://#{elasticsearch_host}:9200"
 
+config :ex_aws, :s3,
+  http_client: ExAws.Request.Hackney,
+  access_key_id: "AKIAIOSFODNN7EXAMPLE",
+  secret_access_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+  host: minio_host,
+  scheme: "http://",
+  port: 9000
+
 config :api, :hostname, "lotta.web"
 
 # We don't run a server during test. If one is required,
@@ -87,6 +102,11 @@ config :api, :hostname, "lotta.web"
 config :api, ApiWeb.Endpoint,
   http: [port: 4002],
   server: false
+
+config :junit_formatter,
+  print_report_file: true,
+  include_filename?: true,
+  include_file_line?: true
 
 # Print only warnings and errors during test
 config :logger, level: :warn

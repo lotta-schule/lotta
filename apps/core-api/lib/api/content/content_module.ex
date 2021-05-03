@@ -6,6 +6,8 @@ defmodule Api.Content.ContentModule do
   import Ecto.Changeset
 
   alias Api.Repo
+  alias Api.Content.{Article, ContentModuleResult}
+  alias Api.Storage.File
 
   @type id() :: String.t()
 
@@ -25,11 +27,11 @@ defmodule Api.Content.ContentModule do
     field :sort_key, :integer
     field :configuration, :map
 
-    belongs_to :article, Api.Content.Article
-    has_many :results, Api.Content.ContentModuleResult
+    belongs_to :article, Article
+    has_many :results, ContentModuleResult
 
     many_to_many :files,
-                 Api.Accounts.File,
+                 File,
                  join_through: "content_module_file",
                  on_replace: :delete
 
@@ -46,7 +48,7 @@ defmodule Api.Content.ContentModule do
   end
 
   defp put_assoc_files(content_module, %{files: files}) do
-    files = Enum.map(files, fn file -> Repo.get!(Api.Accounts.File, file.id) end)
+    files = Enum.map(files, fn file -> Repo.get!(File, file.id) end)
 
     content_module
     |> put_assoc(:files, files)

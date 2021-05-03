@@ -3,7 +3,6 @@ import Config
 ugc_s3_compat_endpoint = System.get_env("UGC_S3_COMPAT_ENDPOINT", "")
 ugc_s3_compat_access_key_id = System.get_env("UGC_S3_COMPAT_ACCESS_KEY_ID", "")
 ugc_s3_compat_secret_access_key = System.get_env("UGC_S3_COMPAT_SECRET_ACCESS_KEY", "")
-ugc_s3_compat_bucket = System.get_env("UGC_S3_COMPAT_BUCKET", "")
 ugc_s3_compat_region = System.get_env("UGC_S3_COMPAT_REGION", "")
 ugc_s3_compat_cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL", "")
 
@@ -41,11 +40,11 @@ config :api, Api.Mailer, adapter: Bamboo.LocalAdapter
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
-  access_key_id: ugc_s3_compat_access_key_id,
-  secret_access_key: ugc_s3_compat_secret_access_key,
-  host: %{ugc_s3_compat_region => ugc_s3_compat_endpoint},
-  region: ugc_s3_compat_region,
-  scheme: "https://"
+  access_key_id: "AKIAIOSFODNN7EXAMPLE",
+  secret_access_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+  host: "minio",
+  scheme: "http://",
+  port: 9000
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
