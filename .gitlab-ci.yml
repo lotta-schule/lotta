@@ -20,6 +20,12 @@ test:
   script:
     - npm install
     - npm run test:ci -- --coverage
+  artifacts:
+    when: always
+    paths:
+      - junit.xml
+    reports:
+      junit: junit.xml
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 lint:
