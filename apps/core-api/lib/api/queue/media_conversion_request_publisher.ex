@@ -4,10 +4,12 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
   """
 
   use GenServer
-  @behaviour GenRMQ.Publisher
-  alias Api.Accounts.File
 
   require Logger
+
+  alias Api.Storage.File
+
+  @behaviour GenRMQ.Publisher
 
   @exchange "media-conversion"
   @queue "media-conversion-tasks"

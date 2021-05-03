@@ -4,6 +4,7 @@ defmodule Api.AccountsTest do
   use Api.DataCase
   use Bamboo.Test
 
+  alias Api.Repo
   alias Api.Fixtures
   alias Api.Accounts
   alias Api.Accounts.User
@@ -90,19 +91,6 @@ defmodule Api.AccountsTest do
       assert Argon2.verify_pass("newpass", user.password_hash)
 
       assert_delivered_email(Api.Email.password_changed_mail(user))
-    end
-  end
-
-  describe "files" do
-    test "delete_file/1 should delete file" do
-      user = Fixtures.fixture(:registered_user)
-      file = Fixtures.fixture(:file, user)
-
-      Accounts.delete_file(file)
-
-      assert_raise Ecto.NoResultsError, fn ->
-        Api.Repo.get!(Accounts.File, file.id)
-      end
     end
   end
 end

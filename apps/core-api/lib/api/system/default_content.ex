@@ -10,9 +10,9 @@ defmodule Api.System.DefaultContent do
   import Ecto.Changeset
 
   alias Api.Repo
-  alias Api.UploadService
   alias Api.System.Category
-  alias Api.Accounts.{Directory, User, UserGroup}
+  alias Api.Storage.Directory
+  alias Api.Accounts.{User, UserGroup}
   alias Api.Content.{Article, ContentModule}
 
   alias __MODULE__.Context
@@ -199,33 +199,19 @@ defmodule Api.System.DefaultContent do
     files =
       available_assets()
       |> Enum.with_index()
-      |> Enum.map(fn {{filename, type}, index} ->
-        oid = "#{user.id}#{DateTime.to_unix(DateTime.utc_now())}#{index}#{:rand.uniform(9999)}"
+      |> Enum.map(fn {{filename, type}, _index} ->
         fullpath = Application.app_dir(:api, "priv/default_content/files/#{filename}")
-        %{size: filesize} = File.stat!(fullpath)
-
-        {:ok, %{url: remote_location}} =
-          UploadService.upload_to_space(%{
-            localfilepath: fullpath,
-            content_type: type,
-            file_name: UUID.uuid5(:dns, "#{oid}.ugc.lotta.schule")
-          })
 
         {:ok, file} =
-          %Api.Accounts.File{
-            user_id: user.id,
-            parent_directory_id: shared_dir.id,
-            remote_location: remote_location,
-            filename: filename,
-            filesize: filesize,
-            file_type:
-              case type do
-                "image" <> _ -> "image"
-                "application/pdf" -> "pdf"
-              end,
-            mime_type: type
-          }
-          |> Repo.insert()
+          Api.Storage.create_stored_file_from_upload(
+            %Plug.Upload{
+              path: fullpath,
+              content_type: type,
+              filename: filename
+            },
+            shared_dir,
+            user
+          )
 
         file
       end)
@@ -484,7 +470,10 @@ defmodule Api.System.DefaultContent do
 
       case Enum.find(files, &(&1.filename == filename)) do
         file when not is_nil(file) ->
-          file.remote_location
+          file
+          |> Repo.preload(:remote_storage_entity)
+          |> Map.fetch!(:remote_storage_entity)
+          |> Api.Storage.RemoteStorage.get_http_url()
 
         _ ->
           text

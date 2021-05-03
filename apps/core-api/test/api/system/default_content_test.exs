@@ -7,7 +7,8 @@ defmodule Api.DefaultContentTest do
   import Ecto.Query
 
   alias Api.Repo
-  alias Api.Accounts.{File, Directory, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.{File, Directory}
   alias Api.Content.Article
   alias Api.System.{Category, DefaultContent}
   alias Api.Accounts.Authentication

@@ -1,10 +1,13 @@
-defmodule Api.Accounts.FileConversion do
+defmodule Api.Storage.FileConversion do
   @moduledoc """
     Ecto Schema for file conversions
   """
 
   use Ecto.Schema
+
   import Ecto.Changeset
+
+  alias Api.Storage.{File, RemoteStorageEntity}
 
   schema "file_conversions" do
     field :file_type, :string
@@ -16,7 +19,8 @@ defmodule Api.Accounts.FileConversion do
     field :media_duration, :float
     field :remote_location, :string
 
-    belongs_to :file, Api.Accounts.File
+    belongs_to :file, File, type: :binary_id
+    belongs_to :remote_storage_entity, RemoteStorageEntity
 
     timestamps()
   end

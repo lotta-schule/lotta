@@ -4,7 +4,8 @@ defmodule Api.Accounts.Permissions do
   """
 
   alias Api.Repo
-  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.{Directory, File}
   alias Api.Content.Article
 
   @doc """

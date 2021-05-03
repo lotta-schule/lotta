@@ -10,15 +10,9 @@ defmodule Api.Accounts do
   alias Ecto.Changeset
   alias Api.Repo
   alias Api.Mailer
-
-  alias Api.Accounts.{
-    User,
-    UserGroup,
-    GroupEnrollmentToken,
-    Directory,
-    File,
-    FileConversion
-  }
+  alias Api.Accounts.{User, UserGroup, GroupEnrollmentToken}
+  alias Api.Storage
+  alias Api.Storage.{File}
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -247,7 +241,7 @@ defmodule Api.Accounts do
     case Repo.insert(changeset) do
       {:ok, user} ->
         user
-        |> create_new_user_directories()
+        |> Storage.create_new_user_directories()
 
         {:ok, user, generated_pw}
 
@@ -274,7 +268,7 @@ defmodule Api.Accounts do
     # this should probably be merged to a genserver / bg job of some kind
     from(f in File, where: f.user_id == ^user.id)
     |> Repo.all()
-    |> Enum.each(&delete_file/1)
+    |> Enum.each(&Storage.delete_file/1)
 
     Repo.delete(user)
   end
@@ -388,267 +382,6 @@ defmodule Api.Accounts do
     user
     |> User.update_email_changeset(email)
     |> Repo.update()
-  end
-
-  @doc """
-  List root directories for a user
-  """
-  @spec list_root_directories(User.t()) :: [Directory.t()]
-  def list_root_directories(%User{} = user) do
-    from(d in Directory,
-      where:
-        is_nil(d.parent_directory_id) and
-          (d.user_id == ^user.id or is_nil(d.user_id)),
-      order_by: [fragment("? DESC NULLS LAST", d.user_id), :name]
-    )
-    |> Repo.all()
-  end
-
-  @doc """
-  List a directory's subdirectories
-  """
-  @spec list_directories(Directory.t()) :: [Directory.t()]
-  def list_directories(%Directory{} = directory) do
-    from(d in Directory,
-      where: d.parent_directory_id == ^directory.id,
-      order_by: [:name]
-    )
-    |> Repo.all()
-  end
-
-  @doc """
-  Gets a single directory.
-
-  returns nil if the Directory does not exist
-
-  ## Examples
-
-      iex> get_directory(123)
-      %Directory{}
-
-      iex> get_directory(456)
-      nil
-
-  """
-  @spec get_directory(pos_integer()) :: Directory.t() | nil
-  def get_directory(id), do: Repo.get(Directory, id)
-
-  @doc """
-  Creates a Directory.
-
-  ## Examples
-
-      iex> create_directory(%{field: value})
-      {:ok, %Directory{}}
-
-      iex> create_directory(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  @spec create_directory(map()) :: {:ok, Directory.t()} | {:error, Changeset.t()}
-  def create_directory(attrs) do
-    %Directory{}
-    |> Directory.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Create the default directories for a new user
-  """
-  @spec create_new_user_directories(User.t()) :: [term()]
-  def create_new_user_directories(%User{} = user) do
-    ["Mein Profil", "Meine Bilder", "Meine Dokumente", "Meine Videos", "Meine Tondokumente"]
-    |> Enum.map(fn name ->
-      create_directory(%{
-        name: name,
-        user_id: user.id
-      })
-    end)
-  end
-
-  @doc """
-  Updates a directory.
-
-  ## Examples
-
-      iex> update_directory(directory, path)
-      {:ok, %Directory{}}
-
-  """
-  @spec update_directory(Directory.t(), map()) :: {:ok, Directory.t()} | {:error, Changeset.t()}
-  def update_directory(%Directory{} = directory, attrs) do
-    directory
-    |> Directory.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a Directory.
-
-  ## Examples
-
-      iex> delete_directory(directory)
-      {:ok, %Directory{}}
-
-      iex> delete_directory(directory)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  @spec delete_directory(Directory.t()) :: {:ok, Directory.t()} | {:error, Changeset.t()}
-  def delete_directory(%Directory{} = directory) do
-    Repo.delete(directory)
-  end
-
-  @doc """
-  Returns the list of files for a given directory
-
-  ## Examples
-
-      iex> list_files()
-      [%File{}, ...]
-
-  """
-  @spec list_files(Directory.t()) :: [Directory.t()]
-  def list_files(%Directory{} = parent_directory) do
-    from(f in File,
-      where: f.parent_directory_id == ^parent_directory.id,
-      order_by: [:filename]
-    )
-    |> Repo.all()
-  end
-
-  @doc """
-  Gets a single file.
-  Returns `nil` if file is not found.
-
-  ## Examples
-
-      iex> get_file(123)
-      %File{}
-
-      iex> get_file(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_file(id), do: Repo.get(File, id)
-
-  @doc """
-  Updates a file.
-
-  ## Examples
-
-      iex> update_file(file, path)
-      {:ok, %File{}}
-
-  """
-  def update_file(%File{} = file, attrs) do
-    file
-    |> File.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a File AND all its dependend conversions
-
-  ## Examples
-
-      iex> delete_file(file)
-      {:ok, %File{}}
-
-      iex> delete_file(file)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_file(%File{} = file) do
-    file = Repo.preload(file, [:file_conversions])
-
-    Enum.each(file.file_conversions, fn file_conversion ->
-      delete_file_conversion(file_conversion)
-    end)
-
-    File.delete_attachment(file)
-    Repo.delete(file)
-  end
-
-  @doc """
-  Given a list of ids, transfers the corresponding files to a public archive.
-  This is the new directory structure created:
-  / archive / <current_year> / <user_id> / <filename>.ext
-  """
-  @doc since: "2.0.0"
-
-  @spec transfer_files_by_ids([pos_integer()], User.t()) :: [File.t()]
-
-  def transfer_files_by_ids(file_ids, %User{id: user_id}) do
-    from(f in File,
-      where: f.user_id == ^user_id and f.id in ^file_ids
-    )
-    |> Repo.all()
-    |> Enum.map(fn file ->
-      parent_directory =
-        List.last(ensure_archive_directory("#{DateTime.utc_now().year}/#{user_id}"))
-
-      file
-      |> Changeset.change(%{user_id: nil, parent_directory_id: parent_directory.id})
-      |> Repo.update!()
-    end)
-  end
-
-  @spec ensure_archive_directory(String.t() | nil) :: [Directory.t()]
-
-  defp ensure_archive_directory(path) do
-    [
-      "archiv"
-      | if(is_nil(path), do: [], else: String.split(path, "/"))
-    ]
-    |> Enum.reduce([], fn dirname, dir_list ->
-      parent_directory = List.last(dir_list)
-
-      parent_directory_condition =
-        case parent_directory do
-          nil ->
-            dynamic([d], is_nil(d.parent_directory_id))
-
-          directory ->
-            dynamic([d], d.parent_directory_id == ^directory.id)
-        end
-
-      condition = dynamic([d], d.name == ^dirname and ^parent_directory_condition)
-
-      from(d in Directory, where: ^condition)
-      |> Repo.one()
-      |> case do
-        nil ->
-          {:ok, directory} =
-            create_directory(%{
-              name: dirname,
-              parent_directory_id:
-                if(is_nil(parent_directory), do: nil, else: parent_directory.id)
-            })
-
-          dir_list ++ [directory]
-
-        directory ->
-          dir_list ++ [directory]
-      end
-    end)
-  end
-
-  @doc """
-  Deletes a FileConversion.
-
-  ## Examples
-
-      iex> delete_file_conversion(file_conversion)
-      {:ok, %FileConversion{}}
-
-      iex> delete_file_conversion(file_conversion)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_file_conversion(%FileConversion{} = file_conversion) do
-    File.delete_attachment(file_conversion)
-    Repo.delete(file_conversion)
   end
 
   @doc """

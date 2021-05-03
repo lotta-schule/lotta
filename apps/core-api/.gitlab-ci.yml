@@ -19,6 +19,10 @@ services:
   - name: rabbitmq:latest
   - name: bitnami/redis:latest
     alias: redis
+  - name: minio/minio:latest
+    alias: minio
+    entrypoint: ['sh']
+    command: ['-c', 'mkdir -p /export/lotta-dev-ugc && /usr/bin/minio server /export']
   - name: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
     alias: elasticsearch
     command:
@@ -39,6 +43,8 @@ test:
     UGC_S3_COMPAT_SECRET_ACCESS_KEY: "${S3COMPAT_SECRET_ACCESS_KEY}"
     UGC_S3_COMPAT_ENDPOINT: mp4-dev-ugc.fra1.digitaloceanspaces.com
     UGC_S3_COMPAT_BUCKET: mp4-dev-ugc
+    MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
+    MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
@@ -47,6 +53,12 @@ test:
     # gitlab k8s-runner has a problem with service hostname exposition
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/2229
     - make tests-ci
+  artifacts:
+    when: always
+    paths:
+      - _build/test/lib/api/test-junit-report.xml
+    reports:
+      junit: _build/test/lib/api/test-junit-report.xml
   coverage: '/\[TOTAL\]\s+(\d+\.\d+%)$/'
 
 build docker image:production:

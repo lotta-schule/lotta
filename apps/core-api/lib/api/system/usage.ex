@@ -9,7 +9,7 @@ defmodule Api.System.Usage do
   import Ecto.Query
 
   alias Api.Repo
-  alias Api.Accounts.{File, FileConversion}
+  alias Api.Storage.{File, FileConversion}
 
   @doc """
   Return the usage statistics

@@ -47,6 +47,7 @@ defmodule ApiWeb.Schema do
       |> Dataloader.add_source(Api.Content, Api.Content.data())
       |> Dataloader.add_source(Api.System, Api.System.data())
       |> Dataloader.add_source(Api.Accounts, Api.Accounts.data())
+      |> Dataloader.add_source(Api.Storage, Api.Storage.data())
 
     Map.put(ctx, :loader, loader)
   end

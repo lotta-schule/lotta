@@ -98,6 +98,26 @@ config :api, ApiWeb.Endpoint,
   secret_key_base: secret_key_base,
   live_view: [signing_salt: secret_signing_salt_live_view]
 
+config :api, Api.Storage.RemoteStorage,
+  default_storage: "minio",
+  storages: %{
+    "digitalocean-dev" => %{
+      type: Api.Storage.RemoteStorage.Strategy.S3,
+      config: %{}
+    },
+    "digitalocean-prod" => %{
+      type: Api.Storage.RemoteStorage.Strategy.S3,
+      config: %{}
+    },
+    "minio" => %{
+      type: Api.Storage.RemoteStorage.Strategy.S3,
+      config: %{
+        endpoint: ugc_s3_compat_endpoint,
+        bucket: ugc_s3_compat_bucket
+      }
+    }
+  }
+
 config :api, Api.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: mailgun_api_key,

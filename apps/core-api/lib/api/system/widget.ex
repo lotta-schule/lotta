@@ -7,7 +7,8 @@ defmodule Api.System.Widget do
   alias Api.Repo
   import Ecto.Changeset
   import Ecto.Query
-  alias Api.Accounts.{File, UserGroup}
+  alias Api.Accounts.UserGroup
+  alias Api.Storage.File
   alias Api.System.Category
 
   @type id() :: pos_integer()
@@ -19,10 +20,12 @@ defmodule Api.System.Widget do
     field :title, :string
     field :type, :string
 
-    belongs_to :icon_image_file, File, on_replace: :nilify
+    belongs_to :icon_image_file, File,
+      on_replace: :nilify,
+      type: :binary_id
 
     many_to_many :groups,
-                 Api.Accounts.UserGroup,
+                 UserGroup,
                  join_through: "widgets_user_groups",
                  join_keys: [widget_id: :id, group_id: :id],
                  on_replace: :delete
@@ -53,7 +56,7 @@ defmodule Api.System.Widget do
 
   defp put_assoc_icon_image_file(changeset, %{icon_image_file: %{id: icon_image_file_id}}) do
     changeset
-    |> put_assoc(:icon_image_file, Repo.get(Api.Accounts.File, icon_image_file_id))
+    |> put_assoc(:icon_image_file, Repo.get(File, icon_image_file_id))
   end
 
   defp put_assoc_icon_image_file(changeset, _args), do: changeset

@@ -3,7 +3,8 @@ defmodule Api.Repo.Seeder do
   alias Ecto.Changeset
   alias Api.Accounts
   alias Api.System
-  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.{Directory, File}
   alias Api.Content.{Article, ContentModule}
   alias Api.Messages.Message
   alias Api.System.{Category, CustomDomain, Widget}

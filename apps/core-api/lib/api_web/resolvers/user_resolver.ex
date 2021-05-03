@@ -9,6 +9,7 @@ defmodule ApiWeb.UserResolver do
   alias ApiWeb.Context
   alias Api.Repo
   alias Api.Accounts
+  alias Api.Storage
   alias Api.Mailer
   alias Api.Accounts.User
 
@@ -194,8 +195,9 @@ defmodule ApiWeb.UserResolver do
   end
 
   def destroy_account(args, %{context: %Context{current_user: current_user}}) do
-    transfer_file_ids = args[:transfer_file_ids] || []
-    Accounts.transfer_files_by_ids(transfer_file_ids, current_user)
+    (args[:transfer_file_ids] || [])
+    |> Storage.archive_user_files_by_ids(current_user)
+
     Accounts.delete_user(current_user)
   end
 
