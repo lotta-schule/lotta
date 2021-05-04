@@ -18,7 +18,7 @@ defmodule ApiWeb.Schema.Messages.Message do
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :content, :string
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
   end
 end

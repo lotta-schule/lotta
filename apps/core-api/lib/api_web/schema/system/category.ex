@@ -5,8 +5,8 @@ defmodule ApiWeb.Schema.System.Category do
 
   object :category do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :title, :string
     field :is_sidenav, :boolean
     field :is_homepage, :boolean

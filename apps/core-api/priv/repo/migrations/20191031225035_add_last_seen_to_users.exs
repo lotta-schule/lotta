@@ -3,7 +3,7 @@ defmodule Api.Repo.Migrations.AddLastSeenToUsers do
 
   def change do
     alter table(:users) do
-      add :last_seen, :naive_datetime
+      add(:last_seen, :utc_datetime)
     end
   end
 end

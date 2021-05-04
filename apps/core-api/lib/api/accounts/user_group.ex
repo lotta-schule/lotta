@@ -20,6 +20,8 @@ defmodule Api.Accounts.UserGroup do
           is_admin_group: boolean()
         }
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "user_groups" do
     field :name, :string
     field :sort_key, :integer

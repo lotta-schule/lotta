@@ -13,6 +13,8 @@ defmodule Api.Storage.File do
 
   @primary_key {:id, :binary_id, read_after_writes: true}
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "files" do
     field :mime_type, :string
     field :file_type, :string
