@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     Paper,
     Typography,
@@ -47,12 +47,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-export const WidgetsManagement = memo(() => {
+export const WidgetsManagement = React.memo(() => {
     const styles = useStyles();
 
-    const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(
-        null
-    );
+    const [
+        selectedWidget,
+        setSelectedWidget,
+    ] = React.useState<WidgetModel | null>(null);
 
     const { data, loading: isLoading, error } = useQuery<{
         widgets: WidgetModel[];
@@ -119,7 +120,7 @@ export const WidgetsManagement = memo(() => {
                                         styles.iconSmall
                                     )}
                                 />
-                                Widget erstellen
+                                Marginale erstellen
                             </Button>
                             <Menu {...bindMenu(popupState)}>
                                 <MenuItem
@@ -134,7 +135,7 @@ export const WidgetsManagement = memo(() => {
                                     {Widget.getIconForType(
                                         WidgetModelType.Calendar
                                     )}{' '}
-                                    &nbsp; Kalender-Widget erstellen
+                                    &nbsp; Kalender-Marginale erstellen
                                 </MenuItem>
                                 <MenuItem
                                     onClick={() => {
@@ -148,7 +149,7 @@ export const WidgetsManagement = memo(() => {
                                     {Widget.getIconForType(
                                         WidgetModelType.Schedule
                                     )}{' '}
-                                    &nbsp; VPlan-Widget erstellen
+                                    &nbsp; VPlan-Marginale erstellen
                                 </MenuItem>
                             </Menu>
                         </>

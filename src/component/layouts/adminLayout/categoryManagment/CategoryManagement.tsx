@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { Paper, Tabs, Tab, makeStyles } from '@material-ui/core';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { CategoriesManagement } from './categories/CategoriesManagement';
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const CategoryManagement = memo(() => {
+export const CategoryManagement = React.memo(() => {
     const styles = useStyles();
     const { history, location } = useRouter();
 
