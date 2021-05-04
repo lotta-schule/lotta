@@ -160,7 +160,8 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                             const isMultipleDays =
                                 (duration.days && duration.days > 1) ||
                                 (duration.months && duration.months > 0) ||
-                                (duration.years && duration.years > 0);
+                                (duration.years && duration.years > 0) ||
+                                false;
                             return (
                                 <React.Fragment key={i}>
                                     <ListItem
