@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import {
     Button,
     Divider,
@@ -48,17 +48,17 @@ export interface WidgetEditorProps {
     onSelectWidget(widget: WidgetModel | null): void;
 }
 
-export const WidgetEditor = memo<WidgetEditorProps>(
+export const WidgetEditor = React.memo<WidgetEditorProps>(
     ({ selectedWidget, onSelectWidget }) => {
         const styles = useStyles();
 
-        const [widget, setWidget] = useState<WidgetModel | null>(null);
+        const [widget, setWidget] = React.useState<WidgetModel | null>(null);
         const [
             isDeleteWidgetDialogOpen,
             setIsDeleteWidgetDialogOpen,
-        ] = useState(false);
+        ] = React.useState(false);
 
-        const [isShowSuccess, setIsShowSuccess] = useState(false);
+        const [isShowSuccess, setIsShowSuccess] = React.useState(false);
         const [mutateWidget, { loading: isLoading, error }] = useMutation<
             { widget: WidgetModel },
             { id: ID; widget: any }
@@ -69,7 +69,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(
             },
         });
 
-        const updateWidget = useCallback(async () => {
+        const updateWidget = React.useCallback(async () => {
             if (!selectedWidget || !widget) {
                 return null;
             }
@@ -88,7 +88,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(
             });
         }, [selectedWidget, widget, mutateWidget]);
 
-        useEffect(() => {
+        React.useEffect(() => {
             if (selectedWidget === null && widget !== null) {
                 setWidget(null);
             } else if (selectedWidget) {
@@ -126,7 +126,7 @@ export const WidgetEditor = memo<WidgetEditorProps>(
                 <Divider className={styles.divider} />
 
                 <WidgetIconSelection
-                    icon={widget.configuration.icon ?? {}}
+                    icon={widget.configuration?.icon ?? {}}
                     onSelectIcon={(icon) =>
                         setWidget({
                             ...widget,

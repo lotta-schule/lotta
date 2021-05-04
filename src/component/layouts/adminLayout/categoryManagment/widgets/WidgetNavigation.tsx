@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import {
     Theme,
@@ -34,7 +34,7 @@ export interface WidgetNavigationProps {
     onSelectWidget(categoryModel: WidgetModel): void;
 }
 
-export const WidgetNavigation = memo<WidgetNavigationProps>(
+export const WidgetNavigation = React.memo<WidgetNavigationProps>(
     ({ widgets, selectedWidget, onSelectWidget }) => {
         const styles = useStyles();
 
@@ -54,7 +54,7 @@ export const WidgetNavigation = memo<WidgetNavigationProps>(
                             >
                                 <Typography component={'div'} variant={'body1'}>
                                     <WidgetIcon
-                                        icon={widget.configuration.icon}
+                                        icon={widget.configuration?.icon}
                                         size={36}
                                     />
                                     &nbsp;
