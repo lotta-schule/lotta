@@ -9,6 +9,8 @@ defmodule Api.Storage.FileConversion do
 
   alias Api.Storage.{File, RemoteStorageEntity}
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "file_conversions" do
     field :file_type, :string
     field :filesize, :integer

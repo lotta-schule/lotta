@@ -25,6 +25,8 @@ defmodule Api.System.Category do
           hide_articles_from_homepage: boolean()
         }
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "categories" do
     field :title, :string
     field :sort_key, :integer

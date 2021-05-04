@@ -400,43 +400,43 @@ defmodule Api.Repo.Seeder do
       %Message{
         sender_user_id: alexis.id,
         recipient_user_id: eike.id,
-        inserted_at: ~N[2020-11-01 10:00:00],
-        updated_at: ~N[2020-11-01 10:00:00],
+        inserted_at: ~U[2020-11-01 10:00:00Z],
+        updated_at: ~U[2020-11-01 10:00:00Z],
         content: "OK, alles bereit?"
       },
       %Message{
         sender_user_id: eike.id,
         recipient_user_id: alexis.id,
-        inserted_at: ~N[2020-11-01 12:30:00],
-        updated_at: ~N[2020-11-01 12:30:00],
+        inserted_at: ~U[2020-11-01 12:30:00Z],
+        updated_at: ~U[2020-11-01 12:30:00Z],
         content: "Was meinst du damit?"
       },
       %Message{
         sender_user_id: alexis.id,
         recipient_user_id: eike.id,
-        inserted_at: ~N[2020-11-01 12:32:00],
-        updated_at: ~N[2020-11-01 12:32:00],
+        inserted_at: ~U[2020-11-01 12:32:00Z],
+        updated_at: ~U[2020-11-01 12:32:00Z],
         content: "Bereit für das Deployment"
       },
       %Message{
         sender_user_id: eike.id,
         recipient_user_id: alexis.id,
-        inserted_at: ~N[2020-11-01 13:12:00],
-        updated_at: ~N[2020-11-01 13:12:00],
+        inserted_at: ~U[2020-11-01 13:12:00Z],
+        updated_at: ~U[2020-11-01 13:12:00Z],
         content: "Ich frag mal in die Gruppe"
       },
       %Message{
         sender_user_id: eike.id,
         recipient_group_id: lehrer_group.id,
-        inserted_at: ~N[2020-11-01 13:12:46],
-        updated_at: ~N[2020-11-01 13:12:46],
+        inserted_at: ~U[2020-11-01 13:12:46Z],
+        updated_at: ~U[2020-11-01 13:12:46Z],
         content: "Alles bereit hier? Wir würden deployen."
       },
       %Message{
         sender_user_id: billy.id,
         recipient_user_id: alexis.id,
-        inserted_at: ~N[2020-11-01 21:01:44],
-        updated_at: ~N[2020-11-01 21:01:44],
+        inserted_at: ~U[2020-11-01 21:01:44Z],
+        updated_at: ~U[2020-11-01 21:01:44Z],
         content: "Bist du da?"
       }
     ]
@@ -555,8 +555,8 @@ defmodule Api.Repo.Seeder do
     Repo.insert!(%Article{
       title: "Draft1",
       preview: "Entwurf Artikel zu I",
-      inserted_at: ~N[2019-09-01 10:00:00],
-      updated_at: ~N[2019-09-01 10:00:00],
+      inserted_at: ~U[2019-09-01 10:00:00Z],
+      updated_at: ~U[2019-09-01 10:00:00Z],
       preview_image_file_id: List.first(eike_files).id
     })
     |> Repo.preload(:users)
@@ -567,8 +567,8 @@ defmodule Api.Repo.Seeder do
     Repo.insert!(%Article{
       title: "Draft2",
       preview: "Entwurf Artikel zu XYZ",
-      inserted_at: ~N[2019-09-01 10:05:00],
-      updated_at: ~N[2019-09-01 10:05:00],
+      inserted_at: ~U[2019-09-01 10:05:00Z],
+      updated_at: ~U[2019-09-01 10:05:00Z],
       preview_image_file_id: List.first(eike_files).id
     })
     |> Repo.preload(:users)
@@ -580,8 +580,8 @@ defmodule Api.Repo.Seeder do
       title: "Fertiger Artikel zum Konzert",
       preview: "Entwurf Artikel zu XYZ",
       ready_to_publish: true,
-      inserted_at: ~N[2019-09-01 10:06:00],
-      updated_at: ~N[2019-09-01 10:06:00],
+      inserted_at: ~U[2019-09-01 10:06:00Z],
+      updated_at: ~U[2019-09-01 10:06:00Z],
       preview_image_file_id: List.first(eike_files).id
     })
     |> Repo.preload(:users)
@@ -595,8 +595,8 @@ defmodule Api.Repo.Seeder do
         published: true,
         title: "And the oskar goes to ...",
         preview: "Hallo hallo hallo",
-        inserted_at: ~N[2019-09-01 10:08:00],
-        updated_at: ~N[2019-09-01 10:08:00]
+        inserted_at: ~U[2019-09-01 10:08:00Z],
+        updated_at: ~U[2019-09-01 10:08:00Z]
       })
 
     Repo.insert!(%ContentModule{
@@ -750,8 +750,8 @@ defmodule Api.Repo.Seeder do
         title: "Landesfinale Volleyball WK IV",
         preview:
           "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-        inserted_at: ~N[2019-09-01 10:09:00],
-        updated_at: ~N[2019-09-01 10:09:00],
+        inserted_at: ~U[2019-09-01 10:09:00Z],
+        updated_at: ~U[2019-09-01 10:09:00Z],
         published: true
       })
 
@@ -817,8 +817,8 @@ defmodule Api.Repo.Seeder do
           "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
         topic: "KleinKunst 2018",
         published: true,
-        inserted_at: ~N[2019-09-01 10:11:00],
-        updated_at: ~N[2019-09-01 10:11:00]
+        inserted_at: ~U[2019-09-01 10:11:00Z],
+        updated_at: ~U[2019-09-01 10:11:00Z]
       })
 
     assign_groups(kleinkunst_wb2, [verwaltung_group, lehrer_group, schueler_group])
@@ -885,8 +885,8 @@ defmodule Api.Repo.Seeder do
           "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
         topic: "KleinKunst 2018",
         published: true,
-        inserted_at: ~N[2019-09-01 10:12:00],
-        updated_at: ~N[2019-09-01 10:12:00]
+        inserted_at: ~U[2019-09-01 10:12:00Z],
+        updated_at: ~U[2019-09-01 10:12:00Z]
       })
 
     assign_groups(vorausscheid, [verwaltung_group, lehrer_group])
@@ -952,8 +952,8 @@ defmodule Api.Repo.Seeder do
         preview:
           "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
         published: true,
-        inserted_at: ~N[2019-09-01 10:13:00],
-        updated_at: ~N[2019-09-01 10:13:00]
+        inserted_at: ~U[2019-09-01 10:13:00Z],
+        updated_at: ~U[2019-09-01 10:13:00Z]
       })
 
     Repo.insert!(%ContentModule{
@@ -1015,8 +1015,8 @@ defmodule Api.Repo.Seeder do
       title: "Beitrag Projekt 1",
       preview: "Lorem ipsum dolor sit amet.",
       published: true,
-      inserted_at: ~N[2019-09-01 10:14:00],
-      updated_at: ~N[2019-09-01 10:14:00]
+      inserted_at: ~U[2019-09-01 10:14:00Z],
+      updated_at: ~U[2019-09-01 10:14:00Z]
     })
 
     Repo.insert!(%Article{
@@ -1024,8 +1024,8 @@ defmodule Api.Repo.Seeder do
       title: "Beitrag Projekt 2",
       preview: "Lorem ipsum dolor sit amet.",
       published: true,
-      inserted_at: ~N[2019-09-01 10:15:00],
-      updated_at: ~N[2019-09-01 10:15:00]
+      inserted_at: ~U[2019-09-01 10:15:00Z],
+      updated_at: ~U[2019-09-01 10:15:00Z]
     })
 
     Repo.insert!(%Article{
@@ -1033,8 +1033,8 @@ defmodule Api.Repo.Seeder do
       title: "Beitrag Projekt 3",
       preview: "Lorem ipsum dolor sit amet.",
       published: true,
-      inserted_at: ~N[2019-09-01 10:16:00],
-      updated_at: ~N[2019-09-01 10:16:00]
+      inserted_at: ~U[2019-09-01 10:16:00Z],
+      updated_at: ~U[2019-09-01 10:16:00Z]
     })
 
     Enum.map(4..30, fn i ->
@@ -1044,8 +1044,8 @@ defmodule Api.Repo.Seeder do
           title: "Beitrag Projekt #{i} - nur für Lehrer",
           preview: "Lorem ipsum dolor sit amet.",
           published: true,
-          inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
-          updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
+          inserted_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second),
+          updated_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second)
         })
 
       art2 =
@@ -1054,8 +1054,8 @@ defmodule Api.Repo.Seeder do
           title: "Beitrag Projekt #{i} - nur für Schüler",
           preview: "Lorem ipsum dolor sit amet.",
           published: true,
-          inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
-          updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
+          inserted_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second),
+          updated_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second)
         })
 
       assign_groups(art1, [verwaltung_group, lehrer_group])

@@ -12,6 +12,8 @@ defmodule Api.Storage.Directory do
 
   @primary_key {:id, :binary_id, read_after_writes: true}
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "directories" do
     field :name, :string
 

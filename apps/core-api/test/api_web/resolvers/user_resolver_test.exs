@@ -206,7 +206,11 @@ defmodule ApiWeb.UserResolverTest do
     """
     test "returns the user last seen for self", %{user: user, user_jwt: user_jwt} do
       user
-      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.local_now()})
+      |> Ecto.Changeset.change(%{
+        last_seen:
+          DateTime.utc_now()
+          |> DateTime.truncate(:second)
+      })
       |> Repo.update!()
 
       res =
@@ -223,9 +227,13 @@ defmodule ApiWeb.UserResolverTest do
                }
              } = res
 
+      {:ok, last_seen, 0} =
+        last_seen
+        |> DateTime.from_iso8601()
+
       diff =
-        NaiveDateTime.local_now()
-        |> NaiveDateTime.diff(NaiveDateTime.from_iso8601!(last_seen), :second)
+        DateTime.utc_now()
+        |> DateTime.diff(last_seen, :second)
 
       # difference must be less than 1 minute
       assert diff < 60
@@ -233,7 +241,7 @@ defmodule ApiWeb.UserResolverTest do
 
     test "returns the user last_seen for admin", %{user: user, admin_jwt: admin_jwt} do
       user
-      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
+      |> Ecto.Changeset.change(%{last_seen: ~U[2020-11-14 00:00:00Z]})
       |> Repo.update!()
 
       res =
@@ -245,7 +253,7 @@ defmodule ApiWeb.UserResolverTest do
       assert res == %{
                "data" => %{
                  "user" => %{
-                   "last_seen" => "2020-11-14T00:00:00"
+                   "last_seen" => "2020-11-14T00:00:00Z"
                  }
                }
              }
@@ -253,7 +261,7 @@ defmodule ApiWeb.UserResolverTest do
 
     test "does not return the user last_seen for others", %{user2: user2, user_jwt: user_jwt} do
       user2
-      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
+      |> Ecto.Changeset.change(%{last_seen: ~U[2020-11-14 00:00:00Z]})
       |> Repo.update!()
 
       res =

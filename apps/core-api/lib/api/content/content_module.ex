@@ -20,6 +20,8 @@ defmodule Api.Content.ContentModule do
           configuration: map()
         }
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "content_modules" do
     field :content, :map
     field :type, :string

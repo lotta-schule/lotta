@@ -15,6 +15,8 @@ defmodule Api.System.Widget do
 
   @type t() :: %__MODULE__{id: id(), type: String.t()}
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "widgets" do
     field :configuration, :map
     field :title, :string

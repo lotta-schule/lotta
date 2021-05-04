@@ -2,7 +2,6 @@ defmodule Api.Content.Article do
   @moduledoc """
     Ecto Schema for articles
   """
-
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -28,6 +27,8 @@ defmodule Api.Content.Article do
           published: boolean(),
           is_pinned_to_top: boolean()
         }
+
+  @timestamps_opts [type: :utc_datetime]
 
   schema "articles" do
     field(:title, :string)

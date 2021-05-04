@@ -13,12 +13,14 @@ defmodule Api.Accounts.User do
   alias Api.Storage.File
   alias Api.Content.Article
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "users" do
     field :email, :string
     field :name, :string
     field :nickname, :string
     field :class, :string
-    field :last_seen, :naive_datetime
+    field :last_seen, :utc_datetime
     field :hide_full_name, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string

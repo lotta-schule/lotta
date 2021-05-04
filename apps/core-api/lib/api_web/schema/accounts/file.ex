@@ -20,8 +20,8 @@ defmodule ApiWeb.Schema.Accounts.File do
   object :directory do
     field :id, :id
     field :name, :string
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :parent_directory, :directory,
@@ -30,8 +30,8 @@ defmodule ApiWeb.Schema.Accounts.File do
 
   object :file do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :filename, :string
     field :filesize, :integer
     field :mime_type, :string
@@ -52,8 +52,8 @@ defmodule ApiWeb.Schema.Accounts.File do
 
   object :file_conversion do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :format, :string
     field :mime_type, :string
     field :remote_location, :string

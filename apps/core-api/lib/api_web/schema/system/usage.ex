@@ -4,8 +4,8 @@ defmodule ApiWeb.Schema.System.Usage do
   use Absinthe.Schema.Notation
 
   object :usage do
-    field :period_start, :naive_datetime
-    field :period_end, :naive_datetime
+    field :period_start, :datetime
+    field :period_end, :datetime
     field :storage, :storage_usage
     field :media, :media_usage
   end

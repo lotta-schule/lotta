@@ -8,6 +8,9 @@ defmodule Api.System.Configuration do
   use Ecto.Schema
 
   @primary_key false
+
+  @timestamps_opts [type: :utc_datetime]
+
   schema "configuration" do
     field :name, :string
     field :string_value, :string

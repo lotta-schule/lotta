@@ -10,7 +10,7 @@ defmodule ApiWeb.Schema.System.System do
     field :title, :string
     field :slug, :string
     field :custom_theme, :json
-    field :inserted_at, :naive_datetime
+    field :inserted_at, :datetime
     field :host, :string, resolve: &SystemResolver.host/2
     field :logo_image_file, :file
     field :background_image_file, :file
@@ -25,8 +25,8 @@ defmodule ApiWeb.Schema.System.System do
     field :id, :id
     field :host, :string
     field :is_main_domain, :boolean
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
   end
 
   input_object :system_input do

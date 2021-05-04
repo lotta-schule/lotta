@@ -11,7 +11,7 @@ defmodule Api.Content do
 
   @type filter() :: %{
           optional(:first) => pos_integer(),
-          optional(:updated_before) => NaiveDateTime.t()
+          optional(:updated_before) => DateTime.t()
         }
 
   def data() do

@@ -8,6 +8,8 @@ defmodule Api.Accounts.GroupEnrollmentToken do
 
   alias Api.Accounts.UserGroup
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "group_enrollment_tokens" do
     field :token, :string
 
