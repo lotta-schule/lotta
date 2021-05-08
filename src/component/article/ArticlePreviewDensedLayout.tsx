@@ -5,7 +5,6 @@ import {
     Typography,
     Link,
     Grid,
-    Fab,
     makeStyles,
     Theme,
 } from '@material-ui/core';
@@ -22,6 +21,8 @@ import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
 import { BackgroundImg } from 'react-cloudimage-responsive';
+import { Button } from 'component/general/button/Button';
+import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>((theme) => ({
@@ -37,8 +38,7 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean }>((theme) => ({
             '& .edit-button': {
                 border: 0,
                 display: 'flex',
-                color: theme.palette.primary.contrastText,
-                backgroundColor: theme.palette.secondary.main,
+                color: theme.palette.secondary.main,
             },
         },
     },
@@ -152,9 +152,9 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(
         isEmbedded,
     }) => {
         const currentUser = useCurrentUser();
-
         const isMobile = useIsMobile();
         const styles = useStyle({ isEmbedded });
+        const { push } = useHistory();
 
         const [toggleArticlePin] = useMutation<
             { article: ArticleModel },
@@ -272,32 +272,32 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(
                                         currentUser,
                                         article
                                     ) && (
-                                        <Fab
+                                        <Button
                                             aria-label="Edit"
-                                            size="small"
                                             className={clsx(
                                                 styles.editButton,
                                                 'edit-button'
                                             )}
-                                            component={CollisionLink}
-                                            to={Article.getPath(article, {
-                                                edit: true,
-                                            })}
-                                        >
-                                            <Edit />
-                                        </Fab>
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                push(
+                                                    Article.getPath(article, {
+                                                        edit: true,
+                                                    })
+                                                );
+                                            }}
+                                            icon={<Edit />}
+                                        />
                                     )}
                                 {!disablePin && User.isAdmin(currentUser) && (
-                                    <Fab
+                                    <Button
                                         aria-label="Pin"
-                                        size="small"
                                         className={clsx(styles.pinButton, {
                                             active: article.isPinnedToTop,
                                         })}
                                         onClick={() => toggleArticlePin()}
-                                    >
-                                        <Place />
-                                    </Fab>
+                                        icon={<Place />}
+                                    />
                                 )}
                             </Grid>
                         )}

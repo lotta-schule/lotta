@@ -8,9 +8,9 @@ import {
     TextField,
     Typography,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { SdStorage } from '@material-ui/icons';
 import { useSystem } from 'util/client/useSystem';
-import { SaveButton } from 'component/general/SaveButton';
 import { useMutation } from '@apollo/client';
 import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -22,7 +22,6 @@ export const Constraints = React.memo(() => {
     const [value, setValue] = React.useState(
         system.userMaxStorageConfig ?? defaultLimitRef.current
     );
-    const [isShowSuccess, setIsShowSuccess] = React.useState(false);
 
     const isLimitSet = value >= 0;
 
@@ -41,10 +40,6 @@ export const Constraints = React.memo(() => {
         UpdateSystemMutation,
         {
             variables: { system: { userMaxStorageConfig: value } },
-            onCompleted: () => {
-                setIsShowSuccess(true);
-                setTimeout(() => setIsShowSuccess(false), 3000);
-            },
         }
     );
 
@@ -143,13 +138,9 @@ export const Constraints = React.memo(() => {
                         </Grid>
                     </Grid>
                 </animated.div>
-                <SaveButton
-                    onClick={() => updateSystem()}
-                    isLoading={isLoading}
-                    isSuccess={isShowSuccess}
-                >
+                <Button onClick={() => updateSystem()} disabled={isLoading}>
                     Speichern
-                </SaveButton>
+                </Button>
             </div>
         </>
     );

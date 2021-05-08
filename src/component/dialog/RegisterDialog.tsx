@@ -5,7 +5,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button,
     TextField,
     Typography,
     Grid,
@@ -14,6 +13,7 @@ import {
     FormGroup,
     FormControlLabel,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { fade } from '@material-ui/core/styles';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -69,8 +69,6 @@ export const RegisterDialog = memo<RegisterDialogProps>(
                         onClick={() => {
                             onRequestClose();
                         }}
-                        color="secondary"
-                        variant="outlined"
                     >
                         Schließen
                     </Button>
@@ -233,17 +231,10 @@ export const RegisterDialog = memo<RegisterDialogProps>(
                         onClick={() => {
                             onRequestClose();
                         }}
-                        color="secondary"
-                        variant="outlined"
                     >
                         Abbrechen
                     </Button>
-                    <Button
-                        type={'submit'}
-                        disabled={isLoading}
-                        variant="contained"
-                        color="secondary"
-                    >
+                    <Button type={'submit'} disabled={isLoading}>
                         Registrieren
                     </Button>
                 </DialogActions>

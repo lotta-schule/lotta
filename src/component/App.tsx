@@ -1,4 +1,4 @@
-import React, { memo, Suspense, lazy } from 'react';
+import * as React from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deDE } from '@material-ui/core/locale';
@@ -15,25 +15,30 @@ import { BaseLayout } from './layouts/BaseLayout';
 import { GetSystemQuery } from 'api/query/GetSystemQuery';
 import merge from 'lodash/merge';
 import ServerDownImage from './ServerDownImage.svg';
+import { CssVariables } from './CssVariables';
 
-const AdminLayout = lazy(() => import('./layouts/adminLayout/AdminLayout'));
-const ArticleRoute = lazy(() => import('./routes/ArticleRoute'));
-const CategoryRoute = lazy(() => import('./routes/CategoryRoute'));
-const EditArticleRoute = lazy(() => import('./routes/EditArticleRoute'));
-const SearchLayout = lazy(() => import('./layouts/SearchLayout'));
-const PrivacyLayout = lazy(() => import('./layouts/PrivacyLayout'));
-const ProfileLayout = lazy(
+const AdminLayout = React.lazy(
+    () => import('./layouts/adminLayout/AdminLayout')
+);
+const ArticleRoute = React.lazy(() => import('./routes/ArticleRoute'));
+const CategoryRoute = React.lazy(() => import('./routes/CategoryRoute'));
+const EditArticleRoute = React.lazy(() => import('./routes/EditArticleRoute'));
+const SearchLayout = React.lazy(() => import('./layouts/SearchLayout'));
+const PrivacyLayout = React.lazy(() => import('./layouts/PrivacyLayout'));
+const ProfileLayout = React.lazy(
     () => import('./layouts/profileLayout/ProfileLayout')
 );
-const MessagingLayout = lazy(
+const MessagingLayout = React.lazy(
     () => import('./layouts/messagingLayout/MessagingLayout')
 );
-const ResetPasswordLayout = lazy(() => import('./layouts/ResetPasswordLayout'));
-const RequestPasswordResetLayout = lazy(
+const ResetPasswordLayout = React.lazy(
+    () => import('./layouts/ResetPasswordLayout')
+);
+const RequestPasswordResetLayout = React.lazy(
     () => import('./layouts/RequestPasswordResetLayout')
 );
 
-export const App = memo(() => {
+export const App = React.memo(() => {
     const {
         data,
         loading: isLoadingSystem,
@@ -98,9 +103,10 @@ export const App = memo(() => {
                 return theme;
             }}
         >
+            <CssVariables />
             <BrowserRouter>
                 <AppHead />
-                <Suspense fallback={<EmptyLoadingLayout />}>
+                <React.Suspense fallback={<EmptyLoadingLayout />}>
                     <BaseLayout>
                         <Switch>
                             <Route exact path={'/'} component={CategoryRoute} />
@@ -150,7 +156,7 @@ export const App = memo(() => {
                             />
                         </Switch>
                     </BaseLayout>
-                </Suspense>
+                </React.Suspense>
             </BrowserRouter>
         </ThemeProvider>
     );

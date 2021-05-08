@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {
-    Button,
     Divider,
     TextField,
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from '@apollo/client';
@@ -16,8 +16,6 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
 import { WidgetIconSelection } from './WidgetIconSelection';
-import { SaveButton } from 'component/general/SaveButton';
-import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
     input: {
@@ -37,10 +35,6 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
     },
-    deleteButton: {
-        backgroundColor: theme.palette.error.main,
-        color: theme.palette.error.contrastText,
-    },
 }));
 
 export interface WidgetEditorProps {
@@ -58,16 +52,10 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
             setIsDeleteWidgetDialogOpen,
         ] = React.useState(false);
 
-        const [isShowSuccess, setIsShowSuccess] = React.useState(false);
         const [mutateWidget, { loading: isLoading, error }] = useMutation<
             { widget: WidgetModel },
             { id: ID; widget: any }
-        >(UpdateWidgetMutation, {
-            onCompleted: () => {
-                setIsShowSuccess(true);
-                setTimeout(() => setIsShowSuccess(false), 3000);
-            },
-        });
+        >(UpdateWidgetMutation);
 
         const updateWidget = React.useCallback(async () => {
             if (!selectedWidget || !widget) {
@@ -163,19 +151,18 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                     />
                 )}
 
-                <SaveButton
+                <Button
                     style={{ float: 'right' }}
-                    isLoading={isLoading}
-                    isSuccess={isShowSuccess}
+                    disabled={isLoading}
                     className={styles.button}
                     onClick={() => updateWidget()}
                 >
                     Marginale speichern
-                </SaveButton>
+                </Button>
                 <Divider className={styles.divider} />
                 <Button
-                    variant={'contained'}
-                    className={clsx(styles.button, styles.deleteButton)}
+                    variant={'error'}
+                    className={styles.button}
                     onClick={() => setIsDeleteWidgetDialogOpen(true)}
                 >
                     Marginale löschen

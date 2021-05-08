@@ -9,7 +9,6 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Button,
     Checkbox,
     FormControlLabel,
 } from '@material-ui/core';
@@ -25,10 +24,10 @@ import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
-import { SaveButton } from 'component/general/SaveButton';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles((theme: Theme) => ({
     input: {
@@ -71,7 +70,6 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
             setIsDeleteCategoryDialogOpen,
         ] = React.useState(false);
 
-        const [isShowSuccess, setIsShowSuccess] = React.useState(false);
         const [selectedWidgets, setSelectedWidgets] = React.useState<
             WidgetModel[]
         >([]);
@@ -85,10 +83,6 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     variables: { categoryId: category?.id ?? null },
                 },
             ],
-            onCompleted: () => {
-                setIsShowSuccess(true);
-                setTimeout(() => setIsShowSuccess(false), 3000);
-            },
         });
         const {
             data: currentWidgetsData,
@@ -297,23 +291,19 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     }
                 />
                 <p>&nbsp;</p>
-                <SaveButton
+                <Button
                     className={styles.saveButton}
-                    isLoading={isLoading}
-                    isSuccess={isShowSuccess}
+                    disabled={isLoading}
                     onClick={() => updateCategory()}
                 >
                     Kategorie speichern
-                </SaveButton>
+                </Button>
 
                 {!category.isHomepage && (
                     <>
                         <Divider className={styles.deleteDivider} />
                         <Button
-                            size="small"
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<Delete />}
+                            icon={<Delete />}
                             onClick={() => setIsDeleteCategoryDialogOpen(true)}
                         >
                             Kategorie löschen

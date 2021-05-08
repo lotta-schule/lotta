@@ -1,8 +1,6 @@
 import React, { memo } from 'react';
 import { Add, DragHandle, Delete } from '@material-ui/icons';
 import {
-    IconButton,
-    Button,
     Grid,
     TextField,
     makeStyles,
@@ -16,6 +14,7 @@ import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
 import { FormElementConfiguration } from './FormElementConfiguration';
+import { Button } from 'component/general/button/Button';
 
 export interface EditProps {
     contentModule: ContentModuleModel;
@@ -111,7 +110,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                                                     >
                                                         <DragHandle />
                                                     </span>
-                                                    <IconButton
+                                                    <Button
                                                         onClick={() =>
                                                             updateConfiguration(
                                                                 {
@@ -126,9 +125,8 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
                                                                 }
                                                             )
                                                         }
-                                                    >
-                                                        <Delete />
-                                                    </IconButton>
+                                                        icon={<Delete />}
+                                                    />
                                                 </div>
                                                 <Grid
                                                     container
@@ -263,7 +261,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
             </Grid>
             <Button
                 style={{ float: 'right' }}
-                startIcon={<Add />}
+                icon={<Add />}
                 onClick={() =>
                     updateConfiguration({
                         elements: [
@@ -281,6 +279,7 @@ export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
             >
                 Feld hinzufügen
             </Button>
+            <p style={{ clear: 'right' }}></p>
         </>
     );
 });

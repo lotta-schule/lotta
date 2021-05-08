@@ -4,9 +4,9 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button,
     TextField,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { ArticleModel, ArticleModelInput } from '../../model';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
 import { useMutation } from '@apollo/client';
@@ -92,17 +92,10 @@ export const CreateArticleDialog = React.memo<CreateArticleDialogProps>(
                                 resetForm();
                                 onAbort();
                             }}
-                            color="secondary"
-                            variant="outlined"
                         >
                             Abbrechen
                         </Button>
-                        <Button
-                            type={'submit'}
-                            disabled={!title || isLoading}
-                            color="secondary"
-                            variant="contained"
-                        >
+                        <Button type={'submit'} disabled={!title || isLoading}>
                             Artikel erstellen
                         </Button>
                     </DialogActions>

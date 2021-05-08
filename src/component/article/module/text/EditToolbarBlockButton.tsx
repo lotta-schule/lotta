@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { useSlate } from 'slate-react';
-import { ToggleButton } from '@material-ui/lab';
+import { Button } from 'component/general/button/Button';
 import { Block, isBlockActive, toggleBlock } from './SlateUtils';
 
 export interface EditToolbarMarkButtonProps {
@@ -8,16 +8,14 @@ export interface EditToolbarMarkButtonProps {
     children?: any;
 }
 
-export const EditToolbarBlockButton: FC<EditToolbarMarkButtonProps> = ({
+export const EditToolbarBlockButton: React.FC<EditToolbarMarkButtonProps> = ({
     mark,
     children,
 }) => {
     const editor = useSlate();
 
     return (
-        <ToggleButton
-            size={'small'}
-            value={mark}
+        <Button
             selected={isBlockActive(editor, mark)}
             onMouseDown={(e) => {
                 e.preventDefault();
@@ -25,6 +23,6 @@ export const EditToolbarBlockButton: FC<EditToolbarMarkButtonProps> = ({
             }}
         >
             {children}
-        </ToggleButton>
+        </Button>
     );
 };

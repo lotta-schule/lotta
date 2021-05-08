@@ -4,8 +4,8 @@ import {
     TextField,
     Typography,
     makeStyles,
-    Button,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { useQuery } from '@apollo/client';
 import { ArticlePreviewDensedLayout } from 'component/article/ArticlePreviewDensedLayout';
 import { ArticleModel, CategoryModel } from 'model';
@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     },
     advancedSettingsButton: {
         float: 'right',
+        marginTop: theme.spacing(1),
     },
     advancedSettings: {
         overflow: 'hidden',
@@ -97,12 +98,14 @@ const SearchLayout = React.memo(() => {
                                 !isAdvancedSearchFormVisible
                             )
                         }
+                        icon={
+                            isAdvancedSearchFormVisible ? (
+                                <ExpandLess />
+                            ) : (
+                                <ExpandMore />
+                            )
+                        }
                     >
-                        {isAdvancedSearchFormVisible ? (
-                            <ExpandLess />
-                        ) : (
-                            <ExpandMore />
-                        )}{' '}
                         erweiterte Suche
                     </Button>
                     <animated.div

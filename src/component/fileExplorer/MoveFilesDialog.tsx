@@ -1,13 +1,12 @@
-import React, { memo, useState, useContext, useEffect } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    Button,
     DialogActions,
     Tooltip,
-    IconButton,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
@@ -16,7 +15,6 @@ import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { SaveButton } from 'component/general/SaveButton';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import fileExplorerContext from './context/FileExplorerContext';
 
@@ -33,8 +31,6 @@ export const MoveFilesDialog = memo(() => {
         isCreateNewFolderDialogOpen,
         setIsCreateNewFolderDialogOpen,
     ] = useState(false);
-
-    const [isShowSuccess, setIsShowSuccess] = useState(false);
 
     const [moveFile, { error, loading: isLoading }] = useMutation(
         UpdateFileMutation,
@@ -92,12 +88,6 @@ export const MoveFilesDialog = memo(() => {
         }
     );
 
-    useEffect(() => {
-        if (state.showMoveFiles) {
-            setIsShowSuccess(false);
-        }
-    }, [state.showMoveFiles]);
-
     return (
         <ResponsiveFullScreenDialog
             fullWidth
@@ -113,12 +103,11 @@ export const MoveFilesDialog = memo(() => {
                 <DialogContentText>Wähle ein Zielort</DialogContentText>
                 <ErrorMessage error={error} />
                 <Tooltip title={'Ordner erstellen'}>
-                    <IconButton
+                    <Button
                         aria-label="Ordner erstellen"
                         onClick={() => setIsCreateNewFolderDialogOpen(true)}
-                    >
-                        <CreateNewFolderOutlined color={'secondary'} />
-                    </IconButton>
+                        icon={<CreateNewFolderOutlined color={'secondary'} />}
+                    />
                 </Tooltip>
                 <DirectoryTree
                     defaultExpandedDirectoryIds={state.currentPath.map((d) =>
@@ -141,10 +130,8 @@ export const MoveFilesDialog = memo(() => {
                 >
                     Abbrechen
                 </Button>
-                <SaveButton
-                    isLoading={isLoading}
-                    isSuccess={isShowSuccess}
-                    disabled={selectedDirectory === null}
+                <Button
+                    disabled={isLoading || selectedDirectory === null}
                     onClick={async () => {
                         try {
                             await Promise.all(
@@ -166,7 +153,6 @@ export const MoveFilesDialog = memo(() => {
                                     }
                                 })
                             );
-                            setIsShowSuccess(true);
                             dispatch({ type: 'hideMoveFiles' });
                         } catch (e) {
                             console.error(
@@ -177,7 +163,7 @@ export const MoveFilesDialog = memo(() => {
                     }}
                 >
                     Dateien verschieben
-                </SaveButton>
+                </Button>
             </DialogActions>
         </ResponsiveFullScreenDialog>
     );

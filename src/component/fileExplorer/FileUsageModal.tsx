@@ -2,7 +2,6 @@ import React, { memo, useContext } from 'react';
 import {
     Dialog,
     DialogTitle,
-    IconButton,
     List,
     ListItem,
     ListItemAvatar,
@@ -10,6 +9,7 @@ import {
     ListItemSecondaryAction,
     makeStyles,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { OpenInNew } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
 import { FileModel, ID, FileModelUsageLocation } from 'model';
@@ -134,11 +134,10 @@ export const FileUsageModal = memo(() => {
                         />
                         {hasSecondaryAction(usage) && (
                             <ListItemSecondaryAction>
-                                <IconButton
+                                <Button
                                     onClick={getSecondaryActionCallback(usage)}
-                                >
-                                    <OpenInNew />
-                                </IconButton>
+                                    icon={<OpenInNew />}
+                                />
                             </ListItemSecondaryAction>
                         )}
                     </ListItem>

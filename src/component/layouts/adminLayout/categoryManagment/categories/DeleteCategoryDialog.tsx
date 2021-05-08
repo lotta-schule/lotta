@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
-    Button,
     DialogTitle,
     DialogContent,
     DialogContentText,
     DialogActions,
     LinearProgress,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { ArticleModel, CategoryModel, ID } from 'model';
 import { useQuery, useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
@@ -123,14 +123,12 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        color={'primary'}
                         onClick={(e) => onClose(e, 'auto')}
                         disabled={isLoading}
                     >
                         Abbrechen
                     </Button>
                     <Button
-                        color={'secondary'}
                         onClick={() =>
                             deleteCategory({
                                 variables: { id: categoryToDelete.id },

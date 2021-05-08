@@ -4,7 +4,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button,
     TextField,
 } from '@material-ui/core';
 import { UpdatePasswordMutation } from 'api/mutation/UpdatePasswordMutation';
@@ -12,6 +11,7 @@ import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
+import { Button } from 'component/general/button/Button';
 
 export interface UpdatePasswordDialogProps {
     isOpen: boolean;
@@ -114,8 +114,6 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                                         resetForm();
                                         onRequestClose();
                                     }}
-                                    color="secondary"
-                                    variant="outlined"
                                 >
                                     Abbrechen
                                 </Button>
@@ -127,8 +125,6 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                                     newPassword !== newPasswordRepetition ||
                                     isLoading
                                 }
-                                color="secondary"
-                                variant="contained"
                             >
                                 Passwort ändern
                             </Button>

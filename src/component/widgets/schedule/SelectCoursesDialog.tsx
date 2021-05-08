@@ -4,12 +4,12 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    Button,
     FormGroup,
     FormControlLabel,
     Checkbox,
     makeStyles,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { LOCALSTORAGE_KEY } from './Schedule';
 
@@ -105,19 +105,8 @@ export const SelectCoursesDialog = memo<SelectCoursesDialogProps>(
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        onClick={() => onClose()}
-                        color="secondary"
-                        variant="outlined"
-                    >
-                        Abbrechen
-                    </Button>
-                    <Button
-                        type={'submit'}
-                        color="secondary"
-                        variant="contained"
-                        onClick={() => saveAndClose()}
-                    >
+                    <Button onClick={() => onClose()}>Abbrechen</Button>
+                    <Button type={'submit'} onClick={() => saveAndClose()}>
                         Filter speichern
                     </Button>
                 </DialogActions>

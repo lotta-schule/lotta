@@ -1,13 +1,7 @@
-import React, {
-    FormEvent,
-    KeyboardEvent,
-    memo,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import * as React from 'react';
+import { Button } from 'component/general/button/Button';
 import { ChatType, MessageModel, ThreadRepresentation } from 'model';
-import { Button, makeStyles, TextField, Toolbar } from '@material-ui/core';
+import { makeStyles, TextField, Toolbar } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { SendMessageMutation } from 'api/mutation/SendMessageMutation';
@@ -37,19 +31,19 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-export const ComposeMessage = memo<ComposeMessageProps>(
+export const ComposeMessage = React.memo<ComposeMessageProps>(
     ({ threadRepresentation }) => {
         const styles = useStyles();
 
-        const inputRef = useRef<HTMLInputElement>(null);
-        const [content, setContent] = useState('');
+        const inputRef = React.useRef<HTMLInputElement>(null);
+        const [content, setContent] = React.useState('');
 
-        useEffect(() => {
+        React.useEffect(() => {
             setContent('');
             inputRef.current?.focus();
         }, [threadRepresentation]);
 
-        useEffect(() => {
+        React.useEffect(() => {
             if (content === '') {
                 inputRef.current?.focus();
             }
@@ -96,11 +90,11 @@ export const ComposeMessage = memo<ComposeMessageProps>(
             },
         });
 
-        const onSubmit = (e: FormEvent) => {
+        const onSubmit = (e: React.FormEvent) => {
             e.preventDefault();
             createMessage();
         };
-        const onKeypress = (e: KeyboardEvent) => {
+        const onKeypress = (e: React.KeyboardEvent) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 createMessage();
@@ -122,13 +116,11 @@ export const ComposeMessage = memo<ComposeMessageProps>(
                         onKeyPress={onKeypress}
                     />
                     <Button
-                        size={'small'}
                         className={styles.button}
                         type={'submit'}
                         disabled={isLoading}
-                    >
-                        <Send />
-                    </Button>
+                        icon={<Send />}
+                    />
                 </form>
             </Toolbar>
         );

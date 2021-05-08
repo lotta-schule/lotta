@@ -6,8 +6,8 @@ import {
     makeStyles,
     Theme,
     Container,
-    IconButton,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { Edit, Place } from '@material-ui/icons';
 import { fade } from '@material-ui/core/styles';
 import { format } from 'date-fns';
@@ -22,6 +22,7 @@ import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
 import { Article as ArticleUtil } from 'util/model/Article';
 import { useIsRetina } from 'util/useIsRetina';
+import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
@@ -154,6 +155,7 @@ interface ArticlePreviewProps {
 export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
     ({ article, disableLink, disableEdit, disablePin, isEmbedded, narrow }) => {
         const isMobile = useIsMobile();
+        const { push } = useHistory();
         const retinaMultiplier = useIsRetina() ? 2 : 1;
 
         const currentUser = useCurrentUser();
@@ -261,33 +263,34 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                                         article
                                                     ) &&
                                                         !disableEdit && (
-                                                            <IconButton
+                                                            <Button
                                                                 aria-label="Beitrag bearbeiten"
-                                                                size="small"
                                                                 className={clsx(
                                                                     styles.editButton,
                                                                     'edit-button'
                                                                 )}
-                                                                component={
-                                                                    CollisionLink
-                                                                }
-                                                                to={ArticleUtil.getPath(
-                                                                    article,
-                                                                    {
-                                                                        edit: true,
-                                                                    }
-                                                                )}
-                                                            >
-                                                                <Edit />
-                                                            </IconButton>
+                                                                onClick={(
+                                                                    e
+                                                                ) => {
+                                                                    e.stopPropagation();
+                                                                    push(
+                                                                        ArticleUtil.getPath(
+                                                                            article,
+                                                                            {
+                                                                                edit: true,
+                                                                            }
+                                                                        )
+                                                                    );
+                                                                }}
+                                                                icon={<Edit />}
+                                                            />
                                                         )}
                                                     {User.isAdmin(
                                                         currentUser
                                                     ) &&
                                                         !disablePin && (
-                                                            <IconButton
+                                                            <Button
                                                                 aria-label="Beitrag an der Kategorie anpinnen"
-                                                                size="small"
                                                                 className={clsx(
                                                                     styles.pinButton,
                                                                     {
@@ -298,9 +301,8 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                                                 onClick={() =>
                                                                     toggleArticlePin()
                                                                 }
-                                                            >
-                                                                <Place />
-                                                            </IconButton>
+                                                                icon={<Place />}
+                                                            />
                                                         )}
                                                 </div>
                                             )}

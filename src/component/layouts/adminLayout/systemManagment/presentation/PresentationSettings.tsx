@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
 import {
-    Button,
     Card,
     CardContent,
     Grid,
@@ -28,6 +27,7 @@ import get from 'lodash/get';
 import merge from 'lodash/merge';
 import Img from 'react-cloudimage-responsive';
 import createTypography from '@material-ui/core/styles/createTypography';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles((theme) => ({
     section: {
@@ -323,8 +323,6 @@ export const PresentationSettings = memo(() => {
                         <Button
                             fullWidth
                             disabled={isLoading}
-                            variant={'outlined'}
-                            color={'secondary'}
                             onClick={() =>
                                 updateSystem({
                                     variables: {

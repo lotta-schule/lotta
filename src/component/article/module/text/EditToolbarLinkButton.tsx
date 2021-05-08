@@ -2,17 +2,16 @@ import React, { FC } from 'react';
 import { useSlate } from 'slate-react';
 import { Range } from 'slate';
 import { Link } from '@material-ui/icons';
-import { ToggleButton } from '@material-ui/lab';
+import { Button } from 'component/general/button/Button';
 import { isLinkActive, unwrapLink, insertLink } from './SlateUtils';
 
 export const EditToolbarLinkButton: FC = () => {
     const editor = useSlate();
 
     return (
-        <ToggleButton
-            size={'small'}
-            value={'link'}
+        <Button
             selected={isLinkActive(editor)}
+            icon={<Link />}
             onMouseDown={(e) => {
                 e.preventDefault();
                 if (isLinkActive(editor)) {
@@ -35,8 +34,6 @@ export const EditToolbarLinkButton: FC = () => {
                     }
                 }
             }}
-        >
-            <Link />
-        </ToggleButton>
+        />
     );
 };
