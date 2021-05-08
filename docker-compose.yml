@@ -14,7 +14,8 @@ services:
       - api_api
     ports:
       - 3000:3000
-    command: npm start
+      - 6006:6006
+    command: bash -c "npm start"
     env_file: .env
     stdin_open: true
     tty: true

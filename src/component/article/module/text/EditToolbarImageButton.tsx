@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useState } from 'react';
+import { Button } from 'component/general/button/Button';
 import { useSlate } from 'slate-react';
 import { Range } from 'slate';
-import { ToggleButton } from '@material-ui/lab';
 import { Image } from '@material-ui/icons';
 import { insertImage } from './SlateUtils';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
@@ -40,7 +40,7 @@ export const EditToolbarImageButton: FC<EditToolbarImageButtonProps> = ({
     return (
         <SelectFileButton
             label={<Image />}
-            buttonComponent={ToggleButton}
+            buttonComponent={Button}
             buttonComponentProps={{ size: 'small', value: 'select-file' }}
             onSelect={onClickImage}
             onChangeFileExplorerVisibility={(visible) => {

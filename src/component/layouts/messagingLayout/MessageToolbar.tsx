@@ -1,13 +1,7 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import { ChatType, ThreadRepresentation } from 'model';
-import {
-    Box,
-    IconButton,
-    makeStyles,
-    Popover,
-    Tab,
-    Tabs,
-} from '@material-ui/core';
+import { Box, makeStyles, Popover, Tab, Tabs } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { Add, ArrowLeft } from '@material-ui/icons';
 import {
     bindTrigger,
@@ -49,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const MessageToolbar = memo<MessageToolbarProps>(
+export const MessageToolbar = React.memo<MessageToolbarProps>(
     ({ onToggle, onCreateMessageThread }) => {
         const styles = useStyles();
         const isMobile = useIsMobile();
@@ -60,26 +54,24 @@ export const MessageToolbar = memo<MessageToolbarProps>(
             popupId: 'create-message-thread',
         });
 
-        const [newMessageType, setNewMessageType] = useState<ChatType>(
+        const [newMessageType, setNewMessageType] = React.useState<ChatType>(
             ChatType.DirectMessage
         );
 
         return (
             <div className={styles.root}>
-                <IconButton
+                <Button
                     aria-label={'Neue Nachricht schreiben'}
+                    icon={<Add />}
                     {...bindTrigger(popupState)}
-                >
-                    <Add />
-                </IconButton>
+                />
                 {isMobile && onToggle && (
-                    <IconButton
+                    <Button
                         style={{ float: 'right' }}
                         aria-label={'Seitenleiste einklappen'}
                         onClick={onToggle}
-                    >
-                        <ArrowLeft />
-                    </IconButton>
+                        icon={<ArrowLeft />}
+                    />
                 )}
                 <Popover
                     {...bindPopover(popupState)}

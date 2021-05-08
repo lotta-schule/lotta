@@ -4,12 +4,12 @@ import {
     Typography,
     makeStyles,
     Theme,
-    Button,
     Grid,
     CircularProgress,
     Menu,
     MenuItem,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { WidgetModel, WidgetModelType } from 'model';
 import { useQuery, useMutation } from '@apollo/client';
@@ -107,19 +107,18 @@ export const WidgetsManagement = React.memo(() => {
                     {(popupState) => (
                         <>
                             <Button
-                                size={'small'}
-                                variant={'contained'}
-                                color={'secondary'}
                                 className={styles.addButton}
                                 disabled={isLoadingCreateWidget}
+                                icon={
+                                    <AddCircleIcon
+                                        className={clsx(
+                                            styles.leftIcon,
+                                            styles.iconSmall
+                                        )}
+                                    />
+                                }
                                 {...bindTrigger(popupState)}
                             >
-                                <AddCircleIcon
-                                    className={clsx(
-                                        styles.leftIcon,
-                                        styles.iconSmall
-                                    )}
-                                />
                                 Marginale erstellen
                             </Button>
                             <Menu {...bindMenu(popupState)}>

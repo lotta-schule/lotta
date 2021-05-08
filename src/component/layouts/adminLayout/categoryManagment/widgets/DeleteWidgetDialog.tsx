@@ -3,9 +3,9 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    Button,
     DialogActions,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { WidgetModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
 import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
@@ -69,14 +69,12 @@ export const DeleteWidgetDialog = memo<DeleteWidgetDialogProps>(
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        color={'primary'}
                         onClick={(e) => onClose(e, 'auto')}
                         disabled={isLoading}
                     >
                         Abbrechen
                     </Button>
                     <Button
-                        color={'secondary'}
                         onClick={() =>
                             deleteWidget({ variables: { id: widget.id } })
                         }

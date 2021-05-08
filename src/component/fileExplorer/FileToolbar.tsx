@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import * as React from 'react';
 import {
     CloudUploadOutlined,
     CreateNewFolderOutlined,
@@ -13,7 +13,6 @@ import {
     Theme,
     createStyles,
     Tooltip,
-    IconButton,
     Toolbar,
     Badge,
     CircularProgress,
@@ -29,6 +28,7 @@ import { File } from 'util/model';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles<Theme>((theme: Theme) =>
     createStyles({
@@ -71,14 +71,14 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
     })
 );
 
-export const FileToolbar = memo(() => {
+export const FileToolbar = React.memo(() => {
     const styles = useStyles();
     const isMobile = useIsMobile();
 
     const currentUser = useCurrentUser();
     const uploads = useUploads();
     const createUpload = useCreateUpload();
-    const [state, dispatch] = useContext(fileExplorerContext);
+    const [state, dispatch] = React.useContext(fileExplorerContext);
 
     const uploadLength = uploads.length;
     const uploadTotalProgress =
@@ -174,7 +174,7 @@ export const FileToolbar = memo(() => {
                                     )
                                 }
                             >
-                                <IconButton
+                                <Button
                                     aria-label={`${uploadLength} Dateien werden hochgeladen`}
                                     onClick={() =>
                                         dispatch({ type: 'showActiveUploads' })
@@ -186,7 +186,7 @@ export const FileToolbar = memo(() => {
                                         variant={'determinate'}
                                         value={uploadTotalProgress}
                                     />
-                                </IconButton>
+                                </Button>
                             </Badge>
                         </Tooltip>
                     </Zoom>
@@ -197,20 +197,23 @@ export const FileToolbar = memo(() => {
                         <>
                             <Zoom in={showFileEditingButtons}>
                                 <Tooltip title="Dateien verschieben">
-                                    <IconButton
+                                    <Button
                                         aria-label="Dateien verschieben"
                                         onClick={() =>
                                             dispatch({ type: 'showMoveFiles' })
                                         }
                                         data-testid="FileExplorerToolbarMoveFileButton"
-                                    >
-                                        <FileCopyOutlined color={'secondary'} />
-                                    </IconButton>
+                                        icon={
+                                            <FileCopyOutlined
+                                                color={'secondary'}
+                                            />
+                                        }
+                                    />
                                 </Tooltip>
                             </Zoom>
                             <Zoom in={showFileEditingButtons}>
                                 <Tooltip title="Dateien löschen">
-                                    <IconButton
+                                    <Button
                                         aria-label="Dateien löschen"
                                         onClick={() =>
                                             dispatch({
@@ -218,11 +221,12 @@ export const FileToolbar = memo(() => {
                                             })
                                         }
                                         data-testid="FileExplorerToolbarDeleteFileButton"
-                                    >
-                                        <DeleteOutlineOutlined
-                                            color={'secondary'}
-                                        />
-                                    </IconButton>
+                                        icon={
+                                            <DeleteOutlineOutlined
+                                                color={'secondary'}
+                                            />
+                                        }
+                                    />
                                 </Tooltip>
                             </Zoom>
                         </>
@@ -232,15 +236,18 @@ export const FileToolbar = memo(() => {
                         currentUser!
                     ) && (
                         <Tooltip title="Ordner erstellen">
-                            <IconButton
+                            <Button
                                 aria-label="Ordner erstellen"
                                 onClick={() =>
                                     dispatch({ type: 'showCreateNewFolder' })
                                 }
                                 data-testid="FileExplorerToolbarCreateDirectoryButton"
-                            >
-                                <CreateNewFolderOutlined color={'secondary'} />
-                            </IconButton>
+                                icon={
+                                    <CreateNewFolderOutlined
+                                        color={'secondary'}
+                                    />
+                                }
+                            />
                         </Tooltip>
                     )}
                     {File.canEditDirectory(
@@ -249,9 +256,15 @@ export const FileToolbar = memo(() => {
                     ) && (
                         <Zoom in={state.currentPath.length > 1}>
                             <Tooltip title="Dateien hochladen">
-                                <IconButton
+                                <Button
                                     aria-label="Dateien hochladen"
                                     data-testid="FileExplorerToolbarNewUploadButton"
+                                    onlyIcon
+                                    icon={
+                                        <CloudUploadOutlined
+                                            color={'secondary'}
+                                        />
+                                    }
                                 >
                                     <input
                                         multiple
@@ -272,8 +285,7 @@ export const FileToolbar = memo(() => {
                                             }
                                         }}
                                     />
-                                    <CloudUploadOutlined color={'secondary'} />
-                                </IconButton>
+                                </Button>
                             </Tooltip>
                         </Zoom>
                     )}
@@ -286,7 +298,7 @@ export const FileToolbar = memo(() => {
                                         : 'einblenden'
                                 }`}
                             >
-                                <IconButton
+                                <Button
                                     data-testid="FileExplorerDetailViewButton"
                                     aria-label={`Info-Leiste für Dateien und Ordner ${
                                         state.detailSidebarEnabled
@@ -298,20 +310,20 @@ export const FileToolbar = memo(() => {
                                             type: 'toggleDetailSidebarEnabled',
                                         })
                                     }
-                                >
-                                    {state.detailSidebarEnabled && (
-                                        <Info
-                                            color={'secondary'}
-                                            data-testid="enable-detail-sidebar-icon"
-                                        />
-                                    )}
-                                    {!state.detailSidebarEnabled && (
-                                        <InfoOutlined
-                                            color={'secondary'}
-                                            data-testid="disable-detail-sidebar-icon"
-                                        />
-                                    )}
-                                </IconButton>
+                                    icon={
+                                        state.detailSidebarEnabled ? (
+                                            <Info
+                                                color={'secondary'}
+                                                data-testid="enable-detail-sidebar-icon"
+                                            />
+                                        ) : (
+                                            <InfoOutlined
+                                                color={'secondary'}
+                                                data-testid="disable-detail-sidebar-icon"
+                                            />
+                                        )
+                                    }
+                                />
                             </Tooltip>
                         </Zoom>
                     )}

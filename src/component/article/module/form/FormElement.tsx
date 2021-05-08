@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import {
     ButtonGroup,
-    Button,
     Checkbox,
     FormControlLabel,
     TextField,
@@ -14,8 +13,8 @@ import {
     Select,
     MenuItem,
     FormLabel,
-    IconButton,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { FormElement as FormElementInterface } from './Form';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { FileModel } from 'model';
@@ -283,12 +282,11 @@ export const FormElement = memo<FormElementProps>(
                                             )
                                         ).filename
                                     }
-                                    <IconButton
+                                    <Button
                                         title={'Auswahl entfernen'}
                                         onClick={() => onSetValue('')}
-                                    >
-                                        <Close />
-                                    </IconButton>
+                                        icon={<Close />}
+                                    />
                                 </p>
                             )}
                         {value && /^file-upload:\/\/.+/.test(value as string) && (
@@ -302,12 +300,11 @@ export const FormElement = memo<FormElementProps>(
                                         )
                                     ).filename
                                 }
-                                <IconButton
+                                <Button
                                     title={'Auswahl entfernen'}
                                     onClick={() => onSetValue('')}
-                                >
-                                    <Close />
-                                </IconButton>
+                                    icon={<Close />}
+                                />
                             </p>
                         )}
                     </>

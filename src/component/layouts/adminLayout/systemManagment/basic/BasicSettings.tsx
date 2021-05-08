@@ -18,8 +18,8 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useSystem } from 'util/client/useSystem';
 import { useMutation } from '@apollo/client';
 import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
-import { SaveButton } from 'component/general/SaveButton';
 import Img from 'react-cloudimage-responsive';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles((theme) => ({
     gridContainer: {
@@ -33,15 +33,8 @@ export const BasicSettings = memo(() => {
     const [title, setTitle] = useState(system.title);
     const [logo, setLogo] = useState(system.logoImageFile);
 
-    const [isShowSuccess, setIsShowSuccess] = useState(false);
     const [updateSystem, { loading: isLoading, error }] = useMutation(
-        UpdateSystemMutation,
-        {
-            onCompleted: () => {
-                setIsShowSuccess(true);
-                setTimeout(() => setIsShowSuccess(false), 3000);
-            },
-        }
+        UpdateSystemMutation
     );
 
     return (
@@ -111,10 +104,9 @@ export const BasicSettings = memo(() => {
 
             <Grid container justify={'flex-end'}>
                 <Grid item sm={6} md={4} lg={3}>
-                    <SaveButton
+                    <Button
                         fullWidth
-                        isLoading={isLoading}
-                        isSuccess={isShowSuccess}
+                        disabled={isLoading}
                         onClick={() =>
                             updateSystem({
                                 variables: {
@@ -127,7 +119,7 @@ export const BasicSettings = memo(() => {
                         }
                     >
                         speichern
-                    </SaveButton>
+                    </Button>
                 </Grid>
             </Grid>
         </>

@@ -1,0 +1,11 @@
+.lotta-avatar {
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 0.5em;
+    cursor: pointer;
+    display: inline-block;
+    background-size: cover;
+    box-shadow: 1px 1px 7px #0000002e;
+    height: 2em; /* TODO: Property */
+    width: 2em; /* TODO: Property */
+}

@@ -9,8 +9,6 @@ import {
     Grid,
     TextField,
     Typography,
-    Button,
-    IconButton,
     Badge,
     Divider,
     makeStyles,
@@ -19,6 +17,7 @@ import {
     ListItem,
     ListSubheader,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
 import { Clear } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
@@ -30,9 +29,9 @@ import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
-import { SaveButton } from 'component/general/SaveButton';
 import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
-import { CollisionLink } from 'component/general/CollisionLink';
+import { useHistory } from 'react-router-dom';
+import { NavigationButton } from 'component/general/button/NavigationButton';
 
 export const useStyles = makeStyles((theme) => ({
     gridContainer: {
@@ -70,14 +69,11 @@ export const useStyles = makeStyles((theme) => ({
             marginBottom: theme.spacing(2),
         },
     },
-    deleteAccountButton: {
-        color: theme.palette.error.main,
-        borderColor: theme.palette.error.main,
-    },
 }));
 
 export const ProfileData = memo(() => {
     const styles = useStyles();
+    const { push } = useHistory();
 
     const currentUser = useCurrentUser()!;
 
@@ -103,15 +99,9 @@ export const ProfileData = memo(() => {
         false
     );
 
-    const [isShowSuccess, setIsShowSuccess] = useState(false);
     const [updateProfile, { error, loading: isLoading }] = useMutation<{
         user: UserModel;
-    }>(UpdateProfileMutation, {
-        onCompleted: () => {
-            setIsShowSuccess(true);
-            setTimeout(() => setIsShowSuccess(false), 3000);
-        },
-    });
+    }>(UpdateProfileMutation);
     const getFieldError = useGetFieldError(error);
 
     return (
@@ -128,12 +118,10 @@ export const ProfileData = memo(() => {
                                 horizontal: 'right',
                             }}
                             badgeContent={
-                                <IconButton
-                                    size={'small'}
+                                <NavigationButton
                                     onClick={() => setAvatarImageFile(null)}
-                                >
-                                    <Clear />
-                                </IconButton>
+                                    icon={<Clear />}
+                                />
                             }
                         >
                             <Avatar
@@ -182,11 +170,8 @@ export const ProfileData = memo(() => {
                         <section className={styles.dangerSection}>
                             <Divider className={styles.divider} />
                             <Button
-                                component={CollisionLink}
-                                to={'/profile/delete'}
-                                variant={'outlined'}
-                                color={'inherit'}
-                                className={styles.deleteAccountButton}
+                                variant={'error'}
+                                onClick={() => push('/account/delete')}
                             >
                                 Benutzerkonto löschen
                             </Button>
@@ -207,23 +192,23 @@ export const ProfileData = memo(() => {
                         />
                         <Grid container>
                             <Grid item sm={6}>
-                                <Button
+                                <NavigationButton
                                     onClick={() =>
                                         setIsShowUpdateEmailDialog(true)
                                     }
                                 >
                                     Email ändern
-                                </Button>
+                                </NavigationButton>
                             </Grid>
                             <Grid item sm={6}>
-                                <Button
+                                <NavigationButton
                                     onClick={() =>
                                         setIsShowUpdatePasswordDialog(true)
                                     }
                                     style={{ float: 'right' }}
                                 >
                                     Passwort ändern
-                                </Button>
+                                </NavigationButton>
                             </Grid>
                         </Grid>
                         <TextField
@@ -312,11 +297,10 @@ export const ProfileData = memo(() => {
                             Nutze Einschreibeschlüssel, um dich selbst in
                             Gruppen einzutragen.
                         </Typography>
-                        <SaveButton
+                        <Button
                             type={'submit'}
                             style={{ float: 'right' }}
-                            isLoading={isLoading}
-                            isSuccess={isShowSuccess}
+                            disabled={isLoading}
                             onClick={() =>
                                 updateProfile({
                                     variables: {
@@ -335,7 +319,7 @@ export const ProfileData = memo(() => {
                             }
                         >
                             Speichern
-                        </SaveButton>
+                        </Button>
                         <UpdatePasswordDialog
                             isOpen={isShowUpdatePasswordDialog}
                             onRequestClose={() =>

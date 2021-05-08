@@ -1,0 +1,15 @@
+h1 {
+  font-size: 2em;
+  text-transform: uppercase;
+  font-weight: lighter;
+  margin: 0.5em;
+}
+
+.banner > .box > .box {
+  justify-content: space-between;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--lotta-banner-background-color1), 1) 0%,
+    rgba(var(--lotta-banner-background-color2), 1) 100%
+  );
+}

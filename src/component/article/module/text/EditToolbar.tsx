@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Toolbar, createStyles, makeStyles, Theme } from '@material-ui/core';
-import { ToggleButtonGroup } from '@material-ui/lab';
 import {
     FormatBold,
     FormatItalic,
@@ -9,6 +8,7 @@ import {
     FormatListNumbered,
     ArrowDropDown,
 } from '@material-ui/icons';
+import { ButtonGroup } from 'component/general/button/ButtonGroup';
 import { useFocused } from 'slate-react';
 import { EditToolbarMarkButton } from './EditToolbarMarkButton';
 import { EditToolbarLinkButton } from './EditToolbarLinkButton';
@@ -61,11 +61,7 @@ export const EditToolbar = React.memo<EditToolbarProps>(({ onRequestSave }) => {
 
     return (
         <AnimatedToolbar style={props} className={styles.toolbar}>
-            <ToggleButtonGroup
-                className={styles.toolbarButtonGroup}
-                size={'small'}
-                value={false}
-            >
+            <ButtonGroup className={styles.toolbarButtonGroup}>
                 <EditToolbarMarkButton mark={'bold'}>
                     <FormatBold />
                 </EditToolbarMarkButton>
@@ -75,46 +71,30 @@ export const EditToolbar = React.memo<EditToolbarProps>(({ onRequestSave }) => {
                 <EditToolbarMarkButton mark={'underline'}>
                     <FormatUnderlined />
                 </EditToolbarMarkButton>
-            </ToggleButtonGroup>
+            </ButtonGroup>
             &nbsp;
-            <ToggleButtonGroup
-                className={styles.toolbarButtonGroup}
-                size={'small'}
-                value={'none'}
-            >
+            <ButtonGroup className={styles.toolbarButtonGroup}>
                 <EditToolbarLinkButton />
-            </ToggleButtonGroup>
+            </ButtonGroup>
             &nbsp;
-            <ToggleButtonGroup
-                className={styles.toolbarButtonGroup}
-                size={'small'}
-                value={'none'}
-            >
+            <ButtonGroup className={styles.toolbarButtonGroup}>
                 <EditToolbarBlockButton mark={'unordered-list'}>
                     <FormatListBulleted />
                 </EditToolbarBlockButton>
                 <EditToolbarBlockButton mark={'ordered-list'}>
                     <FormatListNumbered />
                 </EditToolbarBlockButton>
-            </ToggleButtonGroup>
+            </ButtonGroup>
             &nbsp;
-            <ToggleButtonGroup
-                className={styles.toolbarButtonGroup}
-                size={'small'}
-                value={'none'}
-            >
+            <ButtonGroup className={styles.toolbarButtonGroup}>
                 <EditToolbarImageButton onImageAdded={onRequestSave} />
-            </ToggleButtonGroup>
+            </ButtonGroup>
             &nbsp;
-            <ToggleButtonGroup
-                className={styles.toolbarButtonGroup}
-                size={'small'}
-                value={'none'}
-            >
+            <ButtonGroup className={styles.toolbarButtonGroup}>
                 <EditToolbarMarkButton mark={'small'}>
                     <ArrowDropDown />
                 </EditToolbarMarkButton>
-            </ToggleButtonGroup>
+            </ButtonGroup>
             &nbsp;
         </AnimatedToolbar>
     );

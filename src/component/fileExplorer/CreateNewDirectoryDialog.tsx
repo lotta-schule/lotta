@@ -4,18 +4,17 @@ import {
     DialogContent,
     DialogContentText,
     TextField,
-    Button,
     DialogActions,
     FormControlLabel,
     Checkbox,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { DirectoryModel, FileModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { CreateDirectoryMutation } from 'api/mutation/CreateDirectoryMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { SaveButton } from 'component/general/SaveButton';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
@@ -34,10 +33,8 @@ export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogPr
         const currentUser = useCurrentUser();
         const [name, setName] = useState('');
         const [isPublic, setIsPublic] = useState(false);
-        const [isShowSuccess, setIsShowSuccess] = useState(false);
         useEffect(() => {
             if (open) {
-                setIsShowSuccess(false);
                 setIsPublic(false);
             }
         }, [open]);
@@ -66,7 +63,6 @@ export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogPr
                 });
             },
             onCompleted: () => {
-                setIsShowSuccess(true);
                 onClose({}, 'auto');
             },
         });
@@ -118,19 +114,12 @@ export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogPr
                             )}
                     </DialogContent>
                     <DialogActions>
-                        <Button
-                            color="primary"
-                            onClick={(e) => onClose(e, 'auto')}
-                        >
+                        <Button onClick={(e) => onClose(e, 'auto')}>
                             Abbrechen
                         </Button>
-                        <SaveButton
-                            type={'submit'}
-                            isLoading={isLoading}
-                            isSuccess={isShowSuccess}
-                        >
+                        <Button type={'submit'} disabled={isLoading}>
                             Ordner erstellen
-                        </SaveButton>
+                        </Button>
                     </DialogActions>
                 </form>
             </ResponsiveFullScreenDialog>

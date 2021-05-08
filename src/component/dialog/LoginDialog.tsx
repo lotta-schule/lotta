@@ -4,12 +4,12 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button,
     TextField,
     Link,
     makeStyles,
     Typography,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { LoginMutation } from 'api/mutation/LoginMutation';
 import { CollisionLink } from 'component/general/CollisionLink';
@@ -132,17 +132,10 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(
                                     resetForm();
                                     onRequestClose();
                                 }}
-                                color="secondary"
-                                variant="outlined"
                             >
                                 Abbrechen
                             </Button>
-                            <Button
-                                type={'submit'}
-                                disabled={isLoading}
-                                variant="contained"
-                                color="secondary"
-                            >
+                            <Button type={'submit'} color="secondary">
                                 Anmelden
                             </Button>
                         </DialogActions>

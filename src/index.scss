@@ -1,5 +1,9 @@
 @import '~video-react/styles/scss/video-react';
 
+* {
+    box-sizing: border-box;
+}
+
 html,
 body {
     margin: 0;

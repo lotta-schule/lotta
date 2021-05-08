@@ -1,24 +1,22 @@
-import React, { memo, useContext, useState, useEffect } from 'react';
+import React, { memo, useContext, useEffect } from 'react';
 import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    Button,
     DialogActions,
     Typography,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
 import { FileModel, DirectoryModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteFileMutation } from 'api/mutation/DeleteFileMutation';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { SaveButton } from 'component/general/SaveButton';
 import fileExplorerContext from './context/FileExplorerContext';
 
 export const DeleteFilesDialog = memo(() => {
     const [state, dispatch] = useContext(fileExplorerContext);
-    const [isShowSuccess, setIsShowSuccess] = useState(false);
 
     const [deleteFile, { error, loading: isLoading }] = useMutation(
         DeleteFileMutation,
@@ -53,7 +51,6 @@ export const DeleteFilesDialog = memo(() => {
 
     useEffect(() => {
         if (state.showDeleteFiles) {
-            setIsShowSuccess(false);
         }
     }, [state.showDeleteFiles]);
 
@@ -83,15 +80,11 @@ export const DeleteFilesDialog = memo(() => {
                 </Typography>
             </DialogContent>
             <DialogActions>
-                <Button
-                    color={'primary'}
-                    onClick={() => dispatch({ type: 'hideDeleteFiles' })}
-                >
+                <Button onClick={() => dispatch({ type: 'hideDeleteFiles' })}>
                     Abbrechen
                 </Button>
-                <SaveButton
-                    isLoading={isLoading}
-                    isSuccess={isShowSuccess}
+                <Button
+                    disabled={isLoading}
                     onClick={async () => {
                         try {
                             await Promise.all(
@@ -109,7 +102,6 @@ export const DeleteFilesDialog = memo(() => {
                                     }
                                 })
                             );
-                            setIsShowSuccess(true);
                             dispatch({ type: 'hideDeleteFiles' });
                         } catch (e) {
                             console.error(
@@ -120,7 +112,7 @@ export const DeleteFilesDialog = memo(() => {
                     }}
                 >
                     Dateien endgültig löschen
-                </SaveButton>
+                </Button>
             </DialogActions>
         </ResponsiveFullScreenDialog>
     );

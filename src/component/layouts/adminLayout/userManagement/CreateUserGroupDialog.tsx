@@ -1,6 +1,5 @@
 import React, { memo, useState } from 'react';
 import {
-    Button,
     DialogTitle,
     DialogContent,
     DialogContentText,
@@ -13,6 +12,7 @@ import { CreateUserGroupMutation } from 'api/mutation/CreateUserGroupMutation';
 import { GetSystemQuery } from 'api/query/GetSystemQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Button } from 'component/general/button/Button';
 
 export interface CreateUserGroupDialogProps {
     isOpen: boolean;
@@ -93,17 +93,10 @@ export const CreateUserGroupDialog = memo<CreateUserGroupDialogProps>(
                                 resetForm();
                                 onAbort();
                             }}
-                            color="secondary"
-                            variant="outlined"
                         >
                             Abbrechen
                         </Button>
-                        <Button
-                            type={'submit'}
-                            disabled={!name || isLoading}
-                            color="secondary"
-                            variant="contained"
-                        >
+                        <Button type={'submit'} disabled={!name || isLoading}>
                             Gruppe erstellen
                         </Button>
                     </DialogActions>

@@ -1,7 +1,8 @@
-import React, { memo, MouseEvent } from 'react';
-import { makeStyles, Theme, Button, IconButton } from '@material-ui/core';
+import * as React from 'react';
+import { makeStyles, Theme } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
 import { Clear } from '@material-ui/icons';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         zIndex: 100,
     },
     removeButton: {
+        border: 'none',
         position: 'absolute',
         top: theme.spacing(1),
         right: theme.spacing(1),
@@ -31,34 +33,26 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface EditOverlayProps {
     label: string;
-    onClick(event: MouseEvent<HTMLButtonElement>): void;
-    onClickRemove?(event: MouseEvent<HTMLButtonElement>): void;
+    onClick(event: React.MouseEvent<HTMLButtonElement>): void;
+    onClickRemove?(event: React.MouseEvent<HTMLButtonElement>): void;
     children?: any;
 }
 
-export const EditOverlay = memo<EditOverlayProps>(
+export const EditOverlay = React.memo<EditOverlayProps>(
     ({ children, label, onClickRemove, onClick }) => {
         const styles = useStyles();
         return (
             <div className={styles.root}>
                 <div className={styles.overlay}>
                     {!!onClickRemove && (
-                        <IconButton
+                        <Button
                             aria-label={'remove'}
                             className={styles.removeButton}
-                            size={'small'}
                             onClick={onClickRemove}
-                        >
-                            <Clear fontSize={'inherit'} />
-                        </IconButton>
+                            icon={<Clear />}
+                        />
                     )}
-                    <Button
-                        variant={'contained'}
-                        color={'secondary'}
-                        onClick={onClick}
-                    >
-                        {label}
-                    </Button>
+                    <Button onClick={onClick}>{label}</Button>
                 </div>
                 {children}
             </div>

@@ -1,0 +1,26 @@
+button.lotta-navigation-button {
+    border: none;
+    padding: 0.3em;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    border-radius: 0.5em;
+    display: flex;
+    min-height: 0;
+    border: 1px solid transparent;
+}
+
+.lotta-navigation-button:hover {
+    background-color: rgba(var(--lotta-primary-color), 0.1);
+    transition: linear;
+    transition-duration: 0.2s;
+}
+
+.lotta-navigation-button .lotta-button_icon svg {
+    width: 0.8em;
+    height: 0.8em;
+}
+
+.lotta-navigation-button .lotta-button_icon ~ .lotta-button_text {
+    padding: 0;
+    margin-right: auto;
+}

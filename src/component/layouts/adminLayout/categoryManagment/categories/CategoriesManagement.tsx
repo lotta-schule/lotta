@@ -1,18 +1,11 @@
 import React, { FunctionComponent, memo, useState } from 'react';
-import {
-    Paper,
-    Typography,
-    makeStyles,
-    Theme,
-    Button,
-    Grid,
-} from '@material-ui/core';
+import { Paper, Typography, makeStyles, Theme, Grid } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
-import clsx from 'clsx';
 import { CategoryModel } from 'model';
 import { CategoryNavigation } from './CategoryNavigation';
 import { CategoryEditor } from './CategoryEditor';
 import { CreateCategoryDialog } from './CreateCategoryDialog';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -37,12 +30,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         float: 'right',
         marginTop: theme.spacing(1),
     },
-    leftIcon: {
-        marginRight: theme.spacing(1),
-    },
-    iconSmall: {
-        fontSize: 20,
-    },
     padding: {
         paddingRight: theme.spacing(4),
     },
@@ -65,15 +52,10 @@ export const CategoriesManagement: FunctionComponent = memo(() => {
             <Typography variant="h4" className={styles.headlines}>
                 Kategorien
                 <Button
-                    size="small"
-                    variant="contained"
-                    color="secondary"
                     className={styles.button}
                     onClick={() => setIsCreateCategoryDialogOpen(true)}
+                    icon={<AddCircleIcon />}
                 >
-                    <AddCircleIcon
-                        className={clsx(styles.leftIcon, styles.iconSmall)}
-                    />
                     Kategorie erstellen
                 </Button>
             </Typography>

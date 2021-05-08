@@ -1,0 +1,26 @@
+body {
+  padding: 0px !important;
+}
+.user-menu {
+  display: flex;
+  width: 20vw;
+}
+.user-menu-avatar {
+  display: flex;
+}
+.user-menu-avatar .lotta-avatar {
+  width: 7em;
+  height: 7em;
+  margin: auto;
+}
+.user-menu ul {
+  list-style: none;
+  padding: 0;
+  margin-left: 1em;
+  margin-top: 0;
+  margin-bottom: 0;
+  justify-content: flex-end;
+}
+.user-menu .lotta-navigation-button {
+  width: 100%;
+}

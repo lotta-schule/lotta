@@ -6,10 +6,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=default",
-    "test:ci": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=jest-junit  --ci --testResultsProcessor='jest-junit'",
+    "test:ci": "react-scripts test --roots \"${PWD}/src\" --env=jest-environment-jsdom-sixteen --reporters=jest-junit  --ci --testResultsProcessor='jest-junit' --collectCoverageFrom='src/**/*.{ts,tsx}' --collectCoverageFrom='!src/**/*.stories.{ts,tsx}'",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src .",
     "apollo:schema:download": "apollo client:download-schema src/api/schema.json",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -92,6 +94,12 @@
     "video-react": "^0.14.1"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.0.27",
+    "@storybook/addon-essentials": "^6.0.27",
+    "@storybook/addon-links": "^6.0.27",
+    "@storybook/node-logger": "^6.0.27",
+    "@storybook/preset-create-react-app": "^3.1.4",
+    "@storybook/react": "^6.0.27",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.1.2",
     "@testing-library/react-hooks": "^5.0.3",

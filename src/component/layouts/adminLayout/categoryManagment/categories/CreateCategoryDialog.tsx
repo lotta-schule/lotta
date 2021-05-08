@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-    Button,
     DialogTitle,
     DialogContent,
     DialogActions,
@@ -13,6 +12,7 @@ import {
     makeStyles,
     LinearProgress,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { CategoryModel } from 'model';
 import { CreateCategoryMutation } from 'api/mutation/CreateCategoryMutation';
 import { useMutation } from '@apollo/client';
@@ -188,8 +188,6 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                 resetForm();
                                 onAbort();
                             }}
-                            color="secondary"
-                            variant="outlined"
                         >
                             Abbrechen
                         </Button>
@@ -201,8 +199,6 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                 (categoryPosition === CategoryPosition.Sub &&
                                     !parentCategory)
                             }
-                            color="secondary"
-                            variant="contained"
                         >
                             Kategorie erstellen
                         </Button>

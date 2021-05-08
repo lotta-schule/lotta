@@ -4,7 +4,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button,
     TextField,
 } from '@material-ui/core';
 import { UpdateEmailMutation } from 'api/mutation/UpdateEmailMutation';
@@ -12,6 +11,7 @@ import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
+import { Button } from 'component/general/button/Button';
 
 export interface UpdateEmailDialogProps {
     isOpen: boolean;
@@ -75,16 +75,12 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
                                     resetForm();
                                     onRequestClose();
                                 }}
-                                color="secondary"
-                                variant="outlined"
                             >
                                 Abbrechen
                             </Button>
                             <Button
                                 type={'submit'}
                                 disabled={!newEmail || isLoading}
-                                color="secondary"
-                                variant="contained"
                             >
                                 Email ändern
                             </Button>

@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import {
-    Button,
     Card,
     CardContent,
     Grid,
@@ -9,10 +8,11 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
-import useRouter from 'use-react-router';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { RequestPasswordResetMutation } from 'api/mutation/RequestPasswordResetMutation';
+import useRouter from 'use-react-router';
 
 const useStyles = makeStyles((theme) => ({
     helpText: {
@@ -96,8 +96,6 @@ export const RequestPasswordResetLayout = memo(() => {
                                 <Button
                                     type={'submit'}
                                     disabled={!!data || isLoading}
-                                    variant="contained"
-                                    color="secondary"
                                     style={{ float: 'right' }}
                                 >
                                     Anfrage senden
