@@ -41,4 +41,19 @@ defmodule ApiWeb.MessagesResolver do
       |> Messages.create_message()
       |> format_errors("Nachricht konnte nicht versandt werden.")
   end
+
+  def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
+    message = Messages.get_message(id)
+
+    cond do
+      is_nil(message) ->
+        {:error, "Nachricht nicht gefunden."}
+
+      not is_author?(current_user, message) ->
+        {:error, "Du darfst diese Nachricht nicht löschen."}
+
+      true ->
+        Messages.delete_message(message)
+    end
+  end
 end

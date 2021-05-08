@@ -42,4 +42,22 @@ defmodule Api.MessagesTest do
       assert to_id == to.id
     end
   end
+
+  describe "delete messages" do
+    test "delete_message/1 should delete a message" do
+      from = Fixtures.fixture(:registered_user, %{email: "hedwig@hogwarts.de"})
+      to = Fixtures.fixture(:registered_user, %{email: "erol@hogwarts.de"})
+
+      assert {:ok, message} =
+               Messages.create_message(
+                 Fixtures.fixture(:valid_message_attrs, from_id: from.id, to_id: to.id)
+               )
+
+      assert {:ok, _message} = Messages.delete_message(message)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Api.Repo.get!(Message, message.id)
+      end
+    end
+  end
 end
