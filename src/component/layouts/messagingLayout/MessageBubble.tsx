@@ -1,9 +1,20 @@
-import React, { memo } from 'react';
-import { fade, makeStyles, Theme, Typography } from '@material-ui/core';
+import * as React from 'react';
+import {
+    fade,
+    IconButton,
+    makeStyles,
+    Theme,
+    Typography,
+} from '@material-ui/core';
 import { MessageModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { User } from 'util/model';
 import { format } from 'date-fns';
+import { Delete } from '@material-ui/icons';
+import { DeleteMessageMutation } from 'api/mutation/DeleteMessageMutation';
+import { useMutation } from '@apollo/client';
+import { GetMessagesQuery } from 'api/query/GetMessagesQuery';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import de from 'date-fns/locale/de';
 
 export interface MessageBubbleProps {
@@ -73,9 +84,39 @@ const useStyles = makeStyles<Theme, MessageBubbleProps>((theme) => {
     };
 });
 
-export const MessageBubble = memo<MessageBubbleProps>((props) => {
+export const MessageBubble = React.memo<MessageBubbleProps>((props) => {
     const styles = useStyles(props);
+    const currentUser = useCurrentUser();
+
     const { message } = props;
+
+    const [deleteMessage] = useMutation(DeleteMessageMutation, {
+        variables: { id: message.id },
+        update: (client, { data }) => {
+            if (data?.message) {
+                const cache = client.readQuery<{ messages: MessageModel[] }>({
+                    query: GetMessagesQuery,
+                });
+                client.writeQuery({
+                    query: GetMessagesQuery,
+                    data: {
+                        messages: cache?.messages?.filter(
+                            (m) => m.id !== data.message.id
+                        ),
+                    },
+                });
+            }
+        },
+        optimisticResponse: ({ id }) => {
+            return {
+                message: {
+                    __typename: 'Message',
+                    id,
+                },
+            };
+        },
+    });
+
     return (
         <div className={styles.root}>
             <Typography variant={'body1'} className={styles.message}>
@@ -95,6 +136,15 @@ export const MessageBubble = memo<MessageBubbleProps>((props) => {
                     {User.getName(message.senderUser)}
                 </span>
                 {format(new Date(message.insertedAt), 'PPPpp', { locale: de })}
+                {message.senderUser?.id === currentUser?.id && (
+                    <IconButton
+                        size={'small'}
+                        aria-label="Nachricht löschen"
+                        onClick={() => deleteMessage()}
+                    >
+                        <Delete />
+                    </IconButton>
+                )}
             </Typography>
         </div>
     );
