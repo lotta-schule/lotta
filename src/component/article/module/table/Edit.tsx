@@ -142,6 +142,7 @@ export const Edit = React.memo<EditProps>(
                         column === String(columnCount - 1)
                     ) {
                         e.preventDefault();
+                        requestFocusOnNextUpdate.current = true;
                         onUpdateModule({
                             ...contentModule,
                             content: {

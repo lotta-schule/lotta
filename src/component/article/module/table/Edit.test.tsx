@@ -92,8 +92,8 @@ describe('component/article/module/table/Edit', () => {
                     />
                 );
                 const input = screen.getByDisplayValue('Name');
-                await userEvent.click(input);
-                await userEvent.type(input, '{enter}');
+                userEvent.click(input);
+                userEvent.type(input, '{enter}');
                 await waitFor(() => {
                     expect(screen.getByDisplayValue('LAb')).toHaveFocus();
                 });
@@ -118,8 +118,8 @@ describe('component/article/module/table/Edit', () => {
                     />
                 );
                 const input = screen.getByDisplayValue('Lehrer F');
-                await userEvent.click(input);
-                await userEvent.type(input, '{enter}');
+                userEvent.click(input);
+                userEvent.type(input, '{enter}');
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
