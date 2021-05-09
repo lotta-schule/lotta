@@ -1,9 +1,9 @@
-import React, { memo, useState, useCallback, MouseEvent } from 'react';
+import * as React from 'react';
 import {
     RenderElementProps,
     useReadOnly,
     useSelected,
-    useEditor,
+    useSlateStatic,
 } from 'slate-react';
 import { makeStyles, Theme } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
@@ -14,8 +14,9 @@ import {
     PhotoSizeSelectLarge,
     PhotoSizeSelectActual,
 } from '@material-ui/icons';
-import { Transforms } from 'slate';
+import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
+import { Image } from '../SlateCustomTypes';
 
 export type SlateImageProps = Omit<RenderElementProps, 'children'> & {
     children: any;
@@ -56,23 +57,24 @@ const useStyles = makeStyles<
     },
 }));
 
-export const SlateImage = memo<SlateImageProps>(
+export const SlateImage = React.memo<SlateImageProps>(
     ({ element, attributes, children }) => {
+        const imageElement = element as Image;
         const isEditing = !useReadOnly();
-        const editor = useEditor();
+        const editor = useSlateStatic();
         const isSelected = useSelected();
         const styles = useStyles({ isEditing, isSelected, ...element });
-        const [showOverlay, setShowOverlay] = useState(false);
+        const [showOverlay, setShowOverlay] = React.useState(false);
 
-        const src = element.src as string;
+        const src = imageElement.src;
         const imageUrl = `https://afdptjdxen.cloudimg.io/width/400/foil1/${src}`;
 
-        const setElementOptions = useCallback(
-            (options: { alignment?: string; size?: string }) => {
-                return (e: MouseEvent<any>) => {
+        const setElementOptions = React.useCallback(
+            (options: Partial<Image>) => {
+                return (e: React.MouseEvent<any>) => {
                     e.preventDefault();
                     Transforms.setNodes(editor, options, {
-                        match: (node) => node.type === 'image',
+                        match: (node) => (node as Element).type === 'image',
                     });
                 };
             },
@@ -108,7 +110,7 @@ export const SlateImage = memo<SlateImageProps>(
                     >
                         <ToggleButtonGroup
                             size={'small'}
-                            value={element.alignment ?? 'right'}
+                            value={imageElement.alignment ?? 'right'}
                         >
                             <ToggleButton
                                 value={'left'}
@@ -129,7 +131,7 @@ export const SlateImage = memo<SlateImageProps>(
                         </ToggleButtonGroup>
                         <ToggleButtonGroup
                             size={'small'}
-                            value={element.size ?? 'middle'}
+                            value={imageElement.size ?? 'middle'}
                         >
                             <ToggleButton
                                 value={'large'}
