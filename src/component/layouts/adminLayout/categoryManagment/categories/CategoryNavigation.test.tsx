@@ -35,7 +35,7 @@ describe('component/layouts/adminLayout/categoryManagment/categories/CategoryNav
         ).toHaveLength(topLevelCategories.length);
     });
 
-    describe('selected category', async () => {
+    describe('selected category', () => {
         it('should select a category on click', async () => {
             const onSelectCategory = jest.fn();
             const screen = render(

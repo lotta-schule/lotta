@@ -6,8 +6,7 @@ import {
     TextField,
     Typography,
 } from '@material-ui/core';
-import { Transition } from 'react-spring/renderprops';
-import { animated } from 'react-spring';
+import { Transition, animated } from 'react-spring';
 import { flatten, uniq } from 'lodash';
 
 export interface EnrollmentTokensEditorProps {
@@ -44,7 +43,6 @@ export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(
                     <ul>
                         <Transition
                             items={tokens}
-                            keys={(t) => t}
                             config={{
                                 tension: 2000,
                                 friction: 100,
@@ -54,7 +52,7 @@ export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(
                             enter={{ height: 'auto' }}
                             leave={{ height: 0 }}
                         >
-                            {(token) => (props) => (
+                            {(props: any, token) => (
                                 <Chip
                                     key={token}
                                     variant={'outlined'}

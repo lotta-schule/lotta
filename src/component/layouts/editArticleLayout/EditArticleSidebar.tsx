@@ -41,7 +41,7 @@ import { User, Category } from 'util/model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
 import { UsersList } from './UsersList';
-import { SelectTopicAutocomplete } from './SelectTopicAutocomplete';
+import { TagsSelect } from './TagsSelect';
 import uniqBy from 'lodash/uniqBy';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
@@ -221,11 +221,11 @@ export const EditArticleSidebar = React.memo<EditArticleSidebarProps>(
                 </CardContent>
                 {User.isAdmin(currentUser) && (
                     <CardContent>
-                        <SelectTopicAutocomplete
-                            value={article.topic ?? ''}
-                            onChange={(topic) =>
-                                onUpdate({ ...article, topic })
-                            }
+                        <TagsSelect
+                            value={article.tags || []}
+                            onChange={(tags) => {
+                                onUpdate({ ...article, tags });
+                            }}
                         />
                     </CardContent>
                 )}

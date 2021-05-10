@@ -8,7 +8,7 @@ export const GetUnpublishedArticlesQuery = gql`
             updatedAt
             title
             preview
-            topic
+            tags
             readyToPublish
             published
             isPinnedToTop

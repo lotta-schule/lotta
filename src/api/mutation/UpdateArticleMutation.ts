@@ -8,7 +8,7 @@ export const UpdateArticleMutation = gql`
             updatedAt
             title
             preview
-            topic
+            tags
             readyToPublish
             published
             isPinnedToTop

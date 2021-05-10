@@ -105,7 +105,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                     title: 'Weihnachtsmarkt',
                     preview: Weihnachtsmarkt.preview,
                     previewImageFile: null,
-                    topic: 'La Revolucion',
+                    tags: ['La Revolucion'],
                     category: null,
                 },
             };
@@ -174,7 +174,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                     title: 'Weihnachtsmarkt',
                     preview: Weihnachtsmarkt.preview,
                     previewImageFile: null,
-                    topic: 'La Revolucion',
+                    tags: ['La Revolucion'],
                     category: null,
                 },
             };

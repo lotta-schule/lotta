@@ -1,14 +1,14 @@
 import { gql } from '@apollo/client';
 
-export const GetTopicQuery = gql`
-    query GetPage($topic: String!) {
-        articles: topic(topic: $topic) {
+export const GetArticlesForTag = gql`
+    query GetArticlesForTag($tag: String!) {
+        articles: tag(tag: $tag) {
             id
             insertedAt
             updatedAt
             title
             preview
-            topic
+            tags
             readyToPublish
             isPinnedToTop
             previewImageFile {

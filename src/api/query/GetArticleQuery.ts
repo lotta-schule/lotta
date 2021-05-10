@@ -8,7 +8,7 @@ export const GetArticleQuery = gql`
             updatedAt
             title
             preview
-            topic
+            tags
             readyToPublish
             published
             isPinnedToTop

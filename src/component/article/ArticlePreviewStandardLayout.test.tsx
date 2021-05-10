@@ -96,7 +96,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
         });
     });
 
-    it('should render topic', () => {
+    it('should render tags', () => {
         const screen = render(
             <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
             {},

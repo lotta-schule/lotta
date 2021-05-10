@@ -1,14 +1,15 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { useSlate } from 'slate-react';
 import { Button } from 'component/general/button/Button';
-import { Mark, isMarkActive, toggleMark } from './SlateUtils';
+import { isMarkActive, toggleMark } from './SlateUtils';
+import { FormattedText } from './SlateCustomTypes';
 
 export interface EditToolbarMarkButtonProps {
-    mark: Mark;
+    mark: keyof Omit<FormattedText, 'text'>;
     children?: any;
 }
 
-export const EditToolbarMarkButton: FC<EditToolbarMarkButtonProps> = ({
+export const EditToolbarMarkButton: React.FC<EditToolbarMarkButtonProps> = ({
     mark,
     children,
 }) => {
