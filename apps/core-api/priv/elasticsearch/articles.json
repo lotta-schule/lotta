@@ -17,7 +17,7 @@
                 "type": "text",
                 "analyzer": "german"
             },
-            "topic": {
+            "tags": {
                 "type": "keyword"
             },
             "updated_at": {

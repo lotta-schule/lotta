@@ -815,7 +815,7 @@ defmodule Api.Repo.Seeder do
         title: "Der Podcast zum WB 2",
         preview:
           "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
-        topic: "KleinKunst 2018",
+        tags: ["KleinKunst 2018"],
         published: true,
         inserted_at: ~U[2019-09-01 10:11:00Z],
         updated_at: ~U[2019-09-01 10:11:00Z]
@@ -883,7 +883,7 @@ defmodule Api.Repo.Seeder do
         title: "Der Vorausscheid",
         preview:
           "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
-        topic: "KleinKunst 2018",
+        tags: ["KleinKunst 2018"],
         published: true,
         inserted_at: ~U[2019-09-01 10:12:00Z],
         updated_at: ~U[2019-09-01 10:12:00Z]

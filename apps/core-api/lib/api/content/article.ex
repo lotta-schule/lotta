@@ -17,12 +17,12 @@ defmodule Api.Content.Article do
 
   @type id() :: pos_integer()
 
-  @type topic() :: String.t()
+  @type tags() :: [String.t()]
 
   @type t() :: %__MODULE__{
           id: id(),
           title: String.t(),
-          topic: topic(),
+          tags: tags(),
           ready_to_publish: boolean(),
           published: boolean(),
           is_pinned_to_top: boolean()
@@ -33,7 +33,7 @@ defmodule Api.Content.Article do
   schema "articles" do
     field(:title, :string)
     field(:preview, :string)
-    field(:topic, :string)
+    field(:tags, {:array, :string})
     field(:ready_to_publish, :boolean)
     field(:published, :boolean, default: false)
     field(:is_pinned_to_top, :boolean)
@@ -121,7 +121,7 @@ defmodule Api.Content.Article do
       :ready_to_publish,
       :published,
       :preview,
-      :topic
+      :tags
     ])
     |> validate_required([:title])
     |> put_assoc_users(attrs)

@@ -18,7 +18,7 @@ defimpl Elasticsearch.Document, for: Api.Content.Article do
       category_id: article.category_id,
       title: article.title,
       preview: article.preview,
-      topic: article.topic,
+      tags: article.tags,
       updated_at: article.updated_at,
       inserted_at: article.inserted_at,
       users:

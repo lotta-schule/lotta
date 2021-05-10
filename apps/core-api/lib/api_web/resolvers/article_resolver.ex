@@ -24,8 +24,8 @@ defmodule ApiWeb.ArticleResolver do
 
   def get(_args, _info), do: {:error, "Beitrag nicht gefunden."}
 
-  def get_topics(_args, %{context: %Context{current_user: current_user}}) do
-    {:ok, Content.list_topics(current_user)}
+  def get_all_tags(_args, %{context: %Context{current_user: current_user}}) do
+    {:ok, Content.list_all_tags(current_user)}
   end
 
   def all(args, %{context: %Context{current_user: current_user}}) do
@@ -47,8 +47,8 @@ defmodule ApiWeb.ArticleResolver do
     {:ok, Content.list_user_articles(current_user)}
   end
 
-  def by_topic(%{topic: topic}, %{context: %Context{current_user: current_user}}) do
-    {:ok, Content.list_articles_by_topic(current_user, topic)}
+  def by_tag(%{tag: tag}, %{context: %Context{current_user: current_user}}) do
+    {:ok, Content.list_articles_by_tag(current_user, tag)}
   end
 
   def create(%{article: article_params}, %{context: %Context{current_user: user}}) do
