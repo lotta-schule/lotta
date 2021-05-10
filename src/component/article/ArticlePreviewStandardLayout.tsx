@@ -125,13 +125,15 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
                 padding: theme.spacing(0.5),
             },
         },
-        topic: {
+        tags: {
+            display: 'inline-block',
             border: '1px solid',
             borderColor: theme.palette.secondary.main,
             color: theme.palette.secondary.main,
             fontSize: '0.7rem',
             padding: '2px 4px',
             marginBottom: theme.spacing(1.5),
+            marginRight: theme.spacing(0.5),
             borderRadius: 4,
             maxWidth: 'max-content',
             fontFamily: theme.typography.fontFamily,
@@ -222,9 +224,11 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                         >
                             {article.preview}
                         </Typography>
-                        {article.topic && (
-                            <div className={styles.topic}>{article.topic}</div>
-                        )}
+                        {article.tags?.map((tag) => (
+                            <div className={styles.tags} key={tag}>
+                                {tag}
+                            </div>
+                        ))}
                         <Grid container>
                             <Grid item xs={9} style={{ display: 'flex' }}>
                                 <Grid item>

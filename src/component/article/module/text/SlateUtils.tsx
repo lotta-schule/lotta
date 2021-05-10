@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
 import { Editor, Element, Range, Text, Transforms, Node } from 'slate';
@@ -7,16 +7,8 @@ import {
     SlatePre050Node,
 } from './interface/SlatePre050Document';
 import { SlateImage } from './elements/SlateImage';
+import { BlockElement, CustomText, Image, Link } from './SlateCustomTypes';
 import isUrl from 'is-url';
-
-export type Mark = 'bold' | 'italic' | 'underline' | 'link' | 'small';
-
-export type Block =
-    | 'paragraph'
-    | 'unordered-list'
-    | 'ordered-list'
-    | 'list-item'
-    | 'image';
 
 export const renderElement = ({
     attributes,
@@ -62,7 +54,7 @@ export const renderElement = ({
                 </Typography>
             );
         case 'link':
-            const href = element.href as string;
+            const href = element.href;
             let isSameHost = false;
             try {
                 const url = new URL(href);
@@ -85,7 +77,7 @@ export const renderElement = ({
 };
 
 export const renderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
-    const customStyles: CSSProperties = {
+    const customStyles: React.CSSProperties = {
         fontWeight: leaf.bold ? 'bold' : 'normal',
         fontStyle: leaf.italic ? 'italic' : 'normal',
         textDecoration: leaf.underline ? 'underline' : 'none',
@@ -98,11 +90,17 @@ export const renderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
     );
 };
 
-export const isMarkActive = (editor: Editor, mark: Mark): boolean => {
+export const isMarkActive = (
+    editor: Editor,
+    mark: keyof Omit<CustomText, 'text'>
+): boolean => {
     return Editor.marks(editor)?.[mark] ?? false;
 };
 
-export const toggleMark = (editor: Editor, mark: Mark) => {
+export const toggleMark = (
+    editor: Editor,
+    mark: keyof Omit<CustomText, 'text'>
+) => {
     const isActive = isMarkActive(editor, mark);
     Transforms.setNodes(
         editor,
@@ -111,18 +109,23 @@ export const toggleMark = (editor: Editor, mark: Mark) => {
     );
 };
 
-export const isBlockActive = (editor: Editor, block: Block): boolean => {
-    const [match] = Editor.nodes(editor, { match: (n) => n.type === block });
+export const isBlockActive = (
+    editor: Editor,
+    block: BlockElement['type']
+): boolean => {
+    const [match] = Editor.nodes(editor, {
+        match: (n) => (n as Element).type === block,
+    });
     return !!match;
 };
 
-export const toggleBlock = (editor: Editor, block: Block) => {
+export const toggleBlock = (editor: Editor, block: BlockElement['type']) => {
     const isActive = isBlockActive(editor, block);
     const listTypes = ['unordered-list', 'ordered-list'];
     const isList = listTypes.includes(block);
 
     Transforms.unwrapNodes(editor, {
-        match: (n) => listTypes.includes(n.type as string),
+        match: (n) => listTypes.includes((n as Element).type as string),
         split: true,
     });
 
@@ -176,12 +179,16 @@ export const insertLink = (editor: Editor, url: string, text: string = url) => {
 };
 
 export const isLinkActive = (editor: Editor) => {
-    const [link] = Editor.nodes(editor, { match: (n) => n.type === 'link' });
+    const [link] = Editor.nodes(editor, {
+        match: (n: Node) => (n as Element).type === 'link',
+    });
     return !!link;
 };
 
 export const unwrapLink = (editor: Editor) => {
-    Transforms.unwrapNodes(editor, { match: (n) => n.type === 'link' });
+    Transforms.unwrapNodes(editor, {
+        match: (n: Node) => (n as Element).type === 'link',
+    });
 };
 
 export const wrapLink = (editor: Editor, url: string, text: string = url) => {
@@ -191,7 +198,7 @@ export const wrapLink = (editor: Editor, url: string, text: string = url) => {
 
     const { selection } = editor;
     const isCollapsed = selection && Range.isCollapsed(selection);
-    const link = {
+    const link: Link = {
         type: 'link',
         href: url,
         children: isCollapsed ? [{ text }] : [],
@@ -238,7 +245,7 @@ export const withLinks = (editor: ReactEditor) => {
 //
 
 export const insertImage = (editor: Editor, url: string) => {
-    const image = { type: 'image', src: url, children: [{ text: '' }] };
+    const image: Image = { type: 'image', src: url };
     Transforms.insertNodes(editor, image);
 };
 

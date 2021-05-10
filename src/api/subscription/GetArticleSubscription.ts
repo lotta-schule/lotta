@@ -8,7 +8,7 @@ export const ArticleIsUpdatedSubscription = gql`
             updatedAt
             title
             preview
-            topic
+            tags
             readyToPublish
             isPinnedToTop
             previewImageFile {

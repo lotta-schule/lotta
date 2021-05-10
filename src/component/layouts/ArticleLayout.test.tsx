@@ -1,8 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor, getMetaTagValue } from 'test/util';
 import { Schulfest, MusikCategory } from 'test/fixtures';
 import { ArticleLayout } from './ArticleLayout';
-import { GetTopicQuery } from 'api/query/GetTopicQuery';
+import { GetArticlesForTag } from 'api/query/GetArticlesForTagQuery';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 
 describe('component/article/ArticleLayout', () => {
@@ -21,8 +21,8 @@ describe('component/article/ArticleLayout', () => {
             },
             {
                 request: {
-                    query: GetTopicQuery,
-                    variables: { topic: 'La Revolucion' },
+                    query: GetArticlesForTag,
+                    variables: { tag: 'La Revolucion' },
                 },
                 result: { data: { articles: [] } },
             },

@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import { UserGroupModel } from 'model';
-import { render, waitFor, createEvent, fireEvent } from 'test/util';
+import { render, waitFor } from 'test/util';
 import {
     adminGroup,
     lehrerGroup,
@@ -303,15 +303,14 @@ describe('component/edit/GroupSelect', () => {
                 {}
             );
 
-            userEvent.type(await screen.findByRole('textbox'), 'Schü');
+            const textbox = screen.getByRole('textbox');
+            userEvent.type(textbox, 'Schü');
 
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
 
-            const textbox = screen.getByRole('textbox');
-
-            fireEvent(textbox, createEvent.blur(screen.getByRole('textbox')));
+            userEvent.tab();
 
             await waitFor(() => {
                 expect(screen.getByRole('textbox')).toHaveValue('');

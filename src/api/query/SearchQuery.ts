@@ -8,7 +8,7 @@ export const SearchQuery = gql`
             updatedAt
             title
             preview
-            topic
+            tags
             readyToPublish
             isPinnedToTop
             previewImageFile {

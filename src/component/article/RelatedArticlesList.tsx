@@ -1,9 +1,10 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { ArticleModel } from 'model';
 import { useQuery } from '@apollo/client';
-import { GetTopicQuery } from 'api/query/GetTopicQuery';
-import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography, makeStyles, LinearProgress } from '@material-ui/core';
+import { useTransition, animated } from 'react-spring';
+import { GetArticlesForTag } from 'api/query/GetArticlesForTagQuery';
+import { ArticlePreviewDensedLayout } from './ArticlePreviewDensedLayout';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,38 +19,53 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface RelatedArticlesListProps {
-    article: ArticleModel;
+    tag: string;
 }
 
-export const RelatedArticlesList = memo<RelatedArticlesListProps>(
-    ({ article }) => {
+export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
+    ({ tag }) => {
         const styles = useStyles();
-        const { data } = useQuery<
+        const { data, loading: isLoading } = useQuery<
             { articles: ArticleModel[] },
-            { topic: string }
-        >(GetTopicQuery, { variables: { topic: article.topic! } });
-        if (!data || !data.articles || !data.articles.length) {
-            return null;
+            { tag: string }
+        >(GetArticlesForTag, { variables: { tag } });
+        const relatedArticles =
+            data?.articles.filter(
+                () => true // (a) => a.id !== article.id
+            ) ?? [];
+        const transitions = useTransition(relatedArticles, {
+            initial: { opacity: 0, maxHeight: 0 },
+            from: { opacity: 0, maxHeight: 0 },
+            enter: [{ opacity: 1, maxHeight: 100 }],
+            leave: { opacity: 0, height: 0 },
+            key: (a: ArticleModel) => a.id,
+            trail: 1000,
+        });
+
+        if (isLoading) {
+            return <LinearProgress />;
         }
-        const relatedArticles = data.articles.filter(
-            (a) => a.id !== article.id
-        );
+
         if (!relatedArticles.length) {
             return null;
         }
         return (
-            <>
+            <section>
                 <Typography variant={'h6'} className={styles.root}>
-                    Weitere Beiträge zum Thema <strong>{article.topic!}</strong>
+                    Weitere Beiträge zum Thema <strong>{tag}</strong>
                 </Typography>
-                {relatedArticles.map((relatedArticle) => (
-                    <ArticlePreviewStandardLayout
-                        key={relatedArticle.id}
-                        article={relatedArticle}
-                        limitedHeight
-                    />
-                ))}
-            </>
+                {transitions((props, article) => {
+                    return (
+                        <animated.div style={props}>
+                            <ArticlePreviewDensedLayout
+                                key={article.id}
+                                article={article}
+                                limitedHeight
+                            />
+                        </animated.div>
+                    );
+                })}
+            </section>
         );
     }
 );
