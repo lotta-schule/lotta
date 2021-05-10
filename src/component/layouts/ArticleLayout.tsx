@@ -98,9 +98,9 @@ export const ArticleLayout = memo<ArticleLayoutProps>(
                             </Typography>
                         )}
                         <Article article={article} />
-                        {article.topic && (
-                            <RelatedArticlesList article={article} />
-                        )}
+                        {article.tags?.map((tag) => (
+                            <RelatedArticlesList key={tag} tag={tag} />
+                        ))}
                     </>
                 );
             }

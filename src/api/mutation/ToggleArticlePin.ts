@@ -8,7 +8,7 @@ export const ToggleArticlePinMutation = gql`
             updatedAt
             title
             preview
-            topic
+            tags
             readyToPublish
             isPinnedToTop
             previewImageFile {

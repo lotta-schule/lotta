@@ -91,7 +91,7 @@ export const ComputerExperten = {
     title: 'Computerexperten',
     preview:
         'Hallo, wir sind die Computerexperten. Experten deshalb, weil wir wirklich experten sind und nicht nur so tun. Wir lieben FOSS.',
-    topic: '',
+    tags: [],
     category: null,
     published: true,
 };
@@ -182,7 +182,7 @@ export const VivaLaRevolucion = {
     title: 'Viva La Revolucion',
     preview:
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
-    topic: '',
+    tags: [],
     category: null,
     published: false,
 };
@@ -299,7 +299,7 @@ export const Schulfest = {
     title: 'Schulfest',
     preview:
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
-    topic: 'La Revolucion',
+    tags: ['La Revolucion'],
     category: null,
     published: false,
 };
@@ -415,7 +415,7 @@ export const Weihnachtsmarkt = {
     preview:
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     previewImageFile: null,
-    topic: 'La Revolucion',
+    tags: ['La Revolucion'],
     category: null,
     published: false,
 };
@@ -453,7 +453,7 @@ export const Klausurenplan = {
     preview:
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     previewImageFile: null,
-    topic: 'La Revolucion',
+    tags: ['La Revolucion'],
     category: null,
     published: false,
 };
@@ -492,7 +492,7 @@ export const LehrerListe = {
     preview:
         'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.',
     previewImageFile: null,
-    topic: null,
+    tags: [],
     category: null,
     published: false,
 };

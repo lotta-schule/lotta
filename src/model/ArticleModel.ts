@@ -14,7 +14,7 @@ export interface ArticleModel {
     readyToPublish: boolean;
     published: boolean;
     isPinnedToTop: boolean;
-    topic?: string;
+    tags: string[];
     previewImageFile?: FileModel | null;
     contentModules: ContentModuleModel[];
     users: UserModel[];
