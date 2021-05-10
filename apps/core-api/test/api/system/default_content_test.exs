@@ -68,7 +68,7 @@ defmodule Api.DefaultContentTest do
         |> Enum.map(&Repo.preload(&1, [:users, :preview_image_file, :category]))
 
       assert 3 = Enum.count(articles)
-      assert Enum.all?(articles, &(&1.topic == "Hilfe"))
+      assert Enum.all?(articles, &(&1.tags == ["Hilfe"]))
       assert Enum.all?(articles, &([%User{name: "Max Mustermann"}] = &1.users))
       assert Enum.all?(articles, &(%File{} = &1.preview_image_file))
       assert Enum.all?(articles, &(%Category{title: "Über lotta"} = &1.category))

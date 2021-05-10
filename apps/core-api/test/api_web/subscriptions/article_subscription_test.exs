@@ -51,7 +51,7 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       articleIsUpdated(id: $id) {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -62,7 +62,7 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       updateArticle(id: $id, article: $article) {
         title
         preview
-        topic
+        tags
         readyToPublish
         users {
           name

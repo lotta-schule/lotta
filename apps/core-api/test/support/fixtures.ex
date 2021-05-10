@@ -146,7 +146,7 @@ defmodule Api.Fixtures do
     %{
       title: "Mein Artikel",
       preview: "Kleine Artikel-Vorschau",
-      topic: "Mein Thema",
+      tags: ["Mein Thema"],
       ready_to_publish: true,
       is_pinned_to_top: false,
       category: fixture(:category)

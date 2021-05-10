@@ -226,7 +226,7 @@ defmodule Api.System.DefaultContent do
       %Article{
         title: "Erste Schritte mit Lotta",
         is_pinned_to_top: false,
-        topic: "Hilfe",
+        tags: ["Hilfe"],
         preview: "Erstellen und bearbeiten Sie Kategorien"
       }
       |> change()
@@ -310,7 +310,7 @@ defmodule Api.System.DefaultContent do
       %Article{
         title: "Erste Schritte mit Lotta",
         is_pinned_to_top: false,
-        topic: "Hilfe",
+        tags: ["Hilfe"],
         preview: "Nutzergruppen & Einschreibeschlüssel organisieren"
       }
       |> change()
@@ -409,7 +409,7 @@ defmodule Api.System.DefaultContent do
       %Article{
         title: "Willkommen",
         is_pinned_to_top: true,
-        topic: "Hilfe",
+        tags: ["Hilfe"],
         preview: "Ihre ersten Schritte mit Lotta"
       }
       |> change()
