@@ -1,12 +1,9 @@
 import * as React from 'react';
 import clsx from 'clsx';
 import './base-button.scss';
+import { BaseElement, BaseElementProps } from '../BaseElement';
 
-export interface BaseButtonProps
-    extends React.DetailedHTMLProps<
-        React.ButtonHTMLAttributes<HTMLButtonElement>,
-        HTMLButtonElement
-    > {
+export interface BaseButtonProps extends BaseElementProps {
     /**
      * Wether the button is currently 'active' or 'selected'
      */
@@ -31,20 +28,22 @@ export interface BaseButtonProps
 /**
  * Primary UI component for user interaction
  */
-export const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
+export const BaseButton = React.forwardRef<any, BaseButtonProps>(
     (
         {
             children,
             variant = 'default',
             fullWidth = false,
             selected = false,
+            as = 'button',
             ...props
         },
         ref
     ) => {
         return (
-            <button
-                ref={ref}
+            <BaseElement
+                as={as}
+                ref={ref as any}
                 type={props.type ?? 'button'}
                 {...props}
                 className={clsx(
@@ -55,7 +54,7 @@ export const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
                 )}
             >
                 {children}
-            </button>
+            </BaseElement>
         );
     }
 );
