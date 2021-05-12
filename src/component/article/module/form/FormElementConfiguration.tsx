@@ -7,9 +7,9 @@ import {
     FormControlLabel,
     Checkbox,
     makeStyles,
-    Button,
 } from '@material-ui/core';
 import { PlusOne } from '@material-ui/icons';
+import { Button } from 'component/general/button/Button';
 
 export interface FormElementConfigurationProps {
     element: FormElement;
@@ -247,7 +247,7 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(
                             </section>
                         ))}
                         <Button
-                            startIcon={<PlusOne />}
+                            icon={<PlusOne />}
                             onClick={() =>
                                 updateElement({
                                     options: [

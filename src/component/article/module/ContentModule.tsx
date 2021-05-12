@@ -8,7 +8,6 @@ import {
     Popover,
     Box,
     Divider,
-    Button,
     CardProps,
     StyledComponentProps,
     CircularProgress,
@@ -34,6 +33,7 @@ import {
     usePopupState,
 } from 'material-ui-popup-state/hooks';
 import clsx from 'clsx';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles<Theme, { isEditModeEnabled: boolean }>((theme) =>
     createStyles({
@@ -219,8 +219,8 @@ export const ContentModule = memo<ContentModuleProps>(
                                             </>
                                         )}
                                         <Button
-                                            color={'primary'}
-                                            startIcon={
+                                            variant={'error'}
+                                            icon={
                                                 <Delete
                                                     className={clsx(
                                                         styles.buttonIcon

@@ -6,17 +6,12 @@ import {
     FileConversion,
 } from '../../../../model';
 import { File } from 'util/model';
-import {
-    CardContent,
-    Typography,
-    Button,
-    Grid,
-    Divider,
-} from '@material-ui/core';
+import { CardContent, Typography, Grid, Divider } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { useStyles } from './Download';
 import { BackgroundImg } from 'react-cloudimage-responsive';
 import { CloudDownload } from '@material-ui/icons';
+import { Button } from 'component/general/button/Button';
 
 export interface ShowProps {
     contentModule: ContentModuleModel;
@@ -82,15 +77,13 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                     style={{ alignSelf: 'center' }}
                                 >
                                     <Button
+                                        as={'a'}
                                         fullWidth
-                                        variant={'outlined'}
-                                        color={'secondary'}
                                         style={{ minWidth: 130, maxWidth: 160 }}
-                                        component={'a'}
                                         href={File.getSameOriginUrl(file)}
                                         download={file.filename}
                                         target={'_blank'}
-                                        startIcon={<CloudDownload />}
+                                        icon={<CloudDownload />}
                                     >
                                         download
                                     </Button>
