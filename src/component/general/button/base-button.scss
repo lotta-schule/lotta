@@ -5,10 +5,10 @@
     background: none;
     border-radius: 0.5em;
     padding: 0.7em;
-    cursor: pointer;
     display: flex;
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-decoration: none;
     font-size: 0.8rem;
     justify-content: center;
     &:not([disabled]) {
@@ -27,7 +27,7 @@
     border-color: rgba(var(--lotta-disabled-color), 1);
 }
 
-.lotta-base-button:hover {
+.lotta-base-button:hover:not([disabled]) {
     background-color: rgba(var(--lotta-primary-color), 0.1);
     transition: linear;
     transition-duration: 0.2s;

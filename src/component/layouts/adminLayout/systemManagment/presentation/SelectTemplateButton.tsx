@@ -1,6 +1,6 @@
 import React, { MouseEvent as ReactMouseEvent, memo } from 'react';
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
-import ButtonBase from '@material-ui/core/ButtonBase';
+import { BaseButton } from 'component/general/button/BaseButton';
 import Typography from '@material-ui/core/Typography';
 import get from 'lodash/get';
 
@@ -25,7 +25,6 @@ const useStyles = makeStyles<Theme, { partialTheme: Partial<Theme> }>(
                     zIndex: 1,
                 },
             },
-            focusVisible: {},
             imageButton: {
                 position: 'absolute' as any,
                 left: 0,
@@ -69,12 +68,7 @@ export const SelectTemplateButton = memo<SelectTemplateButtonProps>(
         const classes = useStyles({ partialTheme });
 
         return (
-            <ButtonBase
-                focusRipple
-                className={classes.root}
-                focusVisibleClassName={classes.focusVisible}
-                onClick={onClick}
-            >
+            <BaseButton className={classes.root} onClick={onClick}>
                 <span className={classes.imageButton}>
                     <Typography
                         component="span"
@@ -85,7 +79,7 @@ export const SelectTemplateButton = memo<SelectTemplateButtonProps>(
                         {title}
                     </Typography>
                 </span>
-            </ButtonBase>
+            </BaseButton>
         );
     }
 );

@@ -18,7 +18,7 @@ export const EditToolbarBlockButton: React.FC<EditToolbarMarkButtonProps> = ({
     return (
         <Button
             selected={isBlockActive(editor, mark)}
-            onMouseDown={(e) => {
+            onMouseDown={(e: React.MouseEvent) => {
                 e.preventDefault();
                 toggleBlock(editor, mark);
             }}

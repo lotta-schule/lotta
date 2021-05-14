@@ -123,7 +123,7 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={(e) => onClose(e, 'auto')}
+                        onClick={(e: React.MouseEvent) => onClose(e, 'auto')}
                         disabled={isLoading}
                     >
                         Abbrechen

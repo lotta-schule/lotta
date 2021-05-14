@@ -1,5 +1,5 @@
 import React, { Reducer, memo, useReducer } from 'react';
-import { makeStyles, Theme, Paper, Toolbar, Button } from '@material-ui/core';
+import { makeStyles, Theme, Paper, Toolbar } from '@material-ui/core';
 import { FileModel } from 'model';
 import { useTranslation } from 'react-i18next';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
@@ -16,6 +16,7 @@ import {
 } from './context/FileExplorerContext';
 import { Action, reducer } from './context/reducer';
 import { MoveDirectoryDialog } from './MoveDirectoryDialog';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles<Theme>((theme: Theme) => ({
     bottomToolbar: {

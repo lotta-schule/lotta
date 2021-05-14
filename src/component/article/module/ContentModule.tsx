@@ -1,14 +1,12 @@
-import React, { memo, useMemo, HTMLAttributes, Suspense } from 'react';
+import * as React from 'react';
 import {
     Card,
     makeStyles,
     Theme,
     createStyles,
-    IconButton,
     Popover,
     Box,
     Divider,
-    Button,
     CardProps,
     StyledComponentProps,
     CircularProgress,
@@ -34,6 +32,7 @@ import {
     usePopupState,
 } from 'material-ui-popup-state/hooks';
 import clsx from 'clsx';
+import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles<Theme, { isEditModeEnabled: boolean }>((theme) =>
     createStyles({
@@ -98,12 +97,12 @@ interface ContentModuleProps {
     isDragging?: boolean;
     cardProps?: Omit<CardProps, 'className' | 'component' | 'innerRef'> &
         Pick<StyledComponentProps, 'innerRef'>;
-    dragbarProps?: Omit<HTMLAttributes<HTMLDivElement>, 'className'>;
+    dragbarProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'className'>;
     onUpdateModule(contentModule: ContentModuleModel): void;
     onRemoveContentModule(): void;
 }
 
-export const ContentModule = memo<ContentModuleProps>(
+export const ContentModule = React.memo<ContentModuleProps>(
     ({
         isEditModeEnabled,
         contentModule,
@@ -122,7 +121,7 @@ export const ContentModule = memo<ContentModuleProps>(
             popupId: 'contentmodule-configuration',
         });
 
-        const config = useMemo(() => {
+        const config = React.useMemo(() => {
             switch (contentModule.type) {
                 case ContentModuleType.TITLE:
                     return (
@@ -169,7 +168,7 @@ export const ContentModule = memo<ContentModuleProps>(
                 data-testid={'ContentModule'}
                 {...cardProps}
             >
-                <Suspense fallback={<CircularProgress />}>
+                <React.Suspense fallback={<CircularProgress />}>
                     {isEditModeEnabled && (
                         <div
                             {...dragbarProps}
@@ -178,7 +177,7 @@ export const ContentModule = memo<ContentModuleProps>(
                         >
                             <DragHandle />
                             <span>
-                                <IconButton
+                                <Button
                                     classes={{ root: styles.dragbarButton }}
                                     style={{
                                         position: 'absolute',
@@ -186,15 +185,16 @@ export const ContentModule = memo<ContentModuleProps>(
                                         right: 0,
                                     }}
                                     aria-label="Einstellungen"
+                                    icon={
+                                        <MoreVert
+                                            className={clsx(styles.buttonIcon, {
+                                                [styles.activeButtonIcon]:
+                                                    popupState.isOpen,
+                                            })}
+                                        />
+                                    }
                                     {...bindTrigger(popupState)}
-                                >
-                                    <MoreVert
-                                        className={clsx(styles.buttonIcon, {
-                                            [styles.activeButtonIcon]:
-                                                popupState.isOpen,
-                                        })}
-                                    />
-                                </IconButton>
+                                />
                                 <Popover
                                     {...bindPopover(popupState)}
                                     aria-label={'Einstellungen'}
@@ -219,8 +219,8 @@ export const ContentModule = memo<ContentModuleProps>(
                                             </>
                                         )}
                                         <Button
-                                            color={'primary'}
-                                            startIcon={
+                                            variant={'error'}
+                                            icon={
                                                 <Delete
                                                     className={clsx(
                                                         styles.buttonIcon
@@ -304,7 +304,7 @@ export const ContentModule = memo<ContentModuleProps>(
                             onUpdateModule={onUpdateModule}
                         />
                     )}
-                </Suspense>
+                </React.Suspense>
             </Card>
         );
     }

@@ -1,14 +1,7 @@
-import React, {
-    FunctionComponent,
-    memo,
-    MouseEvent,
-    useEffect,
-    KeyboardEventHandler,
-    KeyboardEvent,
-    useCallback,
-} from 'react';
+import * as React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { Theme, IconButton, Typography } from '@material-ui/core';
+import { Theme, Typography } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { FileModel } from 'model';
 import { useWindowSize } from 'util/useWindowSize';
 import { useIsRetina } from 'util/useIsRetina';
@@ -57,12 +50,18 @@ export interface ImageOverlayProps {
     selectedUrl?: string | null;
     selectedFile?: FileModel | null;
     caption?: string;
-    onPrevious?(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
-    onNext?(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
-    onClose(e: MouseEvent<HTMLButtonElement> | KeyboardEvent<Window>): void;
+    onPrevious?(
+        e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Window>
+    ): void;
+    onNext?(
+        e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Window>
+    ): void;
+    onClose(
+        e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Window>
+    ): void;
 }
 
-export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(
+export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> = React.memo(
     ({ selectedFile, selectedUrl, caption, onPrevious, onNext, onClose }) => {
         useLockBodyScroll();
         const styles = useStyles();
@@ -72,7 +71,7 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(
             Math.floor(px * 0.8 * retinaMultiplier)
         );
 
-        const onKeyDown: KeyboardEventHandler<Window> = useCallback(
+        const onKeyDown: React.KeyboardEventHandler<Window> = React.useCallback(
             (event) => {
                 if (event.keyCode === 27) {
                     // ESC
@@ -88,7 +87,7 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(
             [onClose, onNext, onPrevious]
         );
 
-        useEffect(() => {
+        React.useEffect(() => {
             window.addEventListener('keydown', onKeyDown as any);
             return () => {
                 window.removeEventListener('keydown', onKeyDown as any);
@@ -103,33 +102,27 @@ export const ImageOverlay: FunctionComponent<ImageOverlayProps> = memo(
         }`;
         return (
             <div className={styles.root}>
-                <IconButton
-                    size="medium"
-                    color={'secondary'}
+                <Button
+                    small
+                    icon={<Close />}
                     className={styles.closeButton}
                     onClick={onClose}
-                >
-                    <Close />
-                </IconButton>
+                />
                 {onPrevious && (
-                    <IconButton
-                        size={'small'}
-                        color={'secondary'}
+                    <Button
+                        small
+                        icon={<ChevronLeft />}
                         className={styles.leftButton}
                         onClick={onPrevious}
-                    >
-                        <ChevronLeft />
-                    </IconButton>
+                    />
                 )}
                 {onNext && (
-                    <IconButton
-                        size={'small'}
-                        color={'secondary'}
+                    <Button
+                        small
+                        icon={<ChevronRight />}
                         className={styles.rightButton}
                         onClick={onNext}
-                    >
-                        <ChevronRight />
-                    </IconButton>
+                    />
                 )}
                 <img src={imgUrl} alt={''} />
                 {caption && (

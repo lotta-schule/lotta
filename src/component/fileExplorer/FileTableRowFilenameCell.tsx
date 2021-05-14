@@ -1,15 +1,7 @@
-import React, {
-    memo,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    useState,
-    useContext,
-} from 'react';
+import * as React from 'react';
 import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
 import {
-    IconButton,
     InputAdornment,
     TableCell,
     TextField,
@@ -21,6 +13,7 @@ import { Done } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';
 import { UpdateDirectoryMutation } from 'api/mutation/UpdateDirectoryMutation';
+import { Button } from 'component/general/button/Button';
 import fileExplorerContext from './context/FileExplorerContext';
 
 export interface FileTableRowFilenameCellProps {
@@ -38,16 +31,16 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(
+export const FileTableRowFilenameCell = React.memo<FileTableRowFilenameCellProps>(
     ({ file, directory, isRenaming, onCompleteRenaming, onSelect }) => {
         const styles = useStyles();
-        const [{ currentPath }] = useContext(fileExplorerContext);
-        const [newFilename, setNewFilename] = useState(
+        const [{ currentPath }] = React.useContext(fileExplorerContext);
+        const [newFilename, setNewFilename] = React.useState(
             file?.filename ?? directory!.name
         );
 
-        const renamingInputRef = useRef<HTMLInputElement>();
-        useLayoutEffect(() => {
+        const renamingInputRef = React.useRef<HTMLInputElement>();
+        React.useLayoutEffect(() => {
             if (renamingInputRef.current) {
                 renamingInputRef.current.focus();
                 renamingInputRef.current.addEventListener('blur', () => {
@@ -57,7 +50,7 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [renamingInputRef.current]);
 
-        useEffect(() => {
+        React.useEffect(() => {
             setNewFilename(file?.filename ?? directory!.name);
         }, [directory, file, isRenaming]);
 
@@ -159,19 +152,19 @@ export const FileTableRowFilenameCell = memo<FileTableRowFilenameCellProps>(
                                         </InputAdornment>
                                     ) : (
                                         <InputAdornment position={'end'}>
-                                            <IconButton
-                                                aria-label="OK"
+                                            <Button
+                                                icon={<Done />}
+                                                aria-label={'OK'}
                                                 disabled={
                                                     newFilename.length < 1
                                                 }
-                                                color={'secondary'}
-                                                onMouseDown={(e) => {
+                                                onMouseDown={(
+                                                    e: React.MouseEvent<any>
+                                                ) => {
                                                     e.preventDefault();
                                                     move();
                                                 }}
-                                            >
-                                                <Done />
-                                            </IconButton>
+                                            />
                                         </InputAdornment>
                                     ),
                             }}

@@ -1,12 +1,9 @@
 import * as React from 'react';
+import { BaseElement, BaseElementProps } from '../BaseElement';
 import clsx from 'clsx';
 import './base-button.scss';
 
-export interface BaseButtonProps
-    extends React.DetailedHTMLProps<
-        React.ButtonHTMLAttributes<HTMLButtonElement>,
-        HTMLButtonElement
-    > {
+export type BaseButtonProps = {
     /**
      * Wether the button is currently 'active' or 'selected'
      */
@@ -23,39 +20,54 @@ export interface BaseButtonProps
     fullWidth?: boolean;
 
     /**
+     * CSS Classname
+     */
+    className?: string;
+
+    /**
+     * CSS Styles
+     */
+    style?: React.CSSProperties;
+
+    /**
      * Content to show on the button
      */
     children?: any;
-}
+} & BaseElementProps<'button'>;
 
 /**
  * Primary UI component for user interaction
  */
-export const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
+export const BaseButton = React.forwardRef<any, BaseButtonProps>(
     (
         {
             children,
+            style,
+            className,
             variant = 'default',
             fullWidth = false,
             selected = false,
+            as = 'button',
             ...props
         },
         ref
     ) => {
         return (
-            <button
-                ref={ref}
-                type={props.type ?? 'button'}
+            <BaseElement
+                as={as}
+                ref={ref as any}
+                type={(props as any).type ?? 'button'}
                 {...props}
+                style={style}
                 className={clsx(
                     'lotta-base-button',
                     `variant__${variant}`,
                     { selected, 'full-width': fullWidth },
-                    props.className
+                    className
                 )}
             >
                 {children}
-            </button>
+            </BaseElement>
         );
     }
 );

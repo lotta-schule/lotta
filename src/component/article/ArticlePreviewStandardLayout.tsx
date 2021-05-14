@@ -274,7 +274,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                                                     'edit-button'
                                                                 )}
                                                                 onClick={(
-                                                                    e
+                                                                    e: React.MouseEvent
                                                                 ) => {
                                                                     e.stopPropagation();
                                                                     push(

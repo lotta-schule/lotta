@@ -1,18 +1,18 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { useSlate } from 'slate-react';
 import { Range } from 'slate';
 import { Link } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
 import { isLinkActive, unwrapLink, insertLink } from './SlateUtils';
 
-export const EditToolbarLinkButton: FC = () => {
+export const EditToolbarLinkButton: React.FC = () => {
     const editor = useSlate();
 
     return (
         <Button
             selected={isLinkActive(editor)}
             icon={<Link />}
-            onMouseDown={(e) => {
+            onMouseDown={(e: React.MouseEvent) => {
                 e.preventDefault();
                 if (isLinkActive(editor)) {
                     unwrapLink(editor);

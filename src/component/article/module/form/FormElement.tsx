@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import {
-    ButtonGroup,
     Checkbox,
     FormControlLabel,
     TextField,
@@ -15,8 +14,9 @@ import {
     FormLabel,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
-import { FormElement as FormElementInterface } from './Form';
+import { ButtonGroup } from 'component/general/button/ButtonGroup';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { FormElement as FormElementInterface } from './Form';
 import { FileModel } from 'model';
 import { Close } from '@material-ui/icons';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -193,12 +193,7 @@ export const FormElement = memo<FormElementProps>(
                 const maxSize = 15 * 1024 * 1024; // 15 MB
                 return (
                     <>
-                        <ButtonGroup
-                            disableElevation
-                            style={{ width: '100%' }}
-                            variant={'contained'}
-                            color={'primary'}
-                        >
+                        <ButtonGroup style={{ width: '100%' }}>
                             <Button style={{ flex: '0 0 50%' }}>
                                 <input
                                     type={'file'}

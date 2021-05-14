@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -10,6 +9,7 @@ import {
     Tooltip,
     TextFieldProps,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import {
     SkipPrevious,
     SkipNext,
@@ -302,12 +302,13 @@ export const Edit = React.memo<EditProps>(
                         id={`cm-${contentModule.id}-delete-column-tooltip`}
                     >
                         <span>
-                            <IconButton
-                                size={'small'}
+                            <Button
+                                small
+                                icon={<SkipPrevious />}
                                 aria-labelledby={`cm-${contentModule.id}-delete-column-tooltip`}
                                 aria-label={'letzte Spalte entfernen'}
                                 disabled={columnCount <= 1}
-                                onClick={(_e) => {
+                                onClick={() => {
                                     onUpdateModule({
                                         ...contentModule,
                                         content: {
@@ -321,17 +322,16 @@ export const Edit = React.memo<EditProps>(
                                         },
                                     });
                                 }}
-                            >
-                                <SkipPrevious />
-                            </IconButton>
+                            />
                         </span>
                     </Tooltip>
                     <Tooltip
                         title={'Spalte hinzufügen'}
                         id={`cm-${contentModule.id}-insert-column-tooltip`}
                     >
-                        <IconButton
-                            size={'small'}
+                        <Button
+                            small
+                            icon={<SkipNext />}
                             aria-labelledby={`cm-${contentModule.id}-insert-column-tooltip`}
                             onClick={() => {
                                 requestFocusOnNextUpdate.current = true;
@@ -346,9 +346,7 @@ export const Edit = React.memo<EditProps>(
                                     },
                                 });
                             }}
-                        >
-                            <SkipNext />
-                        </IconButton>
+                        />
                     </Tooltip>
                 </div>
                 <div className={styles.asideToolbar}>
@@ -357,12 +355,13 @@ export const Edit = React.memo<EditProps>(
                         id={`cm-${contentModule.id}-delete-row-tooltip`}
                     >
                         <span>
-                            <IconButton
-                                size={'small'}
+                            <Button
+                                small
+                                icon={<ExpandLess />}
                                 disabled={rowCount <= 1}
                                 aria-labelledby={`cm-${contentModule.id}-delete-row-tooltip`}
                                 aria-label={'Zeile entfernen'}
-                                onClick={(_e) => {
+                                onClick={() => {
                                     onUpdateModule({
                                         ...contentModule,
                                         content: {
@@ -373,17 +372,16 @@ export const Edit = React.memo<EditProps>(
                                         },
                                     });
                                 }}
-                            >
-                                <ExpandLess />
-                            </IconButton>
+                            />
                         </span>
                     </Tooltip>
                     <Tooltip
                         title={'Zeile hinzufügen'}
                         id={`cm-${contentModule.id}-insert-row-tooltip`}
                     >
-                        <IconButton
-                            size={'small'}
+                        <Button
+                            small
+                            icon={<ExpandMore />}
                             aria-labelledby={`cm-${contentModule.id}-insert-row-tooltip`}
                             onClick={() => {
                                 requestFocusOnNextUpdate.current = true;
@@ -400,9 +398,7 @@ export const Edit = React.memo<EditProps>(
                                     },
                                 });
                             }}
-                        >
-                            <ExpandMore />
-                        </IconButton>
+                        />
                     </Tooltip>
                 </div>
                 <Table ref={tableRef} className={styles.table}>

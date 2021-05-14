@@ -3,7 +3,7 @@ import { BaseButton, BaseButtonProps } from './BaseButton';
 import clsx from 'clsx';
 import './button.scss';
 
-export interface ButtonProps extends BaseButtonProps {
+export type ButtonProps = {
     /**
      * Button contents
      */
@@ -15,20 +15,26 @@ export interface ButtonProps extends BaseButtonProps {
     icon?: React.ReactElement;
 
     /**
+     * Disable setting a minimal height
+     */
+    small?: boolean;
+
+    /**
      * Force style for button with only icon and without label,
      * even if child is found
      */
     onlyIcon?: boolean;
-}
+} & BaseButtonProps;
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ icon, label, onlyIcon, children, ...props }, ref) => {
+    ({ icon, label, onlyIcon, small, children, ...props }, ref) => {
         return (
             <BaseButton
                 {...props}
                 ref={ref}
                 className={clsx('lotta-button', props.className, {
                     'only-icon': onlyIcon || (icon && !(label || children)),
+                    small: small,
                 })}
             >
                 {icon && <span className={'lotta-button_icon'}>{icon}</span>}

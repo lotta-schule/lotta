@@ -4,7 +4,6 @@ import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScree
 import {
     DialogTitle,
     DialogContent,
-    Button,
     Typography,
     LinearProgress,
 } from '@material-ui/core';
@@ -15,6 +14,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
+import { Button } from 'component/general/button/Button';
 
 export interface FormResultsDialogProps {
     isOpen: boolean;

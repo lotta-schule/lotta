@@ -1,11 +1,4 @@
-import React, {
-    MouseEvent,
-    memo,
-    useContext,
-    useCallback,
-    useEffect,
-    useMemo,
-} from 'react';
+import * as React from 'react';
 import {
     Table,
     TableHead,
@@ -15,10 +8,10 @@ import {
     Theme,
     Checkbox,
     CircularProgress,
-    IconButton,
     fade,
     Typography,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { makeStyles } from '@material-ui/styles';
 import { useQuery } from '@apollo/client';
 import { ArrowBackRounded } from '@material-ui/icons';
@@ -140,9 +133,9 @@ const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>(
     })
 );
 
-export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
+export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
     const { t } = useTranslation();
-    const [state, dispatch] = useContext(fileExplorerContext);
+    const [state, dispatch] = React.useContext(fileExplorerContext);
     const styles = useStyles({
         filesAreEditable: state.mode === FileExplorerMode.ViewAndEdit,
     });
@@ -157,7 +150,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         },
     });
 
-    const filteredSortedFiles = useMemo(
+    const filteredSortedFiles = React.useMemo(
         () =>
             data?.files
                 .filter((file) => {
@@ -217,7 +210,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         }, null) as number;
     };
 
-    const toggleFileMarked = (e: MouseEvent, file: FileModel) => {
+    const toggleFileMarked = (e: React.MouseEvent, file: FileModel) => {
         e.preventDefault();
         if (isMarked(file)) {
             if (e.metaKey) {
@@ -264,7 +257,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         }
     };
 
-    const filteredSortedDirectories = useMemo(
+    const filteredSortedDirectories = React.useMemo(
         () =>
             data?.directories
                 .filter((_directory) => true)
@@ -272,7 +265,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         [data]
     );
 
-    const lowestSelectedFileIndex = useMemo(() => {
+    const lowestSelectedFileIndex = React.useMemo(() => {
         if (!state.markedFiles.length) {
             return null;
         }
@@ -288,7 +281,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
             null
         );
     }, [state.markedFiles, filteredSortedFiles]);
-    const highestSelectedFileIndex = useMemo(() => {
+    const highestSelectedFileIndex = React.useMemo(() => {
         if (!state.markedFiles.length) {
             return null;
         }
@@ -305,7 +298,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         );
     }, [state.markedFiles, filteredSortedFiles]);
 
-    const onKeyDown = useCallback(
+    const onKeyDown = React.useCallback(
         (e: KeyboardEvent) => {
             if (e.key === 'ArrowUp') {
                 if (state.markedFiles.length) {
@@ -376,7 +369,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
         ]
     );
 
-    useEffect(() => {
+    React.useEffect(() => {
         document.addEventListener('keydown', onKeyDown);
         return () => {
             document.removeEventListener('keydown', onKeyDown);
@@ -472,8 +465,9 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                         <TableCell>
                             {isLoading && <CircularProgress size={'1rem'} />}
                             {!isLoading && state.currentPath.length > 1 && (
-                                <IconButton
-                                    size={'small'}
+                                <Button
+                                    small
+                                    icon={<ArrowBackRounded />}
                                     onClick={() =>
                                         dispatch({
                                             type: 'setPath',
@@ -483,9 +477,7 @@ export const FileTable = memo<FileTableProps>(({ fileFilter }) => {
                                             ),
                                         })
                                     }
-                                >
-                                    <ArrowBackRounded />
-                                </IconButton>
+                                />
                             )}
                         </TableCell>
                         <TableCell>

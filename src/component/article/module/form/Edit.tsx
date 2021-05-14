@@ -200,7 +200,7 @@ export const Edit = React.memo<EditProps>(
                 </DragDropContext>
                 <Grid container className={styles.inputWrapper}>
                     <Grid item xs={5}>
-                        <Button color={'primary'} type={'submit'} disabled>
+                        <Button type={'submit'} disabled>
                             Senden
                         </Button>
                     </Grid>

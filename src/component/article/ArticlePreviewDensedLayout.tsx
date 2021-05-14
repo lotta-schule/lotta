@@ -278,7 +278,7 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(
                                                 styles.editButton,
                                                 'edit-button'
                                             )}
-                                            onClick={(e) => {
+                                            onClick={(e: React.MouseEvent) => {
                                                 e.stopPropagation();
                                                 push(
                                                     Article.getPath(article, {
