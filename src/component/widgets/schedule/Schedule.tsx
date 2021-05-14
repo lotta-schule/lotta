@@ -18,9 +18,9 @@ import {
     TableCell,
     Typography,
     Link,
-    IconButton,
     Tooltip,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import { darken } from '@material-ui/core/styles';
 import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
@@ -301,7 +301,8 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                 <Typography variant={'caption'} className={styles.date}>
                     {lastScheduleData?.schedule ? (
                         <Tooltip title={lastScheduleData.schedule.head.date}>
-                            <IconButton
+                            <Button
+                                icon={<ArrowBackIos />}
                                 onClick={() =>
                                     setCurrentDate(
                                         dateToDateString(
@@ -315,9 +316,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                                         )
                                     )
                                 }
-                            >
-                                <ArrowBackIos />
-                            </IconButton>
+                            />
                         </Tooltip>
                     ) : (
                         <div style={{ width: 48 }} />
@@ -325,7 +324,8 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                     <span>{currentScheduleData.schedule.head.date}</span>
                     {nextScheduleData?.schedule ? (
                         <Tooltip title={nextScheduleData.schedule.head.date}>
-                            <IconButton
+                            <Button
+                                icon={<ArrowForwardIos />}
                                 onClick={() =>
                                     setCurrentDate(
                                         dateToDateString(
@@ -339,9 +339,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                                         )
                                     )
                                 }
-                            >
-                                <ArrowForwardIos />
-                            </IconButton>
+                            />
                         </Tooltip>
                     ) : (
                         <div style={{ width: 48 }} />

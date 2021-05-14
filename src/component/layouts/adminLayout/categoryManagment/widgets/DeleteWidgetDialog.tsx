@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import {
     DialogTitle,
     DialogContent,
@@ -24,7 +24,7 @@ export interface DeleteWidgetDialogProps {
     onConfirm(): void;
 }
 
-export const DeleteWidgetDialog = memo<DeleteWidgetDialogProps>(
+export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
     ({ isOpen, widget, onClose, onConfirm }) => {
         const [deleteWidget, { loading: isLoading, error }] = useMutation<
             { widget: WidgetModel },
@@ -69,7 +69,7 @@ export const DeleteWidgetDialog = memo<DeleteWidgetDialogProps>(
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={(e) => onClose(e, 'auto')}
+                        onClick={(e: React.MouseEvent) => onClose(e, 'auto')}
                         disabled={isLoading}
                     >
                         Abbrechen

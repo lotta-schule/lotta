@@ -1,8 +1,7 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     Checkbox,
     FormControlLabel,
-    IconButton,
     NoSsr,
     TextField,
     Theme,
@@ -13,6 +12,7 @@ import { useAutocomplete } from '@material-ui/lab';
 import { Check, Close } from '@material-ui/icons';
 import { useUserGroups } from 'util/client/useUserGroups';
 import { UserGroupModel } from 'model/UserGroupModel';
+import { Button } from 'component/general/button/Button';
 import clsx from 'clsx';
 
 export interface GroupSelectProps {
@@ -123,7 +123,7 @@ const useStyles = makeStyles<Theme, { row?: boolean }>((theme) => ({
     },
 }));
 
-export const GroupSelect = memo<GroupSelectProps>(
+export const GroupSelect = React.memo<GroupSelectProps>(
     ({
         className,
         variant,
@@ -140,7 +140,7 @@ export const GroupSelect = memo<GroupSelectProps>(
         const styles = useStyles({ row });
         const groups = useUserGroups().filter(filterSelection ?? (() => true));
 
-        const [searchtext, setSearchtext] = useState('');
+        const [searchtext, setSearchtext] = React.useState('');
 
         const {
             getRootProps,
@@ -271,14 +271,14 @@ export const GroupSelect = memo<GroupSelectProps>(
                                             >
                                                 {option.name}
                                             </Typography>
-                                            <IconButton
+                                            <Button
+                                                small
+                                                variant={'error'}
                                                 aria-label={`Gruppe "${option.name}" entfernen`}
-                                                size={'small'}
                                                 onClick={onDelete}
                                                 disabled={disabled}
-                                            >
-                                                <Close />
-                                            </IconButton>
+                                                icon={<Close />}
+                                            />
                                         </div>
                                     );
                                 })}

@@ -1,11 +1,6 @@
 import * as React from 'react';
-import {
-    fade,
-    IconButton,
-    makeStyles,
-    Theme,
-    Typography,
-} from '@material-ui/core';
+import { fade, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { MessageModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { User } from 'util/model';
@@ -137,13 +132,12 @@ export const MessageBubble = React.memo<MessageBubbleProps>((props) => {
                 </span>
                 {format(new Date(message.insertedAt), 'PPPpp', { locale: de })}
                 {message.senderUser?.id === currentUser?.id && (
-                    <IconButton
-                        size={'small'}
+                    <Button
+                        small
+                        icon={<Delete />}
                         aria-label="Nachricht löschen"
                         onClick={() => deleteMessage()}
-                    >
-                        <Delete />
-                    </IconButton>
+                    />
                 )}
             </Typography>
         </div>

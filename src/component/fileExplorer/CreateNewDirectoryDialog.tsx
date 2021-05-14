@@ -114,7 +114,11 @@ export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogPr
                             )}
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={(e) => onClose(e, 'auto')}>
+                        <Button
+                            onClick={(e: React.MouseEvent) =>
+                                onClose(e, 'auto')
+                            }
+                        >
                             Abbrechen
                         </Button>
                         <Button type={'submit'} disabled={isLoading}>

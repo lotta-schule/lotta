@@ -1,17 +1,5 @@
-import React, {
-    memo,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
-import {
-    IconButton,
-    LinearProgress,
-    makeStyles,
-    Typography,
-} from '@material-ui/core';
+import * as React from 'react';
+import { LinearProgress, makeStyles, Typography } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ChatType, ThreadRepresentation } from 'model';
@@ -23,6 +11,7 @@ import { MessageToolbar } from './MessageToolbar';
 import { Forum } from '@material-ui/icons';
 import { useIsMobile } from 'util/useIsMobile';
 import { useMessages } from './useMessages';
+import { Button } from 'component/general/button/Button';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
@@ -66,12 +55,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const MessagingView = memo(() => {
+export const MessagingView = React.memo(() => {
     const styles = useStyles();
     const isMobile = useIsMobile();
     const currentUser = useCurrentUser();
 
-    const sectionElRef = useRef<HTMLElement>(null);
+    const sectionElRef = React.useRef<HTMLElement>(null);
     useSetWindowHeight(sectionElRef);
 
     const { data, loading: isLoading, error } = useMessages();
@@ -79,15 +68,15 @@ export const MessagingView = memo(() => {
     const [
         selectedThread,
         setSelectedThread,
-    ] = useState<ThreadRepresentation | null>(null);
+    ] = React.useState<ThreadRepresentation | null>(null);
     const [
         newMessageThread,
         setNewMessageThread,
-    ] = useState<ThreadRepresentation | null>(null);
+    ] = React.useState<ThreadRepresentation | null>(null);
 
-    const [isSidebarActive, setIsSidebarActive] = useState(true);
+    const [isSidebarActive, setIsSidebarActive] = React.useState(true);
 
-    const threadRepresentations = useMemo(() => {
+    const threadRepresentations = React.useMemo(() => {
         return Array.from(data?.messages ?? [])
             .sort((msg1, msg2) => msg2.updatedAt.localeCompare(msg1.updatedAt))
             .reduce(
@@ -125,7 +114,7 @@ export const MessagingView = memo(() => {
             );
     }, [data, currentUser, newMessageThread]);
 
-    const getMessagesForThread = useCallback(
+    const getMessagesForThread = React.useCallback(
         (thread: ThreadRepresentation) => {
             return (
                 data?.messages.filter((msg) =>
@@ -140,25 +129,25 @@ export const MessagingView = memo(() => {
         [data]
     );
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (!selectedThread && threadRepresentations.length) {
             setSelectedThread(threadRepresentations[0]);
         }
     }, [selectedThread, threadRepresentations]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (newMessageThread && newMessageThread !== selectedThread) {
             setNewMessageThread(null);
         }
     }, [selectedThread, newMessageThread]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (selectedThread) {
             setIsSidebarActive(false);
         }
     }, [selectedThread]);
 
-    const mainView = useMemo(() => {
+    const mainView = React.useMemo(() => {
         if (!selectedThread) {
             return null;
         }
@@ -219,12 +208,11 @@ export const MessagingView = memo(() => {
             </aside>
             <div className={styles.messageView}>
                 {isMobile && (
-                    <IconButton
+                    <Button
+                        icon={<Forum />}
                         style={{ width: 40 }}
                         onClick={() => setIsSidebarActive(true)}
-                    >
-                        <Forum />
-                    </IconButton>
+                    />
                 )}
                 {mainView}
             </div>

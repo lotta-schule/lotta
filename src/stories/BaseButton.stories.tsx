@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from '@storybook/react/types-6-0';
 
@@ -26,8 +26,9 @@ General.args = {
 export const Disabled = Template.bind({});
 Disabled.args = {
     children: 'Der Button darf nichts',
+    as: 'button',
     disabled: true,
-};
+} as any;
 
 export const FillVariant = Template.bind({});
 FillVariant.args = {
