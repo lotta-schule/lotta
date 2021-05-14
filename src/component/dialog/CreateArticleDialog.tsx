@@ -96,7 +96,7 @@ export const CreateArticleDialog = React.memo<CreateArticleDialogProps>(
                             Abbrechen
                         </Button>
                         <Button type={'submit'} disabled={!title || isLoading}>
-                            Artikel erstellen
+                            Beitrag erstellen
                         </Button>
                     </DialogActions>
                 </form>

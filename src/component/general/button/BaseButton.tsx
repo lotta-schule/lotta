@@ -56,7 +56,7 @@ export const BaseButton = React.forwardRef<any, BaseButtonProps>(
             <BaseElement
                 as={as}
                 ref={ref as any}
-                type={'type' in props ? props.type ?? 'button' : undefined}
+                type={(props as any).type ?? 'button'}
                 {...props}
                 style={style}
                 className={clsx(
