@@ -1,4 +1,4 @@
-import React, { memo, lazy, useState, useMemo, Suspense } from 'react';
+import * as React from 'react';
 import {
     Button,
     Card,
@@ -24,7 +24,6 @@ import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { GetRelevantFilesInUsageQuery } from 'api/query/GetRelevantFilesInUsage';
 import { useSystem } from 'util/client/useSystem';
 import { useOnLogout } from 'util/user/useOnLogout';
-import { Article } from 'util/model';
 import { ArticlesList } from 'component/profile/ArticlesList';
 import { ProfileDeleteFileSelection } from './ProfileDeleteFileSelection';
 import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
@@ -37,7 +36,9 @@ import {
     Warning,
     DeleteForever,
 } from '@material-ui/icons';
-const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
+const FileExplorer = React.lazy(
+    () => import('component/fileExplorer/FileExplorer')
+);
 
 enum ProfileDeleteStep {
     Start,
@@ -68,22 +69,23 @@ export const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const ProfileDelete = memo(() => {
+export const ProfileDelete = React.memo(() => {
     const styles = useStyles();
 
     const history = useHistory();
     const onLogout = useOnLogout();
 
     const system = useSystem();
-    const [selectedFilesToTransfer, setSelectedFilesToTransfer] = useState<
-        FileModel[]
-    >([]);
+    const [
+        selectedFilesToTransfer,
+        setSelectedFilesToTransfer,
+    ] = React.useState<FileModel[]>([]);
 
-    const [currentStep, setCurrentStep] = useState<ProfileDeleteStep>(
+    const [currentStep, setCurrentStep] = React.useState<ProfileDeleteStep>(
         ProfileDeleteStep.Start
     );
-    const [selectedFilesTab, setSelectedFilesTab] = useState(0);
-    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+    const [selectedFilesTab, setSelectedFilesTab] = React.useState(0);
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = React.useState(false);
 
     const {
         data: ownArticlesData,
@@ -148,7 +150,7 @@ export const ProfileDelete = memo(() => {
         isLoadingRelevantFiles ||
         isLoadingDestroyAccount;
 
-    const cardActions = useMemo(() => {
+    const cardActions = React.useMemo(() => {
         const button =
             currentStep < ProfileDeleteStep.ConfirmDeletion ? (
                 <Button
@@ -304,7 +306,7 @@ export const ProfileDelete = memo(() => {
                                             {' '}
                                             {
                                                 ownArticlesData.articles.filter(
-                                                    Article.isVisible
+                                                    (a) => a.published
                                                 ).length
                                             }{' '}
                                         </strong>{' '}
@@ -350,7 +352,7 @@ export const ProfileDelete = memo(() => {
                             relevantFilesData.files.length > 1 && (
                                 <Tabs
                                     value={selectedFilesTab}
-                                    onChange={(e, val) =>
+                                    onChange={(_, val) =>
                                         setSelectedFilesTab(val)
                                     }
                                     indicatorColor={'primary'}
@@ -438,9 +440,9 @@ export const ProfileDelete = memo(() => {
                                 Sicherheit herunterladen. Andere Dateien werden
                                 endgültig gelöscht.
                             </Typography>
-                            <Suspense fallback={'...'}>
+                            <React.Suspense fallback={'...'}>
                                 <FileExplorer />
-                            </Suspense>
+                            </React.Suspense>
                         </div>
                     </CardContent>
                     {cardActions}

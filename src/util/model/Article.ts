@@ -7,8 +7,4 @@ export const Article = {
             options?.edit ? '/edit' : ''
         }`;
     },
-
-    isVisible(article: ArticleModel) {
-        return !!article.category;
-    },
 };

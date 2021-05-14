@@ -68,7 +68,7 @@ export const UserNavigationMobile = memo(() => {
         skip: !currentUser || !User.isAdmin(currentUser),
     });
     const unpublishedBadgeNumber = unpublishedArticlesData?.articles.filter(
-        (article) => !article.readyToPublish || !article.category
+        (article) => !article.readyToPublish || !article.published
     ).length;
 
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
