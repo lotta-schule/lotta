@@ -100,7 +100,7 @@ export const UserNavigation = memo(() => {
     );
 
     const unpublishedBadgeNumber = unpublishedArticlesData?.articles.filter(
-        (article) => !article.readyToPublish || !article.category
+        (article) => !article.readyToPublish || !article.published
     ).length;
 
     const [

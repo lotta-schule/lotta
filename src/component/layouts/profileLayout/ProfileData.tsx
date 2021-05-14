@@ -171,7 +171,7 @@ export const ProfileData = memo(() => {
                             <Divider className={styles.divider} />
                             <Button
                                 variant={'error'}
-                                onClick={() => push('/account/delete')}
+                                onClick={() => push('/profile/delete')}
                             >
                                 Benutzerkonto löschen
                             </Button>

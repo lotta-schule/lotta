@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render } from 'test/util';
 import {
     ComputerExperten,
@@ -58,5 +58,61 @@ describe('component/profile/ArticlesList', () => {
         );
 
         expect(screen.getByRole('img')).toBeVisible();
+    });
+
+    describe('should show correct status', () => {
+        it('for non-ready, non-published article', () => {
+            const screen = render(
+                <ArticlesList
+                    articles={[
+                        {
+                            ...Weihnachtsmarkt,
+                            published: false,
+                            readyToPublish: false,
+                        },
+                    ]}
+                />,
+                {}
+            );
+            expect(
+                screen.getByRole('cell', { name: /bearbeitung/i })
+            ).toBeVisible();
+        });
+
+        it('for ready, non-published article', () => {
+            const screen = render(
+                <ArticlesList
+                    articles={[
+                        {
+                            ...Weihnachtsmarkt,
+                            published: false,
+                            readyToPublish: true,
+                        },
+                    ]}
+                />,
+                {}
+            );
+            expect(
+                screen.getByRole('cell', { name: /bereit zur freigabe/i })
+            ).toBeVisible();
+        });
+
+        it('for published article', () => {
+            const screen = render(
+                <ArticlesList
+                    articles={[
+                        {
+                            ...Weihnachtsmarkt,
+                            published: true,
+                            readyToPublish: true,
+                        },
+                    ]}
+                />,
+                {}
+            );
+            expect(
+                screen.getByRole('cell', { name: /veröffentlicht/i })
+            ).toBeVisible();
+        });
     });
 });

@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import * as React from 'react';
 import {
     makeStyles,
     Theme,
@@ -74,11 +74,11 @@ export interface ArticlesListProps {
     articles: ArticleModel[];
 }
 
-export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
+export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
     const styles = useStyles();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
 
-    const articleSorter = useCallback(
+    const articleSorter = React.useCallback(
         (article1, article2) =>
             new Date(article2.updatedAt).getTime() -
             new Date(article1.updatedAt).getTime(),
@@ -159,11 +159,11 @@ export const ArticlesList = memo<ArticlesListProps>(({ articles }) => {
                             )}
                         </TableCell>
                         <TableCell>
-                            {article.category && <span>Sichtbar</span>}
-                            {article.readyToPublish && !article.category && (
+                            {article.published && <span>Veröffentlicht</span>}
+                            {article.readyToPublish && !article.published && (
                                 <span>Bereit zur Freigabe</span>
                             )}
-                            {!article.readyToPublish && !article.category && (
+                            {!article.readyToPublish && !article.published && (
                                 <span>In Bearbeitung</span>
                             )}
                         </TableCell>
