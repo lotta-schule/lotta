@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import * as React from 'react';
 import {
     AppBar,
     Toolbar,
@@ -16,8 +16,8 @@ import { useCategories } from 'util/categories/useCategories';
 import { fade } from '@material-ui/core/styles';
 import { Category } from 'util/model';
 import { useApolloClient } from '@apollo/client';
-import clsx from 'clsx';
 import { gql } from '@apollo/client';
+import clsx from 'clsx';
 
 const useStyles = makeStyles<Theme>((theme) => ({
     root: {
@@ -34,6 +34,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
             paddingRight: '3em',
         },
     },
+    appBar: {},
     secondaryAppBar: {
         backgroundColor: fade(theme.palette.background.paper, 0.9),
         maxHeight: 40,
@@ -93,8 +94,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
     },
 }));
 
-export const Navbar = memo(() => {
+export const Navbar = React.memo(() => {
     const styles = useStyles();
+    const wrapperRef = React.useRef<HTMLElement>(null);
 
     const apolloClient = useApolloClient();
     const [categories] = useCategories();
@@ -103,7 +105,7 @@ export const Navbar = memo(() => {
         currentCategoryId || '0'
     );
 
-    const openDrawer = useCallback(() => {
+    const openDrawer = React.useCallback(() => {
         apolloClient.writeQuery({
             query: gql`
                 {
@@ -130,8 +132,16 @@ export const Navbar = memo(() => {
             category.category && category.category.id === categoriesHierarchy[0]
     );
 
+    React.useLayoutEffect(() => {
+        wrapperRef.current
+            ?.querySelectorAll('.selected')
+            .forEach((selectedNavItem) => {
+                selectedNavItem.scrollIntoView({ behavior: 'smooth' });
+            });
+    }, [currentCategoryId]);
+
     return (
-        <nav className={styles.root}>
+        <nav className={styles.root} ref={wrapperRef}>
             <Grid container style={{ position: 'relative' }}>
                 <Grid item xs className={styles.padding}>
                     <AppBar position={'sticky'} className={styles.appBar}>
@@ -193,7 +203,11 @@ export const Navbar = memo(() => {
                 </Grid>
             </Grid>
             {subcategories.length > 0 && (
-                <AppBar position={'sticky'} className={styles.secondaryAppBar}>
+                <AppBar
+                    data-testid={'nav-level2'}
+                    position={'sticky'}
+                    className={styles.secondaryAppBar}
+                >
                     <Toolbar style={{ minHeight: '0', height: '40px' }}>
                         {subcategories.map((category) => (
                             <Button

@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { createMemoryHistory } from 'history';
+import { createMemoryHistory, MemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
@@ -26,6 +26,7 @@ import DateFnsUtils from '@date-io/date-fns';
 
 export interface TestSetupOptions {
     defaultPathEntries?: string[];
+    getHistory?: (history: MemoryHistory) => void;
     onChangeLocation?: (location: Location) => void;
     currentUser?: UserModel;
     additionalMocks?: MockedResponse[];
@@ -41,6 +42,7 @@ const ProviderFactory = (options: TestSetupOptions): FC => ({ children }) => {
     const history = createMemoryHistory({
         initialEntries: options.defaultPathEntries || ['/'],
     });
+    options?.getHistory?.(history);
     if (options.onChangeLocation) {
         history.listen((...args) => {
             options.onChangeLocation!(...((args as unknown) as [any]));
