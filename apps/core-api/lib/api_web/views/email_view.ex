@@ -10,6 +10,7 @@ defmodule ApiWeb.EmailView do
   import Phoenix.HTML.Link
 
   alias Api.System
+  alias Api.Storage
   alias Api.Content.Article
 
   @doc """
@@ -67,7 +68,8 @@ defmodule ApiWeb.EmailView do
         default_logo_data_url()
 
       file ->
-        file.remote_location
+        file
+        |> Storage.get_http_url()
     end
   end
 

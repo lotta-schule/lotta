@@ -13,7 +13,7 @@ defmodule Api.Storage.RemoteStorage.Strategy.S3 do
     |> S3.upload(
       config[:config][:bucket],
       path,
-      acl: :public_read,
+      acl: :bucket_owner_full_control,
       content_type: content_type
     )
     |> ExAws.request()
@@ -30,9 +30,16 @@ defmodule Api.Storage.RemoteStorage.Strategy.S3 do
     end
   end
 
-  def delete(%RemoteStorageEntity{path: path}, config) do
+  def delete(%RemoteStorageEntity{path: path} = entity, config) do
     S3.delete_object(config[:config][:bucket], path)
     |> ExAws.request()
+    |> case do
+      {:error, {error, _status_code, _binary}} ->
+        {:error, error}
+
+      {:ok, _result} ->
+        entity
+    end
   end
 
   def get_http_url(%RemoteStorageEntity{path: path}, config) do

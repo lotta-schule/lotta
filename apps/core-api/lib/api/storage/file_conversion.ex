@@ -9,6 +9,8 @@ defmodule Api.Storage.FileConversion do
 
   alias Api.Storage.{File, RemoteStorageEntity}
 
+  @primary_key {:id, :binary_id, read_after_writes: true}
+
   @timestamps_opts [type: :utc_datetime]
 
   schema "file_conversions" do
@@ -19,10 +21,9 @@ defmodule Api.Storage.FileConversion do
     field :full_metadata, :map
     field :metadata, :map
     field :media_duration, :float
-    field :remote_location, :string
 
     belongs_to :file, File, type: :binary_id
-    belongs_to :remote_storage_entity, RemoteStorageEntity
+    belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id
 
     timestamps()
   end
@@ -30,7 +31,7 @@ defmodule Api.Storage.FileConversion do
   @doc false
   def changeset(file_conversion, attrs) do
     file_conversion
-    |> cast(attrs, [:format, :remote_location, :mime_type, :file_type, :file_id])
-    |> validate_required([:format, :remote_location, :mime_type, :file_type, :file_id])
+    |> cast(attrs, [:format, :mime_type, :file_type, :file_id])
+    |> validate_required([:format, :mime_type, :file_type, :file_id])
   end
 end

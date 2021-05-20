@@ -7,19 +7,19 @@ defmodule Api.StorageTest do
   alias Api.Accounts.User
   alias Api.Fixtures
   alias Api.Repo
-  alias Api.Repo.Seeder
   alias Api.Storage
   alias Api.Storage.{Directory, File}
 
   setup do
-    Seeder.seed()
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
+    user_file = Repo.get_by!(File, filename: "eoa3.mp3")
     user_directory = Repo.get_by!(Directory, name: "ehrenberg-on-air")
 
     {:ok,
      %{
        user: user,
-       user_directory: user_directory
+       user_directory: user_directory,
+       user_file: user_file
      }}
   end
 
@@ -48,7 +48,7 @@ defmodule Api.StorageTest do
              } = uploaded_file
 
       res =
-        S3.list_objects("lotta-dev-ugc", prefix: "tenant_2")
+        S3.list_objects("lotta-dev-ugc", prefix: "test")
         |> ExAws.request!()
 
       assert %{
@@ -56,7 +56,39 @@ defmodule Api.StorageTest do
                body: %{contents: contents}
              } = res
 
-      assert Enum.any?(contents, &(&1.key == "tenant_2/#{uploaded_file.id}"))
+      assert Enum.any?(contents, &(&1.key == "test/#{uploaded_file.id}"))
+    end
+
+    test "set_remote_storage/2 should reupload a file to new location", %{user_file: user_file} do
+      user_file =
+        user_file
+        |> Repo.preload(:remote_storage_entity)
+
+      current_file_datetime =
+        ExAws.S3.head_object("lotta-dev-ugc", user_file.remote_storage_entity.path)
+        |> ExAws.request!()
+        |> Map.fetch!(:headers)
+        |> Enum.find_value(fn {key, val} ->
+          if key == "Date", do: val
+        end)
+        |> Timex.parse!("{RFC1123}")
+
+      user_file =
+        user_file
+        |> Storage.set_remote_storage("minio")
+
+      assert %File{} = user_file
+
+      new_file_datetime =
+        ExAws.S3.head_object("lotta-dev-ugc", user_file.remote_storage_entity.path)
+        |> ExAws.request!()
+        |> Map.fetch!(:headers)
+        |> Enum.find_value(fn {key, val} ->
+          if key == "Date", do: val
+        end)
+        |> Timex.parse!("{RFC1123}")
+
+      assert DateTime.compare(new_file_datetime, current_file_datetime) == :gt
     end
 
     test "delete_file/1 should delete file in the database" do
@@ -68,6 +100,11 @@ defmodule Api.StorageTest do
       assert_raise Ecto.NoResultsError, fn ->
         Repo.get!(File, file.id)
       end
+    end
+
+    test "should call get_http_url", %{user_file: user_file} do
+      assert Api.Storage.get_http_url(user_file) =~
+               ~r/http:\/\/minio:9000\/lotta-dev-ugc\/test\//
     end
   end
 end

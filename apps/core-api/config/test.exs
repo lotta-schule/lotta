@@ -67,14 +67,6 @@ config :api, :redis_connection,
   name: :redix,
   timeout: 15000
 
-config :ex_aws, :s3,
-  http_client: ExAws.Request.Hackney,
-  access_key_id: System.get_env("UGC_S3_COMPAT_ACCESS_KEY_ID", ""),
-  secret_access_key: System.get_env("UGC_S3_COMPAT_SECRET_ACCESS_KEY", ""),
-  host: %{"fra1" => System.get_env("UGC_S3_COMPAT_ENDPOINT", "")},
-  region: "fra1",
-  scheme: "https://"
-
 config :api, Api.Mailer, adapter: Bamboo.TestAdapter
 
 config :ex_aws, :hackney_opts,
@@ -94,6 +86,19 @@ config :ex_aws, :s3,
   host: minio_host,
   scheme: "http://",
   port: 9000
+
+config :api, Api.Storage.RemoteStorage,
+  default_storage: "minio",
+  prefix: "test",
+  storages: %{
+    "minio" => %{
+      type: Api.Storage.RemoteStorage.Strategy.S3,
+      config: %{
+        endpoint: "http://minio:9000",
+        bucket: "lotta-dev-ugc"
+      }
+    }
+  }
 
 config :api, :hostname, "lotta.web"
 

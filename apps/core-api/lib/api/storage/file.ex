@@ -23,10 +23,9 @@ defmodule Api.Storage.File do
     field :full_metadata, :map
     field :metadata, :map
     field :media_duration, :float
-    field :remote_location, :string
 
     has_many :file_conversions, FileConversion
-    belongs_to :remote_storage_entity, RemoteStorageEntity
+    belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id
     belongs_to :user, User
     belongs_to :parent_directory, Directory, type: :binary_id
 
@@ -50,7 +49,6 @@ defmodule Api.Storage.File do
     |> validate_required([
       :filename,
       :filesize,
-      :remote_location,
       :mime_type,
       :file_type,
       :parent_directory_id,

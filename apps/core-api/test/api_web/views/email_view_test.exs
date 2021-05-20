@@ -8,11 +8,6 @@ defmodule ApiWeb.EmailViewTest do
   alias Api.Storage.File
   alias ApiWeb.EmailView
 
-  setup do
-    Repo.Seeder.seed()
-    {:ok, %{}}
-  end
-
   describe "email_view theme_prop/2" do
     test "should return a valid known property" do
       assert EmailView.theme_prop("palette.primary.main", "yellow") == "red"
@@ -44,7 +39,7 @@ defmodule ApiWeb.EmailViewTest do
       System.get_configuration()
       |> System.put_configuration(:logo_image_file, file)
 
-      assert "http://a.de/logo1.jpg" = EmailView.logo_url()
+      assert EmailView.logo_url() =~ ~r/http:\/\/minio/
     end
   end
 end

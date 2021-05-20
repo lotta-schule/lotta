@@ -1,11 +1,5 @@
 import Config
 
-ugc_s3_compat_endpoint = System.get_env("UGC_S3_COMPAT_ENDPOINT", "")
-ugc_s3_compat_access_key_id = System.get_env("UGC_S3_COMPAT_ACCESS_KEY_ID", "")
-ugc_s3_compat_secret_access_key = System.get_env("UGC_S3_COMPAT_SECRET_ACCESS_KEY", "")
-ugc_s3_compat_region = System.get_env("UGC_S3_COMPAT_REGION", "")
-ugc_s3_compat_cdn_base_url = System.get_env("UGC_S3_COMPAT_CDN_BASE_URL", "")
-
 config :api, :environment, :development
 
 # Configure your database
@@ -66,6 +60,38 @@ config :api, ApiWeb.Auth.AccessToken,
 config :api, :hostname, "localhost"
 
 config :api, :schedule_provider_url, "http://schedule_provider:3000"
+
+config :api, Api.Storage.RemoteStorage,
+  default_storage: "minio",
+  prefix: "tenant_2",
+  storages:
+    System.get_env("REMOTE_STORAGE_STORES", "")
+    |> String.split(",")
+    |> Enum.filter(&(String.length(&1) > 0))
+    |> Enum.reduce(%{}, fn storage_name, acc ->
+      env_name =
+        storage_name
+        |> String.upcase()
+        |> String.replace("-", "_")
+
+      acc
+      |> Map.put(storage_name, %{
+        type: Api.Storage.RemoteStorage.Strategy.S3,
+        config: %{
+          endpoint: System.get_env("REMOTE_STORAGE_#{env_name}_ENDPOINT"),
+          bucket: System.get_env("REMOTE_STORAGE_#{env_name}_BUCKET")
+        }
+      })
+    end)
+    |> Map.merge(%{
+      "minio" => %{
+        type: Api.Storage.RemoteStorage.Strategy.S3,
+        config: %{
+          endpoint: "http://minio:9000",
+          bucket: "lotta-dev-ugc"
+        }
+      }
+    })
 
 # ## SSL Support
 #

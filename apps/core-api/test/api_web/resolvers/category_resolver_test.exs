@@ -12,8 +12,6 @@ defmodule ApiWeb.CategoryResolverTest do
   alias Api.Content.Article
 
   setup do
-    Repo.Seeder.seed()
-
     faecher_category = Repo.get_by!(Category, title: "Fächer")
 
     emails = [

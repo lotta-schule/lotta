@@ -2,10 +2,6 @@ defmodule ApiWeb.SitemapTest do
   @moduledoc false
   use ApiWeb.ConnCase
 
-  setup do
-    Api.Repo.Seeder.seed()
-  end
-
   describe "sitemaps" do
     test "returns an index sitemap" do
       res =

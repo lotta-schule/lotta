@@ -9,7 +9,7 @@ defmodule Api.Repo.Migrations.ChangeArticlesCategoryOnDelete do
     end
   end
 
-  def up do
+  def down do
     drop(constraint(:articles, "articles_category_id_fkey"))
 
     alter table(:articles) do

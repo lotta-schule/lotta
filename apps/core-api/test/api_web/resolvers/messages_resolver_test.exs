@@ -9,8 +9,6 @@ defmodule ApiWeb.MessagesResolverTest do
   alias Api.Messages.Message
 
   setup do
-    Repo.Seeder.seed()
-
     emails = [
       "alexis.rinaldoni@lotta.schule",
       "eike.wiewiorra@lotta.schule"

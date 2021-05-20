@@ -8,6 +8,8 @@ variables:
   # DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
   DOCKER_TLS_CERTDIR: "/certs"
+  MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
+  MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
 cache:
   key: "lotta-api-deps"
@@ -43,8 +45,6 @@ test:
     UGC_S3_COMPAT_SECRET_ACCESS_KEY: "${S3COMPAT_SECRET_ACCESS_KEY}"
     UGC_S3_COMPAT_ENDPOINT: mp4-dev-ugc.fra1.digitaloceanspaces.com
     UGC_S3_COMPAT_BUCKET: mp4-dev-ugc
-    MINIO_ROOT_USER: AKIAIOSFODNN7EXAMPLE
-    MINIO_ROOT_PASSWORD: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
   before_script:
     - mix local.hex --force
     - mix local.rebar --force

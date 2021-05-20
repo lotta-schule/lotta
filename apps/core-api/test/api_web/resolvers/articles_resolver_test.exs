@@ -11,8 +11,6 @@ defmodule ApiWeb.ArticleResolverTest do
   alias Api.System.Category
 
   setup do
-    Repo.Seeder.seed()
-
     faecher_category = Repo.get_by!(Category, title: "Fächer")
     projekt_category = Repo.get_by!(Category, title: "Projekt")
 

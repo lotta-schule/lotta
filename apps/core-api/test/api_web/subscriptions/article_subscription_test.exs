@@ -9,8 +9,6 @@ defmodule ApiWeb.ArticleSubscriptionTest do
   alias Api.Content.Article
 
   setup do
-    Repo.Seeder.seed()
-
     emails = [
       "alexis.rinaldoni@lotta.schule",
       "eike.wiewiorra@lotta.schule",

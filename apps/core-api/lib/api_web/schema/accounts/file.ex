@@ -35,7 +35,7 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :filename, :string
     field :filesize, :integer
     field :mime_type, :string
-    field :remote_location, :string
+    field :remote_location, :string, resolve: &ApiWeb.FileResolver.resolve_remote_location/3
     field :file_type, :file_type
     field :user_id, :id
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
@@ -56,7 +56,7 @@ defmodule ApiWeb.Schema.Accounts.File do
     field :updated_at, :datetime
     field :format, :string
     field :mime_type, :string
-    field :remote_location, :string
+    field :remote_location, :string, resolve: &ApiWeb.FileResolver.resolve_remote_location/3
   end
 
   enum :file_type do

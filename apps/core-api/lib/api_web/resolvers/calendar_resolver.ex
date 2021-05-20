@@ -1,6 +1,8 @@
 defmodule ApiWeb.CalendarResolver do
   @moduledoc false
 
+  require Logger
+
   def get(%{url: url} = args, _info) do
     result_body =
       ConCache.fetch_or_store(:http_cache, url, fn ->
@@ -9,8 +11,12 @@ defmodule ApiWeb.CalendarResolver do
             {:ok, body} = :hackney.body(client_ref)
             {:ok, %ConCache.Item{value: to_string(body), ttl: :timer.hours(6)}}
 
+          {:ok, status, _headers, _client_ref} ->
+            {:error, "Calendar Error #{status}"}
+
           error ->
-            error
+            Logger.error(error)
+            {:error, :unknown_error}
         end
       end)
 

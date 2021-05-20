@@ -6,14 +6,11 @@ defmodule ApiWeb.WidgetResolverTest do
   import Ecto.Query
 
   alias ApiWeb.Auth.AccessToken
-  alias Api.Repo.Seeder
   alias Api.Repo
   alias Api.System.{Category, Widget}
   alias Api.Accounts.{User}
 
   setup do
-    Seeder.seed()
-
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
 

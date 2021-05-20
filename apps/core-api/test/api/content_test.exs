@@ -41,7 +41,7 @@ defmodule Api.ContentTest do
           Api.Repo.preload(article, [:category, :users])
         end)
 
-      assert listed_articles == [article]
+      assert List.last(listed_articles) == article
     end
 
     test "list_user_articles/2 should return users' articles" do
