@@ -8,8 +8,6 @@ defmodule ApiWeb.SystemResolverTest do
   use ApiWeb.ConnCase, async: false
 
   setup do
-    Repo.Seeder.seed()
-
     lotta_admin = Repo.get_by!(User, email: "alexis.rinaldoni@einsa.net")
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")

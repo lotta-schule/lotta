@@ -46,27 +46,6 @@ config :api, Api.Elasticsearch.Cluster,
     hackney: [pool: :elasticsearch_pool]
   ]
 
-config :api, Api.Storage.RemoteStorage,
-  default_storage: "minio",
-  prefix: "tenant_2",
-  storages: %{
-    "digitalocean-dev" => %{
-      type: Api.Storage.RemoteStorage.Strategy.S3,
-      config: %{}
-    },
-    "digitalocean-prod" => %{
-      type: Api.Storage.RemoteStorage.Strategy.S3,
-      config: %{}
-    },
-    "minio" => %{
-      type: Api.Storage.RemoteStorage.Strategy.S3,
-      config: %{
-        endpoint: "http://minio:9000",
-        bucket: "lotta-dev-ugc"
-      }
-    }
-  }
-
 config :api, Api.Mailer, default_sender: "mail@lotta.schule"
 
 config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
@@ -80,7 +59,8 @@ config :api, :default_user, %{
 config :argon2_elixir,
   argon2_type: 1
 
-config :sentry, []
+config :sentry,
+  included_environments: []
 
 # Configures Elixir's Logger
 config :logger,

@@ -7,6 +7,7 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
 
   require Logger
 
+  alias Api.Storage
   alias Api.Storage.File
 
   @behaviour GenRMQ.Publisher
@@ -29,7 +30,10 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
   end
 
   def send_conversion_request(%File{} = file) do
-    {:ok, encoded_file} = Poison.encode(file)
+    {:ok, encoded_file} =
+      file
+      |> Map.put(:remote_location, Storage.get_http_url(file))
+      |> Poison.encode()
 
     GenRMQ.Publisher.publish(
       Api.Queue.MediaConversionRequestPublisher,
@@ -67,7 +71,6 @@ defmodule Api.Queue.MediaConversionRequestPublisher do
       @queue,
       prefix()
     )
-    |> IO.inspect()
 
     AMQP.Channel.close(channel)
   end

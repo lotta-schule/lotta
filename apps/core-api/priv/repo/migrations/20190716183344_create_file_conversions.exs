@@ -1,9 +1,6 @@
 defmodule Api.Repo.Migrations.CreateFileConversions do
   use Ecto.Migration
 
-  @primary_key {:id, :binary_id, []}
-  @foreign_key_type :binary_id
-
   def change do
     create table(:file_conversions) do
       add(:format, :string)

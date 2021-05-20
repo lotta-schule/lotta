@@ -8,12 +8,9 @@ defmodule ApiWeb.Auth.TokenControllerTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Repo.Seeder
   alias Api.Accounts.User
 
   setup do
-    Seeder.seed()
-
     email = "alexis.rinaldoni@lotta.schule"
 
     admin = Repo.get_by!(User, email: email)

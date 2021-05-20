@@ -8,7 +8,7 @@ defmodule Api.Queue.MediaConversionConsumer do
   alias GenRMQ.Message
   alias Ecto.Changeset
   alias Api.Repo
-  alias Api.Storage.{File, FileConversion}
+  alias Api.Storage.{File, FileConversion, RemoteStorage}
 
   use GenServer
 
@@ -60,16 +60,19 @@ defmodule Api.Queue.MediaConversionConsumer do
       for output <- outputs do
         %FileConversion{
           :format => output["format"],
-          :remote_location => output["remoteLocation"],
           :mime_type => output["mimeType"],
           :file_type => output["fileType"],
           :file_id => file_id
         }
         |> add_metadata(output)
+        |> Changeset.put_assoc(:remote_storage_entity, %{
+          store_name: RemoteStorage.default_store(),
+          path: output["remoteStorage"]["path"]
+        })
         |> Repo.insert()
         |> case do
           {:ok, conversion} ->
-            Logger.info("file conversion #{inspect(conversion)} has been created")
+            Logger.info("file conversion #{conversion.id} has been created")
 
           {:error, reason} ->
             Logger.error("Could not save file conversion to database, error occured: #{reason}")
@@ -128,7 +131,7 @@ defmodule Api.Queue.MediaConversionConsumer do
     })
   end
 
-  defp add_metadata(file_or_conversion, _), do: file_or_conversion
+  defp add_metadata(file_or_conversion, _), do: Changeset.change(file_or_conversion)
 
   defp rmq_uri do
     Keyword.fetch!(Application.fetch_env!(:api, :rabbitmq), :url)

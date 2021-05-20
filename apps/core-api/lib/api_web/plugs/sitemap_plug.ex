@@ -7,6 +7,8 @@ defmodule ApiWeb.SitemapPlug do
   import Ecto.Query
   alias Api.Repo
   alias Api.System
+  alias Api.Storage
+  alias Api.Slugifier
   alias Api.Content.Article
 
   def init(opts), do: opts
@@ -43,7 +45,7 @@ defmodule ApiWeb.SitemapPlug do
        |> Enum.map(fn category ->
          "\t<url>\n" <>
            "\t\t<loc>https://#{conn.host}/c/#{category.id}-#{
-             Api.Slugifier.slugify_string(category.title)
+             Slugifier.slugify_string(category.title)
            }</loc>\n" <>
            "\t\t<lastmod>#{category.updated_at}</lastmod>\n" <>
            "\t</url>\n"
@@ -70,13 +72,13 @@ defmodule ApiWeb.SitemapPlug do
 
          "\t<url>\n" <>
            "\t\t<loc>https://#{conn.host}/c/#{article.id}-#{
-             Api.Slugifier.slugify_string(article.title)
+             Slugifier.slugify_string(article.title)
            }</loc>\n" <>
            "\t\t<lastmod>#{article.updated_at}</lastmod>\n" <>
            case article do
-             %{preview_image_file: %{remote_location: image_location}} ->
+             %{preview_image_file: file} ->
                "\t\t<image:image>\n" <>
-                 "\t\t\t<image:loc>#{image_location}</image:loc>\n" <>
+                 "\t\t\t<image:loc>#{Storage.get_http_url(file)}</image:loc>\n" <>
                  "\t\t</image:image>\n"
 
              _ ->

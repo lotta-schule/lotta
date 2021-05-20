@@ -94,16 +94,14 @@ defmodule ApiWeb.ContentModuleResolver do
              %{
                id: file_id,
                mime_type: mime_type,
-               filename: filename,
-               remote_location: remote_location
+               filename: filename
              } = file
              when not is_nil(file) <- Storage.get_file(file_id),
-             true <- can_read?(user, file) do
-          data =
-            remote_location
-            |> HTTPoison.get!()
-            |> Map.fetch!(:body)
-
+             true <- can_read?(user, file),
+             {:ok, %HTTPoison.Response{body: data}} <-
+               file
+               |> Storage.get_http_url()
+               |> HTTPoison.get() do
           {filename,
            %Attachment{
              content_id: file_id,

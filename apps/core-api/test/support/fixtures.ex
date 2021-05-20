@@ -1,5 +1,6 @@
 defmodule Api.Fixtures do
   @moduledoc false
+
   alias Api.Repo
   alias Api.System.Category
   alias Api.Accounts.{User, UserGroup}
@@ -116,8 +117,7 @@ defmodule Api.Fixtures do
       file_type: "some_file_type",
       filename: "some_filename",
       filesize: 42,
-      mime_type: "some_mime_type",
-      remote_location: "some_remote_location"
+      mime_type: "some_mime_type"
     }
   end
 

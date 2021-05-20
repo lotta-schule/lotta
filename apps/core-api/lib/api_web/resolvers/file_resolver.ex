@@ -69,6 +69,12 @@ defmodule ApiWeb.FileResolver do
     end
   end
 
+  def resolve_remote_location(file, _args, _info) do
+    {:ok,
+     file
+     |> Storage.get_http_url()}
+  end
+
   def file(%{id: id}, %{context: %Context{current_user: current_user}}) do
     file =
       Storage.get_file(id)
@@ -103,17 +109,19 @@ defmodule ApiWeb.FileResolver do
 
   def relevant_files_in_usage(_args, %{context: %Context{current_user: current_user}}) do
     category_files =
-      from f in Api.Storage.File,
+      from(f in Api.Storage.File,
         join: c in Category,
         where: f.user_id == ^current_user.id and c.banner_image_file_id == f.id
+      )
 
     article_files =
-      from f in Api.Storage.File,
+      from(f in Api.Storage.File,
         join: a in Article,
         where: f.user_id == ^current_user.id and a.preview_image_file_id == f.id
+      )
 
     article_cm_files =
-      from f in Api.Storage.File,
+      from(f in Api.Storage.File,
         join: cmf in "content_module_file",
         on: cmf.file_id == f.id,
         join: cm in ContentModule,
@@ -121,6 +129,7 @@ defmodule ApiWeb.FileResolver do
         join: a in Article,
         on: a.id == cm.article_id,
         where: f.user_id == ^current_user.id
+      )
 
     combined_files =
       [category_files, article_files, article_cm_files]

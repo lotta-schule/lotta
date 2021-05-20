@@ -1,4 +1,6 @@
 defmodule Api.Storage do
+  require Logger
+
   import Ecto.Query
 
   alias Plug.Upload
@@ -16,6 +18,14 @@ defmodule Api.Storage do
     queryable
   end
 
+  @doc """
+  Upload a file to a given directory for a given user.
+  Creates the file object in the database and stores the data in the 
+  default RemoteStorage.
+  """
+  @doc since: "2.5.0"
+  @spec create_stored_file_from_upload(Upload.t(), Directory.t(), User.t()) ::
+          {:ok, Api.Storage.File.t()} | {:error, term()}
   def create_stored_file_from_upload(
         %Upload{} = upload,
         %Directory{} = directory,
@@ -49,17 +59,68 @@ defmodule Api.Storage do
     end)
     |> Multi.update(:complete_file, fn %{file: file, remote_storage_entity: remote_storage_entity} ->
       file
-      |> Api.Repo.preload(:remote_storage_entity)
+      |> Repo.preload(:remote_storage_entity)
       |> Changeset.change()
       |> Changeset.put_assoc(:remote_storage_entity, remote_storage_entity)
     end)
     |> Repo.transaction()
     |> case do
       {:ok, %{complete_file: file}} ->
+        Api.Queue.MediaConversionRequestPublisher.send_conversion_request(file)
         {:ok, file}
 
       {:error, reason} ->
         {:error, reason}
+    end
+  end
+
+  @doc """
+  Change the Remote storage of the file, that means, move file data to another location.
+  """
+  @doc since: "2.5.0"
+  @spec set_remote_storage(File.t() | FileConversion.t(), String.t()) ::
+          {:ok, File.t()} | {:error, Changeset.t()} | {:error, atom()}
+  def set_remote_storage(file, store_name) when is_binary(store_name) do
+    file =
+      file
+      |> Repo.preload(:remote_storage_entity)
+
+    filepath = Path.join(System.tmp_dir(), file.id)
+    # first fetch the file data
+    file_url =
+      file.remote_storage_entity
+      |> RemoteStorage.get_http_url()
+      |> String.to_charlist()
+
+    with {:ok, :saved_to_file} <-
+           :httpc.request(:get, {file_url, []}, [], stream: String.to_charlist(filepath)),
+         {:ok, entity} <-
+           RemoteStorage.create(
+             %Upload{
+               filename: file.filename,
+               content_type: file.mime_type,
+               path: filepath
+             },
+             file.id
+           ) do
+      entity
+      |> Repo.insert()
+
+      file
+      |> Repo.reload()
+      |> Repo.preload(:remote_storage_entity)
+    else
+      {:ok, {{_, _status_code, status_text}, _headers, body}} ->
+        Logger.error(body)
+
+        {:error,
+         status_text
+         |> IO.chardata_to_string()
+         |> String.downcase()
+         |> String.to_atom()}
+
+      error ->
+        error
     end
   end
 
@@ -255,12 +316,39 @@ defmodule Api.Storage do
         file_conversion
         |> Repo.preload(:remote_storage_entity)
 
-      RemoteStorage.delete(file_conversion.remote_storage_entity)
+      if file_conversion.remote_storage_entity do
+        RemoteStorage.delete(file_conversion.remote_storage_entity)
+      end
+
       Repo.delete(file_conversion)
     end)
 
-    RemoteStorage.delete(file.remote_storage_entity)
+    if file.remote_storage_entity do
+      RemoteStorage.delete(file.remote_storage_entity)
+    end
+
     Repo.delete(file)
+  end
+
+  @doc """
+  Get the http URL for a given file
+
+  ## Examples
+  iex> get_http_url(Repo.get(123))
+  "https://somebucket/file.jpg"
+  """
+  @doc since: "2.5.0"
+  @spec get_http_url(Api.Storage.File.t() | Api.Storage.FileConversion.t() | nil) ::
+          String.t() | nil
+  def get_http_url(nil), do: nil
+
+  def get_http_url(file) do
+    entity =
+      file
+      |> Repo.preload(:remote_storage_entity)
+      |> Map.get(:remote_storage_entity)
+
+    if entity, do: RemoteStorage.get_http_url(entity)
   end
 
   @doc """

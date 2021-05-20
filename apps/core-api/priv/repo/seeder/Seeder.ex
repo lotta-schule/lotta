@@ -9,7 +9,9 @@ defmodule Api.Repo.Seeder do
   alias Api.Messages.Message
   alias Api.System.{Category, CustomDomain, Widget}
 
-  def seed() do
+  def seed do
+    clean_minio()
+
     Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
 
     system = System.get_configuration()
@@ -147,7 +149,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo1.jpg",
-          remote_location: "http://a.de/logo1.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -155,7 +156,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo2.jpg",
-          remote_location: "http://a.de/logo2.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -163,7 +163,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo3.png",
-          remote_location: "http://a.de/logo3.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -171,7 +170,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo4.png",
-          remote_location: "http://a.de/logo4.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -179,7 +177,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos_podcast.id,
           filename: "podcast1.png",
-          remote_location: "http://a.de/podcast1.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -187,7 +184,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos_podcast.id,
           filename: "podcast2.png",
-          remote_location: "http://a.de/podcast2.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -195,7 +191,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos_chamaeleon.id,
           filename: "chamaeleon.png",
-          remote_location: "http://a.de/chamaeleon.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -203,7 +198,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_dunkel.jpg",
-          remote_location: "http://a.de/hg_dunkel.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -211,7 +205,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_hell.jpg",
-          remote_location: "http://a.de/hg_hell.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -219,7 +212,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_comic.png",
-          remote_location: "http://a.de/hg_comic.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -227,7 +219,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_grafik.png",
-          remote_location: "http://a.de/hg_grafik.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -237,6 +228,7 @@ defmodule Api.Repo.Seeder do
         file
         |> Map.put(:user_id, alexis.id)
         |> Repo.insert!()
+        |> upload_test_file!()
       end)
 
     # alexis' files
@@ -253,7 +245,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "ich_schoen.jpg",
-          remote_location: "http://a.de/0801801",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -261,7 +252,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "ich_haesslich.jpg",
-          remote_location: "http://a.de/828382383",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -269,7 +259,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: irgendwas_directory.id,
           filename: "irgendwas.png",
-          remote_location: "https://placeimg.com/5/5/any",
           filesize: 713,
           file_type: "image",
           mime_type: "image/png"
@@ -277,7 +266,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: irgendwas_directory.id,
           filename: "wasanderes.png",
-          remote_location: "http://a.de/28374892374",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -285,7 +273,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast1.mp4",
-          remote_location: "http://a.de/82734897238497",
           filesize: 12288,
           media_duration: 152.5,
           file_type: "video",
@@ -294,7 +281,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast2.mov",
-          remote_location: "http://a.de/82734897238498",
           filesize: 12288,
           media_duration: 69.1,
           file_type: "video",
@@ -303,7 +289,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "pc3.m4v",
-          remote_location: "http://a.de/82734897238499",
           filesize: 12288,
           media_duration: 259.3,
           file_type: "video",
@@ -314,6 +299,7 @@ defmodule Api.Repo.Seeder do
         file
         |> Map.put(:user_id, alexis.id)
         |> Repo.insert!()
+        |> upload_test_file!()
       end)
 
     alexis
@@ -336,7 +322,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "wieartig1.jpg",
-          remote_location: "http://a.de/0801345801",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -344,7 +329,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "wieartig2.jpg",
-          remote_location: "http://a.de/828382123383",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -352,7 +336,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: eoa_directory.id,
           filename: "eoa2.mp3",
-          remote_location: "http://a.de/08234980234239",
           filesize: 12288,
           file_type: "audio",
           mime_type: "audio/mp3"
@@ -360,7 +343,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: eoa_directory.id,
           filename: "eoa3.mp3",
-          remote_location: "http://a.de/28374234892374",
           filesize: 12288,
           file_type: "audio",
           mime_type: "audio/mp3"
@@ -368,7 +350,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast5.mp4",
-          remote_location: "http://a.de/7238497",
           filesize: 12288,
           file_type: "video",
           mime_type: "video/mp4"
@@ -376,7 +357,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast6.mov",
-          remote_location: "http://a.de/97238498",
           filesize: 12288,
           file_type: "video",
           mime_type: "video/mov"
@@ -384,7 +364,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "pocst7.m4v",
-          remote_location: "http://a.de/8238499",
           filesize: 12288,
           file_type: "video",
           mime_type: "video/m4v"
@@ -394,6 +373,7 @@ defmodule Api.Repo.Seeder do
         file
         |> Map.put(:user_id, eike.id)
         |> Repo.insert!()
+        |> upload_test_file!()
       end)
 
     [
@@ -1071,5 +1051,68 @@ defmodule Api.Repo.Seeder do
     |> Changeset.change()
     |> Changeset.put_assoc(:groups, groups)
     |> Repo.update!()
+  end
+
+  defp upload_test_file!(%File{} = file) do
+    remote_path = "test/#{file.id}"
+
+    "test/support/fixtures/#{file.filename}"
+    |> ExAws.S3.Upload.stream_file()
+    |> ExAws.S3.upload("lotta-dev-ugc", remote_path)
+    |> ExAws.request!()
+
+    file
+    |> Repo.preload(:remote_storage_entity)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:remote_storage_entity, %{
+      store_name: "minio",
+      path: remote_path
+    })
+    |> Repo.update!()
+  end
+
+  defp clean_minio do
+    bucket = "lotta-dev-ugc"
+
+    %{status_code: status_code} =
+      bucket
+      |> ExAws.S3.head_bucket()
+      |> ExAws.request!()
+
+    if status_code == 200 do
+      %{body: %{contents: objects}} =
+        bucket
+        |> ExAws.S3.list_objects(prefix: "test")
+        |> ExAws.request!()
+
+      objects =
+        objects
+        |> Enum.map(& &1.key)
+
+      ExAws.S3.delete_all_objects(bucket, objects)
+      |> ExAws.request!()
+    else
+      bucket
+      |> ExAws.S3.put_bucket("")
+      |> ExAws.request!()
+    end
+
+    bucket
+    |> ExAws.S3.put_bucket_policy(
+      Jason.encode!(%{
+        "Statement" => [
+          %{
+            "Action" => ["s3:GetObject"],
+            "Effect" => "Allow",
+            "Principal" => %{
+              "AWS" => ["*"]
+            },
+            "Resource" => ["arn:aws:s3:::#{bucket}/*"]
+          }
+        ],
+        Version: "2012-10-17"
+      })
+    )
+    |> ExAws.request!()
   end
 end

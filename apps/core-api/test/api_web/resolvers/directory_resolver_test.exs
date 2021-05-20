@@ -11,8 +11,6 @@ defmodule ApiWeb.DirectoryResolverTest do
   use ApiWeb.ConnCase
 
   setup do
-    Repo.Seeder.seed()
-
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user = Repo.get_by!(User, email: "billy@lotta.schule")

@@ -7,13 +7,10 @@ defmodule ApiWeb.FileResolverTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Repo.Seeder
   alias Api.Accounts.User
   alias Api.Storage.{File, Directory}
 
   setup do
-    Seeder.seed()
-
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user = Repo.get_by!(User, email: "billy@lotta.schule")
@@ -254,7 +251,7 @@ defmodule ApiWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: admin_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "file" => %{
                    "filename" => "ich_schoen.jpg",
@@ -262,7 +259,7 @@ defmodule ApiWeb.FileResolverTest do
                      %{
                        "usage" => "avatar",
                        "user" => %{
-                         "avatarImageFile" => %{"remoteLocation" => "http://a.de/0801801"},
+                         "avatarImageFile" => %{"remoteLocation" => remote_location},
                          "name" => "Alexis Rinaldoni",
                          "nickname" => "Der Meister"
                        }
@@ -270,7 +267,9 @@ defmodule ApiWeb.FileResolverTest do
                    ]
                  }
                }
-             }
+             } = res
+
+      assert is_binary(remote_location)
     end
 
     test "returns own file's usage for non-admin user", %{
@@ -283,28 +282,28 @@ defmodule ApiWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "file" => %{
                    "filename" => "wieartig1.jpg",
                    "usage" => [
                      %{
                        "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => "http://a.de/0801345801"},
+                         "previewImageFile" => %{"remoteLocation" => _},
                          "title" => "Fertiger Artikel zum Konzert"
                        },
                        "usage" => "preview"
                      },
                      %{
                        "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => "http://a.de/0801345801"},
+                         "previewImageFile" => %{"remoteLocation" => _},
                          "title" => "Draft2"
                        },
                        "usage" => "preview"
                      },
                      %{
                        "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => "http://a.de/0801345801"},
+                         "previewImageFile" => %{"remoteLocation" => _},
                          "title" => "Draft1"
                        },
                        "usage" => "preview"
@@ -312,7 +311,7 @@ defmodule ApiWeb.FileResolverTest do
                    ]
                  }
                }
-             }
+             } = res
     end
 
     test "returns public file's usage for admin user", %{

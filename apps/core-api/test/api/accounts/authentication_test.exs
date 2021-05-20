@@ -7,12 +7,9 @@ defmodule Api.Accounts.AuthenticationTest do
 
   alias Ecto.Changeset
   alias Api.Repo
-  alias Api.Repo.Seeder
   alias Api.Accounts.User
 
   setup do
-    Seeder.seed()
-
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
 
     {:ok, %{user: user}}

@@ -14,8 +14,6 @@ defmodule ApiWeb.ContentModuleResolverTest do
   alias Api.Storage.File
 
   setup do
-    Api.Repo.Seeder.seed()
-
     query =
       from cm in ContentModule,
         where: fragment("?->>? = ?", cm.content, "value", "Pizza Test-Formular")

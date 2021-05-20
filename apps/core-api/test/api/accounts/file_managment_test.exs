@@ -6,8 +6,6 @@ defmodule Api.Accounts.FileManagmentTest do
   alias Api.Accounts.{FileManagment, User}
 
   setup do
-    Api.Repo.Seeder.seed()
-
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
 
     {:ok, %{user: user}}

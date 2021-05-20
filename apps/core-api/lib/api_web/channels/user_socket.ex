@@ -1,4 +1,6 @@
 defmodule ApiWeb.UserSocket do
+  require Logger
+
   use Phoenix.Socket
   use Absinthe.Phoenix.Socket, schema: ApiWeb.Schema
 
@@ -30,7 +32,8 @@ defmodule ApiWeb.UserSocket do
 
       {:ok, socket}
     else
-      _ ->
+      e ->
+        Logger.error(inspect(e))
         :error
     end
   end

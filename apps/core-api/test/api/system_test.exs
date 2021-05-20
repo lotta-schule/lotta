@@ -4,10 +4,6 @@ defmodule Api.SystemTest do
   use Api.DataCase, async: true
   alias Api.System
 
-  setup do
-    Repo.Seeder.seed()
-  end
-
   describe "System domains" do
     test "get_main_url should return custom url set as main_domain" do
       assert System.get_main_url() == "https://lotta.web"
