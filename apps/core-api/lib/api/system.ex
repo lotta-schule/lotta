@@ -2,7 +2,8 @@ defmodule Api.System do
   import Ecto.Query
 
   alias Api.Repo
-  alias Api.Accounts.{File, User}
+  alias Api.Accounts.User
+  alias Api.Storage.File
   alias Api.System.{Category, Configuration, Widget}
 
   @allowed_configuration_keys [

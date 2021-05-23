@@ -9,7 +9,6 @@ defmodule ApiWeb.SearchResolverTest do
   use ApiWeb.ConnCase
 
   setup do
-    Repo.Seeder.seed()
     Elasticsearch.delete(Api.Elasticsearch.Cluster, "*")
     :timer.sleep(500)
     Elasticsearch.Index.hot_swap(Api.Elasticsearch.Cluster, "articles")

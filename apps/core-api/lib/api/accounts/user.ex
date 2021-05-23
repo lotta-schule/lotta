@@ -9,26 +9,32 @@ defmodule Api.Accounts.User do
 
   alias Api.Repo
   alias Ecto.Changeset
-  alias Api.Accounts.{File, UserEnrollmentToken, UserGroup}
+  alias Api.Accounts.{UserEnrollmentToken, UserGroup}
+  alias Api.Storage.File
   alias Api.Content.Article
+
+  @timestamps_opts [type: :utc_datetime]
 
   schema "users" do
     field :email, :string
     field :name, :string
     field :nickname, :string
     field :class, :string
-    field :last_seen, :naive_datetime
+    field :last_seen, :utc_datetime
     field :hide_full_name, :boolean
     field :password, :string, virtual: true
     field :password_hash, :string
     field :password_hash_format, :integer
     field :has_changed_default_password, :boolean
 
-    field :all_groups, {:array, UserGroup}, virtual: true, default: []
+    field :all_groups, {:array, :any}, virtual: true, default: []
     field :is_admin?, :boolean, virtual: true, default: false
     field :access_level, :string, virtual: true
 
-    belongs_to :avatar_image_file, File, on_replace: :nilify
+    belongs_to :avatar_image_file, File,
+      on_replace: :nilify,
+      type: :binary_id
+
     has_many :files, File
     has_many :enrollment_tokens, UserEnrollmentToken, on_replace: :delete
     has_many :sent_messages, Api.Messages.Message, foreign_key: :sender_user_id

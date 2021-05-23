@@ -3,7 +3,7 @@ defmodule ApiWeb.ContentModuleResolver do
 
   import Api.Accounts.Permissions
 
-  alias Api.{Accounts, Content, Email, Mailer, Repo}
+  alias Api.{Content, Email, Mailer, Repo, Storage}
   alias ApiWeb.Context
   alias Bamboo.Attachment
 
@@ -94,16 +94,14 @@ defmodule ApiWeb.ContentModuleResolver do
              %{
                id: file_id,
                mime_type: mime_type,
-               filename: filename,
-               remote_location: remote_location
+               filename: filename
              } = file
-             when not is_nil(file) <- Accounts.get_file(String.to_integer(file_id)),
-             true <- can_read?(user, file) do
-          data =
-            remote_location
-            |> HTTPoison.get!()
-            |> Map.fetch!(:body)
-
+             when not is_nil(file) <- Storage.get_file(file_id),
+             true <- can_read?(user, file),
+             {:ok, %HTTPoison.Response{body: data}} <-
+               file
+               |> Storage.get_http_url()
+               |> HTTPoison.get() do
           {filename,
            %Attachment{
              content_id: file_id,

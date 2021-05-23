@@ -85,7 +85,7 @@ defmodule Api.Elasticsearch.Search do
             },
             %{
               "match_phrase" => %{
-                "topic" => %{
+                "tags" => %{
                   "query" => searchtext,
                   "boost" => 2
                 }

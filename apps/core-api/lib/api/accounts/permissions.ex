@@ -4,7 +4,9 @@ defmodule Api.Accounts.Permissions do
   """
 
   alias Api.Repo
-  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.{Directory, File}
+  alias Api.Messages.Message
   alias Api.Content.Article
 
   @doc """
@@ -14,7 +16,7 @@ defmodule Api.Accounts.Permissions do
   """
   @doc since: "2.0.0"
 
-  @spec is_author?(User.t(), Article.t() | Directory.t() | File.t()) :: boolean
+  @spec is_author?(User.t(), Article.t() | Directory.t() | File.t() | Message.t()) :: boolean
 
   def is_author?(%User{} = user, %Article{} = article) do
     article
@@ -29,6 +31,10 @@ defmodule Api.Accounts.Permissions do
 
   def is_author?(%User{id: user_id}, %File{} = file) do
     user_id == file.user_id
+  end
+
+  def is_author?(%User{id: user_id}, %Message{} = message) do
+    user_id == message.sender_user_id
   end
 
   def is_author?(nil, _), do: false

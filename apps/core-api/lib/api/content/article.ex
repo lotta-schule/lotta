@@ -2,7 +2,6 @@ defmodule Api.Content.Article do
   @moduledoc """
     Ecto Schema for articles
   """
-
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -11,34 +10,41 @@ defmodule Api.Content.Article do
   alias Api.Repo
   alias Api.Mailer
   alias Api.System
-  alias Api.Accounts.{File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
   alias Api.Content.{Article, ContentModule}
+  alias Api.Storage.File
   alias Api.System.Category
 
   @type id() :: pos_integer()
 
-  @type topic() :: String.t()
+  @type tags() :: [String.t()]
 
   @type t() :: %__MODULE__{
           id: id(),
           title: String.t(),
-          topic: topic(),
+          tags: tags(),
           ready_to_publish: boolean(),
           published: boolean(),
           is_pinned_to_top: boolean()
         }
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "articles" do
     field(:title, :string)
     field(:preview, :string)
-    field(:topic, :string)
+    field(:tags, {:array, :string})
     field(:ready_to_publish, :boolean)
     field(:published, :boolean, default: false)
     field(:is_pinned_to_top, :boolean)
 
-    belongs_to(:category, Category, on_replace: :nilify)
-    belongs_to(:preview_image_file, File, on_replace: :nilify)
-    has_many(:content_modules, ContentModule, on_replace: :delete)
+    belongs_to :category, Category, on_replace: :nilify
+
+    belongs_to :preview_image_file, File,
+      on_replace: :nilify,
+      type: :binary_id
+
+    has_many :content_modules, ContentModule, on_replace: :delete
 
     many_to_many(
       :groups,
@@ -115,7 +121,7 @@ defmodule Api.Content.Article do
       :ready_to_publish,
       :published,
       :preview,
-      :topic
+      :tags
     ])
     |> validate_required([:title])
     |> put_assoc_users(attrs)

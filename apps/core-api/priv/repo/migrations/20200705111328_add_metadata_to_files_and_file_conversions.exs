@@ -33,7 +33,7 @@ defmodule Api.Repo.Migrations.AddMetadataToFilesAndFileConversions do
     # fetch filesize from all file_conversions without filesize
 
     Api.Repo.all(
-      from(fc in Api.Accounts.FileConversion,
+      from(fc in "file_conversions",
         select: [fc.id, fc.remote_location],
         where: is_nil(fc.filesize) and not is_nil(fc.remote_location)
       )
@@ -45,7 +45,7 @@ defmodule Api.Repo.Migrations.AddMetadataToFilesAndFileConversions do
           Logger.info("Content-Length found on id #{id}: #{filesize}")
 
           if filesize do
-            from(fc in Api.Accounts.FileConversion, where: fc.id == ^id)
+            from(fc in Api.Storage.FileConversion, where: fc.id == ^id)
             |> Api.Repo.update_all(set: [filesize: String.to_integer(filesize)])
           else
             Logger.info("No filesize found")

@@ -2,8 +2,11 @@ defmodule Api.Release do
   @moduledoc """
     Release tasks like database migrations
   """
-  alias Ecto.Migrator
+  require Logger
+
   import Ecto.Query
+
+  alias Ecto.Migrator
 
   @app :api
 
@@ -46,26 +49,32 @@ defmodule Api.Release do
     end)
   end
 
-  def check_unavailable_files do
-    Application.ensure_all_started(@app)
+  def migrate_files_to_default_remote_storage() do
+    store = Api.Storage.RemoteStorage.default_store()
 
-    Api.Repo.all(from(f in Api.Accounts.File, select: [f.id, f.remote_location]))
-    |> Enum.each(fn [id, remote_location] ->
-      case HTTPoison.head(remote_location) do
-        {:ok, %{status_code: 200}} ->
-          # IO.inspect(headers)
-          nil
+    from(f in Api.Storage.File,
+      join: rs in Api.Storage.RemoteStorageEntity,
+      on: f.remote_storage_entity_id == rs.id,
+      where: rs.store_name != ^store,
+      preload: [:remote_storage_entity]
+    )
+    |> Api.Repo.all()
+    |> Enum.chunk_every(10)
+    |> Enum.each(fn files_chunk ->
+      files_chunk
+      |> Enum.each(fn file ->
+        file
+        |> Api.Storage.set_remote_storage(store)
+        |> case do
+          {:error, error} ->
+            Logger.error("#{error}: Error migrating file #{file.id} to #{store}")
 
-        {:ok, %{status_code: status_code}} ->
-          IO.inspect("Status Code #{status_code} getting file ##{id} #{remote_location}")
-          nil
+          _ ->
+            {:ok, file}
+        end
+      end)
 
-        {:error, reason} ->
-          IO.inspect("error getting file ##{id} #{remote_location}: #{inspect(reason)}")
-          nil
-      end
-
-      :timer.sleep(100)
+      :timer.sleep(250)
     end)
   end
 

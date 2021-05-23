@@ -31,6 +31,10 @@ defmodule ApiWeb.Context do
 
   def fetch(%__MODULE__{} = context, key), do: Map.fetch(context, key)
 
+  def get_and_update(%__MODULE__{} = context, key, func) do
+    Map.get_and_update(context, key, func)
+  end
+
   @doc """
   Set the virtual user_fields for a given user
   """

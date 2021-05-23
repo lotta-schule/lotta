@@ -59,7 +59,8 @@ config :api, :default_user, %{
 config :argon2_elixir,
   argon2_type: 1
 
-config :sentry, []
+config :sentry,
+  included_environments: []
 
 # Configures Elixir's Logger
 config :logger,

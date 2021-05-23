@@ -15,7 +15,7 @@ defmodule ApiWeb.Schema.Calendar do
     field :uid, :string
     field :description, :string
     field :summary, :string
-    field :start, :naive_datetime
-    field :end, :naive_datetime
+    field :start, :datetime
+    field :end, :datetime
   end
 end

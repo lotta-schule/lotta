@@ -6,10 +6,9 @@ defmodule ApiWeb.MessagesResolverTest do
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
   alias Api.Accounts.{User, UserGroup}
+  alias Api.Messages.Message
 
   setup do
-    Repo.Seeder.seed()
-
     emails = [
       "alexis.rinaldoni@lotta.schule",
       "eike.wiewiorra@lotta.schule"
@@ -29,7 +28,8 @@ defmodule ApiWeb.MessagesResolverTest do
        user2: user2,
        user2_jwt: user2_jwt,
        lehrer_group: Repo.get_by!(UserGroup, name: "Lehrer"),
-       schueler_group: Repo.get_by!(UserGroup, name: "Schüler")
+       schueler_group: Repo.get_by!(UserGroup, name: "Schüler"),
+       message: Repo.get_by!(Message, content: "OK, alles bereit?")
      }}
   end
 
@@ -323,6 +323,121 @@ defmodule ApiWeb.MessagesResolverTest do
                    "locations" => [%{"column" => 3, "line" => 2}],
                    "message" => "Du kannst dieser Gruppe keine Nachricht senden.",
                    "path" => ["createMessage"]
+                 }
+               ]
+             }
+    end
+  end
+
+  describe "delete message mutation" do
+    @query """
+    mutation DeleteMessage($id: ID!) {
+      deleteMessage(id: $id) {
+        id
+      }
+    }
+    """
+
+    test "delete own message", %{user_jwt: user_jwt, message: message} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: message.id
+          }
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "deleteMessage" => %{
+                   "id" => Integer.to_string(message.id)
+                 }
+               }
+             }
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(Message, message.id)
+      end
+    end
+
+    test "return an error if user is not logged in", %{message: message} do
+      res =
+        build_conn()
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: message.id
+          }
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "deleteMessage" => nil
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Du musst angemeldet sein um das zu tun.",
+                   "path" => ["deleteMessage"]
+                 }
+               ]
+             }
+    end
+
+    test "return an error if user is not message sender", %{
+      user2_jwt: user2_jwt,
+      message: message
+    } do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: message.id
+          }
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "deleteMessage" => nil
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Du darfst diese Nachricht nicht löschen.",
+                   "path" => ["deleteMessage"]
+                 }
+               ]
+             }
+    end
+
+    test "return an error if message does not exist", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{
+            id: 0
+          }
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "deleteMessage" => nil
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Nachricht nicht gefunden.",
+                   "path" => ["deleteMessage"]
                  }
                ]
              }

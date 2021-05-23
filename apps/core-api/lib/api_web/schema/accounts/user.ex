@@ -41,9 +41,9 @@ defmodule ApiWeb.Schema.Accounts.User do
 
   object :user do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
-    field :last_seen, :naive_datetime, resolve: &ApiWeb.UserResolver.resolve_last_seen/3
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
+    field :last_seen, :datetime, resolve: &ApiWeb.UserResolver.resolve_last_seen/3
     field :name, :string, resolve: &ApiWeb.UserResolver.resolve_name/3
     field :class, :string
     field :nickname, :string
@@ -51,7 +51,7 @@ defmodule ApiWeb.Schema.Accounts.User do
     field :hide_full_name, :boolean
     field :has_changed_default_password, :boolean
 
-    field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :avatar_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :articles, list_of(:article),
       resolve: Absinthe.Resolution.Helpers.dataloader(Api.Content)
@@ -67,8 +67,8 @@ defmodule ApiWeb.Schema.Accounts.User do
 
   object :user_group do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :name, :string
     field :sort_key, :integer
     field :is_admin_group, :boolean

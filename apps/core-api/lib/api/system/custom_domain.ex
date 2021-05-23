@@ -5,6 +5,8 @@ defmodule Api.System.CustomDomain do
 
   use Ecto.Schema
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "custom_domains" do
     field :host, :string
     field :is_main_domain, :boolean

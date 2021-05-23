@@ -5,13 +5,10 @@ defmodule ApiWeb.UserGroupResolverTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Repo.Seeder
   alias Api.Accounts
   alias Api.Accounts.{User, UserGroup}
 
   setup do
-    Seeder.seed()
-
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")

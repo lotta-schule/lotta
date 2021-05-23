@@ -3,12 +3,15 @@ defmodule Api.Repo.Seeder do
   alias Ecto.Changeset
   alias Api.Accounts
   alias Api.System
-  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.{Directory, File}
   alias Api.Content.{Article, ContentModule}
   alias Api.Messages.Message
   alias Api.System.{Category, CustomDomain, Widget}
 
-  def seed() do
+  def seed do
+    clean_minio()
+
     Repo.insert!(%CustomDomain{host: "lotta.web", is_main_domain: true})
 
     system = System.get_configuration()
@@ -146,7 +149,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo1.jpg",
-          remote_location: "http://a.de/logo1.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -154,7 +156,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo2.jpg",
-          remote_location: "http://a.de/logo2.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -162,7 +163,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo3.png",
-          remote_location: "http://a.de/logo3.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -170,7 +170,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos.id,
           filename: "logo4.png",
-          remote_location: "http://a.de/logo4.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -178,7 +177,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos_podcast.id,
           filename: "podcast1.png",
-          remote_location: "http://a.de/podcast1.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -186,7 +184,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos_podcast.id,
           filename: "podcast2.png",
-          remote_location: "http://a.de/podcast2.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -194,7 +191,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_logos_chamaeleon.id,
           filename: "chamaeleon.png",
-          remote_location: "http://a.de/chamaeleon.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -202,7 +198,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_dunkel.jpg",
-          remote_location: "http://a.de/hg_dunkel.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -210,7 +205,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_hell.jpg",
-          remote_location: "http://a.de/hg_hell.jpg",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -218,7 +212,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_comic.png",
-          remote_location: "http://a.de/hg_comic.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -226,7 +219,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: public_hintergrund.id,
           filename: "hg_grafik.png",
-          remote_location: "http://a.de/hg_grafik.png",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -236,6 +228,7 @@ defmodule Api.Repo.Seeder do
         file
         |> Map.put(:user_id, alexis.id)
         |> Repo.insert!()
+        |> upload_test_file!()
       end)
 
     # alexis' files
@@ -252,7 +245,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "ich_schoen.jpg",
-          remote_location: "http://a.de/0801801",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -260,7 +252,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "ich_haesslich.jpg",
-          remote_location: "http://a.de/828382383",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -268,7 +259,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: irgendwas_directory.id,
           filename: "irgendwas.png",
-          remote_location: "https://placeimg.com/5/5/any",
           filesize: 713,
           file_type: "image",
           mime_type: "image/png"
@@ -276,7 +266,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: irgendwas_directory.id,
           filename: "wasanderes.png",
-          remote_location: "http://a.de/28374892374",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/png"
@@ -284,7 +273,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast1.mp4",
-          remote_location: "http://a.de/82734897238497",
           filesize: 12288,
           media_duration: 152.5,
           file_type: "video",
@@ -293,7 +281,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast2.mov",
-          remote_location: "http://a.de/82734897238498",
           filesize: 12288,
           media_duration: 69.1,
           file_type: "video",
@@ -302,7 +289,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "pc3.m4v",
-          remote_location: "http://a.de/82734897238499",
           filesize: 12288,
           media_duration: 259.3,
           file_type: "video",
@@ -313,6 +299,7 @@ defmodule Api.Repo.Seeder do
         file
         |> Map.put(:user_id, alexis.id)
         |> Repo.insert!()
+        |> upload_test_file!()
       end)
 
     alexis
@@ -335,7 +322,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "wieartig1.jpg",
-          remote_location: "http://a.de/0801345801",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -343,7 +329,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: avatar_directory.id,
           filename: "wieartig2.jpg",
-          remote_location: "http://a.de/828382123383",
           filesize: 12288,
           file_type: "image",
           mime_type: "image/jpg"
@@ -351,7 +336,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: eoa_directory.id,
           filename: "eoa2.mp3",
-          remote_location: "http://a.de/08234980234239",
           filesize: 12288,
           file_type: "audio",
           mime_type: "audio/mp3"
@@ -359,7 +343,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: eoa_directory.id,
           filename: "eoa3.mp3",
-          remote_location: "http://a.de/28374234892374",
           filesize: 12288,
           file_type: "audio",
           mime_type: "audio/mp3"
@@ -367,7 +350,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast5.mp4",
-          remote_location: "http://a.de/7238497",
           filesize: 12288,
           file_type: "video",
           mime_type: "video/mp4"
@@ -375,7 +357,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "podcast6.mov",
-          remote_location: "http://a.de/97238498",
           filesize: 12288,
           file_type: "video",
           mime_type: "video/mov"
@@ -383,7 +364,6 @@ defmodule Api.Repo.Seeder do
         %File{
           parent_directory_id: podcast_directory.id,
           filename: "pocst7.m4v",
-          remote_location: "http://a.de/8238499",
           filesize: 12288,
           file_type: "video",
           mime_type: "video/m4v"
@@ -393,49 +373,50 @@ defmodule Api.Repo.Seeder do
         file
         |> Map.put(:user_id, eike.id)
         |> Repo.insert!()
+        |> upload_test_file!()
       end)
 
     [
       %Message{
         sender_user_id: alexis.id,
         recipient_user_id: eike.id,
-        inserted_at: ~N[2020-11-01 10:00:00],
-        updated_at: ~N[2020-11-01 10:00:00],
+        inserted_at: ~U[2020-11-01 10:00:00Z],
+        updated_at: ~U[2020-11-01 10:00:00Z],
         content: "OK, alles bereit?"
       },
       %Message{
         sender_user_id: eike.id,
         recipient_user_id: alexis.id,
-        inserted_at: ~N[2020-11-01 12:30:00],
-        updated_at: ~N[2020-11-01 12:30:00],
+        inserted_at: ~U[2020-11-01 12:30:00Z],
+        updated_at: ~U[2020-11-01 12:30:00Z],
         content: "Was meinst du damit?"
       },
       %Message{
         sender_user_id: alexis.id,
         recipient_user_id: eike.id,
-        inserted_at: ~N[2020-11-01 12:32:00],
-        updated_at: ~N[2020-11-01 12:32:00],
+        inserted_at: ~U[2020-11-01 12:32:00Z],
+        updated_at: ~U[2020-11-01 12:32:00Z],
         content: "Bereit für das Deployment"
       },
       %Message{
         sender_user_id: eike.id,
         recipient_user_id: alexis.id,
-        inserted_at: ~N[2020-11-01 13:12:00],
-        updated_at: ~N[2020-11-01 13:12:00],
+        inserted_at: ~U[2020-11-01 13:12:00Z],
+        updated_at: ~U[2020-11-01 13:12:00Z],
         content: "Ich frag mal in die Gruppe"
       },
       %Message{
         sender_user_id: eike.id,
         recipient_group_id: lehrer_group.id,
-        inserted_at: ~N[2020-11-01 13:12:46],
-        updated_at: ~N[2020-11-01 13:12:46],
+        inserted_at: ~U[2020-11-01 13:12:46Z],
+        updated_at: ~U[2020-11-01 13:12:46Z],
         content: "Alles bereit hier? Wir würden deployen."
       },
       %Message{
         sender_user_id: billy.id,
         recipient_user_id: alexis.id,
-        inserted_at: ~N[2020-11-01 21:01:44],
-        updated_at: ~N[2020-11-01 21:01:44],
+        inserted_at: ~U[2020-11-01 21:01:44Z],
+        updated_at: ~U[2020-11-01 21:01:44Z],
         content: "Bist du da?"
       }
     ]
@@ -554,8 +535,8 @@ defmodule Api.Repo.Seeder do
     Repo.insert!(%Article{
       title: "Draft1",
       preview: "Entwurf Artikel zu I",
-      inserted_at: ~N[2019-09-01 10:00:00],
-      updated_at: ~N[2019-09-01 10:00:00],
+      inserted_at: ~U[2019-09-01 10:00:00Z],
+      updated_at: ~U[2019-09-01 10:00:00Z],
       preview_image_file_id: List.first(eike_files).id
     })
     |> Repo.preload(:users)
@@ -566,8 +547,8 @@ defmodule Api.Repo.Seeder do
     Repo.insert!(%Article{
       title: "Draft2",
       preview: "Entwurf Artikel zu XYZ",
-      inserted_at: ~N[2019-09-01 10:05:00],
-      updated_at: ~N[2019-09-01 10:05:00],
+      inserted_at: ~U[2019-09-01 10:05:00Z],
+      updated_at: ~U[2019-09-01 10:05:00Z],
       preview_image_file_id: List.first(eike_files).id
     })
     |> Repo.preload(:users)
@@ -579,8 +560,8 @@ defmodule Api.Repo.Seeder do
       title: "Fertiger Artikel zum Konzert",
       preview: "Entwurf Artikel zu XYZ",
       ready_to_publish: true,
-      inserted_at: ~N[2019-09-01 10:06:00],
-      updated_at: ~N[2019-09-01 10:06:00],
+      inserted_at: ~U[2019-09-01 10:06:00Z],
+      updated_at: ~U[2019-09-01 10:06:00Z],
       preview_image_file_id: List.first(eike_files).id
     })
     |> Repo.preload(:users)
@@ -594,8 +575,8 @@ defmodule Api.Repo.Seeder do
         published: true,
         title: "And the oskar goes to ...",
         preview: "Hallo hallo hallo",
-        inserted_at: ~N[2019-09-01 10:08:00],
-        updated_at: ~N[2019-09-01 10:08:00]
+        inserted_at: ~U[2019-09-01 10:08:00Z],
+        updated_at: ~U[2019-09-01 10:08:00Z]
       })
 
     Repo.insert!(%ContentModule{
@@ -749,8 +730,8 @@ defmodule Api.Repo.Seeder do
         title: "Landesfinale Volleyball WK IV",
         preview:
           "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
-        inserted_at: ~N[2019-09-01 10:09:00],
-        updated_at: ~N[2019-09-01 10:09:00],
+        inserted_at: ~U[2019-09-01 10:09:00Z],
+        updated_at: ~U[2019-09-01 10:09:00Z],
         published: true
       })
 
@@ -814,10 +795,10 @@ defmodule Api.Repo.Seeder do
         title: "Der Podcast zum WB 2",
         preview:
           "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
-        topic: "KleinKunst 2018",
+        tags: ["KleinKunst 2018"],
         published: true,
-        inserted_at: ~N[2019-09-01 10:11:00],
-        updated_at: ~N[2019-09-01 10:11:00]
+        inserted_at: ~U[2019-09-01 10:11:00Z],
+        updated_at: ~U[2019-09-01 10:11:00Z]
       })
 
     assign_groups(kleinkunst_wb2, [verwaltung_group, lehrer_group, schueler_group])
@@ -882,10 +863,10 @@ defmodule Api.Repo.Seeder do
         title: "Der Vorausscheid",
         preview:
           "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
-        topic: "KleinKunst 2018",
+        tags: ["KleinKunst 2018"],
         published: true,
-        inserted_at: ~N[2019-09-01 10:12:00],
-        updated_at: ~N[2019-09-01 10:12:00]
+        inserted_at: ~U[2019-09-01 10:12:00Z],
+        updated_at: ~U[2019-09-01 10:12:00Z]
       })
 
     assign_groups(vorausscheid, [verwaltung_group, lehrer_group])
@@ -951,8 +932,8 @@ defmodule Api.Repo.Seeder do
         preview:
           "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
         published: true,
-        inserted_at: ~N[2019-09-01 10:13:00],
-        updated_at: ~N[2019-09-01 10:13:00]
+        inserted_at: ~U[2019-09-01 10:13:00Z],
+        updated_at: ~U[2019-09-01 10:13:00Z]
       })
 
     Repo.insert!(%ContentModule{
@@ -1014,8 +995,8 @@ defmodule Api.Repo.Seeder do
       title: "Beitrag Projekt 1",
       preview: "Lorem ipsum dolor sit amet.",
       published: true,
-      inserted_at: ~N[2019-09-01 10:14:00],
-      updated_at: ~N[2019-09-01 10:14:00]
+      inserted_at: ~U[2019-09-01 10:14:00Z],
+      updated_at: ~U[2019-09-01 10:14:00Z]
     })
 
     Repo.insert!(%Article{
@@ -1023,8 +1004,8 @@ defmodule Api.Repo.Seeder do
       title: "Beitrag Projekt 2",
       preview: "Lorem ipsum dolor sit amet.",
       published: true,
-      inserted_at: ~N[2019-09-01 10:15:00],
-      updated_at: ~N[2019-09-01 10:15:00]
+      inserted_at: ~U[2019-09-01 10:15:00Z],
+      updated_at: ~U[2019-09-01 10:15:00Z]
     })
 
     Repo.insert!(%Article{
@@ -1032,8 +1013,8 @@ defmodule Api.Repo.Seeder do
       title: "Beitrag Projekt 3",
       preview: "Lorem ipsum dolor sit amet.",
       published: true,
-      inserted_at: ~N[2019-09-01 10:16:00],
-      updated_at: ~N[2019-09-01 10:16:00]
+      inserted_at: ~U[2019-09-01 10:16:00Z],
+      updated_at: ~U[2019-09-01 10:16:00Z]
     })
 
     Enum.map(4..30, fn i ->
@@ -1043,8 +1024,8 @@ defmodule Api.Repo.Seeder do
           title: "Beitrag Projekt #{i} - nur für Lehrer",
           preview: "Lorem ipsum dolor sit amet.",
           published: true,
-          inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
-          updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
+          inserted_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second),
+          updated_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second)
         })
 
       art2 =
@@ -1053,8 +1034,8 @@ defmodule Api.Repo.Seeder do
           title: "Beitrag Projekt #{i} - nur für Schüler",
           preview: "Lorem ipsum dolor sit amet.",
           published: true,
-          inserted_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second),
-          updated_at: NaiveDateTime.add(~N[2019-09-02 18:12:00], 60 * (i + 1), :second)
+          inserted_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second),
+          updated_at: DateTime.add(~U[2019-09-02 18:12:00Z], 60 * (i + 1), :second)
         })
 
       assign_groups(art1, [verwaltung_group, lehrer_group])
@@ -1070,5 +1051,68 @@ defmodule Api.Repo.Seeder do
     |> Changeset.change()
     |> Changeset.put_assoc(:groups, groups)
     |> Repo.update!()
+  end
+
+  defp upload_test_file!(%File{} = file) do
+    remote_path = "test/#{file.id}"
+
+    "test/support/fixtures/#{file.filename}"
+    |> ExAws.S3.Upload.stream_file()
+    |> ExAws.S3.upload("lotta-dev-ugc", remote_path)
+    |> ExAws.request!()
+
+    file
+    |> Repo.preload(:remote_storage_entity)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:remote_storage_entity, %{
+      store_name: "minio",
+      path: remote_path
+    })
+    |> Repo.update!()
+  end
+
+  defp clean_minio do
+    bucket = "lotta-dev-ugc"
+
+    %{status_code: status_code} =
+      bucket
+      |> ExAws.S3.head_bucket()
+      |> ExAws.request!()
+
+    if status_code == 200 do
+      %{body: %{contents: objects}} =
+        bucket
+        |> ExAws.S3.list_objects(prefix: "test")
+        |> ExAws.request!()
+
+      objects =
+        objects
+        |> Enum.map(& &1.key)
+
+      ExAws.S3.delete_all_objects(bucket, objects)
+      |> ExAws.request!()
+    else
+      bucket
+      |> ExAws.S3.put_bucket("")
+      |> ExAws.request!()
+    end
+
+    bucket
+    |> ExAws.S3.put_bucket_policy(
+      Jason.encode!(%{
+        "Statement" => [
+          %{
+            "Action" => ["s3:GetObject"],
+            "Effect" => "Allow",
+            "Principal" => %{
+              "AWS" => ["*"]
+            },
+            "Resource" => ["arn:aws:s3:::#{bucket}/*"]
+          }
+        ],
+        Version: "2012-10-17"
+      })
+    )
+    |> ExAws.request!()
   end
 end

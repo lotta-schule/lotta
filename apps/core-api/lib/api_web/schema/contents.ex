@@ -29,16 +29,16 @@ defmodule ApiWeb.Schema.Contents do
       resolve(&ApiWeb.ArticleResolver.own/2)
     end
 
-    field :topics, list_of(:string) do
-      resolve(&ApiWeb.ArticleResolver.get_topics/2)
+    field :tags, list_of(non_null(:string)) do
+      resolve(&ApiWeb.ArticleResolver.get_all_tags/2)
     end
 
-    field :topic, list_of(:article) do
+    field :tag, list_of(:article) do
       middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
-      arg(:topic, non_null(:string))
+      arg(:tag, non_null(:string))
 
-      resolve(&ApiWeb.ArticleResolver.by_topic/2)
+      resolve(&ApiWeb.ArticleResolver.by_tag/2)
     end
 
     field :content_module_results, list_of(:content_module_result) do

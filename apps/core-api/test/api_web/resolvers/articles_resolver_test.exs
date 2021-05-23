@@ -5,13 +5,12 @@ defmodule ApiWeb.ArticleResolverTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Accounts.{File, User}
+  alias Api.Accounts.User
+  alias Api.Storage.File
   alias Api.Content.Article
   alias Api.System.Category
 
   setup do
-    Repo.Seeder.seed()
-
     faecher_category = Repo.get_by!(Category, title: "Fächer")
     projekt_category = Repo.get_by!(Category, title: "Projekt")
 
@@ -61,7 +60,7 @@ defmodule ApiWeb.ArticleResolverTest do
       article(id: $id) {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -80,7 +79,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    "preview" => "Hallo hallo hallo",
                    "readyToPublish" => false,
                    "title" => "And the oskar goes to ...",
-                   "topic" => nil
+                   "tags" => nil
                  }
                }
              }
@@ -104,7 +103,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
                    "readyToPublish" => false,
                    "title" => "Der Vorausscheid",
-                   "topic" => "KleinKunst 2018"
+                   "tags" => ["KleinKunst 2018"]
                  }
                }
              }
@@ -128,7 +127,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
                    "readyToPublish" => false,
                    "title" => "Der Vorausscheid",
-                   "topic" => "KleinKunst 2018"
+                   "tags" => ["KleinKunst 2018"]
                  }
                }
              }
@@ -227,7 +226,7 @@ defmodule ApiWeb.ArticleResolverTest do
       articles {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -246,28 +245,28 @@ defmodule ApiWeb.ArticleResolverTest do
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "title" => "Beitrag Projekt 3"
                    },
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "title" => "Beitrag Projekt 2"
                    },
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "title" => "Beitrag Projekt 1"
                    },
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "preview" =>
                        "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
                      "title" => "„Nipple Jesus“- eine extreme Erfahrung"
@@ -275,7 +274,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "preview" =>
                        "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
                      "title" => "Landesfinale Volleyball WK IV"
@@ -283,7 +282,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "preview" => "Hallo hallo hallo",
                      "title" => "And the oskar goes to ..."
                    }
@@ -297,7 +296,7 @@ defmodule ApiWeb.ArticleResolverTest do
       articles {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
         groups {
@@ -329,7 +328,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 30 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -337,7 +336,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 30 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -349,7 +348,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 29 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -357,7 +356,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 29 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -369,7 +368,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 28 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -377,7 +376,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 28 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -389,7 +388,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 27 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -397,7 +396,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 27 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -409,7 +408,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 26 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -417,7 +416,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 26 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -429,7 +428,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 25 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -437,7 +436,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 25 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -449,7 +448,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 24 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -457,7 +456,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 24 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -469,7 +468,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 23 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -477,7 +476,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 23 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -489,7 +488,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 22 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -497,7 +496,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 22 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -509,7 +508,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 21 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -517,7 +516,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 21 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -529,7 +528,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 20 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -537,7 +536,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 20 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -549,7 +548,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 19 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -557,7 +556,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 19 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -569,7 +568,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 18 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -577,7 +576,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 18 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -589,7 +588,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 17 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -597,7 +596,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 17 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -609,7 +608,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 16 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -617,7 +616,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 16 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -629,7 +628,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 15 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -637,7 +636,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 15 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -649,7 +648,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 14 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -657,7 +656,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 14 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -669,7 +668,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 13 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -677,7 +676,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 13 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -689,7 +688,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 12 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -697,7 +696,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 12 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -709,7 +708,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 11 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -717,7 +716,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 11 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -729,7 +728,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 10 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -737,7 +736,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 10 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -749,7 +748,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 9 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -757,7 +756,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 9 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -769,7 +768,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 8 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -777,7 +776,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 8 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -789,7 +788,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 7 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -797,7 +796,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 7 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -809,7 +808,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 6 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -817,7 +816,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 6 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -829,7 +828,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 5 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -837,7 +836,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 5 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -849,7 +848,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 4 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -857,7 +856,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 4 - nur für Lehrer",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -865,7 +864,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 3",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -873,7 +872,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 2",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -881,7 +880,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 1",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -890,7 +889,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
                      "readyToPublish" => false,
                      "title" => "„Nipple Jesus“- eine extreme Erfahrung",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
@@ -899,7 +898,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
                      "readyToPublish" => false,
                      "title" => "Der Vorausscheid",
-                     "topic" => "KleinKunst 2018"
+                     "tags" => ["KleinKunst 2018"]
                    },
                    %{
                      "groups" => [
@@ -912,7 +911,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
                      "readyToPublish" => false,
                      "title" => "Der Podcast zum WB 2",
-                     "topic" => "KleinKunst 2018"
+                     "tags" => ["KleinKunst 2018"]
                    },
                    %{
                      "groups" => [],
@@ -921,7 +920,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
                      "readyToPublish" => false,
                      "title" => "Landesfinale Volleyball WK IV",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -929,7 +928,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Hallo hallo hallo",
                      "readyToPublish" => false,
                      "title" => "And the oskar goes to ...",
-                     "topic" => nil
+                     "tags" => nil
                    }
                  ]
                }
@@ -952,7 +951,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -964,7 +963,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -975,7 +974,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -987,7 +986,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -999,7 +998,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1017,7 +1016,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 25 - nur für Schüler"
                    },
                    %{
@@ -1029,7 +1028,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 24 - nur für Schüler"
                    },
                    %{
@@ -1041,7 +1040,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 23 - nur für Schüler"
                    },
                    %{
@@ -1053,7 +1052,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 22 - nur für Schüler"
                    },
                    %{
@@ -1065,7 +1064,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 21 - nur für Schüler"
                    },
                    %{
@@ -1077,7 +1076,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 20 - nur für Schüler"
                    },
                    %{
@@ -1089,7 +1088,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 19 - nur für Schüler"
                    },
                    %{
@@ -1101,7 +1100,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 18 - nur für Schüler"
                    },
                    %{
@@ -1113,7 +1112,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 17 - nur für Schüler"
                    },
                    %{
@@ -1125,7 +1124,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 16 - nur für Schüler"
                    },
                    %{
@@ -1137,7 +1136,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 15 - nur für Schüler"
                    },
                    %{
@@ -1149,7 +1148,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 14 - nur für Schüler"
                    },
                    %{
@@ -1161,7 +1160,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 13 - nur für Schüler"
                    },
                    %{
@@ -1173,7 +1172,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 12 - nur für Schüler"
                    },
                    %{
@@ -1185,7 +1184,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 11 - nur für Schüler"
                    },
                    %{
@@ -1197,7 +1196,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 10 - nur für Schüler"
                    },
                    %{
@@ -1209,7 +1208,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 9 - nur für Schüler"
                    },
                    %{
@@ -1221,7 +1220,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 8 - nur für Schüler"
                    },
                    %{
@@ -1233,7 +1232,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 7 - nur für Schüler"
                    },
                    %{
@@ -1245,7 +1244,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 6 - nur für Schüler"
                    },
                    %{
@@ -1257,7 +1256,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 5 - nur für Schüler"
                    },
                    %{
@@ -1269,14 +1268,14 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "title" => "Beitrag Projekt 4 - nur für Schüler"
                    },
                    %{
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "title" => "Beitrag Projekt 3"
                    },
@@ -1284,7 +1283,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "title" => "Beitrag Projekt 2"
                    },
@@ -1292,14 +1291,14 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "title" => "Beitrag Projekt 1"
                    },
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "preview" =>
                        "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
@@ -1316,7 +1315,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" =>
                        "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
                      "title" => "Der Podcast zum WB 2",
-                     "topic" => "KleinKunst 2018"
+                     "tags" => ["KleinKunst 2018"]
                    },
                    %{
                      "groups" => [],
@@ -1325,7 +1324,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Zweimal Silber für die Mannschaften des Christian-Gottfried-Ehrenberg-Gymnasium Delitzsch beim Landesfinale \"Jugend trainiert für Europa\" im Volleyball. Nach beherztem Kampf im Finale unterlegen ...",
                      "readyToPublish" => false,
                      "title" => "Landesfinale Volleyball WK IV",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -1333,7 +1332,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Hallo hallo hallo",
                      "readyToPublish" => false,
                      "title" => "And the oskar goes to ...",
-                     "topic" => nil
+                     "tags" => nil
                    }
                  ]
                }
@@ -1350,7 +1349,7 @@ defmodule ApiWeb.ArticleResolverTest do
     #   articles(filter: $filter) {
     #     title
     #     preview
-    #     topic
+    #     tags
     #     readyToPublish
     #     isPinnedToTop
     #   }
@@ -1369,14 +1368,14 @@ defmodule ApiWeb.ArticleResolverTest do
     #                %{
     #                  "isPinnedToTop" => false,
     #                  "readyToPublish" => false,
-    #                  "topic" => nil,
+    #                  "tags" => nil,
     #                  "preview" => "Lorem ipsum dolor sit amet.",
     #                  "title" => "Beitrag Projekt 3"
     #                },
     #                %{
     #                  "isPinnedToTop" => false,
     #                  "readyToPublish" => false,
-    #                  "topic" => nil,
+    #                  "tags" => nil,
     #                  "preview" => "Lorem ipsum dolor sit amet.",
     #                  "title" => "Beitrag Projekt 2"
     #                }
@@ -1390,7 +1389,7 @@ defmodule ApiWeb.ArticleResolverTest do
       articles(categoryID: $category_id) {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -1413,21 +1412,21 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 3",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 2",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 1",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "isPinnedToTop" => false,
@@ -1435,7 +1434,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
                      "readyToPublish" => false,
                      "title" => "„Nipple Jesus“- eine extreme Erfahrung",
-                     "topic" => nil
+                     "tags" => nil
                    }
                  ]
                }
@@ -1447,7 +1446,7 @@ defmodule ApiWeb.ArticleResolverTest do
       articles(category_id: $category_id) {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
         groups {
@@ -1472,7 +1471,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1485,7 +1484,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 30 - nur für Lehrer"
                    },
@@ -1493,7 +1492,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1505,7 +1504,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 29 - nur für Lehrer"
                    },
@@ -1513,7 +1512,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1525,7 +1524,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 28 - nur für Lehrer"
                    },
@@ -1533,7 +1532,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1545,7 +1544,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 27 - nur für Lehrer"
                    },
@@ -1553,7 +1552,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1565,7 +1564,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 26 - nur für Lehrer"
                    },
@@ -1573,7 +1572,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1585,7 +1584,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 25 - nur für Lehrer"
                    },
@@ -1593,7 +1592,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1605,7 +1604,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 24 - nur für Lehrer"
                    },
@@ -1613,7 +1612,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1625,7 +1624,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 23 - nur für Lehrer"
                    },
@@ -1633,7 +1632,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1645,7 +1644,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 22 - nur für Lehrer"
                    },
@@ -1653,7 +1652,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1665,7 +1664,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 21 - nur für Lehrer"
                    },
@@ -1673,7 +1672,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1685,7 +1684,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 20 - nur für Lehrer"
                    },
@@ -1693,7 +1692,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1705,7 +1704,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 19 - nur für Lehrer"
                    },
@@ -1713,7 +1712,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1725,7 +1724,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 18 - nur für Lehrer"
                    },
@@ -1733,7 +1732,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1745,7 +1744,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 17 - nur für Lehrer"
                    },
@@ -1753,7 +1752,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1765,7 +1764,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 16 - nur für Lehrer"
                    },
@@ -1773,7 +1772,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1785,7 +1784,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 15 - nur für Lehrer"
                    },
@@ -1793,7 +1792,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1805,7 +1804,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 14 - nur für Lehrer"
                    },
@@ -1813,7 +1812,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1825,7 +1824,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 13 - nur für Lehrer"
                    },
@@ -1833,7 +1832,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1845,7 +1844,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 12 - nur für Lehrer"
                    },
@@ -1853,7 +1852,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1865,7 +1864,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 11 - nur für Lehrer"
                    },
@@ -1873,7 +1872,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1885,7 +1884,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 10 - nur für Lehrer"
                    },
@@ -1893,7 +1892,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1905,7 +1904,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 9 - nur für Lehrer"
                    },
@@ -1913,7 +1912,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1925,7 +1924,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 8 - nur für Lehrer"
                    },
@@ -1933,7 +1932,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1945,7 +1944,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 7 - nur für Lehrer"
                    },
@@ -1953,7 +1952,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1965,7 +1964,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 6 - nur für Lehrer"
                    },
@@ -1973,7 +1972,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -1985,7 +1984,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 5 - nur für Lehrer"
                    },
@@ -1993,7 +1992,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [
                        %{"name" => "Verwaltung"},
                        %{"name" => "Lehrer"},
@@ -2005,7 +2004,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [%{"name" => "Verwaltung"}, %{"name" => "Lehrer"}],
                      "title" => "Beitrag Projekt 4 - nur für Lehrer"
                    },
@@ -2013,7 +2012,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "title" => "Beitrag Projekt 3"
                    },
@@ -2021,7 +2020,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "title" => "Beitrag Projekt 2"
                    },
@@ -2029,14 +2028,14 @@ defmodule ApiWeb.ArticleResolverTest do
                      "isPinnedToTop" => false,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "title" => "Beitrag Projekt 1"
                    },
                    %{
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "groups" => [],
                      "preview" =>
                        "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
@@ -2070,7 +2069,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 30 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2082,7 +2081,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 29 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2094,7 +2093,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 28 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2106,7 +2105,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 27 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2118,7 +2117,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 26 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2130,7 +2129,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 25 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2142,7 +2141,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 24 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2154,7 +2153,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 23 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2166,7 +2165,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 22 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2178,7 +2177,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 21 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2190,7 +2189,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 20 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2202,7 +2201,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 19 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2214,7 +2213,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 18 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2226,7 +2225,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 17 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2238,7 +2237,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 16 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2250,7 +2249,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 15 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2262,7 +2261,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 14 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2274,7 +2273,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 13 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2286,7 +2285,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 12 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2298,7 +2297,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 11 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2310,7 +2309,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 10 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2322,7 +2321,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 9 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2334,7 +2333,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 8 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2346,7 +2345,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 7 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2358,7 +2357,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 6 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2370,7 +2369,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 5 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [
@@ -2382,13 +2381,13 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 4 - nur für Schüler",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
                      "isPinnedToTop" => false,
                      "readyToPublish" => false,
-                     "topic" => nil,
+                     "tags" => nil,
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "title" => "Beitrag Projekt 3"
                    },
@@ -2398,7 +2397,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 2",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -2406,7 +2405,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Lorem ipsum dolor sit amet.",
                      "readyToPublish" => false,
                      "title" => "Beitrag Projekt 1",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "groups" => [],
@@ -2415,7 +2414,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Das Theaterstück „Nipple Jesus“, welches am 08.02.2019 im Museum der Bildenden Künste aufgeführt wurde, hat bei mir noch lange nach der Aufführung große Aufmerksamkeit hinterlassen.",
                      "readyToPublish" => false,
                      "title" => "„Nipple Jesus“- eine extreme Erfahrung",
-                     "topic" => nil
+                     "tags" => nil
                    }
                  ]
                }
@@ -2433,7 +2432,7 @@ defmodule ApiWeb.ArticleResolverTest do
     #   articles(filter: $filter, category_id: $category_id) {
     #     title
     #     preview
-    #     topic
+    #     tags
     #     readyToPublish
     #     isPinnedToTop
     #   }
@@ -2457,7 +2456,7 @@ defmodule ApiWeb.ArticleResolverTest do
     #                %{
     #                  "isPinnedToTop" => false,
     #                  "readyToPublish" => false,
-    #                  "topic" => nil,
+    #                  "tags" => nil,
     #                  "preview" => "Lorem ipsum dolor sit amet.",
     #                  "title" => "Beitrag Projekt 3"
     #                },
@@ -2465,7 +2464,7 @@ defmodule ApiWeb.ArticleResolverTest do
     #                  "isPinnedToTop" => false,
     #                  "preview" => "Lorem ipsum dolor sit amet.",
     #                  "readyToPublish" => false,
-    #                  "topic" => nil,
+    #                  "tags" => nil,
     #                  "title" => "Beitrag Projekt 2"
     #                }
     #              ]
@@ -2480,7 +2479,7 @@ defmodule ApiWeb.ArticleResolverTest do
       unpublishedArticles {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -2502,7 +2501,7 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Entwurf Artikel zu XYZ",
                      "readyToPublish" => true,
                      "title" => "Fertiger Artikel zum Konzert",
-                     "topic" => nil
+                     "tags" => nil
                    }
                  ]
                }
@@ -2555,7 +2554,7 @@ defmodule ApiWeb.ArticleResolverTest do
       ownArticles {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -2577,21 +2576,21 @@ defmodule ApiWeb.ArticleResolverTest do
                      "preview" => "Entwurf Artikel zu I",
                      "readyToPublish" => false,
                      "title" => "Draft1",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "isPinnedToTop" => false,
                      "preview" => "Entwurf Artikel zu XYZ",
                      "readyToPublish" => false,
                      "title" => "Draft2",
-                     "topic" => nil
+                     "tags" => nil
                    },
                    %{
                      "isPinnedToTop" => false,
                      "preview" => "Entwurf Artikel zu XYZ",
                      "readyToPublish" => true,
                      "title" => "Fertiger Artikel zum Konzert",
-                     "topic" => nil
+                     "tags" => nil
                    }
                  ]
                }
@@ -2618,14 +2617,14 @@ defmodule ApiWeb.ArticleResolverTest do
     end
   end
 
-  describe "get topics query" do
+  describe "get tags query" do
     @query """
-    query topics {
-      topics
+    query tags {
+      tags
     }
     """
 
-    test "topics: returns a list of topics for a normal user" do
+    test "tags: returns a list of tags for a normal user" do
       res =
         build_conn()
         |> get("/api", query: @query)
@@ -2633,12 +2632,12 @@ defmodule ApiWeb.ArticleResolverTest do
 
       assert res == %{
                "data" => %{
-                 "topics" => []
+                 "tags" => []
                }
              }
     end
 
-    test "topics: returns a list of topics for an admin user", %{admin_jwt: admin_jwt} do
+    test "tags: returns a list of tags for an admin user", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
@@ -2647,19 +2646,19 @@ defmodule ApiWeb.ArticleResolverTest do
 
       assert res == %{
                "data" => %{
-                 "topics" => ["KleinKunst 2018"]
+                 "tags" => ["KleinKunst 2018"]
                }
              }
     end
   end
 
-  describe "topic query" do
+  describe "tags query" do
     @query """
-    query topic($topic: String!) {
-      topic(topic: $topic) {
+    query tag($tag: String!) {
+      tag(tag: $tag) {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -2670,19 +2669,19 @@ defmodule ApiWeb.ArticleResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
-        |> get("/api", query: @query, variables: %{topic: "KleinKunst 2018"})
+        |> get("/api", query: @query, variables: %{tag: "KleinKunst 2018"})
         |> json_response(200)
 
       assert res == %{
                "data" => %{
-                 "topic" => [
+                 "tag" => [
                    %{
                      "isPinnedToTop" => false,
                      "preview" =>
                        "Singen, Schauspielern, Instrumente Spielen - Die Kerndisziplinen von Klienkunst waren auch diese Jahr beim Vorausscheid am 14. Februar vertreten. Wir mischten uns unter die Kandidaten, Techniker und die Jury.",
                      "readyToPublish" => false,
                      "title" => "Der Vorausscheid",
-                     "topic" => "KleinKunst 2018"
+                     "tags" => ["KleinKunst 2018"]
                    },
                    %{
                      "isPinnedToTop" => false,
@@ -2690,7 +2689,7 @@ defmodule ApiWeb.ArticleResolverTest do
                        "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
                      "readyToPublish" => false,
                      "title" => "Der Podcast zum WB 2",
-                     "topic" => "KleinKunst 2018"
+                     "tags" => ["KleinKunst 2018"]
                    }
                  ]
                }
@@ -2701,19 +2700,19 @@ defmodule ApiWeb.ArticleResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
-        |> get("/api", query: @query, variables: %{topic: "KleinKunst 2018"})
+        |> get("/api", query: @query, variables: %{tag: "KleinKunst 2018"})
         |> json_response(200)
 
       assert res == %{
                "data" => %{
-                 "topic" => [
+                 "tag" => [
                    %{
                      "isPinnedToTop" => false,
                      "preview" =>
                        "Das Podcastteam hat alle Hochlichter der Veranstaltung in einem originellen Film zusammengeschnitten. Wir beglückwünschen die Sieger und haben unseren Sieger gesondert gefeiert.",
                      "readyToPublish" => false,
                      "title" => "Der Podcast zum WB 2",
-                     "topic" => "KleinKunst 2018"
+                     "tags" => ["KleinKunst 2018"]
                    }
                  ]
                }
@@ -2724,12 +2723,12 @@ defmodule ApiWeb.ArticleResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> get("/api", query: @query, variables: %{topic: "KleinKunst 2018"})
+        |> get("/api", query: @query, variables: %{tag: "KleinKunst 2018"})
         |> json_response(200)
 
       assert res == %{
                "data" => %{
-                 "topic" => []
+                 "tag" => []
                }
              }
     end
@@ -2741,7 +2740,7 @@ defmodule ApiWeb.ArticleResolverTest do
       createArticle(article: $article) {
         title
         preview
-        topic
+        tags
         readyToPublish
         users {
           name
@@ -2771,7 +2770,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    "preview" => nil,
                    "readyToPublish" => nil,
                    "title" => "Ein neuer Artikel",
-                   "topic" => nil,
+                   "tags" => nil,
                    "users" => [%{"name" => "Eike Wiewiorra"}]
                  }
                }
@@ -2804,7 +2803,7 @@ defmodule ApiWeb.ArticleResolverTest do
       updateArticle(id: $id, article: $article) {
         title
         preview
-        topic
+        tags
         readyToPublish
         users {
           name
@@ -2859,7 +2858,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    "title" => "ABC",
                    "preview" => "Entwurf Artikel zu XYZ",
                    "readyToPublish" => false,
-                   "topic" => nil,
+                   "tags" => nil,
                    "users" => [%{"name" => "Eike Wiewiorra"}]
                  }
                }
@@ -2879,7 +2878,7 @@ defmodule ApiWeb.ArticleResolverTest do
                    "title" => "ABC",
                    "preview" => "Entwurf Artikel zu XYZ",
                    "readyToPublish" => false,
-                   "topic" => nil,
+                   "tags" => nil,
                    "users" => [%{"name" => "Eike Wiewiorra"}]
                  }
                }

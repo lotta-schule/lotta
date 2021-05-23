@@ -36,4 +36,22 @@ defmodule Api.Messages do
     |> Message.changeset(attrs)
     |> Repo.insert()
   end
+
+  @doc """
+  Get a message by id
+  """
+  @spec get_message(String.t()) :: Message.t() | nil
+  def get_message(id) do
+    Repo.get(Message, String.to_integer(id))
+  end
+
+  @doc """
+  Delete a message
+  """
+  @doc since: "2.5.0"
+  @spec delete_message(Message.t()) :: {:ok, Message.t()} | {:error, Ecto.Changeset.t()}
+  def delete_message(%Message{} = msg) do
+    msg
+    |> Repo.delete()
+  end
 end

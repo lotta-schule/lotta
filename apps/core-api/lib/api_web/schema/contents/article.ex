@@ -4,13 +4,13 @@ defmodule ApiWeb.Schema.Contents.Article do
   use Absinthe.Schema.Notation
 
   input_object :article_input do
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :title, non_null(:string)
     field :preview, :string
     field :ready_to_publish, :boolean
     field :published, :boolean
-    field :topic, :string
+    field :tags, list_of(non_null(:string))
     field :preview_image_file, :select_file_input
     field :groups, list_of(:select_user_group_input)
     field :category, :select_category_input
@@ -20,7 +20,7 @@ defmodule ApiWeb.Schema.Contents.Article do
 
   @desc "Filtering options for the article list"
   input_object :article_filter do
-    field :updated_before, :naive_datetime,
+    field :updated_before, :datetime,
       description: "Return only results updated before than a given date"
 
     field :first, :integer, description: "Limit the number of results to return"
@@ -37,17 +37,16 @@ defmodule ApiWeb.Schema.Contents.Article do
 
   object :article do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :title, :string
     field :preview, :string
-    field :topic, :string
+    field :tags, list_of(non_null(:string))
     field :ready_to_publish, :boolean
     field :published, :boolean
     field :is_pinned_to_top, :boolean
 
-    field :preview_image_file, :file,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :preview_image_file, :file, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :groups, list_of(:user_group), resolve: &ApiWeb.UserGroupResolver.resolve_model_groups/2
 
@@ -60,19 +59,19 @@ defmodule ApiWeb.Schema.Contents.Article do
 
   object :content_module do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :type, :content_module_type
     field :content, :json
-    field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+    field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
     field :sort_key, :integer
     field :configuration, :json
   end
 
   object :content_module_result do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :result, :json
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
   end

@@ -9,7 +9,7 @@ defmodule Api.System.Usage do
   import Ecto.Query
 
   alias Api.Repo
-  alias Api.Accounts.{File, FileConversion}
+  alias Api.Storage.{File, FileConversion}
 
   @doc """
   Return the usage statistics
@@ -22,7 +22,7 @@ defmodule Api.System.Usage do
           Timex.now()
           |> Timex.shift(months: -month)
           |> Timex.beginning_of_month()
-          |> Timex.to_naive_datetime()
+          |> Timex.to_datetime()
 
         period_end =
           case month do
@@ -32,7 +32,7 @@ defmodule Api.System.Usage do
             _ ->
               period_start
               |> Timex.end_of_month()
-              |> Timex.to_naive_datetime()
+              |> Timex.to_datetime()
           end
 
         with {:ok, storage_usage} <- get_storage_usage(),

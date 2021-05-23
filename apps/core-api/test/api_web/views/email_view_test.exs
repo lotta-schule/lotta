@@ -2,13 +2,11 @@ defmodule ApiWeb.EmailViewTest do
   @moduledoc false
 
   use Api.DataCase
-  alias Api.System
-  alias ApiWeb.EmailView
 
-  setup do
-    Api.Repo.Seeder.seed()
-    {:ok, %{}}
-  end
+  alias Api.Repo
+  alias Api.System
+  alias Api.Storage.File
+  alias ApiWeb.EmailView
 
   describe "email_view theme_prop/2" do
     test "should return a valid known property" do
@@ -33,15 +31,15 @@ defmodule ApiWeb.EmailViewTest do
 
     test "should return its url if a file is set as logo" do
       file =
-        from(f in Api.Accounts.File,
+        from(f in File,
           where: f.filename == "logo1.jpg"
         )
-        |> Api.Repo.one!()
+        |> Repo.one!()
 
       System.get_configuration()
       |> System.put_configuration(:logo_image_file, file)
 
-      assert "http://a.de/logo1.jpg" = EmailView.logo_url()
+      assert EmailView.logo_url() =~ ~r/http:\/\/minio/
     end
   end
 end

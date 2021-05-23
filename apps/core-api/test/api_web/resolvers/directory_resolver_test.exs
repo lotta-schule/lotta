@@ -5,13 +5,12 @@ defmodule ApiWeb.DirectoryResolverTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Accounts.{Directory, User}
+  alias Api.Accounts.User
+  alias Api.Storage.Directory
 
   use ApiWeb.ConnCase
 
   setup do
-    Repo.Seeder.seed()
-
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user = Repo.get_by!(User, email: "billy@lotta.schule")
@@ -598,7 +597,10 @@ defmodule ApiWeb.DirectoryResolverTest do
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{parentDirectoryId: 0, name: "newdirectoryname"}
+          variables: %{
+            parentDirectoryId: "00000000-0000-0000-0000-000000000000",
+            name: "newdirectoryname"
+          }
         )
         |> json_response(200)
 
@@ -606,7 +608,8 @@ defmodule ApiWeb.DirectoryResolverTest do
                "data" => %{"createDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Ordner mit der id 0 nicht gefunden.",
+                   "message" =>
+                     "Ordner mit der id 00000000-0000-0000-0000-000000000000 nicht gefunden.",
                    "path" => ["createDirectory"]
                  }
                ]
@@ -726,14 +729,18 @@ defmodule ApiWeb.DirectoryResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: 0, name: "newdirectoryname"})
+        |> post("/api",
+          query: @query,
+          variables: %{id: "00000000-0000-0000-0000-000000000000", name: "newdirectoryname"}
+        )
         |> json_response(200)
 
       assert %{
                "data" => %{"updateDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Ordner mit der id 0 nicht gefunden.",
+                   "message" =>
+                     "Ordner mit der id 00000000-0000-0000-0000-000000000000 nicht gefunden.",
                    "path" => ["updateDirectory"]
                  }
                ]
@@ -925,14 +932,15 @@ defmodule ApiWeb.DirectoryResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: 0})
+        |> post("/api", query: @query, variables: %{id: "00000000-0000-0000-0000-000000000000"})
         |> json_response(200)
 
       assert %{
                "data" => %{"deleteDirectory" => nil},
                "errors" => [
                  %{
-                   "message" => "Ordner mit der id 0 nicht gefunden.",
+                   "message" =>
+                     "Ordner mit der id 00000000-0000-0000-0000-000000000000 nicht gefunden.",
                    "path" => ["deleteDirectory"]
                  }
                ]

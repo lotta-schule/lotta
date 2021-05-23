@@ -7,6 +7,8 @@ defmodule Api.Content.ContentModuleResult do
 
   use Ecto.Schema
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "content_module_results" do
     field :result, :map
 

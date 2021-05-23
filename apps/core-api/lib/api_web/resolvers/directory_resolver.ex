@@ -5,15 +5,15 @@ defmodule ApiWeb.DirectoryResolver do
   import Api.Accounts.Permissions
 
   alias ApiWeb.Context
-  alias Api.Accounts
   alias Api.Accounts.User
+  alias Api.Storage
   alias Api.Repo
 
   def list(%{parent_directory_id: parent_directory_id}, %{
         context: %Context{current_user: current_user}
       })
       when not is_nil(parent_directory_id) and bit_size(parent_directory_id) > 0 do
-    parent_directory = Accounts.get_directory(parent_directory_id)
+    parent_directory = Storage.get_directory(parent_directory_id)
 
     cond do
       is_nil(parent_directory) ->
@@ -23,16 +23,16 @@ defmodule ApiWeb.DirectoryResolver do
         {:error, "Du hast nicht die Rechte, diesen Ordner anzusehen."}
 
       true ->
-        {:ok, Accounts.list_directories(parent_directory)}
+        {:ok, Storage.list_directories(parent_directory)}
     end
   end
 
   def list(_, %{context: %Context{current_user: current_user}}) do
-    {:ok, Accounts.list_root_directories(current_user)}
+    {:ok, Storage.list_root_directories(current_user)}
   end
 
   def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
-    directory = Accounts.get_directory(String.to_integer(id))
+    directory = Storage.get_directory(id)
 
     cond do
       is_nil(directory) ->
@@ -54,7 +54,7 @@ defmodule ApiWeb.DirectoryResolver do
         context: %Context{current_user: current_user}
       })
       when not is_nil(parent_directory_id) do
-    parent_directory = Accounts.get_directory(parent_directory_id)
+    parent_directory = Storage.get_directory(parent_directory_id)
 
     cond do
       is_nil(parent_directory) ->
@@ -64,7 +64,7 @@ defmodule ApiWeb.DirectoryResolver do
         {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
 
       true ->
-        Accounts.create_directory(%{
+        Storage.create_directory(%{
           name: name,
           parent_directory_id: parent_directory.id,
           user_id: parent_directory.user_id
@@ -76,7 +76,7 @@ defmodule ApiWeb.DirectoryResolver do
   def create(%{name: name, is_public: true}, %{
         context: %Context{current_user: %User{is_admin?: true}}
       }) do
-    Accounts.create_directory(%{
+    Storage.create_directory(%{
       name: name,
       user_id: nil
     })
@@ -90,7 +90,7 @@ defmodule ApiWeb.DirectoryResolver do
   end
 
   def create(%{name: name}, %{context: %Context{current_user: %{id: user_id}}}) do
-    Accounts.create_directory(%{
+    Storage.create_directory(%{
       name: name,
       user_id: user_id
     })
@@ -103,7 +103,7 @@ defmodule ApiWeb.DirectoryResolver do
   end
 
   def update(%{id: id} = args, %{context: %Context{current_user: current_user}}) do
-    directory = Accounts.get_directory(String.to_integer(id))
+    directory = Storage.get_directory(id)
 
     if directory do
       directory =
@@ -120,7 +120,7 @@ defmodule ApiWeb.DirectoryResolver do
             nil
 
           %{parent_directory_id: target_directory_id} ->
-            Accounts.get_directory(String.to_integer(target_directory_id))
+            Storage.get_directory(target_directory_id)
 
           _ ->
             source_directory
@@ -129,7 +129,7 @@ defmodule ApiWeb.DirectoryResolver do
       if can_write?(current_user, source_directory || directory) &&
            can_write?(current_user, target_directory || directory) do
         directory
-        |> Accounts.update_directory(Map.take(args, [:name, :parent_directory_id]))
+        |> Storage.update_directory(Map.take(args, [:name, :parent_directory_id]))
         |> format_errors("Bearbeiten des Ordners fehlgeschlagen.")
       else
         {:error, "Du hast nicht die Rechte, diesen Ordner zu beschreiben."}
@@ -140,7 +140,7 @@ defmodule ApiWeb.DirectoryResolver do
   end
 
   def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
-    directory = Accounts.get_directory(String.to_integer(id))
+    directory = Storage.get_directory(id)
 
     cond do
       is_nil(directory) ->
@@ -159,7 +159,7 @@ defmodule ApiWeb.DirectoryResolver do
 
       true ->
         directory
-        |> Accounts.delete_directory()
+        |> Storage.delete_directory()
         |> format_errors("Erstellen des Ordners fehlgeschlagen")
     end
   end

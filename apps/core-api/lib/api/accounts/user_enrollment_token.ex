@@ -9,6 +9,8 @@ defmodule Api.Accounts.UserEnrollmentToken do
 
   alias Api.Accounts.User
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "users_enrollment_tokens" do
     field :enrollment_token, :string
 

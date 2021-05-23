@@ -20,31 +20,31 @@ defmodule ApiWeb.Schema.Accounts.File do
   object :directory do
     field :id, :id
     field :name, :string
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :parent_directory, :directory,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
   end
 
   object :file do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :filename, :string
     field :filesize, :integer
     field :mime_type, :string
-    field :remote_location, :string
+    field :remote_location, :string, resolve: &ApiWeb.FileResolver.resolve_remote_location/3
     field :file_type, :file_type
     field :user_id, :id
     field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
 
     field :file_conversions, list_of(:file_conversion),
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :parent_directory, :directory,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Accounts)
+      resolve: Absinthe.Resolution.Helpers.dataloader(Api.Storage)
 
     field :usage, list_of(:file_usage_location),
       resolve: &ApiWeb.FileResolver.resolve_file_usage/3
@@ -52,11 +52,11 @@ defmodule ApiWeb.Schema.Accounts.File do
 
   object :file_conversion do
     field :id, :id
-    field :inserted_at, :naive_datetime
-    field :updated_at, :naive_datetime
+    field :inserted_at, :datetime
+    field :updated_at, :datetime
     field :format, :string
     field :mime_type, :string
-    field :remote_location, :string
+    field :remote_location, :string, resolve: &ApiWeb.FileResolver.resolve_remote_location/3
   end
 
   enum :file_type do

@@ -21,6 +21,14 @@ defmodule ApiWeb.Schema.Messages do
 
       resolve(&ApiWeb.MessagesResolver.create/2)
     end
+
+    field :delete_message, type: :message do
+      middleware(ApiWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:id, non_null(:id))
+
+      resolve(&ApiWeb.MessagesResolver.delete/2)
+    end
   end
 
   object :messages_subscriptions do

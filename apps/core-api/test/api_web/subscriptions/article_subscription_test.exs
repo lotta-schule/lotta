@@ -9,8 +9,6 @@ defmodule ApiWeb.ArticleSubscriptionTest do
   alias Api.Content.Article
 
   setup do
-    Repo.Seeder.seed()
-
     emails = [
       "alexis.rinaldoni@lotta.schule",
       "eike.wiewiorra@lotta.schule",
@@ -51,7 +49,7 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       articleIsUpdated(id: $id) {
         title
         preview
-        topic
+        tags
         readyToPublish
         isPinnedToTop
       }
@@ -62,7 +60,7 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       updateArticle(id: $id, article: $article) {
         title
         preview
-        topic
+        tags
         readyToPublish
         users {
           name

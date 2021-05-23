@@ -8,7 +8,8 @@ defmodule Api.System.Category do
   import Ecto.{Changeset, Query}
 
   alias Api.Repo
-  alias Api.Accounts.{File, UserGroup}
+  alias Api.Accounts.UserGroup
+  alias Api.Storage.File
   alias Api.System.{Category, Widget}
 
   @type id() :: pos_integer()
@@ -24,6 +25,8 @@ defmodule Api.System.Category do
           hide_articles_from_homepage: boolean()
         }
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "categories" do
     field :title, :string
     field :sort_key, :integer
@@ -33,11 +36,14 @@ defmodule Api.System.Category do
     field :redirect, :string
     field :hide_articles_from_homepage, :boolean
 
-    belongs_to :banner_image_file, File, on_replace: :nilify
+    belongs_to :banner_image_file, File,
+      on_replace: :nilify,
+      type: :binary_id
+
     belongs_to :category, Category
 
     many_to_many :groups,
-                 Api.Accounts.UserGroup,
+                 UserGroup,
                  join_through: "categories_user_groups",
                  join_keys: [category_id: :id, group_id: :id],
                  on_replace: :delete
@@ -71,7 +77,7 @@ defmodule Api.System.Category do
 
   defp put_assoc_banner_image_file(changeset, %{banner_image_file: %{id: banner_image_file_id}}) do
     changeset
-    |> put_assoc(:banner_image_file, Repo.get(Api.Accounts.File, banner_image_file_id))
+    |> put_assoc(:banner_image_file, Repo.get(File, banner_image_file_id))
   end
 
   defp put_assoc_banner_image_file(changeset, %{banner_image_file: nil}) do
@@ -83,7 +89,7 @@ defmodule Api.System.Category do
 
   defp put_assoc_category(changeset, %{category: %{id: category_id}}) do
     changeset
-    |> put_assoc(:category, Repo.get(Api.System.Category, category_id))
+    |> put_assoc(:category, Repo.get(Category, category_id))
   end
 
   defp put_assoc_category(changeset, _args), do: changeset

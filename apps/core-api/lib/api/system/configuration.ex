@@ -3,17 +3,20 @@ defmodule Api.System.Configuration do
     Ecto Schema for system configuration
   """
 
-  alias Api.Accounts.File
+  alias Api.Storage.File
 
   use Ecto.Schema
 
   @primary_key false
+
+  @timestamps_opts [type: :utc_datetime]
+
   schema "configuration" do
     field :name, :string
     field :string_value, :string
     field :json_value, :map
 
-    belongs_to :file_value, File
+    belongs_to :file_value, File, type: :binary_id
 
     timestamps()
   end

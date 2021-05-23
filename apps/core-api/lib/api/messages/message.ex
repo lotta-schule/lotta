@@ -1,9 +1,11 @@
 defmodule Api.Messages.Message do
   @moduledoc false
-
   use Ecto.Schema
+
   import Ecto.Changeset
   alias Api.Accounts.{User, UserGroup}
+
+  @timestamps_opts [type: :utc_datetime]
 
   schema "messages" do
     field :content, :string

@@ -1,8 +1,10 @@
 defmodule Api.Fixtures do
   @moduledoc false
+
   alias Api.Repo
   alias Api.System.Category
-  alias Api.Accounts.{User, UserGroup, File}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.File
   alias Api.Content.{Article}
   alias Api.Messages.Message
 
@@ -115,8 +117,7 @@ defmodule Api.Fixtures do
       file_type: "some_file_type",
       filename: "some_filename",
       filesize: 42,
-      mime_type: "some_mime_type",
-      remote_location: "some_remote_location"
+      mime_type: "some_mime_type"
     }
   end
 
@@ -145,7 +146,7 @@ defmodule Api.Fixtures do
     %{
       title: "Mein Artikel",
       preview: "Kleine Artikel-Vorschau",
-      topic: "Mein Thema",
+      tags: ["Mein Thema"],
       ready_to_publish: true,
       is_pinned_to_top: false,
       category: fixture(:category)

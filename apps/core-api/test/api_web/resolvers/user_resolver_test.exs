@@ -9,12 +9,10 @@ defmodule ApiWeb.UserResolverTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Repo.Seeder
-  alias Api.Accounts.{Directory, File, User, UserGroup}
+  alias Api.Accounts.{User, UserGroup}
+  alias Api.Storage.{Directory, File}
 
   setup do
-    Seeder.seed()
-
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")
@@ -205,7 +203,11 @@ defmodule ApiWeb.UserResolverTest do
     """
     test "returns the user last seen for self", %{user: user, user_jwt: user_jwt} do
       user
-      |> Ecto.Changeset.change(%{last_seen: NaiveDateTime.local_now()})
+      |> Ecto.Changeset.change(%{
+        last_seen:
+          DateTime.utc_now()
+          |> DateTime.truncate(:second)
+      })
       |> Repo.update!()
 
       res =
@@ -222,9 +224,13 @@ defmodule ApiWeb.UserResolverTest do
                }
              } = res
 
+      {:ok, last_seen, 0} =
+        last_seen
+        |> DateTime.from_iso8601()
+
       diff =
-        NaiveDateTime.local_now()
-        |> NaiveDateTime.diff(NaiveDateTime.from_iso8601!(last_seen), :second)
+        DateTime.utc_now()
+        |> DateTime.diff(last_seen, :second)
 
       # difference must be less than 1 minute
       assert diff < 60
@@ -232,7 +238,7 @@ defmodule ApiWeb.UserResolverTest do
 
     test "returns the user last_seen for admin", %{user: user, admin_jwt: admin_jwt} do
       user
-      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
+      |> Ecto.Changeset.change(%{last_seen: ~U[2020-11-14 00:00:00Z]})
       |> Repo.update!()
 
       res =
@@ -244,7 +250,7 @@ defmodule ApiWeb.UserResolverTest do
       assert res == %{
                "data" => %{
                  "user" => %{
-                   "last_seen" => "2020-11-14T00:00:00"
+                   "last_seen" => "2020-11-14T00:00:00Z"
                  }
                }
              }
@@ -252,7 +258,7 @@ defmodule ApiWeb.UserResolverTest do
 
     test "does not return the user last_seen for others", %{user2: user2, user_jwt: user_jwt} do
       user2
-      |> Ecto.Changeset.change(%{last_seen: ~N[2020-11-14 00:00:00]})
+      |> Ecto.Changeset.change(%{last_seen: ~U[2020-11-14 00:00:00Z]})
       |> Repo.update!()
 
       res =
@@ -1696,7 +1702,7 @@ defmodule ApiWeb.UserResolverTest do
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{transferFileIds: [1, file.id]}
+          variables: %{transferFileIds: ["00000000-0000-0000-0000-000000000001", file.id]}
         )
         |> json_response(200)
 

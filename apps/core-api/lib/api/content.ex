@@ -11,7 +11,7 @@ defmodule Api.Content do
 
   @type filter() :: %{
           optional(:first) => pos_integer(),
-          optional(:updated_before) => NaiveDateTime.t()
+          optional(:updated_before) => DateTime.t()
         }
 
   def data() do
@@ -51,43 +51,43 @@ defmodule Api.Content do
   end
 
   @doc """
-  Get all the available topic
+  Get all the available tags
 
   ## Examples
       
-      iex> list_topics(nil)
-      ["Topic 1", "Topic 2", ...]
+      iex> list_all_tags(nil)
+      ["Tag 1", "Tag 2", ...]
   """
-  @doc since: "1.2.0"
-  @spec list_topics(User.t() | nil) :: [String.t()]
-  def list_topics(user) do
+  @doc since: "2.5.0"
+  @spec list_all_tags(User.t() | nil) :: [String.t()]
+  def list_all_tags(user) do
     query = Article.get_published_articles_query(user)
 
     from([a, ...] in query,
-      where: not is_nil(a.topic),
-      select: a.topic
+      where: not is_nil(a.tags),
+      select: a.tags
     )
     |> Repo.all()
   end
 
   @doc """
-  Returns the list of articles belonging to a topic, regarding user.
+  Returns the list of articles having a given tag, regarding user.
 
   ## Examples
 
-      iex> list_articles(topic)
+      iex> list_articles(tag)
       [%Article{}, ...]
 
   """
-  @doc since: "1.0.0"
-  @spec list_articles_by_topic(User.t() | nil, String.t()) :: list(Article.t())
-  def list_articles_by_topic(user, topic) do
+  @doc since: "2.5.0"
+  @spec list_articles_by_tag(User.t() | nil, String.t()) :: list(Article.t())
+  def list_articles_by_tag(user, tag) do
     query =
       user
       |> Article.get_published_articles_query()
 
     from(a in query,
-      where: a.topic == ^topic,
+      where: ^tag in a.tags,
       order_by: [desc: :updated_at]
     )
     |> Repo.all()
@@ -116,7 +116,7 @@ defmodule Api.Content do
 
   ## Examples
 
-      iex> list_user_articles(topic)
+      iex> list_user_articles(user)
       [%Article{}, ...]
 
   """

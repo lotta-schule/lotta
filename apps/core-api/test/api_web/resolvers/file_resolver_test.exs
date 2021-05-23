@@ -7,12 +7,10 @@ defmodule ApiWeb.FileResolverTest do
 
   alias ApiWeb.Auth.AccessToken
   alias Api.Repo
-  alias Api.Repo.Seeder
-  alias Api.Accounts.{User, File, Directory}
+  alias Api.Accounts.User
+  alias Api.Storage.{File, Directory}
 
   setup do
-    Seeder.seed()
-
     admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
     user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
     user = Repo.get_by!(User, email: "billy@lotta.schule")
@@ -253,7 +251,7 @@ defmodule ApiWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: admin_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "file" => %{
                    "filename" => "ich_schoen.jpg",
@@ -261,7 +259,7 @@ defmodule ApiWeb.FileResolverTest do
                      %{
                        "usage" => "avatar",
                        "user" => %{
-                         "avatarImageFile" => %{"remoteLocation" => "http://a.de/0801801"},
+                         "avatarImageFile" => %{"remoteLocation" => remote_location},
                          "name" => "Alexis Rinaldoni",
                          "nickname" => "Der Meister"
                        }
@@ -269,7 +267,9 @@ defmodule ApiWeb.FileResolverTest do
                    ]
                  }
                }
-             }
+             } = res
+
+      assert is_binary(remote_location)
     end
 
     test "returns own file's usage for non-admin user", %{
@@ -282,28 +282,28 @@ defmodule ApiWeb.FileResolverTest do
         |> get("/api", query: @query, variables: %{id: user2_file.id})
         |> json_response(200)
 
-      assert res == %{
+      assert %{
                "data" => %{
                  "file" => %{
                    "filename" => "wieartig1.jpg",
                    "usage" => [
                      %{
                        "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => "http://a.de/0801345801"},
+                         "previewImageFile" => %{"remoteLocation" => _},
                          "title" => "Fertiger Artikel zum Konzert"
                        },
                        "usage" => "preview"
                      },
                      %{
                        "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => "http://a.de/0801345801"},
+                         "previewImageFile" => %{"remoteLocation" => _},
                          "title" => "Draft2"
                        },
                        "usage" => "preview"
                      },
                      %{
                        "article" => %{
-                         "previewImageFile" => %{"remoteLocation" => "http://a.de/0801345801"},
+                         "previewImageFile" => %{"remoteLocation" => _},
                          "title" => "Draft1"
                        },
                        "usage" => "preview"
@@ -311,7 +311,7 @@ defmodule ApiWeb.FileResolverTest do
                    ]
                  }
                }
-             }
+             } = res
     end
 
     test "returns public file's usage for admin user", %{
@@ -393,8 +393,7 @@ defmodule ApiWeb.FileResolverTest do
       admin_jwt: admin_jwt,
       admin_account: admin_account
     } do
-      admin_dir =
-        Api.Repo.get_by!(Api.Accounts.Directory, name: "podcast", user_id: admin_account.id)
+      admin_dir = Api.Repo.get_by!(Directory, name: "podcast", user_id: admin_account.id)
 
       res =
         build_conn()
@@ -682,14 +681,18 @@ defmodule ApiWeb.FileResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @query, variables: %{id: 0, filename: "neuername.test"})
+        |> post("/api",
+          query: @query,
+          variables: %{id: "00000000-0000-0000-0000-000000000000", filename: "neuername.test"}
+        )
         |> json_response(200)
 
       assert %{
                "data" => %{"updateFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Die Datei mit der id 0 wurde nicht gefunden.",
+                   "message" =>
+                     "Die Datei mit der id 00000000-0000-0000-0000-000000000000 wurde nicht gefunden.",
                    "path" => ["updateFile"]
                  }
                ]
@@ -854,7 +857,7 @@ defmodule ApiWeb.FileResolverTest do
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @mutation,
-          variables: %{file: "file", parentDirectoryId: 0},
+          variables: %{file: "file", parentDirectoryId: "00000000-0000-0000-0000-000000000000"},
           file: image_upload
         )
         |> json_response(200)
@@ -864,7 +867,8 @@ defmodule ApiWeb.FileResolverTest do
       assert res["errors"] == [
                %{
                  "locations" => [%{"column" => 3, "line" => 2}],
-                 "message" => "Der Ordner mit der id 0 wurde nicht gefunden.",
+                 "message" =>
+                   "Der Ordner mit der id 00000000-0000-0000-0000-000000000000 wurde nicht gefunden.",
                  "path" => ["uploadFile"]
                }
              ]
@@ -1020,14 +1024,15 @@ defmodule ApiWeb.FileResolverTest do
       res =
         build_conn()
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
-        |> post("/api", query: @mutation, variables: %{id: 0})
+        |> post("/api", query: @mutation, variables: %{id: "00000000-0000-0000-0000-000000000000"})
         |> json_response(200)
 
       assert %{
                "data" => %{"deleteFile" => nil},
                "errors" => [
                  %{
-                   "message" => "Datei mit der id 0 nicht gefunden.",
+                   "message" =>
+                     "Datei mit der id 00000000-0000-0000-0000-000000000000 nicht gefunden.",
                    "path" => ["deleteFile"]
                  }
                ]
