@@ -107,7 +107,12 @@ defmodule Api.Storage do
                content_type: file.mime_type,
                path: filepath
              },
-             file.id
+               case file do
+                 %{file_id: fileid, id: id} ->
+                   Path.join(fileid, id)
+                 file ->
+                   file.id
+               end
            ) do
       entity
       |> Repo.insert()

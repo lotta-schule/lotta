@@ -4,7 +4,7 @@ defmodule Api.MixProject do
   def project do
     [
       app: :api,
-      version: "2.5.12",
+      version: "2.5.13",
       name: "Lotta API Server",
       source_url: "https://gitlab.com/medienportal/api-server",
       homepage_url: "https://lotta.schule",
