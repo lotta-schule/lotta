@@ -50,9 +50,14 @@ defmodule Api.Release do
   end
 
   def migrate_files_to_default_remote_storage() do
+    migrate_filelikes_in_chunks(Api.Storage.File)
+    migrate_filelikes_in_chunks(Api.Storage.FileConversion)
+  end
+
+  defp migrate_filelikes_in_chunks(module) do
     store = Api.Storage.RemoteStorage.default_store()
 
-    from(f in Api.Storage.File,
+    from(f in module,
       join: rs in Api.Storage.RemoteStorageEntity,
       on: f.remote_storage_entity_id == rs.id,
       where: rs.store_name != ^store,

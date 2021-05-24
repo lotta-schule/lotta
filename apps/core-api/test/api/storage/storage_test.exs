@@ -73,7 +73,7 @@ defmodule Api.StorageTest do
         end)
         |> Timex.parse!("{RFC1123}")
 
-      user_file =
+      {:ok, user_file} =
         user_file
         |> Storage.set_remote_storage("minio")
 
