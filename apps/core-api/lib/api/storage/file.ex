@@ -25,9 +25,9 @@ defmodule Api.Storage.File do
     field :media_duration, :float
 
     has_many :file_conversions, FileConversion
-    belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id
+    belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id, on_replace: :delete
     belongs_to :user, User
-    belongs_to :parent_directory, Directory, type: :binary_id
+    belongs_to :parent_directory, Directory, type: :binary_id, on_replace: :delete
 
     many_to_many(
       :content_modules,
