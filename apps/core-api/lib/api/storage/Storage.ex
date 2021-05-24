@@ -109,7 +109,7 @@ defmodule Api.Storage do
       file
       |> Repo.preload(:remote_storage_entity)
       |> Ecto.Changeset.change()
-      |> put_assoc(:remote_storage_entity, entity)
+      |> Ecto.Changeset.put_assoc(:remote_storage_entity, entity)
       |> Repo.update()
     else
       {:ok, {{_, _status_code, status_text}, _headers, body}} ->
