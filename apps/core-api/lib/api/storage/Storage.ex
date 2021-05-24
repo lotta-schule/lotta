@@ -78,8 +78,8 @@ defmodule Api.Storage do
   Change the Remote storage of the file, that means, move file data to another location.
   """
   @doc since: "2.5.0"
-  @spec set_remote_storage(File.t() | FileConversion.t(), String.t()) ::
-          {:ok, File.t()} | {:error, Changeset.t()} | {:error, atom()}
+  @spec set_remote_storage(Api.Storage.File.t() | Api.Storage.FileConversion.t(), String.t()) ::
+          {:ok, Api.Storage.File.t()} | {:error, Changeset.t()} | {:error, atom()}
   def set_remote_storage(file, store_name) when is_binary(store_name) do
     file =
       file
@@ -97,7 +97,13 @@ defmodule Api.Storage do
          {:ok, entity} <-
            RemoteStorage.create(
              %Upload{
-               filename: file.filename,
+               filename:
+                 case file do
+                   %{filename: filename} ->
+                     filename
+                   _ ->
+                     ""
+                 end,
                content_type: file.mime_type,
                path: filepath
              },
