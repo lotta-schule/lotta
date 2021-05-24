@@ -23,7 +23,7 @@ defmodule Api.Storage.FileConversion do
     field :media_duration, :float
 
     belongs_to :file, File, type: :binary_id
-    belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id
+    belongs_to :remote_storage_entity, RemoteStorageEntity, type: :binary_id, on_replace: :nilify
 
     timestamps()
   end
