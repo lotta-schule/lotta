@@ -13,17 +13,17 @@ defmodule Api.Repo.Migrations.ChangeFileIdsToBinaryIds do
     flush()
 
     alter table(:file_conversions) do
-      add(:uuid, :uuid, null: false, default: fragment("gen_random_uuid()"))
+      add(:uuid, :uuid, null: false, default: fragment("public.gen_random_uuid()"))
       add(:file_uuid, :uuid)
     end
 
     alter table(:files) do
-      add(:uuid, :uuid, null: false, default: fragment("gen_random_uuid()"))
+      add(:uuid, :uuid, null: false, default: fragment("public.gen_random_uuid()"))
       add(:parent_directory_uuid, :uuid)
     end
 
     alter table(:directories) do
-      add(:uuid, :uuid, null: false, default: fragment("gen_random_uuid()"))
+      add(:uuid, :uuid, null: false, default: fragment("public.gen_random_uuid()"))
       add(:parent_directory_uuid, :uuid)
     end
 

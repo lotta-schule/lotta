@@ -7,7 +7,7 @@ defmodule Api.Repo.Migrations.CreateRemoteStorageEntities do
 
   def up do
     create table(:remote_storage_entities, primary_key: false) do
-      add(:id, :uuid, null: false, primary_key: true, default: fragment("gen_random_uuid()"))
+      add(:id, :uuid, null: false, primary_key: true, default: fragment("public.gen_random_uuid()"))
       add(:store_name, :string)
       add(:path, :string)
 
