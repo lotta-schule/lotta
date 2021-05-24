@@ -7,7 +7,7 @@ defmodule Api.Repo.Migrations.ChangeFileIdsToBinaryIds do
     drop(table(:tenants))
 
     Repo.query!("
-      CREATE EXTENSION pgcrypto IF NOT EXISTS;
+      CREATE EXTENSION IF NOT EXISTS pgcrypto CASCADE;
     ")
 
     flush()
