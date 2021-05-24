@@ -13,7 +13,7 @@ defmodule Api.Storage.RemoteStorage.Strategy.S3 do
     |> S3.upload(
       config[:config][:bucket],
       path,
-      acl: :bucket_owner_full_control,
+      grant_read: [uri: "http://acs.amazonaws.com/groups/global/AllUsers", uri: "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"],
       content_type: content_type
     )
     |> ExAws.request()
