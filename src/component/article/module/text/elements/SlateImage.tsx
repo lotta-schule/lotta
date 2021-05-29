@@ -5,8 +5,9 @@ import {
     useSelected,
     useSlateStatic,
 } from 'slate-react';
+import { ButtonGroup } from 'component/general/button/ButtonGroup';
+import { Button } from 'component/general/button/Button';
 import { makeStyles, Theme } from '@material-ui/core';
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import {
     FormatAlignRight,
     FormatAlignLeft,
@@ -108,56 +109,51 @@ export const SlateImage = React.memo<SlateImageProps>(
                             flexDirection: 'column',
                         }}
                     >
-                        <ToggleButtonGroup
-                            size={'small'}
-                            value={imageElement.alignment ?? 'right'}
-                        >
-                            <ToggleButton
+                        <ButtonGroup>
+                            <Button
+                                small
+                                selected={imageElement.alignment === 'left'}
                                 value={'left'}
                                 onMouseDown={setElementOptions({
                                     alignment: 'left',
                                 })}
-                            >
-                                <FormatAlignLeft />
-                            </ToggleButton>
-                            <ToggleButton
-                                value={'right'}
+                                icon={<FormatAlignLeft />}
+                            />
+                            <Button
+                                small
+                                selected={imageElement.alignment === 'right' || imageElement.alignment === undefined}
                                 onMouseDown={setElementOptions({
                                     alignment: 'right',
                                 })}
-                            >
-                                <FormatAlignRight />
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                        <ToggleButtonGroup
-                            size={'small'}
-                            value={imageElement.size ?? 'middle'}
-                        >
-                            <ToggleButton
-                                value={'large'}
+                                icon={<FormatAlignRight />}
+                            />
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button
+                                small
+                                selected={imageElement.size === 'large'}
                                 onMouseDown={setElementOptions({
                                     size: 'large',
                                 })}
-                            >
-                                <PhotoSizeSelectActual />
-                            </ToggleButton>
-                            <ToggleButton
-                                value={'middle'}
+                                icon={<PhotoSizeSelectActual />}
+                            />
+                            <Button
+                                small
+                                selected={imageElement.size === 'middle' || ! imageElement.size}
                                 onMouseDown={setElementOptions({
                                     size: 'middle',
                                 })}
-                            >
-                                <PhotoSizeSelectLarge />
-                            </ToggleButton>
-                            <ToggleButton
-                                value={'small'}
+                                icon={<PhotoSizeSelectLarge />}
+                            />
+                            <Button
+                                small
+                                selected={imageElement.size === 'small'}
                                 onMouseDown={setElementOptions({
                                     size: 'small',
                                 })}
-                            >
-                                <PhotoSizeSelectSmall />
-                            </ToggleButton>
-                        </ToggleButtonGroup>
+                                icon={<PhotoSizeSelectSmall />}
+                            />
+                        </ButtonGroup>
                     </div>
                 )}
                 {children}
