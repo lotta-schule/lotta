@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'sticky',
             backgroundColor: theme.palette.background.paper,
             padding: theme.spacing(1),
+            zIndex: 100,
         },
         toolbarButtonGroup: {
             marginRight: theme.spacing(0.5),

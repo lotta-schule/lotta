@@ -245,7 +245,7 @@ export const withLinks = (editor: ReactEditor) => {
 //
 
 export const insertImage = (editor: Editor, url: string) => {
-    const image: Image = { type: 'image', src: url };
+    const image: Image = { type: 'image', src: url, children: [{ text: '' }] };
     Transforms.insertNodes(editor, image);
 };
 

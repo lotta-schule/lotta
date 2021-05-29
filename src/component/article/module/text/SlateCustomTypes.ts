@@ -33,6 +33,7 @@ export type Image = {
     src: string;
     alignment?: string;
     size?: string;
+    children: FormattedText[];
 };
 
 export type Link = {
