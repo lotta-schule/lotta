@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-    Button,
     Card,
     CardContent,
     CardActions,
@@ -19,11 +18,11 @@ import {
 } from '@material-ui/core';
 import { ArticleModel, FileModel } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useQuery, useMutation } from '@apollo/client';
+import { Button } from 'component/general/button/Button';
+import { useQuery, useApolloClient, useMutation } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { GetRelevantFilesInUsageQuery } from 'api/query/GetRelevantFilesInUsage';
 import { useSystem } from 'util/client/useSystem';
-import { useOnLogout } from 'util/user/useOnLogout';
 import { ArticlesList } from 'component/profile/ArticlesList';
 import { ProfileDeleteFileSelection } from './ProfileDeleteFileSelection';
 import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
@@ -73,7 +72,7 @@ export const ProfileDelete = React.memo(() => {
     const styles = useStyles();
 
     const history = useHistory();
-    const onLogout = useOnLogout();
+    const apolloClient = useApolloClient();
 
     const system = useSystem();
     const [
@@ -136,11 +135,9 @@ export const ProfileDelete = React.memo(() => {
         },
         onCompleted: () => {
             setIsConfirmDialogOpen(false);
-            onLogout({
-                update: () => {
-                    history.push('/');
-                },
-            });
+            history.push('/');
+            localStorage.clear();
+            apolloClient.resetStore();
         },
         onError: () => setCurrentStep((s) => s - 1),
     });
@@ -154,11 +151,9 @@ export const ProfileDelete = React.memo(() => {
         const button =
             currentStep < ProfileDeleteStep.ConfirmDeletion ? (
                 <Button
-                    size={'small'}
-                    variant={'outlined'}
-                    color={'secondary'}
+                    small
                     disabled={isLoading}
-                    endIcon={<NavigateNext />}
+                    icon={<NavigateNext />}
                     onClick={() => {
                         setCurrentStep((s) => s + 1);
                     }}
@@ -167,11 +162,10 @@ export const ProfileDelete = React.memo(() => {
                 </Button>
             ) : (
                 <Button
-                    size={'small'}
-                    variant={'outlined'}
+                    small
                     className={styles.deleteButton}
                     disabled={isLoading}
-                    startIcon={<Warning />}
+                    icon={<Warning />}
                     onClick={() => {
                         setIsConfirmDialogOpen(true);
                     }}
@@ -183,10 +177,8 @@ export const ProfileDelete = React.memo(() => {
             <CardActions className={styles.cardActions}>
                 <Grow in={!isLoading && currentStep > ProfileDeleteStep.Start}>
                     <Button
-                        size={'small'}
-                        color={'secondary'}
-                        variant={'outlined'}
-                        startIcon={<NavigateBefore />}
+                        small
+                        icon={<NavigateBefore />}
                         disabled={currentStep <= ProfileDeleteStep.Start}
                         onClick={() => setCurrentStep((s) => s - 1)}
                         aria-hidden={
@@ -555,15 +547,13 @@ export const ProfileDelete = React.memo(() => {
                 <DialogActions>
                     <Button
                         onClick={() => setIsConfirmDialogOpen(false)}
-                        color={'primary'}
                         autoFocus
                     >
                         Abbrechen
                     </Button>
                     <Button
                         onClick={() => destroyAccount()}
-                        variant={'outlined'}
-                        startIcon={<DeleteForever />}
+                        icon={<DeleteForever />}
                         className={styles.deleteButton}
                         disabled={isLoading}
                     >

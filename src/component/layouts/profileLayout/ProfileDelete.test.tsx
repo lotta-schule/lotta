@@ -17,14 +17,6 @@ import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { ProfileDelete } from './ProfileDelete';
 import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
 
-// FIXME:
-// There are massive problems here with both of the queries (GetOwnArticles and GetRelevantFilesUsage)
-// This is the second time I stumble upon this and it took me hours of productive time.
-// I will delay this again, but this needs reel deep debugging into apollo, there is something I don't get
-// or maybe it is a bug on their side.
-// For now, the tests do not test for when non-null responses return from the server, so there is very much
-// of the actual use of the component not covered and this is shit // Alexis
-
 describe('component/layouts/profileLayout/ProfileDelete', () => {
     const filesAndDirs = getPrivateAndPublicFiles(SomeUser);
 
