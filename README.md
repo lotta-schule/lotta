@@ -22,7 +22,7 @@ than copy over the .env.sample to .env and start with:
 You will need an [API server](https://gitlab.com/medienportal/api-server) up
 and running in order to start.
 
-You may have to run `docker-compose run app npm install` to update your dependencies.
+You may have to run `docker-compose run web npm install` to update your dependencies.
 
 - Start the development server and storyboard together
 
@@ -56,7 +56,7 @@ npm run storybook
 You are missing some dependencies. You probably need to run
 
 ``` bash
-docker-compose run app npm install
+docker-compose run web npm install
 ```
 
 #### Failing tests on Gitlab CI
@@ -69,5 +69,5 @@ A test for a component is found in the same file, but with the ending `.test.tsx
 You can execute the tests locally with the command:
 
 ``` bash
-docker-compose run app npm test
+docker-compose run web npm test
 ```
