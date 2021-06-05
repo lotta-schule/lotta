@@ -1,4 +1,4 @@
-import React, { Reducer, FC, Suspense, useReducer, useEffect } from 'react';
+import * as React from 'react';
 import { pick } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -10,7 +10,7 @@ import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
-import { ClientModel, UserModel } from 'model';
+import { TenantModel, UserModel } from 'model';
 import { theme } from '../theme';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
 import { i18n } from 'i18n';
@@ -31,12 +31,14 @@ export interface TestSetupOptions {
     currentUser?: UserModel;
     additionalMocks?: MockedResponse[];
     useCache?: boolean;
-    system?: ClientModel;
+    tenant?: TenantModel;
 }
 
-const ProviderFactory = (options: TestSetupOptions): FC => ({ children }) => {
+const ProviderFactory = (options: TestSetupOptions): React.FC => ({
+    children,
+}) => {
     const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
-        pick(options, ['currentUser', 'system'])
+        pick(options, ['currentUser', 'tenant'])
     );
 
     const history = createMemoryHistory({
@@ -68,7 +70,7 @@ const ProviderFactory = (options: TestSetupOptions): FC => ({ children }) => {
                             cache={options.useCache ? cache : undefined}
                         >
                             <UploadQueueProvider>
-                                <Suspense
+                                <React.Suspense
                                     fallback={
                                         <span data-testid="LazyLoadIndicator">
                                             Lazy Load ES6 Module
@@ -78,7 +80,7 @@ const ProviderFactory = (options: TestSetupOptions): FC => ({ children }) => {
                                     <Router history={history}>
                                         {children}
                                     </Router>
-                                </Suspense>
+                                </React.Suspense>
                             </UploadQueueProvider>
                         </MockedProvider>
                     </CloudimageProvider>
@@ -121,18 +123,18 @@ export interface TestFileExplorerContextProviderProps {
     defaultValue?: Partial<typeof defaultFileExplorerState>;
     onUpdateState?(currentState: typeof defaultFileExplorerState): void;
 }
-export const TestFileExplorerContextProvider: FC<TestFileExplorerContextProviderProps> = ({
+export const TestFileExplorerContextProvider: React.FC<TestFileExplorerContextProviderProps> = ({
     children,
     defaultValue,
     onUpdateState,
 }) => {
-    const [state, dispatch] = useReducer<
-        Reducer<typeof defaultFileExplorerState, FileExploreerStateAction>
+    const [state, dispatch] = React.useReducer<
+        React.Reducer<typeof defaultFileExplorerState, FileExploreerStateAction>
     >(fileExplorerStateReducer, {
         ...defaultFileExplorerState,
         ...defaultValue,
     });
-    useEffect(() => {
+    React.useEffect(() => {
         onUpdateState?.(state);
         // eslint-disable-next-line
     }, [state]);

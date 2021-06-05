@@ -6,9 +6,9 @@ import {
     Button,
     DialogActions,
 } from '@material-ui/core';
-import { ClientModel, UserGroupModel, ID } from 'model';
+import { TenantModel, UserGroupModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
-import { GetSystemQuery } from 'api/query/GetSystemQuery';
+import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { DeleteUserGroupMutation } from 'api/mutation/DeleteUserGroupMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -31,15 +31,15 @@ export const DeleteUserGroupDialog = memo<DeleteUserGroupDialogProps>(
         >(DeleteUserGroupMutation, {
             update: (cache, { data }) => {
                 if (data && data.group) {
-                    const readSystemResult = cache.readQuery<{
-                        system: ClientModel;
-                    }>({ query: GetSystemQuery });
-                    cache.writeQuery<{ system: ClientModel }>({
-                        query: GetSystemQuery,
+                    const readTenantResult = cache.readQuery<{
+                        tenant: TenantModel;
+                    }>({ query: GetTenantQuery });
+                    cache.writeQuery<{ tenant: TenantModel }>({
+                        query: GetTenantQuery,
                         data: {
-                            system: {
-                                ...readSystemResult!.system,
-                                groups: readSystemResult!.system.groups.filter(
+                            tenant: {
+                                ...readTenantResult!.tenant,
+                                groups: readTenantResult!.tenant.groups.filter(
                                     (g) => g.id !== data.group.id
                                 ),
                             },

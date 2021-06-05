@@ -19,7 +19,7 @@ import { GroupSelect } from 'component/edit/GroupSelect';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
-import { useUserGroups } from 'util/client/useUserGroups';
+import { useUserGroups } from 'util/tenant/useUserGroups';
 
 const useStyles = makeStyles((theme: Theme) => ({
     header: {

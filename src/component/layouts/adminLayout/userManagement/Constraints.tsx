@@ -10,17 +10,17 @@ import {
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { SdStorage } from '@material-ui/icons';
-import { useSystem } from 'util/client/useSystem';
+import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
-import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
+import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
 
 export const Constraints = React.memo(() => {
-    const system = useSystem();
+    const tenant = useTenant();
     const defaultLimitRef = React.useRef(20);
     const [value, setValue] = React.useState(
-        system.userMaxStorageConfig ?? defaultLimitRef.current
+        tenant.configuration.userMaxStorageConfig ?? defaultLimitRef.current
     );
 
     const isLimitSet = value >= 0;
@@ -36,10 +36,17 @@ export const Constraints = React.memo(() => {
         }
     }, [isLimitSet, value]);
 
-    const [updateSystem, { loading: isLoading, error }] = useMutation(
-        UpdateSystemMutation,
+    const [updateTenant, { loading: isLoading, error }] = useMutation(
+        UpdateTenantMutation,
         {
-            variables: { system: { userMaxStorageConfig: value } },
+            variables: {
+                tenant: {
+                    configuration: {
+                        ...tenant.configuration,
+                        userMaxStorageConfig: value,
+                    },
+                },
+            },
         }
     );
 
@@ -138,7 +145,7 @@ export const Constraints = React.memo(() => {
                         </Grid>
                     </Grid>
                 </animated.div>
-                <Button onClick={() => updateSystem()} disabled={isLoading}>
+                <Button onClick={() => updateTenant()} disabled={isLoading}>
                     Speichern
                 </Button>
             </div>

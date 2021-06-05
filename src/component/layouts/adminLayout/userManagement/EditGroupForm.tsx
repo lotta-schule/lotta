@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UserGroupModel, ID, UserGroupInputModel } from 'model';
-import { useUserGroups } from 'util/client/useUserGroups';
+import { useUserGroups } from 'util/tenant/useUserGroups';
 import {
     CircularProgress,
     Checkbox,

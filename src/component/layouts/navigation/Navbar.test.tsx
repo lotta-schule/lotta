@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MemoryHistory } from 'history';
-import { FaecherCategory, FrancaisCategory } from 'test/fixtures/System';
+import { FaecherCategory, FrancaisCategory } from 'test/fixtures/Tenant';
 import { render, waitFor } from 'test/util';
 import { Navbar } from './Navbar';
 

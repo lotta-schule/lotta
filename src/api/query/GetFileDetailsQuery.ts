@@ -47,7 +47,7 @@ export const GetFileDetailsQuery = gql`
                         }
                     }
                 }
-                ... on FileSystemUsageLocation {
+                ... on FileTenantUsageLocation {
                     usage
                 }
                 ... on FileUserUsageLocation {
