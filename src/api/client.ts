@@ -79,7 +79,11 @@ const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
         return [...obj.map((o) => mutateVariableInputObject(o, propToDelete))];
     } else if (obj !== null && obj !== undefined && typeof obj === 'object') {
         return Object.keys(obj).reduce((newObj, key) => {
-            if (key === 'configuration' && typeof obj[key] === 'object') {
+            if (
+                key === 'configuration' &&
+                typeof obj[key] === 'object' &&
+                !obj[key]['__typename']
+            ) {
                 return {
                     ...newObj,
                     [key]: JSON.stringify(obj[key]),

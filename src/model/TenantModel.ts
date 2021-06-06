@@ -10,7 +10,7 @@ export interface TenantModel {
     host: string;
     groups: UserGroupModel[];
     configuration: {
-        userMaxStorageConfig: number;
+        userMaxStorageConfig: string;
         customTheme?: any;
         logoImageFile?: FileModel | null;
         backgroundImageFile?: FileModel | null;

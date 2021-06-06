@@ -27,7 +27,7 @@ export const tenant = {
     host: 'info.lotta.schule',
     groups: [adminGroup, lehrerGroup, elternGroup, schuelerGroup],
     configuration: {
-        userMaxStorageConfig: 20,
+        userMaxStorageConfig: '20',
         logoImageFile: null,
         backgroundImageFile: null,
     },

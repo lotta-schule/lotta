@@ -18,9 +18,9 @@ import { animated, useSpring } from 'react-spring';
 
 export const Constraints = React.memo(() => {
     const tenant = useTenant();
-    const defaultLimitRef = React.useRef(20);
+    const lastSetLimitRef = React.useRef(20);
     const [value, setValue] = React.useState(
-        tenant.configuration.userMaxStorageConfig ?? defaultLimitRef.current
+        parseInt(tenant.configuration.userMaxStorageConfig, 10) ?? -1
     );
 
     const isLimitSet = value >= 0;
@@ -32,7 +32,7 @@ export const Constraints = React.memo(() => {
 
     React.useEffect(() => {
         if (isLimitSet) {
-            defaultLimitRef.current = value;
+            lastSetLimitRef.current = value;
         }
     }, [isLimitSet, value]);
 
@@ -43,7 +43,7 @@ export const Constraints = React.memo(() => {
                 tenant: {
                     configuration: {
                         ...tenant.configuration,
-                        userMaxStorageConfig: value,
+                        userMaxStorageConfig: String(value),
                     },
                 },
             },
@@ -76,7 +76,7 @@ export const Constraints = React.memo(() => {
                         <Checkbox
                             checked={!isLimitSet}
                             onChange={(_e, checked) =>
-                                setValue(checked ? -1 : defaultLimitRef.current)
+                                setValue(checked ? -1 : lastSetLimitRef.current)
                             }
                         />
                     }
@@ -90,7 +90,7 @@ export const Constraints = React.memo(() => {
                         <Checkbox
                             checked={isLimitSet}
                             onChange={(_e, checked) =>
-                                setValue(checked ? defaultLimitRef.current : -1)
+                                setValue(checked ? lastSetLimitRef.current : -1)
                             }
                         />
                     }
@@ -120,7 +120,7 @@ export const Constraints = React.memo(() => {
                             <TextField
                                 label={''}
                                 value={
-                                    isLimitSet ? value : defaultLimitRef.current
+                                    isLimitSet ? value : lastSetLimitRef.current
                                 }
                                 onChange={({ currentTarget }) => {
                                     if (currentTarget.value) {

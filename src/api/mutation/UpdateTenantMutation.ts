@@ -7,7 +7,18 @@ export const UpdateTenantMutation = gql`
             title
             slug
             host
-            configuration
+            configuration {
+                backgroundImageFile {
+                    id
+                    remoteLocation
+                }
+                logoImageFile {
+                    id
+                    remoteLocation
+                }
+                customTheme
+                userMaxStorageConfig
+            }
         }
     }
 `;
