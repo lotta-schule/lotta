@@ -16,6 +16,8 @@ import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { CssVariables } from './CssVariables';
 import merge from 'lodash/merge';
 import ServerDownImage from './ServerDownImage.svg';
+import TenantNotFoundImage from './TenantNotFoundImage.svg';
+import styles from './App.module.scss';
 
 const AdminLayout = React.lazy(
     () => import('./layouts/adminLayout/AdminLayout')
@@ -44,7 +46,7 @@ export const App = React.memo(() => {
         loading: isLoadingTenant,
         error,
         called: calledTenant,
-    } = useQuery<{ tenant: TenantModel }>(GetTenantQuery);
+    } = useQuery<{ tenant: TenantModel | null }>(GetTenantQuery);
     const isLoadingCurrentUser = useCurrentUser() === undefined;
     useCategories();
 
@@ -58,23 +60,10 @@ export const App = React.memo(() => {
 
     if (error) {
         return (
-            <>
-                <h1 style={{ fontFamily: 'sans-serif', marginLeft: '1em' }}>
-                    Server nicht erreichbar
-                </h1>
-                <div
-                    style={{
-                        fontFamily: 'sans-serif',
-                        margin: '1em',
-                        textAlign: 'center',
-                    }}
-                >
+            <section className={styles.error}>
+                <h1>Server nicht erreichbar</h1>
+                <div>
                     <img
-                        style={{
-                            display: 'inline-block',
-                            maxWidth: '80%',
-                            maxHeight: '70vh',
-                        }}
                         src={ServerDownImage}
                         alt={'Der Server ist nicht erreichbar'}
                     />
@@ -85,11 +74,40 @@ export const App = React.memo(() => {
                     </p>
                     <p>{error.message}</p>
                 </div>
-            </>
+            </section>
         );
     }
 
-    const { tenant } = data!;
+    const tenant = data?.tenant;
+
+    if (!tenant) {
+        return (
+            <section className={styles.error}>
+                <h1>Seite nicht gefunden.</h1>
+                <div>
+                    <img
+                        src={TenantNotFoundImage}
+                        alt={'Diese Seite existiert nicht'}
+                    />
+                    <p>
+                        Unter dieser Adresse ist aktuell keine lotta-Plattform
+                        zu erreichen. Überprüfe die Adresse in der Adressleiste.
+                    </p>
+                    <p className={styles.secondary}>
+                        Sie haben Interesse, ein eigenes lotta unter dieser
+                        Adresse anzubieten? Weitere Informationen gibt es auf{' '}
+                        <a
+                            href="https://lotta.schule"
+                            title="Zur Lotta-Projektseite"
+                        >
+                            lotta.schule
+                        </a>
+                        .
+                    </p>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <ThemeProvider
