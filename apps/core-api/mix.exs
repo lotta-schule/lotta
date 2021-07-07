@@ -1,21 +1,21 @@
-defmodule Api.MixProject do
+defmodule Lotta.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :api,
+      app: :lotta,
       version: "2.5.13",
       name: "Lotta API Server",
       source_url: "https://gitlab.com/medienportal/api-server",
       homepage_url: "https://lotta.schule",
-      elixir: "~> 1.10",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
       releases: [
-        api: [
+        lotta: [
           include_executables_for: [:unix]
         ]
       ],
@@ -27,7 +27,7 @@ defmodule Api.MixProject do
         "coveralls.html": :test
       ],
       docs: [
-        main: "Api",
+        main: "Lotta",
         logo: "priv/static/logo.png",
         extras: ["README.md"]
       ],
@@ -40,7 +40,7 @@ defmodule Api.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Api.Application, []},
+      mod: {Lotta.Application, []},
       extra_applications: [
         :lager,
         :logger,
@@ -97,14 +97,14 @@ defmodule Api.MixProject do
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:elasticsearch, "~> 1.0"},
-      # Teset
+      # Test
       {:mock, "~> 0.3", only: :test},
-      {:junit_formatter, "~> 3.2", only: [:test]},
+      {:junit_formatter, "~> 3.2", only: :test},
       # Prod
-      {:libcluster, "~> 3.2"},
+      {:libcluster, "~> 3.2", only: :prod},
       # Development
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       # live dashboard
       {:telemetry_poller, "~> 0.5"},

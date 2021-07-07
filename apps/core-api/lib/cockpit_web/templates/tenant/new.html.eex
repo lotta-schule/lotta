@@ -1,0 +1,5 @@
+<h1>Kunde anlegen</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.tenant_path(@conn, :create)) %>
+
+<span><%= link "Zurück", to: Routes.tenant_path(@conn, :index) %></span>

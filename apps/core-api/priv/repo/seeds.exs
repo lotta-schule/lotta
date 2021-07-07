@@ -1,1 +1,1 @@
-Api.Repo.Seeder.seed()
+Lotta.Repo.Seeder.seed()

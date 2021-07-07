@@ -1,12 +1,14 @@
-defmodule Api.Fixtures do
+defmodule Lotta.Fixtures do
   @moduledoc false
 
-  alias Api.Repo
-  alias Api.System.Category
-  alias Api.Accounts.{User, UserGroup}
-  alias Api.Storage.File
-  alias Api.Content.{Article}
-  alias Api.Messages.Message
+  import Ecto.Query
+
+  alias Lotta.Repo
+  alias Lotta.Tenants.Category
+  alias Lotta.Accounts.{User, UserGroup}
+  alias Lotta.Storage.File
+  alias Lotta.Content.{Article}
+  alias Lotta.Messages.Message
 
   def fixture(name, params \\ %{})
 
@@ -24,7 +26,7 @@ defmodule Api.Fixtures do
     {:ok, category} =
       Category
       |> struct(fixture(:valid_category_attrs))
-      |> Repo.insert(on_conflict: :nothing)
+      |> Repo.insert(on_conflict: :nothing, prefix: "tenant_test")
 
     category
   end
@@ -42,7 +44,7 @@ defmodule Api.Fixtures do
   def fixture(:user_group, is_admin_group: true) do
     %UserGroup{}
     |> Map.merge(fixture(:valid_user_group_attrs, is_admin_group: true))
-    |> Repo.insert!()
+    |> Repo.insert!(prefix: "tenant_test")
   end
 
   def fixture(:user_group, _) do
@@ -97,7 +99,12 @@ defmodule Api.Fixtures do
 
     email = Map.get(usr, :email)
 
-    ((email && Repo.get_by(User, email: email)) || Repo.insert!(usr, returning: true))
+    ((email &&
+        Repo.one(
+          from(u in User, where: u.email == ^email),
+          prefix: "tenant_test"
+        )) ||
+       Repo.insert!(usr, returning: true, prefix: "tenant_test"))
     |> Map.replace(:password, nil)
   end
 
@@ -107,9 +114,9 @@ defmodule Api.Fixtures do
       |> struct(fixture(:valid_admin_attrs))
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:groups, [fixture(:user_group, is_admin_group: true)])
-      |> Repo.insert()
+      |> Repo.insert(prefix: "tenant_test")
 
-    Repo.get(User, user.id)
+    Repo.get(User, user.id, prefix: "tenant_test")
   end
 
   def fixture(:valid_file_attrs, _) do
@@ -135,9 +142,9 @@ defmodule Api.Fixtures do
       |> struct(fixture(:valid_file_attrs))
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:user, user)
-      |> Repo.insert()
+      |> Repo.insert(prefix: "tenant_test")
 
-    Repo.get!(File, file.id)
+    Repo.get!(File, file.id, prefix: "tenant_test")
   end
 
   # Content
@@ -158,7 +165,7 @@ defmodule Api.Fixtures do
     |> Map.merge(fixture(:valid_article_attrs))
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:users, [user])
-    |> Repo.insert!()
+    |> Repo.insert!(prefix: "tenant_test")
   end
 
   def fixture(:unpublished_article, %User{} = user) do
@@ -167,7 +174,7 @@ defmodule Api.Fixtures do
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:users, [user])
     |> Ecto.Changeset.put_assoc(:category, nil)
-    |> Repo.insert!(on_conflict: :nothing, returning: true)
+    |> Repo.insert!(on_conflict: :nothing, returning: true, prefix: "tenant_test")
   end
 
   # Messages
@@ -183,6 +190,6 @@ defmodule Api.Fixtures do
   def fixture(:message, params) do
     %Message{}
     |> Map.merge(fixture(:valid_message_attrs, params))
-    |> Repo.insert!()
+    |> Repo.insert!(prefix: "tenant_test")
   end
 end

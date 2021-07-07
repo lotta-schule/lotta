@@ -1,14 +1,20 @@
-defmodule ApiWeb.MessagesResolverTest do
+defmodule LottaWeb.MessagesResolverTest do
   @moduledoc false
 
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.Accounts.{User, UserGroup}
-  alias Api.Messages.Message
+  import Ecto.Query
+
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.{Repo, Tenants}
+  alias Lotta.Accounts.{User, UserGroup}
+  alias Lotta.Messages.Message
+
+  @prefix "tenant_test"
 
   setup do
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
+
     emails = [
       "alexis.rinaldoni@lotta.schule",
       "eike.wiewiorra@lotta.schule"
@@ -16,10 +22,39 @@ defmodule ApiWeb.MessagesResolverTest do
 
     [{user, user_jwt}, {user2, user2_jwt}] =
       Enum.map(emails, fn email ->
-        user = Repo.get_by!(User, email: email)
-        {:ok, jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+        user =
+          Repo.one!(
+            from(u in User,
+              where: u.email == ^email
+            ),
+            prefix: tenant.prefix
+          )
+
+        {:ok, jwt, _} = AccessToken.encode_and_sign(user)
         {user, jwt}
       end)
+
+    lehrer_group =
+      Repo.one!(
+        from(ug in UserGroup, where: ug.name == ^"Lehrer"),
+        prefix: tenant.prefix
+      )
+
+    schueler_group =
+      Repo.one!(
+        from(ug in UserGroup,
+          where: ug.name == ^"Schüler"
+        ),
+        prefix: tenant.prefix
+      )
+
+    message =
+      Repo.one!(
+        from(m in Message,
+          where: m.content == "OK, alles bereit?"
+        ),
+        prefix: tenant.prefix
+      )
 
     {:ok,
      %{
@@ -27,9 +62,10 @@ defmodule ApiWeb.MessagesResolverTest do
        user_jwt: user_jwt,
        user2: user2,
        user2_jwt: user2_jwt,
-       lehrer_group: Repo.get_by!(UserGroup, name: "Lehrer"),
-       schueler_group: Repo.get_by!(UserGroup, name: "Schüler"),
-       message: Repo.get_by!(Message, content: "OK, alles bereit?")
+       lehrer_group: lehrer_group,
+       schueler_group: schueler_group,
+       message: message,
+       tenant: tenant
      }}
   end
 
@@ -54,6 +90,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "returns all messages for a user", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -99,6 +136,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "returns all messages for a user's group", %{user2_jwt: user2_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -144,6 +182,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "return an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -183,6 +222,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "send a message to another user", %{user2: user2, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -207,6 +247,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "send a message to a group", %{user2_jwt: user2_jwt, lehrer_group: lehrer_group} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -229,6 +270,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "return an error if user is not logged in", %{lehrer_group: lehrer_group} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{message: %{content: "Hallo.", recipient_group: %{id: lehrer_group.id}}}
@@ -252,6 +294,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "return an error if no recipient is given", %{user2_jwt: user2_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query, variables: %{message: %{content: "Hallo."}})
         |> json_response(200)
@@ -277,6 +320,7 @@ defmodule ApiWeb.MessagesResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -307,6 +351,7 @@ defmodule ApiWeb.MessagesResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -338,9 +383,10 @@ defmodule ApiWeb.MessagesResolverTest do
     }
     """
 
-    test "delete own message", %{user_jwt: user_jwt, message: message} do
+    test "delete own message", %{user_jwt: user_jwt, message: message, tenant: t} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -359,13 +405,14 @@ defmodule ApiWeb.MessagesResolverTest do
              }
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(Message, message.id)
+        Repo.get!(Message, message.id, prefix: t.prefix)
       end
     end
 
     test "return an error if user is not logged in", %{message: message} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -394,6 +441,7 @@ defmodule ApiWeb.MessagesResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -420,6 +468,7 @@ defmodule ApiWeb.MessagesResolverTest do
     test "return an error if message does not exist", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,

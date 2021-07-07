@@ -1,7 +1,7 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.12
+ARG ALPINE_VERSION=3.13
 
-FROM elixir:1.11.2-alpine AS builder
+FROM elixir:1.12-alpine AS builder
 
 ENV MIX_ENV=prod
 
@@ -13,6 +13,8 @@ RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache \
     git \
+    npm \
+    nodejs \
     build-base
 
 # install hex + rebar
@@ -31,10 +33,14 @@ RUN mix deps.compile
 # build project
 COPY priv priv
 COPY lib lib
+COPY assets assets
 
 # build release
 COPY rel rel
 RUN mix compile
+RUN npm install --prefix assets
+RUN npm run deploy --prefix assets
+RUN mix phx.digest
 RUN mix release
 
 # From this line onwards, we're in a new image, which will be the image used in production
@@ -49,17 +55,18 @@ RUN apk update && \
     bash \
     curl \
     openssl-dev \
-    libssl1.1
+    libssl1.1 \
+    libstdc++
 
 RUN mkdir -p /app
 WORKDIR /app
 
-COPY --from=builder /app/_build/prod/rel/api ./
+COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
 USER nobody
 
 ENV HOME=/app
 
-ENTRYPOINT ["bin/api"]
+ENTRYPOINT ["bin/lotta"]
 
 CMD ["start"]

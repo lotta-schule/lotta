@@ -1,4 +1,4 @@
-defmodule ApiWeb.SubscriptionCase do
+defmodule LottaWeb.SubscriptionCase do
   @moduledoc """
   This module defines the test case to be used by
   subscription tests
@@ -11,12 +11,12 @@ defmodule ApiWeb.SubscriptionCase do
       # Import conveniences for testing with channels
       import Phoenix.ChannelTest
       # The default endpoint for testing
-      @endpoint ApiWeb.Endpoint
+      @endpoint LottaWeb.Endpoint
 
       use Absinthe.Phoenix.SubscriptionTest,
-        schema: ApiWeb.Schema
+        schema: LottaWeb.Schema
 
-      use ApiWeb.ConnCase, async: true
+      use LottaWeb.ConnCase, async: true
     end
   end
 end

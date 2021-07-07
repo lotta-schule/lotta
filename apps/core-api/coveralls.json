@@ -1,0 +1,8 @@
+{
+  "skip_files": [
+    "priv/repo/seeder/Seeder.ex",
+    "lib/lotta/application.ex",
+    "lib/lotta_web/schema",
+    "test"
+  ]
+}

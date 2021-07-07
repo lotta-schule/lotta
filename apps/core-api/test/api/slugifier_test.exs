@@ -1,8 +1,8 @@
-defmodule Api.SlugifierTest do
+defmodule Lotta.SlugifierTest do
   @moduledoc false
 
-  use Api.DataCase
-  alias Api.Slugifier
+  use Lotta.DataCase
+  alias Lotta.Slugifier
 
   describe "slugifier" do
     test "Slugifier should slugify 'Der Artikel'" do

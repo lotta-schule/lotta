@@ -1,12 +1,20 @@
-defmodule Api.Accounts.FileManagmentTest do
+defmodule Lotta.Accounts.FileManagmentTest do
   @moduledoc false
 
-  use Api.DataCase
+  use Lotta.DataCase
 
-  alias Api.Accounts.{FileManagment, User}
+  import Ecto.Query
+
+  alias Lotta.Accounts.{FileManagment, User}
+
+  @prefix "tenant_test"
 
   setup do
-    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
+    user =
+      Repo.one!(
+        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
+        prefix: @prefix
+      )
 
     {:ok, %{user: user}}
   end

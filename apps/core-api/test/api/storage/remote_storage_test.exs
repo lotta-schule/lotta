@@ -1,21 +1,22 @@
-defmodule Api.RemoteStorageTest do
+defmodule Lotta.RemoteStorageTest do
   @moduledoc false
 
-  use Api.DataCase, async: true
+  use Lotta.DataCase, async: false
 
   import Mock
 
-  alias Api.Storage.{RemoteStorage, RemoteStorageEntity}
+  alias Lotta.Storage.{RemoteStorage, RemoteStorageEntity}
 
   describe "RemoteStorage" do
     test "config_for_store/1 should return the config for the given store" do
-      assert RemoteStorage.config_for_store("minio") ==
-               {:ok,
-                %{
-                  type: RemoteStorage.Strategy.S3,
-                  config: %{bucket: "lotta-dev-ugc", endpoint: "http://minio:9000"},
-                  name: "minio"
-                }}
+      assert {:ok,
+              %{
+                type: RemoteStorage.Strategy.S3,
+                config: %{bucket: "lotta-dev-ugc", endpoint: endpoint},
+                name: "minio"
+              }} = RemoteStorage.config_for_store("minio")
+
+      assert endpoint =~ ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000/
     end
 
     test "config_for_store/1 should return an error tuple if the given name does not exist" do
@@ -36,12 +37,6 @@ defmodule Api.RemoteStorageTest do
 
     test "get_strategy/1 should return the strategy for the default store if no config name is given" do
       assert RemoteStorage.get_strategy() == {:ok, RemoteStorage.Strategy.S3}
-    end
-
-    test "get_prefixed_path/1 should return the given path prepended by the configured prefix" do
-      assert RemoteStorage.get_prefixed_path("/a") == "test/a"
-      assert RemoteStorage.get_prefixed_path("/") == "test/"
-      assert RemoteStorage.get_prefixed_path("a/b/c") == "test/a/b/c"
     end
 
     test "create/1 should call corresponding strategy" do

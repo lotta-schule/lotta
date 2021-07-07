@@ -1,0 +1,36 @@
+<h2><%= @tenant.title %></h2>
+
+<div>
+  <%= link get_tenant_url(@tenant), to: get_tenant_url(@tenant) %>
+</div>
+<div>
+  Erstellt am <%= @tenant.inserted_at %>
+</div>
+
+<h3 style="margin-top: 1em">Nutzungsübersicht</h3>
+
+<% storage = List.first(@usages).storage %>
+
+<p>
+  <strong><%= storage.files_total %></strong> Dateien belegen <strong><%= :erlang.float_to_binary(storage.used_total / 1024 / 1024 / 1024, decimals: 3) %></strong> GB Speicher.
+</p>
+
+<ul class="list-group">
+  <%= for usage <- @usages do %>
+    <div class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <div>
+          <%= :erlang.float_to_binary((usage.media.media_conversion_current_period || 0) / 60, decimals: 1) %> Minuten Medienumwandlung
+        </div>
+      <div>
+        <%= usage.period_start.month %>/<%= usage.period_start.year %>
+      </div>
+      </div>
+    </div>
+  <% end %>
+</ul>
+<hr />
+
+<div>
+  <span><%= link "Zurück", to: Routes.tenant_path(@conn, :index) %></span>
+</div>

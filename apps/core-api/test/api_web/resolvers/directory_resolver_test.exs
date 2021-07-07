@@ -1,38 +1,58 @@
-defmodule ApiWeb.DirectoryResolverTest do
+defmodule LottaWeb.DirectoryResolverTest do
   @moduledoc false
 
   import Ecto.Query
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.Accounts.User
-  alias Api.Storage.Directory
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.{Repo, Tenants}
+  alias Lotta.Accounts.User
+  alias Lotta.Storage.Directory
 
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
+
+  @prefix "tenant_test"
 
   setup do
-    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
-    user2 = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
-    user = Repo.get_by!(User, email: "billy@lotta.schule")
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-    {:ok, admin_jwt, _} =
-      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+    admin =
+      Repo.one!(
+        from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    {:ok, user2_jwt, _} =
-      AccessToken.encode_and_sign(user2, %{email: user2.email, name: user2.name})
+    user2 =
+      Repo.one!(
+        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+    user =
+      Repo.one!(
+        from(u in User, where: u.email == ^"billy@lotta.schule"),
+        prefix: tenant.prefix
+      )
+
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
+
+    {:ok, user2_jwt, _} = AccessToken.encode_and_sign(user2)
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     user2_directory =
       Repo.one!(
-        from d in Directory,
+        from(d in Directory,
           where: is_nil(d.parent_directory_id) and d.name == "avatar" and d.user_id == ^user2.id
+        ),
+        prefix: tenant.prefix
       )
 
     public_directory =
       Repo.one!(
-        from d in Directory,
+        from(d in Directory,
           where: d.name == "logos" and is_nil(d.user_id) and is_nil(d.parent_directory_id)
+        ),
+        prefix: tenant.prefix
       )
 
     {:ok,
@@ -44,7 +64,8 @@ defmodule ApiWeb.DirectoryResolverTest do
        user_account: user,
        user_jwt: user_jwt,
        user2_directory: user2_directory,
-       public_directory: public_directory
+       public_directory: public_directory,
+       tenant: tenant
      }}
   end
 
@@ -69,6 +90,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{parentDirectoryId: nil})
         |> json_response(200)
@@ -129,6 +151,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> get("/api", query: @query, variables: %{parentDirectoryId: nil})
         |> json_response(200)
@@ -189,6 +212,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{parentDirectoryId: nil})
         |> json_response(200)
@@ -230,16 +254,11 @@ defmodule ApiWeb.DirectoryResolverTest do
 
     test "returns error when user is not owner of private directory and user is not admin", %{
       user_jwt: user_jwt,
-      user2_account: user2_account
+      user2_directory: user2_directory
     } do
-      user2_directory =
-        Repo.get_by!(Directory,
-          name: "avatar",
-          user_id: user2_account.id
-        )
-
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
@@ -257,16 +276,11 @@ defmodule ApiWeb.DirectoryResolverTest do
 
     test "returns error when user is not owner of private directory and user is admin", %{
       admin_jwt: admin_jwt,
-      user2_account: user2_account
+      user2_directory: user2_directory
     } do
-      user2_directory =
-        Repo.get_by!(Directory,
-          name: "avatar",
-          user_id: user2_account.id
-        )
-
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{parentDirectoryId: user2_directory.id})
         |> json_response(200)
@@ -301,6 +315,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> get("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
@@ -321,6 +336,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> get("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)
@@ -341,6 +357,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)
@@ -361,6 +378,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
@@ -382,6 +400,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
@@ -418,6 +437,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query, variables: %{name: "Neuer Ordner"})
         |> json_response(200)
@@ -440,6 +460,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -464,6 +485,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -488,6 +510,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -509,6 +532,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "create a new root public directory as admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{name: "Neuer Ordner", isPublic: true})
         |> json_response(200)
@@ -530,6 +554,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -551,6 +576,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "returns error when creating a root public directory as non-admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -573,6 +599,7 @@ defmodule ApiWeb.DirectoryResolverTest do
          %{user2_directory: user2_directory, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -594,6 +621,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "returns error when directory does not exist", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -631,12 +659,20 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "move a user's own directory to own directory", %{
       user2_directory: user2_directory,
       user2_jwt: user2_jwt,
-      user2_account: user2_account
+      user2_account: user2_account,
+      tenant: t
     } do
-      target_dir = Repo.get_by!(Directory, name: "podcast", user_id: user2_account.id)
+      target_dir =
+        Repo.one!(
+          from(d in Directory,
+            where: d.name == ^"podcast" and d.user_id == ^user2_account.id
+          ),
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -657,17 +693,22 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "move a user's own directory to root", %{
       user2_directory: user2_directory,
       user2_jwt: user2_jwt,
-      user2_account: user2_account
+      user2_account: user2_account,
+      tenant: t
     } do
       dir =
-        Repo.insert!(%Directory{
-          user_id: user2_account.id,
-          name: "directory",
-          parent_directory_id: user2_directory.id
-        })
+        Repo.insert!(
+          %Directory{
+            user_id: user2_account.id,
+            name: "directory",
+            parent_directory_id: user2_directory.id
+          },
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query, variables: %{id: dir.id, parentDirectoryId: nil})
         |> json_response(200)
@@ -683,6 +724,7 @@ defmodule ApiWeb.DirectoryResolverTest do
          %{user2_directory: user2_directory, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -707,6 +749,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -728,6 +771,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "returns error when directory does not exist", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -753,6 +797,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: public_directory.id, name: "newdirname"})
         |> json_response(200)
@@ -770,6 +815,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
@@ -791,16 +837,27 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "returns error when trying to move a directory from public directory as non-admin", %{
       public_directory: public_directory,
       user2_jwt: user2_jwt,
-      user2_account: user2_account
+      user2_account: user2_account,
+      tenant: t
     } do
-      target_dir = Repo.get_by!(Directory, name: "podcast", user_id: user2_account.id)
+      target_dir =
+        Repo.one!(
+          from(d in Directory,
+            where: d.name == ^"podcast" and d.user_id == ^user2_account.id
+          ),
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: public_directory.id, parentDirectoryId: target_dir.id}
+          variables: %{
+            id: public_directory.id,
+            parentDirectoryId: target_dir.id
+          }
         )
         |> json_response(200)
 
@@ -822,10 +879,14 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: user2_directory.id, parentDirectoryId: public_directory.id}
+          variables: %{
+            id: user2_directory.id,
+            parentDirectoryId: public_directory.id
+          }
         )
         |> json_response(200)
 
@@ -851,16 +912,21 @@ defmodule ApiWeb.DirectoryResolverTest do
     """
     test "delete a user's own directory", %{
       user2_jwt: user2_jwt,
-      user2_account: user2_account
+      user2_account: user2_account,
+      tenant: t
     } do
       directory =
-        Repo.insert!(%Directory{
-          name: "temporary",
-          user_id: user2_account.id
-        })
+        Repo.insert!(
+          %Directory{
+            name: "temporary",
+            user_id: user2_account.id
+          },
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
@@ -871,21 +937,26 @@ defmodule ApiWeb.DirectoryResolverTest do
                }
              }
 
-      assert Repo.get(Directory, directory.id) == nil
+      assert Repo.get(Directory, directory.id, prefix: t.prefix) == nil
     end
 
     test "returns error when user is not owner of directory as admin", %{
       admin_jwt: admin_jwt,
-      user2_account: user2_account
+      user2_account: user2_account,
+      tenant: t
     } do
       directory =
-        Repo.insert!(%Directory{
-          name: "temporary",
-          user_id: user2_account.id
-        })
+        Repo.insert!(
+          %Directory{
+            name: "temporary",
+            user_id: user2_account.id
+          },
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
@@ -903,16 +974,21 @@ defmodule ApiWeb.DirectoryResolverTest do
 
     test "returns error when user is not owner of directory as non-admin", %{
       user_jwt: user_jwt,
-      user2_account: user2_account
+      user2_account: user2_account,
+      tenant: t
     } do
       directory =
-        Repo.insert!(%Directory{
-          name: "temporary",
-          user_id: user2_account.id
-        })
+        Repo.insert!(
+          %Directory{
+            name: "temporary",
+            user_id: user2_account.id
+          },
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
@@ -931,6 +1007,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     test "returns error when directory does not exist", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: "00000000-0000-0000-0000-000000000000"})
         |> json_response(200)
@@ -948,15 +1025,20 @@ defmodule ApiWeb.DirectoryResolverTest do
     end
 
     test "deletes a public directory as admin if directory is empty", %{
-      admin_jwt: admin_jwt
+      admin_jwt: admin_jwt,
+      tenant: t
     } do
       directory =
-        Repo.insert!(%Directory{
-          name: "public_temporary"
-        })
+        Repo.insert!(
+          %Directory{
+            name: "public_temporary"
+          },
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
@@ -967,7 +1049,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                }
              }
 
-      assert Repo.get(Directory, directory.id) == nil
+      assert Repo.get(Directory, directory.id, prefix: t.prefix) == nil
     end
 
     test "returns error when trying to delete a non-empty public directory as admin", %{
@@ -976,6 +1058,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)
@@ -993,16 +1076,21 @@ defmodule ApiWeb.DirectoryResolverTest do
 
     test "deletes own directory as user if directory is empty", %{
       user_jwt: user_jwt,
-      user_account: user_account
+      user_account: user_account,
+      tenant: t
     } do
       directory =
-        Repo.insert!(%Directory{
-          name: "temporary",
-          user_id: user_account.id
-        })
+        Repo.insert!(
+          %Directory{
+            name: "temporary",
+            user_id: user_account.id
+          },
+          prefix: t.prefix
+        )
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: directory.id})
         |> json_response(200)
@@ -1013,7 +1101,7 @@ defmodule ApiWeb.DirectoryResolverTest do
                }
              }
 
-      assert Repo.get(Directory, directory.id) == nil
+      assert Repo.get(Directory, directory.id, prefix: t.prefix) == nil
     end
 
     test "returns error when trying to delete a non-empty public directory as non-admin", %{
@@ -1022,6 +1110,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query, variables: %{id: user2_directory.id})
         |> json_response(200)
@@ -1043,6 +1132,7 @@ defmodule ApiWeb.DirectoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api", query: @query, variables: %{id: public_directory.id})
         |> json_response(200)

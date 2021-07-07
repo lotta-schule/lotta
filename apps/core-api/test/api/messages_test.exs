@@ -1,11 +1,19 @@
-defmodule Api.MessagesTest do
+defmodule Lotta.MessagesTest do
   @moduledoc false
 
-  use Api.DataCase
+  use Lotta.DataCase
 
-  alias Api.Fixtures
-  alias Api.Messages
-  alias Api.Messages.Message
+  alias Lotta.Fixtures
+  alias Lotta.Messages
+  alias Lotta.Messages.Message
+
+  @prefix "tenant_test"
+
+  setup do
+    Repo.put_prefix(@prefix)
+
+    :ok
+  end
 
   describe "messages" do
     test "list_for_user/1 should return a users' messages" do
@@ -36,7 +44,7 @@ defmodule Api.MessagesTest do
                content: "Das ist die Nachricht",
                sender_user: %{id: from_id},
                recipient_user: %{id: to_id}
-             } = Api.Repo.preload(message, [:sender_user, :recipient_user])
+             } = Lotta.Repo.preload(message, [:sender_user, :recipient_user])
 
       assert from_id == from.id
       assert to_id == to.id
@@ -56,7 +64,7 @@ defmodule Api.MessagesTest do
       assert {:ok, _message} = Messages.delete_message(message)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Api.Repo.get!(Message, message.id)
+        Lotta.Repo.get!(Message, message.id)
       end
     end
   end

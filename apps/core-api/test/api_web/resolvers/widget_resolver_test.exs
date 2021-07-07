@@ -1,27 +1,37 @@
-defmodule ApiWeb.WidgetResolverTest do
+defmodule LottaWeb.WidgetResolverTest do
   @moduledoc false
 
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
 
   import Ecto.Query
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.System.{Category, Widget}
-  alias Api.Accounts.{User}
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.{Repo, Tenants}
+  alias Lotta.Accounts.User
+  alias Lotta.Tenants.{Category, Widget}
+
+  @prefix "tenant_test"
 
   setup do
-    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
-    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-    {:ok, admin_jwt, _} =
-      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+    admin =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+    user =
+      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    widget = Repo.one!(from Widget, limit: 1)
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
 
-    homepage = Repo.one!(from c in Category, where: c.is_homepage == true)
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
+    widget = Repo.one!(from(Widget, limit: 1), prefix: tenant.prefix)
+
+    homepage = Repo.one!(from(c in Category, where: c.is_homepage == true), prefix: tenant.prefix)
 
     {:ok,
      %{
@@ -50,6 +60,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns widgets if user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -76,6 +87,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns widgets if user is not admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -102,6 +114,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns widgets if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -131,6 +144,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns widgets if user is admin", %{admin_jwt: admin_jwt, homepage: homepage} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{categoryId: homepage.id})
         |> json_response(200)
@@ -157,6 +171,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns widgets if user is not admin", %{user_jwt: user_jwt, homepage: homepage} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{categoryId: homepage.id})
         |> json_response(200)
@@ -183,6 +198,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns widgets if user is not logged in", %{homepage: homepage} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query, variables: %{categoryId: homepage.id})
         |> json_response(200)
 
@@ -209,6 +225,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "creates a widget if user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{title: "New Widget", type: "CALENDAR"})
         |> json_response(200)
@@ -226,6 +243,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns an error if user is not admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{title: "New Widget", type: "CALENDAR"})
         |> json_response(200)
@@ -246,6 +264,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{title: "New Widget", type: "CALENDAR"})
         |> json_response(200)
 
@@ -276,6 +295,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "creates a widget if user is admin", %{admin_jwt: admin_jwt, widget: widget} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -296,6 +316,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns an error if user is not admin", %{user_jwt: user_jwt, widget: widget} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -319,6 +340,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns an error if user is not logged in", %{widget: widget} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{id: widget.id, widget: %{title: "Changed Widget"}}
@@ -351,6 +373,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "deletes a widget if user is admin", %{admin_jwt: admin_jwt, widget: widget} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: widget.id})
         |> json_response(200)
@@ -367,6 +390,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns an error if user is not admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -387,6 +411,7 @@ defmodule ApiWeb.WidgetResolverTest do
     test "returns an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 

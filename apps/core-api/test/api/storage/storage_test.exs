@@ -1,19 +1,37 @@
-defmodule Api.StorageTest do
+defmodule Lotta.StorageTest do
   @moduledoc false
 
-  use Api.DataCase, async: true
+  use Lotta.DataCase, async: true
+
+  import Ecto.Query
 
   alias ExAws.S3
-  alias Api.Accounts.User
-  alias Api.Fixtures
-  alias Api.Repo
-  alias Api.Storage
-  alias Api.Storage.{Directory, File}
+  alias Lotta.Accounts.User
+  alias Lotta.{Fixtures, Repo, Storage}
+  alias Lotta.Storage.{Directory, File}
+
+  @prefix "tenant_test"
 
   setup do
-    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
-    user_file = Repo.get_by!(File, filename: "eoa3.mp3")
-    user_directory = Repo.get_by!(Directory, name: "ehrenberg-on-air")
+    user =
+      Repo.one!(
+        from(u in User,
+          where: u.email == ^"eike.wiewiorra@lotta.schule"
+        ),
+        prefix: @prefix
+      )
+
+    user_file =
+      Repo.one!(
+        from(f in File, where: f.filename == ^"eoa3.mp3"),
+        prefix: @prefix
+      )
+
+    user_directory =
+      Repo.one!(
+        from(d in Directory, where: d.name == ^"ehrenberg-on-air"),
+        prefix: @prefix
+      )
 
     {:ok,
      %{
@@ -47,22 +65,18 @@ defmodule Api.StorageTest do
                remote_storage_entity: _remote_storage_entity
              } = uploaded_file
 
-      res =
-        S3.list_objects("lotta-dev-ugc", prefix: "test")
-        |> ExAws.request!()
+      res = ExAws.request!(S3.list_objects("lotta-dev-ugc", prefix: "tenant_test"))
 
       assert %{
                status_code: 200,
                body: %{contents: contents}
              } = res
 
-      assert Enum.any?(contents, &(&1.key == "test/#{uploaded_file.id}"))
+      assert Enum.any?(contents, &(&1.key == "tenant_test/#{uploaded_file.id}"))
     end
 
     test "set_remote_storage/2 should reupload a file to new location", %{user_file: user_file} do
-      user_file =
-        user_file
-        |> Repo.preload(:remote_storage_entity)
+      user_file = Repo.preload(user_file, :remote_storage_entity)
 
       current_file_datetime =
         ExAws.S3.head_object("lotta-dev-ugc", user_file.remote_storage_entity.path)
@@ -73,6 +87,8 @@ defmodule Api.StorageTest do
         end)
         |> Timex.parse!("{RFC1123}")
 
+      # wait 2 seconds in order to enforce new DateTime
+      :timer.sleep(2000)
       {:ok, user_file} =
         user_file
         |> Storage.set_remote_storage("minio")
@@ -98,13 +114,13 @@ defmodule Api.StorageTest do
       Storage.delete_file(file)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(File, file.id)
+        Repo.get!(File, file.id, prefix: @prefix)
       end
     end
 
     test "should call get_http_url", %{user_file: user_file} do
-      assert Api.Storage.get_http_url(user_file) =~
-               ~r/http:\/\/minio:9000\/lotta-dev-ugc\/test\//
+      assert Storage.get_http_url(user_file) =~
+               ~r/http:\/\/(minio|localhost|127\.0\.0\.1):9000\/lotta-dev-ugc\/tenant_test\//
     end
   end
 end

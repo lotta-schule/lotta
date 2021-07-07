@@ -1,25 +1,51 @@
-defmodule ApiWeb.UserGroupResolverTest do
+defmodule LottaWeb.UserGroupResolverTest do
   @moduledoc false
 
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.Accounts
-  alias Api.Accounts.{User, UserGroup}
+  import Ecto.Query
+
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.{Accounts, Repo, Tenants}
+  alias Lotta.Accounts.{User, UserGroup}
+
+  @prefix "tenant_test"
 
   setup do
-    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
-    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
-    user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-    {:ok, admin_jwt, _} =
-      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+    admin =
+      Repo.one!(from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+    user =
+      Repo.one!(from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
-    lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
+    user2 =
+      Repo.one!(from(u in User, where: u.email == ^"mcurie@lotta.schule"), prefix: tenant.prefix)
+
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
+    schueler_group =
+      Repo.one!(
+        from(ug in UserGroup,
+          where: ug.name == ^"Schüler"
+        ),
+        prefix: tenant.prefix
+      )
+
+    lehrer_group =
+      Repo.one!(
+        from(ug in UserGroup,
+          where: ug.name == ^"Lehrer"
+        ),
+        prefix: tenant.prefix
+      )
 
     {:ok,
      %{
@@ -29,14 +55,15 @@ defmodule ApiWeb.UserGroupResolverTest do
        user2: user2,
        user_jwt: user_jwt,
        schueler_group: schueler_group,
-       lehrer_group: lehrer_group
+       lehrer_group: lehrer_group,
+       tenant: tenant
      }}
   end
 
   describe "get all groups query" do
     @query """
-    query system {
-      system {
+    query tenant {
+      tenant {
         groups {
           name
         }
@@ -47,12 +74,13 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "anonymous user should get an empty list" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query)
         |> json_response(200)
 
       assert res == %{
                "data" => %{
-                 "system" => %{"groups" => []}
+                 "tenant" => %{"groups" => []}
                }
              }
     end
@@ -60,13 +88,14 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "admin user should get all groups", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
 
       assert res == %{
                "data" => %{
-                 "system" => %{
+                 "tenant" => %{
                    "groups" => [
                      %{"name" => "Administration"},
                      %{"name" => "Verwaltung"},
@@ -81,13 +110,14 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "user should only get his own groups", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
 
       assert res == %{
                "data" => %{
-                 "system" => %{
+                 "tenant" => %{
                    "groups" => [
                      %{"name" => "Lehrer"}
                    ]
@@ -112,6 +142,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should return group with requested", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
@@ -131,6 +162,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -148,6 +180,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
@@ -168,6 +201,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should return an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
@@ -200,6 +234,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should update group", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -225,6 +260,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -254,6 +290,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -280,6 +317,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should return an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -315,6 +353,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should delete group", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
@@ -333,6 +372,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -356,6 +396,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: lehrer_group.id})
         |> json_response(200)
@@ -376,6 +417,8 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should return an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
@@ -408,6 +451,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should create group", %{admin_jwt: admin_jwt, lehrer_group: lehrer_group} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -434,6 +478,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -460,6 +505,7 @@ defmodule ApiWeb.UserGroupResolverTest do
     test "should return an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{

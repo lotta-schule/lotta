@@ -1,56 +1,31 @@
-# Api
+# Lotta
 
-API written for Lotta API Server
+[Lotta](https://lotta.schule) API Server
 
 Phoenix, Elixir & Absinthe
 
 ## Setup
 
-Make sure to have docker installed.
-Then, copy the `.env.sample` to `.env`, and replace the values by values
-for a real s3-compatible store (you can use s3 itself,
-or digitalocean for example.
-You could also start a minIO server via docker
-(TODO: that would be useful to add to standard developer setup))
+Make sure to have [elixir](https://elixir-lang.org/install.html) installed.
 
-Then, install dependencies:
+The project depends on:
 
-```bash
-make dependencies
+- postgres
+- redis
+- elasticsearch
+- An S3-compatible Object storage
+
+In order to faciliate the setup during development, a docker-compose file
+for these services is provided.
+If you want to use it, [install docker](https://docs.docker.com/engine/install/)
+and then start the services:
+
+``` bash
+docker-compose -f docker-compose.services.yml up -d
 ```
 
-Then, migrate the database and add the seeds:
-Just run
+You will then be able to start phoenix using:
 
-```bash
-make setup_db
-```
-
-## Start
-
-
-```bash
-make start
-```
-
-## Develop
-
-```bash
-# start the dev server
-make start
-
-# execute tests
-make tests
-
-# execute tests
-mix doc
-
-# install dependencies
-make dependencies
-
-# Setup Database
-make setup_db
-
-# Migrate Database
-make migrate_db
+``` bash
+mix phx.server
 ```
