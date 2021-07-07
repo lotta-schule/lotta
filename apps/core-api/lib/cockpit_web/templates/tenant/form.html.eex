@@ -1,0 +1,33 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= label f, :title, "Name der Schule", class: "form-label" %>
+    <%= text_input f, :title, class: "form-control", placeholder: "Meine Schule" %>
+    <%= error_tag f, :title %>
+  </div>
+
+  <div class="mb-3">
+    <%= label f, :slug, "Kürzel", class: "form-label" %>
+    <%= text_input f, :slug, class: "form-control", placeholder: "meine-schule" %>
+    <%= error_tag f, :slug %>
+  </div>
+
+  <div class="mb-3">
+    <%= label f, :name, "Name des Administrators", class: "form-label" %>
+    <%= text_input f, :name, class: "form-control", placeholder: "Michel Muster" %>
+  </div>
+
+  <div class="mb-3">
+    <%= label f, :email, "Email des Administrators", class: "form-label" %>
+    <%= text_input f, :email, class: "form-control", placeholder: "michel@muster.de" %>
+  </div>
+
+  <div>
+    <%= submit "Speichern", class: "btn btn-primary float-end" %>
+  </div>
+<% end %>

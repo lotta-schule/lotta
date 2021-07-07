@@ -7,35 +7,45 @@
 # General application configuration
 import Config
 
-config :api,
-  ecto_repos: [Api.Repo]
+config :lotta, :environment, Mix.env()
 
-config :api, :environment, :production
+config :lotta,
+  ecto_repos: [Lotta.Repo]
 
-config :api, Api.Repo, start_apps_before_migration: [:httpoison]
+config :lotta, :base_uri,
+  host: "lotta.schule",
+  scheme: "https"
 
-config :api, :live_view,
+config :lotta, Lotta.Repo, start_apps_before_migration: [:httpoison]
+
+config :lotta, :live_view,
   username: "admin",
   password: "password"
 
-# Configures the endpoint
-config :api, ApiWeb.Endpoint,
+# Configures the endpoints
+config :lotta, LottaWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B",
-  render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json)],
-  pubsub_server: Api.PubSub,
+  render_errors: [view: LottaWeb.ErrorView, accepts: ~w(json)],
+  pubsub_server: Lotta.PubSub,
   live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
 
-config :api, Api.Elasticsearch.Cluster,
-  url: "http://elasticsearch:9200",
+config :lotta, CockpitWeb.Endpoint,
+  url: [host: "localhost"],
+  secret_key_base: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B",
+  render_errors: [view: CockpitWeb.ErrorView, accepts: ~w(json)],
+  pubsub_server: Lotta.PubSub,
+  live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
+
+config :lotta, Lotta.Elasticsearch.Cluster,
+  url: "http://localhost:9200",
   api: Elasticsearch.API.HTTP,
   json_library: Poison,
-  index_prefix: "",
   indexes: %{
     articles: %{
       settings: "priv/elasticsearch/articles.json",
-      store: Api.Elasticsearch.Store,
-      sources: [Api.Content.Article],
+      store: Lotta.Elasticsearch.Store,
+      sources: [Lotta.Content.Article],
       bulk_page_size: 150,
       bulk_wait_interval: 20_000
     }
@@ -46,11 +56,13 @@ config :api, Api.Elasticsearch.Cluster,
     hackney: [pool: :elasticsearch_pool]
   ]
 
-config :api, Api.Mailer, default_sender: "mail@lotta.schule"
+config :lotta, Lotta.Mailer, default_sender: "mail@lotta.schule"
 
-config :api, ApiWeb.Auth.AccessToken, issuer: "lotta"
+config :lotta, LottaWeb.Auth.AccessToken,
+  issuer: "lotta",
+  secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 
-config :api, :default_user, %{
+config :lotta, :default_user, %{
   name: "Max Mustermann",
   email: "maxmustermann@lotta.schule",
   hide_full_name: false

@@ -1,44 +1,38 @@
 import Config
 
-config :api, :environment, :development
+config :lotta, :base_uri,
+  host: "lotta.lvh.me",
+  scheme: "http",
+  port: 3000
 
-# Configure your database
-config :api, Api.Repo,
+config :lotta, Lotta.Repo,
   username: "lotta",
   password: "lotta",
   database: "lotta",
-  hostname: "postgres",
-  prefix: "tenant_2",
-  after_connect: {Api.Repo, :after_connect, ["tenant_2"]},
+  hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :api, :rabbitmq,
-  url: "amqp://guest:guest@rabbitmq",
-  prefix: "tenant_2"
+config :lotta, :rabbitmq, url: "amqp://guest:guest@localhost"
 
-config :api, :default_configuration, %{
-  slug: "ehrenberg",
-  title: "Ehrenberg-Gymnasium-Delitzsch",
-  custom_theme: %{}
-}
-
-config :api, :redis_connection,
-  host: "redis",
+config :lotta, :redis_connection,
+  host: "localhost",
   password: "lotta",
   name: :redix
 
-config :api, Api.Elasticsearch.Cluster, index_prefix: "tenant_2"
+config :lotta, Lotta.Elasticsearch.Cluster, []
 
-config :api, Api.Mailer, adapter: Bamboo.LocalAdapter
+config :lotta, Lotta.Mailer, adapter: Bamboo.LocalAdapter
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
   access_key_id: "AKIAIOSFODNN7EXAMPLE",
   secret_access_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-  host: "minio",
+  host: "localhost",
   scheme: "http://",
   port: 9000
+
+config :lotta, :cockpit, admin_api_key: "abc"
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -46,24 +40,28 @@ config :ex_aws, :s3,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :api, ApiWeb.Endpoint,
+config :lotta, LottaWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
   watchers: []
 
-config :api, ApiWeb.Auth.AccessToken,
+config :lotta, CockpitWeb.Endpoint,
+  http: [port: 4001],
+  debug_errors: true,
+  code_reloader: false,
+  check_origin: false,
+  watchers: []
+
+config :lotta, LottaWeb.Auth.AccessToken,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"
 
-config :api, :hostname, "localhost"
+config :lotta, :schedule_provider_url, "http://localhost:3111"
 
-config :api, :schedule_provider_url, "http://schedule_provider:3000"
-
-config :api, Api.Storage.RemoteStorage,
+config :lotta, Lotta.Storage.RemoteStorage,
   default_storage: "minio",
-  prefix: "tenant_2",
   storages:
     System.get_env("REMOTE_STORAGE_STORES", "")
     |> String.split(",")
@@ -76,7 +74,7 @@ config :api, Api.Storage.RemoteStorage,
 
       acc
       |> Map.put(storage_name, %{
-        type: Api.Storage.RemoteStorage.Strategy.S3,
+        type: Lotta.Storage.RemoteStorage.Strategy.S3,
         config: %{
           endpoint: System.get_env("REMOTE_STORAGE_#{env_name}_ENDPOINT"),
           bucket: System.get_env("REMOTE_STORAGE_#{env_name}_BUCKET")
@@ -85,9 +83,9 @@ config :api, Api.Storage.RemoteStorage,
     end)
     |> Map.merge(%{
       "minio" => %{
-        type: Api.Storage.RemoteStorage.Strategy.S3,
+        type: Lotta.Storage.RemoteStorage.Strategy.S3,
         config: %{
-          endpoint: "http://minio:9000",
+          endpoint: "http://localhost:9000",
           bucket: "lotta-dev-ugc"
         }
       }

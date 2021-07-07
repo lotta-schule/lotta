@@ -1,12 +1,17 @@
-defmodule ApiWeb.ArticleSubscriptionTest do
+defmodule LottaWeb.ArticleSubscriptionTest do
   @moduledoc false
 
-  use ApiWeb.SubscriptionCase
+  use LottaWeb.SubscriptionCase
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.Accounts.User
-  alias Api.Content.Article
+  import Ecto.Query
+
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.Repo
+  alias Lotta.Accounts.User
+  alias Lotta.Content.Article
+  alias Lotta.Tenants
+
+  @prefix "tenant_test"
 
   setup do
     emails = [
@@ -16,17 +21,32 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       "maxi@lotta.schule"
     ]
 
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
+
     [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
       Enum.map(emails, fn email ->
-        user = Repo.get_by!(User, email: email)
+        user =
+          Repo.one!(
+            from(u in User, where: u.email == ^email),
+            prefix: tenant.prefix
+          )
 
-        {:ok, jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+        {:ok, jwt, _} = AccessToken.encode_and_sign(user)
 
         {user, jwt}
       end)
 
     titles = ["Der Vorausscheid", "Draft2"]
-    [vorausscheid, draft] = Enum.map(titles, fn title -> Repo.get_by!(Article, title: title) end)
+
+    [vorausscheid, draft] =
+      Enum.map(titles, fn title ->
+        Repo.one!(
+          from(a in Article,
+            where: a.title == ^title
+          ),
+          prefix: tenant.prefix
+        )
+      end)
 
     {:ok,
      %{
@@ -39,7 +59,8 @@ defmodule ApiWeb.ArticleSubscriptionTest do
        user: user,
        user_jwt: user_jwt,
        draft: draft,
-       vorausscheid: vorausscheid
+       vorausscheid: vorausscheid,
+       tenant: tenant
      }}
   end
 
@@ -71,9 +92,12 @@ defmodule ApiWeb.ArticleSubscriptionTest do
     test "subscribe to article changes if user is admin and send notification on article update",
          %{
            admin_jwt: admin_jwt,
-           draft: draft
+           draft: draft,
+           tenant: t
          } do
-      {:ok, socket} = Phoenix.ChannelTest.connect(ApiWeb.UserSocket, %{token: admin_jwt})
+      {:ok, socket} =
+        Phoenix.ChannelTest.connect(LottaWeb.UserSocket, %{token: admin_jwt, tid: t.id})
+
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: to_string(draft.id)})
@@ -81,6 +105,7 @@ defmodule ApiWeb.ArticleSubscriptionTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @mutation, variables: %{id: draft.id, article: %{title: "ABC"}})
         |> json_response(200)
@@ -99,8 +124,14 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       assert Map.fetch!(article, "title") == "ABC"
     end
 
-    test "subscribe to article changes if user is author", %{lehrer_jwt: lehrer_jwt, draft: draft} do
-      {:ok, socket} = Phoenix.ChannelTest.connect(ApiWeb.UserSocket, %{token: lehrer_jwt})
+    test "subscribe to article changes if user is author", %{
+      lehrer_jwt: lehrer_jwt,
+      draft: draft,
+      tenant: t
+    } do
+      {:ok, socket} =
+        Phoenix.ChannelTest.connect(LottaWeb.UserSocket, %{token: lehrer_jwt, tid: t.id})
+
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: draft.id})
@@ -109,9 +140,12 @@ defmodule ApiWeb.ArticleSubscriptionTest do
 
     test "returns an error if user is not author", %{
       vorausscheid: vorausscheid,
-      user_jwt: user_jwt
+      user_jwt: user_jwt,
+      tenant: t
     } do
-      {:ok, socket} = Phoenix.ChannelTest.connect(ApiWeb.UserSocket, %{token: user_jwt})
+      {:ok, socket} =
+        Phoenix.ChannelTest.connect(LottaWeb.UserSocket, %{token: user_jwt, tid: t.id})
+
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: vorausscheid.id})
@@ -121,8 +155,10 @@ defmodule ApiWeb.ArticleSubscriptionTest do
       }
     end
 
-    test "returns an error if article id does not exist", %{user_jwt: user_jwt} do
-      {:ok, socket} = Phoenix.ChannelTest.connect(ApiWeb.UserSocket, %{token: user_jwt})
+    test "returns an error if article id does not exist", %{user_jwt: user_jwt, tenant: t} do
+      {:ok, socket} =
+        Phoenix.ChannelTest.connect(LottaWeb.UserSocket, %{token: user_jwt, tid: t.id})
+
       {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
       ref = push_doc(socket, @subscription, variables: %{id: "0"})

@@ -1,7 +1,0 @@
-Hallo <%= @user.name %>,
-Deine Registrierung bei <%= title() %> war erfolgreich.
-
-Du kannst dich unter <%= main_url() %> mit deinen Zugangsdaten anmelden:
-Nutzername: <%= @user.email %>
-Passwort: <%= @password %>
-

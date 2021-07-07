@@ -1,35 +1,69 @@
-defmodule ApiWeb.UserResolverTest do
+defmodule LottaWeb.UserResolverTest do
   @moduledoc false
 
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
   use Bamboo.Test
 
   import Ecto.Query
-  import Api.Accounts.Authentication
+  import Lotta.Accounts.Authentication
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.Accounts.{User, UserGroup}
-  alias Api.Storage.{Directory, File}
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.{Accounts, Repo, Tenants}
+  alias Lotta.Accounts.{User, UserGroup}
+  alias Lotta.Storage.{Directory, File}
+
+  @prefix "tenant_test"
 
   setup do
-    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
-    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
-    user2 = Repo.get_by!(User, email: "mcurie@lotta.schule")
-    evil_user = Repo.get_by!(User, email: "drevil@lotta.schule")
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
 
-    user_relevant_file = Repo.get_by!(File, filename: "wieartig1.jpg")
+    admin =
+      Repo.one!(
+        from(u in User, where: u.email == ^"alexis.rinaldoni@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    {:ok, admin_jwt, _} =
-      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+    user =
+      Repo.one!(
+        from(u in User, where: u.email == ^"eike.wiewiorra@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+    user2 =
+      Repo.one!(
+        from(u in User, where: u.email == ^"mcurie@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    {:ok, user_hisec_jwt, _} =
-      AccessToken.encode_and_sign(user, %{email: user.email, name: user.name}, token_type: "hisec")
+    evil_user =
+      Repo.one!(
+        from(u in User, where: u.email == ^"drevil@lotta.schule"),
+        prefix: tenant.prefix
+      )
 
-    schueler_group = Repo.get_by!(UserGroup, name: "Schüler")
-    lehrer_group = Repo.get_by!(UserGroup, name: "Lehrer")
+    user_relevant_file =
+      Repo.one!(
+        from(f in File, where: f.filename == ^"wieartig1.jpg"),
+        prefix: tenant.prefix
+      )
+
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
+    {:ok, user_hisec_jwt, _} = AccessToken.encode_and_sign(user, %{}, token_type: "hisec")
+
+    schueler_group =
+      Repo.one!(
+        from(ug in UserGroup, where: ug.name == ^"Schüler"),
+        prefix: tenant.prefix
+      )
+
+    lehrer_group =
+      Repo.one!(
+        from(ug in UserGroup, where: ug.name == ^"Lehrer"),
+        prefix: tenant.prefix
+      )
 
     {:ok,
      %{
@@ -42,7 +76,8 @@ defmodule ApiWeb.UserResolverTest do
        user_hisec_jwt: user_hisec_jwt,
        schueler_group: schueler_group,
        lehrer_group: lehrer_group,
-       user_relevant_file: user_relevant_file
+       user_relevant_file: user_relevant_file,
+       tenant: tenant
      }}
   end
 
@@ -57,6 +92,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns the user name for self", %{user: user, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -73,6 +109,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns the user name for admin", %{user: user, admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -96,6 +133,7 @@ defmodule ApiWeb.UserResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
@@ -115,6 +153,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
@@ -140,6 +179,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns the user email for self", %{user: user, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -156,6 +196,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns the user email for admin", %{user: user, admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -172,6 +213,7 @@ defmodule ApiWeb.UserResolverTest do
     test "does not return the user email for others", %{user2: user2, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
@@ -212,6 +254,7 @@ defmodule ApiWeb.UserResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -243,6 +286,7 @@ defmodule ApiWeb.UserResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -263,6 +307,7 @@ defmodule ApiWeb.UserResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
@@ -298,6 +343,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns the user assigned_groups for self", %{user: user, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -314,6 +360,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns the user assigned_groups for admin", %{user: user, admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -330,6 +377,7 @@ defmodule ApiWeb.UserResolverTest do
     test "does return the user assigned_groups for others", %{user2: user2, user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
@@ -355,14 +403,15 @@ defmodule ApiWeb.UserResolverTest do
       }
     }
     """
-    test "returns the user groups for self", %{user: user, user_jwt: user_jwt} do
+    test "returns the user groups for self", %{user: user, user_jwt: user_jwt, tenant: t} do
       user
       |> Ecto.build_assoc(:enrollment_tokens)
       |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
-      |> Repo.insert!()
+      |> Repo.insert!(prefix: t.prefix)
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -379,14 +428,15 @@ defmodule ApiWeb.UserResolverTest do
       assert Enum.any?(groups, fn %{"name" => name} -> name == "Schüler" end)
     end
 
-    test "returns the user groups for admin", %{user: user, admin_jwt: admin_jwt} do
+    test "returns the user groups for admin", %{user: user, admin_jwt: admin_jwt, tenant: t} do
       user
       |> Ecto.build_assoc(:enrollment_tokens)
       |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
-      |> Repo.insert!()
+      |> Repo.insert!(prefix: t.prefix)
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -403,14 +453,15 @@ defmodule ApiWeb.UserResolverTest do
       assert Enum.any?(groups, fn %{"name" => name} -> name == "Schüler" end)
     end
 
-    test "does return the user groups for others", %{user2: user2, user_jwt: user_jwt} do
+    test "does return the user groups for others", %{user2: user2, user_jwt: user_jwt, tenant: t} do
       user2
       |> Ecto.build_assoc(:enrollment_tokens)
       |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
-      |> Repo.insert!()
+      |> Repo.insert!(prefix: t.prefix)
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user2.id})
         |> json_response(200)
@@ -442,6 +493,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns current_user if user is logged in", %{admin: admin, admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -461,6 +513,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns null if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -486,6 +539,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns users list if user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -541,6 +595,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns error if user is not admin", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -573,6 +628,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should find users by name is user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "alexis"})
         |> json_response(200)
@@ -599,6 +655,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should find users by nickname is user is admin", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "Meister"})
         |> json_response(200)
@@ -621,6 +678,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "mcurie@lotta.schule"})
         |> json_response(200)
@@ -641,6 +699,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should return an empty results array if there is no match", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api",
           query: @query,
@@ -660,6 +719,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{searchtext: "D"})
         |> json_response(200)
@@ -674,6 +734,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should throw an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query, variables: %{searchtext: "De"})
         |> json_response(200)
 
@@ -706,6 +767,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -724,6 +786,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -741,6 +804,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: user.id})
         |> json_response(200)
@@ -757,6 +821,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should return an error if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
 
@@ -781,8 +846,10 @@ defmodule ApiWeb.UserResolverTest do
     }
     """
 
-    test "register the user if data is entered correctly - user should have default directories and 'has_changed_default_password' false" do
+    test "register the user if data is entered correctly - user should have default directories and 'has_changed_default_password' false",
+         %{tenant: t} do
       build_conn()
+      |> put_req_header("tenant", "slug:test")
       |> post("/api",
         query: @query,
         variables: %{
@@ -791,20 +858,27 @@ defmodule ApiWeb.UserResolverTest do
       )
       |> json_response(200)
 
-      %User{id: id, has_changed_default_password: has_changed_default_password} =
-        Repo.get_by!(User, email: "neuernutzer@example.com")
+      %User{
+        id: id,
+        has_changed_default_password: has_changed_default_password
+      } =
+        Repo.one!(
+          from(u in User, where: u.email == ^"neuernutzer@example.com"),
+          prefix: t.prefix
+        )
 
       refute has_changed_default_password
 
       directories =
         from(d in Directory, where: d.user_id == ^id)
-        |> Repo.all()
+        |> Repo.all(prefix: t.prefix)
 
       assert length(directories) == 5
     end
 
-    test "register the user and put him into groupkey's group" do
+    test "register the user and put him into groupkey's group", %{tenant: t} do
       build_conn()
+      |> put_req_header("tenant", "slug:test")
       |> post("/api",
         query: @query,
         variables: %{
@@ -815,21 +889,26 @@ defmodule ApiWeb.UserResolverTest do
       |> json_response(200)
 
       user =
-        User
-        |> Repo.get_by!(email: "neuernutzer@example.com")
+        Repo.one!(
+          from(u in User,
+            where: u.email == ^"neuernutzer@example.com"
+          ),
+          prefix: t.prefix
+        )
         |> Repo.preload(:enrollment_tokens)
 
       user_groups =
         user.enrollment_tokens
         |> Enum.map(& &1.enrollment_token)
-        |> Api.Accounts.list_groups_for_enrollment_tokens()
+        |> Accounts.list_groups_for_enrollment_tokens(t)
 
       [%{name: group_name}] = user_groups
       assert group_name == "Lehrer"
     end
 
-    test "register the user and send him a registration mail with his password" do
+    test "register the user and send him a registration mail with his password", %{tenant: t} do
       build_conn()
+      |> put_req_header("tenant", "slug:test")
       |> post("/api",
         query: @query,
         variables: %{
@@ -838,7 +917,11 @@ defmodule ApiWeb.UserResolverTest do
       )
       |> json_response(200)
 
-      user = Repo.get_by!(User, email: "neuernutzer@example.com")
+      user =
+        Repo.one!(
+          from(u in User, where: u.email == ^"neuernutzer@example.com"),
+          prefix: t.prefix
+        )
 
       assert_delivered_email_matches(%{
         to: [nil: "neuernutzer@example.com"],
@@ -846,12 +929,13 @@ defmodule ApiWeb.UserResolverTest do
       })
 
       [_matchingstring, password] = Regex.run(~r/Passwort: (.*)\n/, text_body)
-      assert Api.Accounts.Authentication.verify_user_pass(user, password)
+      assert Lotta.Accounts.Authentication.verify_user_pass(user, password)
     end
 
     test "returns error when email is already taken" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -881,6 +965,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns error when no name is given" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -907,6 +992,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns error when hide_full_name is selected but no nickname is given" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -943,9 +1029,10 @@ defmodule ApiWeb.UserResolverTest do
     }
     """
 
-    test "returns the user if data is entered correctly" do
+    test "returns the user if data is entered correctly", %{tenant: t} do
       conn =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{username: "alexis.rinaldoni@lotta.schule", password: "test123"}
@@ -966,13 +1053,16 @@ defmodule ApiWeb.UserResolverTest do
       access_token = res["data"]["login"]["access_token"]
       assert String.valid?(access_token)
 
-      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
+      {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule", "tid" => tenant_id}} =
         AccessToken.decode_and_verify(access_token)
+
+      assert tenant_id == t.id
     end
 
     test "returns an error if the username is non-existent" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{username: "zzzzzzzzzzzzzzzzzzzz@bbbbbbbbbbbbbbb.ddd", password: "test123"}
@@ -995,6 +1085,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns an error if the password is wrong" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{username: "alexis.rinaldoni@lotta.schule", password: "abcdef999"}
@@ -1025,6 +1116,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns the token if data is entered correctly", %{user_jwt: user_jwt} do
       conn =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1045,6 +1137,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns an error if the user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{password: "test123"}
@@ -1067,6 +1160,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns an error if the password is wrong", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1098,6 +1192,7 @@ defmodule ApiWeb.UserResolverTest do
     test "returns true and create a token for the database if the user exists" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule"})
         |> json_response(200)
 
@@ -1110,15 +1205,16 @@ defmodule ApiWeb.UserResolverTest do
       assert {:ok, 1} =
                Redix.command(:redix, [
                  "EXISTS",
-                 "user-email-verify-token-alexis.rinaldoni@lotta.schule"
+                 "tenant_test---user-email-verify-token-alexis.rinaldoni@lotta.schule"
                ])
 
       Redix.command(:redix, ["FLUSHALL"])
     end
 
-    test "send the token via email" do
+    test "send the token via email", %{tenant: t} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{email: "alexis.rinaldoni@lotta.schule"})
         |> json_response(200)
 
@@ -1131,19 +1227,27 @@ defmodule ApiWeb.UserResolverTest do
       assert {:ok, token} =
                Redix.command(:redix, [
                  "GET",
-                 "user-email-verify-token-alexis.rinaldoni@lotta.schule"
+                 "tenant_test---user-email-verify-token-alexis.rinaldoni@lotta.schule"
                ])
 
       Redix.command(:redix, ["FLUSHALL"])
 
-      user = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
-      token_mail = Api.Email.request_password_reset_mail(user, token)
+      user =
+        Repo.one!(
+          from(u in User,
+            where: u.email == ^"alexis.rinaldoni@lotta.schule"
+          ),
+          prefix: t.prefix
+        )
+
+      token_mail = Lotta.Email.request_password_reset_mail(user, token)
       assert_delivered_email(token_mail)
     end
 
     test "returns true if the user does not exist" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{email: "abcZZa@invalid.email"})
         |> json_response(200)
 
@@ -1154,7 +1258,10 @@ defmodule ApiWeb.UserResolverTest do
              }
 
       assert {:ok, 0} =
-               Redix.command(:redix, ["EXISTS", "user-email-verify-token-abcZZa@invalid.email"])
+               Redix.command(:redix, [
+                 "EXISTS",
+                 "tenant_test---user-email-verify-token-abcZZa@invalid.email"
+               ])
 
       Redix.command(:redix, ["FLUSHALL"])
     end
@@ -1163,6 +1270,7 @@ defmodule ApiWeb.UserResolverTest do
   test "returns true and create a token for the database if the user exists but is written in the wrong case" do
     res =
       build_conn()
+      |> put_req_header("tenant", "slug:test")
       |> post("/api", query: @query, variables: %{email: "AleXis.Rinaldoni@LOTTA.SCHULE"})
       |> json_response(200)
 
@@ -1175,7 +1283,7 @@ defmodule ApiWeb.UserResolverTest do
     assert {:ok, 1} =
              Redix.command(:redix, [
                "EXISTS",
-               "user-email-verify-token-alexis.rinaldoni@lotta.schule"
+               "tenant_test---user-email-verify-token-alexis.rinaldoni@lotta.schule"
              ])
 
     Redix.command(:redix, ["FLUSHALL"])
@@ -1190,20 +1298,25 @@ defmodule ApiWeb.UserResolverTest do
     }
     """
 
-    test "returns an auth token if given user info is correct" do
+    test "returns an auth token if given user info is correct", %{tenant: t} do
       token = "abcdef123"
 
       Redix.command(:redix, [
         "SET",
-        "user-email-verify-token-alexis.rinaldoni@lotta.schule",
+        "tenant_test---user-email-verify-token-alexis.rinaldoni@lotta.schule",
         token
       ])
 
       conn =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"}
+          variables: %{
+            email: "alexis.rinaldoni@lotta.schule",
+            token: token,
+            password: "abcdef"
+          }
         )
         |> fetch_cookies(encrypted: ~w(SignInRefreshToken))
 
@@ -1222,7 +1335,13 @@ defmodule ApiWeb.UserResolverTest do
       {:ok, %{"sub" => _id, "email" => "alexis.rinaldoni@lotta.schule"}} =
         AccessToken.decode_and_verify(access_token)
 
-      user = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
+      user =
+        Repo.one!(
+          from(u in User,
+            where: u.email == ^"alexis.rinaldoni@lotta.schule"
+          ),
+          prefix: t.prefix
+        )
 
       assert String.valid?(res["data"]["resetPassword"]["access_token"])
       assert Argon2.verify_pass("abcdef", user.password_hash)
@@ -1234,12 +1353,13 @@ defmodule ApiWeb.UserResolverTest do
 
       Redix.command(:redix, [
         "SET",
-        "user-email-verify-token-alexis.rinaldoni@lotta.schule",
+        "tenant_test---user-email-verify-token-alexis.rinaldoni@lotta.schule",
         token <> "blub"
       ])
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{email: "alexis.rinaldoni@lotta.schule", token: token, password: "abcdef"}
@@ -1266,15 +1386,20 @@ defmodule ApiWeb.UserResolverTest do
 
       Redix.command(:redix, [
         "SET",
-        "user-email-verify-token-alexis.rinaldoni@lotta.schule",
+        "tenant_test---user-email-verify-token-alexis.rinaldoni@lotta.schule",
         token
       ])
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{email: "alexis.rinaldoni@blub.einsa.net", token: token, password: "abcdef"}
+          variables: %{
+            email: "alexis.rinaldoni@blub.einsa.net",
+            token: token,
+            password: "abcdef"
+          }
         )
         |> json_response(200)
 
@@ -1313,10 +1438,14 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: user2.id, groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]}
+          variables: %{
+            id: user2.id,
+            groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]
+          }
         )
         |> json_response(200)
 
@@ -1340,10 +1469,14 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: 0, groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]}
+          variables: %{
+            id: 0,
+            groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]
+          }
         )
         |> json_response(200)
 
@@ -1368,10 +1501,14 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: user2.id, groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]}
+          variables: %{
+            id: user2.id,
+            groups: [%{id: schueler_group.id}, %{id: lehrer_group.id}]
+          }
         )
         |> json_response(200)
 
@@ -1401,6 +1538,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should update a users name and nickname", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1421,6 +1559,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should return an error when it the user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{user: %{name: "Neuer Name", nickname: "Dr New"}}
@@ -1447,9 +1586,10 @@ defmodule ApiWeb.UserResolverTest do
       }
     }
     """
-    test "should update a users password", %{user_hisec_jwt: user_hisec_jwt} do
+    test "should update a users password", %{user_hisec_jwt: user_hisec_jwt, tenant: t} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
         |> post("/api",
           query: @query,
@@ -1465,18 +1605,20 @@ defmodule ApiWeb.UserResolverTest do
                }
              }
 
-      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456")
+      assert {:ok, _} = login_with_username_pass("eike.wiewiorra@lotta.schule", "test456", t)
     end
 
     test "should set has_changed_default_password to true", %{
       user: user,
-      user_hisec_jwt: user_hisec_jwt
+      user_hisec_jwt: user_hisec_jwt,
+      tenant: t
     } do
       user
       |> Ecto.Changeset.change(%{has_changed_default_password: false})
       |> Repo.update!()
 
       build_conn()
+      |> put_req_header("tenant", "slug:test")
       |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
       |> post("/api",
         query: @query,
@@ -1484,7 +1626,7 @@ defmodule ApiWeb.UserResolverTest do
       )
       |> json_response(200)
 
-      assert %{has_changed_default_password: true} = Repo.get!(User, user.id)
+      assert %{has_changed_default_password: true} = Repo.get!(User, user.id, prefix: t.prefix)
     end
 
     test "should return an error when the user uses an access token instead of an hisec token", %{
@@ -1492,6 +1634,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1515,6 +1658,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
         |> post("/api",
           query: @query,
@@ -1546,6 +1690,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should update a user's email", %{user_hisec_jwt: user_hisec_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
         |> post("/api",
           query: @query,
@@ -1567,6 +1712,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1590,6 +1736,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_hisec_jwt}")
         |> post("/api",
           query: @query,
@@ -1621,6 +1768,7 @@ defmodule ApiWeb.UserResolverTest do
     test "should return an error when user is not logged in", %{user_relevant_file: file} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{transferFileIds: [file.id]}
@@ -1645,6 +1793,7 @@ defmodule ApiWeb.UserResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query)
         |> json_response(200)
@@ -1665,10 +1814,12 @@ defmodule ApiWeb.UserResolverTest do
     test "should successfully destroy the account, transferring files", %{
       user_jwt: user_jwt,
       user: user,
-      user_relevant_file: file
+      user_relevant_file: file,
+      tenant: t
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1685,20 +1836,22 @@ defmodule ApiWeb.UserResolverTest do
              } = res
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(User, user.id)
+        Repo.get!(User, user.id, prefix: t.prefix)
       end
 
-      refetched_file = Repo.get!(File, file.id)
+      refetched_file = Repo.get!(File, file.id, prefix: t.prefix)
       refute refetched_file.user_id
     end
 
     test "should successfully destroy the account, ignoring invalid file ids", %{
       user_jwt: user_jwt,
       user: user,
-      user_relevant_file: file
+      user_relevant_file: file,
+      tenant: t
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
@@ -1715,10 +1868,10 @@ defmodule ApiWeb.UserResolverTest do
              } = res
 
       assert_raise Ecto.NoResultsError, fn ->
-        Repo.get!(User, user.id)
+        Repo.get!(User, user.id, prefix: t.prefix)
       end
 
-      refetched_file = Repo.get!(File, file.id)
+      refetched_file = Repo.get!(File, file.id, prefix: t.prefix)
       refute refetched_file.user_id
     end
   end

@@ -1,4 +1,4 @@
-defmodule ApiWeb.ConnCase do
+defmodule LottaWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -20,18 +20,18 @@ defmodule ApiWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      alias ApiWeb.Router.Helpers, as: Routes
+      alias LottaWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint ApiWeb.Endpoint
+      @endpoint LottaWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Api.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Lotta.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Api.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Lotta.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

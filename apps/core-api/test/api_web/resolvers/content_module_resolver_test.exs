@@ -1,33 +1,57 @@
-defmodule ApiWeb.ContentModuleResolverTest do
+defmodule LottaWeb.ContentModuleResolverTest do
   @moduledoc false
 
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
   use Bamboo.Test
 
   import Ecto.Query
 
-  alias ApiWeb.Auth.AccessToken
+  alias LottaWeb.Auth.AccessToken
 
-  alias Api.Repo
-  alias Api.Accounts.User
-  alias Api.Content.ContentModule
-  alias Api.Storage.File
+  alias Lotta.{Repo, Tenants}
+  alias Lotta.Accounts.User
+  alias Lotta.Content.ContentModule
+  alias Lotta.Storage.File
+
+  @prefix "tenant_test"
 
   setup do
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
+
     query =
-      from cm in ContentModule,
+      from(cm in ContentModule,
         where: fragment("?->>? = ?", cm.content, "value", "Pizza Test-Formular")
+      )
 
-    test_formular = Repo.one!(query)
-    admin = Repo.get_by!(User, email: "alexis.rinaldoni@lotta.schule")
-    user = Repo.get_by!(User, email: "eike.wiewiorra@lotta.schule")
+    test_formular = Repo.one!(query, prefix: tenant.prefix)
 
-    {:ok, admin_jwt, _} =
-      AccessToken.encode_and_sign(admin, %{email: admin.email, name: admin.name})
+    admin =
+      Repo.one!(
+        from(u in User,
+          where: u.email == ^"alexis.rinaldoni@lotta.schule"
+        ),
+        prefix: tenant.prefix
+      )
 
-    admin_file = Repo.get_by!(File, filename: "irgendwas.png")
+    user =
+      Repo.one!(
+        from(u in User,
+          where: u.email == ^"eike.wiewiorra@lotta.schule"
+        ),
+        prefix: tenant.prefix
+      )
 
-    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+    {:ok, admin_jwt, _} = AccessToken.encode_and_sign(admin)
+
+    admin_file =
+      Repo.one!(
+        from(f in File,
+          where: f.filename == ^"irgendwas.png"
+        ),
+        prefix: tenant.prefix
+      )
+
+    {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
 
     {:ok,
      %{
@@ -36,7 +60,8 @@ defmodule ApiWeb.ContentModuleResolverTest do
        admin_jwt: admin_jwt,
        admin_file: admin_file,
        user: user,
-       user_jwt: user_jwt
+       user_jwt: user_jwt,
+       tenant: tenant
      }}
   end
 
@@ -51,6 +76,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -93,6 +119,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -117,7 +144,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
         |> List.last()
 
       mail =
-        Api.Email.content_module_form_response_mail(test_formular, results.result["responses"])
+        Lotta.Email.content_module_form_response_mail(test_formular, results.result["responses"])
 
       assert_delivered_email(mail)
     end
@@ -125,6 +152,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     test "sends form response and strips out unwanted fields", %{test_formular: test_formular} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -168,6 +196,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
           variables: %{
@@ -225,22 +254,20 @@ defmodule ApiWeb.ContentModuleResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
           variables: %{
             id: test_formular.id,
-            response:
-              "{
+            response: "{
           \"name\": \"Test\",
           \"größe\": \"klein\",
           \"feld3\": [\"käse\",\"pilze\"],
           \"dieses_feld_existiert_nicht\": \"abcABC\",
           \"transport\": \"lieferung\",
           \"beschreibung\": \"\",
-          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"irgendwas.png\\\",\\\"filesize\\\":713,\\\"filetype\\\":\\\"image/png\\\",\\\"id\\\":\\\"#{
-                admin_file.id
-              }\\\"}\"
+          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"irgendwas.png\\\",\\\"filesize\\\":713,\\\"filetype\\\":\\\"image/png\\\",\\\"id\\\":\\\"#{admin_file.id}\\\"}\"
         }"
           }
         )
@@ -286,22 +313,20 @@ defmodule ApiWeb.ContentModuleResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
           variables: %{
             id: test_formular.id,
-            response:
-              "{
+            response: "{
           \"name\": \"Test\",
           \"größe\": \"klein\",
           \"feld3\": [\"käse\",\"pilze\"],
           \"dieses_feld_existiert_nicht\": \"abcABC\",
           \"transport\": \"lieferung\",
           \"beschreibung\": \"\",
-          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"irgendwas.png\\\",\\\"filesize\\\":713,\\\"filetype\\\":\\\"image/png\\\",\\\"id\\\":\\\"#{
-                admin_file.id
-              }\\\"}\"
+          \"coupon\": \"lotta-file-id://{\\\"filename\\\":\\\"irgendwas.png\\\",\\\"filesize\\\":713,\\\"filetype\\\":\\\"image/png\\\",\\\"id\\\":\\\"#{admin_file.id}\\\"}\"
         }"
           }
         )
@@ -346,6 +371,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
@@ -394,6 +420,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
@@ -421,6 +448,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     test "return an error user is not user", %{user_jwt: user_jwt, test_formular: test_formular} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
@@ -441,6 +469,7 @@ defmodule ApiWeb.ContentModuleResolverTest do
     test "return an error user is not logged in", %{test_formular: test_formular} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query, variables: %{id: test_formular.id})
         |> json_response(200)
 

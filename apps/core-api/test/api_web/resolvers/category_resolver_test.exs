@@ -1,18 +1,28 @@
-defmodule ApiWeb.CategoryResolverTest do
+defmodule LottaWeb.CategoryResolverTest do
   @moduledoc false
 
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
 
   import Ecto.Query
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.Accounts.User
-  alias Api.System.Category
-  alias Api.Content.Article
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.{Repo, Tenants}
+  alias Lotta.Accounts.User
+  alias Lotta.Tenants.Category
+  alias Lotta.Content.Article
+
+  @prefix "tenant_test"
 
   setup do
-    faecher_category = Repo.get_by!(Category, title: "Fächer")
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
+
+    faecher_category =
+      Repo.one!(
+        from(c in Category,
+          where: c.title == ^"Fächer"
+        ),
+        prefix: tenant.prefix
+      )
 
     emails = [
       "alexis.rinaldoni@lotta.schule",
@@ -23,8 +33,15 @@ defmodule ApiWeb.CategoryResolverTest do
 
     [{admin, admin_jwt}, {lehrer, lehrer_jwt}, {schueler, schueler_jwt}, {user, user_jwt}] =
       Enum.map(emails, fn email ->
-        user = Repo.get_by!(User, email: email)
-        {:ok, jwt, _} = AccessToken.encode_and_sign(user, %{email: user.email, name: user.name})
+        user =
+          Repo.one!(
+            from(u in User,
+              where: u.email == ^email
+            ),
+            prefix: tenant.prefix
+          )
+
+        {:ok, jwt, _} = AccessToken.encode_and_sign(user)
         {user, jwt}
       end)
 
@@ -38,7 +55,8 @@ defmodule ApiWeb.CategoryResolverTest do
        schueler: schueler,
        schueler_jwt: schueler_jwt,
        user: user,
-       user_jwt: user_jwt
+       user_jwt: user_jwt,
+       tenant: tenant
      }}
   end
 
@@ -61,6 +79,7 @@ defmodule ApiWeb.CategoryResolverTest do
     test "returns all categories for admin user", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -160,6 +179,7 @@ defmodule ApiWeb.CategoryResolverTest do
     test "returns all categories for lehrer if user is in lehrer_group", %{lehrer_jwt: lehrer_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{lehrer_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -255,6 +275,7 @@ defmodule ApiWeb.CategoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{schueler_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -336,6 +357,7 @@ defmodule ApiWeb.CategoryResolverTest do
     test "returns all categories with no groups if user has no groups", %{user_jwt: user_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> get("/api", query: @query)
         |> json_response(200)
@@ -397,6 +419,7 @@ defmodule ApiWeb.CategoryResolverTest do
     test "returns all categories with no groups if user is not logged in" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/api", query: @query)
         |> json_response(200)
 
@@ -471,6 +494,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: faecher_category.id, category: category})
         |> json_response(200)
@@ -491,6 +515,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: 0, category: category})
         |> json_response(200)
@@ -518,6 +543,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: faecher_category.id, category: category})
         |> json_response(200)
@@ -542,6 +568,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{id: faecher_category.id, category: category})
         |> json_response(200)
 
@@ -575,6 +602,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{category: category})
         |> json_response(200)
@@ -595,6 +623,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{category: category})
         |> json_response(200)
@@ -619,6 +648,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{category: category})
         |> json_response(200)
 
@@ -647,17 +677,19 @@ defmodule ApiWeb.CategoryResolverTest do
 
     test "deletes faecher category with articles, make subcategories main categories", %{
       admin_jwt: admin_jwt,
-      faecher_category: faecher_category
+      faecher_category: faecher_category,
+      tenant: t
     } do
       article_ids =
         from(a in Article,
           where: a.category_id == ^faecher_category.id,
           select: a.id
         )
-        |> Repo.all()
+        |> Repo.all(prefix: t.prefix)
 
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: faecher_category.id})
         |> json_response(200)
@@ -672,7 +704,7 @@ defmodule ApiWeb.CategoryResolverTest do
 
       refetched_article_ids =
         from(a in Article, where: a.id in ^article_ids)
-        |> Repo.all()
+        |> Repo.all(prefix: t.prefix)
 
       assert refetched_article_ids == []
 
@@ -681,7 +713,7 @@ defmodule ApiWeb.CategoryResolverTest do
           where: is_nil(c.category_id),
           order_by: [:sort_key, :title]
         )
-        |> Repo.all()
+        |> Repo.all(prefix: t.prefix)
         |> Enum.map(& &1.title)
 
       assert refetched_main_categories == [
@@ -701,6 +733,7 @@ defmodule ApiWeb.CategoryResolverTest do
     test "returns error if category does not exist", %{admin_jwt: admin_jwt} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api", query: @query, variables: %{id: 0})
         |> json_response(200)
@@ -724,6 +757,7 @@ defmodule ApiWeb.CategoryResolverTest do
     } do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api", query: @query, variables: %{id: faecher_category.id})
         |> json_response(200)
@@ -744,6 +778,7 @@ defmodule ApiWeb.CategoryResolverTest do
     test "returns error if user is not logged in", %{faecher_category: faecher_category} do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> post("/api", query: @query, variables: %{id: faecher_category.id})
         |> json_response(200)
 

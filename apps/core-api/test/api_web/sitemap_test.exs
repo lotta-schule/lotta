@@ -1,11 +1,12 @@
-defmodule ApiWeb.SitemapTest do
+defmodule LottaWeb.SitemapTest do
   @moduledoc false
-  use ApiWeb.ConnCase
+  use LottaWeb.ConnCase
 
   describe "sitemaps" do
     test "returns an index sitemap" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/sitemap.xml")
         |> response(200)
 
@@ -19,6 +20,7 @@ defmodule ApiWeb.SitemapTest do
     test "returns categories sitemap" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/sitemap.xml?categories")
         |> response(200)
 
@@ -38,6 +40,7 @@ defmodule ApiWeb.SitemapTest do
     test "returns articles sitemap" do
       res =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> get("/sitemap.xml?articles&date=#{Date.to_iso8601(~D[2019-09-01])}")
         |> response(200)
 

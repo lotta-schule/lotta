@@ -1,12 +1,11 @@
-defmodule Api.AccountsTest do
+defmodule Lotta.AccountsTest do
   @moduledoc false
 
-  use Api.DataCase
+  use Lotta.DataCase
   use Bamboo.Test
 
-  alias Api.Fixtures
-  alias Api.Accounts
-  alias Api.Accounts.User
+  alias Lotta.{Accounts, Fixtures, Tenants, Repo}
+  alias Lotta.Accounts.User
 
   @all_users [
     "alexis.rinaldoni@einsa.net",
@@ -18,6 +17,17 @@ defmodule Api.AccountsTest do
     "doro@lotta.schule",
     "mcurie@lotta.schule"
   ]
+  @prefix "tenant_test"
+
+  setup do
+    Repo.put_prefix(@prefix)
+
+    {:ok,
+     %{
+       tenant: Tenants.get_tenant_by_prefix(@prefix)
+     }}
+  end
+
   describe "users" do
     test "list_users/0 returns all users" do
       assert Enum.all?(
@@ -37,31 +47,32 @@ defmodule Api.AccountsTest do
       assert is_nil(Accounts.get_user(0))
     end
 
-    test "register_user/1 should normalize (email) input" do
-      user =
-        %{}
-        |> Map.put(:name, "Ludwig van Beethoven")
-        |> Map.put(:nickname, "Lulu")
-        |> Map.put(:email, "DerLudwigVan@Beethoven.de   ")
-        |> Map.put(:password, "musik123")
-        |> Accounts.register_user()
+    test "register_user/1 should normalize (email) input", %{tenant: t} do
+      user_params = %{
+        name: "Ludwig van Beethoven",
+        nickname: "Lulu",
+        email: "DerLudwigVan@Beethoven.de   ",
+        password: "musik123"
+      }
+
+      user = Accounts.register_user(t, user_params)
 
       assert {:ok, %User{email: "DerLudwigVan@Beethoven.de"}, _password} = user
     end
 
-    test "register_user/1 with valid data creates a user with a password" do
+    test "register_user/1 with valid data creates a user with a password", %{tenant: t} do
       assert {:ok, %User{} = user, password} =
-               Accounts.register_user(Fixtures.fixture(:valid_user_attrs))
+               Accounts.register_user(t, Fixtures.fixture(:valid_user_attrs))
 
       assert user.email == "some@email.de"
       assert user.name == "Alberta Smith"
       refute is_nil(password)
-      assert Api.Accounts.Authentication.verify_user_pass(user, password)
+      assert Lotta.Accounts.Authentication.verify_user_pass(user, password)
     end
 
-    test "register_user/1 with invalid data returns error changeset" do
+    test "register_user/1 with invalid data returns error changeset", %{tenant: t} do
       assert {:error, %Ecto.Changeset{}} =
-               Accounts.register_user(Fixtures.fixture(:invalid_user_attrs))
+               Accounts.register_user(t, Fixtures.fixture(:invalid_user_attrs))
     end
 
     test "update_profile/2 with valid data updates the user" do
@@ -93,7 +104,7 @@ defmodule Api.AccountsTest do
 
       assert Argon2.verify_pass("newpass", user.password_hash)
 
-      assert_delivered_email(Api.Email.password_changed_mail(user))
+      assert_delivered_email(Lotta.Email.password_changed_mail(user))
     end
   end
 end

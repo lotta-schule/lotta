@@ -1,19 +1,27 @@
-defmodule ApiWeb.Auth.TokenControllerTest do
+defmodule LottaWeb.Auth.TokenControllerTest do
   @moduledoc false
 
-  use ApiWeb.ConnCase, async: true
+  use LottaWeb.ConnCase, async: true
 
-  import Api.Accounts.Authentication
+  import Lotta.Accounts.Authentication
   import Phoenix.ConnTest
+  import Ecto.Query
 
-  alias ApiWeb.Auth.AccessToken
-  alias Api.Repo
-  alias Api.Accounts.User
+  alias LottaWeb.Auth.AccessToken
+  alias Lotta.{Repo, Tenants}
+  alias Lotta.Accounts.User
+
+  @prefix "tenant_test"
 
   setup do
+    tenant = Tenants.get_tenant_by_prefix(@prefix)
     email = "alexis.rinaldoni@lotta.schule"
 
-    admin = Repo.get_by!(User, email: email)
+    admin =
+      Repo.one!(
+        from(u in User, where: u.email == ^email),
+        prefix: tenant.prefix
+      )
 
     {:ok, _access_token, refresh_token} = create_user_tokens(admin)
 
@@ -24,6 +32,7 @@ defmodule ApiWeb.Auth.TokenControllerTest do
     test "should refresh a valid token if it is valid", %{refresh_token: token} do
       conn =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("content-type", "application/json")
         |> put_req_cookie("SignInRefreshToken", token)
         |> post("/auth/token/refresh")
@@ -53,6 +62,7 @@ defmodule ApiWeb.Auth.TokenControllerTest do
     test "should throw an error if refresh token is no valid token" do
       conn =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("content-type", "application/json")
         |> put_req_cookie(
           "SignInRefreshToken",
@@ -79,6 +89,7 @@ defmodule ApiWeb.Auth.TokenControllerTest do
 
       conn =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("content-type", "application/json")
         |> put_req_cookie("SignInRefreshToken", token)
         |> post("/auth/token/refresh")
@@ -93,6 +104,7 @@ defmodule ApiWeb.Auth.TokenControllerTest do
     test "should throw an error if there is no refresh token cookie" do
       conn =
         build_conn()
+        |> put_req_header("tenant", "slug:test")
         |> put_req_header("content-type", "application/json")
         |> post("/auth/token/refresh")
 
