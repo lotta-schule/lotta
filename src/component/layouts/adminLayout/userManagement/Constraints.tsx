@@ -10,17 +10,19 @@ import {
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { SdStorage } from '@material-ui/icons';
-import { useSystem } from 'util/client/useSystem';
+import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
-import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
+import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
 
 export const Constraints = React.memo(() => {
-    const system = useSystem();
-    const defaultLimitRef = React.useRef(20);
+    const tenant = useTenant();
+    const lastSetLimitRef = React.useRef(20);
     const [value, setValue] = React.useState(
-        system.userMaxStorageConfig ?? defaultLimitRef.current
+        tenant.configuration.userMaxStorageConfig
+            ? parseInt(tenant.configuration.userMaxStorageConfig, 10)
+            : -1
     );
 
     const isLimitSet = value >= 0;
@@ -32,14 +34,21 @@ export const Constraints = React.memo(() => {
 
     React.useEffect(() => {
         if (isLimitSet) {
-            defaultLimitRef.current = value;
+            lastSetLimitRef.current = value;
         }
     }, [isLimitSet, value]);
 
-    const [updateSystem, { loading: isLoading, error }] = useMutation(
-        UpdateSystemMutation,
+    const [updateTenant, { loading: isLoading, error }] = useMutation(
+        UpdateTenantMutation,
         {
-            variables: { system: { userMaxStorageConfig: value } },
+            variables: {
+                tenant: {
+                    configuration: {
+                        ...tenant.configuration,
+                        userMaxStorageConfig: String(value),
+                    },
+                },
+            },
         }
     );
 
@@ -69,7 +78,7 @@ export const Constraints = React.memo(() => {
                         <Checkbox
                             checked={!isLimitSet}
                             onChange={(_e, checked) =>
-                                setValue(checked ? -1 : defaultLimitRef.current)
+                                setValue(checked ? -1 : lastSetLimitRef.current)
                             }
                         />
                     }
@@ -83,7 +92,7 @@ export const Constraints = React.memo(() => {
                         <Checkbox
                             checked={isLimitSet}
                             onChange={(_e, checked) =>
-                                setValue(checked ? defaultLimitRef.current : -1)
+                                setValue(checked ? lastSetLimitRef.current : -1)
                             }
                         />
                     }
@@ -113,7 +122,7 @@ export const Constraints = React.memo(() => {
                             <TextField
                                 label={''}
                                 value={
-                                    isLimitSet ? value : defaultLimitRef.current
+                                    isLimitSet ? value : lastSetLimitRef.current
                                 }
                                 onChange={({ currentTarget }) => {
                                     if (currentTarget.value) {
@@ -138,7 +147,7 @@ export const Constraints = React.memo(() => {
                         </Grid>
                     </Grid>
                 </animated.div>
-                <Button onClick={() => updateSystem()} disabled={isLoading}>
+                <Button onClick={() => updateTenant()} disabled={isLoading}>
                     Speichern
                 </Button>
             </div>

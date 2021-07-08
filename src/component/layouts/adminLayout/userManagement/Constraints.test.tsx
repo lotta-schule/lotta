@@ -2,8 +2,8 @@ import * as React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, waitFor } from 'test/util';
 import { Constraints } from './Constraints';
-import { system } from 'test/fixtures';
-import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
+import { tenant } from 'test/fixtures';
+import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 
 describe('component/layouts/adminLayout/userManagement/Constraints', () => {
     it('should render without error', () => {
@@ -17,7 +17,13 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
                 {},
                 {
                     useCache: true,
-                    system: { ...system, userMaxStorageConfig: -1 },
+                    tenant: {
+                        ...tenant,
+                        configuration: {
+                            ...tenant.configuration,
+                            userMaxStorageConfig: '-1',
+                        },
+                    },
                 }
             );
             await waitFor(() => {
@@ -36,7 +42,10 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
                 {},
                 {
                     useCache: true,
-                    system: { ...system, userMaxStorageConfig: -1 },
+                    tenant: {
+                        ...tenant,
+                        configuration: { userMaxStorageConfig: '-1' },
+                    },
                 }
             );
             userEvent.click(
@@ -50,7 +59,7 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
 
     describe('should impose limit', () => {
         it('should have "no limit" checkbox checked when limit is 20', () => {
-            const screen = render(<Constraints />, {});
+            const screen = render(<Constraints />, {}, { useCache: true });
             expect(
                 screen.getByRole('checkbox', { name: /begrenzen auf/i })
             ).toBeChecked();
@@ -79,7 +88,7 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
             ).toHaveValue(20123);
         });
 
-        it('have the system value prefilled', () => {
+        it('have the tenant value prefilled', () => {
             const screen = render(<Constraints />, {}, { useCache: true });
             expect(
                 screen.getByRole('spinbutton', { name: /freier speicher/i })
@@ -90,15 +99,26 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
             it('should work by request when changing via input field', async () => {
                 const updateFn = jest.fn(() => ({
                     data: {
-                        system: { ...system, userMaxStorageConfig: 20123 },
+                        tenant: {
+                            ...tenant,
+                            configuration: {
+                                ...tenant.configuration,
+                                userMaxStorageConfig: '20123',
+                            },
+                        },
                     },
                 }));
                 const mocks = [
                     {
                         request: {
-                            query: UpdateSystemMutation,
+                            query: UpdateTenantMutation,
                             variables: {
-                                system: { userMaxStorageConfig: 20123 },
+                                tenant: {
+                                    configuration: {
+                                        ...tenant.configuration,
+                                        userMaxStorageConfig: '20123',
+                                    },
+                                },
                             },
                         },
                         result: updateFn,

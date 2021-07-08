@@ -14,8 +14,8 @@ import {
     Divider,
 } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
-import { useSystem } from 'util/client/useSystem';
-import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
+import { useTenant } from 'util/tenant/useTenant';
+import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
@@ -23,11 +23,11 @@ import { ColorSettingRow } from './ColorSettingRow';
 import { SelectTemplateButton } from './SelectTemplateButton';
 import { Helmet } from 'react-helmet';
 import { textFonts, headerFonts } from './fonts';
+import { Button } from 'component/general/button/Button';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import Img from 'react-cloudimage-responsive';
 import createTypography from '@material-ui/core/styles/createTypography';
-import { Button } from 'component/general/button/Button';
 
 const useStyles = makeStyles((theme) => ({
     section: {
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const PresentationSettings = memo(() => {
     const styles = useStyles();
-    const system = useSystem();
+    const tenant = useTenant();
     const theme = useTheme();
 
     const [allThemes, setAllThemes] = useState<
@@ -48,14 +48,14 @@ export const PresentationSettings = memo(() => {
     >([{ title: 'Standard', theme: {} }]);
 
     const [customTheme, setCustomTheme] = useState<any>(
-        system.customTheme || {}
+        tenant.configuration.customTheme || {}
     );
     const [backgroundImage, setBackgroundImage] = useState(
-        system.backgroundImageFile
+        tenant.configuration.backgroundImageFile
     );
 
     const [updateSystem, { loading: isLoading, error }] = useMutation(
-        UpdateSystemMutation
+        UpdateTenantMutation
     );
 
     const getFromTheme = (key: string): any => {
@@ -326,12 +326,14 @@ export const PresentationSettings = memo(() => {
                             onClick={() =>
                                 updateSystem({
                                     variables: {
-                                        system: {
-                                            customTheme: JSON.stringify(
-                                                customTheme
-                                            ),
-                                            backgroundImageFile: backgroundImage && {
-                                                id: backgroundImage.id,
+                                        tenant: {
+                                            configuration: {
+                                                customTheme: JSON.stringify(
+                                                    customTheme
+                                                ),
+                                                backgroundImageFile: backgroundImage && {
+                                                    id: backgroundImage.id,
+                                                },
                                             },
                                         },
                                     },

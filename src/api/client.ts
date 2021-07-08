@@ -79,7 +79,11 @@ const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
         return [...obj.map((o) => mutateVariableInputObject(o, propToDelete))];
     } else if (obj !== null && obj !== undefined && typeof obj === 'object') {
         return Object.keys(obj).reduce((newObj, key) => {
-            if (key === 'configuration' && typeof obj[key] === 'object') {
+            if (
+                key === 'configuration' &&
+                typeof obj[key] === 'object' &&
+                !obj[key]['__typename']
+            ) {
                 return {
                     ...newObj,
                     [key]: JSON.stringify(obj[key]),
@@ -159,9 +163,9 @@ const phoenixSocket = process.env.REACT_APP_API_SOCKET_URL
               params: () => {
                   const token = localStorage.getItem('id');
                   if (token) {
-                      return { token };
+                      return { token, tid: window.tid };
                   } else {
-                      return {};
+                      return { tid: window.tid };
                   }
               },
           }
@@ -187,13 +191,7 @@ const link = websocketLink
 const apolloClient = new ApolloClient({
     link,
     resolvers: {},
-    cache: new InMemoryCache({
-        typePolicies: {
-            System: {
-                keyFields: ['title'],
-            },
-        },
-    }),
+    cache: new InMemoryCache({}),
 });
 
 const writeDefaults = () => {

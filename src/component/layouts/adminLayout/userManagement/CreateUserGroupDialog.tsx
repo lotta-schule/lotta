@@ -7,9 +7,9 @@ import {
     TextField,
 } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
-import { ClientModel, UserGroupModel } from 'model';
+import { TenantModel, UserGroupModel } from 'model';
 import { CreateUserGroupMutation } from 'api/mutation/CreateUserGroupMutation';
-import { GetSystemQuery } from 'api/query/GetSystemQuery';
+import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Button } from 'component/general/button/Button';
@@ -29,16 +29,16 @@ export const CreateUserGroupDialog = memo<CreateUserGroupDialogProps>(
         >(CreateUserGroupMutation, {
             update: (cache, { data }) => {
                 if (data && data.group) {
-                    const readSystemResult = cache.readQuery<{
-                        system: ClientModel;
-                    }>({ query: GetSystemQuery });
-                    cache.writeQuery<{ system: ClientModel }>({
-                        query: GetSystemQuery,
+                    const readTenantResult = cache.readQuery<{
+                        tenant: TenantModel;
+                    }>({ query: GetTenantQuery });
+                    cache.writeQuery<{ tenant: TenantModel }>({
+                        query: GetTenantQuery,
                         data: {
-                            system: {
-                                ...readSystemResult!.system,
+                            tenant: {
+                                ...readTenantResult!.tenant,
                                 groups: [
-                                    ...readSystemResult!.system.groups,
+                                    ...readTenantResult!.tenant.groups,
                                     data.group,
                                 ],
                             },

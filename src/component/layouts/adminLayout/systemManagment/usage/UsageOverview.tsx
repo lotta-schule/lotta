@@ -9,12 +9,12 @@ import {
     LinearProgress,
 } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useSystem } from 'util/client/useSystem';
+import { useTenant } from 'util/tenant/useTenant';
 import { FileSize } from 'util/FileSize';
 import { useQuery } from '@apollo/client';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { GetSystemUsageQuery } from 'api/query/GetSystemUsageQuery';
+import { GetUsageQuery } from 'api/query/GetUsageQuery';
 
 const useStyles = makeStyles((theme) => ({
     gridContainer: {
@@ -25,9 +25,9 @@ const useStyles = makeStyles((theme) => ({
 
 export const UsageOverview = memo(() => {
     const styles = useStyles();
-    const system = useSystem();
+    const tenant = useTenant();
 
-    const { data, error, loading: isLoading } = useQuery(GetSystemUsageQuery);
+    const { data, error, loading: isLoading } = useQuery(GetUsageQuery);
 
     const getMediaConversionTimeFormatted = (usage: any) => {
         if (!data?.usage) {
@@ -48,13 +48,13 @@ export const UsageOverview = memo(() => {
             <Card variant={'outlined'}>
                 <CardContent>
                     <Typography color="textSecondary" gutterBottom>
-                        {system.host}
+                        {tenant.host}
                     </Typography>
                     <Typography variant={'h5'} component={'h2'}>
-                        {system.title}
+                        {tenant.title}
                     </Typography>
                     <Typography color={'textSecondary'}>
-                        {system.insertedAt}
+                        {tenant.insertedAt}
                     </Typography>
                 </CardContent>
             </Card>

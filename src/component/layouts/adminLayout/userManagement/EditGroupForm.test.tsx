@@ -5,7 +5,7 @@ import {
     elternGroup,
     lehrerGroup,
     schuelerGroup,
-    system,
+    tenant,
 } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { EditGroupForm } from './EditGroupForm';
@@ -114,15 +114,15 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
         };
         const groups = [adminGroup, lehrerGroup, elternGroup, schuelerGroup];
         const groupsWithSecondAdmin = [...groups, otherAdminGroup];
-        const systemWithSecondAdmin = {
-            ...system,
+        const tenantWithSecondAdmin = {
+            ...tenant,
             groups: groupsWithSecondAdmin,
         };
         it('should have the admin checkbox checked for a admin group', async () => {
             const screen = render(
                 <EditGroupForm group={adminGroup} />,
                 {},
-                { additionalMocks, system: systemWithSecondAdmin }
+                { additionalMocks, tenant: tenantWithSecondAdmin }
             );
             expect(
                 await screen.findByRole('checkbox', {
@@ -154,7 +154,7 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
                 {},
                 {
                     additionalMocks: [...additionalMocks, saveMock],
-                    system: systemWithSecondAdmin,
+                    tenant: tenantWithSecondAdmin,
                 }
             );
             userEvent.click(

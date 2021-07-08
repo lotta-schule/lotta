@@ -75,8 +75,8 @@ export const FileUsageModal = memo(() => {
         if (usage.user) {
             return `Nutzer: ${User.getNickname(usage.user)}`;
         }
-        if (usage.system) {
-            return `SeitenLayout ${usage.system.title}`;
+        if (usage.tenant) {
+            return `SeitenLayout ${usage.tenant.title}`;
         }
         return 'Verwendung unbekannt';
     };
@@ -105,16 +105,17 @@ export const FileUsageModal = memo(() => {
                                 />
                             </ListItemAvatar>
                         )}
-                        {usage.system?.logoImageFile?.remoteLocation && (
+                        {usage.tenant?.configuration.logoImageFile
+                            ?.remoteLocation && (
                             <ListItemAvatar>
                                 <Img
                                     operation={'cover'}
                                     size={'150x100'}
                                     src={
-                                        usage.system.logoImageFile
+                                        usage.tenant.configuration.logoImageFile
                                             .remoteLocation
                                     }
-                                    alt={`Logo von ${usage.system.title}`}
+                                    alt={`Logo von ${usage.tenant.title}`}
                                 />
                             </ListItemAvatar>
                         )}

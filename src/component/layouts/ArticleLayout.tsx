@@ -12,7 +12,7 @@ import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
 import { RelatedArticlesList } from 'component/article/RelatedArticlesList';
 import { Helmet } from 'react-helmet';
-import { useSystem } from 'util/client/useSystem';
+import { useTenant } from 'util/tenant/useTenant';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ID } from 'model/ID';
@@ -38,7 +38,7 @@ export interface ArticleLayoutProps {
 export const ArticleLayout = memo<ArticleLayoutProps>(
     ({ articleId, title }) => {
         const styles = useStyle();
-        const client = useSystem() || {};
+        const tenant = useTenant() || {};
 
         const { data, loading: isLoading, error } = useQuery<
             { article: ArticleModel },
@@ -63,7 +63,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(
                     <>
                         <Helmet>
                             <title>
-                                {article.title} &nbsp; {client.title}
+                                {article.title} &nbsp; {tenant.title}
                             </title>
                             <meta
                                 name={'description'}
@@ -86,7 +86,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(
                             )}
                             <meta
                                 property={'og:site_name'}
-                                content={client.title}
+                                content={tenant.title}
                             />
                         </Helmet>
                         {title && (
@@ -105,7 +105,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(
                 );
             }
             return <ErrorMessage error={new Error('Beitrag nicht gefunden')} />;
-        }, [client.title, data, error, isLoading, styles.siteTitle, title]);
+        }, [tenant.title, data, error, isLoading, styles.siteTitle, title]);
 
         return (
             <>

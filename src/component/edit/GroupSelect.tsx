@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import { useAutocomplete } from '@material-ui/lab';
 import { Check, Close } from '@material-ui/icons';
-import { useUserGroups } from 'util/client/useUserGroups';
+import { useUserGroups } from 'util/tenant/useUserGroups';
 import { UserGroupModel } from 'model/UserGroupModel';
 import { Button } from 'component/general/button/Button';
 import clsx from 'clsx';
