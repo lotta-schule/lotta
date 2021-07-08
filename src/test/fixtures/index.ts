@@ -1,4 +1,4 @@
 export * from './Accounts';
 export * from './Content';
 export * from './Messages';
-export * from './System';
+export * from './Tenant';

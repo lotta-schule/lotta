@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { useSystem } from 'util/client/useSystem';
+import * as React from 'react';
+import { useTenant } from 'util/tenant/useTenant';
 import { useTheme } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
 import {
@@ -7,13 +7,13 @@ import {
     headerFonts,
 } from './layouts/adminLayout/systemManagment/presentation/fonts';
 
-export const AppHead = memo(() => {
-    const system = useSystem();
+export const AppHead = React.memo(() => {
+    const tenant = useTenant();
     const theme = useTheme();
 
     const allFonts = [...textFonts, ...headerFonts];
 
-    const title = system.title ?? '';
+    const title = tenant.title;
     return (
         <Helmet>
             <title>{title}</title>

@@ -15,11 +15,11 @@ import {
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useSystem } from 'util/client/useSystem';
+import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
-import { UpdateSystemMutation } from 'api/mutation/UpdateSystemMutation';
-import Img from 'react-cloudimage-responsive';
+import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { Button } from 'component/general/button/Button';
+import Img from 'react-cloudimage-responsive';
 
 const useStyles = makeStyles((theme) => ({
     gridContainer: {
@@ -29,12 +29,12 @@ const useStyles = makeStyles((theme) => ({
 
 export const BasicSettings = memo(() => {
     const styles = useStyles();
-    const system = useSystem();
-    const [title, setTitle] = useState(system.title);
-    const [logo, setLogo] = useState(system.logoImageFile);
+    const tenant = useTenant();
+    const [title, setTitle] = useState(tenant.title);
+    const [logo, setLogo] = useState(tenant.configuration.logoImageFile);
 
-    const [updateSystem, { loading: isLoading, error }] = useMutation(
-        UpdateSystemMutation
+    const [updateTenant, { loading: isLoading, error }] = useMutation(
+        UpdateTenantMutation
     );
 
     return (
@@ -92,8 +92,8 @@ export const BasicSettings = memo(() => {
                         <TableBody>
                             <TableRow>
                                 <TableCell>
-                                    <Link href={`https://${system.host}`}>
-                                        {system.host}
+                                    <Link href={`https://${tenant.host}`}>
+                                        {tenant.host}
                                     </Link>
                                 </TableCell>
                             </TableRow>
@@ -108,9 +108,9 @@ export const BasicSettings = memo(() => {
                         fullWidth
                         disabled={isLoading}
                         onClick={() =>
-                            updateSystem({
+                            updateTenant({
                                 variables: {
-                                    system: {
+                                    tenant: {
                                         title,
                                         logoImageFile: logo && { id: logo.id },
                                     },

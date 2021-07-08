@@ -3,7 +3,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { deDE } from '@material-ui/core/locale';
 import { LinearProgress } from '@material-ui/core';
-import { ClientModel } from 'model';
+import { TenantModel } from 'model';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useQuery } from '@apollo/client';
@@ -12,10 +12,12 @@ import { useCategories } from 'util/categories/useCategories';
 import { AppHead } from './AppHead';
 import { EmptyLoadingLayout } from './layouts/EmptyLoadingLayout';
 import { BaseLayout } from './layouts/BaseLayout';
-import { GetSystemQuery } from 'api/query/GetSystemQuery';
+import { GetTenantQuery } from 'api/query/GetTenantQuery';
+import { CssVariables } from './CssVariables';
 import merge from 'lodash/merge';
 import ServerDownImage from './ServerDownImage.svg';
-import { CssVariables } from './CssVariables';
+import TenantNotFoundImage from './TenantNotFoundImage.svg';
+import styles from './App.module.scss';
 
 const AdminLayout = React.lazy(
     () => import('./layouts/adminLayout/AdminLayout')
@@ -41,14 +43,14 @@ const RequestPasswordResetLayout = React.lazy(
 export const App = React.memo(() => {
     const {
         data,
-        loading: isLoadingSystem,
+        loading: isLoadingTenant,
         error,
-        called: calledSystem,
-    } = useQuery<{ system: ClientModel }>(GetSystemQuery);
+        called: calledTenant,
+    } = useQuery<{ tenant: TenantModel | null }>(GetTenantQuery);
     const isLoadingCurrentUser = useCurrentUser() === undefined;
     useCategories();
 
-    if (!calledSystem || isLoadingSystem || isLoadingCurrentUser) {
+    if (!calledTenant || isLoadingTenant || isLoadingCurrentUser) {
         return (
             <div>
                 <LinearProgress />
@@ -58,23 +60,10 @@ export const App = React.memo(() => {
 
     if (error) {
         return (
-            <>
-                <h1 style={{ fontFamily: 'sans-serif', marginLeft: '1em' }}>
-                    Server nicht erreichbar
-                </h1>
-                <div
-                    style={{
-                        fontFamily: 'sans-serif',
-                        margin: '1em',
-                        textAlign: 'center',
-                    }}
-                >
+            <section className={styles.error}>
+                <h1>Server nicht erreichbar</h1>
+                <div>
                     <img
-                        style={{
-                            display: 'inline-block',
-                            maxWidth: '80%',
-                            maxHeight: '70vh',
-                        }}
                         src={ServerDownImage}
                         alt={'Der Server ist nicht erreichbar'}
                     />
@@ -85,18 +74,47 @@ export const App = React.memo(() => {
                     </p>
                     <p>{error.message}</p>
                 </div>
-            </>
+            </section>
         );
     }
 
-    const { system } = data!;
+    const tenant = data?.tenant;
+
+    if (!tenant) {
+        return (
+            <section className={styles.error}>
+                <h1>Seite nicht gefunden.</h1>
+                <div>
+                    <img
+                        src={TenantNotFoundImage}
+                        alt={'Diese Seite existiert nicht'}
+                    />
+                    <p>
+                        Unter dieser Adresse ist aktuell keine lotta-Plattform
+                        zu erreichen. Überprüfe die Adresse in der Adressleiste.
+                    </p>
+                    <p className={styles.secondary}>
+                        Sie haben Interesse, ein eigenes lotta unter dieser
+                        Adresse anzubieten? Weitere Informationen gibt es auf{' '}
+                        <a
+                            href="https://lotta.schule"
+                            title="Zur Lotta-Projektseite"
+                        >
+                            lotta.schule
+                        </a>
+                        .
+                    </p>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <ThemeProvider
             theme={() => {
-                if (system.customTheme) {
+                if (tenant.configuration.customTheme) {
                     return createMuiTheme(
-                        merge({}, theme, system.customTheme),
+                        merge({}, theme, tenant.configuration.customTheme),
                         deDE
                     );
                 }

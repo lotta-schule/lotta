@@ -6,7 +6,7 @@ import {
 } from './Accounts';
 import {
     CalendarWidgetConfig,
-    ClientModel,
+    TenantModel,
     ScheduleWidgetConfig,
     WidgetModel,
     WidgetModelType,
@@ -14,23 +14,25 @@ import {
 
 /**
  *
- * System
+ * Tenant
  *
  */
 
-export const system = {
-    id: '1', // add ID for cache
+export const tenant = {
+    id: '1',
     title: 'DerEineVonHier',
     slug: 'derdiedas',
     insertedAt: '2014-03-08 12:00',
     updatedAt: '2014-03-08 12:00',
     host: 'info.lotta.schule',
-    userMaxStorageConfig: 20,
     groups: [adminGroup, lehrerGroup, elternGroup, schuelerGroup],
-    customTheme: {},
-    logoImageFile: null,
-    backgroundImageFile: null,
-} as ClientModel;
+    configuration: {
+        userMaxStorageConfig: '20',
+        logoImageFile: null,
+        backgroundImageFile: null,
+        customTheme: {},
+    },
+} as TenantModel;
 
 /**
  *

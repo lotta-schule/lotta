@@ -1,6 +1,6 @@
 import { ID } from './ID';
 import { UserModel } from './UserModel';
-import { ClientModel } from './ClientModel';
+import { TenantModel } from './TenantModel';
 import { ArticleModel } from './ArticleModel';
 import { ContentModuleModel } from './ContentModuleModel';
 import { CategoryModel } from './CategoryModel';
@@ -47,14 +47,14 @@ export interface FileConversion {
     remoteLocation: string;
 }
 
-export type FileModelUsageLocation = Partial<FileModelSystemUsageLocation> &
+export type FileModelUsageLocation = Partial<FileModelTenantUsageLocation> &
     Partial<FileModelUserUsageLocation> &
     Partial<FileModelContentModuleUsageLocation> &
     Partial<FileModelArticleUsageLocation> &
     Partial<FileModelCategoryUsageLocation>;
-export interface FileModelSystemUsageLocation {
+export interface FileModelTenantUsageLocation {
     usage: string;
-    system: ClientModel;
+    tenant: TenantModel;
 }
 export interface FileModelCategoryUsageLocation {
     usage: string;

@@ -10,10 +10,10 @@ import { Navbar } from './navigation/Navbar';
 import { useIsMobile } from 'util/useIsMobile';
 import { useIsRetina } from 'util/useIsRetina';
 import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
-import { useSystem } from 'util/client/useSystem';
-import { ClientModel } from 'model';
+import { useTenant } from 'util/tenant/useTenant';
+import { TenantModel } from 'model';
 
-const useStyles = makeStyles<Theme, { system: ClientModel }>((theme) => ({
+const useStyles = makeStyles<Theme, { tenant: TenantModel }>((theme) => ({
     '@global': {
         '*': {
             boxSizing: 'border-box',
@@ -34,9 +34,9 @@ const useStyles = makeStyles<Theme, { system: ClientModel }>((theme) => ({
                 backgroundAttachment: 'scroll',
                 backgroundSize: 'cover',
                 [theme.breakpoints.up('md')]: {
-                    backgroundImage: ({ system }) =>
-                        system.backgroundImageFile
-                            ? `url(${system.backgroundImageFile.remoteLocation})`
+                    backgroundImage: ({ tenant }) =>
+                        tenant.configuration.backgroundImageFile
+                            ? `url(${tenant.configuration.backgroundImageFile.remoteLocation})`
                             : undefined,
                 },
             },
@@ -77,8 +77,8 @@ const useStyles = makeStyles<Theme, { system: ClientModel }>((theme) => ({
 
 export const BaseLayout = memo(({ children }) => {
     usePiwikAnalytics();
-    const system = useSystem();
-    const styles = useStyles({ system });
+    const tenant = useTenant();
+    const styles = useStyles({ tenant });
     const isMobile = useIsMobile();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
     return (
@@ -86,12 +86,15 @@ export const BaseLayout = memo(({ children }) => {
             <header className={styles.header}>
                 <Grid container style={{ height: '100%' }}>
                     <Grid item md={3} className={styles.logoGridItem}>
-                        {system.logoImageFile && (
+                        {tenant.configuration.logoImageFile && (
                             <img
                                 src={`https://afdptjdxen.cloudimg.io/height/${
                                     80 * retinaMultiplier
-                                }/foil1/${system.logoImageFile.remoteLocation}`}
-                                alt={`Logo ${system.title}`}
+                                }/foil1/${
+                                    tenant.configuration.logoImageFile
+                                        .remoteLocation
+                                }`}
+                                alt={`Logo ${tenant.title}`}
                                 className={styles.logo}
                             />
                         )}
@@ -102,7 +105,7 @@ export const BaseLayout = memo(({ children }) => {
                             style={{ marginBottom: 0 }}
                             gutterBottom
                         >
-                            {system.title}
+                            {tenant.title}
                         </Typography>
                     </Grid>
                 </Grid>

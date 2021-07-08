@@ -22,19 +22,20 @@ import { Button } from 'component/general/button/Button';
 import { useQuery, useApolloClient, useMutation } from '@apollo/client';
 import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { GetRelevantFilesInUsageQuery } from 'api/query/GetRelevantFilesInUsage';
-import { useSystem } from 'util/client/useSystem';
+import { useTenant } from 'util/tenant/useTenant';
 import { ArticlesList } from 'component/profile/ArticlesList';
 import { ProfileDeleteFileSelection } from './ProfileDeleteFileSelection';
 import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { useHistory } from 'react-router-dom';
-import clsx from 'clsx';
 import {
     NavigateNext,
     NavigateBefore,
     Warning,
     DeleteForever,
 } from '@material-ui/icons';
+import clsx from 'clsx';
+
 const FileExplorer = React.lazy(
     () => import('component/fileExplorer/FileExplorer')
 );
@@ -74,7 +75,7 @@ export const ProfileDelete = React.memo(() => {
     const history = useHistory();
     const apolloClient = useApolloClient();
 
-    const system = useSystem();
+    const tenant = useTenant();
     const [
         selectedFilesToTransfer,
         setSelectedFilesToTransfer,
@@ -226,11 +227,11 @@ export const ProfileDelete = React.memo(() => {
                             className={styles.paragraph}
                             variant={'body1'}
                         >
-                            Deine Zeit bei <em>{system.title}</em> ist vorbei
+                            Deine Zeit bei <em>{tenant.title}</em> ist vorbei
                             und du möchtest dein Benutzerkonto mit deinen
                             persönlichen Dateien und Daten löschen?
                             <br />
-                            Deine Zeit bei <em>{system.title}</em> ist vorbei
+                            Deine Zeit bei <em>{tenant.title}</em> ist vorbei
                             und du möchtest dein Benutzerkonto mit deinen
                             persönlichen Dateien und Daten löschen?
                         </Typography>
@@ -254,10 +255,10 @@ export const ProfileDelete = React.memo(() => {
                             </li>
                             <li>welche gelöscht werden können und</li>
                             <li>
-                                welche Daten Du an <em>{system.title}</em>{' '}
+                                welche Daten Du an <em>{tenant.title}</em>{' '}
                                 übergeben kannst, sodass nachfolgende
                                 Generationen auf der Homepage von{' '}
-                                <em>{system.title}</em> von Dir lesen können.
+                                <em>{tenant.title}</em> von Dir lesen können.
                             </li>
                         </Typography>
                     </CardContent>
@@ -303,7 +304,7 @@ export const ProfileDelete = React.memo(() => {
                                             }{' '}
                                         </strong>{' '}
                                         sichtbaren Beiträgen auf{' '}
-                                        <em>{system.title}</em> als Autor
+                                        <em>{tenant.title}</em> als Autor
                                         eingetragen.
                                     </Typography>
                                     <Typography
@@ -380,7 +381,7 @@ export const ProfileDelete = React.memo(() => {
                                 variant={'body1'}
                             >
                                 Es gibt Dateien, die du hochgeladen hast, die
-                                bei <em>{system.title}</em> in Beiträgen
+                                bei <em>{tenant.title}</em> in Beiträgen
                                 sichtbar sind.
                             </Typography>
                             <Typography
@@ -389,7 +390,7 @@ export const ProfileDelete = React.memo(() => {
                             >
                                 Du hast jetzt die Möglichkeit, die
                                 Nutzungsrechte an diesen Dateien{' '}
-                                <em>{system.title}</em> zu übergeben. Dadurch
+                                <em>{tenant.title}</em> zu übergeben. Dadurch
                                 bleiben die Beiträge weiter vollständig und die
                                 Dateien wären weiter für Nutzer sichtbar.
                             </Typography>
@@ -398,7 +399,7 @@ export const ProfileDelete = React.memo(() => {
                                 variant={'body1'}
                             >
                                 Überlege dir gut, für welche Dateien du{' '}
-                                <em>{system.title}</em> erlauben möchtest, sie
+                                <em>{tenant.title}</em> erlauben möchtest, sie
                                 weiterhin auf ihrer Webseite zu zeigen. Wenn
                                 dein Benutzerkonto erst gelöscht ist, kann der
                                 Vorgang nicht mehr korrigiert werden, und du
@@ -492,7 +493,7 @@ export const ProfileDelete = React.memo(() => {
                                     <em>
                                         {selectedFilesToTransfer.length} Dateien
                                     </em>
-                                    , die du {system.title} überlässt, werden
+                                    , die du {tenant.title} überlässt, werden
                                     gelöscht
                                 </li>
                             )}

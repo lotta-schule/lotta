@@ -13,7 +13,7 @@ import { useMutation } from '@apollo/client';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
-import { useUserGroups } from 'util/client/useUserGroups';
+import { useUserGroups } from 'util/tenant/useUserGroups';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { EditGroupForm } from './EditGroupForm';
 import { CreateUserGroupDialog } from './CreateUserGroupDialog';

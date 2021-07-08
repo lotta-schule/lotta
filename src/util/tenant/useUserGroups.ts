@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import * as React from 'react';
 import { UserGroupModel } from 'model/UserGroupModel';
-import { useSystem } from './useSystem';
+import { useTenant } from './useTenant';
 
 export const useUserGroups = (): UserGroupModel[] => {
-    const system = useSystem();
-    const groups = useMemo(() => system?.groups ?? [], [system]);
-    return useMemo(
+    const tenant = useTenant();
+    const groups = React.useMemo(() => tenant?.groups ?? [], [tenant]);
+    return React.useMemo(
         () => [...groups].sort((g1, g2) => g1.sortKey - g2.sortKey),
         [groups]
     );

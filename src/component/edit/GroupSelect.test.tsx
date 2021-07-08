@@ -5,7 +5,7 @@ import {
     adminGroup,
     lehrerGroup,
     schuelerGroup,
-    system,
+    tenant,
     elternGroup,
 } from 'test/fixtures';
 import { GroupSelect } from './GroupSelect';
@@ -363,10 +363,10 @@ describe('component/edit/GroupSelect', () => {
         });
 
         describe('selecting a group', () => {
-            const systemWith2AdminGroups = {
-                ...system,
+            const tenantWith2AdminGroups = {
+                ...tenant,
                 groups: [
-                    ...system.groups,
+                    ...tenant.groups,
                     {
                         id: '87',
                         insertedAt: '2020-09-11 00:00',
@@ -394,7 +394,7 @@ describe('component/edit/GroupSelect', () => {
                         onSelectGroups={callback}
                     />,
                     {},
-                    { system: systemWith2AdminGroups }
+                    { tenant: tenantWith2AdminGroups }
                 );
 
                 userEvent.click(await screen.findByRole('textbox'));
@@ -429,7 +429,7 @@ describe('component/edit/GroupSelect', () => {
                     />,
                     {},
                     {
-                        system: systemWith2AdminGroups,
+                        tenant: tenantWith2AdminGroups,
                     }
                 );
 
@@ -463,7 +463,7 @@ describe('component/edit/GroupSelect', () => {
                         onSelectGroups={callback}
                     />,
                     {},
-                    { system: systemWith2AdminGroups }
+                    { tenant: tenantWith2AdminGroups }
                 );
 
                 userEvent.click(await screen.findByRole('textbox'));
@@ -497,7 +497,7 @@ describe('component/edit/GroupSelect', () => {
                         onSelectGroups={callback}
                     />,
                     {},
-                    { system: systemWith2AdminGroups }
+                    { tenant: tenantWith2AdminGroups }
                 );
 
                 userEvent.click(await screen.findByRole('textbox'));
