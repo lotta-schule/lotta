@@ -115,7 +115,6 @@ export const getMetaTagValue = (metaName: string) => {
             return metas[i].getAttribute('content');
         }
     }
-    return '';
 };
 
 export interface TestFileExplorerContextProviderProps {

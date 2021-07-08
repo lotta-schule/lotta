@@ -17,7 +17,13 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
                 {},
                 {
                     useCache: true,
-                    tenant: { ...tenant, userMaxStorageConfig: -1 },
+                    tenant: {
+                        ...tenant,
+                        configuration: {
+                            ...tenant.configuration,
+                            userMaxStorageConfig: '-1',
+                        },
+                    },
                 }
             );
             await waitFor(() => {
@@ -36,7 +42,10 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
                 {},
                 {
                     useCache: true,
-                    tenant: { ...tenant, userMaxStorageConfig: -1 },
+                    tenant: {
+                        ...tenant,
+                        configuration: { userMaxStorageConfig: '-1' },
+                    },
                 }
             );
             userEvent.click(
@@ -50,7 +59,7 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
 
     describe('should impose limit', () => {
         it('should have "no limit" checkbox checked when limit is 20', () => {
-            const screen = render(<Constraints />, {});
+            const screen = render(<Constraints />, {}, { useCache: true });
             expect(
                 screen.getByRole('checkbox', { name: /begrenzen auf/i })
             ).toBeChecked();
@@ -90,7 +99,13 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
             it('should work by request when changing via input field', async () => {
                 const updateFn = jest.fn(() => ({
                     data: {
-                        tenant: { ...tenant, userMaxStorageConfig: 20123 },
+                        tenant: {
+                            ...tenant,
+                            configuration: {
+                                ...tenant.configuration,
+                                userMaxStorageConfig: '20123',
+                            },
+                        },
                     },
                 }));
                 const mocks = [
@@ -98,7 +113,12 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
                         request: {
                             query: UpdateTenantMutation,
                             variables: {
-                                tenant: { userMaxStorageConfig: 20123 },
+                                tenant: {
+                                    configuration: {
+                                        ...tenant.configuration,
+                                        userMaxStorageConfig: '20123',
+                                    },
+                                },
                             },
                         },
                         result: updateFn,

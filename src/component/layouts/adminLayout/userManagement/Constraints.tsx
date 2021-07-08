@@ -20,7 +20,9 @@ export const Constraints = React.memo(() => {
     const tenant = useTenant();
     const lastSetLimitRef = React.useRef(20);
     const [value, setValue] = React.useState(
-        parseInt(tenant.configuration.userMaxStorageConfig, 10) ?? -1
+        tenant.configuration.userMaxStorageConfig
+            ? parseInt(tenant.configuration.userMaxStorageConfig, 10)
+            : -1
     );
 
     const isLimitSet = value >= 0;

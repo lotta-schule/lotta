@@ -30,6 +30,7 @@ export const tenant = {
         userMaxStorageConfig: '20',
         logoImageFile: null,
         backgroundImageFile: null,
+        customTheme: {},
     },
 } as TenantModel;
 
