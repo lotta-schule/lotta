@@ -1,9 +1,10 @@
 import React, { FunctionComponent, memo } from 'react';
-import { ContentModuleModel } from '../../../../model';
+import { File } from 'util/model';
+import { ContentModuleModel } from 'model';
 import { Player, ControlBar } from 'video-react';
-import find from 'lodash/find';
 import { Typography } from '@material-ui/core';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import find from 'lodash/find';
 
 interface VideoVideoProps {
     contentModule: ContentModuleModel;
@@ -29,7 +30,8 @@ export const VideoVideo: FunctionComponent<VideoVideoProps> = memo(
             find(contentModule.files[0].fileConversions, (fc) =>
                 /^storyboard/.test(fc.format)
             );
-        const posterFileLocation = posterFile && posterFile.remoteLocation;
+        const posterFileLocation =
+            posterFile && File.getFileConversionRemoteLocation(posterFile);
         if (!file) {
             return (
                 <PlaceholderImage width={'100%'} height={350} icon={'video'} />
@@ -57,8 +59,8 @@ export const VideoVideo: FunctionComponent<VideoVideoProps> = memo(
             <Player playsInline poster={posterFileLocation || undefined}>
                 {videoFiles.map((vf) => (
                     <source
-                        key={vf.remoteLocation}
-                        src={vf.remoteLocation}
+                        key={File.getFileConversionRemoteLocation(vf)}
+                        src={File.getFileConversionRemoteLocation(vf)}
                         type={vf.mimeType}
                     />
                 ))}

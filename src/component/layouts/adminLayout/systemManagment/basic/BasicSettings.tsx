@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     Card,
     CardContent,
@@ -12,6 +12,7 @@ import {
     Typography,
     makeStyles,
 } from '@material-ui/core';
+import { File } from 'util/model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -27,11 +28,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const BasicSettings = memo(() => {
+export const BasicSettings = React.memo(() => {
     const styles = useStyles();
     const tenant = useTenant();
-    const [title, setTitle] = useState(tenant.title);
-    const [logo, setLogo] = useState(tenant.configuration.logoImageFile);
+    const [title, setTitle] = React.useState(tenant.title);
+    const [logo, setLogo] = React.useState(tenant.configuration.logoImageFile);
 
     const [updateTenant, { loading: isLoading, error }] = useMutation(
         UpdateTenantMutation
@@ -65,7 +66,7 @@ export const BasicSettings = memo(() => {
                                     <Img
                                         operation={'height'}
                                         size={'80'}
-                                        src={logo.remoteLocation}
+                                        src={File.getFileRemoteLocation(logo)}
                                     />
                                 ) : (
                                     <PlaceholderImage

@@ -1,6 +1,12 @@
-import React from 'react';
+import * as React from 'react';
 import { User } from './User';
-import { FileModel, FileModelType, DirectoryModel, UserModel } from 'model';
+import {
+    FileModel,
+    FileModelType,
+    DirectoryModel,
+    UserModel,
+    FileConversionModel,
+} from 'model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFile,
@@ -97,27 +103,21 @@ export const File = {
     getPreviewImageLocation(file?: FileModel, size: string = '200x200') {
         if (file) {
             if (file.fileType === FileModelType.Image) {
-                return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${file.remoteLocation}`;
+                return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${File.getFileRemoteLocation(
+                    file
+                )}`;
             } else {
                 const imageConversionFile = file.fileConversions?.find((fc) =>
                     /^gif/.test(fc.format)
                 );
                 if (imageConversionFile) {
-                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${imageConversionFile.remoteLocation}`;
+                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${File.getFileConversionRemoteLocation(
+                        imageConversionFile
+                    )}`;
                 }
             }
         }
         return null;
-    },
-
-    getSameOriginUrl(file: FileModel) {
-        if (process.env.REACT_APP_FILE_REPLACEMENT_URL) {
-            return file.remoteLocation?.replace(
-                new RegExp(`^${process.env.REACT_APP_FILE_REPLACEMENT_URL}`),
-                ''
-            );
-        }
-        return file.remoteLocation;
     },
 
     canEditDirectory(
@@ -135,5 +135,17 @@ export const File = {
             return true; // Is a root directory
         }
         return this.canEditDirectory(directory, user);
+    },
+
+    getFileRemoteLocation(file: FileModel) {
+        const baseUrl =
+            process.env.REACT_APP_FILE_URL || window.location.origin;
+        return [baseUrl, 'storage', 'f', file.id].join('/');
+    },
+
+    getFileConversionRemoteLocation(fileConversion: FileConversionModel) {
+        const baseUrl =
+            process.env.REACT_APP_FILE_URL || window.location.origin;
+        return [baseUrl, 'storage', 'fc', fileConversion.id].join('/');
     },
 };

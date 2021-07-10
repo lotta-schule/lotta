@@ -31,20 +31,18 @@ export interface FileModel {
     updatedAt: string;
     filename: string;
     filesize: number;
-    remoteLocation: string;
     mimeType: string;
     fileType: FileModelType;
     parentDirectory: Partial<DirectoryModel>;
-    fileConversions: FileConversion[];
+    fileConversions: FileConversionModel[];
     usage?: FileModelUsageLocation[];
 }
 
-export interface FileConversion {
+export interface FileConversionModel {
     id?: ID;
     fileType: FileModelType;
     format: string;
     mimeType: string;
-    remoteLocation: string;
 }
 
 export type FileModelUsageLocation = Partial<FileModelTenantUsageLocation> &

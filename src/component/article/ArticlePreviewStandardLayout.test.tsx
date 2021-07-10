@@ -89,10 +89,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             ).toBeVisible();
             expect(
                 screen.getByRole('img', { name: /vorschaubild/i })
-            ).toHaveAttribute(
-                'src',
-                expect.stringContaining('https://fakes3/meinbild.jpg')
-            );
+            ).toHaveAttribute('src', expect.stringContaining('/storage/f/123'));
         });
     });
 

@@ -12,7 +12,7 @@ export const ReceiveMessageSubscription = gql`
                 name
                 nickname
                 avatarImageFile {
-                    remoteLocation
+                    id
                 }
             }
             recipientUser {
@@ -20,7 +20,7 @@ export const ReceiveMessageSubscription = gql`
                 name
                 nickname
                 avatarImageFile {
-                    remoteLocation
+                    id
                 }
             }
             recipientGroup {

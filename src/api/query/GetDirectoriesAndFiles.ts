@@ -20,7 +20,6 @@ export const GetDirectoriesAndFilesQuery = gql`
             updatedAt
             filename
             filesize
-            remoteLocation
             mimeType
             fileType
             userId
@@ -30,7 +29,6 @@ export const GetDirectoriesAndFilesQuery = gql`
                 updatedAt
                 format
                 mimeType
-                remoteLocation
             }
             parentDirectory {
                 id

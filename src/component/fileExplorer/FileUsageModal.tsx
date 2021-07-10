@@ -16,7 +16,7 @@ import { FileModel, ID, FileModelUsageLocation } from 'model';
 import { GetFileDetailsQuery } from 'api/query/GetFileDetailsQuery';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Category, Article, User } from 'util/model';
+import { Article, Category, File, User } from 'util/model';
 import { useTranslation } from 'react-i18next';
 import fileExplorerContext from './context/FileExplorerContext';
 import Img from 'react-cloudimage-responsive';
@@ -52,7 +52,7 @@ export const FileUsageModal = memo(() => {
         usage.article || usage.category || usage.user?.id === current_user?.id;
 
     const getSecondaryActionCallback = (usage: FileModelUsageLocation) => (
-        e: React.MouseEvent<any>
+        _e: React.MouseEvent<any>
     ) => {
         if (usage.user) {
             window.open('/profile');
@@ -92,29 +92,26 @@ export const FileUsageModal = memo(() => {
             <List>
                 {data?.file?.usage?.map((usage, i) => (
                     <ListItem key={i}>
-                        {usage.article?.previewImageFile?.remoteLocation && (
+                        {usage.article?.previewImageFile && (
                             <ListItemAvatar>
                                 <Img
                                     operation={'cover'}
                                     size={'150x100'}
-                                    src={
+                                    src={File.getFileRemoteLocation(
                                         usage.article.previewImageFile
-                                            .remoteLocation
-                                    }
+                                    )}
                                     alt={`Vorschaubild zu ${usage.article.title}`}
                                 />
                             </ListItemAvatar>
                         )}
-                        {usage.tenant?.configuration.logoImageFile
-                            ?.remoteLocation && (
+                        {usage.tenant?.configuration.logoImageFile && (
                             <ListItemAvatar>
                                 <Img
                                     operation={'cover'}
                                     size={'150x100'}
-                                    src={
+                                    src={File.getFileRemoteLocation(
                                         usage.tenant.configuration.logoImageFile
-                                            .remoteLocation
-                                    }
+                                    )}
                                     alt={`Logo von ${usage.tenant.title}`}
                                 />
                             </ListItemAvatar>

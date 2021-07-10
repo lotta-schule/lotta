@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import * as React from 'react';
 import {
     Card,
     CardContent,
@@ -14,6 +14,7 @@ import {
     Divider,
 } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
+import { File } from 'util/model';
 import { useTenant } from 'util/tenant/useTenant';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -38,19 +39,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const PresentationSettings = memo(() => {
+export const PresentationSettings = React.memo(() => {
     const styles = useStyles();
     const tenant = useTenant();
     const theme = useTheme();
 
-    const [allThemes, setAllThemes] = useState<
+    const [allThemes, setAllThemes] = React.useState<
         { title: string; theme: Partial<Theme> }[]
     >([{ title: 'Standard', theme: {} }]);
 
-    const [customTheme, setCustomTheme] = useState<any>(
+    const [customTheme, setCustomTheme] = React.useState<any>(
         tenant.configuration.customTheme || {}
     );
-    const [backgroundImage, setBackgroundImage] = useState(
+    const [backgroundImage, setBackgroundImage] = React.useState(
         tenant.configuration.backgroundImageFile
     );
 
@@ -62,7 +63,7 @@ export const PresentationSettings = memo(() => {
         return get(customTheme, key, get(theme, key));
     };
 
-    useEffect(() => {
+    React.useEffect(() => {
         Promise.all(
             ['Königsblau', 'Leipzig'].map(async (title) => {
                 const pureName = title.toLowerCase().replace(/ö/g, 'oe');
@@ -194,7 +195,9 @@ export const PresentationSettings = memo(() => {
                                         <Img
                                             operation={'height'}
                                             size={'400x200'}
-                                            src={backgroundImage.remoteLocation}
+                                            src={File.getFileRemoteLocation(
+                                                backgroundImage
+                                            )}
                                         />
                                     ) : (
                                         <PlaceholderImage

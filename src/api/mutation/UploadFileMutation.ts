@@ -9,7 +9,6 @@ export const UploadFileMutation = gql`
             filename
             filesize
             mimeType
-            remoteLocation
             fileType
             userId
             parentDirectory {

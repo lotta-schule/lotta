@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import {
     Card,
     CardContent,
@@ -14,7 +14,7 @@ import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User, Article } from 'util/model';
+import { Article, File, User } from 'util/model';
 import { useMutation } from '@apollo/client';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
@@ -142,7 +142,7 @@ interface ArticlePreviewProps {
     isEmbedded?: boolean;
 }
 
-export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(
+export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
     ({
         article,
         disableLink,
@@ -195,9 +195,9 @@ export const ArticlePreviewDensedLayout = memo<ArticlePreviewProps>(
                             {maybeLinked(
                                 <BackgroundImg
                                     height={'100%'}
-                                    src={
-                                        article.previewImageFile.remoteLocation
-                                    }
+                                    src={File.getFileRemoteLocation(
+                                        article.previewImageFile
+                                    )}
                                     className={styles.articlePreviewImage}
                                     params="func=crop&gravity=auto"
                                 />

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import {
     Klausurenplan,
@@ -14,7 +14,7 @@ import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { CategoryLayout } from './CategoryLayout';
 
 describe('component/article/CategoryLayout', () => {
-    const categoryWidgetsMock = (categoryId: string): MockedResponse => ({
+    const categoryWidgetsMock = (_categoryId: string): MockedResponse => ({
         request: {
             query: GetCategoryWidgetsQuery,
             variables: { categoryId: MusikCategory.id },
@@ -55,7 +55,7 @@ describe('component/article/CategoryLayout', () => {
             );
             const headerContent = await screen.findByTestId('HeaderContent');
             expect(getComputedStyle(headerContent).backgroundImage).toContain(
-                'meinbild.jpg'
+                '/storage/f/123'
             );
         });
 

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { Grid, Typography, makeStyles, Theme } from '@material-ui/core';
@@ -10,7 +10,7 @@ import { useQuery } from '@apollo/client';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User } from 'util/model';
+import { File, User } from 'util/model';
 import { Header } from 'component/general/Header';
 
 const useStyles = makeStyles<Theme, { twoColumns: boolean }>((theme) => ({
@@ -44,7 +44,7 @@ export interface CategoryLayoutProps {
     articles?: ArticleModel[];
 }
 
-export const CategoryLayout = memo<CategoryLayoutProps>(
+export const CategoryLayout = React.memo<CategoryLayoutProps>(
     ({ category, articles }) => {
         const styles = useStyles({
             twoColumns: category.layoutName === '2-columns',
@@ -76,8 +76,11 @@ export const CategoryLayout = memo<CategoryLayoutProps>(
         }
 
         const bannerImageUrl =
-            category.bannerImageFile?.remoteLocation &&
-            `https://afdptjdxen.cloudimg.io/crop/950x120/foil1/${category.bannerImageFile.remoteLocation}`;
+            (category.bannerImageFile &&
+                `https://afdptjdxen.cloudimg.io/crop/950x120/foil1/${File.getFileRemoteLocation(
+                    category.bannerImageFile
+                )}`) ||
+            undefined;
         return (
             <>
                 <BaseLayoutMainContent>

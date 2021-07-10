@@ -114,7 +114,6 @@ export const imageFile = {
     mimeType: 'image/jpg',
     insertedAt: '2001-01-01 14:15',
     updatedAt: '2001-01-01 14:15',
-    remoteLocation: 'https://fakes3/meinbild.jpg',
     fileConversions: [],
 };
 
@@ -126,7 +125,6 @@ export const otherImageFile = {
     mimeType: 'image/gif',
     insertedAt: '2001-01-01 14:15',
     updatedAt: '2001-01-01 14:15',
-    remoteLocation: 'https://fakes3/meinbild.gif',
     fileConversions: [],
 };
 
@@ -138,7 +136,6 @@ export const documentFile = {
     mimeType: 'application/pdf',
     insertedAt: '1848-02-21 00:00',
     updatedAt: '1848-02-21 00:00',
-    remoteLocation: 'https://revoluti.on/manifest.pdf',
     fileConversions: [],
 };
 
@@ -150,7 +147,6 @@ export const convertedDocumentFile = {
     mimeType: 'application/pdf',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
-    remoteLocation: 'https://fake3/bildband.pdf',
     fileConversions: [
         {
             id: '55451',
@@ -159,7 +155,6 @@ export const convertedDocumentFile = {
             fileType: FileModelType.Image,
             format: 'jpg:200',
             mimeType: 'image/jpg',
-            remoteLocation: 'https://fake3/bildband55451',
         },
         {
             id: '55452',
@@ -168,7 +163,6 @@ export const convertedDocumentFile = {
             fileType: FileModelType.Audio,
             format: 'texttospeech:mp3',
             mimeType: 'audio/mp3',
-            remoteLocation: 'https://fake3/bildband-tts',
         },
         {
             id: '55453',
@@ -177,7 +171,6 @@ export const convertedDocumentFile = {
             fileType: FileModelType.Misc,
             format: 'ocr:txt',
             mimeType: 'plain/text',
-            remoteLocation: 'https://fake3/bildband-ocr',
         },
     ],
 };
@@ -190,14 +183,12 @@ export const movieFile = {
     mimeType: 'video/mp4',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
-    remoteLocation: 'https://fake3/kino.mp4',
     fileConversions: [
         {
             id: '75001',
             fileType: FileModelType.Image,
             format: 'gif:300',
             mimeType: 'image/gif',
-            remoteLocation: 'https://fake3/kino75001',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -206,7 +197,6 @@ export const movieFile = {
             fileType: FileModelType.Image,
             format: 'storyboard:800',
             mimeType: 'image/jpg',
-            remoteLocation: 'https://fake3/kino75002',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -215,7 +205,6 @@ export const movieFile = {
             fileType: FileModelType.Video,
             format: 'webm:1080',
             mimeType: 'video/webm',
-            remoteLocation: 'https://fake3/kino75003',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -224,7 +213,6 @@ export const movieFile = {
             fileType: FileModelType.Video,
             format: 'webm:768',
             mimeType: 'video/webm',
-            remoteLocation: 'https://fake3/kino75004',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -233,7 +221,6 @@ export const movieFile = {
             fileType: FileModelType.Video,
             format: 'mp4:1080',
             mimeType: 'video/mp4',
-            remoteLocation: 'https://fake3/kino75005',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -242,7 +229,6 @@ export const movieFile = {
             fileType: FileModelType.Video,
             format: 'mp4:768',
             mimeType: 'video/mp4',
-            remoteLocation: 'https://fake3/kino75006',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -251,7 +237,6 @@ export const movieFile = {
             fileType: FileModelType.Audio,
             format: 'mp3:std',
             mimeType: 'audio/mp3',
-            remoteLocation: 'https://fake3/kino75007',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -266,14 +251,12 @@ export const audioFile = {
     mimeType: 'audio/wav',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
-    remoteLocation: 'https://fake3/vietkong.wav',
     fileConversions: [
         {
             id: '99001',
             fileType: FileModelType.Audio,
             format: 'hifi:flac',
             mimeType: 'audio/flac',
-            remoteLocation: 'https://fake3/vietkong.flac',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -282,7 +265,6 @@ export const audioFile = {
             fileType: FileModelType.Audio,
             format: 'lofi:mp3',
             mimeType: 'audio/mp3',
-            remoteLocation: 'https://fake3/vietkong.mp3',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },
@@ -297,14 +279,12 @@ export const powerpointFile = {
     mimeType: 'application/mspowerpoint',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
-    remoteLocation: 'https://fake3/langweilig.ppt',
     fileConversions: [
         {
             id: '21',
             fileType: FileModelType.Misc,
             format: 'thumbnail:jpg',
             mimeType: 'image/jpg',
-            remoteLocation: 'https://fake3/langweiliginbild',
             insertedAt: '2001-01-21 00:00',
             updatedAt: '2001-01-21 00:00',
         },

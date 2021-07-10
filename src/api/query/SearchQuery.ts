@@ -13,7 +13,6 @@ export const SearchQuery = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
             }
             category {
                 id
@@ -27,7 +26,7 @@ export const SearchQuery = gql`
                 nickname
                 name
                 avatarImageFile {
-                    remoteLocation
+                    id
                 }
             }
         }

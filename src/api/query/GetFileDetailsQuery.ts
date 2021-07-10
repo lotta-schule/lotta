@@ -8,7 +8,6 @@ export const GetFileDetailsQuery = gql`
             updatedAt
             filename
             filesize
-            remoteLocation
             mimeType
             fileType
             user {
@@ -16,7 +15,7 @@ export const GetFileDetailsQuery = gql`
                 name
                 nickname
                 avatarImageFile {
-                    remoteLocation
+                    id
                 }
             }
             usage {
@@ -33,7 +32,7 @@ export const GetFileDetailsQuery = gql`
                         id
                         title
                         previewImageFile {
-                            remoteLocation
+                            id
                         }
                     }
                 }
@@ -43,7 +42,7 @@ export const GetFileDetailsQuery = gql`
                         id
                         title
                         previewImageFile {
-                            remoteLocation
+                            id
                         }
                     }
                 }
@@ -57,7 +56,7 @@ export const GetFileDetailsQuery = gql`
                         name
                         nickname
                         avatarImageFile {
-                            remoteLocation
+                            id
                         }
                     }
                 }
@@ -68,7 +67,6 @@ export const GetFileDetailsQuery = gql`
                 updatedAt
                 format
                 mimeType
-                remoteLocation
             }
             parentDirectory {
                 id

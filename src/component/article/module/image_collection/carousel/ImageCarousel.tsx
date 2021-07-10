@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { File } from 'util/model';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Button, MobileStepper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
@@ -142,10 +143,12 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                             )}
                             {Math.abs(activeStep - index) <= 2 ? (
                                 <img
-                                    src={`https://afdptjdxen.cloudimg.io/fit/800x500/foil1/${file.remoteLocation}`}
+                                    src={`https://afdptjdxen.cloudimg.io/fit/800x500/foil1/${File.getFileRemoteLocation(
+                                        file
+                                    )}`}
                                     alt={
                                         getConfiguration(file).caption ||
-                                        file.remoteLocation
+                                        File.getFileRemoteLocation(file)
                                     }
                                 />
                             ) : null}
