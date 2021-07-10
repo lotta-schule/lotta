@@ -21,6 +21,13 @@ defmodule Lotta.Release do
           &Migrator.run(&1, :up, all: true)
         )
     end
+
+    Enum.map(
+      Lotta.Tenants.list_tenants(),
+      fn tenant ->
+        Lotta.Tenants.TenantSelector.run_migrations(prefix: tenant.prefix)
+      end
+    )
   end
 
   def drop do

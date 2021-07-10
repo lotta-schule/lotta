@@ -30,7 +30,6 @@ config :lotta, :rabbitmq,
         end
     }
     |> URI.to_string()
-    |> IO.inspect()
 
 config :lotta, :redis_connection,
   host: System.fetch_env!("REDIS_HOST"),
