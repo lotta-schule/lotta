@@ -17,7 +17,7 @@ export const GetUsersQuery = gql`
                 isAdminGroup
             }
             avatarImageFile {
-                remoteLocation
+                id
             }
         }
     }

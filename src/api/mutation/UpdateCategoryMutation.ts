@@ -11,7 +11,6 @@ export const UpdateCategoryMutation = gql`
             layoutName
             bannerImageFile {
                 id
-                remoteLocation
             }
             groups {
                 id

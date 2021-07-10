@@ -1,7 +1,8 @@
-import React, { memo, useMemo } from 'react';
+import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { Article } from '../article/Article';
-import { ArticleModel } from '../../model';
+import { ArticleModel, ID } from 'model';
+import { File } from 'util/model';
 import {
     CircularProgress,
     Typography,
@@ -15,7 +16,6 @@ import { Helmet } from 'react-helmet';
 import { useTenant } from 'util/tenant/useTenant';
 import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ID } from 'model/ID';
 
 const useStyle = makeStyles((theme: Theme) => ({
     siteTitle: {
@@ -35,7 +35,7 @@ export interface ArticleLayoutProps {
     articleId: ID;
 }
 
-export const ArticleLayout = memo<ArticleLayoutProps>(
+export const ArticleLayout = React.memo<ArticleLayoutProps>(
     ({ articleId, title }) => {
         const styles = useStyle();
         const tenant = useTenant() || {};
@@ -45,7 +45,7 @@ export const ArticleLayout = memo<ArticleLayoutProps>(
             { id: ID }
         >(GetArticleQuery, { variables: { id: articleId } });
 
-        const mainContent = useMemo(() => {
+        const mainContent = React.useMemo(() => {
             if (isLoading) {
                 return (
                     <div>
@@ -81,7 +81,9 @@ export const ArticleLayout = memo<ArticleLayoutProps>(
                             {article.previewImageFile && (
                                 <meta
                                     property={'og:image'}
-                                    content={`https://afdptjdxen.cloudimg.io/cover/1800x945/foil1/${article.previewImageFile.remoteLocation}`}
+                                    content={`https://afdptjdxen.cloudimg.io/cover/1800x945/foil1/${File.getFileRemoteLocation(
+                                        article.previewImageFile
+                                    )}`}
                                 />
                             )}
                             <meta

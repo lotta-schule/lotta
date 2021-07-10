@@ -34,10 +34,10 @@ import {
     Warning,
 } from '@material-ui/icons';
 import { SearchUserField } from '../adminLayout/userManagement/SearchUserField';
-import { ArticleModel, ID } from '../../../model';
+import { ArticleModel, ID } from 'model';
+import { Category, File, User } from 'util/model';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User, Category } from 'util/model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
 import { UsersList } from './UsersList';
@@ -241,7 +241,9 @@ export const EditArticleSidebar = React.memo<EditArticleSidebarProps>(
                             <Img
                                 operation={'width'}
                                 size={'300x200'}
-                                src={article.previewImageFile.remoteLocation}
+                                src={File.getFileRemoteLocation(
+                                    article.previewImageFile
+                                )}
                             />
                         ) : (
                             <PlaceholderImage width={'100%'} height={150} />

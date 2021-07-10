@@ -100,6 +100,9 @@ describe('component/layouts/adminLayout/MessageToolbar', () => {
                 'Drinalda'
             );
             await waitFor(() => {
+                expect(screen.queryByRole('progressbar')).toBeNull();
+            });
+            await waitFor(() => {
                 expect(
                     screen.getByRole('option', { name: /drinalda/i })
                 ).toBeVisible();

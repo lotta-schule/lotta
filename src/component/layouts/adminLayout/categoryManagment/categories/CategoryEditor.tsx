@@ -23,7 +23,7 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
-import { Category, RedirectType } from 'util/model';
+import { Category, File, RedirectType } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
@@ -202,7 +202,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                         <Img
                             operation={'cover'}
                             size={'900x150'}
-                            src={category.bannerImageFile.remoteLocation}
+                            src={File.getFileRemoteLocation(
+                                category.bannerImageFile
+                            )}
                         />
                     ) : (
                         <PlaceholderImage width={'100%'} height={75} />

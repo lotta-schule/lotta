@@ -13,7 +13,6 @@ export const ToggleArticlePinMutation = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
                 mimeType
                 fileType
                 filename
@@ -27,7 +26,6 @@ export const ToggleArticlePinMutation = gql`
                 configuration
                 files {
                     id
-                    remoteLocation
                     mimeType
                     fileType
                     filename
@@ -36,7 +34,6 @@ export const ToggleArticlePinMutation = gql`
                         id
                         format
                         mimeType
-                        remoteLocation
                     }
                 }
             }

@@ -10,11 +10,9 @@ export const UpdateTenantMutation = gql`
             configuration {
                 backgroundImageFile {
                     id
-                    remoteLocation
                 }
                 logoImageFile {
                     id
-                    remoteLocation
                 }
                 customTheme
                 userMaxStorageConfig

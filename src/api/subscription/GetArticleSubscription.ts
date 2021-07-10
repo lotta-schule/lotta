@@ -13,7 +13,6 @@ export const ArticleIsUpdatedSubscription = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
                 mimeType
                 fileType
             }
@@ -27,7 +26,6 @@ export const ArticleIsUpdatedSubscription = gql`
                 updatedAt
                 files {
                     id
-                    remoteLocation
                     mimeType
                     fileType
                     filename
@@ -37,7 +35,6 @@ export const ArticleIsUpdatedSubscription = gql`
                         id
                         format
                         mimeType
-                        remoteLocation
                     }
                 }
             }
@@ -56,7 +53,7 @@ export const ArticleIsUpdatedSubscription = gql`
                 nickname
                 name
                 avatarImageFile {
-                    remoteLocation
+                    id
                 }
             }
         }

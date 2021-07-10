@@ -14,7 +14,6 @@ export const GetArticleQuery = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
                 mimeType
                 fileType
             }
@@ -28,7 +27,6 @@ export const GetArticleQuery = gql`
                 updatedAt
                 files {
                     id
-                    remoteLocation
                     mimeType
                     fileType
                     filename
@@ -38,7 +36,6 @@ export const GetArticleQuery = gql`
                         id
                         format
                         mimeType
-                        remoteLocation
                     }
                 }
             }
@@ -57,7 +54,7 @@ export const GetArticleQuery = gql`
                 nickname
                 name
                 avatarImageFile {
-                    remoteLocation
+                    id
                 }
             }
         }

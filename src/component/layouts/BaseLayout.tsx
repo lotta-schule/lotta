@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import {
     Grid,
     Container,
@@ -11,6 +11,7 @@ import { useIsMobile } from 'util/useIsMobile';
 import { useIsRetina } from 'util/useIsRetina';
 import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
 import { useTenant } from 'util/tenant/useTenant';
+import { File } from 'util/model';
 import { TenantModel } from 'model';
 
 const useStyles = makeStyles<Theme, { tenant: TenantModel }>((theme) => ({
@@ -36,7 +37,9 @@ const useStyles = makeStyles<Theme, { tenant: TenantModel }>((theme) => ({
                 [theme.breakpoints.up('md')]: {
                     backgroundImage: ({ tenant }) =>
                         tenant.configuration.backgroundImageFile
-                            ? `url(${tenant.configuration.backgroundImageFile.remoteLocation})`
+                            ? `url(${File.getFileRemoteLocation(
+                                  tenant.configuration.backgroundImageFile
+                              )})`
                             : undefined,
                 },
             },
@@ -75,7 +78,7 @@ const useStyles = makeStyles<Theme, { tenant: TenantModel }>((theme) => ({
     },
 }));
 
-export const BaseLayout = memo(({ children }) => {
+export const BaseLayout = React.memo(({ children }) => {
     usePiwikAnalytics();
     const tenant = useTenant();
     const styles = useStyles({ tenant });
@@ -90,10 +93,9 @@ export const BaseLayout = memo(({ children }) => {
                             <img
                                 src={`https://afdptjdxen.cloudimg.io/height/${
                                     80 * retinaMultiplier
-                                }/foil1/${
+                                }/foil1/${File.getFileRemoteLocation(
                                     tenant.configuration.logoImageFile
-                                        .remoteLocation
-                                }`}
+                                )}`}
                                 alt={`Logo ${tenant.title}`}
                                 className={styles.logo}
                             />

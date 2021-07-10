@@ -10,11 +10,9 @@ export const GetTenantQuery = gql`
             configuration {
                 backgroundImageFile {
                     id
-                    remoteLocation
                 }
                 logoImageFile {
                     id
-                    remoteLocation
                 }
                 customTheme
                 userMaxStorageConfig

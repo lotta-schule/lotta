@@ -152,7 +152,7 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                                         e.stopPropagation()
                                     }
                                     component={'a'}
-                                    href={File.getSameOriginUrl(file)}
+                                    href={File.getFileRemoteLocation(file)}
                                     download={file.filename}
                                 >
                                     <CloudDownloadOutlined

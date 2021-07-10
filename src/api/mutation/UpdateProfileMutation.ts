@@ -12,7 +12,7 @@ export const UpdateProfileMutation = gql`
             class
             enrollmentTokens
             avatarImageFile {
-                remoteLocation
+                id
             }
             groups {
                 id

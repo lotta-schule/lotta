@@ -14,7 +14,6 @@ export const GetOwnArticlesQuery = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
             }
             contentModules {
                 id
@@ -24,7 +23,6 @@ export const GetOwnArticlesQuery = gql`
                 configuration
                 files {
                     id
-                    remoteLocation
                     mimeType
                     fileType
                     filename
@@ -34,7 +32,6 @@ export const GetOwnArticlesQuery = gql`
                         id
                         format
                         mimeType
-                        remoteLocation
                     }
                 }
             }

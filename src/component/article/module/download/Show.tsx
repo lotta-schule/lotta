@@ -1,10 +1,5 @@
-import React, { memo } from 'react';
-import {
-    ContentModuleModel,
-    FileModel,
-    FileModelType,
-    FileConversion,
-} from '../../../../model';
+import * as React from 'react';
+import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { File } from 'util/model';
 import { CardContent, Typography, Grid, Divider } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
@@ -17,7 +12,7 @@ export interface ShowProps {
     contentModule: ContentModuleModel;
 }
 
-export const Show = memo<ShowProps>(({ contentModule }) => {
+export const Show = React.memo<ShowProps>(({ contentModule }) => {
     const styles = useStyles();
 
     const getConfiguration = (file: FileModel) => {
@@ -44,10 +39,6 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
             return true;
         }
         return false;
-    };
-
-    const previewFile = (file: FileModel): FileModel | FileConversion => {
-        return file;
     };
 
     return (
@@ -80,7 +71,7 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                         as={'a'}
                                         fullWidth
                                         style={{ minWidth: 130, maxWidth: 160 }}
-                                        href={File.getSameOriginUrl(file)}
+                                        href={File.getFileRemoteLocation(file)}
                                         download={file.filename}
                                         target={'_blank'}
                                         icon={<CloudDownload />}
@@ -105,10 +96,9 @@ export const Show = memo<ShowProps>(({ contentModule }) => {
                                                     background:
                                                         'transparent 50% 50% / cover no-repeat',
                                                 }}
-                                                src={
-                                                    previewFile(file)
-                                                        .remoteLocation
-                                                }
+                                                src={File.getFileRemoteLocation(
+                                                    file
+                                                )}
                                                 params="func=crop&gravity=auto"
                                             />
                                         </Grid>

@@ -13,7 +13,6 @@ export const GetArticlesForTag = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
                 mimeType
                 fileType
                 filename

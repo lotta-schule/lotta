@@ -14,7 +14,6 @@ export const CreateArticleMutation = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
                 mimeType
                 fileType
                 filename

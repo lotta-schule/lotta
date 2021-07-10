@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     Avatar,
     Card,
@@ -22,7 +22,7 @@ import { useMutation } from '@apollo/client';
 import { Clear } from '@material-ui/icons';
 import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { UpdateEmailDialog } from 'component/dialog/UpdateEmailDialog';
-import { User } from 'util/model';
+import { File, User } from 'util/model';
 import { FileModelType, UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
@@ -71,33 +71,36 @@ export const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const ProfileData = memo(() => {
+export const ProfileData = React.memo(() => {
     const styles = useStyles();
     const { push } = useHistory();
 
     const currentUser = useCurrentUser()!;
 
-    const [classOrShortName, setClassOrShortName] = useState(currentUser.class);
-    const [name, setName] = useState(currentUser.name);
-    const [nickname, setNickname] = useState(currentUser.nickname);
-    const [isHideFullName, setIsHideFullName] = useState(
+    const [classOrShortName, setClassOrShortName] = React.useState(
+        currentUser.class
+    );
+    const [name, setName] = React.useState(currentUser.name);
+    const [nickname, setNickname] = React.useState(currentUser.nickname);
+    const [isHideFullName, setIsHideFullName] = React.useState(
         currentUser.hideFullName
     );
-    const [avatarImageFile, setAvatarImageFile] = useState<
+    const [avatarImageFile, setAvatarImageFile] = React.useState<
         FileModel | null | undefined
     >(currentUser.avatarImageFile);
-    const [enrollmentTokens, setEnrollmentTokens] = useState<string[]>(
+    const [enrollmentTokens, setEnrollmentTokens] = React.useState<string[]>(
         currentUser.enrollmentTokens ?? []
     );
 
     const [
         isShowUpdatePasswordDialog,
         setIsShowUpdatePasswordDialog,
-    ] = useState(false);
+    ] = React.useState(false);
 
-    const [isShowUpdateEmailDialog, setIsShowUpdateEmailDialog] = useState(
-        false
-    );
+    const [
+        isShowUpdateEmailDialog,
+        setIsShowUpdateEmailDialog,
+    ] = React.useState(false);
 
     const [updateProfile, { error, loading: isLoading }] = useMutation<{
         user: UserModel;
@@ -127,7 +130,9 @@ export const ProfileData = memo(() => {
                             <Avatar
                                 src={
                                     avatarImageFile
-                                        ? avatarImageFile.remoteLocation
+                                        ? File.getFileRemoteLocation(
+                                              avatarImageFile
+                                          )
                                         : User.getDefaultAvatarUrl(currentUser)
                                 }
                                 alt={User.getNickname(currentUser)}
