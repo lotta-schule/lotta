@@ -9,17 +9,12 @@ defmodule Lotta.Release do
   alias Ecto.Migrator
 
   @app :lotta
-  @start_apps [
-    :crypto,
-    :ssl,
-    :ecto
-  ]
 
   @elasticsearch_clusters [Lotta.Elasticsearch.Cluster]
   @elasticsearch_indexes [:articles]
 
   def migrate do
-    Enum.each(@start_apps, &Application.ensure_all_started/1)
+    Application.load(@app)
 
     for repo <- repos() do
       {:ok, _, _} =
