@@ -31,7 +31,14 @@ defmodule LottaWeb.Router do
   scope "/auth" do
     pipe_through([:tenant, :auth, :json_api])
 
-    post("/token/refresh", LottaWeb.Auth.TokenController, :refresh)
+    post("/token/refresh", LottaWeb.TokenController, :refresh)
+  end
+
+  scope "/storage" do
+    pipe_through([:tenant, :auth])
+
+    get("/f/:id", LottaWeb.StorageController, :get_file)
+    get("/fc/:id", LottaWeb.StorageController, :get_file_conversion)
   end
 
   scope "/api" do

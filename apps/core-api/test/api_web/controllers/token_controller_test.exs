@@ -1,4 +1,4 @@
-defmodule LottaWeb.Auth.TokenControllerTest do
+defmodule LottaWeb.TokenControllerTest do
   @moduledoc false
 
   use LottaWeb.ConnCase, async: true

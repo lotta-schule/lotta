@@ -97,6 +97,7 @@ defmodule Lotta.MixProject do
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:elasticsearch, "~> 1.0"},
+      {:reverse_proxy_plug, "~> 1.3"},
       # Test
       {:mock, "~> 0.3", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
