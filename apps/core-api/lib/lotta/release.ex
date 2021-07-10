@@ -14,8 +14,6 @@ defmodule Lotta.Release do
   @elasticsearch_indexes [:articles]
 
   def migrate do
-    Application.load(@app)
-
     for repo <- repos() do
       {:ok, _, _} =
         Migrator.with_repo(
@@ -24,12 +22,24 @@ defmodule Lotta.Release do
         )
     end
 
+    config =
+      Application.get_env(:lotta, Repo)
+      |> Keyword.put(:name, nil)
+      |> Keyword.put(:pool_size, 2)
+      |> Keyword.delete(:pool)
+
+    {:ok, pid} = Lotta.Repo.start_link(config)
+    Lotta.Repo.put_dynamic_repo(pid)
+
     Enum.map(
       Lotta.Tenants.list_tenants(),
       fn tenant ->
-        Lotta.Tenants.TenantSelector.run_migrations(prefix: tenant.prefix)
+        Lotta.Tenants.TenantSelector.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
       end
     )
+
+    Lotta.Repo.stop(1000)
+    Lotta.Repo.put_dynamic_repo(Lotta.Repo)
   end
 
   def drop do
