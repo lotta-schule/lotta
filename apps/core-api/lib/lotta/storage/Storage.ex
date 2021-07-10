@@ -284,6 +284,7 @@ defmodule Lotta.Storage do
 
   """
   @doc since: "2.5.0"
+  @spec get_file(Lotta.Storage.File.id()) :: Lotta.Storage.File.t() | nil
   def get_file(id), do: Repo.get(Lotta.Storage.File, id)
 
   @doc """

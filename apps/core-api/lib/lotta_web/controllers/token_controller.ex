@@ -1,4 +1,4 @@
-defmodule LottaWeb.Auth.TokenController do
+defmodule LottaWeb.TokenController do
   require Logger
 
   use Phoenix.Controller
