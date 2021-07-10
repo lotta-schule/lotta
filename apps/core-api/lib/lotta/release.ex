@@ -6,6 +6,7 @@ defmodule Lotta.Release do
 
   import Ecto.Query
 
+  alias Lotta.Repo
   alias Ecto.Migrator
 
   @app :lotta
@@ -28,8 +29,8 @@ defmodule Lotta.Release do
       |> Keyword.put(:pool_size, 2)
       |> Keyword.delete(:pool)
 
-    {:ok, pid} = Lotta.Repo.start_link(config)
-    Lotta.Repo.put_dynamic_repo(pid)
+    {:ok, pid} = Repo.start_link(config)
+    Repo.put_dynamic_repo(pid)
 
     Enum.map(
       Lotta.Tenants.list_tenants(),
@@ -38,8 +39,8 @@ defmodule Lotta.Release do
       end
     )
 
-    Lotta.Repo.stop(1000)
-    Lotta.Repo.put_dynamic_repo(Lotta.Repo)
+    Repo.stop(1000)
+    Repo.put_dynamic_repo(Repo)
   end
 
   def drop do
@@ -82,7 +83,7 @@ defmodule Lotta.Release do
       where: rs.store_name != ^store,
       preload: [:remote_storage_entity]
     )
-    |> Lotta.Repo.all()
+    |> Repo.all()
     |> Enum.chunk_every(10)
     |> Enum.each(fn files_chunk ->
       files_chunk
