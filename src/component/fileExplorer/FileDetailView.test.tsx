@@ -16,7 +16,6 @@ describe('component/fileExplorer/FileDetailView', () => {
         mimeType: 'image/jpg',
         insertedAt: '2001-01-01 14:15',
         updatedAt: '2001-01-01 14:15',
-        remoteLocation: 'https://fakes3/meinbild.jpg',
         userId: user.id,
         fileConversions: [],
         parentDirectory: {
@@ -50,7 +49,6 @@ describe('component/fileExplorer/FileDetailView', () => {
         filesize: 412756,
         fileType: FileModelType.Image,
         mimeType: 'image/jpg',
-        remoteLocation: 'https://localhost:3000/image.jpg',
     };
     const usedFileMocks = [
         {
@@ -125,7 +123,7 @@ describe('component/fileExplorer/FileDetailView', () => {
             const previewImage = screen.getByTestId(
                 'PreviewImage'
             ) as HTMLImageElement;
-            expect(previewImage.src).toContain('https://fakes3/meinbild.jpg');
+            expect(previewImage.src).toContain('/storage/f/123');
         });
 
         it('should show not show a previewImage for Pdf document without image preview', () => {

@@ -9,7 +9,6 @@ export const GetWidgetsQuery = gql`
             configuration
             iconImageFile {
                 id
-                remoteLocation
             }
             groups {
                 id

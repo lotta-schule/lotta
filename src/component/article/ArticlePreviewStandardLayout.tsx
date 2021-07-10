@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { User, Article } from 'util/model';
+import { Article, File, User } from 'util/model';
 import { useMutation } from '@apollo/client';
 import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
 import { CollisionLink } from '../general/CollisionLink';
@@ -202,9 +202,11 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                     className={styles.previewImage}
                                     src={`https://afdptjdxen.cloudimg.io/bound/${
                                         400 * retinaMultiplier
-                                    }x${300 * retinaMultiplier}/foil1/${
-                                        article.previewImageFile.remoteLocation
-                                    }`}
+                                    }x${
+                                        300 * retinaMultiplier
+                                    }/foil1/${File.getFileRemoteLocation(
+                                        article.previewImageFile
+                                    )}`}
                                     alt={`Vorschaubild zu ${article.title}`}
                                 />
                             )

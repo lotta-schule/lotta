@@ -15,7 +15,7 @@ export const GetCurrentUserQuery = gql`
             enrollmentTokens
             hasChangedDefaultPassword
             avatarImageFile {
-                remoteLocation
+                id
             }
             groups {
                 id

@@ -1,26 +1,27 @@
-import React, { FC, useCallback, useState } from 'react';
+import * as React from 'react';
 import { Button } from 'component/general/button/Button';
 import { useSlate } from 'slate-react';
 import { Range } from 'slate';
 import { Image } from '@material-ui/icons';
 import { insertImage } from './SlateUtils';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { File } from 'util/model';
 import { FileModel } from 'model';
 
 export interface EditToolbarImageButtonProps {
     onImageAdded?(): void;
 }
 
-export const EditToolbarImageButton: FC<EditToolbarImageButtonProps> = ({
+export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
     onImageAdded,
 }) => {
     const editor = useSlate();
     const [
         lastEditorSelection,
         setLastEditorSelection,
-    ] = useState<Range | null>(null);
+    ] = React.useState<Range | null>(null);
 
-    const onClickImage = useCallback(
+    const onClickImage = React.useCallback(
         (file: FileModel) => {
             if (lastEditorSelection) {
                 editor.apply({
@@ -29,7 +30,7 @@ export const EditToolbarImageButton: FC<EditToolbarImageButtonProps> = ({
                     newProperties: lastEditorSelection,
                 });
             }
-            insertImage(editor, file.remoteLocation);
+            insertImage(editor, File.getFileRemoteLocation(file));
             setTimeout(() => {
                 onImageAdded?.();
             }, 100);

@@ -13,7 +13,6 @@ export const GetCategoriesQuery = gql`
             layoutName
             bannerImageFile {
                 id
-                remoteLocation
             }
             groups {
                 id

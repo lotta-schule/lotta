@@ -14,7 +14,6 @@ export const UpdateArticleMutation = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
                 mimeType
                 fileType
                 filename
@@ -28,7 +27,6 @@ export const UpdateArticleMutation = gql`
                 configuration
                 files {
                     id
-                    remoteLocation
                     mimeType
                     fileType
                     filename
@@ -38,7 +36,6 @@ export const UpdateArticleMutation = gql`
                         id
                         format
                         mimeType
-                        remoteLocation
                     }
                 }
             }

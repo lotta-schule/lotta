@@ -2,6 +2,7 @@ import * as React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Theme, Typography } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
+import { File } from 'util/model';
 import { FileModel } from 'model';
 import { useWindowSize } from 'util/useWindowSize';
 import { useIsRetina } from 'util/useIsRetina';
@@ -98,7 +99,9 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> = React.me
             return null;
         }
         const imgUrl = `https://afdptjdxen.cloudimg.io/bound/${width}x${height}/foil1/${
-            selectedFile?.remoteLocation ?? selectedUrl
+            selectedFile
+                ? File.getFileRemoteLocation(selectedFile)
+                : selectedUrl
         }`;
         return (
             <div className={styles.root}>

@@ -13,7 +13,6 @@ export const CreateCategoryMutation = gql`
             layoutName
             bannerImageFile {
                 id
-                remoteLocation
             }
             groups {
                 id

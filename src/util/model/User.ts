@@ -1,4 +1,5 @@
 import { UserModel, ArticleModel } from 'model';
+import { File } from './File';
 
 export const User = {
     getName(user?: UserModel | null) {
@@ -14,7 +15,9 @@ export const User = {
 
     getAvatarUrl(user?: UserModel | null, size: number = 100) {
         return user?.avatarImageFile
-            ? `https://afdptjdxen.cloudimg.io/bound/${size}x${size}/foil1/${user.avatarImageFile.remoteLocation}`
+            ? `https://afdptjdxen.cloudimg.io/bound/${size}x${size}/foil1/${File.getFileRemoteLocation(
+                  user.avatarImageFile
+              )}`
             : User.getDefaultAvatarUrl(user);
     },
 

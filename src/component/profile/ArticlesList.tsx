@@ -10,7 +10,7 @@ import {
     Link,
 } from '@material-ui/core';
 import { ArticleModel } from 'model';
-import { User, Article, Category } from 'util/model';
+import { User, Article, Category, File } from 'util/model';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { UserAvatar } from 'component/user/UserAvatar';
@@ -134,10 +134,11 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                                         className={styles.previewImage}
                                         src={`https://afdptjdxen.cloudimg.io/cover/${
                                             40 * retinaMultiplier
-                                        }x${40 * retinaMultiplier}/foil1/${
+                                        }x${
+                                            40 * retinaMultiplier
+                                        }/foil1/${File.getFileRemoteLocation(
                                             article.previewImageFile
-                                                .remoteLocation
-                                        }`}
+                                        )}`}
                                         alt={`Vorschaubild zum Beitrag "${article.title}"`}
                                     />
                                 )}

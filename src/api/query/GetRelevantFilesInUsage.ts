@@ -8,7 +8,6 @@ export const GetRelevantFilesInUsageQuery = gql`
             updatedAt
             filename
             filesize
-            remoteLocation
             mimeType
             fileType
             userId
@@ -18,7 +17,6 @@ export const GetRelevantFilesInUsageQuery = gql`
                 updatedAt
                 format
                 mimeType
-                remoteLocation
             }
             usage {
                 ... on FileCategoryUsageLocation {
@@ -34,7 +32,7 @@ export const GetRelevantFilesInUsageQuery = gql`
                         id
                         title
                         previewImageFile {
-                            remoteLocation
+                            id
                         }
                     }
                 }

@@ -21,7 +21,7 @@ export const GetUserQuery = gql`
                 name
             }
             avatarImageFile {
-                remoteLocation
+                id
             }
         }
     }

@@ -14,7 +14,6 @@ export const GetArticlesQuery = gql`
             isPinnedToTop
             previewImageFile {
                 id
-                remoteLocation
             }
             category {
                 id
@@ -28,7 +27,7 @@ export const GetArticlesQuery = gql`
                 nickname
                 name
                 avatarImageFile {
-                    remoteLocation
+                    id
                 }
             }
         }

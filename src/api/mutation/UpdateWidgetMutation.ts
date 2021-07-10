@@ -9,7 +9,6 @@ export const UpdateWidgetMutation = gql`
             configuration
             iconImageFile {
                 id
-                remoteLocation
             }
             groups {
                 id
