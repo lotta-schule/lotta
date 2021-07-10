@@ -288,6 +288,24 @@ defmodule Lotta.Storage do
   def get_file(id), do: Repo.get(Lotta.Storage.File, id)
 
   @doc """
+  Gets a single file_conversion.
+  Returns `nil` if file_conversion is not found.
+
+  ## Examples
+
+      iex> get_file_conversion(123)
+      %File{}
+
+      iex> get_file_conversion(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  @doc since: "2.5.0"
+  @spec get_file_conversion(Lotta.Storage.FileConversion.id()) ::
+          Lotta.Storage.FileConversion.t() | nil
+  def get_file_conversion(id), do: Repo.get(Lotta.Storage.FileConversion, id)
+
+  @doc """
   Updates a file.
 
   ## Examples
