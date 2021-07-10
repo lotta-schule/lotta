@@ -138,6 +138,56 @@ deploy:staging:
     refs:
     - develop
 
+deploy:production:
+  stage: deploy
+  environment:
+    name: production
+    url: https://core.staging.lotta.schule
+  image:
+    name: lotta/ionos-helm-deploy:latest
+  script:
+  - /user/local/bin/setup.sh
+  - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d "{ \"version\":\"api-$CI_COMMIT_SHA\", \"refs\":[{ \"repository\":\"$CI_PROJECT_PATH\", \"commit\":\"$CI_COMMIT_TAG\" }], \"projects\":[\"api\"] }"
+  - helm repo add lotta $LOTTA_HELM_REPO_URL
+  - helm repo update
+  - helm upgrade --install lotta-core lotta/lotta-core
+    --namespace lotta
+    --reuse-values
+    --set autoscaling.enabled=true
+    --set autoscaling.minReplicas=2
+    --set autoscaling.maxReplicas=3
+    --set elasticsearch.enabled=true
+    --set image.tag=$CI_COMMIT_TAG
+    --set appRevision=$CI_COMMIT_TAG
+    --set baseSecret=$BASE_SECRET
+    --set jwtSecret=$JWT_SECRET
+    --set cockpit.adminApiKey=$COCKPIT_ADMIN_API_KEY
+    --set appEnvironment=prod
+    --set baseUri.host="lotta.schule"
+    --set ingress.hosts[0].name="core.lotta.schule"
+    --set ingress.hosts[0].tls=true
+    --set ingress.hosts[0].tlsSecret="core-lotta-schule-tls"
+    --set ingress.hosts[1].name="cockpit.lotta.schule"
+    --set ingress.hosts[1].tls=true
+    --set ingress.hosts[1].type="cockpit"
+    --set ingress.hosts[1].tlsSecret="cockpit-lotta-schule-tls"
+    --set sentry.dsn=$SENTRY_DSN
+    --set mailgun.apiKey=$MAILGUN_API_KEY
+    --set mailgun.domain=$MAILGUN_DOMAIN
+    --set s3Storage.endpoint=$S3COMPAT_ENDPOINT
+    --set s3Storage.accessKeyId=$S3COMPAT_ACCESS_KEY_ID
+    --set s3Storage.secretAccessKey=$S3COMPAT_SECRET_ACCESS_KEY
+    --set s3Storage.region=$S3COMPAT_REGION
+    --set redis.auth.password=$REDIS_PASSWORD
+    --set postgresql.postgresqlPassword=$POSTGRES_PASSWORD
+    --set postgresql.postgresqlPostgresPassword=$POSTGRES_PASSWORD
+    --set rabbitmq.auth.password=$RABBITMQ_PASSWORD
+    --set rabbitmq.auth.erlangCookie=$RABBITMQ_ERLANG_COOKIE
+  - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/api-$CI_COMMIT_TAG/deploys/" -X POST -X POST -H 'Content-Type:application/json' -H "Authorization:Bearer $SENTRY_API_TOKEN" -d '{"environment":"staging"}'
+  only:
+    - tags
+
+
 pages:
   stage: build
   environment:
