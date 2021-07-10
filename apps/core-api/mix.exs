@@ -106,7 +106,7 @@ defmodule Lotta.MixProject do
       # Development
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.24", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       # live dashboard
       {:telemetry_poller, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6"},
