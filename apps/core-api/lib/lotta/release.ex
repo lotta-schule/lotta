@@ -9,12 +9,17 @@ defmodule Lotta.Release do
   alias Ecto.Migrator
 
   @app :lotta
+  @start_apps [
+    :crypto,
+    :ssl,
+    :ecto
+  ]
 
   @elasticsearch_clusters [Lotta.Elasticsearch.Cluster]
   @elasticsearch_indexes [:articles]
 
   def migrate do
-    Application.ensure_all_started()
+    Enum.each(@start_apps, &Application.ensure_all_started/1)
 
     for repo <- repos() do
       {:ok, _, _} =
@@ -64,7 +69,7 @@ defmodule Lotta.Release do
   end
 
   defp migrate_filelikes_in_chunks(module) do
-    store = Api.Storage.RemoteStorage.default_store()
+    store = Lotta.Storage.RemoteStorage.default_store()
 
     from(f in module,
       join: rs in Api.Storage.RemoteStorageEntity,
