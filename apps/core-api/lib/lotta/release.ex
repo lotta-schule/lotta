@@ -14,6 +14,8 @@ defmodule Lotta.Release do
   @elasticsearch_indexes [:articles]
 
   def migrate do
+    Application.ensure_all_started()
+
     for repo <- repos() do
       {:ok, _, _} =
         Migrator.with_repo(
