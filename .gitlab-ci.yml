@@ -116,3 +116,24 @@ deploy:staging:
   only:
     refs:
       - develop
+
+deploy:production:
+  stage: deploy
+  environment:
+    name: production
+  image:
+    name: lotta/ionos-helm-deploy:latest
+  script:
+  - /user/local/bin/setup.sh
+  - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d "{ \"version\":\"api-$CI_COMMIT_TAG\", \"refs\":[{ \"repository\":\"$CI_PROJECT_PATH\", \"commit\":\"$CI_COMMIT_SHA\", \"previousCommit\":\"$CI_COMMIT_BEFORE_SHA\" }], \"projects\":[\"web\"] }"
+  - helm repo add lotta $LOTTA_HELM_REPO_URL
+  - helm repo update
+  - helm upgrade --install lotta-web lotta/lotta-web
+    --namespace lotta
+    --set image.tag=$CI_COMMIT_TAG
+    --set ingress.hosts[0].name="*.lotta.schule"
+    --set ingress.hosts[0].tls=true
+    --set ingress.hosts[0].tlsSecret="wildcard-lotta-schule-tls"
+  only:
+    refs:
+      - develop
