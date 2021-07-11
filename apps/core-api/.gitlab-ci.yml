@@ -101,9 +101,6 @@ deploy:staging:
   - helm upgrade --install lotta-core lotta/lotta-core
     --namespace lotta-staging
     --reuse-values
-    --set autoscaling.enabled=true
-    --set autoscaling.minReplicas=2
-    --set autoscaling.maxReplicas=2
     --set elasticsearch.enabled=false
     --set imagePullSecrets[0].name=regcred
     --set image.repository=$CI_REGISTRY_IMAGE
