@@ -15,10 +15,15 @@ defmodule LottaWeb.TenantResolver do
   def update(%{tenant: tenant_input}, %{
         context: %{tenant: tenant}
       }) do
-    configuration = Map.get(tenant, :configuration, %{}) || %{}
+    configuration =
+      Map.merge(
+        Map.get(tenant, :configuration, %{}) || %{},
+        Map.get(tenant_input, :configuration, %{})
+      )
 
     with {:ok, tenant} <- Tenants.update_tenant(tenant, tenant_input),
-         {:ok, configuration} <- Tenants.update_configuration(tenant, configuration) do
+         {:ok, configuration} <-
+           Tenants.update_configuration(tenant, configuration) do
       {:ok, Map.put(tenant, :configuration, configuration)}
     else
       error ->
