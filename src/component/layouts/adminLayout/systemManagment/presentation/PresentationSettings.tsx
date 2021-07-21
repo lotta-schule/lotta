@@ -331,6 +331,7 @@ export const PresentationSettings = React.memo(() => {
                                     variables: {
                                         tenant: {
                                             configuration: {
+                                                ...tenant.configuration,
                                                 customTheme: JSON.stringify(
                                                     customTheme
                                                 ),

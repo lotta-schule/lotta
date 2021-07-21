@@ -80,7 +80,8 @@ const mutateVariableInputObject = (obj: any, propToDelete: string): any => {
     } else if (obj !== null && obj !== undefined && typeof obj === 'object') {
         return Object.keys(obj).reduce((newObj, key) => {
             if (
-                key === 'configuration' &&
+                (key === 'configuration' || key === 'customTheme') &&
+                obj[key] &&
                 typeof obj[key] === 'object' &&
                 !obj[key]['__typename']
             ) {
