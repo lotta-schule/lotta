@@ -113,7 +113,12 @@ export const BasicSettings = React.memo(() => {
                                 variables: {
                                     tenant: {
                                         title,
-                                        logoImageFile: logo && { id: logo.id },
+                                        configuration: {
+                                            ...tenant.configuration,
+                                            logoImageFile: logo && {
+                                                id: logo.id,
+                                            },
+                                        },
                                     },
                                 },
                             })
