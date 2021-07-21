@@ -14,7 +14,6 @@ export const NavigationButton = React.forwardRef<
             {...props}
             ref={ref}
             className={clsx('lotta-navigation-button', props.className)}
-            id={'navigation'}
         />
     );
 });
