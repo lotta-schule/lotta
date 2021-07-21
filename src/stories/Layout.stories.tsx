@@ -1,16 +1,11 @@
 import React from 'react';
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from '@storybook/react/types-6-0';
-
 import { Box } from '../component/general/layout/Box';
 import { Page } from '../component/general/layout/Page';
-import { Navigation } from '../component/general/navigation/Navigation';
-import { NavigationButton } from 'component/general/button/NavigationButton';
 import { Banner } from 'component/general/layout/Banner';
 import { UserMenu } from 'component/general/navigation/UserMenu';
-import { Favorite, CalendarToday, Fingerprint } from '@material-ui/icons';
 import { Header } from 'component/general/layout/Header';
-import { Button } from 'component/general/button/Button';
 
 const loremIpsumContent = (
     <>
@@ -52,14 +47,6 @@ const Template: Story = ({ children, ...args }) => (
                 <h2>Lotta Gesamtschule</h2>
             </Box>
         </Header>
-        <Navigation
-            primaryButtons={[
-                <NavigationButton key={'start'}>Start</NavigationButton>,
-                <NavigationButton key={'BLA'}>Bla</NavigationButton>,
-                <NavigationButton key={'blub'}>Blub</NavigationButton>,
-                <NavigationButton key={'aksdjf'}>Test</NavigationButton>,
-            ]}
-        />
         {children}
     </Page>
 );
@@ -81,13 +68,6 @@ WithSidebar.args = {
             </main>
             <aside>
                 <Box style={{ marginTop: '.5em' }}>
-                    <Navigation
-                        primaryButtons={[
-                            <Button icon={<Favorite />} />,
-                            <Button icon={<CalendarToday />} />,
-                            <Button icon={<Fingerprint />} />,
-                        ]}
-                    />
                     <div>Ich bin eine Seitenleiste</div>
                 </Box>
             </aside>

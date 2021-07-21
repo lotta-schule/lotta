@@ -68,13 +68,18 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                     style={{ alignSelf: 'center' }}
                                 >
                                     <Button
-                                        as={'a'}
                                         fullWidth
-                                        style={{ minWidth: 130, maxWidth: 160 }}
+                                        style={{
+                                            minWidth: 130,
+                                            maxWidth: 160,
+                                        }}
                                         href={File.getFileRemoteLocation(file)}
-                                        download={file.filename}
                                         target={'_blank'}
                                         icon={<CloudDownload />}
+                                        {...({
+                                            download: file.filename,
+                                        } as any)}
+                                        role={'link'}
                                     >
                                         download
                                     </Button>

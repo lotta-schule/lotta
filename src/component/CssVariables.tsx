@@ -3,7 +3,7 @@ import { useTheme } from '@material-ui/core';
 import { decomposeColor } from '@material-ui/core/styles';
 import kebabCase from 'lodash/kebabCase';
 
-export type CssVarValue = number[];
+export type CssVarValue = number[] | string;
 
 const getCssValue = (value: CssVarValue): string => {
     if (
@@ -27,6 +27,9 @@ export const CssVariables = React.memo(() => {
                 0,
                 3
             ),
+            navigationColor: decomposeColor(
+                theme.palette.primary.main
+            ).values.slice(0, 3),
             disabledColor: decomposeColor(
                 theme.palette.text.disabled
             ).values.slice(0, 3),
@@ -35,7 +38,7 @@ export const CssVariables = React.memo(() => {
                 3
             ),
             contrastTextColor: decomposeColor(
-                theme.palette.secondary.contrastText
+                theme.palette.primary.contrastText
             ).values.slice(0, 3),
             boxBackgroundColor: decomposeColor(
                 theme.palette.background.paper
@@ -45,6 +48,8 @@ export const CssVariables = React.memo(() => {
             ).values.slice(0, 3),
             bannerBackgroundColor1: [54, 123, 240],
             bannerBackgroundColor2: [54, 123, 240],
+            typographyFontFamily: theme.typography.fontFamily as string,
+            spacing: `${theme.spacing(1)}px`,
         }),
         [theme]
     );
@@ -54,8 +59,6 @@ export const CssVariables = React.memo(() => {
         if (root) {
             Object.keys(cssVariables).forEach((jsName) => {
                 const varName = `--lotta-${kebabCase(jsName)}`;
-                if (process.env.NODE_ENV === 'development') {
-                }
                 root.style.setProperty(
                     varName,
                     getCssValue(cssVariables[jsName])
