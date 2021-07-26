@@ -279,7 +279,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 if (value === RedirectType.None) {
                                     setCategory({
                                         ...category,
-                                        redirect: undefined,
+                                        redirect: null,
                                     });
                                 }
                                 if (value === RedirectType.Intern) {
