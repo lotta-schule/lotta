@@ -4,6 +4,7 @@ defmodule LottaWeb.Schema.Messages do
   use Absinthe.Schema.Notation
 
   alias Lotta.Messages.Message
+  alias Lotta.Tenants
 
   object :messages_queries do
     field :messages, list_of(:message) do
@@ -34,9 +35,13 @@ defmodule LottaWeb.Schema.Messages do
   object :messages_subscriptions do
     field :receive_message, :message do
       config(fn
-        _args, %{context: %{current_user: %{id: user_id, all_groups: groups}}} ->
+        _args,
+        %{context: %{current_user: %{id: user_id, all_groups: groups}, tenant: %{id: tid}}} ->
           {:ok,
-           topic: ["messages:user:#{user_id}" | Enum.map(groups, &"messages:group:#{&1.id}")]}
+           topic: [
+             "#{tid}:messages:user:#{user_id}"
+             | Enum.map(groups, &"#{tid}:messages:group:#{&1.id}")
+           ]}
       end)
 
       # this tells Absinthe to run any subscriptions with this field every time
@@ -45,13 +50,20 @@ defmodule LottaWeb.Schema.Messages do
       # this particular comment
       trigger(:create_message,
         topic: fn message ->
-          case message do
-            %Message{sender_user_id: sender_id, recipient_user_id: user_id}
-            when not is_nil(user_id) ->
-              ["messages:user:#{sender_id}", "messages:user:#{user_id}"]
+          prefix = Ecto.get_meta(message, :prefix)
+          tenant = Tenants.get_tenant_by_prefix(prefix)
 
-            %Message{recipient_group_id: group_id} when not is_nil(group_id) ->
-              "messages:group:#{group_id}"
+          if tenant do
+            tid = tenant.id
+
+            case message do
+              %Message{sender_user_id: sender_id, recipient_user_id: user_id}
+              when not is_nil(user_id) ->
+                ["#{tid}:messages:user:#{sender_id}", "#{tid}:messages:user:#{user_id}"]
+
+              %Message{recipient_group_id: group_id} when not is_nil(group_id) ->
+                "#{tid}:messages:group:#{group_id}"
+            end
           end
         end
       )

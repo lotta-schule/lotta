@@ -3,6 +3,8 @@ defmodule LottaWeb.Schema.Contents do
 
   use Absinthe.Schema.Notation
 
+  alias Lotta.Tenants
+
   object :contents_queries do
     field :article, :article do
       arg(:id, non_null(:id))
@@ -100,7 +102,14 @@ defmodule LottaWeb.Schema.Contents do
 
       trigger(:update_article,
         topic: fn article ->
-          ["article:#{article.id}"]
+          prefix = Ecto.get_meta(article, :prefix)
+          tenant = Tenants.get_tenant_by_prefix(prefix)
+
+          if tenant do
+            tid = tenant.id
+
+            ["#{tid}:article:#{article.id}"]
+          end
         end
       )
 

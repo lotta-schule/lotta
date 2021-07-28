@@ -107,14 +107,14 @@ defmodule LottaWeb.ArticleResolver do
   end
 
   def article_is_updated_config(%{id: id}, %{
-        context: %Context{current_user: current_user, tenant: tenant}
+        context: %Context{current_user: current_user, tenant: %{id: tid} = tenant}
       }) do
     Repo.put_prefix(tenant.prefix)
 
     with {id, _} <- Integer.parse(id, 10),
          article when not is_nil(article) <- Lotta.Content.get_article(id),
          true <- Lotta.Accounts.Permissions.can_read?(current_user, article) do
-      {:ok, topic: ["article:#{id}"]}
+      {:ok, topic: ["#{tid}:article:#{id}"]}
     else
       nil ->
         {:error, "Beitrag nicht gefunden."}
