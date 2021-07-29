@@ -24,6 +24,6 @@ defmodule Lotta.Accounts.FileManagment do
       on: f.parent_directory_id == d.id,
       where: f.user_id == ^user.id and not is_nil(d.user_id)
     )
-    |> Repo.aggregate(:sum, :filesize, prefix: Ecto.get_meta(user, :prefix))
+    |> Repo.aggregate(:sum, :filesize, prefix: Ecto.get_meta(user, :prefix)) || 0
   end
 end

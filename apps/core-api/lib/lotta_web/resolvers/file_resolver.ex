@@ -154,7 +154,8 @@ defmodule LottaWeb.FileResolver do
       tenant
       |> Tenants.get_configuration()
       |> Map.get(:user_max_storage_config, "-1")
-      |> String.to_integer()
+
+    size_limit = if is_nil(size_limit), do: -1, else: String.to_integer(size_limit)
 
     cond do
       size_limit > -1 &&
