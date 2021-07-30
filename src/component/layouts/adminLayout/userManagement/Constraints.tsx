@@ -16,12 +16,14 @@ import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
 
+const MEGABYTE = 1024 * 1024;
+
 export const Constraints = React.memo(() => {
     const tenant = useTenant();
     const lastSetLimitRef = React.useRef(20);
     const [value, setValue] = React.useState(
         tenant.configuration.userMaxStorageConfig
-            ? parseInt(tenant.configuration.userMaxStorageConfig, 10)
+            ? parseInt(tenant.configuration.userMaxStorageConfig, 10) / MEGABYTE
             : -1
     );
 
@@ -45,7 +47,7 @@ export const Constraints = React.memo(() => {
                 tenant: {
                     configuration: {
                         ...tenant.configuration,
-                        userMaxStorageConfig: String(value),
+                        userMaxStorageConfig: String(value * MEGABYTE),
                     },
                 },
             },
