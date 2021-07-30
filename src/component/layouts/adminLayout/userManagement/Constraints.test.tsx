@@ -116,7 +116,7 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
                                 tenant: {
                                     configuration: {
                                         ...tenant.configuration,
-                                        userMaxStorageConfig: '20123',
+                                        userMaxStorageConfig: '21100494848',
                                     },
                                 },
                             },
