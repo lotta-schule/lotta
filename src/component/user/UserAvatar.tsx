@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { Avatar } from '@material-ui/core';
 import { AvatarProps } from '@material-ui/core/Avatar';
 import { UserModel } from 'model';
@@ -12,8 +12,8 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
     size?: number;
 }
 
-export const UserAvatar = memo<UserAvatarProps>(
-    ({ user, size, ...otherProps }) => {
+export const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
+    ({ user, size, ...otherProps }, ref) => {
         const retinaMultiplier = useIsRetina() ? 2 : 1;
         const src = User.getAvatarUrl(
             user,
@@ -22,19 +22,25 @@ export const UserAvatar = memo<UserAvatarProps>(
 
         return (
             <Avatar
+                ref={ref}
+                data-testid={'Avatar'}
                 src={src}
                 alt={`Profilbild von ${User.getNickname(user)}`}
+                imgProps={{
+                    'aria-label': `Profilbild von ${User.getNickname(user)}`,
+                }}
                 {...otherProps}
             />
         );
     }
 );
 
-export const CurrentUserAvatar = memo<Omit<UserAvatarProps, 'user'>>(
-    (props) => {
-        const currentUser = useCurrentUser();
-        return currentUser ? (
-            <UserAvatar user={currentUser} {...props} />
-        ) : null;
-    }
-);
+export const CurrentUserAvatar = React.forwardRef<
+    HTMLDivElement,
+    Omit<UserAvatarProps, 'user'>
+>((props, ref) => {
+    const currentUser = useCurrentUser();
+    return currentUser ? (
+        <UserAvatar ref={ref} user={currentUser} {...props} />
+    ) : null;
+});

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { makeStyles, Theme, Container } from '@material-ui/core';
 import { ArticleModel } from 'model';
 import { Header } from 'component/general/Header';
@@ -8,7 +8,7 @@ import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
 
 export interface ArticleTitleProps {
     article: ArticleModel;
-    showEditButton?: boolean;
+    onUpdate?: (article: ArticleModel) => void;
 }
 
 const useStyles = makeStyles<Theme>(() => ({
@@ -18,13 +18,13 @@ const useStyles = makeStyles<Theme>(() => ({
     },
 }));
 
-export const ArticleTitle = memo<ArticleTitleProps>(
-    ({ article, showEditButton }) => {
+export const ArticleTitle = React.memo<ArticleTitleProps>(
+    ({ article, onUpdate }) => {
         const styles = useStyles();
         const currentUser = useCurrentUser();
 
         const showEditSection =
-            showEditButton &&
+            !!onUpdate &&
             (User.canEditArticle(currentUser, article) ||
                 User.isAdmin(currentUser));
         return (
@@ -34,6 +34,7 @@ export const ArticleTitle = memo<ArticleTitleProps>(
                         article={article}
                         isEmbedded
                         disableLink
+                        onUpdateArticle={onUpdate}
                         disableEdit={!showEditSection}
                         disablePin={!User.isAdmin(currentUser)}
                     />
@@ -42,3 +43,4 @@ export const ArticleTitle = memo<ArticleTitleProps>(
         );
     }
 );
+ArticleTitle.displayName = 'ArticleTitle';

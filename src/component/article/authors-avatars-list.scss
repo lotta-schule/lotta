@@ -1,0 +1,14 @@
+.lotta-authors-avatars-list {
+  display: flex;
+  width: 100%;
+  padding: 8px 0;
+  .avatar-group {
+    flex-grow: 1;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    border-radius: 50%;
+  }
+}

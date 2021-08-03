@@ -1,4 +1,4 @@
-import React, { memo, Suspense } from 'react';
+import * as React from 'react';
 import { ArticleModel } from '../../model';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -31,16 +31,15 @@ const useStyles = makeStyles((theme) => ({
 
 interface ArticleEditableProps {
     article: ArticleModel;
-    isEditModeEnabled?: boolean;
-    onUpdateArticle?(article: ArticleModel): void;
+    onUpdateArticle: (article: ArticleModel) => void;
 }
 
-export const ArticleEditable = memo<ArticleEditableProps>(
-    ({ article, isEditModeEnabled, onUpdateArticle }) => {
+export const ArticleEditable = React.memo<ArticleEditableProps>(
+    ({ article, onUpdateArticle }) => {
         const styles = useStyles();
         return (
             <article className={styles.root} data-testid={'ArticleEditable'}>
-                <ArticleTitle article={article} />
+                <ArticleTitle article={article} onUpdate={onUpdateArticle} />
                 <section className={styles.contentModules}>
                     {article.preview && (
                         <section className={styles.previewSection}>
@@ -54,7 +53,7 @@ export const ArticleEditable = memo<ArticleEditableProps>(
                             <Divider />
                         </section>
                     )}
-                    <Suspense fallback={<CircularProgress />}>
+                    <React.Suspense fallback={<CircularProgress />}>
                         <DragDropContext
                             onDragEnd={({
                                 draggableId,
@@ -73,41 +72,38 @@ export const ArticleEditable = memo<ArticleEditableProps>(
                                     return;
                                 }
 
-                                if (onUpdateArticle) {
-                                    onUpdateArticle({
-                                        ...article,
-                                        contentModules: Array.from(
-                                            article.contentModules
+                                onUpdateArticle({
+                                    ...article,
+                                    contentModules: Array.from(
+                                        article.contentModules
+                                    )
+                                        .map((contentModule) => {
+                                            if (
+                                                contentModule.id.toString() ===
+                                                draggableId
+                                            ) {
+                                                return {
+                                                    ...contentModule,
+                                                    sortKey:
+                                                        destination.index * 10 +
+                                                        (destination.index >
+                                                        source.index
+                                                            ? 1
+                                                            : -1),
+                                                };
+                                            } else {
+                                                return contentModule;
+                                            }
+                                        })
+                                        .sort(
+                                            (cm1, cm2) =>
+                                                cm1.sortKey - cm2.sortKey
                                         )
-                                            .map((contentModule) => {
-                                                if (
-                                                    contentModule.id.toString() ===
-                                                    draggableId
-                                                ) {
-                                                    return {
-                                                        ...contentModule,
-                                                        sortKey:
-                                                            destination.index *
-                                                                10 +
-                                                            (destination.index >
-                                                            source.index
-                                                                ? 1
-                                                                : -1),
-                                                    };
-                                                } else {
-                                                    return contentModule;
-                                                }
-                                            })
-                                            .sort(
-                                                (cm1, cm2) =>
-                                                    cm1.sortKey - cm2.sortKey
-                                            )
-                                            .map((cm, i) => ({
-                                                ...cm,
-                                                sortKey: i * 10,
-                                            })),
-                                    });
-                                }
+                                        .map((cm, i) => ({
+                                            ...cm,
+                                            sortKey: i * 10,
+                                        })),
+                                });
                             }}
                         >
                             <Droppable droppableId={String(article.id)}>
@@ -142,9 +138,7 @@ export const ArticleEditable = memo<ArticleEditableProps>(
                                                             contentModule={
                                                                 contentModule
                                                             }
-                                                            isEditModeEnabled={
-                                                                isEditModeEnabled
-                                                            }
+                                                            isEditModeEnabled
                                                             cardProps={{
                                                                 innerRef,
                                                                 ...draggableProps,
@@ -158,27 +152,22 @@ export const ArticleEditable = memo<ArticleEditableProps>(
                                                             onUpdateModule={(
                                                                 updatedModule
                                                             ) => {
-                                                                if (
-                                                                    onUpdateArticle
-                                                                ) {
-                                                                    onUpdateArticle(
-                                                                        {
-                                                                            ...article,
-                                                                            contentModules: article.contentModules.map(
-                                                                                (
-                                                                                    contentModule
-                                                                                ) =>
-                                                                                    contentModule.id ===
-                                                                                    updatedModule.id
-                                                                                        ? updatedModule
-                                                                                        : contentModule
-                                                                            ),
-                                                                        }
-                                                                    );
-                                                                }
+                                                                onUpdateArticle(
+                                                                    {
+                                                                        ...article,
+                                                                        contentModules: article.contentModules.map(
+                                                                            (
+                                                                                contentModule
+                                                                            ) =>
+                                                                                contentModule.id ===
+                                                                                updatedModule.id
+                                                                                    ? updatedModule
+                                                                                    : contentModule
+                                                                        ),
+                                                                    }
+                                                                );
                                                             }}
                                                             onRemoveContentModule={() =>
-                                                                onUpdateArticle &&
                                                                 onUpdateArticle(
                                                                     {
                                                                         ...article,
@@ -201,7 +190,7 @@ export const ArticleEditable = memo<ArticleEditableProps>(
                                 )}
                             </Droppable>
                         </DragDropContext>
-                    </Suspense>
+                    </React.Suspense>
                 </section>
             </article>
         );

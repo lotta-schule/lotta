@@ -6,6 +6,7 @@ import {
     makeStyles,
     Theme,
     Container,
+    Input,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { Edit, Place } from '@material-ui/icons';
@@ -23,7 +24,12 @@ import { useIsMobile } from 'util/useIsMobile';
 import { Article as ArticleUtil } from 'util/model/Article';
 import { useIsRetina } from 'util/useIsRetina';
 import { useHistory } from 'react-router-dom';
+import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
+import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { TagsSelect } from 'component/layouts/editArticleLayout/TagsSelect';
+import { Tag } from 'component/general/tag/Tag';
 import clsx from 'clsx';
+import Img from 'react-cloudimage-responsive';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
     (theme) => ({
@@ -53,7 +59,7 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
         mainSection: {
             paddingLeft: theme.spacing(1.5),
             paddingRight: theme.spacing(1),
-            width: '70%',
+            flexGrow: 1,
             [theme.breakpoints.down('xs')]: {
                 border: 0,
                 padding: theme.spacing(0.5),
@@ -62,6 +68,7 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
         },
         imageSection: {
             width: '100%',
+            flexShrink: 0,
             [theme.breakpoints.up('sm')]: {
                 width: ({ narrow }) => (narrow ? '100%' : '30%'),
             },
@@ -125,19 +132,6 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
                 padding: theme.spacing(0.5),
             },
         },
-        tags: {
-            display: 'inline-block',
-            border: '1px solid',
-            borderColor: theme.palette.secondary.main,
-            color: theme.palette.secondary.main,
-            fontSize: '0.7rem',
-            padding: '2px 4px',
-            marginBottom: theme.spacing(1.5),
-            marginRight: theme.spacing(0.5),
-            borderRadius: 4,
-            maxWidth: 'max-content',
-            fontFamily: theme.typography.fontFamily,
-        },
         link: {
             width: '100%',
         },
@@ -147,6 +141,7 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
 interface ArticlePreviewProps {
     article: ArticleModel;
     disableLink?: boolean;
+    onUpdateArticle?: (article: ArticleModel) => void;
     disableEdit?: boolean;
     disablePin?: boolean;
     limitedHeight?: boolean;
@@ -155,7 +150,15 @@ interface ArticlePreviewProps {
 }
 
 export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
-    ({ article, disableLink, disableEdit, disablePin, isEmbedded, narrow }) => {
+    ({
+        article,
+        disableLink,
+        disableEdit,
+        disablePin,
+        isEmbedded,
+        narrow,
+        onUpdateArticle,
+    }) => {
         const isMobile = useIsMobile();
         const { push } = useHistory();
         const retinaMultiplier = useIsRetina() ? 2 : 1;
@@ -194,130 +197,210 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                 className={styles.container}
                 data-testid="ArticlePreviewStandardLayout"
             >
-                <Grid container>
+                <Grid container wrap={'nowrap'}>
                     <Grid className={styles.imageSection} container>
-                        {maybeLinked(
-                            article.previewImageFile && (
-                                <img
-                                    className={styles.previewImage}
-                                    src={`https://afdptjdxen.cloudimg.io/bound/${
-                                        400 * retinaMultiplier
-                                    }x${
-                                        300 * retinaMultiplier
-                                    }/foil1/${File.getFileRemoteLocation(
-                                        article.previewImageFile
-                                    )}`}
-                                    alt={`Vorschaubild zu ${article.title}`}
-                                />
-                            )
+                        {!!onUpdateArticle && (
+                            <SelectFileOverlay
+                                allowDeletion
+                                style={{ width: '100%' }}
+                                label={'Vorschaubild ändern'}
+                                onSelectFile={(previewImageFile) =>
+                                    onUpdateArticle({
+                                        ...article,
+                                        previewImageFile,
+                                    })
+                                }
+                            >
+                                {article.previewImageFile ? (
+                                    <Img
+                                        operation={'width'}
+                                        size={'300x200'}
+                                        src={File.getFileRemoteLocation(
+                                            article.previewImageFile
+                                        )}
+                                    />
+                                ) : (
+                                    <PlaceholderImage
+                                        width={'100%'}
+                                        height={150}
+                                    />
+                                )}
+                            </SelectFileOverlay>
                         )}
+                        {!onUpdateArticle &&
+                            maybeLinked(
+                                article.previewImageFile && (
+                                    <img
+                                        className={styles.previewImage}
+                                        src={`https://afdptjdxen.cloudimg.io/bound/${
+                                            400 * retinaMultiplier
+                                        }x${
+                                            300 * retinaMultiplier
+                                        }/foil1/${File.getFileRemoteLocation(
+                                            article.previewImageFile
+                                        )}`}
+                                        alt={`Vorschaubild zu ${article.title}`}
+                                    />
+                                )
+                            )}
                     </Grid>
                     <Grid className={styles.mainSection}>
-                        <Typography
-                            gutterBottom
-                            className={styles.title}
-                            role={'heading'}
-                        >
-                            {maybeLinked(article.title)}
-                        </Typography>
-                        <Typography
-                            className={styles.previewSection}
-                            variant={'subtitle2'}
-                        >
-                            {article.preview}
-                        </Typography>
-                        {article.tags?.map((tag) => (
-                            <div className={styles.tags} key={tag}>
-                                {tag}
-                            </div>
-                        ))}
+                        {!!onUpdateArticle && (
+                            <Input
+                                fullWidth
+                                disableUnderline
+                                value={article.title}
+                                onChange={(e) => {
+                                    onUpdateArticle({
+                                        ...article,
+                                        title: (e.target as HTMLInputElement)
+                                            .value,
+                                    });
+                                }}
+                                className={styles.title}
+                                inputProps={{
+                                    'aria-label': 'Article title',
+                                }}
+                            />
+                        )}
+                        {!onUpdateArticle && (
+                            <Typography
+                                gutterBottom
+                                className={styles.title}
+                                role={'heading'}
+                                aria-label={'Article title'}
+                            >
+                                {maybeLinked(article.title)}
+                            </Typography>
+                        )}
+                        {!!onUpdateArticle && (
+                            <Input
+                                fullWidth
+                                multiline
+                                disableUnderline
+                                value={article.preview}
+                                onChange={(e) => {
+                                    onUpdateArticle({
+                                        ...article,
+                                        preview: (e.target as HTMLInputElement)
+                                            .value,
+                                    });
+                                }}
+                                className={styles.previewSection}
+                                inputProps={{
+                                    'aria-label': 'Article preview text',
+                                }}
+                            />
+                        )}
+                        {!onUpdateArticle && (
+                            <Typography
+                                className={styles.previewSection}
+                                variant={'subtitle2'}
+                                aria-label={'Article preview Text'}
+                            >
+                                {article.preview}
+                            </Typography>
+                        )}
+                        {!!onUpdateArticle && (
+                            <TagsSelect
+                                value={article.tags}
+                                onChange={(tags) => {
+                                    console.log(tags);
+                                    onUpdateArticle({ ...article, tags });
+                                }}
+                            />
+                        )}
+                        {!onUpdateArticle &&
+                            article.tags?.map((tag) => (
+                                <Tag key={tag}>{tag}</Tag>
+                            ))}
                         <Grid container>
-                            <Grid item xs={9} style={{ display: 'flex' }}>
-                                <Grid item>
-                                    <Typography
-                                        className={clsx(
-                                            styles.date,
-                                            'dt-updated'
-                                        )}
-                                        component={'time'}
-                                        variant={'subtitle1'}
-                                        dateTime={article.updatedAt}
-                                    >
-                                        {format(
-                                            new Date(article.updatedAt),
-                                            'P',
-                                            { locale: de }
-                                        ) + ' '}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <AuthorAvatarsList users={article.users} />
-                                </Grid>
+                            <Grid item>
+                                <Typography
+                                    className={clsx(styles.date, 'dt-updated')}
+                                    component={'time'}
+                                    variant={'subtitle1'}
+                                    dateTime={article.updatedAt}
+                                >
+                                    {format(new Date(article.updatedAt), 'P', {
+                                        locale: de,
+                                    }) + ' '}
+                                </Typography>
                             </Grid>
-                            {(!isMobile || isEmbedded) && (
-                                <Grid item xs={3}>
-                                    {showEditSection && (
-                                        <section>
-                                            {showEditSection && (
-                                                <div
-                                                    className={
-                                                        styles.buttonSection
-                                                    }
-                                                >
-                                                    {User.canEditArticle(
-                                                        currentUser,
-                                                        article
-                                                    ) &&
-                                                        !disableEdit && (
-                                                            <Button
-                                                                aria-label="Beitrag bearbeiten"
-                                                                className={clsx(
-                                                                    styles.editButton,
-                                                                    'edit-button'
-                                                                )}
-                                                                onClick={(
-                                                                    e: React.MouseEvent
-                                                                ) => {
-                                                                    e.stopPropagation();
-                                                                    push(
-                                                                        ArticleUtil.getPath(
-                                                                            article,
-                                                                            {
-                                                                                edit: true,
-                                                                            }
-                                                                        )
-                                                                    );
-                                                                }}
-                                                                icon={<Edit />}
-                                                            />
-                                                        )}
-                                                    {User.isAdmin(
-                                                        currentUser
-                                                    ) &&
-                                                        !disablePin && (
-                                                            <Button
-                                                                aria-label="Beitrag an der Kategorie anpinnen"
-                                                                className={clsx(
-                                                                    styles.pinButton,
-                                                                    {
-                                                                        active:
-                                                                            article.isPinnedToTop,
-                                                                    }
-                                                                )}
-                                                                onClick={() =>
-                                                                    toggleArticlePin()
-                                                                }
-                                                                icon={<Place />}
-                                                            />
-                                                        )}
-                                                </div>
-                                            )}
-                                        </section>
-                                    )}
-                                </Grid>
-                            )}
+                            <Grid item style={{ flexGrow: 1 }}>
+                                <AuthorAvatarsList
+                                    users={article.users}
+                                    onUpdate={
+                                        !!onUpdateArticle
+                                            ? (users) => {
+                                                  console.log(users);
+                                                  onUpdateArticle({
+                                                      ...article,
+                                                      users,
+                                                  });
+                                              }
+                                            : undefined
+                                    }
+                                />
+                            </Grid>
                         </Grid>
                     </Grid>
+                    {(!isMobile || isEmbedded) && (
+                        <Grid item xs={1}>
+                            {showEditSection && (
+                                <section>
+                                    {showEditSection && (
+                                        <div className={styles.buttonSection}>
+                                            {User.canEditArticle(
+                                                currentUser,
+                                                article
+                                            ) &&
+                                                !disableEdit && (
+                                                    <Button
+                                                        aria-label="Beitrag bearbeiten"
+                                                        className={clsx(
+                                                            styles.editButton,
+                                                            'edit-button'
+                                                        )}
+                                                        onClick={(
+                                                            e: React.MouseEvent
+                                                        ) => {
+                                                            e.stopPropagation();
+                                                            push(
+                                                                ArticleUtil.getPath(
+                                                                    article,
+                                                                    {
+                                                                        edit: true,
+                                                                    }
+                                                                )
+                                                            );
+                                                        }}
+                                                        icon={<Edit />}
+                                                    />
+                                                )}
+                                            {User.isAdmin(currentUser) &&
+                                                !disablePin && (
+                                                    <Button
+                                                        aria-label="Beitrag an der Kategorie anpinnen"
+                                                        className={clsx(
+                                                            styles.pinButton,
+                                                            {
+                                                                active:
+                                                                    article.isPinnedToTop,
+                                                            }
+                                                        )}
+                                                        onClick={() =>
+                                                            toggleArticlePin()
+                                                        }
+                                                        icon={<Place />}
+                                                    />
+                                                )}
+                                        </div>
+                                    )}
+                                </section>
+                            )}
+                        </Grid>
+                    )}
                 </Grid>
             </Container>
         );

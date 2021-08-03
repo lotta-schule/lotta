@@ -7,7 +7,7 @@ import { Show } from './Show';
 export interface TitleProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
 const useStyles = makeStyles((theme) => ({

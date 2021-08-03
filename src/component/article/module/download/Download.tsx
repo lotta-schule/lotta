@@ -8,7 +8,7 @@ const Edit = lazy(() => import('./Edit'));
 export interface DownloadProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
 export const useStyles = makeStyles((theme) => ({

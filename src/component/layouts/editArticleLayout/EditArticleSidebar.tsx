@@ -40,7 +40,6 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
-import { UsersList } from './UsersList';
 import { TagsSelect } from './TagsSelect';
 import uniqBy from 'lodash/uniqBy';
 import clsx from 'clsx';
@@ -265,22 +264,6 @@ export const EditArticleSidebar = React.memo<EditArticleSidebarProps>(
                             }}
                         />
                     )}
-                    <UsersList
-                        users={article.users}
-                        onClickRemove={(user) => {
-                            if (user.id === currentUser?.id) {
-                                setIsSelfRemovalDialogOpen(true);
-                            } else {
-                                onUpdate({
-                                    ...article,
-                                    users: article.users.filter(
-                                        (articleUser) =>
-                                            articleUser.id !== user.id
-                                    ),
-                                });
-                            }
-                        }}
-                    />
                 </CardContent>
                 <CardContent>
                     <GroupSelect

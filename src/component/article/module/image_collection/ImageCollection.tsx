@@ -9,9 +9,9 @@ import get from 'lodash/get';
 export interface ImageProps {
     contentModule: ContentModuleModel<{ captions: string[] }>;
     isEditModeEnabled?: boolean;
-    onUpdateModule(
+    onUpdateModule?: (
         contentModule: ContentModuleModel<{ captions: string[] }>
-    ): void;
+    ) => void;
 }
 
 export const ImageCollection: FunctionComponent<ImageProps> = memo(

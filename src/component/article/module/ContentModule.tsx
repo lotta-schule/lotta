@@ -98,8 +98,8 @@ interface ContentModuleProps {
     cardProps?: Omit<CardProps, 'className' | 'component' | 'innerRef'> &
         Pick<StyledComponentProps, 'innerRef'>;
     dragbarProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'className'>;
-    onUpdateModule(contentModule: ContentModuleModel): void;
-    onRemoveContentModule(): void;
+    onUpdateModule?: (contentModule: ContentModuleModel) => void;
+    onRemoveContentModule?: () => void;
 }
 
 export const ContentModule = React.memo<ContentModuleProps>(
@@ -122,6 +122,9 @@ export const ContentModule = React.memo<ContentModuleProps>(
         });
 
         const config = React.useMemo(() => {
+            if (!onUpdateModule) {
+                return null;
+            }
             switch (contentModule.type) {
                 case ContentModuleType.TITLE:
                     return (
@@ -230,7 +233,7 @@ export const ContentModule = React.memo<ContentModuleProps>(
                                             aria-label={'Modul löschen'}
                                             style={{ float: 'right' }}
                                             onClick={() =>
-                                                onRemoveContentModule()
+                                                onRemoveContentModule?.()
                                             }
                                         >
                                             Modul löschen

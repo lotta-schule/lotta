@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ArticleModel, ID } from '../../../model';
 import { ArticleEditable as Article } from '../../article/ArticleEditable';
 import { EditArticleSidebar } from './EditArticleSidebar';
-import { BaseLayoutSidebar } from '../BaseLayoutSidebar';
 import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -141,72 +140,9 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                         when={isArticleDirty}
                     />
                     <Article
-                        isEditModeEnabled
                         article={editedArticle}
                         onUpdateArticle={changeArticle}
                     />
-                    <AddModuleBar
-                        onAddModule={async (contentModule) => {
-                            changeArticle({
-                                ...editedArticle,
-                                contentModules: [
-                                    ...editedArticle.contentModules,
-                                    {
-                                        configuration: {},
-                                        ...contentModule,
-                                        insertedAt: new Date().toISOString(),
-                                        updatedAt: new Date().toISOString(),
-                                        sortKey: editedArticle.contentModules
-                                            .length
-                                            ? Math.max(
-                                                  ...editedArticle.contentModules.map(
-                                                      (cm) => cm.sortKey || 0
-                                                  )
-                                              ) + 10
-                                            : 0,
-                                    },
-                                ],
-                            });
-                        }}
-                    />
-                    <ResponsiveFullScreenDialog
-                        open={isUpdatedArticleModalVisible}
-                    >
-                        <DialogTitle>
-                            Beitrag wurde von einem anderen Nutzer aktualisiert.
-                        </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Module des Beitrags von einem Nutzer verändert.
-                            </DialogContentText>
-                            <DialogContentText>
-                                Möchtest du den veränderten Beitrag laden?
-                                Allerdings gehen dadurch deine Änderungen
-                                verloren.
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button
-                                onClick={() =>
-                                    setIsUpdatedArticleModalVisible(false)
-                                }
-                            >
-                                Nichts tun
-                            </Button>
-                            <Button
-                                color={'primary'}
-                                onClick={() => {
-                                    changeArticle(article);
-                                    setIsArticleDirty(false);
-                                    setIsUpdatedArticleModalVisible(false);
-                                }}
-                            >
-                                Änderungen laden
-                            </Button>
-                        </DialogActions>
-                    </ResponsiveFullScreenDialog>
-                </BaseLayoutMainContent>
-                <BaseLayoutSidebar>
                     <EditArticleSidebar
                         article={editedArticle}
                         onUpdate={changeArticle}
@@ -271,7 +207,67 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                             });
                         }}
                     />
-                </BaseLayoutSidebar>
+                    <AddModuleBar
+                        onAddModule={async (contentModule) => {
+                            changeArticle({
+                                ...editedArticle,
+                                contentModules: [
+                                    ...editedArticle.contentModules,
+                                    {
+                                        configuration: {},
+                                        ...contentModule,
+                                        insertedAt: new Date().toISOString(),
+                                        updatedAt: new Date().toISOString(),
+                                        sortKey: editedArticle.contentModules
+                                            .length
+                                            ? Math.max(
+                                                  ...editedArticle.contentModules.map(
+                                                      (cm) => cm.sortKey || 0
+                                                  )
+                                              ) + 10
+                                            : 0,
+                                    },
+                                ],
+                            });
+                        }}
+                    />
+                    <ResponsiveFullScreenDialog
+                        open={isUpdatedArticleModalVisible}
+                    >
+                        <DialogTitle>
+                            Beitrag wurde von einem anderen Nutzer aktualisiert.
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Module des Beitrags von einem Nutzer verändert.
+                            </DialogContentText>
+                            <DialogContentText>
+                                Möchtest du den veränderten Beitrag laden?
+                                Allerdings gehen dadurch deine Änderungen
+                                verloren.
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                onClick={() =>
+                                    setIsUpdatedArticleModalVisible(false)
+                                }
+                            >
+                                Nichts tun
+                            </Button>
+                            <Button
+                                color={'primary'}
+                                onClick={() => {
+                                    changeArticle(article);
+                                    setIsArticleDirty(false);
+                                    setIsUpdatedArticleModalVisible(false);
+                                }}
+                            >
+                                Änderungen laden
+                            </Button>
+                        </DialogActions>
+                    </ResponsiveFullScreenDialog>
+                </BaseLayoutMainContent>
             </>
         );
     }

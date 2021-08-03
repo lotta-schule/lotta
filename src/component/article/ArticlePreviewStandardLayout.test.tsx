@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render, waitFor } from 'test/util';
 import {
     adminGroup,
     imageFile,
     SomeUser,
+    SomeUserin,
     Weihnachtsmarkt,
 } from 'test/fixtures';
 import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
+import userEvent from '@testing-library/user-event';
 
 describe('component/article/ArticlePreviewStandardLayout', () => {
     it('should render an ArticlePreview without error', () => {
@@ -28,8 +30,11 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                 { currentUser: SomeUser, useCache: true }
             );
             expect(
-                screen.getByRole('heading', { name: /weihnachtsmarkt/i })
+                screen.getByRole('heading', { name: /article title/i })
             ).toBeVisible();
+            expect(
+                screen.getByRole('heading', { name: /article title/i })
+            ).toHaveTextContent('Weihnachtsmarkt');
             expect(
                 screen.queryByRole('link', { name: /weihnachtsmarkt/i })
             ).toBeNull();
@@ -42,27 +47,107 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                 { currentUser: SomeUser, useCache: true }
             );
             expect(
-                screen.getByRole('heading', { name: /weihnachtsmarkt/i })
+                screen.getByRole('heading', { name: /article title/i })
             ).toBeVisible();
+            expect(
+                screen.getByRole('heading', { name: /article title/i })
+            ).toHaveTextContent('Weihnachtsmarkt');
             expect(
                 screen.getByRole('link', { name: /weihnachtsmarkt/i })
             ).toBeVisible();
         });
+
+        it('as editable when onUpdateArticle prop is given', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={Weihnachtsmarkt}
+                    onUpdateArticle={jest.fn()}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            expect(
+                screen.getByRole('textbox', { name: /article title/i })
+            ).toBeVisible();
+            expect(
+                screen.getByRole('textbox', { name: /article title/i })
+            ).toHaveValue('Weihnachtsmarkt');
+        });
+
+        it('and call update callback when edited', () => {
+            const fn = jest.fn();
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={Weihnachtsmarkt}
+                    onUpdateArticle={fn}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            userEvent.type(
+                screen.getByRole('textbox', { name: /article title/i }),
+                '{selectall}A'
+            );
+            expect(fn).toHaveBeenCalledWith({ ...Weihnachtsmarkt, title: 'A' });
+        });
     });
 
-    it('should render preview', () => {
-        const screen = render(
-            <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
-            {},
-            { currentUser: SomeUser, useCache: true }
-        );
-        expect(
-            screen.getByRole('heading', { name: /weihnachtsmarkt/i })
-        ).toBeVisible();
+    describe('Article Preview field', () => {
+        it('should render preview', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            expect(
+                screen.getByText(
+                    'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
+                )
+            ).toBeVisible();
+        });
+
+        it('as editable when onUpdateArticle prop is given', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={Weihnachtsmarkt}
+                    onUpdateArticle={jest.fn()}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            expect(
+                screen.getByRole('textbox', { name: /article preview text/i })
+            ).toBeVisible();
+            expect(
+                screen.getByRole('textbox', { name: /article preview text/i })
+            ).toHaveValue(
+                'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
+            );
+        });
+
+        it('and call update callback when edited', () => {
+            const fn = jest.fn();
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={Weihnachtsmarkt}
+                    onUpdateArticle={fn}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            userEvent.type(
+                screen.getByRole('textbox', { name: /article preview text/i }),
+                '{selectall}A'
+            );
+            expect(fn).toHaveBeenCalledWith({
+                ...Weihnachtsmarkt,
+                preview: 'A',
+            });
+        });
     });
 
     describe('preview image', () => {
-        it('should not render if not available', () => {
+        it('should not render if not available when not in EditMode', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
@@ -91,24 +176,164 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                 screen.getByRole('img', { name: /vorschaubild/i })
             ).toHaveAttribute('src', expect.stringContaining('/storage/f/123'));
         });
+
+        describe('EditMode', () => {
+            it('as editable when onUpdateArticle prop is given', () => {
+                const screen = render(
+                    <ArticlePreviewStandardLayout
+                        article={Weihnachtsmarkt}
+                        onUpdateArticle={jest.fn()}
+                    />,
+                    {},
+                    { currentUser: SomeUser, useCache: true }
+                );
+                expect(screen.getByTestId('EditOverlay')).toBeVisible();
+            });
+        });
     });
 
-    it('should render tags', () => {
-        const screen = render(
-            <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
-            {},
-            { currentUser: SomeUser, useCache: true }
-        );
-        expect(screen.getByText('La Revolucion')).toBeVisible();
+    describe('tags', () => {
+        it('should render tags', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            expect(screen.getByTestId('Tag')).toHaveTextContent(
+                'La Revolucion'
+            );
+        });
+
+        it('should not show DeleteButton when in EditMode', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            const tag = screen.getByTestId('Tag');
+            expect(
+                tag.querySelector('[data-testid="DeleteButton"]')
+            ).toBeNull();
+        });
+
+        it('should show DeleteButton when in EditMode', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={Weihnachtsmarkt}
+                    onUpdateArticle={jest.fn()}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            const tag = screen.getByTestId('Tag');
+            expect(tag.querySelector('svg')).toBeVisible();
+        });
+
+        it('should delete the tag when DeleteButton is clicked', () => {
+            const fn = jest.fn();
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={Weihnachtsmarkt}
+                    onUpdateArticle={fn}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            const tag = screen.getByTestId('Tag');
+            userEvent.click(tag.querySelector('svg')!);
+            expect(fn).toHaveBeenCalledWith({
+                ...Weihnachtsmarkt,
+                tags: [],
+            });
+        });
+
+        it('should add a new tag', async () => {
+            const fn = jest.fn();
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={Weihnachtsmarkt}
+                    onUpdateArticle={fn}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            userEvent.type(
+                screen.getByRole('textbox', { name: /tag hinzufügen/i }),
+                'Neu{enter}'
+            );
+            await waitFor(() => {
+                expect(fn).toHaveBeenCalledWith({
+                    ...Weihnachtsmarkt,
+                    tags: ['La Revolucion', 'Neu'],
+                });
+            });
+        });
     });
 
-    it('should render last update time', () => {
-        const screen = render(
-            <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
-            {},
-            { currentUser: SomeUser, useCache: true }
-        );
-        expect(screen.getByText('11.10.2020')).toBeVisible();
+    describe('UpdateTime', () => {
+        it('should render last update time', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            expect(screen.getByText('11.10.2020')).toBeVisible();
+        });
+    });
+
+    describe('Users List', () => {
+        const WeihnachtsmarktWithUsers = {
+            ...Weihnachtsmarkt,
+            users: [SomeUser, SomeUserin],
+        };
+        it('should render the users list', () => {
+            const screen = render(
+                <ArticlePreviewStandardLayout
+                    article={WeihnachtsmarktWithUsers}
+                />,
+                {},
+                { currentUser: SomeUser, useCache: true }
+            );
+            expect(screen.getByTestId('AuthorAvatarsList')).toBeVisible();
+            expect(
+                screen.getAllByRole('img', { name: /profilbild/i })
+            ).toHaveLength(2);
+        });
+
+        describe('EditMode', () => {
+            it('should show the "add author" input field when in EditMode', () => {
+                const screen = render(
+                    <ArticlePreviewStandardLayout
+                        article={WeihnachtsmarktWithUsers}
+                        onUpdateArticle={jest.fn()}
+                    />,
+                    {},
+                    { currentUser: SomeUser, useCache: true }
+                );
+                expect(
+                    screen.getByRole('textbox', { name: /autor hinzufügen/i })
+                ).toBeVisible();
+            });
+
+            it('should show the "delete" button for authors when in EditMode', () => {
+                const fn = jest.fn();
+                const screen = render(
+                    <ArticlePreviewStandardLayout
+                        article={WeihnachtsmarktWithUsers}
+                        onUpdateArticle={fn}
+                    />,
+                    {},
+                    { currentUser: SomeUser, useCache: true }
+                );
+                const avatarsList = screen.getByTestId('AuthorAvatarsList');
+                expect(avatarsList.querySelector('button')).toBeVisible();
+                userEvent.click(avatarsList.querySelector('button')!);
+                expect(fn).toHaveBeenCalledWith({
+                    ...WeihnachtsmarktWithUsers,
+                    users: [SomeUserin],
+                });
+            });
+        });
     });
 
     describe('Edit Button', () => {

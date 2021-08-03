@@ -132,7 +132,6 @@ describe('component/layouts/adminLayout/userManagment/CreateArticleDialog', () =
             );
             userEvent.type(screen.getByRole('textbox'), 'Test');
             userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
-            console.log(screen.getByRole('button', { name: /abbrechen/i }));
 
             await waitFor(() => {
                 expect(onAbort).toHaveBeenCalled();

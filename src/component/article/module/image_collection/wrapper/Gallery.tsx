@@ -32,7 +32,7 @@ const useStyles = makeStyles(() => ({
 export interface GalleryProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
 export const Gallery = memo<GalleryProps>(
@@ -72,7 +72,7 @@ export const Gallery = memo<GalleryProps>(
                             key={file.id}
                             style={{ position: 'relative', height: '100%' }}
                         >
-                            {isEditModeEnabled && (
+                            {isEditModeEnabled && onUpdateModule && (
                                 <IconButton
                                     color={'secondary'}
                                     className={styles.deleteButton}
@@ -93,7 +93,7 @@ export const Gallery = memo<GalleryProps>(
                                 file={file}
                                 caption={getConfiguration(file).caption}
                                 onUpdateFile={(newFile) =>
-                                    onUpdateModule({
+                                    onUpdateModule?.({
                                         ...contentModule,
                                         files: contentModule.files.map((f, i) =>
                                             i === index ? newFile : f
@@ -113,7 +113,7 @@ export const Gallery = memo<GalleryProps>(
                                     })
                                 }
                                 onUpdateCaption={(newCaption) => {
-                                    onUpdateModule({
+                                    onUpdateModule?.({
                                         ...contentModule,
                                         configuration: {
                                             ...contentModule.configuration,
@@ -135,7 +135,7 @@ export const Gallery = memo<GalleryProps>(
                     ))}
                 </GridList>
 
-                {isEditModeEnabled && (
+                {isEditModeEnabled && onUpdateModule && (
                     <SelectFileButton
                         multiple
                         label={'Bild hinzufügen'}

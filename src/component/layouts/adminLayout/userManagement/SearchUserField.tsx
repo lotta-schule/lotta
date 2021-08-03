@@ -18,7 +18,6 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
-        margin: theme.spacing(1, 0),
         position: 'relative',
     },
     inputWrapper: {
@@ -95,8 +94,6 @@ export const SearchUserField = memo<SearchUserFieldProps>(
             groupedOptions,
             focused,
             setAnchorEl,
-            // value
-            // getTagProps
         } = useAutocomplete({
             id: 'user-select',
             value: null,
@@ -124,6 +121,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(
             <NoSsr>
                 <div
                     className={clsx(styles.root, className)}
+                    style={style}
                     data-testid="SearchUserField"
                 >
                     <div
@@ -147,9 +145,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(
                                 disabled={disabled}
                                 variant={variant}
                                 size={'small'}
-                                placeholder={
-                                    'Nutzer nach Namen suchen oder korrekte E-Mail-Adresse eingeben.'
-                                }
+                                placeholder={'Nutzer suchen ...'}
                                 {...getInputProps()}
                             />
                             {isLoading && (

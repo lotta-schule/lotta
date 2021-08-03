@@ -15,8 +15,36 @@ describe('component/layouts/editArticleLayouut/TagsSelect', () => {
         },
     ];
 
-    it('should render a RelatedArticlesList without error', async () => {
+    it('should render a TagsSelect without error', async () => {
         render(<TagsSelect value={[]} onChange={() => {}} />, {}, {});
+    });
+
+    it('should show the given tags', () => {
+        const screen = render(
+            <TagsSelect value={['tag1', 'tag2']} onChange={() => {}} />,
+            {},
+            {}
+        );
+        const tagElements = screen.getAllByTestId('Tag');
+        expect(tagElements).toHaveLength(2);
+        ['tag1', 'tag2'].forEach((tag) => {
+            expect(
+                tagElements.find((t) => t.textContent === tag)
+            ).toBeDefined();
+        });
+    });
+
+    it('should show a delete button for tags', () => {
+        const fn = jest.fn();
+        const screen = render(
+            <TagsSelect value={['tag1']} onChange={fn} />,
+            {},
+            {}
+        );
+        const tagElement = screen.getByTestId('Tag');
+        expect(tagElement.querySelector('button')).toBeVisible();
+        userEvent.click(tagElement.querySelector('button')!);
+        expect(fn).toHaveBeenCalledWith([]);
     });
 
     it('should show the correct options', async () => {
@@ -28,7 +56,8 @@ describe('component/layouts/editArticleLayouut/TagsSelect', () => {
             {},
             { additionalMocks: getAdditionalMocks(resFn) }
         );
-        userEvent.click(screen.getByRole('textbox'));
+        expect(screen.getByRole('textbox')).toBeVisible();
+        userEvent.type(screen.getByRole('textbox'), 'ta');
         await waitFor(() => {
             expect(resFn).toHaveBeenCalled();
         });
@@ -48,6 +77,7 @@ describe('component/layouts/editArticleLayouut/TagsSelect', () => {
             { additionalMocks: getAdditionalMocks(resFn) }
         );
         userEvent.click(screen.getByRole('textbox'));
+        userEvent.type(screen.getByRole('textbox'), 'ta');
         await waitFor(() => {
             expect(resFn).toHaveBeenCalled();
         });
@@ -55,13 +85,17 @@ describe('component/layouts/editArticleLayouut/TagsSelect', () => {
         expect(onChangeFn).toHaveBeenCalledWith(['noch ein tag']);
     });
 
-    it('should show the given tags', async () => {
+    it('should clear the input when a tag is added', async () => {
+        const resFn = jest.fn(() => ({
+            data: { tags: ['tag', 'noch ein tag', 'wieder-tag'] },
+        }));
+        const onChangeFn = jest.fn();
         const screen = render(
-            <TagsSelect value={['A', 'B']} onChange={() => {}} />,
+            <TagsSelect value={[]} onChange={onChangeFn} />,
             {},
-            {}
+            { additionalMocks: getAdditionalMocks(resFn) }
         );
-        expect(screen.getByRole('button', { name: 'A' })).toBeVisible();
-        expect(screen.getByRole('button', { name: 'B' })).toBeVisible();
+        userEvent.type(screen.getByRole('textbox'), 'ta{enter}');
+        expect(screen.getByRole('textbox')).toHaveValue('');
     });
 });
