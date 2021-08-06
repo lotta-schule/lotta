@@ -4,10 +4,6 @@ import {
     CardContent,
     makeStyles,
     Typography,
-    FormControl,
-    FormLabel,
-    FormControlLabel,
-    Switch,
     Popper,
     Grow,
     Paper,
@@ -27,14 +23,14 @@ import { CategorySelect } from './CategorySelect';
 import { GroupSelect } from '../../edit/GroupSelect';
 import {
     ArrowDropDown as ArrowDropDownIcon,
-    FiberManualRecord,
     Warning,
 } from '@material-ui/icons';
 import { ArticleModel, ID } from 'model';
-import { Category, User } from 'util/model';
+import { Category } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
+import { ArticleStateEditor } from 'component/article/ArticleStateEditor';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
@@ -209,92 +205,10 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                     </Grid>
                     <Grid item md={4} className={styles.gridItem}>
                         <Typography variant={'h6'}>Veröffentlichung</Typography>
-                        <div>
-                            {!article.readyToPublish && (
-                                <CardContent>
-                                    <FormControl component={'fieldset'}>
-                                        <FormLabel component={'legend'}>
-                                            Gib den Beitrag zur Kontrolle frei,
-                                            um ihn als 'fertig' zu markieren.
-                                            Ein Verantwortlicher kann ihn dann
-                                            sichtbar schalten.
-                                        </FormLabel>
-                                        <FormControlLabel
-                                            value={1}
-                                            control={
-                                                <Switch color={'secondary'} />
-                                            }
-                                            onChange={(_, checked) =>
-                                                setIsReadyToPublish(checked)
-                                            }
-                                            label={
-                                                isReadyToPublish
-                                                    ? 'Beitrag wird zur Kontrolle freigegeben'
-                                                    : 'Zur Kontrolle freigeben'
-                                            }
-                                            labelPlacement={'end'}
-                                        />
-                                    </FormControl>
-                                </CardContent>
-                            )}
-                            <FormControl component={'fieldset'}>
-                                <FormLabel component={'legend'}>
-                                    Nur von Administratoren veröffentlichte
-                                    Beiträge werden auf der Seite angezeigt.
-                                </FormLabel>
-                                {User.isAdmin(currentUser) && (
-                                    <FormControlLabel
-                                        value={1}
-                                        disabled={!User.isAdmin(currentUser)}
-                                        control={<Switch color={'secondary'} />}
-                                        checked={isPublished}
-                                        onChange={(_, checked) =>
-                                            setIsPublished(checked)
-                                        }
-                                        label={
-                                            article.published
-                                                ? isPublished
-                                                    ? 'Beitrag ist veröffentlicht.'
-                                                    : 'Veröffentlichung wird zurückgenommen.'
-                                                : isPublished
-                                                ? 'Beitrag wird veröffentlicht.'
-                                                : 'Beitrag veröffentlichen'
-                                        }
-                                        labelPlacement={'end'}
-                                    />
-                                )}
-                                {!User.isAdmin(currentUser) && (
-                                    <div
-                                        className={
-                                            styles.isPublishedInformation
-                                        }
-                                    >
-                                        <FiberManualRecord
-                                            fontSize={'inherit'}
-                                            htmlColor={
-                                                article.published
-                                                    ? 'green'
-                                                    : 'red'
-                                            }
-                                        />
-                                        <Typography
-                                            variant={'body1'}
-                                            component={'span'}
-                                        >
-                                            {article.published && (
-                                                <>Beitrag ist veröffentlicht</>
-                                            )}
-                                            {!article.published && (
-                                                <>
-                                                    Beitrag ist nicht
-                                                    veröffentlicht
-                                                </>
-                                            )}
-                                        </Typography>
-                                    </div>
-                                )}
-                            </FormControl>
-                        </div>
+                        <ArticleStateEditor
+                            article={article}
+                            onUpdate={onUpdate}
+                        />
                         <div className={styles.buttonWrapper}>
                             <Button
                                 className={styles.cancelButton}
