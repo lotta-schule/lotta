@@ -9,10 +9,6 @@ const useStyles = makeStyles((theme) => ({
     contentModules: {
         backgroundColor: theme.palette.background.paper,
     },
-    previewSection: {
-        padding: theme.spacing(1),
-        color: theme.palette.grey[600],
-    },
 }));
 
 interface ArticleProps {

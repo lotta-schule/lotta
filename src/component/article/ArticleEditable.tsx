@@ -2,13 +2,7 @@ import * as React from 'react';
 import { ArticleModel } from '../../model';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import {
-    makeStyles,
-    CircularProgress,
-    Grid,
-    Typography,
-    Divider,
-} from '@material-ui/core';
+import { makeStyles, CircularProgress } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { ArticleTitle } from './ArticleTitle';
 
@@ -22,10 +16,6 @@ const useStyles = makeStyles((theme) => ({
     contentModules: {
         marginTop: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
-    },
-    previewSection: {
-        padding: theme.spacing(1),
-        color: theme.palette.grey[600],
     },
 }));
 
@@ -41,18 +31,6 @@ export const ArticleEditable = React.memo<ArticleEditableProps>(
             <article className={styles.root} data-testid={'ArticleEditable'}>
                 <ArticleTitle article={article} onUpdate={onUpdateArticle} />
                 <section className={styles.contentModules}>
-                    {article.preview && (
-                        <section className={styles.previewSection}>
-                            <Grid container>
-                                <Grid item xs>
-                                    <Typography variant={'subtitle2'}>
-                                        {article.preview}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Divider />
-                        </section>
-                    )}
                     <React.Suspense fallback={<CircularProgress />}>
                         <DragDropContext
                             onDragEnd={({
