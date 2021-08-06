@@ -1,0 +1,13 @@
+.lotta-label {
+    display: block;
+    color: rgba(var(--lotta-label-text-color), 1);
+    font-family: monospace;
+    font-size: 0.6rem;
+    line-height: 2em;
+    letter-spacing: 0.05rem;
+    text-transform: uppercase;
+}
+
+.lotta-label img {
+    display: block;
+}
