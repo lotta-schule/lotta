@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ArticleModel, ID } from '../../../model';
 import { ArticleEditable as Article } from '../../article/ArticleEditable';
-import { EditArticleSidebar } from './EditArticleSidebar';
+import { EditArticleFooter } from './EditArticleFooter';
 import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -143,7 +143,8 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                         article={editedArticle}
                         onUpdateArticle={changeArticle}
                     />
-                    <EditArticleSidebar
+                    <EditArticleFooter
+                        style={{ marginTop: '.5em' }}
                         article={editedArticle}
                         onUpdate={changeArticle}
                         isLoading={isLoading}

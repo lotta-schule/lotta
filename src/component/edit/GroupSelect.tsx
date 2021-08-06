@@ -209,7 +209,7 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                     data-testid="GroupSelect"
                 >
                     <div {...getRootProps()} data-testid="GroupSelectSelection">
-                        <Typography {...getInputLabelProps()}>
+                        <Typography role={'heading'} {...getInputLabelProps()}>
                             {label ?? 'Sichtbarkeit:'}
                         </Typography>
                         <div
