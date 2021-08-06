@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-between',
         '& > :nth-child(2)': {
             flexGrow: 1,
-            padding: theme.spacing(1, 0),
+            padding: theme.spacing(1),
         },
     },
     buttonWrapper: {

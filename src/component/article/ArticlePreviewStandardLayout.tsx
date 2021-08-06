@@ -278,6 +278,9 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                 fullWidth
                                 multiline
                                 disableUnderline
+                                placeholder={
+                                    'Füge dem Beitrag einen kurzen Vorschautext hinzu.'
+                                }
                                 value={article.preview}
                                 onChange={(e) => {
                                     onUpdateArticle({
@@ -303,7 +306,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                         )}
                         {!!onUpdateArticle && (
                             <TagsSelect
-                                value={article.tags}
+                                value={article.tags ?? []}
                                 onChange={(tags) => {
                                     console.log(tags);
                                     onUpdateArticle({ ...article, tags });
