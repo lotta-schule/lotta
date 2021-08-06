@@ -12,9 +12,10 @@
   max-width: 'max-content';
   font-family: var(--lotta-typography-font-family);
 
-  button {
+  & > button.lotta-tag__delete-button {
     float: right;
     margin-left: 2px;
+    padding: 0 !important;
 
     & svg {
       width: .5em;

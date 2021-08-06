@@ -16,6 +16,7 @@ export const Tag = React.memo<TagProps>(({ onDelete, children }) => {
             {onDelete && (
                 <Button
                     small
+                    className={'lotta-tag__delete-button'}
                     aria-label={`Tag ${children} löschen`}
                     onClick={() => onDelete()}
                     icon={<Close />}
