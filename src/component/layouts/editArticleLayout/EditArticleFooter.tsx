@@ -23,15 +23,17 @@ import { CategorySelect } from './CategorySelect';
 import { GroupSelect } from '../../edit/GroupSelect';
 import {
     ArrowDropDown as ArrowDropDownIcon,
+    Event,
     Warning,
 } from '@material-ui/icons';
 import { ArticleModel, ID } from 'model';
-import { Category } from 'util/model';
+import { Category, User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
 import { ArticleStateEditor } from 'component/article/ArticleStateEditor';
 import clsx from 'clsx';
+import { ArticleDatesEditor } from './ArticleDatesEditor';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -50,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
     },
     buttonWrapper: {
         display: 'flex',
-        alignItems: 'baseline',
     },
     cancelButton: {
         borderColor: theme.palette.secondary.main,
@@ -107,6 +108,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
             isSelfRemovalDialogOpen,
             setIsSelfRemovalDialogOpen,
         ] = React.useState(false);
+        const [isDatesEditorOpen, setIsDatesEditorOpen] = React.useState(false);
         const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = React.useState(
             false
         );
@@ -210,6 +212,34 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                             >
                                 abbrechen
                             </Button>
+                            {User.isAdmin(currentUser) && (
+                                <>
+                                    <Button
+                                        className={styles.cancelButton}
+                                        onClick={() =>
+                                            setIsDatesEditorOpen(true)
+                                        }
+                                        title={'Daten bearbeiten'}
+                                        aria-label={'Edit dates'}
+                                    >
+                                        <Event />
+                                    </Button>
+                                    <ArticleDatesEditor
+                                        isOpen={isDatesEditorOpen}
+                                        article={article}
+                                        onUpdate={({ insertedAt }) => {
+                                            onUpdate({
+                                                ...article,
+                                                insertedAt,
+                                            });
+                                            setIsDatesEditorOpen(false);
+                                        }}
+                                        onAbort={() =>
+                                            setIsDatesEditorOpen(false)
+                                        }
+                                    />
+                                </>
+                            )}
                             <ButtonGroup fullWidth>
                                 <Button
                                     fullWidth
