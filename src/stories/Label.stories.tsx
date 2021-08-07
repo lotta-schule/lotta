@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
 import { Label, LabelProps } from 'component/general/label/Label';
-import { Input } from 'component/general/input/Input';
+import { Input } from 'component/general/form/input/Input';
 import { Select } from 'component/general/select/Select';
 
 export default {
