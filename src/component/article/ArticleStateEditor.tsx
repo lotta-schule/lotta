@@ -50,17 +50,18 @@ export const ArticleStateEditor = React.memo<ArticleStateEditorProps>(
                         aria-label={'draft'}
                         control={<Radio />}
                         label={'Entwurf'}
-                        disabled={state !== ArticleState.Published && isAdmin}
+                        disabled={
+                            state !== ArticleState.Published &&
+                            isAdmin &&
+                            !isAuthor
+                        }
                     />
                     <FormControlLabel
                         value={ArticleState.Submitted}
                         aria-label={'submitted'}
                         control={<Radio />}
-                        label={'Zur Kontroller freigeben'}
-                        disabled={
-                            (!isAdmin && state === ArticleState.Published) ||
-                            (!isAuthor && isAdmin)
-                        }
+                        label={'Zur Kontrolle freigeben'}
+                        disabled={state === ArticleState.Published || isAdmin}
                     />
                     <FormControlLabel
                         value={ArticleState.Published}
