@@ -75,23 +75,22 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
             [onUpdate, users]
         );
 
-        if (!users) {
-            return null;
-        }
         return (
             <div
                 data-testid={'AuthorAvatarsList'}
                 className={clsx('lotta-authors-avatars-list', className)}
             >
-                <AvatarGroup
-                    max={max ?? 3}
-                    classes={{
-                        root: 'avatar-group',
-                        avatar: 'avatar',
-                    }}
-                >
-                    {users.map((user) => getAvatar(user))}
-                </AvatarGroup>
+                {users && (
+                    <AvatarGroup
+                        max={max ?? 3}
+                        classes={{
+                            root: 'avatar-group',
+                            avatar: 'avatar',
+                        }}
+                    >
+                        {users.map((user) => getAvatar(user))}
+                    </AvatarGroup>
+                )}
                 {!!onUpdate && (
                     <SearchUserField
                         label={'Autor hinzufügen'}

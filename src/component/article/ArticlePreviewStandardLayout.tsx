@@ -344,6 +344,9 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             </Grid>
                             <Grid item style={{ flexGrow: 1 }}>
                                 <AuthorAvatarsList
+                                    max={
+                                        !!onUpdateArticle ? Infinity : undefined
+                                    }
                                     users={article.users}
                                     onUpdate={
                                         !!onUpdateArticle
