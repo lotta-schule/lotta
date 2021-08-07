@@ -9,9 +9,6 @@ export type InputProps = {
     inline?: boolean;
 } & React.HTMLProps<HTMLInputElement>;
 
-/**
- * Primary UI component for user interaction
- */
 export const Input = React.forwardRef<any, InputProps>(
     ({ children, className, inline, ...props }, ref) => (
         <input
