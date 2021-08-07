@@ -103,12 +103,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
         const currentUser = useCurrentUser();
         const history = useHistory();
 
-        const [isReadyToPublish, setIsReadyToPublish] = React.useState(
-            article.readyToPublish || false
-        );
-        const [isPublished, setIsPublished] = React.useState(
-            article.published || false
-        );
         const [
             isSelfRemovalDialogOpen,
             setIsSelfRemovalDialogOpen,
@@ -223,8 +217,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                     disabled={isLoading}
                                     onClick={() =>
                                         onSave({
-                                            readyToPublish: isReadyToPublish,
-                                            published: isPublished,
                                             updatedAt: new Date().toISOString(),
                                         })
                                     }
@@ -275,8 +267,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                                     <MenuItem
                                                         onClick={() =>
                                                             onSave({
-                                                                readyToPublish: isReadyToPublish,
-                                                                published: isPublished,
                                                                 updatedAt: new Date(
                                                                     article.updatedAt
                                                                 ).toISOString(),
@@ -289,8 +279,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                                     <MenuItem
                                                         onClick={() =>
                                                             onSave({
-                                                                readyToPublish: isReadyToPublish,
-                                                                published: isPublished,
                                                                 updatedAt:
                                                                     article.insertedAt,
                                                             })

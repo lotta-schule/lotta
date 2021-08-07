@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { UserModel } from 'model';
-import { Badge, makeStyles, Tooltip } from '@material-ui/core';
+import { Badge, Tooltip } from '@material-ui/core';
 import { AvatarGroup } from '@material-ui/lab';
 import { User } from 'util/model';
-import { theme } from 'theme';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { Button } from 'component/general/button/Button';
 import { Close } from '@material-ui/icons';
