@@ -3,6 +3,7 @@ import { render, waitFor } from 'test/util';
 import {
     adminGroup,
     imageFile,
+    KeinErSieEsUser,
     SomeUser,
     SomeUserin,
     Weihnachtsmarkt,
@@ -323,7 +324,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                         onUpdateArticle={fn}
                     />,
                     {},
-                    { currentUser: SomeUser, useCache: true }
+                    { currentUser: KeinErSieEsUser, useCache: true }
                 );
                 const avatarsList = screen.getByTestId('AuthorAvatarsList');
                 expect(avatarsList.querySelector('button')).toBeVisible();
@@ -331,6 +332,77 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                 expect(fn).toHaveBeenCalledWith({
                     ...WeihnachtsmarktWithUsers,
                     users: [SomeUserin],
+                });
+            });
+            describe('should show warning when removing oneself', () => {
+                it('show a warning when user tries to remove him/herself and close the popup on abort', async () => {
+                    const onUpdate = jest.fn();
+                    const screen = render(
+                        <ArticlePreviewStandardLayout
+                            article={WeihnachtsmarktWithUsers}
+                            onUpdateArticle={onUpdate}
+                        />,
+                        {},
+                        { currentUser: SomeUser, useCache: true }
+                    );
+                    userEvent.click(
+                        screen.getByRole('button', { name: /che entfernen/i })
+                    );
+                    expect(screen.getByRole('presentation')).toBeVisible();
+                    expect(
+                        screen
+                            .getByRole('presentation')
+                            .querySelectorAll('button')
+                    ).toHaveLength(2);
+                    expect(
+                        screen
+                            .getByRole('presentation')
+                            .querySelectorAll('button')[0]
+                    ).toHaveTextContent(/abbrechen/i);
+                    userEvent.click(
+                        screen
+                            .getByRole('presentation')
+                            .querySelectorAll('button')[0]
+                    );
+                    await waitFor(() => {
+                        expect(screen.queryByRole('presentation')).toBeNull();
+                    });
+                });
+
+                it('show a warning when user tries to remove him/herself and remove user on confirm', () => {
+                    const onUpdate = jest.fn();
+                    const screen = render(
+                        <ArticlePreviewStandardLayout
+                            article={WeihnachtsmarktWithUsers}
+                            onUpdateArticle={onUpdate}
+                        />,
+                        {},
+                        { currentUser: SomeUser, useCache: true }
+                    );
+                    userEvent.click(
+                        screen.getByRole('button', { name: /che entfernen/i })
+                    );
+                    expect(screen.getByRole('presentation')).toBeVisible();
+                    expect(
+                        screen
+                            .getByRole('presentation')
+                            .querySelectorAll('button')
+                    ).toHaveLength(2);
+                    expect(
+                        screen
+                            .getByRole('presentation')
+                            .querySelectorAll('button')[1]
+                    ).toHaveTextContent(/entfernen/i);
+                    userEvent.click(
+                        screen
+                            .getByRole('presentation')
+                            .querySelectorAll('button')[1]
+                    );
+
+                    expect(onUpdate).toHaveBeenCalledWith({
+                        ...WeihnachtsmarktWithUsers,
+                        users: [SomeUserin],
+                    });
                 });
             });
         });

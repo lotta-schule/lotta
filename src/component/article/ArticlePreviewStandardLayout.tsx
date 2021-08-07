@@ -7,6 +7,9 @@ import {
     Theme,
     Container,
     Input,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { Edit, Place } from '@material-ui/icons';
@@ -30,6 +33,7 @@ import { TagsSelect } from 'component/layouts/editArticleLayout/TagsSelect';
 import { Tag } from 'component/general/tag/Tag';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
     (theme) => ({
@@ -125,6 +129,10 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
                 color: theme.palette.secondary.main,
             },
         },
+        dateGridItem: {
+            display: 'flex',
+            alignItems: 'baseline',
+        },
         date: {
             paddingTop: theme.spacing(1),
             marginRight: theme.spacing(2),
@@ -169,6 +177,11 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
         const showEditSection =
             User.canEditArticle(currentUser, article) ||
             User.isAdmin(currentUser);
+
+        const [
+            isSelfRemovalDialogOpen,
+            setIsSelfRemovalDialogOpen,
+        ] = React.useState(false);
 
         const [toggleArticlePin] = useMutation<
             { article: ArticleModel },
@@ -308,7 +321,6 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             <TagsSelect
                                 value={article.tags ?? []}
                                 onChange={(tags) => {
-                                    console.log(tags);
                                     onUpdateArticle({ ...article, tags });
                                 }}
                             />
@@ -318,7 +330,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                 <Tag key={tag}>{tag}</Tag>
                             ))}
                         <Grid container>
-                            <Grid item>
+                            <Grid item className={styles.dateGridItem}>
                                 <Typography
                                     className={clsx(styles.date, 'dt-updated')}
                                     component={'time'}
@@ -336,15 +348,83 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                     onUpdate={
                                         !!onUpdateArticle
                                             ? (users) => {
-                                                  console.log(users);
-                                                  onUpdateArticle({
-                                                      ...article,
-                                                      users,
-                                                  });
+                                                  if (
+                                                      users.length ===
+                                                          article.users.length -
+                                                              1 &&
+                                                      article.users.find(
+                                                          (u) =>
+                                                              u.id ===
+                                                              currentUser!.id
+                                                      ) &&
+                                                      !users.find(
+                                                          (u) =>
+                                                              u.id ===
+                                                              currentUser!.id
+                                                      )
+                                                  ) {
+                                                      setIsSelfRemovalDialogOpen(
+                                                          true
+                                                      );
+                                                  } else {
+                                                      onUpdateArticle({
+                                                          ...article,
+                                                          users,
+                                                      });
+                                                  }
                                               }
                                             : undefined
                                     }
                                 />
+                                <ResponsiveFullScreenDialog
+                                    open={isSelfRemovalDialogOpen}
+                                >
+                                    <DialogTitle>
+                                        Dich selbst aus dem Beitrag entfernen
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <p>
+                                            Möchtest du dich selbst wirklich aus
+                                            dem Beitrag "{article.title}"
+                                            entfernen?
+                                        </p>
+                                        <p>
+                                            Du wirst den Beitrag dann nicht mehr
+                                            bearbeiten können und übergibst die
+                                            Rechte den anderen Autoren oder
+                                            Administratoren der Seite
+                                        </p>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button
+                                            onClick={() =>
+                                                setIsSelfRemovalDialogOpen(
+                                                    false
+                                                )
+                                            }
+                                        >
+                                            abbrechen
+                                        </Button>
+                                        <Button
+                                            color={'secondary'}
+                                            onClick={() => {
+                                                onUpdateArticle!({
+                                                    ...article,
+                                                    users: article.users.filter(
+                                                        (articleUser) =>
+                                                            articleUser.id !==
+                                                            currentUser?.id
+                                                    ),
+                                                });
+                                                setIsSelfRemovalDialogOpen(
+                                                    false
+                                                );
+                                            }}
+                                        >
+                                            endgültig entfernen
+                                        </Button>
+                                    </DialogActions>
+                                </ResponsiveFullScreenDialog>
                             </Grid>
                         </Grid>
                     </Grid>
