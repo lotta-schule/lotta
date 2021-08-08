@@ -24,19 +24,19 @@ const Template: Story<Omit<RadioGroupProps, 'ref'>> = (args) => (
 
 const ColoredTemplate: Story<Omit<RadioGroupProps, 'ref'>> = (args) => (
     <RadioGroup {...args} name={'radio-group'}>
-        <Radio featureColor={'red'} value={'0'}>
+        <Radio featureColor={[255, 0, 0]} value={'0'}>
             Option 0
         </Radio>
-        <Radio featureColor={'green'} value={'1'}>
+        <Radio featureColor={[0, 255, 0]} value={'1'}>
             Option 1
         </Radio>
-        <Radio featureColor={'yellow'} value={'2'}>
+        <Radio featureColor={[255, 255, 0]} value={'2'}>
             Option 2
         </Radio>
-        <Radio featureColor={'pink'} value={'3'}>
+        <Radio featureColor={[255, 120, 120]} value={'3'}>
             Option 3
         </Radio>
-        <Radio featureColor={'brown'} value={'4'}>
+        <Radio featureColor={[220, 175, 175]} value={'4'}>
             Option 4
         </Radio>
     </RadioGroup>
