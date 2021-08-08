@@ -4,9 +4,9 @@ import {
     Link,
     Grid,
     makeStyles,
+    Input as MuiInput,
     Theme,
     Container,
-    Input,
     DialogTitle,
     DialogContent,
     DialogActions,
@@ -31,9 +31,10 @@ import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { TagsSelect } from 'component/layouts/editArticleLayout/TagsSelect';
 import { Tag } from 'component/general/tag/Tag';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { Input } from 'component/general/form/input/Input';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
     (theme) => ({
@@ -260,8 +261,8 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                     <Grid className={styles.mainSection}>
                         {!!onUpdateArticle && (
                             <Input
+                                inline
                                 fullWidth
-                                disableUnderline
                                 value={article.title}
                                 onChange={(e) => {
                                     onUpdateArticle({
@@ -271,9 +272,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                     });
                                 }}
                                 className={styles.title}
-                                inputProps={{
-                                    'aria-label': 'Article title',
-                                }}
+                                aria-label={'Article title'}
                             />
                         )}
                         {!onUpdateArticle && (
@@ -287,7 +286,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             </Typography>
                         )}
                         {!!onUpdateArticle && (
-                            <Input
+                            <MuiInput
                                 fullWidth
                                 multiline
                                 disableUnderline

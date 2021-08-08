@@ -1,9 +1,8 @@
-import React, { memo, useState, useEffect } from 'react';
+import * as React from 'react';
 import {
     CircularProgress,
     Grid,
     NoSsr,
-    TextField,
     Theme,
     Typography,
 } from '@material-ui/core';
@@ -14,6 +13,7 @@ import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
 import { useDebounce } from 'util/useDebounce';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { UserModel } from 'model';
+import { Input } from 'component/general/form/input/Input';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -56,17 +56,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface SearchUserFieldProps {
     className?: string;
-    variant?: 'filled' | 'outlined' | 'standard';
     label?: string | null;
     disabled?: boolean;
     style?: React.CSSProperties;
     onSelectUser(user: UserModel): void;
 }
 
-export const SearchUserField = memo<SearchUserFieldProps>(
-    ({ className, variant, label, disabled, style, onSelectUser }) => {
+export const SearchUserField = React.memo<SearchUserFieldProps>(
+    ({ className, label, disabled, style, onSelectUser }) => {
         const styles = useStyles();
-        const [searchtext, setSearchtext] = useState('');
+        const [searchtext, setSearchtext] = React.useState('');
         const [execute, { data, loading: isLoading }] = useLazyQuery<
             { users: UserModel[] },
             { searchtext: string }
@@ -79,7 +78,7 @@ export const SearchUserField = memo<SearchUserFieldProps>(
             setSearchtext('');
         };
 
-        useEffect(() => {
+        React.useEffect(() => {
             if (debouncedSearchtext.length >= 2) {
                 execute({ variables: { searchtext: debouncedSearchtext } });
             }
@@ -139,12 +138,9 @@ export const SearchUserField = memo<SearchUserFieldProps>(
                             ref={setAnchorEl}
                             className={clsx(styles.inputWrapper, { focused })}
                         >
-                            <TextField
-                                fullWidth
+                            <Input
                                 id={'search-user-input-field'}
                                 disabled={disabled}
-                                variant={variant}
-                                size={'small'}
                                 placeholder={'Nutzer suchen ...'}
                                 {...getInputProps()}
                             />

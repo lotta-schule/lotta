@@ -4,7 +4,6 @@ import {
     Card,
     CardContent,
     Grid,
-    TextField,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -12,6 +11,8 @@ import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { RequestPasswordResetMutation } from 'api/mutation/RequestPasswordResetMutation';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 import useRouter from 'use-react-router';
 
 const useStyles = makeStyles((theme) => ({
@@ -81,18 +82,19 @@ export const RequestPasswordResetLayout = memo(() => {
                                     </p>
                                 )}
                                 <ErrorMessage error={error} />
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    disabled={!!data || isLoading}
-                                    label="Deine Email-Adresse:"
-                                    placeholder="beispiel@medienportal.org"
-                                    type="email"
-                                    fullWidth
-                                />
+                                <Label label="Deine Email-Adresse:">
+                                    <Input
+                                        autoFocus
+                                        id="email"
+                                        value={email}
+                                        onChange={(e) =>
+                                            setEmail(e.currentTarget.value)
+                                        }
+                                        disabled={!!data || isLoading}
+                                        placeholder="beispiel@medienportal.org"
+                                        type="email"
+                                    />
+                                </Label>
                                 <Button
                                     type={'submit'}
                                     disabled={!!data || isLoading}

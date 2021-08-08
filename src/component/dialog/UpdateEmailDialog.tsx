@@ -4,7 +4,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField,
 } from '@material-ui/core';
 import { UpdateEmailMutation } from 'api/mutation/UpdateEmailMutation';
 import { useMutation } from '@apollo/client';
@@ -12,6 +11,8 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 import { Button } from 'component/general/button/Button';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 
 export interface UpdateEmailDialogProps {
     isOpen: boolean;
@@ -55,19 +56,20 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
                                 Wähle eine neue Email-Adresse.
                             </DialogContentText>
                             <ErrorMessage error={error} />
-                            <TextField
-                                margin="dense"
-                                id="new-email"
-                                value={newEmail}
-                                onChange={(e) => setNewEmail(e.target.value)}
-                                disabled={isLoading}
-                                label={'Neue Email:'}
-                                placeholder={'Neue Email'}
-                                type="email"
-                                autoComplete={'new-email'}
-                                autoFocus
-                                fullWidth
-                            />
+                            <Label label={'Neue Email:'}>
+                                <Input
+                                    autoFocus
+                                    id="new-email"
+                                    value={newEmail}
+                                    onChange={(e) =>
+                                        setNewEmail(e.currentTarget.value)
+                                    }
+                                    disabled={isLoading}
+                                    placeholder={'Neue Email'}
+                                    type="email"
+                                    autoComplete={'new-email'}
+                                />
+                            </Label>
                         </DialogContent>
                         <DialogActions>
                             <Button

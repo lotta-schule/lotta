@@ -32,13 +32,13 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
 import { ArticleStateEditor } from 'component/article/ArticleStateEditor';
-import clsx from 'clsx';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: '0',
-        overflow: 'auto',
+        overflow: 'visible',
         padding: theme.spacing(1),
     },
     gridItem: {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ArticleModel } from 'model';
-import { FormControlLabel, Radio, RadioGroup } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
+import { RadioGroup, Radio } from 'component/general/form/radio';
 
 export interface ArticleStateEditorProps {
     article: ArticleModel;
@@ -45,29 +45,29 @@ export const ArticleStateEditor = React.memo<ArticleStateEditorProps>(
                         });
                     }}
                 >
-                    <FormControlLabel
+                    <Radio
                         value={ArticleState.Draft}
                         aria-label={'draft'}
-                        control={<Radio />}
                         label={'Entwurf'}
+                        featureColor={[125, 125, 125]}
                         disabled={
                             state !== ArticleState.Published &&
                             isAdmin &&
                             !isAuthor
                         }
                     />
-                    <FormControlLabel
+                    <Radio
                         value={ArticleState.Submitted}
                         aria-label={'submitted'}
-                        control={<Radio />}
                         label={'Zur Kontrolle freigeben'}
+                        featureColor={[200, 200, 50]}
                         disabled={state === ArticleState.Published || isAdmin}
                     />
-                    <FormControlLabel
+                    <Radio
                         value={ArticleState.Published}
                         aria-label={'published'}
-                        control={<Radio />}
                         label={'freigegeben und veröffentlicht'}
+                        featureColor={[50, 225, 50]}
                         disabled={!isAdmin}
                     />
                 </RadioGroup>

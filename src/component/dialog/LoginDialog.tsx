@@ -1,13 +1,11 @@
-import React, { FunctionComponent, memo, useState } from 'react';
+import * as React from 'react';
 import {
     DialogTitle,
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField,
     Link,
     makeStyles,
-    Typography,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { useApolloClient, useMutation } from '@apollo/client';
@@ -18,6 +16,8 @@ import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { UserModel } from 'model';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 
 export interface LoginDialogProps {
     isOpen: boolean;
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(
+export const LoginDialog = React.memo<LoginDialogProps>(
     ({ isOpen, onRequestClose }) => {
         const styles = useStyles();
         const apolloClient = useApolloClient();
@@ -65,9 +65,9 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(
         const [
             isShowUpdatePasswordDialog,
             setIsShowUpdatePasswordDialog,
-        ] = useState(false);
-        const [email, setEmail] = useState('');
-        const [password, setPassword] = useState('');
+        ] = React.useState(false);
+        const [email, setEmail] = React.useState('');
+        const [password, setPassword] = React.useState('');
         const resetForm = () => {
             setEmail('');
             setPassword('');
@@ -92,39 +92,39 @@ export const LoginDialog: FunctionComponent<LoginDialogProps> = memo(
                                 Melde dich hier mit deinen Zugangsdaten an.
                             </DialogContentText>
                             <ErrorMessage error={error} />
-                            <TextField
-                                autoFocus
-                                margin="dense"
-                                id="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                disabled={isLoading}
-                                label="Deine Email-Adresse:"
-                                placeholder="beispiel@medienportal.org"
-                                type="email"
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                disabled={isLoading}
-                                label="Dein Passwort:"
-                                placeholder={'Passwort'}
-                                type="password"
-                                fullWidth
-                            />
-                            <Typography variant="body1" color="secondary">
-                                <Link
-                                    component={CollisionLink}
-                                    color="inherit"
-                                    underline="none"
-                                    to={`/password/request-reset`}
-                                >
-                                    Passwort vergessen?
-                                </Link>
-                            </Typography>
+                            <Label label={'Deine Email-Adresse:'}>
+                                <Input
+                                    autoFocus
+                                    id={'email'}
+                                    value={email}
+                                    onChange={(e) =>
+                                        setEmail(e.currentTarget.value)
+                                    }
+                                    disabled={isLoading}
+                                    placeholder={'beispiel@medienportal.org'}
+                                    type={'email'}
+                                />
+                            </Label>
+                            <Label label={'Dein Passwort:'}>
+                                <Input
+                                    id="password"
+                                    value={password}
+                                    onChange={(e) =>
+                                        setPassword(e.currentTarget.value)
+                                    }
+                                    disabled={isLoading}
+                                    placeholder={'Passwort'}
+                                    type="password"
+                                />
+                            </Label>
+                            <Link
+                                component={CollisionLink}
+                                color="inherit"
+                                underline="none"
+                                to={`/password/request-reset`}
+                            >
+                                Passwort vergessen?
+                            </Link>
                         </DialogContent>
                         <DialogActions>
                             <Button
