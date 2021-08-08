@@ -1,7 +1,6 @@
 import * as React from 'react';
-// also exported from '@storybook/react' if you can deal with breaking changes in 6.1
-import { Story, Meta } from '@storybook/react/types-6-0';
-import { Select, SelectProps } from 'component/general/select/Select';
+import { Story, Meta } from '@storybook/react';
+import { Select, SelectProps } from 'component/general/form/select/Select';
 
 export default {
     title: 'Form/Select',
@@ -25,6 +24,4 @@ const Template: Story<Omit<SelectProps, 'ref'>> = (args) => (
 );
 
 export const Default = Template.bind({});
-Default.args = {
-    placeholder: 'Please type something interesting ...',
-};
+Default.args = {};

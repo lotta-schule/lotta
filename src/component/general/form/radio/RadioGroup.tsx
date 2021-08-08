@@ -9,7 +9,7 @@ export type RadioGroupProps = {
 
 export const RadioGroup = React.forwardRef<any, RadioGroupProps>(
     ({ children, className, name, ...props }, ref) => (
-        <div {...props} className={'lotta-radio-group'}>
+        <div ref={ref} {...props} className={'lotta-radio-group'}>
             {React.Children.map(children as any, (child: React.ReactElement) =>
                 React.cloneElement(child, { name })
             )}

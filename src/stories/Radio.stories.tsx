@@ -13,7 +13,7 @@ export default {
 } as Meta;
 
 const Template: Story<Omit<RadioGroupProps, 'ref'>> = (args) => (
-    <RadioGroup name={'radio-group'}>
+    <RadioGroup {...args} name={'radio-group'}>
         <Radio value={'0'}>Option 0</Radio>
         <Radio value={'1'}>Option 1</Radio>
         <Radio value={'2'}>Option 2</Radio>
@@ -23,7 +23,7 @@ const Template: Story<Omit<RadioGroupProps, 'ref'>> = (args) => (
 );
 
 const ColoredTemplate: Story<Omit<RadioGroupProps, 'ref'>> = (args) => (
-    <RadioGroup name={'radio-group'}>
+    <RadioGroup {...args} name={'radio-group'}>
         <Radio featureColor={'red'} value={'0'}>
             Option 0
         </Radio>

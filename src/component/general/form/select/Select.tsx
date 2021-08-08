@@ -4,9 +4,6 @@ import './select.scss';
 
 export type SelectProps = {} & React.HTMLProps<HTMLSelectElement>;
 
-/**
- * Primary UI component for user interaction
- */
 export const Select = React.forwardRef<any, SelectProps>(
     ({ children, className, ...props }, ref) => (
         <select

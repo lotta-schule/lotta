@@ -15,7 +15,7 @@ export const Input = React.forwardRef<any, InputProps>(
             {...props}
             ref={ref}
             className={clsx(className, 'lotta-input', {
-                ['lotta-input__inline']: inline,
+                'lotta-input__inline': inline,
             })}
             type={'text'}
         />
