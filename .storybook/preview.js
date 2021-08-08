@@ -28,6 +28,13 @@ export const decorators = [
     setThemeDecorator,
     (Story) => (
         <ThemeProvider theme={muiTheme}>
+            <style>
+                {`
+            body {
+                    padding: 8px;
+                }
+            `}
+            </style>
             <Story />
         </ThemeProvider>
     ),

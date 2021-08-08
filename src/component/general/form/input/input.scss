@@ -1,0 +1,26 @@
+input.lotta-input {
+    position: relative;
+    display: flex;
+    border: none;
+    border-bottom: 1px solid rgba(var(--lotta-disabled-color), 1);
+    padding: 0.7em;
+    font-size: 0.8rem;
+    width: 100%;
+    outline: none;
+    &:focus-visible {
+        border-bottom: 1px solid rgba(var(--lotta-primary-color), 1);
+        background-color: rgba(var(--lotta-primary-color), 0.1);
+        border-top-left-radius: 0.5em;
+        border-top-right-radius: 0.5em;
+    }
+}
+
+input.lotta-input__inline {
+    background-color: transparent;
+    font-size: initial;
+    border: none;
+    &:focus-visible {
+        border: none;
+        border-radius: 0.5em;
+    }
+}
