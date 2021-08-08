@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ArrowDropDown } from '@material-ui/icons';
 import clsx from 'clsx';
 import './select.scss';
 

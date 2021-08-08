@@ -1,5 +1,4 @@
 import * as React from 'react';
-import clsx from 'clsx';
 import './radio.scss';
 import { RadioProps } from './Radio';
 
