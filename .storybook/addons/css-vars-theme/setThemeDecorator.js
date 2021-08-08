@@ -8,6 +8,7 @@ export const initialState = {
     'primary-color': [50, 100, 0],
     'error-color': [230, 0, 0],
     'text-color': [3, 3, 3],
+    'label-text-color': [200, 200, 200],
     'disabled-color': [158, 158, 158],
     'contrast-text-color': [255, 255, 255],
     'box-background-color': [255, 255, 255],

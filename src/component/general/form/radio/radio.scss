@@ -1,0 +1,99 @@
+.lotta-radio {
+    --control-indicator-color: var(--lotta-primary-color);
+    display: block;
+    position: relative;
+    padding-left: 2em;
+    margin-bottom: .3em;
+    padding-top: .2em;
+    cursor: pointer;
+    font-size: 1rem;
+    input {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+    }
+    .lotta-radio__control-indicator {
+        position: absolute;
+        top: .1em;
+        left: 0;
+        height: 1.2em;
+        width: 1.2em;
+        background: rgba(var(--lotta-box-background-color), 1);
+        border: 1px solid rgba(var(--lotta-label-text-color), 1);
+    }
+    &:hover input ~ .lotta-radio__control-indicator,
+    input:focus ~ .lotta-radio__control-indicator {
+        background: rgba(var(--lotta-page-background-color), 0.7);
+    }
+
+    input:checked ~ .lotta-radio__control-indicator {
+        background: rgba(var(--lotta-box-background-color), 1);
+    }
+    &:hover input:not([disabled]):checked ~ .lotta-radio__control-indicator,
+    input:checked:focus ~ .lotta-radio__control-indicator {
+        background: rgba(var(--lotta-box-background-color), 0.7);
+    }
+    input:disabled ~ .lotta-radio__control-indicator {
+        background: rgba(var(--lotta-page-background-color), 0.7);
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    .lotta-radio__control-indicator:after {
+        box-sizing: unset;
+        content: '';
+        position: absolute;
+        display: none;
+    }
+    input:checked ~ .lotta-radio__control-indicator:after {
+        display: block;
+    }
+    .lotta-radio__control-indicator {
+        border-radius: 50%;
+    }
+
+    .lotta-radio__control-indicator:after {
+        left: .15em;
+        top: .15em;
+        height: .80em;
+        width: .80em;
+        border-radius: 50%;
+        background: rgba(var(--control-indicator-color), 1);
+        transition: background 250ms;
+    }
+    input:disabled ~ .lotta-radio__control-indicator:after {
+        background: rgba(var(--lotta-disabled-color), 1);
+    }
+    .lotta-radio__control-indicator::before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 2rem;
+        height: 2rem;
+        margin-left: -0.5rem;
+        margin-top: -0.5rem;
+        background: rgba(var(--control-indicator-color), 0.5);
+        border-radius: 3rem;
+        opacity: 0.3;
+        z-index: 1;
+        transform: scale(0);
+        box-shadow: 0px 0px 5px rgba(var(--control-indicator-color), 0.8);
+    }
+    input + .lotta-radio__control-indicator::before {
+        animation: s-ripple 400ms ease-out;
+    }
+    @keyframes s-ripple {
+        0% {
+            opacity: 0;
+            transform: scale(0);
+        }
+        20% {
+            transform: scale(1);
+        }
+        100% {
+            opacity: 0.01;
+            transform: scale(1);
+        }
+    }
+}

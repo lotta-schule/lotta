@@ -37,6 +37,9 @@ export const CssVariables = React.memo(() => {
                 0,
                 3
             ),
+            labelTextColor: decomposeColor(
+                theme.palette.text.hint
+            ).values.slice(0, 3),
             contrastTextColor: decomposeColor(
                 theme.palette.primary.contrastText
             ).values.slice(0, 3),
