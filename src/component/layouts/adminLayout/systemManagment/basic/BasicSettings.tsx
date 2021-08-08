@@ -8,7 +8,6 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    TextField,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -21,6 +20,7 @@ import { useMutation } from '@apollo/client';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { Button } from 'component/general/button/Button';
 import Img from 'react-cloudimage-responsive';
+import { Input } from 'component/general/form/input/Input';
 
 const useStyles = makeStyles((theme) => ({
     gridContainer: {
@@ -44,10 +44,9 @@ export const BasicSettings = React.memo(() => {
             <Typography variant={'h6'}>Name der Seite</Typography>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={6}>
-                    <TextField
-                        fullWidth
+                    <Input
                         value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        onChange={(e) => setTitle(e.currentTarget.value)}
                     />
                 </Grid>
             </Grid>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
     LinearProgress,
     Divider,
-    TextField,
     Theme,
     Typography,
     makeStyles,
@@ -20,6 +19,7 @@ import { SearchUserField } from './SearchUserField';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { Input } from 'component/general/form/input/Input';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -144,18 +144,11 @@ export const UsersList = React.memo(() => {
                     />
                     <Grid container>
                         <Grid item xs={12} sm={6}>
-                            <TextField
-                                fullWidth
-                                margin={'dense'}
+                            <Input
                                 value={filterText}
                                 onChange={(e) => setFilterText(e.target.value)}
                                 placeholder={'Tabelle nach Name filtern'}
-                                helperText={
-                                    '"*"-Zeichen ersetzt beliebige Zeichen'
-                                }
-                                inputProps={{
-                                    'aria-label': 'Nach Name filtern',
-                                }}
+                                aria-label={'Nach Name filtern'}
                             />
                         </Grid>
                         <Grid
@@ -164,11 +157,9 @@ export const UsersList = React.memo(() => {
                             sm={6}
                             className={styles.resultsGridItem}
                         >
-                            <Typography variant={'body1'}>
-                                {t('administration.results', {
-                                    count: rows.length,
-                                })}
-                            </Typography>
+                            {t('administration.results', {
+                                count: rows.length,
+                            })}
                         </Grid>
                     </Grid>
                     <VirtualizedTable

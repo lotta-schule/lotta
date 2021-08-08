@@ -107,6 +107,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                             </Label>
                             <Label label={'Dein Passwort:'}>
                                 <Input
+                                    type={'password'}
                                     id="password"
                                     value={password}
                                     onChange={(e) =>
@@ -114,7 +115,6 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                                     }
                                     disabled={isLoading}
                                     placeholder={'Passwort'}
-                                    type="password"
                                 />
                             </Label>
                             <Link
@@ -135,9 +135,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                             >
                                 Abbrechen
                             </Button>
-                            <Button type={'submit'} color="secondary">
-                                Anmelden
-                            </Button>
+                            <Button type={'submit'}>Anmelden</Button>
                         </DialogActions>
                     </form>
                 </ResponsiveFullScreenDialog>

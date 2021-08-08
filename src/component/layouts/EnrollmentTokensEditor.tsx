@@ -1,13 +1,10 @@
-import React, { ChangeEvent, memo, useEffect, useState } from 'react';
-import {
-    Chip,
-    makeStyles,
-    NoSsr,
-    TextField,
-    Typography,
-} from '@material-ui/core';
+import * as React from 'react';
+import { makeStyles, NoSsr } from '@material-ui/core';
 import { Transition, animated } from 'react-spring';
 import { flatten, uniq } from 'lodash';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { Tag } from 'component/general/tag/Tag';
 
 export interface EnrollmentTokensEditorProps {
     disabled?: boolean;
@@ -25,12 +22,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(
+export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
     ({ disabled, tokens, setTokens }) => {
         const styles = useStyles();
-        const [inputValue, setInputValue] = useState('');
+        const [inputValue, setInputValue] = React.useState('');
 
-        useEffect(() => {
+        React.useEffect(() => {
             if (tokens.length && tokens[tokens.length - 1] === inputValue) {
                 setInputValue('');
             }
@@ -53,37 +50,31 @@ export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(
                             leave={{ height: 0 }}
                         >
                             {(props: any, token) => (
-                                <Chip
-                                    key={token}
-                                    variant={'outlined'}
-                                    component={animated.div}
-                                    label={token}
-                                    className={styles.tag}
-                                    style={props}
-                                    role={'listitem'}
-                                    onDelete={() => {
-                                        setTokens(
-                                            tokens.filter((t) => t !== token)
-                                        );
-                                    }}
-                                />
+                                <animated.div>
+                                    <Tag
+                                        key={token}
+                                        className={styles.tag}
+                                        style={props}
+                                        role={'listitem'}
+                                        onDelete={() => {
+                                            setTokens(
+                                                tokens.filter(
+                                                    (t) => t !== token
+                                                )
+                                            );
+                                        }}
+                                    >
+                                        {token}
+                                    </Tag>
+                                </animated.div>
                             )}
                         </Transition>
                     </ul>
                     <div>
-                        <Typography
-                            component={'label'}
-                            htmlFor={'enter-new-enrollment-token'}
-                        >
-                            Neue Einschreibeschlüssel eintragen
-                        </Typography>
-                        <div>
-                            <TextField
-                                fullWidth
+                        <Label label={'Neue Einschreibeschlüssel eintragen'}>
+                            <Input
                                 id={'enter-new-enrollment-token'}
                                 disabled={disabled}
-                                variant={'filled'}
-                                size={'small'}
                                 placeholder={
                                     'Neue Einschreibeschlüssel hier eintragen. Mehrere Schlüssel durch Komma trennen.'
                                 }
@@ -112,7 +103,7 @@ export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(
                                     setInputValue('');
                                 }}
                                 onChange={(
-                                    ev: ChangeEvent<HTMLInputElement>
+                                    ev: React.ChangeEvent<HTMLInputElement>
                                 ) => {
                                     const { value } = ev.currentTarget;
                                     if (
@@ -134,7 +125,7 @@ export const EnrollmentTokensEditor = memo<EnrollmentTokensEditorProps>(
                                     }
                                 }}
                             />
-                        </div>
+                        </Label>
                     </div>
                 </div>
             </NoSsr>
