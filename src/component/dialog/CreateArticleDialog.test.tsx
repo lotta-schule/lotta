@@ -85,7 +85,7 @@ describe('component/layouts/adminLayout/userManagment/CreateArticleDialog', () =
                             updatedAt: new Date(),
                             preview: '',
                             readyToPublish: false,
-                            puublished: false,
+                            published: false,
                             isPinnedToTop: false,
                             previewImageFile: null,
                             contentModules: [],

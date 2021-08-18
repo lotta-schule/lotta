@@ -77,6 +77,7 @@ export const logosDirectory = {
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Logos',
+    parentDirectory: null,
 };
 
 export const profilDirectory = {
@@ -84,6 +85,7 @@ export const profilDirectory = {
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Profil',
+    parentDirectory: null,
 };
 
 export const podcastsDirectory = {
@@ -91,6 +93,7 @@ export const podcastsDirectory = {
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Profil',
+    parentDirectory: null,
 };
 
 export const schulweitDirectory = {
@@ -98,6 +101,7 @@ export const schulweitDirectory = {
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Schulweit',
+    parentDirectory: null,
 };
 
 /*

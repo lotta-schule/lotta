@@ -26,7 +26,10 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
             request: { query: GetCategoriesQuery },
             result: { data: { categories: allCategories } },
         },
-        { request: { query: ReceiveMessageSubscription }, result: {} },
+        {
+            request: { query: ReceiveMessageSubscription },
+            result: {},
+        },
     ];
     const cache = new InMemoryCache({
         addTypename: false,

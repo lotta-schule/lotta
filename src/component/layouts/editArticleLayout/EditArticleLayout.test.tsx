@@ -69,7 +69,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
 
         it('should call saveArticle endpoint with updated content modules', async () => {
             const onSave = jest.fn(() => ({
-                data: { article: variables.article },
+                data: { article: { ...Weihnachtsmarkt, ...variables.article } },
             }));
             const variables = {
                 id: Weihnachtsmarkt.id,
@@ -138,7 +138,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                 expect(location.pathname).toMatch(/^\/a\//);
             });
             const onSave = jest.fn(() => ({
-                data: { article: variables.article },
+                data: { article: { ...Weihnachtsmarkt, ...variables.article } },
             }));
             const variables = {
                 id: Weihnachtsmarkt.id,

@@ -24,7 +24,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
         const currentUser = useCurrentUser();
 
         const showEditSection =
-            !!onUpdate &&
+            !onUpdate &&
             (User.canEditArticle(currentUser, article) ||
                 User.isAdmin(currentUser));
         return (
