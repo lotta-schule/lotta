@@ -1,18 +1,11 @@
 import * as React from 'react';
 import {
     Divider,
-    Typography,
     makeStyles,
     Theme,
-    TextField,
     FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
     Checkbox,
     FormControlLabel,
-    RadioGroup,
-    Radio,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { CategoryModel, WidgetModel, ID } from 'model';
@@ -29,6 +22,10 @@ import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { Button } from 'component/general/button/Button';
 import { animated, useSpring } from 'react-spring';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
+import { Select } from 'component/general/form/select/Select';
+import { Radio, RadioGroup } from 'component/general/form/radio';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
 
@@ -38,6 +35,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%',
     },
     title: {
+        fontSize: '1.5rem',
+    },
+    heading: {
         marginTop: theme.spacing(5),
         paddingTop: theme.spacing(3),
         marginBottom: theme.spacing(1),
@@ -157,22 +157,25 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
 
         return (
             <>
-                <Typography variant={'h5'} className={styles.title}>
+                <h5 className={styles.title}>
                     {selectedCategory
                         ? selectedCategory.title
                         : category && category.title}
-                </Typography>
+                </h5>
                 <ErrorMessage error={error || currentWidgetsError} />
-                <TextField
-                    fullWidth
-                    className={styles.input}
-                    label={'Name der Kategorie'}
-                    inputProps={{ 'aria-label': 'Name der Kategorie' }}
-                    value={category.title}
-                    onChange={(e) =>
-                        setCategory({ ...category, title: e.target.value })
-                    }
-                />
+                <Label label={'Name der Kategorie'}>
+                    <Input
+                        className={styles.input}
+                        aria-label={'Name der Kategorie'}
+                        value={category.title}
+                        onChange={(e) =>
+                            setCategory({
+                                ...category,
+                                title: e.currentTarget.value,
+                            })
+                        }
+                    />
+                </Label>
 
                 {!category.isHomepage && (
                     <GroupSelect
@@ -184,12 +187,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     />
                 )}
 
-                <Typography
-                    className={clsx(styles.input, styles.title)}
-                    variant={'h6'}
-                >
+                <h6 className={clsx(styles.input, styles.heading)}>
                     Wähle ein Banner für diese Kategorie
-                </Typography>
+                </h6>
 
                 <SelectFileOverlay
                     label={'Banner ändern'}
@@ -238,41 +238,34 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                 )}
 
                 <FormControl className={styles.input}>
-                    <InputLabel htmlFor={'category-layout'}>
-                        Layout für die Kategorie wählen
-                    </InputLabel>
-                    <Select
-                        value={category.layoutName ?? 'standard'}
-                        onChange={({ target }) =>
-                            setCategory({
-                                ...category,
-                                layoutName: target.value as any,
-                            })
-                        }
-                        inputProps={{
-                            id: 'category-layout',
-                        }}
-                        displayEmpty
-                        fullWidth
-                    >
-                        <MenuItem value={'standard'}>Standardlayout</MenuItem>
-                        <MenuItem value={'densed'}>Kompaktlayout</MenuItem>
-                        <MenuItem value={'2-columns'}>
-                            Zweispaltenlayout
-                        </MenuItem>
-                    </Select>
+                    <Label label={'Layout für die Kategorie wählen'}>
+                        <Select
+                            value={category.layoutName ?? 'standard'}
+                            onChange={({ currentTarget }) =>
+                                setCategory({
+                                    ...category,
+                                    layoutName: currentTarget.value as any,
+                                })
+                            }
+                            id={'category-layout'}
+                        >
+                            <option value={'standard'}>Standardlayout</option>
+                            <option value={'densed'}>Kompaktlayout</option>
+                            <option value={'2-columns'}>
+                                Zweispaltenlayout
+                            </option>
+                        </Select>
+                    </Label>
                 </FormControl>
 
                 {!category.isHomepage && (
                     <>
-                        <Typography
-                            className={clsx(styles.input, styles.title)}
-                            variant={'h6'}
-                        >
+                        <h6 className={clsx(styles.input, styles.heading)}>
                             Die Kategorie als Weiterleitung
-                        </Typography>
+                        </h6>
 
                         <RadioGroup
+                            name={'category-redirect-type'}
                             aria-label={'Die Kategorie als Weiterleitung'}
                             value={Category.getRedirectType(category)}
                             onChange={(_e, value) => {
@@ -298,16 +291,14 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 }
                             }}
                         >
-                            <FormControlLabel
+                            <Radio
                                 value={RedirectType.None}
-                                control={<Radio />}
                                 label={
                                     'Kategorie wird nicht weitergeleitet und zeigt eigene Beiträge an.'
                                 }
                             />
-                            <FormControlLabel
+                            <Radio
                                 value={RedirectType.Intern}
-                                control={<Radio />}
                                 label={
                                     'Kategorie zu einer anderen Kategorie weiterleiten:'
                                 }
@@ -318,41 +309,40 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 style={redirectInternallySpringProps}
                             >
                                 <FormControl className={styles.input}>
-                                    <InputLabel htmlFor={'category-redirect'}>
-                                        Zu einer anderen Kategorie weiterleiten
-                                        ...
-                                    </InputLabel>
-                                    <Select
-                                        value={category.redirect || 'null'}
-                                        onChange={({ target }) =>
-                                            setCategory({
-                                                ...category,
-                                                redirect: target.value as string,
-                                            })
+                                    <Label
+                                        label={
+                                            'Zu einer anderen Kategorie weiterleiten ...'
                                         }
-                                        inputProps={{
-                                            id: 'category-redirect',
-                                        }}
-                                        displayEmpty
-                                        fullWidth
                                     >
-                                        {categories.map((category) => (
-                                            <MenuItem
-                                                key={category.id}
-                                                value={Category.getPath(
-                                                    category
-                                                )}
-                                            >
-                                                {category.title}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
+                                        <Select
+                                            value={category.redirect || 'null'}
+                                            onChange={({ currentTarget }) =>
+                                                setCategory({
+                                                    ...category,
+                                                    redirect:
+                                                        currentTarget.value,
+                                                })
+                                            }
+                                            id={'category-redirect'}
+                                        >
+                                            <option key={0} />
+                                            {categories.map((category) => (
+                                                <option
+                                                    key={category.id}
+                                                    value={Category.getPath(
+                                                        category
+                                                    )}
+                                                >
+                                                    {category.title}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </Label>
                                 </FormControl>
                             </animated.div>
 
-                            <FormControlLabel
+                            <Radio
                                 value={RedirectType.Extern}
-                                control={<Radio />}
                                 label={
                                     'Kategorie zu einer Seite im Internet weiterleiten'
                                 }
@@ -362,21 +352,19 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 data-testid={'ExternalRedirectWrapper'}
                                 style={redirectExternallySpringProps}
                             >
-                                <TextField
-                                    fullWidth
-                                    className={styles.input}
-                                    label={'Ziel der Weiterleitung:'}
-                                    inputProps={{
-                                        'aria-label': 'Ziel der Weiterleitung',
-                                    }}
-                                    value={category.redirect}
-                                    onChange={(e) =>
-                                        setCategory({
-                                            ...category,
-                                            redirect: e.target.value,
-                                        })
-                                    }
-                                />
+                                <Label label={'Ziel der Weiterleitung:'}>
+                                    <Input
+                                        className={styles.input}
+                                        aria-label={'Ziel der Weiterleitung'}
+                                        value={category.redirect as string}
+                                        onChange={(e) =>
+                                            setCategory({
+                                                ...category,
+                                                redirect: e.currentTarget.value,
+                                            })
+                                        }
+                                    />
+                                </Label>
                             </animated.div>
                         </RadioGroup>
 
@@ -384,12 +372,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     </>
                 )}
 
-                <Typography
-                    className={clsx(styles.input, styles.title)}
-                    variant={'h6'}
-                >
+                <h6 className={clsx(styles.input, styles.heading)}>
                     Wähle die marginalen Module für diese Kategorie
-                </Typography>
+                </h6>
                 <CategoryWidgetSelector
                     selectedWidgets={selectedWidgets}
                     setSelectedWidgets={(widgets) =>

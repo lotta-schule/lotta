@@ -4,9 +4,10 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 import { ArticleModel, ArticleModelInput } from '../../model';
 import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
 import { useMutation } from '@apollo/client';
@@ -73,18 +74,18 @@ export const CreateArticleDialog = React.memo<CreateArticleDialogProps>(
                             Wähle zunächst einen Titel für deinen Beitrag
                         </DialogContentText>
                         <ErrorMessage error={error} />
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            disabled={isLoading}
-                            label="Titel des Beitrags:"
-                            placeholder="Mein neuer Beitrag"
-                            type="text"
-                            fullWidth
-                        />
+                        <Label label="Titel des Beitrags:">
+                            <Input
+                                autoFocus
+                                id="title"
+                                value={title}
+                                onChange={({ currentTarget }) =>
+                                    setTitle(currentTarget.value)
+                                }
+                                disabled={isLoading}
+                                placeholder="Mein neuer Beitrag"
+                            />
+                        </Label>
                     </DialogContent>
                     <DialogActions>
                         <Button

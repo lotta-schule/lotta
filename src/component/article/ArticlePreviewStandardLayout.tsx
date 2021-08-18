@@ -262,7 +262,6 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                         {!!onUpdateArticle && (
                             <Input
                                 inline
-                                fullWidth
                                 value={article.title}
                                 onChange={(e) => {
                                     onUpdateArticle({

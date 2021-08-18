@@ -5,7 +5,7 @@ import clsx from 'clsx';
 
 export type RadioGroupProps = {
     name: string;
-    value?: string;
+    value?: RadioProps['value'];
     onChange?: (
         event: React.ChangeEvent<HTMLInputElement>,
         value: string

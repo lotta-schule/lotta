@@ -1,14 +1,15 @@
-import React, { FunctionComponent, memo, useState, useEffect } from 'react';
+import * as React from 'react';
 import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    TextField,
     DialogActions,
     FormControlLabel,
     Checkbox,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 import { DirectoryModel, FileModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
@@ -27,13 +28,13 @@ export interface CreateNewFolderDialogProps {
     ): void;
 }
 
-export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogProps> = memo(
+export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
     ({ basePath, open, onClose }) => {
         const parentDirectoryId = basePath?.[basePath.length - 1].id ?? null;
         const currentUser = useCurrentUser();
-        const [name, setName] = useState('');
-        const [isPublic, setIsPublic] = useState(false);
-        useEffect(() => {
+        const [name, setName] = React.useState('');
+        const [isPublic, setIsPublic] = React.useState(false);
+        React.useEffect(() => {
             if (open) {
                 setIsPublic(false);
             }
@@ -88,21 +89,21 @@ export const CreateNewDirectoryDialog: FunctionComponent<CreateNewFolderDialogPr
                             möchtest.
                         </DialogContentText>
                         <ErrorMessage error={error} />
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            label="Name des Ordners"
-                            type="text"
-                            onChange={(e) => setName(e.target.value)}
-                            fullWidth
-                        />
+                        <Label label={'Name des Ordners'}>
+                            <Input
+                                autoFocus
+                                onChange={({ currentTarget }) =>
+                                    setName(currentTarget.value)
+                                }
+                            />
+                        </Label>
                         {User.isAdmin(currentUser) &&
                             basePath?.slice(-1)[0].id === null && (
                                 <FormControlLabel
                                     control={
                                         <Checkbox
                                             checked={isPublic}
-                                            onChange={(e, checked) =>
+                                            onChange={(_e, checked) =>
                                                 setIsPublic(checked)
                                             }
                                         />

@@ -146,7 +146,9 @@ export const UsersList = React.memo(() => {
                         <Grid item xs={12} sm={6}>
                             <Input
                                 value={filterText}
-                                onChange={(e) => setFilterText(e.target.value)}
+                                onChange={(e) =>
+                                    setFilterText(e.currentTarget.value)
+                                }
                                 placeholder={'Tabelle nach Name filtern'}
                                 aria-label={'Nach Name filtern'}
                             />

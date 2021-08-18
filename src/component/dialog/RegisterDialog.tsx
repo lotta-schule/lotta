@@ -122,7 +122,7 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                                     id="first_name"
                                     value={firstName}
                                     onChange={(e) =>
-                                        setFirstName(e.target.value)
+                                        setFirstName(e.currentTarget.value)
                                     }
                                     disabled={isLoading}
                                     placeholder={'Maxi'}
