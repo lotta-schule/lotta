@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ScheduleWidgetConfig } from 'model';
-import { makeStyles, FormControl, FormHelperText } from '@material-ui/core';
+import { makeStyles, FormControl } from '@material-ui/core';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
 import { Select } from 'component/general/form/select/Select';
