@@ -72,12 +72,13 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
                 width: '100%',
             },
             [theme.breakpoints.down('xs')]: {
-                paddingRight: 40,
+                paddingRight: 40, // Make place for button + margin
             },
         },
         editSection: {
             [theme.breakpoints.down('xs')]: {
                 position: 'absolute',
+                minWidth: 40, // button + margin => 32+8
                 bottom: 0,
                 right: 0,
             },
