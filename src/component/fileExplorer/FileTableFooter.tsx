@@ -1,16 +1,11 @@
 import React, { memo, useContext } from 'react';
-import {
-    makeStyles,
-    CircularProgress,
-    Typography,
-    Theme,
-    TextField,
-} from '@material-ui/core';
+import { makeStyles, CircularProgress, Theme } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, DirectoryModel } from 'model';
 import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import fileExplorerContext from './context/FileExplorerContext';
+import { Input } from 'component/general/form/input/Input';
 
 const useStyles = makeStyles<Theme, { error: boolean }>((theme) => ({
     root: {
@@ -23,6 +18,9 @@ const useStyles = makeStyles<Theme, { error: boolean }>((theme) => ({
         paddingBottom: theme.spacing(0.5),
         display: 'flex',
         justifyContent: 'space-between',
+    },
+    mainContent: {
+        fontSize: '.8em',
     },
 }));
 
@@ -76,18 +74,16 @@ export const FileTableFooter = memo(() => {
 
     return (
         <section className={styles.root}>
-            <Typography component={'div'} variant={'body2'}>
-                {mainContent}
-            </Typography>
+            <div className={styles.mainContent}>{mainContent}</div>
             <div>
-                <TextField
+                <Input
                     type={'search'}
                     placeholder={'im Ordner suchen'}
                     value={state.searchtext}
-                    onChange={(e) =>
+                    onChange={({ currentTarget }) =>
                         dispatch({
                             type: 'setSearchFilter',
-                            searchtext: e.currentTarget.value,
+                            searchtext: currentTarget.value,
                         })
                     }
                 />

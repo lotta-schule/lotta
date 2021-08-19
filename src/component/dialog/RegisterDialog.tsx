@@ -1,11 +1,10 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     Checkbox,
     DialogTitle,
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField,
     Typography,
     Grid,
     makeStyles,
@@ -14,19 +13,17 @@ import {
     FormControlLabel,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
-import { fade } from '@material-ui/core/styles';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { useMutation } from '@apollo/client';
 import { RegisterMutation } from 'api/mutation/RegisterMutation';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 
 const useStyles = makeStyles((theme: Theme) => ({
     margin: {
         marginBottom: theme.spacing(3),
-    },
-    groupKeyInput: {
-        backgroundColor: fade(theme.palette.secondary.main, 0.15),
     },
 }));
 
@@ -35,7 +32,7 @@ export interface RegisterDialogProps {
     onRequestClose(): void;
 }
 
-export const RegisterDialog = memo<RegisterDialogProps>(
+export const RegisterDialog = React.memo<RegisterDialogProps>(
     ({ isOpen, onRequestClose }) => {
         const [register, { error, loading: isLoading, data }] = useMutation<{
             register: boolean;
@@ -44,13 +41,13 @@ export const RegisterDialog = memo<RegisterDialogProps>(
 
         const getFieldError = useGetFieldError(error);
 
-        const [firstName, setFirstName] = useState('');
-        const [lastName, setLastName] = useState('');
-        const [nickname, setNickname] = useState('');
-        const [email, setEmail] = useState('');
-        const [groupKey, setGroupKey] = useState('');
-        const [isHideFullName, setIsHideFullName] = useState(false);
-        const [formError, setFormError] = useState<string | null>(null);
+        const [firstName, setFirstName] = React.useState('');
+        const [lastName, setLastName] = React.useState('');
+        const [nickname, setNickname] = React.useState('');
+        const [email, setEmail] = React.useState('');
+        const [groupKey, setGroupKey] = React.useState('');
+        const [isHideFullName, setIsHideFullName] = React.useState(false);
+        const [formError, setFormError] = React.useState<string | null>(null);
 
         const content = data?.register ? (
             <>
@@ -99,55 +96,65 @@ export const RegisterDialog = memo<RegisterDialogProps>(
                         Nutzer zu registrieren.
                     </DialogContentText>
                     <ErrorMessage error={formError || error} />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={isLoading}
-                        label="Deine Email-Adresse:"
-                        placeholder="beispiel@medienportal.org"
-                        type="email"
-                        error={!!getFieldError('email')}
-                        helperText={getFieldError('email')}
-                        inputProps={{ maxLength: 100 }}
-                        fullWidth
-                        required
-                    />
+                    <Label label={'Deine Email-Adresse:'}>
+                        <Input
+                            autoFocus
+                            required
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.currentTarget.value)}
+                            disabled={isLoading}
+                            placeholder="beispiel@medienportal.org"
+                            type="email"
+                            maxLength={100}
+                        />
+                    </Label>
+                    {!!getFieldError('email') && (
+                        <ErrorMessage
+                            error={getFieldError('email') as string}
+                        />
+                    )}
                     <Grid container style={{ display: 'flex' }}>
                         <Grid item xs={12} sm={6}>
-                            <TextField
-                                margin="dense"
-                                id="first_name"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                disabled={isLoading}
-                                error={!!getFieldError('name')}
-                                helperText={getFieldError('email')}
-                                label="Vorname"
-                                placeholder={'Maxi'}
-                                type="text"
-                                inputProps={{ maxLength: 50 }}
-                                fullWidth
-                                required
-                            />
+                            <Label label={'Vorname'}>
+                                <Input
+                                    required
+                                    id="first_name"
+                                    value={firstName}
+                                    onChange={(e) =>
+                                        setFirstName(e.currentTarget.value)
+                                    }
+                                    disabled={isLoading}
+                                    placeholder={'Maxi'}
+                                    maxLength={50}
+                                />
+                            </Label>
+                            {!!getFieldError('name') && (
+                                <ErrorMessage
+                                    error={getFieldError('name') as string}
+                                />
+                            )}
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
-                                margin="dense"
-                                id="last_name"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                disabled={isLoading}
-                                label="Nachname"
-                                placeholder={'Muster'}
-                                error={!!getFieldError('name')}
-                                type="text"
-                                inputProps={{ maxLength: 50 }}
-                                fullWidth
-                                required
-                            />
+                            <Label label={'Nachname'}>
+                                <Input
+                                    required
+                                    id="last_name"
+                                    value={lastName}
+                                    onChange={(e) =>
+                                        setLastName(e.currentTarget.value)
+                                    }
+                                    disabled={isLoading}
+                                    label="Nachname"
+                                    placeholder={'Muster'}
+                                    maxLength={50}
+                                />
+                                {!!getFieldError('name') && (
+                                    <ErrorMessage
+                                        error={getFieldError('name') as string}
+                                    />
+                                )}
+                            </Label>
                         </Grid>
                     </Grid>
                     <Typography variant="caption">
@@ -156,28 +163,29 @@ export const RegisterDialog = memo<RegisterDialogProps>(
                         Schule bist. Deinen Spitznamen kannst du jederzeit in
                         deinem Profil ändern.
                     </Typography>
-                    <TextField
-                        margin="dense"
-                        id="nickname"
-                        disabled={isLoading}
-                        label="Spitzname"
-                        placeholder={'Mäxchen'}
-                        value={nickname}
-                        error={!!getFieldError('nickname')}
-                        helperText={getFieldError('nickname')}
-                        inputProps={{ maxLength: 25 }}
-                        onChange={(e) => {
-                            if (
-                                nickname.length === 0 &&
-                                e.target.value.length > 0
-                            ) {
-                                setIsHideFullName(true);
-                            }
-                            setNickname(e.target.value);
-                        }}
-                        type="text"
-                        fullWidth
-                    />
+                    <Label label={'Spitzname'}>
+                        <Input
+                            id="nickname"
+                            disabled={isLoading}
+                            placeholder={'Mäxchen'}
+                            value={nickname}
+                            maxLength={25}
+                            onChange={(e) => {
+                                if (
+                                    nickname.length === 0 &&
+                                    e.currentTarget.value.length > 0
+                                ) {
+                                    setIsHideFullName(true);
+                                }
+                                setNickname(e.currentTarget.value);
+                            }}
+                        />
+                        {!!getFieldError('nickname') && (
+                            <ErrorMessage
+                                error={getFieldError('nickname') as string}
+                            />
+                        )}
+                    </Label>
                     <FormGroup>
                         <FormControlLabel
                             control={
@@ -207,18 +215,15 @@ export const RegisterDialog = memo<RegisterDialogProps>(
                     <Typography variant="body1" className={styles.margin}>
                         Hast du einen Anmeldeschlüssel?
                     </Typography>
-                    <TextField
-                        margin="dense"
-                        id="code"
-                        disabled={isLoading}
-                        label="Anmeldeschlüssel:"
-                        placeholder={'acb123?!*'}
-                        onChange={(e) => setGroupKey(e.target.value)}
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        className={styles.groupKeyInput}
-                    />
+                    <Label label="Anmeldeschlüssel:">
+                        <Input
+                            id="code"
+                            disabled={isLoading}
+                            label="Anmeldeschlüssel:"
+                            placeholder={'acb123?!*'}
+                            onChange={(e) => setGroupKey(e.currentTarget.value)}
+                        />
+                    </Label>
                     <Typography variant="caption">
                         Gib hier einen Anmeldeschlüssel ein, um deine
                         Nutzerrechte zu erhalten (Schüler, Lehrer, etc.). Du

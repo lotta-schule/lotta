@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-    CircularProgress,
-    TextField,
-    Typography,
-    makeStyles,
-} from '@material-ui/core';
+import { CircularProgress, makeStyles } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { useQuery } from '@apollo/client';
 import { ArticlePreviewDensedLayout } from 'component/article/ArticlePreviewDensedLayout';
@@ -18,6 +13,8 @@ import { animated, useSpring } from 'react-spring';
 import { CategorySelect } from './editArticleLayout/CategorySelect';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import searchBannerImage from './searchBanner.png';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 
 const useStyles = makeStyles((theme) => ({
     inputSection: {
@@ -73,24 +70,24 @@ const SearchLayout = React.memo(() => {
         <>
             <BaseLayoutMainContent>
                 <Header bannerImageUrl={searchBannerImage}>
-                    <Typography variant={'h2'}>Suche</Typography>
+                    <h2>Suche</h2>
                 </Header>
 
                 <section className={styles.inputSection}>
-                    <Typography className={styles.description}>
+                    <div className={styles.description}>
                         Gib ein oder mehrere Suchbegriffe in das Suchfeld ein.
-                    </Typography>
-                    <TextField
-                        fullWidth
-                        autoFocus
-                        variant={'outlined'}
-                        color={'secondary'}
-                        id={'searchfield'}
-                        label={'Suchbegriff'}
-                        type={'search'}
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                    />
+                    </div>
+                    <Label label={'Suchbegriff'}>
+                        <Input
+                            autoFocus
+                            id={'searchfield'}
+                            type={'search'}
+                            value={searchText}
+                            onChange={(e) =>
+                                setSearchText(e.currentTarget.value)
+                            }
+                        />
+                    </Label>
                     <Button
                         className={styles.advancedSettingsButton}
                         onClick={() =>
@@ -112,17 +109,13 @@ const SearchLayout = React.memo(() => {
                         className={styles.advancedSettings}
                         style={springProps}
                     >
-                        <Typography variant={'h3'}>Erweiterte Suche</Typography>
+                        <h3>Erweiterte Suche</h3>
                         <CategorySelect
                             selectedCategory={category}
                             onSelectCategory={setCategory}
                         />
                     </animated.div>
-                    <Typography
-                        variant={'body1'}
-                        component={'div'}
-                        className={styles.result}
-                    >
+                    <div className={styles.result}>
                         {isLoading && (
                             <span>
                                 <CircularProgress
@@ -138,7 +131,7 @@ const SearchLayout = React.memo(() => {
                             </span>
                         )}
                         {!isLoading && !data && <span>&nbsp;</span>}
-                    </Typography>
+                    </div>
                 </section>
                 <section>
                     {data?.results.map((article: ArticleModel) => (

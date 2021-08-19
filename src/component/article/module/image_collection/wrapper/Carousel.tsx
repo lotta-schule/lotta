@@ -6,7 +6,7 @@ import { Gallery } from './Gallery';
 export interface CarouselProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
 export const Carousel = memo<CarouselProps>(

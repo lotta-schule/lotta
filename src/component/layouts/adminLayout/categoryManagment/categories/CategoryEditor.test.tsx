@@ -96,8 +96,8 @@ describe('component/layouts/adminLayout/categoryManagment/CategoryEditor', () =>
         );
 
         expect(
-            screen.getByRole('button', {
-                name: /standardlayout/i,
+            screen.getByRole('combobox', {
+                name: /layout/i,
             })
         ).toBeVisible();
     });

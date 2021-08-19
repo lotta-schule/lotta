@@ -17,7 +17,7 @@ export interface TableConfiguration {}
 export interface TableProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
 const useStyles = makeStyles((theme) => ({

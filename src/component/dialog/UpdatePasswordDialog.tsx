@@ -4,7 +4,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField,
 } from '@material-ui/core';
 import { UpdatePasswordMutation } from 'api/mutation/UpdatePasswordMutation';
 import { useMutation } from '@apollo/client';
@@ -12,6 +11,8 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 import { Button } from 'component/general/button/Button';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 
 export interface UpdatePasswordDialogProps {
     isOpen: boolean;
@@ -79,33 +80,35 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                                 )}
                             </DialogContentText>
                             <ErrorMessage error={error} />
-                            <TextField
-                                margin="dense"
-                                id="new-password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                disabled={isLoading}
-                                label={'Neues Passwort:'}
-                                placeholder={'Neues Passwort'}
-                                type="password"
-                                autoComplete={'new-password'}
-                                autoFocus
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                id="new-password-repetition"
-                                value={newPasswordRepetition}
-                                onChange={(e) =>
-                                    setNewPasswordRepetition(e.target.value)
-                                }
-                                disabled={isLoading}
-                                label={'Wiederholung Neues Passwort:'}
-                                placeholder={'Neues Passwort'}
-                                type="password"
-                                autoComplete={'new-password'}
-                                fullWidth
-                            />
+                            <Label label={'Neues Passwort:'}>
+                                <Input
+                                    autoFocus
+                                    id="new-password"
+                                    value={newPassword}
+                                    onChange={(e) =>
+                                        setNewPassword(e.currentTarget.value)
+                                    }
+                                    disabled={isLoading}
+                                    placeholder={'Neues Passwort'}
+                                    type="password"
+                                    autoComplete={'new-password'}
+                                />
+                            </Label>
+                            <Label label={'Wiederholung Neues Passwort:'}>
+                                <Input
+                                    type="password"
+                                    id="new-password-repetition"
+                                    value={newPasswordRepetition}
+                                    onChange={(e) =>
+                                        setNewPasswordRepetition(
+                                            e.currentTarget.value
+                                        )
+                                    }
+                                    disabled={isLoading}
+                                    placeholder={'Neues Passwort'}
+                                    autoComplete={'new-password'}
+                                />
+                            </Label>
                         </DialogContent>
                         <DialogActions>
                             {!isFirstPasswordChange && (

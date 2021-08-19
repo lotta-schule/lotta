@@ -1,17 +1,11 @@
-import React, { createElement, memo } from 'react';
-import {
-    makeStyles,
-    Button,
-    Grid,
-    TextField,
-    Typography,
-    Select,
-    MenuItem,
-    InputLabel,
-    FormControl,
-} from '@material-ui/core';
+import * as React from 'react';
+import { makeStyles, Grid, Typography, FormControl } from '@material-ui/core';
 import { WidgetIconModel } from 'model';
 import { iconNameMapping, WidgetIcon } from 'component/widgets/WidgetIcon';
+import { Button } from 'component/general/button/Button';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
+import { Select } from 'component/general/form/select/Select';
 
 export interface WidgetIconSelectionProps {
     icon: WidgetIconModel;
@@ -41,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const WidgetIconSelection = memo<WidgetIconSelectionProps>(
+export const WidgetIconSelection = React.memo<WidgetIconSelectionProps>(
     ({ icon, onSelectIcon }) => {
         const styles = useStyles();
 
@@ -54,14 +48,11 @@ export const WidgetIconSelection = memo<WidgetIconSelectionProps>(
                             ([iconName, IconClass]) => (
                                 <Button
                                     key={iconName}
-                                    color={'secondary'}
-                                    size={'large'}
                                     onClick={() =>
                                         onSelectIcon({ ...icon, iconName })
                                     }
-                                >
-                                    {createElement(IconClass)}
-                                </Button>
+                                    icon={React.createElement(IconClass)}
+                                />
                             )
                         )}
                     </div>
@@ -78,51 +69,48 @@ export const WidgetIconSelection = memo<WidgetIconSelectionProps>(
                             </Typography>
                             <Grid container>
                                 <Grid item xs={6}>
-                                    <TextField
-                                        label={'Beschriftung'}
-                                        variant={'outlined'}
-                                        color={'secondary'}
-                                        inputProps={{
-                                            maxLength: 1,
-                                        }}
-                                        value={icon.overlayText ?? ''}
-                                        onChange={(e) =>
-                                            onSelectIcon({
-                                                ...icon,
-                                                overlayText: e.target.value,
-                                            })
-                                        }
-                                    />
+                                    <Label label={'Beschriftung'}>
+                                        <Input
+                                            maxLength={1}
+                                            value={icon.overlayText ?? ''}
+                                            onChange={(e) =>
+                                                onSelectIcon({
+                                                    ...icon,
+                                                    overlayText:
+                                                        e.currentTarget.value,
+                                                })
+                                            }
+                                        />
+                                    </Label>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <FormControl fullWidth>
-                                        <InputLabel
-                                            color={'secondary'}
+                                        <Label
                                             className={styles.label}
-                                        >
-                                            Textfarbe
-                                        </InputLabel>
-                                        <Select
-                                            color={'secondary'}
                                             label={'Textfarbe'}
-                                            fullWidth
-                                            variant={'outlined'}
-                                            onChange={({ target: { value } }) =>
-                                                onSelectIcon({
-                                                    ...icon,
-                                                    overlayTextColor: value as string,
-                                                })
-                                            }
-                                            value={icon.overlayTextColor ?? ''}
                                         >
-                                            <MenuItem value={''}>weiß</MenuItem>
-                                            <MenuItem value={'primary'}>
-                                                primär
-                                            </MenuItem>
-                                            <MenuItem value={'secondary'}>
-                                                sekundär
-                                            </MenuItem>
-                                        </Select>
+                                            <Select
+                                                onChange={(e) =>
+                                                    onSelectIcon({
+                                                        ...icon,
+                                                        overlayTextColor:
+                                                            e.currentTarget
+                                                                .value,
+                                                    })
+                                                }
+                                                value={
+                                                    icon.overlayTextColor ?? ''
+                                                }
+                                            >
+                                                <option value={''}>weiß</option>
+                                                <option value={'primary'}>
+                                                    primär
+                                                </option>
+                                                <option value={'secondary'}>
+                                                    sekundär
+                                                </option>
+                                            </Select>
+                                        </Label>
                                     </FormControl>
                                 </Grid>
                             </Grid>

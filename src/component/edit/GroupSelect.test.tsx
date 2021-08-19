@@ -28,7 +28,19 @@ describe('component/edit/GroupSelect', () => {
             expect(screen.getByText('Sichtbarkeit:')).toBeVisible();
         });
 
-        it('should show a given', () => {
+        it('should show no label if null is given', () => {
+            const screen = render(
+                <GroupSelect
+                    label={null}
+                    selectedGroups={[]}
+                    onSelectGroups={() => {}}
+                />,
+                {}
+            );
+            expect(screen.getByRole('heading')).toBeVisible();
+        });
+
+        it('should show a given label', () => {
             const screen = render(
                 <GroupSelect
                     label={'Wähle Gruppen:'}

@@ -8,7 +8,7 @@ const Edit = lazy(() => import('./Edit'));
 export interface FormProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
-    onUpdateModule(contentModule: ContentModuleModel): void;
+    onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
 export interface FormElementOption {
@@ -40,7 +40,7 @@ export const Form = memo<FormProps>(
     ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
         return (
             <CardContent data-testid="FormContentModule">
-                {isEditModeEnabled && (
+                {isEditModeEnabled && onUpdateModule && (
                     <Edit
                         contentModule={contentModule}
                         onUpdateModule={onUpdateModule}

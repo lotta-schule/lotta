@@ -33,16 +33,21 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface EditOverlayProps {
     label: string;
+    style?: React.CSSProperties;
     onClick(event: React.MouseEvent<HTMLButtonElement>): void;
     onClickRemove?(event: React.MouseEvent<HTMLButtonElement>): void;
     children?: any;
 }
 
 export const EditOverlay = React.memo<EditOverlayProps>(
-    ({ children, label, onClickRemove, onClick }) => {
+    ({ children, label, onClickRemove, style, onClick }) => {
         const styles = useStyles();
         return (
-            <div className={styles.root}>
+            <div
+                className={styles.root}
+                style={style}
+                data-testid={'EditOverlay'}
+            >
                 <div className={styles.overlay}>
                     {!!onClickRemove && (
                         <Button

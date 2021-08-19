@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import userEvent from '@testing-library/user-event';
 import { DirectoryModel, FileModel } from 'model';
 import { render, waitFor } from 'test/util';
@@ -20,12 +20,12 @@ import { DestroyAccountMutation } from 'api/mutation/DestroyAccountMutation';
 describe('component/layouts/profileLayout/ProfileDelete', () => {
     const filesAndDirs = getPrivateAndPublicFiles(SomeUser);
 
-    const files = filesAndDirs.filter(
-        (f) => (f as FileModel).user
-    ) as FileModel[];
-    const directories = filesAndDirs.filter(
-        (f) => !(f as FileModel).user
-    ) as DirectoryModel[];
+    const files = (filesAndDirs.filter(
+        (f: unknown) => (f as FileModel).fileType !== undefined
+    ) as unknown) as FileModel[];
+    const directories = (filesAndDirs.filter(
+        (f: unknown) => (f as FileModel).fileType === undefined
+    ) as unknown) as DirectoryModel[];
     const rootDirectories = directories.filter((d) => !d.parentDirectory);
 
     it('should render the component without error', () => {

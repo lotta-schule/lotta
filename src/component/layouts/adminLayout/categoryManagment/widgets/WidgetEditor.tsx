@@ -1,11 +1,8 @@
 import * as React from 'react';
-import {
-    Divider,
-    TextField,
-    Typography,
-    makeStyles,
-} from '@material-ui/core';
+import { Divider, Typography, makeStyles } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from '@apollo/client';
@@ -22,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(3),
         marginBottom: theme.spacing(3),
         width: '100%',
-    },
-    switchBase: {
-        color: 'gray',
     },
     button: {
         marginTop: theme.spacing(2),
@@ -101,15 +95,18 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                     {widget.type}
                 </Typography>
                 <ErrorMessage error={error} />
-                <TextField
-                    className={styles.input}
-                    fullWidth
-                    label="Name des Widget"
-                    value={widget.title}
-                    onChange={(e) =>
-                        setWidget({ ...widget, title: e.target.value })
-                    }
-                />
+                <Label label="Name des Widget">
+                    <Input
+                        className={styles.input}
+                        value={widget.title}
+                        onChange={(e) =>
+                            setWidget({
+                                ...widget,
+                                title: e.currentTarget.value,
+                            })
+                        }
+                    />
+                </Label>
 
                 <Divider className={styles.divider} />
 

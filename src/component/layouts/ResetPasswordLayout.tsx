@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import {
-    Button,
     Card,
     CardContent,
     Grid,
     Link,
-    TextField,
     Typography,
     makeStyles,
 } from '@material-ui/core';
@@ -16,6 +14,9 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useHistory } from 'react-router-dom';
 import { ResetPasswordMutation } from 'api/mutation/ResetPasswordMutation';
 import { useApolloClient, useMutation } from '@apollo/client';
+import { Input } from 'component/general/form/input/Input';
+import { Button } from 'component/general/button/Button';
+import { Label } from 'component/general/label/Label';
 
 const useStyles = makeStyles((theme) => ({
     helpText: {
@@ -144,42 +145,38 @@ export const ResetPasswordLayout = React.memo(() => {
                                     {mutationError &&
                                         linkToRequestResetPasswordPage}
                                 </ErrorMessage>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="password"
-                                    value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
-                                    disabled={!!data || isLoading}
-                                    label="Dein neues Passwort:"
-                                    placeholder="Passwort"
-                                    type="password"
-                                    inputProps={{
-                                        minLength: 6,
-                                        maxLength: 150,
-                                    }}
-                                    fullWidth
-                                />
-                                <TextField
-                                    margin="dense"
-                                    id="password-repetition"
-                                    value={passwordRepetition}
-                                    onChange={(e) =>
-                                        setPasswordRepetition(e.target.value)
-                                    }
-                                    disabled={!!data || isLoading}
-                                    label="Wiederhole dein neues Passwort zur Sicherheit:"
-                                    placeholder="Wiederhole dein neues Passwort zur Sicherheit"
-                                    type="password"
-                                    fullWidth
-                                />
+                                <Label label="Dein neues Passwort:">
+                                    <Input
+                                        autoFocus
+                                        id="password"
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) =>
+                                            setPassword(e.currentTarget.value)
+                                        }
+                                        disabled={!!data || isLoading}
+                                        placeholder="Passwort"
+                                        minLength={6}
+                                        maxLength={150}
+                                    />
+                                </Label>
+                                <Label label="Wiederhole dein neues Passwort zur Sicherheit:">
+                                    <Input
+                                        id="password-repetition"
+                                        type="password"
+                                        value={passwordRepetition}
+                                        onChange={(e) =>
+                                            setPasswordRepetition(
+                                                e.currentTarget.value
+                                            )
+                                        }
+                                        disabled={!!data || isLoading}
+                                        placeholder="Wiederhole dein neues Passwort zur Sicherheit"
+                                    />
+                                </Label>
                                 <Button
                                     type={'submit'}
                                     disabled={!!data || isLoading}
-                                    variant="contained"
-                                    color="secondary"
                                     style={{ float: 'right' }}
                                 >
                                     Passwort setzen

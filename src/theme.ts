@@ -1,7 +1,7 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core';
 import { deepOrange } from '@material-ui/core/colors';
 
-const primaryColor = '#333'; // '#d1d0d0';
+const primaryColor = '#333';
 const secondaryColor = deepOrange[500];
 const errorColor = '#ff0000';
 const disabledColor = 'rgba(0, 0, 0, 0.38)';

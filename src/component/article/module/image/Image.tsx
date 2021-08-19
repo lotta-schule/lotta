@@ -6,9 +6,9 @@ import { CardContent } from '@material-ui/core';
 export interface ImageProps {
     contentModule: ContentModuleModel<{ caption: string }>;
     isEditModeEnabled?: boolean;
-    onUpdateModule(
+    onUpdateModule?: (
         contentModule: ContentModuleModel<{ caption: string }>
-    ): void;
+    ) => void;
 }
 
 export const Image = memo<ImageProps>(
@@ -17,14 +17,14 @@ export const Image = memo<ImageProps>(
         return (
             <CardContent data-testid="ImageContentModule">
                 <ImageImage
-                    isEditModeEnabled={isEditModeEnabled || false}
+                    isEditModeEnabled={!!isEditModeEnabled}
                     caption={imageCaption ?? ''}
                     file={contentModule.files ? contentModule.files[0] : null}
                     onUpdateFile={(newFile) =>
-                        onUpdateModule({ ...contentModule, files: [newFile] })
+                        onUpdateModule?.({ ...contentModule, files: [newFile] })
                     }
                     onUpdateCaption={(caption) =>
-                        onUpdateModule({
+                        onUpdateModule?.({
                             ...contentModule,
                             content: { caption: caption },
                         })

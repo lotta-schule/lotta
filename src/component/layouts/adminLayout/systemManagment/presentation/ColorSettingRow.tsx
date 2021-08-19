@@ -1,6 +1,7 @@
-import React, { memo } from 'react';
-import { Grid, TextField, Typography, makeStyles } from '@material-ui/core';
+import * as React from 'react';
+import { Grid, makeStyles } from '@material-ui/core';
 import { theme } from 'theme';
+import { Input } from 'component/general/form/input/Input';
 
 export interface ColorSettingRowProps {
     label: string;
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const ColorSettingRow = memo<ColorSettingRowProps>(
+export const ColorSettingRow = React.memo<ColorSettingRowProps>(
     ({ label, hint, value, onChange }) => {
         const styles = useStyles();
 
@@ -39,23 +40,19 @@ export const ColorSettingRow = memo<ColorSettingRowProps>(
                         paddingRight: theme.spacing(2),
                     }}
                 >
-                    <TextField
-                        fullWidth
+                    <Input
                         type={'color'}
                         value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        margin={'dense'}
-                        variant={'outlined'}
+                        style={{ padding: 0 }}
+                        onChange={(e) => onChange(e.currentTarget.value)}
                     />
                 </Grid>
                 <Grid item sm={9} className={styles.description}>
-                    <Typography component={'p'} variant={'subtitle1'}>
-                        {label}
-                    </Typography>
+                    <p style={{ margin: 0 }}>{label}</p>
                     {hint && (
-                        <Typography component={'p'} variant={'subtitle2'}>
-                            {hint}
-                        </Typography>
+                        <p style={{ margin: 0 }}>
+                            <small>{hint}</small>
+                        </p>
                     )}
                 </Grid>
             </Grid>

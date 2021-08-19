@@ -309,6 +309,7 @@ export const Weihnachtsmarkt = {
     contentModules: [
         {
             id: '101100',
+            content: {},
             sortKey: 20,
             type: ContentModuleType.IMAGE_COLLECTION,
             insertedAt: '2019-06-01T16:00:00.000Z',
@@ -439,6 +440,7 @@ export const Klausurenplan = {
             type: ContentModuleType.DOWNLOAD,
             insertedAt: '2019-06-01T16:00:00.000Z',
             updatedAt: '2020-10-11T04:00:00.000Z',
+            content: {},
             configuration: {},
             files: [],
         },

@@ -26,13 +26,13 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         expect(screen.getByTestId('ArticleEditable')).toBeVisible();
     });
 
-    it('should show the editing sidebar', () => {
+    it('should show the editing footer', () => {
         const screen = render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
             {},
             { currentUser: SomeUser, useCache: true }
         );
-        expect(screen.getByTestId('EditArticleSidebar')).toBeVisible();
+        expect(screen.getByTestId('EditArticleFooter')).toBeVisible();
     });
 
     describe('add content modules', () => {
@@ -69,7 +69,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
 
         it('should call saveArticle endpoint with updated content modules', async () => {
             const onSave = jest.fn(() => ({
-                data: { article: variables.article },
+                data: { article: { ...Weihnachtsmarkt, ...variables.article } },
             }));
             const variables = {
                 id: Weihnachtsmarkt.id,
@@ -138,7 +138,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                 expect(location.pathname).toMatch(/^\/a\//);
             });
             const onSave = jest.fn(() => ({
-                data: { article: variables.article },
+                data: { article: { ...Weihnachtsmarkt, ...variables.article } },
             }));
             const variables = {
                 id: Weihnachtsmarkt.id,
@@ -205,7 +205,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
     });
 
     describe('auto-update articles when in editing mode', () => {
-        it('should update basic information like the title when receiving update via subscription', async () => {
+        it('should update the preview when receiving update via subscription', async () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
                 {},
@@ -236,18 +236,18 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                 }
             );
             expect(
-                screen.getByRole('textbox', { name: /vorschau/i })
+                screen.getByRole('textbox', { name: /preview/i })
             ).toHaveValue(
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
             await waitFor(() => {
                 expect(
-                    screen.getByRole('textbox', { name: /vorschau/i })
+                    screen.getByRole('textbox', { name: /preview/i })
                 ).toHaveValue('New Preview-Text');
             });
         }, 20000);
 
-        it('should update basic information like the title when receiving update via subscription after adding a content module', async () => {
+        it('should update the preview when receiving update via subscription after adding a content module', async () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
                 {},
@@ -278,7 +278,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                 }
             );
             expect(
-                screen.getByRole('textbox', { name: /vorschau/i })
+                screen.getByRole('textbox', { name: /preview/i })
             ).toHaveValue(
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
@@ -286,7 +286,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             await waitFor(() => {
                 expect(
                     screen.getByRole('textbox', {
-                        name: /vorschau/i,
+                        name: /preview/i,
                         hidden: true,
                     })
                 ).toHaveValue('New Preview-Text');
@@ -336,11 +336,6 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                     useCache: true,
                 }
             );
-            expect(
-                screen.getByRole('textbox', { name: /vorschau/i })
-            ).toHaveValue(
-                'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
-            );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
             await waitFor(() => {
                 expect(screen.getByRole('presentation')).toBeInTheDocument();
@@ -377,7 +372,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                 }
             );
             userEvent.type(
-                screen.getByRole('textbox', { name: /titel/i }),
+                screen.getByRole('textbox', { name: /title/i }),
                 'Bla'
             );
             window.location.href = '/';

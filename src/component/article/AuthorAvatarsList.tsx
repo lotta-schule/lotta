@@ -1,55 +1,107 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { UserModel } from 'model';
-import { makeStyles, Tooltip, Avatar } from '@material-ui/core';
+import { Badge, Tooltip } from '@material-ui/core';
 import { AvatarGroup } from '@material-ui/lab';
 import { User } from 'util/model';
-import { theme } from 'theme';
+import { UserAvatar } from 'component/user/UserAvatar';
+import { Button } from 'component/general/button/Button';
+import { Close } from '@material-ui/icons';
+import { SearchUserField } from 'component/layouts/adminLayout/userManagement/SearchUserField';
 import clsx from 'clsx';
+
+import './authors-avatars-list.scss';
 
 export interface AuthorAvatarsListProps {
     users: UserModel[];
     className?: string;
     max?: number;
+    onUpdate?: (users: UserModel[]) => void;
 }
 
-const useStyles = makeStyles(() => ({
-    root: {
-        display: 'inline-flex',
-    },
-    authorAvatar: {
-        width: '2em',
-        height: '2em',
-        fontSize: '1rem',
-        boxShadow: '1px 1px 7px #0000002e',
-        borderWidth: 0,
-        backgroundColor: theme.palette.grey[400],
-    },
-}));
-
-export const AuthorAvatarsList = memo<AuthorAvatarsListProps>(
-    ({ users, className, max }) => {
-        const styles = useStyles();
-        if (!users) {
-            return null;
-        }
-        return (
-            <AvatarGroup
-                max={max ?? 3}
-                classes={{
-                    root: clsx(styles.root, className),
-                    avatar: styles.authorAvatar,
-                }}
-            >
-                {users.map((user) => (
+export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
+    ({ users, className, max, onUpdate }) => {
+        const getAvatar = React.useCallback(
+            (user: UserModel) => {
+                const userAvatar = (
                     <Tooltip
                         title={User.getNickname(user)}
                         key={user.id}
                         enterTouchDelay={100}
                     >
-                        <Avatar src={User.getAvatarUrl(user, 40)} />
+                        <UserAvatar
+                            user={user}
+                            style={{
+                                width: 30,
+                                height: 30,
+                                borderRadius: '50%',
+                            }}
+                            size={25}
+                        />
                     </Tooltip>
-                ))}
-            </AvatarGroup>
+                );
+                const isDeletable = !!onUpdate;
+                if (isDeletable) {
+                    return (
+                        <Badge
+                            key={user.id}
+                            badgeContent={
+                                <Button
+                                    small
+                                    style={{ width: 15, height: 15 }}
+                                    icon={
+                                        <Close
+                                            style={{ width: 8, height: 8 }}
+                                        />
+                                    }
+                                    title={`Autor ${User.getNickname(
+                                        user
+                                    )} entfernen`}
+                                    onClick={() =>
+                                        onUpdate!(
+                                            users.filter(
+                                                (u) => u.id !== user.id
+                                            )
+                                        )
+                                    }
+                                />
+                            }
+                        >
+                            {userAvatar}
+                        </Badge>
+                    );
+                }
+                return userAvatar;
+            },
+            [onUpdate, users]
+        );
+
+        return (
+            <div
+                data-testid={'AuthorAvatarsList'}
+                className={clsx('lotta-authors-avatars-list', className)}
+            >
+                {users && (
+                    <AvatarGroup
+                        max={max ?? 3}
+                        classes={{
+                            root: 'avatar-group',
+                            avatar: 'avatar',
+                        }}
+                    >
+                        {users.map((user) => getAvatar(user))}
+                    </AvatarGroup>
+                )}
+                {!!onUpdate && (
+                    <SearchUserField
+                        label={'Autor hinzufügen'}
+                        onSelectUser={(user) => {
+                            if (!users.find((u) => u.id === user.id)) {
+                                onUpdate([...users, user]);
+                            }
+                        }}
+                    />
+                )}
+            </div>
         );
     }
 );

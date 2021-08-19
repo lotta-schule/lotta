@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
 import { ProfileData } from './ProfileData';
@@ -83,6 +83,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                         return {
                             data: {
                                 user: {
+                                    ...SomeUser,
                                     name: 'Ernesto Guevara',
                                     nickname: 'Spitzi',
                                     class: '5/1',
@@ -175,7 +176,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                                 query: GetDirectoriesAndFilesQuery,
                                 variables: { parentDirectoryId: null },
                             },
-                            result: { data: [] },
+                            result: { data: { files: [], directories: [] } },
                         },
                     ],
                 }

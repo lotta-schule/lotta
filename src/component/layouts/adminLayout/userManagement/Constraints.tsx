@@ -3,9 +3,7 @@ import {
     Checkbox,
     FormControlLabel,
     Grid,
-    InputAdornment,
     Slider,
-    TextField,
     Typography,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
@@ -15,6 +13,8 @@ import { useMutation } from '@apollo/client';
 import { UpdateTenantMutation } from 'api/mutation/UpdateTenantMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 
 const MEGABYTE = 1024 * 1024;
 
@@ -62,18 +62,20 @@ export const Constraints = React.memo(() => {
                     Freier Speicher für jeden Nutzer
                 </Typography>
                 <ErrorMessage error={error} />
-                <Typography variant={'body2'} component={'div'}>
-                    <p>
+                <p>
+                    <small>
                         Der freie Speicher für jeden Nutzer bestimmt, wie viel
                         persönlicher Speicherplatz jeder Nutzer durch seine
                         Anmeldung zur Verfügung gestellt bekommt.
-                    </p>
-                    <p>
+                    </small>
+                </p>
+                <p>
+                    <small>
                         Er bestimmt neben dem Speicher, den der Nutzer durch
                         seine Gruppen zur Verfügung gestellt bekommt, wie viele
                         Medien Nutzer online vorhalten können.
-                    </p>
-                </Typography>
+                    </small>
+                </p>
 
                 <FormControlLabel
                     control={
@@ -121,31 +123,26 @@ export const Constraints = React.memo(() => {
                             />
                         </Grid>
                         <Grid item>
-                            <TextField
-                                label={''}
-                                value={
-                                    isLimitSet ? value : lastSetLimitRef.current
-                                }
-                                onChange={({ currentTarget }) => {
-                                    if (currentTarget.value) {
-                                        setValue(parseInt(currentTarget.value));
+                            <Label label={'Begrenzung in MB'}>
+                                <Input
+                                    value={
+                                        isLimitSet
+                                            ? value
+                                            : lastSetLimitRef.current
                                     }
-                                }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position={'start'}>
-                                            MB
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                inputProps={{
-                                    step: 50,
-                                    min: 0,
-                                    type: 'number',
-                                    'aria-labelledby': 'user-storage-limit',
-                                }}
-                                variant="outlined"
-                            />
+                                    onChange={({ currentTarget }) => {
+                                        if (currentTarget.value) {
+                                            setValue(
+                                                parseInt(currentTarget.value)
+                                            );
+                                        }
+                                    }}
+                                    step={50}
+                                    min={0}
+                                    type={'number'}
+                                    aria-labelledby={'user-storage-limit'}
+                                />
+                            </Label>
                         </Grid>
                     </Grid>
                 </animated.div>

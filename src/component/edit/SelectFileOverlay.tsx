@@ -1,35 +1,34 @@
-import React, {
-    FunctionComponent,
-    memo,
-    useState,
-    lazy,
-    Suspense,
-} from 'react';
+import * as React from 'react';
 import { FileModel } from '../../model';
 import { EditOverlay } from './EditOverlay';
 import { DialogTitle, CircularProgress } from '@material-ui/core';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
-const FileExplorer = lazy(() => import('component/fileExplorer/FileExplorer'));
+const FileExplorer = React.lazy(
+    () => import('component/fileExplorer/FileExplorer')
+);
 
 interface SelectFileOverlayProps {
     label: string;
     allowDeletion?: boolean;
+    style?: React.CSSProperties;
     fileFilter?(file: FileModel): boolean;
     onSelectFile(file: FileModel | null): void;
 }
 
-export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo(
-    ({ children, label, allowDeletion, fileFilter, onSelectFile }) => {
-        const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] = useState(
-            false
-        );
+export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> = React.memo(
+    ({ children, label, allowDeletion, fileFilter, style, onSelectFile }) => {
+        const [
+            isSelectFileDialogOpen,
+            setIsSelectFileDialogOpen,
+        ] = React.useState(false);
         const onClickRemove = allowDeletion
             ? () => onSelectFile(null)
             : undefined;
         return (
             <>
                 <EditOverlay
+                    style={style}
                     label={label}
                     onClick={() => setIsSelectFileDialogOpen(true)}
                     onClickRemove={onClickRemove}
@@ -41,7 +40,7 @@ export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo
                     onClose={() => setIsSelectFileDialogOpen(false)}
                     fullWidth
                 >
-                    <Suspense fallback={<CircularProgress />}>
+                    <React.Suspense fallback={<CircularProgress />}>
                         <DialogTitle>Datei auswählen</DialogTitle>
                         <FileExplorer
                             style={{ padding: '0 .5em' }}
@@ -51,7 +50,7 @@ export const SelectFileOverlay: FunctionComponent<SelectFileOverlayProps> = memo
                                 onSelectFile(file);
                             }}
                         />
-                    </Suspense>
+                    </React.Suspense>
                 </ResponsiveFullScreenDialog>
             </>
         );

@@ -1,10 +1,9 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     DialogTitle,
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField,
 } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { TenantModel, UserGroupModel } from 'model';
@@ -13,6 +12,8 @@ import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Button } from 'component/general/button/Button';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 
 export interface CreateUserGroupDialogProps {
     isOpen: boolean;
@@ -20,9 +21,9 @@ export interface CreateUserGroupDialogProps {
     onConfirm(group: UserGroupModel): void;
 }
 
-export const CreateUserGroupDialog = memo<CreateUserGroupDialogProps>(
+export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
     ({ isOpen, onAbort, onConfirm }) => {
-        const [name, setName] = useState('');
+        const [name, setName] = React.useState('');
         const [createUserGroup, { loading: isLoading, error }] = useMutation<
             { group: UserGroupModel },
             { group: Partial<UserGroupModel> }
@@ -73,19 +74,17 @@ export const CreateUserGroupDialog = memo<CreateUserGroupDialogProps>(
                             Erstelle eine neue Gruppe
                         </DialogContentText>
                         <ErrorMessage error={error} />
-                        <TextField
-                            margin="dense"
-                            id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            disabled={isLoading}
-                            label="Name der Gruppe:"
-                            placeholder="Neue Gruppe"
-                            type="text"
-                            autoFocus
-                            required
-                            fullWidth
-                        />
+                        <Label label="Name der Gruppe:">
+                            <Input
+                                autoFocus
+                                required
+                                id="name"
+                                value={name}
+                                onChange={(e) => setName(e.currentTarget.value)}
+                                disabled={isLoading}
+                                placeholder="Neue Gruppe"
+                            />
+                        </Label>
                     </DialogContent>
                     <DialogActions>
                         <Button

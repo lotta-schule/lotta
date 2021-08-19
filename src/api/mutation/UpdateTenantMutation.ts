@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const UpdateTenantMutation = gql`
     mutation UpdateTenant($tenant: TenantInput) {
-        updateTenant(tenant: $tenant) {
+        tenant: updateTenant(tenant: $tenant) {
             id
             title
             slug

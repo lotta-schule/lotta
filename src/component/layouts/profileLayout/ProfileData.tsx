@@ -7,7 +7,6 @@ import {
     FormGroup,
     FormControlLabel,
     Grid,
-    TextField,
     Typography,
     Badge,
     Divider,
@@ -32,6 +31,8 @@ import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
 import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
 import { useHistory } from 'react-router-dom';
 import { NavigationButton } from 'component/general/button/NavigationButton';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 
 export const useStyles = makeStyles((theme) => ({
     gridContainer: {
@@ -183,69 +184,69 @@ export const ProfileData = React.memo(() => {
                         </section>
                     </Grid>
                     <Grid item md={8}>
-                        <TextField
-                            autoFocus
-                            disabled
-                            fullWidth
-                            margin="dense"
-                            id="email"
-                            label="Deine Email-Adresse:"
-                            value={currentUser.email}
-                            placeholder="beispiel@medienportal.org"
-                            type="email"
-                            inputProps={{ maxLength: 100 }}
-                        />
+                        <Label label="Deine Email-Adresse:">
+                            <Input
+                                autoFocus
+                                disabled
+                                id="email"
+                                value={currentUser.email}
+                                placeholder="beispiel@medienportal.org"
+                                type="email"
+                                maxLength={100}
+                            />
+                        </Label>
                         <Grid container>
                             <Grid item sm={6}>
-                                <NavigationButton
+                                <Button
+                                    style={{ border: 0 }}
                                     onClick={() =>
                                         setIsShowUpdateEmailDialog(true)
                                     }
                                 >
                                     Email ändern
-                                </NavigationButton>
+                                </Button>
                             </Grid>
                             <Grid item sm={6}>
-                                <NavigationButton
+                                <Button
                                     onClick={() =>
                                         setIsShowUpdatePasswordDialog(true)
                                     }
-                                    style={{ float: 'right' }}
+                                    style={{ float: 'right', border: 0 }}
                                 >
                                     Passwort ändern
-                                </NavigationButton>
+                                </Button>
                             </Grid>
                         </Grid>
-                        <TextField
-                            autoFocus
-                            fullWidth
-                            margin="dense"
-                            id="name"
-                            label="Dein Vor- und Nachname"
-                            placeholder="Minnie Musterchen"
-                            onChange={(e) => setName(e.target.value)}
-                            inputProps={{ maxLength: 100 }}
-                            disabled={isLoading}
-                            error={!!getFieldError('name')}
-                            helperText={getFieldError('name')}
-                            value={name}
-                            type="name"
-                        />
-                        <TextField
-                            autoFocus
-                            fullWidth
-                            margin="dense"
-                            id="nickname"
-                            label="Dein Spitzname"
-                            value={nickname}
-                            onChange={(e) => setNickname(e.target.value)}
-                            placeholder="El Professore"
-                            type="text"
-                            error={!!getFieldError('nickname')}
-                            helperText={getFieldError('nickname')}
-                            disabled={isLoading}
-                            inputProps={{ maxLength: 25 }}
-                        />
+                        <Label label="Dein Vor- und Nachname">
+                            <Input
+                                autoFocus
+                                id="name"
+                                placeholder="Minnie Musterchen"
+                                onChange={(e) => setName(e.currentTarget.value)}
+                                maxLength={100}
+                                disabled={isLoading}
+                                value={name}
+                                type="name"
+                            />
+                        </Label>
+                        <ErrorMessage error={getFieldError('name') || null} />
+                        <Label label="Dein Spitzname">
+                            <Input
+                                autoFocus
+                                id="nickname"
+                                value={nickname}
+                                onChange={(e) =>
+                                    setNickname(e.currentTarget.value)
+                                }
+                                placeholder="El Professore"
+                                type="text"
+                                disabled={isLoading}
+                                maxLength={25}
+                            />
+                            <ErrorMessage
+                                error={getFieldError('nickname') || null}
+                            />
+                        </Label>
 
                         <FormGroup>
                             <FormControlLabel
@@ -269,26 +270,27 @@ export const ProfileData = React.memo(() => {
                             Artikeln oder in deinem Profil auf. Stattdessen wird
                             dein Spitzname angezeigt.
                         </Typography>
-                        <TextField
-                            autoFocus
-                            fullWidth
-                            margin="dense"
-                            id="classOrShortName"
-                            label="Deine Klasse / Dein Kürzel:"
-                            value={classOrShortName}
-                            onChange={(e) =>
-                                setClassOrShortName(e.target.value)
-                            }
-                            placeholder="7/4, 11, Wie"
-                            error={!!getFieldError('class')}
-                            helperText={
-                                getFieldError('class') ||
-                                'Gib hier deine Klasse oder dein Kürzel ein. Damit kannst du Zugriff auf deinen Stundenplan erhalten.'
-                            }
-                            type="text"
-                            disabled={isLoading}
-                            inputProps={{ maxLength: 25 }}
-                        />
+                        <Label label="Deine Klasse / Dein Kürzel:">
+                            <Input
+                                autoFocus
+                                id="classOrShortName"
+                                value={classOrShortName}
+                                onChange={(e) =>
+                                    setClassOrShortName(e.currentTarget.value)
+                                }
+                                placeholder="7/4"
+                                disabled={isLoading}
+                                maxLength={25}
+                            />
+                        </Label>
+                        <ErrorMessage error={getFieldError('class') || null} />
+                        <p>
+                            <small>
+                                Gib hier deine Klasse oder dein Kürzel ein.
+                                Damit kannst du Zugriff auf deinen Stundenplan
+                                erhalten.
+                            </small>
+                        </p>
                         <Divider className={styles.divider} />
                         <Typography variant={'h5'}>
                             Meine Einschreibeschlüssel
@@ -298,10 +300,12 @@ export const ProfileData = React.memo(() => {
                             tokens={enrollmentTokens}
                             setTokens={setEnrollmentTokens}
                         />
-                        <Typography variant="caption" component={'div'}>
-                            Nutze Einschreibeschlüssel, um dich selbst in
-                            Gruppen einzutragen.
-                        </Typography>
+                        <p>
+                            <small>
+                                Nutze Einschreibeschlüssel, um dich selbst in
+                                Gruppen einzutragen.
+                            </small>
+                        </p>
                         <Button
                             type={'submit'}
                             style={{ float: 'right' }}

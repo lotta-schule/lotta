@@ -1,13 +1,10 @@
-import React, { memo } from 'react';
+import * as React from 'react';
+import { Divider, makeStyles } from '@material-ui/core';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
+import { Select } from 'component/general/form/select/Select';
+import { Button } from 'component/general/button/Button';
 import { CalendarWidgetConfig } from 'model';
-import {
-    TextField,
-    Button,
-    Divider,
-    makeStyles,
-    Select,
-    MenuItem,
-} from '@material-ui/core';
 
 export interface CalendarWidgetConfigurationProps {
     configuration: CalendarWidgetConfig;
@@ -25,128 +22,136 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const CalendarWidgetConfiguration = memo<CalendarWidgetConfigurationProps>(
+export const CalendarWidgetConfiguration = React.memo<CalendarWidgetConfigurationProps>(
     ({ configuration, setConfiguration }) => {
         const styles = useStyles();
         return (
             <div>
                 {(configuration.calendars || []).map((calendar, index) => (
                     <div key={index}>
-                        <TextField
-                            fullWidth
-                            label="URL des Kalenders"
-                            helperText={'Link zu einer *.ics-Datei'}
-                            className={styles.input}
-                            value={calendar.url}
-                            onChange={(e) =>
-                                setConfiguration({
-                                    ...configuration,
-                                    calendars: configuration.calendars.map(
-                                        (cal, i) => {
-                                            return i === index
-                                                ? {
-                                                      ...calendar,
-                                                      url: e.target.value,
-                                                  }
-                                                : cal;
-                                        }
-                                    ),
-                                })
-                            }
-                        />
-                        <Select
-                            fullWidth
-                            label={'Zeit, für die Termine abgerufen werden'}
-                            value={calendar.days ?? 90}
-                            onChange={(e) =>
-                                setConfiguration({
-                                    ...configuration,
-                                    calendars: configuration.calendars.map(
-                                        (cal, i) => {
-                                            return i === index
-                                                ? {
-                                                      ...calendar,
-                                                      days: e.target
-                                                          .value as number,
-                                                  }
-                                                : cal;
-                                        }
-                                    ),
-                                })
-                            }
-                        >
-                            <MenuItem value={7}>
-                                Termine der nächsten 7 Tage anzeigen
-                            </MenuItem>
-                            <MenuItem value={30}>
-                                Termine der nächsten 30 Tage anzeigen
-                            </MenuItem>
-                            <MenuItem value={90}>
-                                Termine der nächsten 3 Monate anzeigen
-                            </MenuItem>
-                            <MenuItem value={180}>
-                                Termine der nächsten 6 Monate anzeigen
-                            </MenuItem>
-                            <MenuItem value={365}>
-                                Termine des nächsten Jahres anzeigen
-                            </MenuItem>
-                        </Select>
+                        <Label label="URL des Kalenders">
+                            <Input
+                                className={styles.input}
+                                value={calendar.url}
+                                onChange={(e) =>
+                                    setConfiguration({
+                                        ...configuration,
+                                        calendars: configuration.calendars.map(
+                                            (cal, i) => {
+                                                return i === index
+                                                    ? {
+                                                          ...calendar,
+                                                          url:
+                                                              e.currentTarget
+                                                                  .value,
+                                                      }
+                                                    : cal;
+                                            }
+                                        ),
+                                    })
+                                }
+                            />
+                            <small>Link zu einer *.ics-Datei</small>
+                        </Label>
+                        <Label label={'Zeit, für die Termine abgerufen werden'}>
+                            <Select
+                                value={calendar.days ?? 90}
+                                onChange={(e) =>
+                                    setConfiguration({
+                                        ...configuration,
+                                        calendars: configuration.calendars.map(
+                                            (cal, i) => {
+                                                return i === index
+                                                    ? {
+                                                          ...calendar,
+                                                          days: Number(
+                                                              e.currentTarget
+                                                                  .value
+                                                          ),
+                                                      }
+                                                    : cal;
+                                            }
+                                        ),
+                                    })
+                                }
+                            >
+                                <option value={7}>
+                                    Termine der nächsten 7 Tage anzeigen
+                                </option>
+                                <option value={30}>
+                                    Termine der nächsten 30 Tage anzeigen
+                                </option>
+                                <option value={90}>
+                                    Termine der nächsten 3 Monate anzeigen
+                                </option>
+                                <option value={180}>
+                                    Termine der nächsten 6 Monate anzeigen
+                                </option>
+                                <option value={365}>
+                                    Termine des nächsten Jahres anzeigen
+                                </option>
+                            </Select>
+                        </Label>
                         {configuration.calendars &&
                             configuration.calendars.length > 1 && (
                                 <>
-                                    <TextField
-                                        fullWidth
-                                        label="Name des Kalenders"
-                                        helperText={
-                                            'Kalender einen beschreibenden Namen für die Legende zuordnen'
-                                        }
-                                        className={styles.input}
-                                        value={calendar.name || ''}
-                                        onChange={(e) =>
-                                            setConfiguration({
-                                                ...configuration,
-                                                calendars: configuration.calendars.map(
-                                                    (cal, i) => {
-                                                        return i === index
-                                                            ? {
-                                                                  ...calendar,
-                                                                  name:
-                                                                      e.target
-                                                                          .value,
-                                                              }
-                                                            : cal;
-                                                    }
-                                                ),
-                                            })
-                                        }
-                                    />
-                                    <TextField
-                                        fullWidth
-                                        type={'color'}
-                                        label="Farbe des Kalenders"
-                                        helperText={
-                                            'Farbe, die dem Kalender zugeordnet wird'
-                                        }
-                                        className={styles.input}
-                                        value={calendar.color || ''}
-                                        onChange={(e) =>
-                                            setConfiguration({
-                                                ...configuration,
-                                                calendars: configuration.calendars.map(
-                                                    (cal, i) => {
-                                                        return i === index
-                                                            ? {
-                                                                  ...calendar,
-                                                                  color:
-                                                                      e.target
-                                                                          .value,
-                                                              }
-                                                            : cal;
-                                                    }
-                                                ),
-                                            })
-                                        }
-                                    />
+                                    <Label label="Name des Kalenders">
+                                        <Input
+                                            className={styles.input}
+                                            value={calendar.name || ''}
+                                            onChange={(e) =>
+                                                setConfiguration({
+                                                    ...configuration,
+                                                    calendars: configuration.calendars.map(
+                                                        (cal, i) => {
+                                                            return i === index
+                                                                ? {
+                                                                      ...calendar,
+                                                                      name:
+                                                                          e
+                                                                              .currentTarget
+                                                                              .value,
+                                                                  }
+                                                                : cal;
+                                                        }
+                                                    ),
+                                                })
+                                            }
+                                        />
+                                        <small>
+                                            Kalender einen beschreibenden Namen
+                                            für die Legende zuordnen
+                                        </small>
+                                    </Label>
+                                    <Label label="Farbe des Kalenders">
+                                        <Input
+                                            type={'color'}
+                                            className={styles.input}
+                                            value={calendar.color || ''}
+                                            onChange={(e) =>
+                                                setConfiguration({
+                                                    ...configuration,
+                                                    calendars: configuration.calendars.map(
+                                                        (cal, i) => {
+                                                            return i === index
+                                                                ? {
+                                                                      ...calendar,
+                                                                      color:
+                                                                          e
+                                                                              .currentTarget
+                                                                              .value,
+                                                                  }
+                                                                : cal;
+                                                        }
+                                                    ),
+                                                })
+                                            }
+                                        />
+                                        <small>
+                                            Farbe, die dem Kalender zugeordnet
+                                            wird
+                                        </small>
+                                    </Label>
                                     <Button
                                         onClick={() =>
                                             setConfiguration({

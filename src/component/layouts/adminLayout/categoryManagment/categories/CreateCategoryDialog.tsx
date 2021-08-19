@@ -3,12 +3,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    FormControlLabel,
-    TextField,
     FormControl,
-    FormLabel,
-    RadioGroup,
-    Radio,
     makeStyles,
     LinearProgress,
 } from '@material-ui/core';
@@ -21,6 +16,9 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { CategorySelect } from '../../../editArticleLayout/CategorySelect';
 import { animated, useSpring } from 'react-spring';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
+import { Radio, RadioGroup } from 'component/general/form/radio';
 
 enum CategoryPosition {
     Main,
@@ -123,63 +121,62 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                     <DialogTitle>Kategorie erstellen</DialogTitle>
                     <DialogContent>
                         <ErrorMessage error={error} />
-                        <TextField
-                            margin="dense"
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            disabled={isLoading}
-                            label="Name der Kategorie:"
-                            placeholder="Meine neue Kategorie"
-                            type="text"
-                            autoFocus
-                            required
-                            fullWidth
-                        />
+                        <Label label="Name der Kategorie:">
+                            <Input
+                                id="title"
+                                value={title}
+                                onChange={({ currentTarget }) =>
+                                    setTitle(currentTarget.value)
+                                }
+                                disabled={isLoading}
+                                placeholder="Meine neue Kategorie"
+                                autoFocus
+                                required
+                            />
+                        </Label>
                         <FormControl
                             className={styles.categoryPositionSet}
                             component={'fieldset'}
                         >
-                            <FormLabel component={'legend'}>
-                                Art der Kategorie
-                            </FormLabel>
-                            <RadioGroup
-                                aria-label={'Art der Kategorie'}
-                                value={categoryPosition}
-                                onChange={(_e, value) =>
-                                    setCategoryPosition(parseInt(value, 10))
-                                }
-                            >
-                                <FormControlLabel
-                                    value={0}
-                                    control={<Radio />}
-                                    label={'Hauptkategorie'}
-                                />
-                                <FormControlLabel
-                                    value={1}
-                                    control={<Radio />}
-                                    label={'Unterkategorie'}
-                                />
-                                <animated.div style={parentCategorySpringProps}>
-                                    <CategorySelect
-                                        hideSubCategories
-                                        className={styles.categorySelect}
-                                        label={'Übergeordnete Kategorie'}
-                                        disabled={
-                                            categoryPosition !==
-                                                CategoryPosition.Sub &&
-                                            !isLoading
-                                        }
-                                        selectedCategory={parentCategory}
-                                        onSelectCategory={setParentCategory}
+                            <Label label={'Art der Kategorie'}>
+                                <RadioGroup
+                                    name={'category-type'}
+                                    aria-label={'Art der Kategorie'}
+                                    value={categoryPosition}
+                                    onChange={(_e, value) =>
+                                        setCategoryPosition(parseInt(value, 10))
+                                    }
+                                >
+                                    <Radio
+                                        value={CategoryPosition.Main}
+                                        label={'Hauptkategorie'}
                                     />
-                                </animated.div>
-                                <FormControlLabel
-                                    value={2}
-                                    control={<Radio />}
-                                    label={'Seitenleistenkategorie'}
-                                />
-                            </RadioGroup>
+                                    <Radio
+                                        value={CategoryPosition.Sub}
+                                        label={'Unterkategorie'}
+                                    />
+                                    <animated.div
+                                        style={parentCategorySpringProps}
+                                    >
+                                        <CategorySelect
+                                            hideSubCategories
+                                            className={styles.categorySelect}
+                                            label={'Übergeordnete Kategorie'}
+                                            disabled={
+                                                categoryPosition !==
+                                                    CategoryPosition.Sub &&
+                                                !isLoading
+                                            }
+                                            selectedCategory={parentCategory}
+                                            onSelectCategory={setParentCategory}
+                                        />
+                                    </animated.div>
+                                    <Radio
+                                        value={CategoryPosition.Side}
+                                        label={'Seitenleistenkategorie'}
+                                    />
+                                </RadioGroup>
+                            </Label>
                         </FormControl>
                     </DialogContent>
                     <DialogActions>

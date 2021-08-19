@@ -317,9 +317,10 @@ describe('component/article/module/form/FormElement', () => {
             userEvent.click(screen.getByRole('button', { name: /auswählen/ }));
             expect(setValueFn).toHaveBeenCalledWith(
                 'lotta-file-id://' +
-                    '{"id":"123","insertedAt":"2001-01-01 14:15","updatedAt":"2001-01-01 14:15","filename":"Dateiname.jpg",' +
-                    '"filesize":123123,"mimeType":"image/jpg","fileType":"IMAGE",' +
-                    '"userId":"1","fileConversions":[],"parentDirectory":{"id":"8743"}}'
+                    '{"fileConversions":[],"fileType":"IMAGE","filename":"Dateiname.jpg",' +
+                    '"filesize":123123,"id":"123","insertedAt":"2001-01-01 14:15",' +
+                    '"mimeType":"image/jpg","parentDirectory":{"id":"8743"},' +
+                    '"updatedAt":"2001-01-01 14:15","userId":"1"}'
             );
         });
 

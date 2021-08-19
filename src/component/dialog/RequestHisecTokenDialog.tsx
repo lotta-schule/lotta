@@ -4,11 +4,12 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    TextField,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { RequestHisecTokenMutation } from 'api/mutation/RequestHisecTokenMutation';
 
@@ -60,19 +61,20 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
                             Passwort.
                         </DialogContentText>
                         <ErrorMessage error={error} />
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="current-password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
-                            label={'Passwort:'}
-                            placeholder={'Passwort'}
-                            type="password"
-                            autoComplete={'current-password'}
-                            fullWidth
-                        />
+                        <Label label={'Passwort:'}>
+                            <Input
+                                autoFocus
+                                id="current-password"
+                                value={password}
+                                onChange={(e) =>
+                                    setPassword(e.currentTarget.value)
+                                }
+                                disabled={isLoading}
+                                placeholder={'Passwort'}
+                                type="password"
+                                autoComplete={'current-password'}
+                            />
+                        </Label>
                     </DialogContent>
                     <DialogActions>
                         <Button

@@ -3,7 +3,6 @@ import {
     Checkbox,
     FormControlLabel,
     NoSsr,
-    TextField,
     Theme,
     Typography,
     makeStyles,
@@ -13,6 +12,7 @@ import { Check, Close } from '@material-ui/icons';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { UserGroupModel } from 'model/UserGroupModel';
 import { Button } from 'component/general/button/Button';
+import { Input } from 'component/general/form/input/Input';
 import clsx from 'clsx';
 
 export interface GroupSelectProps {
@@ -209,7 +209,7 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                     data-testid="GroupSelect"
                 >
                     <div {...getRootProps()} data-testid="GroupSelectSelection">
-                        <Typography {...getInputLabelProps()}>
+                        <Typography role={'heading'} {...getInputLabelProps()}>
                             {label ?? 'Sichtbarkeit:'}
                         </Typography>
                         <div
@@ -283,13 +283,10 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                                     );
                                 })}
 
-                            <TextField
-                                fullWidth
+                            <Input
                                 disabled={disabled}
-                                variant={variant}
-                                size={'small'}
                                 placeholder={'Gruppe suchen'}
-                                inputProps={{ 'aria-label': 'Gruppe suchen' }}
+                                aria-label={'Gruppe suchen'}
                                 {...getInputProps()}
                             />
                         </div>

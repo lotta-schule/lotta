@@ -1,10 +1,10 @@
 .lotta-label {
     position: relative;
     display: block;
+    margin: .5em;
     & > .lotta-label__label {
       display: block;
       color: rgba(var(--lotta-label-text-color), .9);
-      font-family: monospace;
       font-size: 0.6rem;
       line-height: 2em;
       letter-spacing: 0.05rem;
