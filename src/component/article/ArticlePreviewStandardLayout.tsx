@@ -39,6 +39,7 @@ import Img from 'react-cloudimage-responsive';
 const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
     (theme) => ({
         container: {
+            position: 'relative',
             backgroundColor: theme.palette.background.paper,
             padding: theme.spacing(1),
             marginBottom: theme.spacing(1),
@@ -69,6 +70,16 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
                 border: 0,
                 padding: theme.spacing(0.5),
                 width: '100%',
+            },
+            [theme.breakpoints.down('xs')]: {
+                paddingRight: 40,
+            },
+        },
+        editSection: {
+            [theme.breakpoints.down('xs')]: {
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
             },
         },
         imageSection: {
@@ -211,7 +222,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                 className={styles.container}
                 data-testid="ArticlePreviewStandardLayout"
             >
-                <Grid container wrap={'nowrap'}>
+                <Grid container>
                     <Grid className={styles.imageSection} container>
                         {!!onUpdateArticle && (
                             <SelectFileOverlay
@@ -430,7 +441,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                         </Grid>
                     </Grid>
                     {(!isMobile || isEmbedded) && (
-                        <Grid item xs={1}>
+                        <Grid item xs={1} className={styles.editSection}>
                             {showEditSection && (
                                 <section>
                                     {showEditSection && (
