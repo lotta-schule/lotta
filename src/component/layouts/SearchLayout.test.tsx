@@ -97,10 +97,8 @@ describe('component/layouts/SearchLayout', () => {
                     screen.getByRole('button', { name: /erweitert/i })
                 );
                 userEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
-                userEvent.click(
-                    screen.getByRole('button', { name: /kategorie/i })
-                );
-                userEvent.click(
+                userEvent.selectOptions(
+                    screen.getByRole('combobox', { name: /kategorie/i }),
                     await screen.findByRole('option', { name: /fächer/i })
                 );
                 await waitFor(() => {

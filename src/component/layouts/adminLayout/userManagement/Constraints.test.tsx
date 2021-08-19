@@ -44,7 +44,10 @@ describe('component/layouts/adminLayout/userManagement/Constraints', () => {
                     useCache: true,
                     tenant: {
                         ...tenant,
-                        configuration: { userMaxStorageConfig: '-1' },
+                        configuration: {
+                            ...tenant.configuration,
+                            userMaxStorageConfig: '-1',
+                        },
                     },
                 }
             );

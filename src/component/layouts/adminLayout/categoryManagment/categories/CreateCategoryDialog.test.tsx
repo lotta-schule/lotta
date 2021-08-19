@@ -227,11 +227,11 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
                 screen.getByRole('radio', { name: /unterkategorie/i })
             );
             await new Promise((resolve) => setTimeout(resolve, 500));
-            userEvent.click(
-                screen.getByRole('button', { name: /kategorie wählen/i })
-            );
-            userEvent.click(
-                await screen.findByRole('option', { name: /fächer/i })
+            userEvent.selectOptions(
+                screen.getByRole('combobox', {
+                    name: /übergeordnete kategorie/i,
+                }),
+                screen.getByRole('option', { name: /fächer/i })
             );
             userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
 

@@ -19,7 +19,11 @@ export const RadioGroup = React.forwardRef<any, RadioGroupProps>(
             e: React.ChangeEvent<HTMLInputElement>,
             p: RadioProps
         ) => {
-            if ((p.onChange?.(e) as any) !== false && !e.isDefaultPrevented()) {
+            if (
+                (p.onChange?.(e) as any) !== false &&
+                !e.isDefaultPrevented() &&
+                e.target.name === name
+            ) {
                 onChange?.(e, e.target.value);
             }
         };

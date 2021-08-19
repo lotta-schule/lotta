@@ -22,8 +22,8 @@ describe('component/layouts/editArticleLayout/CategorySelect', () => {
                 onSelectCategory={onSelectCategory}
             />
         );
-        userEvent.click(screen.getByRole('button', { name: /wählen/i }));
-        userEvent.click(
+        userEvent.selectOptions(
+            screen.getByRole('combobox', { name: /wählen/i }),
             await screen.findByRole('option', { name: /material/i })
         );
         expect(onSelectCategory).toHaveBeenCalledWith(MaterialCategory);
@@ -37,7 +37,7 @@ describe('component/layouts/editArticleLayout/CategorySelect', () => {
                 onSelectCategory={() => {}}
             />
         );
-        expect(screen.getByText('Label')).toBeInstanceOf(HTMLLabelElement);
+        expect(screen.getByText('Label')).toBeVisible();
     });
 
     describe('option listing options', () => {
@@ -48,7 +48,7 @@ describe('component/layouts/editArticleLayout/CategorySelect', () => {
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('button', { name: /wählen/i }));
+            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(15);
             });
@@ -61,7 +61,7 @@ describe('component/layouts/editArticleLayout/CategorySelect', () => {
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('button', { name: /wählen/i }));
+            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(15);
             });
@@ -75,7 +75,7 @@ describe('component/layouts/editArticleLayout/CategorySelect', () => {
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('button', { name: /wählen/i }));
+            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(5);
             });
@@ -89,7 +89,7 @@ describe('component/layouts/editArticleLayout/CategorySelect', () => {
                     onSelectCategory={() => {}}
                 />
             );
-            userEvent.click(screen.getByRole('button', { name: /wählen/i }));
+            userEvent.click(screen.getByRole('combobox', { name: /wählen/i }));
             await waitFor(() => {
                 expect(screen.getAllByRole('option')).toHaveLength(13);
             });

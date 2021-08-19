@@ -70,7 +70,7 @@ export const CategorySelect = React.memo<CategorySelectProps>(
                 data-testid="CategorySelect"
                 className={className}
             >
-                <Label label={label ?? 'Kategorie:'}>
+                <Label label={label ?? 'Kategorie wählen:'}>
                     <Select
                         value={selectedCategory?.id ?? 'null'}
                         onChange={(e) =>

@@ -144,9 +144,7 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                     aria-label={'Art der Kategorie'}
                                     value={categoryPosition}
                                     onChange={(_e, value) =>
-                                        setCategoryPosition(
-                                            parseInt(value as string, 10)
-                                        )
+                                        setCategoryPosition(parseInt(value, 10))
                                     }
                                 >
                                     <Radio
