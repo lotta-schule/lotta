@@ -308,20 +308,8 @@ export const Weihnachtsmarkt = {
     id: '4',
     contentModules: [
         {
-            id: '101100',
-            content: {},
-            sortKey: 20,
-            type: ContentModuleType.IMAGE_COLLECTION,
-            insertedAt: '2019-06-01T16:00:00.000Z',
-            updatedAt: '2020-10-11T04:00:00.000Z',
-            files: [],
-            configuration: {
-                imageStyle: 2,
-            },
-        },
-        {
             id: '101101',
-            sortKey: 10,
+            sortKey: 0,
             type: ContentModuleType.TEXT,
             insertedAt: '2019-06-01T16:00:00.000Z',
             updatedAt: '2020-10-11T04:00:00.000Z',
@@ -392,8 +380,20 @@ export const Weihnachtsmarkt = {
             },
         },
         {
+            id: '101100',
+            content: {},
+            sortKey: 10,
+            type: ContentModuleType.IMAGE_COLLECTION,
+            insertedAt: '2019-06-01T16:00:00.000Z',
+            updatedAt: '2020-10-11T04:00:00.000Z',
+            files: [],
+            configuration: {
+                imageStyle: 2,
+            },
+        },
+        {
             id: '101102',
-            sortKey: 30,
+            sortKey: 20,
             type: ContentModuleType.VIDEO,
             insertedAt: '2019-06-01T16:00:00.000Z',
             updatedAt: '2020-10-11T04:00:00.000Z',
@@ -436,7 +436,7 @@ export const Klausurenplan = {
         },
         {
             id: '10052',
-            sortKey: 0,
+            sortKey: 10,
             type: ContentModuleType.DOWNLOAD,
             insertedAt: '2019-06-01T16:00:00.000Z',
             updatedAt: '2020-10-11T04:00:00.000Z',

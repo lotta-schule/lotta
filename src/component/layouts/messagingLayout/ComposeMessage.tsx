@@ -76,9 +76,9 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                         query: GetMessagesQuery,
                         data: {
                             messages: [
-                                ...readMessagesResult!.messages.filter(
+                                ...(readMessagesResult?.messages.filter(
                                     (msg) => msg.id !== data.message.id
-                                ),
+                                ) ?? []),
                                 data.message,
                             ],
                         },

@@ -50,12 +50,14 @@ describe('component/layouts/messagingLayout/ComposeMessage', () => {
                         didCallMutation = true;
                         return {
                             data: {
-                                id: 1,
-                                senderUser: SomeUser,
-                                recipientUser: SomeUserin,
-                                recipientGroup: null,
-                                insertedAt: new Date().toString(),
-                                updatedAt: new Date().toString(),
+                                message: {
+                                    id: 1,
+                                    senderUser: SomeUser,
+                                    recipientUser: SomeUserin,
+                                    recipientGroup: null,
+                                    insertedAt: new Date().toString(),
+                                    updatedAt: new Date().toString(),
+                                },
                             },
                         };
                     },
@@ -99,12 +101,14 @@ describe('component/layouts/messagingLayout/ComposeMessage', () => {
                         didCallMutation = true;
                         return {
                             data: {
-                                id: 1,
-                                senderUser: SomeUser,
-                                recipientUser: SomeUserin,
-                                recipientGroup: null,
-                                insertedAt: new Date().toString(),
-                                updatedAt: new Date().toString(),
+                                message: {
+                                    id: 1,
+                                    senderUser: SomeUser,
+                                    recipientUser: SomeUserin,
+                                    recipientGroup: null,
+                                    insertedAt: new Date().toString(),
+                                    updatedAt: new Date().toString(),
+                                },
                             },
                         };
                     },

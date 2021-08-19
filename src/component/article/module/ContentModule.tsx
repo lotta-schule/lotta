@@ -11,7 +11,13 @@ import {
     StyledComponentProps,
     CircularProgress,
 } from '@material-ui/core';
-import { MoreVert, Delete, DragHandle } from '@material-ui/icons';
+import {
+    MoreVert,
+    Delete,
+    DragHandle,
+    ArrowUpward,
+    ArrowDownward,
+} from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType } from '../../../model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
@@ -31,8 +37,8 @@ import {
     bindPopover,
     usePopupState,
 } from 'material-ui-popup-state/hooks';
-import clsx from 'clsx';
 import { Button } from 'component/general/button/Button';
+import clsx from 'clsx';
 
 const useStyles = makeStyles<Theme, { isEditModeEnabled: boolean }>((theme) =>
     createStyles({
@@ -68,10 +74,16 @@ const useStyles = makeStyles<Theme, { isEditModeEnabled: boolean }>((theme) =>
                 display: 'flex',
             },
         },
+        leftButtonSection: {
+            display: 'flex',
+            '& > *': {
+                marginRight: theme.spacing(1),
+            },
+        },
         dragbarButton: {
             padding: '0 5px',
-            height: 32,
-            width: 32,
+            height: 28,
+            width: 28,
         },
         buttonIcon: {
             color: theme.palette.grey[700],
@@ -100,6 +112,8 @@ interface ContentModuleProps {
     dragbarProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'className'>;
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
     onRemoveContentModule?: () => void;
+    onMoveUp?: () => void;
+    onMoveDown?: () => void;
 }
 
 export const ContentModule = React.memo<ContentModuleProps>(
@@ -111,6 +125,8 @@ export const ContentModule = React.memo<ContentModuleProps>(
         dragbarProps,
         onUpdateModule,
         onRemoveContentModule,
+        onMoveUp,
+        onMoveDown,
     }) => {
         const styles = useStyles({
             isEditModeEnabled: isEditModeEnabled ?? false,
@@ -178,14 +194,39 @@ export const ContentModule = React.memo<ContentModuleProps>(
                             className={styles.dragbar}
                             title={'Klicken und Ziehen zum verschieben'}
                         >
-                            <DragHandle />
+                            <section className={styles.leftButtonSection}>
+                                <DragHandle />
+                                {onMoveUp && (
+                                    <Button
+                                        small
+                                        aria-label={
+                                            'Modul um eine Stelle nach oben bewegen'
+                                        }
+                                        className={styles.dragbarButton}
+                                        icon={<ArrowUpward />}
+                                        onClick={() => onMoveUp()}
+                                    />
+                                )}
+                                {onMoveDown && (
+                                    <Button
+                                        small
+                                        aria-label={
+                                            'Modul um eine Stelle nach unten bewegen'
+                                        }
+                                        className={styles.dragbarButton}
+                                        icon={<ArrowDownward />}
+                                        onClick={() => onMoveDown()}
+                                    />
+                                )}
+                            </section>
                             <span>
                                 <Button
-                                    classes={{ root: styles.dragbarButton }}
+                                    small
+                                    className={styles.dragbarButton}
                                     style={{
                                         position: 'absolute',
-                                        top: 0,
-                                        right: 0,
+                                        top: 2,
+                                        right: 2,
                                     }}
                                     aria-label="Einstellungen"
                                     icon={
