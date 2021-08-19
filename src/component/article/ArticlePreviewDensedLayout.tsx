@@ -273,6 +273,7 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                         article
                                     ) && (
                                         <Button
+                                            small
                                             aria-label="Edit"
                                             className={clsx(
                                                 styles.editButton,
@@ -291,6 +292,7 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                     )}
                                 {!disablePin && User.isAdmin(currentUser) && (
                                     <Button
+                                        small
                                         aria-label="Pin"
                                         className={clsx(styles.pinButton, {
                                             active: article.isPinnedToTop,
