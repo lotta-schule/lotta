@@ -90,7 +90,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                         .concat([
                             {
                                 configuration: '{}' as any,
-                                sortKey: 40,
+                                sortKey: 30,
                                 files: [],
                                 type: 'TITLE',
                                 content: '{"title":"Deine Überschrift ..."}',
@@ -159,7 +159,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                         .concat([
                             {
                                 configuration: '{}' as any,
-                                sortKey: 40,
+                                sortKey: 30,
                                 files: [],
                                 type: 'TITLE',
                                 content: '{"title":"Deine Überschrift ..."}',

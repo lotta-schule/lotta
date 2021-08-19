@@ -1,12 +1,51 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
-import { ContentModuleType } from 'model';
+import { ContentModuleModel, ContentModuleType } from 'model';
 import { Klausurenplan, ComputerExperten } from 'test/fixtures';
 import { ContentModule } from './ContentModule';
 import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
 import userEvent from '@testing-library/user-event';
 
 describe('component/article/module/ContentModule', () => {
+    describe('in EditMode', () => {
+        const textContentModule = ComputerExperten.contentModules[0];
+        it('should show and call a "move up" button when onMoveUp prop is given', () => {
+            const fn = jest.fn();
+            const screen = render(
+                <ContentModule
+                    isEditModeEnabled
+                    contentModule={textContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                    onMoveUp={fn}
+                />
+            );
+            userEvent.click(
+                screen.getByRole('button', { name: /nach oben bewegen/i })
+            );
+            expect(fn).toHaveBeenCalled();
+        });
+
+        it('should show and call a "move down" button when onMoveDown prop is given', () => {
+            const fn = jest.fn();
+            const screen = render(
+                <ContentModule
+                    isEditModeEnabled
+                    contentModule={textContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                    onMoveDown={fn}
+                />
+            );
+            userEvent.click(
+                screen.getByRole('button', { name: /nach unten bewegen/i })
+            );
+            expect(fn).toHaveBeenCalled();
+        });
+    });
+
     describe('Text ContentModule', () => {
         const textContentModule = ComputerExperten.contentModules[0];
 
@@ -38,7 +77,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -49,7 +88,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -67,11 +106,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -112,7 +151,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -123,7 +162,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -141,11 +180,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -153,7 +192,7 @@ describe('component/article/module/ContentModule', () => {
                 });
             });
 
-            it('should show the title configuration', async () => {
+            it('should show the title configuration', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -164,7 +203,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -176,11 +215,15 @@ describe('component/article/module/ContentModule', () => {
     });
 
     describe('Image ContentModule', () => {
-        const imageContentModule = {
+        const imageContentModule: ContentModuleModel = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.IMAGE,
             files: [],
+            updatedAt: new Date().toString(),
+            insertedAt: new Date().toString(),
+            content: {},
+            configuration: {},
         };
 
         it('should render module in show mode', () => {
@@ -211,7 +254,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -222,7 +265,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -240,11 +283,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -255,11 +298,15 @@ describe('component/article/module/ContentModule', () => {
     });
 
     describe('ImageCollection ContentModule', () => {
-        const imageCollectionContentModule = {
+        const imageCollectionContentModule: ContentModuleModel = {
             id: '101100',
             sortKey: 10,
             type: ContentModuleType.IMAGE_COLLECTION,
             files: [],
+            insertedAt: new Date().toString(),
+            updatedAt: new Date().toString(),
+            content: {},
+            configuration: {},
         };
 
         it('should render a imageCollection module in show mode', () => {
@@ -292,7 +339,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -303,7 +350,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -321,11 +368,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -333,7 +380,7 @@ describe('component/article/module/ContentModule', () => {
                 });
             });
 
-            it('should show the configuration', async () => {
+            it('should show the configuration', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -344,7 +391,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -363,6 +410,10 @@ describe('component/article/module/ContentModule', () => {
             sortKey: 10,
             type: ContentModuleType.VIDEO,
             files: [],
+            insertedAt: new Date().toString(),
+            updatedAt: new Date().toString(),
+            content: {},
+            configuration: {},
         };
 
         it('should render module in show mode', () => {
@@ -393,7 +444,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -404,7 +455,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -422,11 +473,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -442,6 +493,10 @@ describe('component/article/module/ContentModule', () => {
             sortKey: 10,
             type: ContentModuleType.AUDIO,
             files: [],
+            insertedAt: new Date().toString(),
+            updatedAt: new Date().toString(),
+            content: {},
+            configuration: {},
         };
 
         it('should render module in show mode', () => {
@@ -472,7 +527,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -483,7 +538,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -501,11 +556,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -521,6 +576,10 @@ describe('component/article/module/ContentModule', () => {
             sortKey: 10,
             type: ContentModuleType.DOWNLOAD,
             files: [],
+            insertedAt: new Date().toString(),
+            updatedAt: new Date().toString(),
+            content: {},
+            configuration: {},
         };
 
         it('should render module in show mode', () => {
@@ -551,7 +610,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -562,7 +621,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -580,11 +639,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -592,7 +651,7 @@ describe('component/article/module/ContentModule', () => {
                 });
             });
 
-            it('should show the configuration', async () => {
+            it('should show the configuration', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -603,7 +662,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -620,6 +679,10 @@ describe('component/article/module/ContentModule', () => {
             sortKey: 10,
             type: ContentModuleType.FORM,
             files: [],
+            insertedAt: new Date().toString(),
+            updatedAt: new Date().toString(),
+            content: {},
+            configuration: {},
         };
 
         it('should render module in show mode', () => {
@@ -650,7 +713,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -675,7 +738,7 @@ describe('component/article/module/ContentModule', () => {
                         ],
                     }
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -707,11 +770,11 @@ describe('component/article/module/ContentModule', () => {
                         ],
                     }
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {
@@ -719,7 +782,7 @@ describe('component/article/module/ContentModule', () => {
                 });
             });
 
-            it('should show the configuration', async () => {
+            it('should show the configuration', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -744,7 +807,7 @@ describe('component/article/module/ContentModule', () => {
                         ],
                     }
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -762,6 +825,9 @@ describe('component/article/module/ContentModule', () => {
             type: ContentModuleType.TABLE,
             files: [],
             content: {},
+            insertedAt: new Date().toString(),
+            updatedAt: new Date().toString(),
+            configuration: {},
         };
 
         it('should render module in show mode', () => {
@@ -792,7 +858,7 @@ describe('component/article/module/ContentModule', () => {
                 expect(dragHandle).not.toBeVisible();
             });
 
-            it('config bar should open a menu when clicking on settings button', async () => {
+            it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
@@ -803,7 +869,7 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={() => {}}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
@@ -821,11 +887,11 @@ describe('component/article/module/ContentModule', () => {
                         onRemoveContentModule={deleteCallback}
                     />
                 );
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /einstellungen/i })
                 );
                 expect(screen.getByRole('presentation')).toBeVisible();
-                await userEvent.click(
+                userEvent.click(
                     screen.getByRole('button', { name: /modul löschen/i })
                 );
                 await waitFor(() => {

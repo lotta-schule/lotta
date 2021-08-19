@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArticleModel } from '../../model';
+import { ArticleModel, ContentModuleModel } from '../../model';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { makeStyles, CircularProgress } from '@material-ui/core';
@@ -27,6 +27,33 @@ interface ArticleEditableProps {
 export const ArticleEditable = React.memo<ArticleEditableProps>(
     ({ article, onUpdateArticle }) => {
         const styles = useStyles();
+        const moveContentModulePosition = (
+            moduleId: ContentModuleModel['id'],
+            sourceIndex: number,
+            destinationIndex: number
+        ) => {
+            onUpdateArticle({
+                ...article,
+                contentModules: Array.from(article.contentModules)
+                    .map((contentModule) => {
+                        if (contentModule.id.toString() === moduleId) {
+                            return {
+                                ...contentModule,
+                                sortKey:
+                                    destinationIndex * 10 +
+                                    (destinationIndex > sourceIndex ? 1 : -1),
+                            };
+                        } else {
+                            return contentModule;
+                        }
+                    })
+                    .sort((cm1, cm2) => cm1.sortKey - cm2.sortKey)
+                    .map((cm, i) => ({
+                        ...cm,
+                        sortKey: i * 10,
+                    })),
+            });
+        };
         return (
             <article className={styles.root} data-testid={'ArticleEditable'}>
                 <ArticleTitle article={article} onUpdate={onUpdateArticle} />
@@ -50,38 +77,11 @@ export const ArticleEditable = React.memo<ArticleEditableProps>(
                                     return;
                                 }
 
-                                onUpdateArticle({
-                                    ...article,
-                                    contentModules: Array.from(
-                                        article.contentModules
-                                    )
-                                        .map((contentModule) => {
-                                            if (
-                                                contentModule.id.toString() ===
-                                                draggableId
-                                            ) {
-                                                return {
-                                                    ...contentModule,
-                                                    sortKey:
-                                                        destination.index * 10 +
-                                                        (destination.index >
-                                                        source.index
-                                                            ? 1
-                                                            : -1),
-                                                };
-                                            } else {
-                                                return contentModule;
-                                            }
-                                        })
-                                        .sort(
-                                            (cm1, cm2) =>
-                                                cm1.sortKey - cm2.sortKey
-                                        )
-                                        .map((cm, i) => ({
-                                            ...cm,
-                                            sortKey: i * 10,
-                                        })),
-                                });
+                                moveContentModulePosition(
+                                    draggableId,
+                                    source.index,
+                                    destination.index
+                                );
                             }}
                         >
                             <Droppable droppableId={String(article.id)}>
@@ -126,6 +126,33 @@ export const ArticleEditable = React.memo<ArticleEditableProps>(
                                                             }
                                                             isDragging={
                                                                 snapshot.isDragging
+                                                            }
+                                                            onMoveUp={
+                                                                index === 0
+                                                                    ? undefined
+                                                                    : () => {
+                                                                          moveContentModulePosition(
+                                                                              contentModule.id,
+                                                                              index,
+                                                                              index -
+                                                                                  1
+                                                                          );
+                                                                      }
+                                                            }
+                                                            onMoveDown={
+                                                                index + 1 ===
+                                                                article
+                                                                    .contentModules
+                                                                    .length
+                                                                    ? undefined
+                                                                    : () => {
+                                                                          moveContentModulePosition(
+                                                                              contentModule.id,
+                                                                              index,
+                                                                              index +
+                                                                                  1
+                                                                          );
+                                                                      }
                                                             }
                                                             onUpdateModule={(
                                                                 updatedModule
