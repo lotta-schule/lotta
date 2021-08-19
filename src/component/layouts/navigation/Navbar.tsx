@@ -16,8 +16,8 @@ import { fade } from '@material-ui/core/styles';
 import { useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';
 import { NavigationButton } from 'component/general/button/NavigationButton';
-import clsx from 'clsx';
 import { Category } from 'util/model';
+import clsx from 'clsx';
 
 const useStyles = makeStyles<Theme>((theme) => ({
     root: {
@@ -32,10 +32,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
     },
     padding: {
         [theme.breakpoints.down('sm')]: {
-            paddingRight: '3em',
+            paddingRight: 'calc(3rem - 4px)', // I am not sure why 4px but I think its because of the shadow maybe?
         },
     },
-    appBar: { justifyContent: 'space-evenly' },
     secondaryAppBar: {
         backgroundColor: fade(theme.palette.background.paper, 0.9),
         maxHeight: 40,
@@ -62,7 +61,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
         zIndex: 2001,
         [theme.breakpoints.down('sm')]: {
             display: 'flex',
-            width: '3em',
+            width: '3rem',
         },
     },
     iconButton: {
@@ -133,7 +132,7 @@ export const Navbar = React.memo(() => {
             <Grid container style={{ position: 'relative' }}>
                 <Grid item xs className={styles.padding}>
                     <AppBar position={'sticky'}>
-                        <Toolbar className={styles.appBar}>
+                        <Toolbar>
                             {homepageCategory && (
                                 <NavigationButton
                                     key={'home'}
