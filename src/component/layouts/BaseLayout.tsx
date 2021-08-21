@@ -13,6 +13,7 @@ import { usePiwikAnalytics } from 'util/usePiwikAnalytics';
 import { useTenant } from 'util/tenant/useTenant';
 import { File } from 'util/model';
 import { TenantModel } from 'model';
+import { ScrollToTopButton } from 'component/general/button/ScrollToTopButton';
 
 const useStyles = makeStyles<Theme, { tenant: TenantModel }>((theme) => ({
     '@global': {
@@ -121,6 +122,7 @@ export const BaseLayout = React.memo(({ children }) => {
                     wrap={'nowrap'}
                 >
                     {children}
+                    <ScrollToTopButton />
                 </Grid>
             </main>
         </Container>
