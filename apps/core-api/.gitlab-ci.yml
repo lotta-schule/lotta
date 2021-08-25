@@ -153,7 +153,7 @@ deploy:production:
     --set autoscaling.enabled=true
     --set autoscaling.minReplicas=2
     --set autoscaling.maxReplicas=3
-    --set elasticsearch.enabled=true
+    --set elasticsearch.enabled=false
     --set image.tag=$CI_COMMIT_TAG
     --set appRevision=$CI_COMMIT_TAG
     --set baseSecret=$BASE_SECRET
