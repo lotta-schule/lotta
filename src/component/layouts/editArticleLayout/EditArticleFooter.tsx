@@ -208,7 +208,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                         <div className={styles.buttonWrapper}>
                             <Button
                                 className={styles.cancelButton}
-                                onClick={() => history.back()}
+                                onClick={() => history.go(-1)}
                             >
                                 abbrechen
                             </Button>
