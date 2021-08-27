@@ -143,6 +143,30 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                         article={editedArticle}
                         onUpdateArticle={changeArticle}
                     />
+                    <AddModuleBar
+                        onAddModule={async (contentModule) => {
+                            changeArticle({
+                                ...editedArticle,
+                                contentModules: [
+                                    ...editedArticle.contentModules,
+                                    {
+                                        configuration: {},
+                                        ...contentModule,
+                                        insertedAt: new Date().toISOString(),
+                                        updatedAt: new Date().toISOString(),
+                                        sortKey: editedArticle.contentModules
+                                            .length
+                                            ? Math.max(
+                                                  ...editedArticle.contentModules.map(
+                                                      (cm) => cm.sortKey || 0
+                                                  )
+                                              ) + 10
+                                            : 0,
+                                    },
+                                ],
+                            });
+                        }}
+                    />
                     <EditArticleFooter
                         style={{ marginTop: '.5em' }}
                         article={editedArticle}
@@ -205,30 +229,6 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                                         })),
                                     },
                                 },
-                            });
-                        }}
-                    />
-                    <AddModuleBar
-                        onAddModule={async (contentModule) => {
-                            changeArticle({
-                                ...editedArticle,
-                                contentModules: [
-                                    ...editedArticle.contentModules,
-                                    {
-                                        configuration: {},
-                                        ...contentModule,
-                                        insertedAt: new Date().toISOString(),
-                                        updatedAt: new Date().toISOString(),
-                                        sortKey: editedArticle.contentModules
-                                            .length
-                                            ? Math.max(
-                                                  ...editedArticle.contentModules.map(
-                                                      (cm) => cm.sortKey || 0
-                                                  )
-                                              ) + 10
-                                            : 0,
-                                    },
-                                ],
                             });
                         }}
                     />
