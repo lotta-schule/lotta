@@ -49,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
             flexGrow: 1,
             padding: theme.spacing(1),
         },
+        [theme.breakpoints.down('md')]: {
+            width: '100%',
+        },
     },
     buttonWrapper: {
         display: 'flex',
