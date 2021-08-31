@@ -25,7 +25,6 @@ defmodule Lotta.Queue.MediaConversionConsumer do
       prefetch_count: "10",
       connection: rmq_uri()
     ]
-    |> IO.inspect()
   end
 
   def handle_message(%Message{} = message) do

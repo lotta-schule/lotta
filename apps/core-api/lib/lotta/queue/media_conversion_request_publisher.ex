@@ -23,7 +23,6 @@ defmodule Lotta.Queue.MediaConversionRequestPublisher do
       exchange: {:direct, @exchange},
       connection: rmq_uri()
     ]
-    |> IO.inspect()
   end
 
   def start_link(_args) do
@@ -67,7 +66,7 @@ defmodule Lotta.Queue.MediaConversionRequestPublisher do
       AMQP.Channel.close(channel)
     else
       error ->
-        IO.inspect(error)
+        Sentry.capture_message(inspect(error))
     end
   end
 end

@@ -7,7 +7,7 @@ defmodule LottaWeb.WidgetResolverTest do
 
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
-  alias Lotta.Accounts.User
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Tenants.{Category, Widget}
 
   @prefix "tenant_test"
@@ -31,6 +31,9 @@ defmodule LottaWeb.WidgetResolverTest do
 
     widget = Repo.one!(from(Widget, limit: 1), prefix: tenant.prefix)
 
+    schueler_group =
+      Repo.one!(from(g in UserGroup, where: g.name == ^"Schüler"), prefix: tenant.prefix)
+
     homepage = Repo.one!(from(c in Category, where: c.is_homepage == true), prefix: tenant.prefix)
 
     {:ok,
@@ -40,7 +43,8 @@ defmodule LottaWeb.WidgetResolverTest do
        user_account: user,
        user_jwt: user_jwt,
        widget: widget,
-       homepage: homepage
+       homepage: homepage,
+       schueler_group: schueler_group
      }}
   end
 
@@ -288,18 +292,31 @@ defmodule LottaWeb.WidgetResolverTest do
       updateWidget (id: $id, widget: $widget) {
         title
         type
+        groups {
+          id
+        }
       }
     }
     """
 
-    test "creates a widget if user is admin", %{admin_jwt: admin_jwt, widget: widget} do
+    test "updates a widget if user is admin", %{
+      admin_jwt: admin_jwt,
+      widget: widget,
+      schueler_group: schueler_group
+    } do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{admin_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: widget.id, widget: %{title: "Changed Widget"}}
+          variables: %{
+            id: widget.id,
+            widget: %{
+              title: "Changed Widget",
+              groups: Enum.map([schueler_group], &Map.take(&1, [:id]))
+            }
+          }
         )
         |> json_response(200)
 
@@ -307,20 +324,33 @@ defmodule LottaWeb.WidgetResolverTest do
                "data" => %{
                  "updateWidget" => %{
                    "title" => "Changed Widget",
-                   "type" => "CALENDAR"
+                   "type" => "CALENDAR",
+                   "groups" => [%{"id" => id}]
                  }
                }
              } = res
+
+      assert id == "#{schueler_group.id}"
     end
 
-    test "returns an error if user is not admin", %{user_jwt: user_jwt, widget: widget} do
+    test "returns an error if user is not admin", %{
+      user_jwt: user_jwt,
+      widget: widget,
+      schueler_group: schueler_group
+    } do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{id: widget.id, widget: %{title: "Changed Widget"}}
+          variables: %{
+            id: widget.id,
+            widget: %{
+              title: "Changed Widget",
+              groups: Enum.map([schueler_group], &Map.take(&1, [:id]))
+            }
+          }
         )
         |> json_response(200)
 
