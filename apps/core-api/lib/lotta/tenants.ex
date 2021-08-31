@@ -512,7 +512,7 @@ defmodule Lotta.Tenants do
   def update_widget(widget, attrs) do
     widget
     |> Widget.changeset(attrs)
-    |> Repo.update()
+    |> Repo.update(prefix: Repo.get_prefix())
   end
 
   @doc """
