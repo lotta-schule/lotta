@@ -12,15 +12,18 @@ export default {
     argTypes: {},
 } as Meta;
 
-const Template: Story<Omit<RadioGroupProps, 'ref'>> = (args) => (
-    <RadioGroup {...args} name={'radio-group'}>
-        <Radio value={'0'}>Option 0</Radio>
-        <Radio value={'1'}>Option 1</Radio>
-        <Radio value={'2'}>Option 2</Radio>
-        <Radio value={'3'}>Option 3</Radio>
-        <Radio value={'4'}>Option 4</Radio>
-    </RadioGroup>
-);
+const Template: Story<Omit<RadioGroupProps, 'ref'>> = (args) => {
+    const [val, setVal] = React.useState('0');
+    return (
+        <RadioGroup {...args} name={'radio-group'} value={val} onChange={(_e, val) => setVal(val.toString())}>
+            <Radio value={'0'}>Option 0</Radio>
+            <Radio value={'1'}>Option 1</Radio>
+            <Radio value={'2'}>Option 2</Radio>
+            <Radio value={'3'}>Option 3</Radio>
+            <Radio value={'4'}>Option 4</Radio>
+        </RadioGroup>
+    );
+};
 
 const ColoredTemplate: Story<Omit<RadioGroupProps, 'ref'>> = (args) => (
     <RadioGroup {...args} name={'radio-group'}>
