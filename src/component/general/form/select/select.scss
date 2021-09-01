@@ -13,7 +13,7 @@
     &:focus-visible {
         outline: rgba(var(--lotta-primary-color), 1) solid 1px;
     }
-    @media (prefers-color-scheme: dark) { optgroup  {
+    @media (prefers-color-scheme: dark) { optgroup, option  {
         color: rgba(var(--lotta-contrast-text-color), 1);
     }}
 }
