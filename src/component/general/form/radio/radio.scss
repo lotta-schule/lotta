@@ -52,10 +52,10 @@
     }
 
     .lotta-radio__control-indicator:after {
-        left: .15em;
-        top: .15em;
-        height: .80em;
-        width: .80em;
+        left: 0.2em;
+        top: 0.2em;
+        height: 0.7em;
+        width: 0.7em;
         border-radius: 50%;
         background: rgba(var(--control-indicator-color), 1);
         transition: background 250ms;
@@ -95,5 +95,27 @@
             opacity: 0.01;
             transform: scale(1);
         }
+    }
+    @keyframes s-ripple-dup {
+        0% {
+            transform: scale(0);
+        }
+        30% {
+            transform: scale(1);
+        }
+        60% {
+            transform: scale(1);
+        }
+        100% {
+            opacity: 0;
+            transform: scale(1);
+        }
+    }
+    input + .lotta-radio__control-indicator::before {
+        animation: s-ripple 400ms ease-out;
+    }
+
+    input:checked + .lotta-radio__control-indicator::before {
+        animation-name: s-ripple-dup;
     }
 }
