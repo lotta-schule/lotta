@@ -10,7 +10,7 @@
     letter-spacing: 1px;
     text-decoration: none;
     font-size: 0.8rem;
-    justify-content: center;
+    justify-content: space-evenly;
     &:not([disabled]) {
         cursor: pointer;
         &:hover,
