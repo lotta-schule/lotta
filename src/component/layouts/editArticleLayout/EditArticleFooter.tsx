@@ -182,7 +182,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                         )}
                                     />
                                 }
-                                fullWidth
                             >
                                 Beitrag löschen
                             </Button>
