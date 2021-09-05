@@ -208,10 +208,25 @@ export const Edit = React.memo<EditProps>(
                 <SelectFileButton
                     multiple
                     label={'Datei hinzufügen'}
-                    onSelect={(files: FileModel[]) =>
+                    onSelect={(files: FileModel[]) => {
+                        const duplicateFiles = files.filter((file) =>
+                            contentModule.files.find((f) => f.id === file.id)
+                        );
+                        duplicateFiles.forEach((file) => {
+                            alert(
+                                `Die Datei "${file.filename}" ist schon im Modul vorhanden und wird nicht neu hinzugefügt.`
+                            );
+                        });
                         onUpdateModule({
                             ...contentModule,
-                            files: contentModule.files.concat(files),
+                            files: contentModule.files.concat(
+                                files.filter(
+                                    (file) =>
+                                        !duplicateFiles.find(
+                                            (f) => f.id === file.id
+                                        )
+                                )
+                            ),
                             configuration: {
                                 ...contentModule.configuration,
                                 files: {
@@ -232,8 +247,8 @@ export const Edit = React.memo<EditProps>(
                                     ),
                                 },
                             },
-                        })
-                    }
+                        });
+                    }}
                 />
             </CardContent>
         );
