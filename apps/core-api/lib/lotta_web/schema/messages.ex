@@ -42,6 +42,9 @@ defmodule LottaWeb.Schema.Messages do
              "#{tid}:messages:user:#{user_id}"
              | Enum.map(groups, &"#{tid}:messages:group:#{&1.id}")
            ]}
+
+        _args, _context ->
+          {:error, "unauthorized"}
       end)
 
       # this tells Absinthe to run any subscriptions with this field every time
