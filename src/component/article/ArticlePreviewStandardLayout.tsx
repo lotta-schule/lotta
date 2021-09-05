@@ -223,7 +223,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                 className={styles.container}
                 data-testid="ArticlePreviewStandardLayout"
             >
-                <Grid container>
+                <Grid container wrap={'nowrap'}>
                     <Grid className={styles.imageSection} container>
                         {!!onUpdateArticle && (
                             <SelectFileOverlay
