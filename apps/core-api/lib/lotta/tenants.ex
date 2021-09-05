@@ -80,6 +80,10 @@ defmodule Lotta.Tenants do
         {:ok, tenant}
 
       {:error, failed_operation, failed_value, _changes_so_far} ->
+        Sentry.capture_message(
+          "Error creating new tenant: while #{inspect(failed_operation)}: #{inspect(failed_value)}"
+        )
+
         {:error, failed_operation, failed_value}
     end
   end
