@@ -2,6 +2,7 @@ defmodule Lotta.Tenants do
   @moduledoc """
   This module is for managing the tenants.
   """
+  require Logger
 
   import Ecto.Query
 
@@ -80,9 +81,12 @@ defmodule Lotta.Tenants do
         {:ok, tenant}
 
       {:error, failed_operation, failed_value, _changes_so_far} ->
-        Sentry.capture_message(
+        msg =
           "Error creating new tenant: while #{inspect(failed_operation)}: #{inspect(failed_value)}"
-        )
+
+        Logger.error(msg)
+
+        Sentry.capture_message(msg)
 
         {:error, failed_operation, failed_value}
     end
@@ -224,7 +228,7 @@ defmodule Lotta.Tenants do
         multi
       end
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: 120_000)
     |> case do
       {:ok, changes} ->
         config =
