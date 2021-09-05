@@ -75,7 +75,7 @@ defmodule Lotta.Tenants do
       TenantSelector.create_tenant_database_schema(tenant)
     end)
     |> Multi.merge(&DefaultContent.create_default_content/1)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: 120_000)
     |> case do
       {:ok, %{tenant: tenant}} ->
         {:ok, tenant}
@@ -228,7 +228,7 @@ defmodule Lotta.Tenants do
         multi
       end
     end)
-    |> Repo.transaction(timeout: 120_000)
+    |> Repo.transaction()
     |> case do
       {:ok, changes} ->
         config =
