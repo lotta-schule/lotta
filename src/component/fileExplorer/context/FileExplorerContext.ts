@@ -1,4 +1,4 @@
-import { createContext, Dispatch } from 'react';
+import * as React from 'react';
 import { FileModel, DirectoryModel, ID } from 'model';
 import { Action } from './reducer';
 
@@ -27,8 +27,8 @@ export const defaultState = {
     detailSidebarEnabled: false,
 };
 
-const fileExplorerContext = createContext<
-    [typeof defaultState, Dispatch<Action>]
+const fileExplorerContext = React.createContext<
+    [typeof defaultState, React.Dispatch<Action>]
 >([defaultState, () => {}]);
 
 export const Provider = fileExplorerContext.Provider;

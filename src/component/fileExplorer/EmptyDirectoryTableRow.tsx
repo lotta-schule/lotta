@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import * as React from 'react';
 import {
     TableRow,
     TableCell,
@@ -22,8 +22,8 @@ const useStyles = makeStyles<Theme, { isLoading: boolean }>((theme) => ({
     },
 }));
 
-export const EmptyDirectoryTableRow = memo(() => {
-    const [state, dispatch] = useContext(fileExplorerContext);
+export const EmptyDirectoryTableRow = React.memo(() => {
+    const [state, dispatch] = React.useContext(fileExplorerContext);
 
     const [deleteDirectory, { error, loading: isLoading }] = useMutation(
         DeleteDirectoryMutation,
@@ -38,14 +38,14 @@ export const EmptyDirectoryTableRow = memo(() => {
                         query: GetDirectoriesAndFilesQuery,
                         variables: {
                             parentDirectoryId:
-                                data.directory.parentDirectory.id,
+                                data.directory.parentDirectory?.id ?? null,
                         },
                     });
                     client.writeQuery({
                         query: GetDirectoriesAndFilesQuery,
                         variables: {
                             parentDirectoryId:
-                                data.directory.parentDirectory.id,
+                                data.directory.parentDirectory?.id ?? null,
                         },
                         data: {
                             files: [...(cache?.files ?? [])],

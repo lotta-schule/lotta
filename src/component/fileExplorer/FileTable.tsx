@@ -140,7 +140,11 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
         filesAreEditable: state.mode === FileExplorerMode.ViewAndEdit,
     });
 
-    const { data, error, loading: isLoading } = useQuery<{
+    const {
+        data,
+        error,
+        loading: isLoading,
+    } = useQuery<{
         directories: DirectoryModel[];
         files: FileModel[];
     }>(GetDirectoriesAndFilesQuery, {
@@ -170,27 +174,23 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
     );
 
     const uploadFile = useCreateUpload();
-    const {
-        getRootProps,
-        draggedFiles,
-        isDragAccept,
-        isDragActive,
-    } = useDropzone({
-        onDrop: (files) => {
-            files.forEach((f) =>
-                uploadFile(
-                    f,
-                    state.currentPath[
-                        state.currentPath.length - 1
-                    ] as DirectoryModel
-                )
-            );
-        },
-        disabled: state.currentPath.length < 2,
-        multiple: true,
-        preventDropOnDocument: true,
-        noClick: true,
-    });
+    const { getRootProps, draggedFiles, isDragAccept, isDragActive } =
+        useDropzone({
+            onDrop: (files) => {
+                files.forEach((f) =>
+                    uploadFile(
+                        f,
+                        state.currentPath[
+                            state.currentPath.length - 1
+                        ] as DirectoryModel
+                    )
+                );
+            },
+            disabled: state.currentPath.length < 2,
+            multiple: true,
+            preventDropOnDocument: true,
+            noClick: true,
+        });
 
     const isMarked = (file: FileModel) => {
         if (!file) {
@@ -320,10 +320,9 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                         } else {
                             dispatch({
                                 type: 'markSingleFile',
-                                file:
-                                    filteredSortedFiles[
-                                        lowestSelectedFileIndex - 1
-                                    ],
+                                file: filteredSortedFiles[
+                                    lowestSelectedFileIndex - 1
+                                ],
                             });
                         }
                     }
@@ -350,10 +349,9 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                         } else {
                             dispatch({
                                 type: 'markSingleFile',
-                                file:
-                                    filteredSortedFiles[
-                                        highestSelectedFileIndex + 1
-                                    ],
+                                file: filteredSortedFiles[
+                                    highestSelectedFileIndex + 1
+                                ],
                             });
                         }
                     }
