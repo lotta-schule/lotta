@@ -54,6 +54,12 @@ const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
                 },
             },
         },
+        containerGrid: {
+            flexWrap: 'wrap',
+            [theme.breakpoints.up('sm')]: {
+                flexWrap: ({ narrow }) => (narrow ? 'wrap' : 'nowrap'),
+            },
+        },
         previewImage: {
             width: '100%',
             height: ({ narrow }) => (narrow ? 'auto' : '100%'),
@@ -221,7 +227,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                 className={styles.container}
                 data-testid="ArticlePreviewStandardLayout"
             >
-                <Grid container wrap={narrow ? 'wrap' : 'nowrap'}>
+                <Grid container className={styles.containerGrid}>
                     <Grid className={styles.imageSection} container>
                         {!!onUpdateArticle && (
                             <SelectFileOverlay
