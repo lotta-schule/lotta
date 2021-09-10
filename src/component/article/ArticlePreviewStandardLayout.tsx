@@ -191,10 +191,8 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
             User.canEditArticle(currentUser, article) ||
             User.isAdmin(currentUser);
 
-        const [
-            isSelfRemovalDialogOpen,
-            setIsSelfRemovalDialogOpen,
-        ] = React.useState(false);
+        const [isSelfRemovalDialogOpen, setIsSelfRemovalDialogOpen] =
+            React.useState(false);
 
         const [toggleArticlePin] = useMutation<
             { article: ArticleModel },
@@ -223,7 +221,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                 className={styles.container}
                 data-testid="ArticlePreviewStandardLayout"
             >
-                <Grid container wrap={'nowrap'}>
+                <Grid container wrap={narrow ? 'wrap' : 'nowrap'}>
                     <Grid className={styles.imageSection} container>
                         {!!onUpdateArticle && (
                             <SelectFileOverlay
@@ -481,8 +479,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                                         className={clsx(
                                                             styles.pinButton,
                                                             {
-                                                                active:
-                                                                    article.isPinnedToTop,
+                                                                active: article.isPinnedToTop,
                                                             }
                                                         )}
                                                         onClick={() =>
