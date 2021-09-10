@@ -28,7 +28,7 @@ test:
     - name: minio/minio:latest
       alias: minio
       entrypoint: ['sh']
-      command: ['-c', 'mkdir -p /export/lotta-dev-ugc && /usr/bin/minio server /export']
+      command: ['-c', 'mkdir -p /export/lotta-dev-ugc && /opt/bin/minio server /export']
     - name: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
       alias: elasticsearch
       command:
