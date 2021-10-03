@@ -172,7 +172,13 @@ export const getApolloClient = () => {
     });
 
     const httpLink = createLink({
-        uri: isBrowser ? '/api/backend' : process.env.API_URL,
+        uri: isBrowser
+            ? '/api/backend'
+            : (() => {
+                  const url = new URL(process.env.API_URL);
+                  url.pathname = '/api';
+                  return url.toString();
+              })(),
         fetch: customFetch,
     });
 

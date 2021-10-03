@@ -228,8 +228,8 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
         const { data, headers: refreshResponseHeaders } =
             await axios.request<any>({
                 method: 'POST',
-                baseURL: process.env.AUTH_URL,
-                url: '/token/refresh',
+                baseURL: process.env.API_URL,
+                url: '/auth/token/refresh',
                 headers: request.headers as Record<string, string>,
             });
         if (data?.accessToken) {
