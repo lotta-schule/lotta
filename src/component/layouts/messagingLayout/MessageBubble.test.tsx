@@ -2,7 +2,7 @@ import React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, SomeUserin, getSomeMessages } from 'test/fixtures';
 import { MessageBubble } from './MessageBubble';
-import { DeleteMessageMutation } from 'api/mutation/DeleteMessageMutation';
+import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 const message = {

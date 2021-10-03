@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-    TableRow,
-    TableCell,
-    Menu,
-    MenuItem,
-    makeStyles,
-    fade,
-} from '@material-ui/core';
+import { TableRow, TableCell, Menu, MenuItem } from '@material-ui/core';
 import { MoreVert, CreateOutlined, FileCopyOutlined } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
 import { DirectoryModel } from 'model';
@@ -20,36 +13,18 @@ import fileExplorerContext, {
 } from './context/FileExplorerContext';
 import clsx from 'clsx';
 
+import styles from './DirectoryTableRow.module.scss';
+
 export interface FileTableRowProps {
     directory: DirectoryModel;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {},
-    isDragActive: {
-        backgroundColor: fade(theme.palette.secondary.main, 0.075),
-    },
-    dragHelpText: {
-        display: 'block',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        color: '#333',
-        fontSize: '1.2rem',
-        textShadow: '1px 1px 4px #f523',
-    },
-}));
-
 export const DirectoryTableRow = React.memo<FileTableRowProps>(
     ({ directory }) => {
-        const styles = useStyles();
         const [state, dispatch] = React.useContext(fileExplorerContext);
         const currentUser = useCurrentUser();
-        const [
-            editMenuAnchorEl,
-            setEditMenuAnchorEl,
-        ] = React.useState<null | HTMLElement>(null);
+        const [editMenuAnchorEl, setEditMenuAnchorEl] =
+            React.useState<null | HTMLElement>(null);
         const [isRenamingFile, setIsRenamingFile] = React.useState(false);
 
         const uploadFile = useCreateUpload();
@@ -103,7 +78,7 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
         return (
             <TableRow
                 hover={!isDragActive}
-                className={clsx({
+                className={clsx(styles.root, {
                     selected: !isDragActive && isMarked,
                     [styles.isDragActive]: isDragActive,
                 })}

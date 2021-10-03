@@ -4,39 +4,28 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Link,
-    makeStyles,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { LoginMutation } from 'api/mutation/LoginMutation';
-import { CollisionLink } from 'component/general/CollisionLink';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { UserModel } from 'model';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
+import LoginMutation from 'api/mutation/LoginMutation.graphql';
+import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
+import Link from 'next/link';
+
+import styles from './LoginDialog.module.scss';
 
 export interface LoginDialogProps {
     isOpen: boolean;
     onRequestClose(): void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        '& a': {
-            display: 'block',
-            marginTop: theme.spacing(1),
-            float: 'right',
-        },
-    },
-}));
-
 export const LoginDialog = React.memo<LoginDialogProps>(
     ({ isOpen, onRequestClose }) => {
-        const styles = useStyles();
         const apolloClient = useApolloClient();
         const [login, { error, loading: isLoading }] = useMutation(
             LoginMutation,
@@ -62,10 +51,8 @@ export const LoginDialog = React.memo<LoginDialogProps>(
             }
         );
 
-        const [
-            isShowUpdatePasswordDialog,
-            setIsShowUpdatePasswordDialog,
-        ] = React.useState(false);
+        const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
+            React.useState(false);
         const [email, setEmail] = React.useState('');
         const [password, setPassword] = React.useState('');
         const resetForm = () => {
@@ -117,12 +104,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                                     placeholder={'Passwort'}
                                 />
                             </Label>
-                            <Link
-                                component={CollisionLink}
-                                color="inherit"
-                                underline="none"
-                                to={`/password/request-reset`}
-                            >
+                            <Link href={`/password/request-reset`}>
                                 Passwort vergessen?
                             </Link>
                         </DialogContent>

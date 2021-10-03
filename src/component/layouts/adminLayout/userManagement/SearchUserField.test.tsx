@@ -2,8 +2,8 @@ import * as React from 'react';
 import { omit } from 'lodash';
 import { render, waitFor } from 'test/util';
 import { KeinErSieEsUser, SomeUser, SomeUserin } from 'test/fixtures';
-import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
 import { SearchUserField } from './SearchUserField';
+import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/userManagment/SearchUserField', () => {

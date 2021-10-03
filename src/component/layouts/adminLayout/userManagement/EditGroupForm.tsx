@@ -14,11 +14,11 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
-import { GetGroupQuery } from 'api/query/GetGroupQuery';
-import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import { EnrollmentTokensEditor } from 'component/layouts/EnrollmentTokensEditor';
+import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
+import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 
 export interface EditGroupFormProps {
     group: UserGroupModel;
@@ -46,26 +46,23 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
 
     const [name, setName] = React.useState(group.name);
 
-    const [
-        isDeleteUserGroupDialogOpen,
-        setIsDeleteUserGroupDialogOpen,
-    ] = React.useState(false);
+    const [isDeleteUserGroupDialogOpen, setIsDeleteUserGroupDialogOpen] =
+        React.useState(false);
 
-    const { data, loading: isLoading, error: loadDetailsError } = useQuery<
-        { group: UserGroupModel },
-        { id: ID }
-    >(GetGroupQuery, {
+    const {
+        data,
+        loading: isLoading,
+        error: loadDetailsError,
+    } = useQuery<{ group: UserGroupModel }, { id: ID }>(GetGroupQuery, {
         variables: {
             id: group.id,
         },
     });
-    const [
-        updateGroup,
-        { loading: isLoadingUpdateGroup, error: updateError },
-    ] = useMutation<
-        { group: UserGroupModel },
-        { id: ID; group: UserGroupInputModel }
-    >(UpdateUserGroupMutation);
+    const [updateGroup, { loading: isLoadingUpdateGroup, error: updateError }] =
+        useMutation<
+            { group: UserGroupModel },
+            { id: ID; group: UserGroupInputModel }
+        >(UpdateUserGroupMutation);
 
     React.useEffect(() => {
         if (data && data.group) {

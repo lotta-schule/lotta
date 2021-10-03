@@ -1,0 +1,94 @@
+.root {
+    margin: var(--lotta-spacing) 0;
+    position: relative;
+}
+
+.publicGroupSelectionLabel {
+    margin: 0;
+}
+
+.inputWrapper {
+    color: inherit;
+}
+
+.tag {
+    display: flex;
+    &.row {
+        display: inline-flex;
+    }
+    justify-content: space-between;
+    align-items: center;
+    height: 24px;
+    margin: 2px;
+    line-height: 22px;
+    background-color: #fafafa;
+    border: 1px solid #e8e8e8;
+    border-radius: 2;
+    box-sizing: content-box;
+    padding: 0 var(--lotta-spacing) 0 calc(2 * var(--lotta-spacing));
+    outline: 0;
+    overflow: hidden;
+
+    &.is-admin-group {
+        font-style: italic;
+    }
+
+    &:focus {
+        border-color: #40a9ff;
+        background-color: #e6f7ff;
+    }
+
+    span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    svg {
+        font-size: 12px;
+        cursor: pointer;
+    }
+}
+
+.listBox {
+    margin: var(--lotta-spacing) 0 0;
+    width: 100%;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    list-style: none;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    overflow: auto;
+    max-height: 250px;
+    z-index: 10000;
+
+    li {
+        padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
+        display: flex;
+
+        span {
+            flex-grow: 1;
+        }
+
+        svg {
+            color: transparent;
+            transition: color ease-in 250ms;
+        }
+    }
+
+    li[aria-selected='true'] {
+        svg {
+            color: rgba(var(--lotta-secondary-color), 1);
+        }
+    }
+
+    li[data-focus='true'] {
+        background-color: rgba(var(--lotta-banner-background-color1), 1);
+        cursor: pointer;
+
+        svg {
+            color: rgba(var(--lotta-disabled-color), 1);
+        }
+    }
+}

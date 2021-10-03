@@ -5,7 +5,6 @@ import {
     DialogContentText,
     DialogActions,
 } from '@material-ui/core';
-import { UpdatePasswordMutation } from 'api/mutation/UpdatePasswordMutation';
 import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
@@ -13,6 +12,7 @@ import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 import { Button } from 'component/general/button/Button';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
+import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql';
 
 export interface UpdatePasswordDialogProps {
     isOpen: boolean;
@@ -28,15 +28,11 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
         isFirstPasswordChange,
         withCurrentPassword,
     }) => {
-        const [
-            showRequestHisecToken,
-            setShowRequestHisecToken,
-        ] = React.useState(false);
+        const [showRequestHisecToken, setShowRequestHisecToken] =
+            React.useState(false);
         const [newPassword, setNewPassword] = React.useState('');
-        const [
-            newPasswordRepetition,
-            setNewPasswordRepetition,
-        ] = React.useState('');
+        const [newPasswordRepetition, setNewPasswordRepetition] =
+            React.useState('');
         const resetForm = () => {
             setNewPassword('');
             setNewPasswordRepetition('');

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { BaseButton, BaseButtonProps } from './BaseButton';
 import clsx from 'clsx';
-import './button.scss';
 
 export type ButtonProps = {
     /**
@@ -47,3 +46,4 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         );
     }
 );
+Button.displayName = 'Button';

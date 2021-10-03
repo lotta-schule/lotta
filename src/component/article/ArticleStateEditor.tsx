@@ -75,3 +75,4 @@ export const ArticleStateEditor = React.memo<ArticleStateEditorProps>(
         );
     }
 );
+ArticleStateEditor.displayName = 'ArticleStateEditor';

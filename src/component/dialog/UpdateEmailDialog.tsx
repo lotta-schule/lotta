@@ -5,7 +5,6 @@ import {
     DialogContentText,
     DialogActions,
 } from '@material-ui/core';
-import { UpdateEmailMutation } from 'api/mutation/UpdateEmailMutation';
 import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
@@ -13,6 +12,7 @@ import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 import { Button } from 'component/general/button/Button';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
+import UpdateEmailMutation from 'api/mutation/UpdateEmailMutation.graphql';
 
 export interface UpdateEmailDialogProps {
     isOpen: boolean;
@@ -21,10 +21,8 @@ export interface UpdateEmailDialogProps {
 
 export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
     ({ isOpen, onRequestClose }) => {
-        const [
-            showRequestHisecToken,
-            setShowRequestHisecToken,
-        ] = React.useState(false);
+        const [showRequestHisecToken, setShowRequestHisecToken] =
+            React.useState(false);
         const [newEmail, setNewEmail] = React.useState('');
         const resetForm = () => {
             setNewEmail('');

@@ -9,16 +9,12 @@ import {
     InfoOutlined,
 } from '@material-ui/icons';
 import {
-    makeStyles,
-    Theme,
-    createStyles,
     Tooltip,
     Toolbar,
     Badge,
     CircularProgress,
     Zoom,
     Breadcrumbs,
-    Link,
 } from '@material-ui/core';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
@@ -30,51 +26,9 @@ import fileExplorerContext, {
 } from './context/FileExplorerContext';
 import { Button } from 'component/general/button/Button';
 
-const useStyles = makeStyles<Theme>((theme: Theme) =>
-    createStyles({
-        toolbar: {
-            [theme.breakpoints.down('sm')]: {
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                '& $actions': {
-                    alignSelf: 'flex-end',
-                },
-            },
-        },
-        spacer: {
-            flexGrow: 1,
-            [theme.breakpoints.down('sm')]: {
-                display: 'none',
-            },
-        },
-        title: {
-            overflow: 'auto',
-            flex: '1 1 auto',
-        },
-        actions: {
-            color: theme.palette.text.secondary,
-            display: 'flex',
-            flex: '0 0 auto',
-        },
-        uploadButton: {
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            opacity: 0,
-        },
-        breadcrumbs: {
-            '& [role=button]': {
-                pointerEvents: 'none',
-                cursor: 'inherit',
-            },
-        },
-    })
-);
+import styles from './FileToolbar.module.scss';
 
 export const FileToolbar = React.memo(() => {
-    const styles = useStyles();
     const isMobile = useIsMobile();
 
     const currentUser = useCurrentUser();
@@ -112,17 +66,17 @@ export const FileToolbar = React.memo(() => {
                         style={{ fontSize: '.85rem' }}
                     >
                         {state.currentPath.length > 1 && (
-                            <Link
-                                color="inherit"
-                                onClick={() =>
+                            <a
+                                onClick={(e) => {
+                                    e.preventDefault();
                                     dispatch({
                                         type: 'setPath',
                                         path: [{ id: null }],
-                                    })
-                                }
+                                    });
+                                }}
                             >
                                 <HomeOutlined />
-                            </Link>
+                            </a>
                         )}
                         {state.currentPath
                             .slice(1)
@@ -137,21 +91,20 @@ export const FileToolbar = React.memo(() => {
                                     )
                                     .join('/');
                                 return (
-                                    <Link
+                                    <a
                                         key={currentPathString}
-                                        color={'inherit'}
-                                        onClick={() =>
+                                        onClick={(e) => {
                                             dispatch({
                                                 type: 'setPath',
                                                 path: [
                                                     { id: null },
                                                     ...currentPathComponents,
                                                 ],
-                                            })
-                                        }
+                                            });
+                                        }}
                                     >
                                         {pathDirectory.id && pathDirectory.name}
-                                    </Link>
+                                    </a>
                                 );
                             })}
                     </Breadcrumbs>
@@ -334,3 +287,4 @@ export const FileToolbar = React.memo(() => {
         </>
     );
 });
+FileToolbar.displayName = 'FileToolbar';

@@ -3,7 +3,7 @@ import { Close } from '@material-ui/icons';
 import { Button } from '../button/Button';
 import clsx from 'clsx';
 
-import './tag.scss';
+import styles from './tag.module.scss';
 
 export interface TagProps {
     onDelete?: Function;
@@ -19,13 +19,13 @@ export const Tag = React.memo<TagProps>(
             <div
                 data-testid={'Tag'}
                 {...props}
-                className={clsx('lotta-tag', className)}
+                className={clsx(styles.root, className)}
             >
                 {children}
                 {onDelete && (
                     <Button
                         small
-                        className={'lotta-tag__delete-button'}
+                        className={styles.deleteButton}
                         aria-label={`Tag ${children} löschen`}
                         onClick={() => onDelete()}
                         icon={<Close />}
@@ -35,3 +35,4 @@ export const Tag = React.memo<TagProps>(
         );
     }
 );
+Tag.displayName = 'Tag';

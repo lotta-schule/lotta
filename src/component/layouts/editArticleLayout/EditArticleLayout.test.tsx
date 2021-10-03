@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
-import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
 import { EditArticleLayout } from './EditArticleLayout';
-import { ArticleIsUpdatedSubscription } from 'api/subscription/GetArticleSubscription';
 import { ContentModuleType } from 'model';
+import { Router } from 'next/router';
+import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
+import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
 import MockDate from 'mockdate';
 import userEvent from '@testing-library/user-event';
 
@@ -13,7 +14,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser, useCache: true }
+            { currentUser: SomeUser }
         );
     });
 
@@ -21,7 +22,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         const screen = render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser, useCache: true }
+            { currentUser: SomeUser }
         );
         expect(screen.getByTestId('ArticleEditable')).toBeVisible();
     });
@@ -30,7 +31,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         const screen = render(
             <EditArticleLayout article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser, useCache: true }
+            { currentUser: SomeUser }
         );
         expect(screen.getByTestId('EditArticleFooter')).toBeVisible();
     });
@@ -40,7 +41,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(screen.getByTestId('AddModuleBar')).toBeVisible();
         });
@@ -49,7 +50,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(screen.queryAllByTestId('ContentModule')).toHaveLength(3);
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
@@ -123,7 +124,6 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                             result: onSave,
                         },
                     ],
-                    useCache: true,
                 }
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
@@ -134,8 +134,9 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
         }, 20000);
 
         it('should redirect to article page after saving', async () => {
-            const onChangeLocation = jest.fn(({ location }) => {
-                expect(location.pathname).toMatch(/^\/a\//);
+            const onPushLocation = jest.fn(async (url: any) => {
+                expect(url).toMatch(/^\/a\//);
+                return true;
             });
             const onSave = jest.fn(() => ({
                 data: { article: { ...Weihnachtsmarkt, ...variables.article } },
@@ -192,14 +193,17 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                             result: onSave,
                         },
                     ],
-                    useCache: true,
-                    onChangeLocation,
+                    router: {
+                        pathname: '/a/[slug]/edit',
+                        as: `/a/${Weihnachtsmarkt.id}/edit`,
+                        onPush: onPushLocation,
+                    },
                 }
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
             userEvent.click(screen.getByRole('button', { name: /speichern/i }));
             await waitFor(() => {
-                expect(onChangeLocation).toHaveBeenCalled();
+                expect(onPushLocation).toHaveBeenCalled();
             });
         }, 20000);
     });
@@ -223,7 +227,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                                     ...Weihnachtsmarkt,
                                     preview: 'New Preview-Text',
                                 };
-                                setImmediate(() => {
+                                setTimeout(() => {
                                     screen.rerender(
                                         <EditArticleLayout article={article} />
                                     );
@@ -232,7 +236,6 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                             },
                         },
                     ],
-                    useCache: true,
                 }
             );
             expect(
@@ -240,6 +243,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             ).toHaveValue(
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // wait for subscription
             await waitFor(() => {
                 expect(
                     screen.getByRole('textbox', { name: /preview/i })
@@ -265,7 +269,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                                     ...Weihnachtsmarkt,
                                     preview: 'New Preview-Text',
                                 };
-                                setImmediate(() => {
+                                setTimeout(() => {
                                     screen.rerender(
                                         <EditArticleLayout article={article} />
                                     );
@@ -274,7 +278,6 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                             },
                         },
                     ],
-                    useCache: true,
                 }
             );
             expect(
@@ -291,7 +294,7 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                     })
                 ).toHaveValue('New Preview-Text');
             });
-        }, 20000);
+        }, 30_000);
 
         it('should show a dialog when receiving update including content-module change via subscription after adding a content module', async () => {
             const screen = render(
@@ -309,22 +312,23 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                             result: () => {
                                 const article = {
                                     ...Weihnachtsmarkt,
-                                    contentModules: Weihnachtsmarkt.contentModules.concat(
-                                        [
+                                    contentModules:
+                                        Weihnachtsmarkt.contentModules.concat([
                                             {
                                                 id: '9999999991111111110',
                                                 type: ContentModuleType.TITLE,
                                                 sortKey: 20,
-                                                insertedAt: new Date().toISOString(),
-                                                updatedAt: new Date().toISOString(),
+                                                insertedAt:
+                                                    new Date().toISOString(),
+                                                updatedAt:
+                                                    new Date().toISOString(),
                                                 files: [],
                                                 configuration: {},
                                                 content: {},
                                             } as any,
-                                        ]
-                                    ),
+                                        ]),
                                 };
-                                setImmediate(() => {
+                                setTimeout(() => {
                                     screen.rerender(
                                         <EditArticleLayout article={article} />
                                     );
@@ -333,7 +337,6 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                             },
                         },
                     ],
-                    useCache: true,
                 }
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
@@ -343,68 +346,65 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
                     /beitrag.*aktualisiert/i
                 );
             });
-        }, 20000);
+        }, 30_000);
     });
 
     describe('issue warning when user navigates away', () => {
+        const originalConfirm = global.confirm;
+        beforeEach(() => {
+            global.confirm = jest.fn(() => true);
+        });
+        afterEach(() => {
+            global.confirm = originalConfirm;
+        });
         it('should show a prompt if user has made a change', async () => {
-            let called = false;
-            const spy = jest.spyOn(window, 'addEventListener');
-            spy.mockImplementation((eventName, callback) => {
-                if (eventName === 'beforeunload') {
-                    const event = new Event('beforeunload');
-                    if (typeof callback === 'function') {
-                        expect(callback(event)).toMatch(
-                            /möchtest du die seite wirklich verlassen/i
-                        );
-                        called = true;
-                    } else {
-                        expect(false).toBe(true);
-                    }
-                }
-            });
+            let router: Router;
             const screen = render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
                 {},
                 {
                     currentUser: SomeUser,
-                    useCache: true,
+                    router: {
+                        as: `/c/${Weihnachtsmarkt.id}`,
+                        getInstance: (_router) => {
+                            router = _router;
+                        },
+                    },
                 }
             );
             userEvent.type(
                 screen.getByRole('textbox', { name: /title/i }),
                 'Bla'
             );
-            window.location.href = '/';
             await waitFor(() => {
-                expect(called).toBe(true);
+                expect(router).not.toBeNull();
+            });
+            router!.events.emit('routeChangeStart');
+            await waitFor(() => {
+                expect(global.confirm).toHaveBeenCalled();
             });
         });
 
         it('should not show a prompt if user has not made changes', async () => {
-            let called = false;
-            const spy = jest.spyOn(window, 'addEventListener');
-            spy.mockImplementation((eventName, callback) => {
-                if (eventName === 'beforeunload') {
-                    const event = new Event('beforeunload');
-                    if (typeof callback === 'function') {
-                        expect(callback(event)).toBeNull();
-                        called = true;
-                    } else {
-                        expect(false).toBe(true);
-                    }
-                }
-            });
+            let router: Router;
             render(
                 <EditArticleLayout article={Weihnachtsmarkt} />,
                 {},
                 {
                     currentUser: SomeUser,
-                    useCache: true,
+                    router: {
+                        as: `/c/${Weihnachtsmarkt.id}`,
+                        getInstance: (_router) => {
+                            router = _router;
+                        },
+                    },
                 }
             );
-            window.location.href = '/';
-            expect(called).toBe(false);
+            await waitFor(() => {
+                expect(router).not.toBeNull();
+            });
+            router!.events.emit('routeChangeStart');
+            expect(global.confirm).not.toHaveBeenCalled();
         });
     });
 });

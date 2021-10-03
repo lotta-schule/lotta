@@ -8,10 +8,10 @@ import {
 } from '@material-ui/core';
 import { TenantModel, UserGroupModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
-import { GetTenantQuery } from 'api/query/GetTenantQuery';
-import { DeleteUserGroupMutation } from 'api/mutation/DeleteUserGroupMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
+import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 export interface DeleteUserGroupDialogProps {
     isOpen: boolean;

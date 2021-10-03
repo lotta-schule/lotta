@@ -3,6 +3,10 @@ import { deDE } from '@material-ui/core/locale';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 import { setThemeDecorator } from './addons/css-vars-theme/setThemeDecorator';
 import '../src/index.scss';
+import '../src/component/general/button/base-button.scss';
+import '../src/component/general/button/button.scss';
+import '../src/component/general/button/button-group.scss';
+import '../src/component/general/button/navigation-button.scss';
 
 export const parameters = {
     actions: { argTypesRegex: '^on[A-Z].*' },

@@ -1,15 +1,9 @@
 import * as React from 'react';
-import { makeStyles } from '@material-ui/core';
-import { ArticleModel } from '../../model';
-import { ContentModule } from './module/ContentModule';
+import { ArticleModel } from 'model';
 import { ArticleTitle } from './ArticleTitle';
+import { ContentModule } from './module/ContentModule';
 
-const useStyles = makeStyles((theme) => ({
-    root: {},
-    contentModules: {
-        backgroundColor: theme.palette.background.paper,
-    },
-}));
+import styles from './Article.module.scss';
 
 interface ArticleProps {
     article: ArticleModel;
@@ -17,8 +11,6 @@ interface ArticleProps {
 }
 
 export const Article = React.memo<ArticleProps>(({ article }) => {
-    const styles = useStyles();
-
     return (
         <article className={styles.root} data-testid={'Article'}>
             <ArticleTitle article={article} />

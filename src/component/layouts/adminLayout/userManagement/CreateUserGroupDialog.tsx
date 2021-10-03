@@ -7,13 +7,13 @@ import {
 } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { TenantModel, UserGroupModel } from 'model';
-import { CreateUserGroupMutation } from 'api/mutation/CreateUserGroupMutation';
-import { GetTenantQuery } from 'api/query/GetTenantQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Button } from 'component/general/button/Button';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
+import CreateUserGroupMutation from 'api/mutation/CreateUserGroupMutation.graphql';
+import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 export interface CreateUserGroupDialogProps {
     isOpen: boolean;

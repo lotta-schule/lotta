@@ -1,0 +1,16 @@
+.heading {
+    margin-bottom: calc(3 * var(--lotta-spacing));
+}
+
+.expansionSummary {
+    // TODO: This should probably be other color
+    background-color: rgba(var(--lotta-banner-background-color1), 1);
+    & > div > div {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.selected {
+    font-weight: bolder;
+}

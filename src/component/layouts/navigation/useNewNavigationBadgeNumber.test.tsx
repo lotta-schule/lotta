@@ -4,8 +4,6 @@ import { waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { MessageModel, UserModel } from 'model';
 import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
-import { GetMessagesQuery } from 'api/query/GetMessagesQuery';
 import {
     getSomeMessages,
     KeinErSieEsUser,
@@ -15,7 +13,9 @@ import {
     SomeUserin,
 } from 'test/fixtures';
 import { InMemoryCache } from '@apollo/client';
-import { ReceiveMessageSubscription } from 'api/subscription/ReceiveMessageSubscription';
+import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
+import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
+import GetMessagesQuery from 'api/query/GetMessagesQuery.graphql';
 
 const user = {
     ...SomeUser,
@@ -31,6 +31,7 @@ describe('component/layouts/navigation/useNewMessagesBadgeNumber', () => {
         const cache = new InMemoryCache({ addTypename: false });
         cache.writeQuery({ query: GetCurrentUserQuery, data: { currentUser } });
         cache.writeQuery({ query: GetMessagesQuery, data: { messages } });
+        // eslint-disable-next-line react/display-name
         return ({ children }) => (
             <MockedProvider
                 mocks={[

@@ -10,10 +10,10 @@ import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
 import { FileModel, DirectoryModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { DeleteFileMutation } from 'api/mutation/DeleteFileMutation';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import fileExplorerContext from './context/FileExplorerContext';
+import DeleteFileMutation from 'api/mutation/DeleteFileMutation.graphql';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 export const DeleteFilesDialog = memo(() => {
     const [state, dispatch] = useContext(fileExplorerContext);

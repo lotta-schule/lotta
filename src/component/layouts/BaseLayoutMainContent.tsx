@@ -1,12 +1,12 @@
-import React, { CSSProperties, ReactNode, ReactNodeArray, memo } from 'react';
+import * as React from 'react';
 import { Grid } from '@material-ui/core';
 
 export interface BaseLayoutMainContentProps {
-    style?: CSSProperties;
-    children?: ReactNode | ReactNodeArray;
+    style?: React.CSSProperties;
+    children?: React.ReactNode | React.ReactNodeArray;
 }
 
-export const BaseLayoutMainContent = memo<BaseLayoutMainContentProps>(
+export const BaseLayoutMainContent = React.memo<BaseLayoutMainContentProps>(
     ({ children, style }) => {
         return (
             <Grid item xs>
@@ -17,3 +17,4 @@ export const BaseLayoutMainContent = memo<BaseLayoutMainContentProps>(
         );
     }
 );
+BaseLayoutMainContent.displayName = 'BaseLayoutMainContent';

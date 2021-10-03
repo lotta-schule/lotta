@@ -19,6 +19,9 @@ export const ErrorMessage = React.memo<ErrorMessageProps>(
                 return errorMessage.replace(/^GraphQL error: /, '');
             }
         }, [error]);
+        if (!(children || errorMessage)) {
+            return null;
+        }
         return (
             <Message
                 role={'alert'}
@@ -31,3 +34,4 @@ export const ErrorMessage = React.memo<ErrorMessageProps>(
         );
     }
 );
+ErrorMessage.displayName = 'ErrorMessage';

@@ -1,0 +1,11 @@
+mutation CreateUserGroup($group: UserGroupInput) {
+    group: createUserGroup(group: $group) {
+        id
+        name
+        isAdminGroup
+        sortKey
+        enrollmentTokens {
+            token
+        }
+    }
+}

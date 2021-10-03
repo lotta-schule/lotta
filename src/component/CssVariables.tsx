@@ -23,6 +23,9 @@ export const CssVariables = React.memo(() => {
             primaryColor: decomposeColor(
                 theme.palette.secondary.main
             ).values.slice(0, 3),
+            secondaryColor: decomposeColor(
+                theme.palette.primary.main
+            ).values.slice(0, 3),
             errorColor: decomposeColor(theme.palette.error.main).values.slice(
                 0,
                 3
@@ -49,10 +52,17 @@ export const CssVariables = React.memo(() => {
             pageBackgroundColor: decomposeColor(
                 theme.palette.background.default
             ).values.slice(0, 3),
+            dividerColor: decomposeColor(theme.palette.divider).values.slice(
+                0,
+                3
+            ),
             bannerBackgroundColor1: [54, 123, 240],
             bannerBackgroundColor2: [54, 123, 240],
+            typographyTitleFontFamily: (theme.overrides as any)
+                ?.LottaArticlePreview.title.fontFamily as string,
             typographyFontFamily: theme.typography.fontFamily as string,
             spacing: `${theme.spacing(1)}px`,
+            borderRadius: `${theme.shape.borderRadius}px`,
         }),
         [theme]
     );
@@ -72,3 +82,4 @@ export const CssVariables = React.memo(() => {
 
     return null;
 });
+CssVariables.displayName = 'CssVariables';

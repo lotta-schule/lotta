@@ -93,3 +93,4 @@ export const CategorySelect = React.memo<CategorySelectProps>(
         );
     }
 );
+CategorySelect.displayName = 'CategorySelect';

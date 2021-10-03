@@ -1,20 +1,21 @@
 import * as React from 'react';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { File } from 'util/model';
-import { CardContent, Typography, Grid, Divider } from '@material-ui/core';
+import { CardContent, Grid, Divider } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
-import { useStyles } from './Download';
 import { BackgroundImg } from 'react-cloudimage-responsive';
 import { CloudDownload } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
+import { useServerData } from 'component/ServerDataContext';
+
+import styles from './Download.module.scss';
 
 export interface ShowProps {
     contentModule: ContentModuleModel;
 }
 
 export const Show = React.memo<ShowProps>(({ contentModule }) => {
-    const styles = useStyles();
-
+    const { baseUrl } = useServerData();
     const getConfiguration = (file: FileModel) => {
         if (
             contentModule.configuration &&
@@ -73,7 +74,10 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                             minWidth: 130,
                                             maxWidth: 160,
                                         }}
-                                        href={File.getFileRemoteLocation(file)}
+                                        href={File.getFileRemoteLocation(
+                                            baseUrl,
+                                            file
+                                        )}
                                         target={'_blank'}
                                         icon={<CloudDownload />}
                                         {...({
@@ -102,6 +106,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                                         'transparent 50% 50% / cover no-repeat',
                                                 }}
                                                 src={File.getFileRemoteLocation(
+                                                    baseUrl,
                                                     file
                                                 )}
                                                 params="func=crop&gravity=auto"
@@ -111,7 +116,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                 <Grid item xs={12} sm={7} md={8}>
                                     <div>
                                         {getConfiguration(file).description && (
-                                            <Typography
+                                            <div
                                                 className={
                                                     styles.downloadDescription
                                                 }
@@ -120,18 +125,18 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                                     getConfiguration(file)
                                                         .description
                                                 }
-                                            </Typography>
+                                            </div>
                                         )}
-                                        <Typography className={styles.filename}>
+                                        <div className={styles.filename}>
                                             {file.filename}
-                                        </Typography>
-                                        <Typography
+                                        </div>
+                                        <div
                                             className={styles.secondaryHeading}
                                         >
                                             {new FileSize(
                                                 file.filesize
                                             ).humanize()}
-                                        </Typography>
+                                        </div>
                                     </div>
                                 </Grid>
                                 <Divider
@@ -144,3 +149,4 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
         </CardContent>
     );
 });
+Show.displayName = 'DownloadShow';

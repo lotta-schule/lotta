@@ -1,4 +1,4 @@
-import React, { createElement, memo, ComponentType } from 'react';
+import * as React from 'react';
 import {
     Lens,
     Bookmark,
@@ -19,11 +19,14 @@ import {
     Favorite,
 } from '@material-ui/icons';
 import { WidgetIconModel } from 'model';
-import { Typography, makeStyles, SvgIconProps } from '@material-ui/core';
-import { Theme } from '@material-ui/core/styles';
+import { SvgIconProps } from '@material-ui/core';
 import clsx from 'clsx';
 
-export const iconNameMapping: { [key: string]: ComponentType<SvgIconProps> } = {
+import styles from './WidgetIcon.module.scss';
+
+export const iconNameMapping: {
+    [key: string]: React.ComponentType<SvgIconProps>;
+} = {
     lens: Lens,
     bookmark: Bookmark,
     calendartoday: CalendarToday,
@@ -49,68 +52,32 @@ export interface WidgetIconProps {
     className?: string;
 }
 
-const useStyles = makeStyles<
-    Theme,
-    Pick<WidgetIconProps, 'size'> & { color?: string }
->((theme) => ({
-    root: {
-        position: 'relative',
-        height: ({ size }) => size,
-        width: ({ size }) => size,
-    },
-    icon: {
-        textAlign: 'center',
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        height: '100%',
-        width: '100%',
-    },
-    iconSvg: {
-        height: ({ size }) => size,
-        padding: 5,
-        width: 'auto',
-        fontSize: '1em',
-        boxSizing: 'border-box',
-    },
-    overlayText: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        fontSize: ({ size }) => size,
-        height: '100%',
-        width: '100%',
-        '& span': {
-            color: ({ color }) =>
-                color
-                    ? ((theme.palette as any)[color] as any)?.main ??
-                      theme.palette.background.paper
-                    : theme.palette.background.paper,
-            verticalAlign: 'middle',
-            fontWeight: 'bold',
-            fontSize: '.3em',
-            paddingTop: 2,
-            lineHeight: 1,
-        },
-    },
-}));
-
-export const WidgetIcon = memo<WidgetIconProps>(({ icon, size, className }) => {
-    const styles = useStyles({ size, color: icon?.overlayTextColor });
-    return (
-        <div className={clsx(styles.root, className)}>
-            <div className={styles.icon}>
-                {createElement(iconNameMapping[icon?.iconName ?? 'lens'], {
-                    color: 'secondary',
-                    className: styles.iconSvg,
+export const WidgetIcon = React.memo<WidgetIconProps>(
+    ({ icon, size, className }) => {
+        return (
+            <div
+                className={clsx(styles.root, className, {
+                    [styles.primaryColor]: icon?.overlayTextColor === 'primary',
+                    [styles.secondaryColor]:
+                        icon?.overlayTextColor === 'secondary',
                 })}
+                style={{ width: size, height: size }}
+            >
+                <div className={styles.icon}>
+                    {React.createElement(
+                        iconNameMapping[icon?.iconName ?? 'lens'],
+                        {
+                            color: 'secondary',
+                            className: styles.iconSvg,
+                            style: { height: size },
+                        }
+                    )}
+                </div>
+                <div className={styles.overlayText} style={{ fontSize: size }}>
+                    <span>{icon?.overlayText}</span>
+                </div>
             </div>
-            <div className={styles.overlayText}>
-                <Typography component={'span'}>{icon?.overlayText}</Typography>
-            </div>
-        </div>
-    );
-});
+        );
+    }
+);
+WidgetIcon.displayName = 'WidgetIcon';

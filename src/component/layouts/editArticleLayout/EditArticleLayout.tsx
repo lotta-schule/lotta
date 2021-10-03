@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ArticleModel, ID } from '../../../model';
+import { ArticleModel, ID } from 'model';
+import { Button } from 'component/general/button/Button';
 import { ArticleEditable as Article } from '../../article/ArticleEditable';
 import { EditArticleFooter } from './EditArticleFooter';
 import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
@@ -7,39 +8,36 @@ import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
 import { useMutation, useSubscription } from '@apollo/client';
-import { UpdateArticleMutation } from 'api/mutation/UpdateArticleMutation';
-import { ArticleIsUpdatedSubscription } from 'api/subscription/GetArticleSubscription';
-import { GetArticleQuery } from 'api/query/GetArticleQuery';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import {
-    Button,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
 } from '@material-ui/core';
-import { Prompt } from 'react-router-dom';
+import { useRouter } from 'next/router';
+import { useBeforeUnloadConfirmation } from 'util/useBeforeUnloadConfirmation';
+import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
+import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
+import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 import omit from 'lodash/omit';
-import useRouter from 'use-react-router';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
 }
 
+const BEFORE_LEAVE_MESSAGE =
+    'Möchtest du die Seite wirklich verlassen? Ungespeicherte Änderungen gehen verloren.';
+
 export const EditArticleLayout = React.memo<ArticleLayoutProps>(
     ({ article }) => {
-        const { history } = useRouter();
+        const router = useRouter();
         const currentUser = useCurrentUser();
-
-        const BEFORE_LEAVE_MESSAGE =
-            'Möchtest du die Seite wirklich verlassen? Ungespeicherte Änderungen gehen verloren.';
 
         const [isArticleDirty, setIsArticleDirty] = React.useState(false);
         const [editedArticle, setEditedArticle] = React.useState(article);
-        const [
-            isUpdatedArticleModalVisible,
-            setIsUpdatedArticleModalVisible,
-        ] = React.useState(false);
+        const [isUpdatedArticleModalVisible, setIsUpdatedArticleModalVisible] =
+            React.useState(false);
         React.useEffect(() => {
             if (article.id === editedArticle.id) {
                 setEditedArticle({
@@ -50,20 +48,18 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
             }
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [article]);
-        const [
-            saveArticle,
-            { loading: isLoading, data: updatedArticleData },
-        ] = useMutation<{ article: ArticleModel }, { id: ID; article: any }>(
-            UpdateArticleMutation,
-            {
-                onCompleted: ({ article }) => {
-                    setIsArticleDirty(false);
-                    if (article) {
-                        history.push(ArticleUtil.getPath(article));
-                    }
-                },
-            }
-        );
+        const [saveArticle, { loading: isLoading, data: updatedArticleData }] =
+            useMutation<{ article: ArticleModel }, { id: ID; article: any }>(
+                UpdateArticleMutation,
+                {
+                    onCompleted: ({ article }) => {
+                        setIsArticleDirty(false);
+                        if (article) {
+                            router.push(ArticleUtil.getPath(article));
+                        }
+                    },
+                }
+            );
         useSubscription<{ article: ArticleModel }, { id: ID }>(
             ArticleIsUpdatedSubscription,
             {
@@ -79,11 +75,12 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                             variables: { id: article.id },
                             data,
                         });
-                        const updatedContentModules = data.article.contentModules.filter(
-                            (cm) => {
-                                const existingModule = editedArticle.contentModules.find(
-                                    (_cm) => _cm.id === cm.id
-                                );
+                        const updatedContentModules =
+                            data.article.contentModules.filter((cm) => {
+                                const existingModule =
+                                    editedArticle.contentModules.find(
+                                        (_cm) => _cm.id === cm.id
+                                    );
                                 return (
                                     existingModule &&
                                     new Date(cm.updatedAt).getTime() >
@@ -91,11 +88,11 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                                             existingModule.updatedAt
                                         ).getTime()
                                 );
-                            }
-                        );
-                        const newContentModules = editedArticle.contentModules.filter(
-                            (_cm) => /^-/.test(_cm.id)
-                        );
+                            });
+                        const newContentModules =
+                            editedArticle.contentModules.filter((_cm) =>
+                                /^-/.test(_cm.id)
+                            );
                         if (
                             newContentModules.length ||
                             updatedContentModules.length
@@ -107,25 +104,13 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
             }
         );
 
-        React.useEffect(() => {
-            const listener: OnBeforeUnloadEventHandler = (e) => {
-                e.preventDefault();
-                e.returnValue = true;
-                return BEFORE_LEAVE_MESSAGE;
-            };
-            if (isArticleDirty) {
-                window.addEventListener('beforeunload', listener);
-                return () => {
-                    window.removeEventListener('beforeunload', listener);
-                };
-            }
-        }, [isArticleDirty]);
+        useBeforeUnloadConfirmation(isArticleDirty, BEFORE_LEAVE_MESSAGE);
 
         React.useEffect(() => {
             if (!currentUser) {
-                history.push(ArticleUtil.getPath(article));
+                router.push(ArticleUtil.getPath(article));
             }
-        }, [article, currentUser, history]);
+        }, [article, currentUser, router]);
 
         const changeArticle = (article: ArticleModel) => {
             setIsArticleDirty(true);
@@ -135,10 +120,6 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
         return (
             <>
                 <BaseLayoutMainContent>
-                    <Prompt
-                        message={BEFORE_LEAVE_MESSAGE}
-                        when={isArticleDirty}
-                    />
                     <Article
                         article={editedArticle}
                         onUpdateArticle={changeArticle}
@@ -178,8 +159,8 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                                     'isPinnedToTop',
                                 ]) as ArticleModel),
                                 ...additionalProps,
-                                contentModules: editedArticle.contentModules.map(
-                                    (cm) => ({
+                                contentModules:
+                                    editedArticle.contentModules.map((cm) => ({
                                         ...cm,
                                         content: cm.content
                                             ? JSON.stringify(cm.content)
@@ -187,37 +168,37 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                                         configuration: JSON.stringify(
                                             cm.configuration || {}
                                         ),
-                                    })
-                                ),
+                                    })),
                             };
                             saveArticle({
                                 variables: {
                                     id: article.id,
                                     article: {
                                         ...omit(article, ['id']),
-                                        contentModules: article.contentModules.map(
-                                            (cm) => ({
-                                                ...omit(
-                                                    cm,
-                                                    ...(/^-/.test(cm.id)
-                                                        ? ['id']
-                                                        : []),
-                                                    'updatedAt',
-                                                    'insertedAt'
-                                                ),
-                                                content: cm.content || null,
-                                                files: cm.files?.map(
-                                                    ({ id }) => ({ id })
-                                                ),
-                                            })
-                                        ),
-                                        previewImageFile: article.previewImageFile
-                                            ? {
-                                                  id:
-                                                      article.previewImageFile
-                                                          .id,
-                                              }
-                                            : null,
+                                        contentModules:
+                                            article.contentModules.map(
+                                                (cm) => ({
+                                                    ...omit(
+                                                        cm,
+                                                        ...(/^-/.test(cm.id)
+                                                            ? ['id']
+                                                            : []),
+                                                        'updatedAt',
+                                                        'insertedAt'
+                                                    ),
+                                                    content: cm.content || null,
+                                                    files: cm.files?.map(
+                                                        ({ id }) => ({ id })
+                                                    ),
+                                                })
+                                            ),
+                                        previewImageFile:
+                                            article.previewImageFile
+                                                ? {
+                                                      id: article
+                                                          .previewImageFile.id,
+                                                  }
+                                                : null,
                                         category: article.category
                                             ? { id: article.category.id }
                                             : null,
@@ -257,7 +238,6 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                                 Nichts tun
                             </Button>
                             <Button
-                                color={'primary'}
                                 onClick={() => {
                                     changeArticle(article);
                                     setIsArticleDirty(false);

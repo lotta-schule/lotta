@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
+import * as React from 'react';
+import { CardContent } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { ImageImage } from './ImageImage';
-import { CardContent } from '@material-ui/core';
 
 export interface ImageProps {
     contentModule: ContentModuleModel<{ caption: string }>;
@@ -11,7 +11,7 @@ export interface ImageProps {
     ) => void;
 }
 
-export const Image = memo<ImageProps>(
+export const Image = React.memo<ImageProps>(
     ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
         const imageCaption = contentModule.content?.caption;
         return (
@@ -34,3 +34,4 @@ export const Image = memo<ImageProps>(
         );
     }
 );
+Image.displayName = 'Image';

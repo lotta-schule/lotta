@@ -2,9 +2,9 @@ import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdateEmailDialog } from './UpdateEmailDialog';
-import { UpdateEmailMutation } from 'api/mutation/UpdateEmailMutation';
-import { RequestHisecTokenMutation } from 'api/mutation/RequestHisecTokenMutation';
 import { MockedResponse } from '@apollo/client/testing';
+import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
+import UpdateEmailMutation from 'api/mutation/UpdateEmailMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {

@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Button } from 'component/general/button/Button';
-import { useSlate } from 'slate-react';
+import { Image as ImageIcon } from '@material-ui/icons';
 import { Range } from 'slate';
-import { Image } from '@material-ui/icons';
-import { insertImage } from './SlateUtils';
-import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { useSlate } from 'slate-react';
 import { File } from 'util/model';
 import { FileModel } from 'model';
+import { Button } from 'component/general/button/Button';
+import { insertImage } from './SlateUtils';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { useServerData } from 'component/ServerDataContext';
 
 export interface EditToolbarImageButtonProps {
     onImageAdded?(): void;
@@ -15,11 +16,10 @@ export interface EditToolbarImageButtonProps {
 export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
     onImageAdded,
 }) => {
+    const { baseUrl } = useServerData();
     const editor = useSlate();
-    const [
-        lastEditorSelection,
-        setLastEditorSelection,
-    ] = React.useState<Range | null>(null);
+    const [lastEditorSelection, setLastEditorSelection] =
+        React.useState<Range | null>(null);
 
     const onClickImage = React.useCallback(
         (file: FileModel) => {
@@ -30,17 +30,17 @@ export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
                     newProperties: lastEditorSelection,
                 });
             }
-            insertImage(editor, File.getFileRemoteLocation(file));
+            insertImage(editor, File.getFileRemoteLocation(baseUrl, file));
             setTimeout(() => {
                 onImageAdded?.();
             }, 100);
         },
-        [editor, lastEditorSelection, onImageAdded]
+        [baseUrl, editor, lastEditorSelection, onImageAdded]
     );
 
     return (
         <SelectFileButton
-            label={<Image />}
+            label={<ImageIcon />}
             buttonComponent={Button}
             buttonComponentProps={{ size: 'small', value: 'select-file' }}
             onSelect={onClickImage}

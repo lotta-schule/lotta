@@ -1,8 +1,10 @@
-import React, { memo } from 'react';
-import { ContentModuleModel } from '../../../../model';
-import { CardContent, makeStyles } from '@material-ui/core';
+import * as React from 'react';
+import { CardContent } from '@material-ui/core';
+import { ContentModuleModel } from 'model';
 import { Edit } from './Edit';
 import { Show } from './Show';
+
+import styles from './Title.module.scss';
 
 export interface TitleProps {
     contentModule: ContentModuleModel;
@@ -10,20 +12,8 @@ export interface TitleProps {
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        paddingTop: 30,
-        paddingBottom: 0,
-        margin: '0 16.6%',
-        [theme.breakpoints.down('sm')]: {
-            margin: 0,
-        },
-    },
-}));
-
-export const Title = memo<TitleProps>(
+export const Title = React.memo<TitleProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-        const styles = useStyles();
         return (
             <CardContent
                 className={styles.root}
@@ -42,3 +32,4 @@ export const Title = memo<TitleProps>(
         );
     }
 );
+Title.displayName = 'Title';

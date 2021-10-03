@@ -5,19 +5,15 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    Theme,
     Checkbox,
     CircularProgress,
-    fade,
-    Typography,
 } from '@material-ui/core';
+import { every, range, some, uniqBy } from 'lodash';
 import { Button } from 'component/general/button/Button';
-import { makeStyles } from '@material-ui/styles';
 import { useQuery } from '@apollo/client';
 import { ArrowBackRounded } from '@material-ui/icons';
 import { useDropzone } from 'react-dropzone';
 import { FileModel, FileModelType, DirectoryModel } from 'model';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { DirectoryTableRow } from './DirectoryTableRow';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { FileTableRow } from './FileTableRow';
@@ -28,117 +24,19 @@ import { useTranslation } from 'react-i18next';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
-import some from 'lodash/some';
-import every from 'lodash/every';
-import uniqBy from 'lodash/uniqBy';
-import range from 'lodash/range';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import clsx from 'clsx';
+
+import styles from './FileTable.module.scss';
 
 export interface FileTableProps {
     fileFilter?(file: FileModel): boolean;
 }
 
-const useStyles = makeStyles<Theme, { filesAreEditable: boolean }>(
-    (theme: Theme) => ({
-        root: {
-            position: 'relative',
-            borderColor: '2px solid transparent',
-            transition: 'ease-out 250ms all',
-            border: '2px dashed transparent',
-            outline: 'none',
-            flexGrow: 1,
-            flexShrink: 1,
-        },
-        isDragActive: {
-            backgroundColor: fade(theme.palette.secondary.main, 0.075),
-            border: '2px dashed',
-            borderColor: theme.palette.secondary.main,
-        },
-        dragHelpText: {
-            display: 'block',
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: '#333',
-            fontSize: '1.2rem',
-            textShadow: '1px 1px 4px #f523',
-        },
-        table: {
-            display: 'flex',
-            flexDirection: 'column',
-            '& thead': {
-                display: 'flex',
-                width: '100%',
-            },
-            '& tbody': {
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-                overflowY: 'scroll',
-                height: 600,
-                maxHeight: '50vh',
-                '& tr': {
-                    cursor: 'pointer',
-                },
-            },
-            '& tr': {
-                display: 'flex',
-                width: '100%',
-                flexShrink: 0,
-                boxSizing: 'border-box',
-                '&.selected, &.selected:hover': {
-                    backgroundColor: theme.palette.action.selected,
-                },
-                '& > td, & > th': {
-                    userSelect: 'none',
-                    padding: theme.spacing(1),
-                    boxSizing: 'border-box',
-                    '&:nth-child(1)': {
-                        width: '10%',
-                        display: ({ filesAreEditable }) =>
-                            filesAreEditable ? 'none' : 'initial',
-                    },
-                    '&:nth-child(2)': {
-                        width: '2em',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                    },
-                    '&:nth-child(3)': {
-                        width: 'auto',
-                        flexGrow: 1,
-                        flexShrink: 1,
-                    },
-                    '&:nth-child(5)': {
-                        width: '3em',
-                        paddingTop: 0,
-                        paddingBottom: 0,
-                    },
-                },
-                '& > td': {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    flexGrow: 0,
-                    flexShrink: 0,
-                },
-            },
-        },
-    })
-);
-
 export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
     const { t } = useTranslation();
     const [state, dispatch] = React.useContext(fileExplorerContext);
-    const styles = useStyles({
-        filesAreEditable: state.mode === FileExplorerMode.ViewAndEdit,
-    });
+    const filesAreEditable = state.mode === FileExplorerMode.ViewAndEdit;
 
     const {
         data,
@@ -380,19 +278,20 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
             className={clsx(styles.root, {
                 [styles.isDragActive]: isDragActive,
                 [styles.isDragAccept]: isDragAccept,
+                [styles.isEditable]: filesAreEditable,
             })}
         >
             {!isDragAccept && isDragActive && (
-                <Typography variant={'caption'} className={styles.dragHelpText}>
+                <div className={styles.dragHelpText}>
                     Dateien hierher ziehen
-                </Typography>
+                </div>
             )}
             {isDragAccept && (
-                <Typography variant={'caption'} className={styles.dragHelpText}>
+                <div className={styles.dragHelpText}>
                     {t('files.explorer.dropFilesToUpload', {
                         count: draggedFiles.length,
                     })}
-                </Typography>
+                </div>
             )}
             <ErrorMessage error={error} />
             <Table size={'small'} className={styles.table}>
@@ -536,3 +435,4 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
         </div>
     );
 });
+FileTable.displayName = 'FileTable';

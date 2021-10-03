@@ -1,14 +1,7 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { ContentModuleModel } from '../../../../model';
 import { FormControl, Select, InputLabel, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
 import get from 'lodash/get';
-
-const useStyles = makeStyles(() => ({
-    formControl: {
-        width: '100%',
-    },
-}));
 
 interface ConfigProps {
     contentModule: ContentModuleModel;
@@ -16,18 +9,17 @@ interface ConfigProps {
     onRequestClose(): void;
 }
 
-export const Config = memo<ConfigProps>(
+export const Config = React.memo<ConfigProps>(
     ({ contentModule, onUpdateModule, onRequestClose }) => {
-        const headingLevel: number = get(
+        const headingLevel = get<number>(
             contentModule.configuration,
             'level',
             4
         );
-        const styles = useStyles();
 
         return (
             <form data-testid="TitleContentModuleConfiguration">
-                <FormControl className={styles.formControl}>
+                <FormControl fullWidth>
                     <InputLabel htmlFor="heading-level">
                         Überschrifgrößen (1-3)
                     </InputLabel>
@@ -58,3 +50,4 @@ export const Config = memo<ConfigProps>(
         );
     }
 );
+Config.displayName = 'TitleConfig';

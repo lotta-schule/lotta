@@ -1,13 +1,10 @@
 import * as React from 'react';
 import {
-    makeStyles,
-    Theme,
     Table,
     TableHead,
     TableRow,
     TableCell,
     TableBody,
-    Link,
 } from '@material-ui/core';
 import { ArticleModel } from 'model';
 import { User, Article, Category, File } from 'util/model';
@@ -15,67 +12,22 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { useIsRetina } from 'util/useIsRetina';
+import { useServerData } from 'component/ServerDataContext';
+import Link from 'next/link';
+import getConfig from 'next/config';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        padding: theme.spacing(3, 2),
-    },
-    link: {
-        display: 'inline-flex',
-        alignItems: 'center',
-    },
-    previewImage: {
-        height: 40,
-        width: 40,
-        objectFit: 'cover',
-    },
-    usersList: {
-        '& li': {
-            display: 'flex',
-        },
-    },
-    userAvatar: {
-        display: 'inline-block',
-        width: '1em',
-        height: '1em',
-    },
-    responsiveTable: {
-        [theme.breakpoints.down('sm')]: {
-            '& thead': {
-                display: 'none',
-            },
-            '& tr': {
-                display: 'block',
-                marginBottom: theme.spacing(2),
-            },
-            '& td': {
-                display: 'block',
-                '&:first-child, &:nth-child(2)': {
-                    display: 'inline-block',
-                },
-                '&:nth-child(2)': {
-                    float: 'right',
-                },
-                '&:empty': {
-                    display: 'none',
-                },
-                '&:not(:last-child)': {
-                    border: 'none',
-                },
-                '&:last-child': {
-                    paddingBottom: theme.spacing(2),
-                },
-            },
-        },
-    },
-}));
+import styles from './ArticlesList.module.scss';
+
+const {
+    publicRuntimeConfig: { cloudimageToken },
+} = getConfig();
 
 export interface ArticlesListProps {
     articles: ArticleModel[];
 }
 
 export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
-    const styles = useStyles();
+    const { baseUrl } = useServerData();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
 
     const articleSorter = React.useCallback(
@@ -89,7 +41,7 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
         <Table
             size={'small'}
             data-testid="ArticlesList"
-            className={styles.responsiveTable}
+            className={styles.root}
         >
             <TableHead>
                 <TableRow>
@@ -124,38 +76,45 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                         </TableCell>
                         <TableCell>
                             <Link
-                                color={'secondary'}
-                                className={styles.link}
-                                title={`Beitrag "${article.title}" bearbeiten`}
                                 href={Article.getPath(article, { edit: true })}
+                                passHref
                             >
-                                {article.previewImageFile && (
-                                    <img
-                                        className={styles.previewImage}
-                                        src={`https://afdptjdxen.cloudimg.io/cover/${
-                                            40 * retinaMultiplier
-                                        }x${
-                                            40 * retinaMultiplier
-                                        }/foil1/${File.getFileRemoteLocation(
-                                            article.previewImageFile
-                                        )}`}
-                                        alt={`Vorschaubild zum Beitrag "${article.title}"`}
-                                    />
-                                )}
-                                {article.title}
+                                <a
+                                    className={styles.link}
+                                    title={`Beitrag "${article.title}" bearbeiten`}
+                                >
+                                    {article.previewImageFile && (
+                                        <img
+                                            className={styles.previewImage}
+                                            src={`https://${cloudimageToken}.cloudimg.io/cover/${
+                                                40 * retinaMultiplier
+                                            }x${
+                                                40 * retinaMultiplier
+                                            }/foil1/${File.getFileRemoteLocation(
+                                                baseUrl,
+                                                article.previewImageFile
+                                            )}`}
+                                            alt={`Vorschaubild zum Beitrag "${article.title}"`}
+                                        />
+                                    )}
+                                    {article.title}
+                                </a>
                             </Link>
                         </TableCell>
                         <TableCell>
                             {article.category && (
                                 <Link
-                                    color={'secondary'}
-                                    className={styles.link}
-                                    title={`${Category.getPath(
-                                        article.category
-                                    )} öffnen`}
                                     href={Category.getPath(article.category)}
+                                    passHref
                                 >
-                                    {article.category.title}
+                                    <a
+                                        className={styles.link}
+                                        title={`${Category.getPath(
+                                            article.category
+                                        )} öffnen`}
+                                    >
+                                        {article.category.title}
+                                    </a>
                                 </Link>
                             )}
                         </TableCell>
@@ -174,3 +133,4 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
         </Table>
     );
 });
+ArticlesList.displayName = 'ArticlesList';

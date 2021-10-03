@@ -1,0 +1,43 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    height: 100%;
+}
+.filename {
+    font-size: 1.1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+    padding-bottom: calc(2 * var(--lotta-spacing));
+}
+.filePreview {
+    background-color: #000000;
+    flex-shrink: 1;
+    overflow: auto;
+    padding: var(--lotta-spacing);
+    text-align: center;
+    margin: 0 calc(-1 * var(--lotta-spacing));
+    img {
+        max-width: 200px;
+        max-height: 200px;
+    }
+}
+.infoList {
+    margin-top: var(--lotta-spacing);
+    border-top: 1px solid rgba(var(--lotta-divider-color), 1);
+    li {
+        margin-top: var(--lotta-spacing);
+        overflow: auto;
+        & > :last-child {
+            float: right;
+        }
+    }
+}
+.userAvatar {
+    width: 0.9em;
+    height: 0.9em;
+    display: inline-block;
+    margin-right: 0.25em;
+}

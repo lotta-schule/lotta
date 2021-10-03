@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { MessageModel } from 'model';
-import { GetMessagesQuery } from 'api/query/GetMessagesQuery';
-import { ReceiveMessageSubscription } from 'api/subscription/ReceiveMessageSubscription';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
+import GetMessagesQuery from 'api/query/GetMessagesQuery.graphql';
 
 export const useMessages = () => {
     const currentUser = useCurrentUser();

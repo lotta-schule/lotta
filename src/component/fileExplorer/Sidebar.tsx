@@ -1,33 +1,21 @@
-import React, { memo, useContext } from 'react';
-import { Theme, makeStyles } from '@material-ui/core';
+import * as React from 'react';
 import { FileDetailView } from './FileDetailView';
 import fileExplorerContext from './context/FileExplorerContext';
+import clsx from 'clsx';
 
-const useStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({
-    root: {
-        transition:
-            'width ease-in 150ms, border-color ease-in 150ms, padding linear 50ms',
-        padding: ({ isActive }) => theme.spacing(isActive ? 1 : 0),
-        width: ({ isActive }) => (isActive ? '30%' : 0),
-        borderLeftColor: ({ isActive }) =>
-            isActive ? theme.palette.divider : 'transparent',
-        borderLeftWidth: 1,
-        borderLeftStyle: 'dotted',
-    },
-}));
+import styles from './Sidebar.module.scss';
 
-export const Sidebar = memo(() => {
-    const [{ markedFiles, detailSidebarEnabled }] = useContext(
-        fileExplorerContext
-    );
+export const Sidebar = React.memo(() => {
+    const [{ markedFiles, detailSidebarEnabled }] =
+        React.useContext(fileExplorerContext);
     const isActive = detailSidebarEnabled && markedFiles.length === 1;
-    const styles = useStyles({ isActive });
 
     return (
-        <div className={styles.root}>
+        <div className={clsx(styles.root, { [styles.isActive]: isActive })}>
             {isActive && markedFiles[0] && (
                 <FileDetailView file={markedFiles[0]} />
             )}
         </div>
     );
 });
+Sidebar.displayName = 'Sidebar';

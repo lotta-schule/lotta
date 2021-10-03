@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { ArticleModel } from 'model';
 import { ArticlePreviewDensedLayout } from './ArticlePreviewDensedLayout';
 import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
@@ -13,7 +13,7 @@ interface ArticlePreviewProps {
     layout?: 'standard' | 'densed' | '2-columns';
 }
 
-export const ArticlePreview = memo<ArticlePreviewProps>(
+export const ArticlePreview = React.memo<ArticlePreviewProps>(
     ({ layout, ...props }) => {
         switch (layout) {
             case 'densed':
@@ -28,3 +28,4 @@ export const ArticlePreview = memo<ArticlePreviewProps>(
         }
     }
 );
+ArticlePreview.displayName = 'ArticlePreview';

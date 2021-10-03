@@ -1,7 +1,5 @@
 import * as React from 'react';
-import './radio.scss';
 import { RadioProps } from './Radio';
-import clsx from 'clsx';
 
 export type RadioGroupProps = {
     name: string;
@@ -28,12 +26,7 @@ export const RadioGroup = React.forwardRef<any, RadioGroupProps>(
             }
         };
         return (
-            <div
-                ref={ref}
-                role={'radiogroup'}
-                {...props}
-                className={clsx('lotta-radio-group', className)}
-            >
+            <div ref={ref} role={'radiogroup'} {...props} className={className}>
                 {React.Children.map(
                     children as any,
                     (child: React.ReactElement) => {
@@ -49,3 +42,4 @@ export const RadioGroup = React.forwardRef<any, RadioGroupProps>(
         );
     }
 );
+RadioGroup.displayName = 'RadioGroup';

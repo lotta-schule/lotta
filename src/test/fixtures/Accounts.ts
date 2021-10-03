@@ -78,6 +78,7 @@ export const logosDirectory = {
     updatedAt: '2010-01-01 10:00',
     name: 'Logos',
     parentDirectory: null,
+    usage: [],
 };
 
 export const profilDirectory = {
@@ -86,6 +87,7 @@ export const profilDirectory = {
     updatedAt: '2010-01-01 10:00',
     name: 'Profil',
     parentDirectory: null,
+    usage: [],
 };
 
 export const podcastsDirectory = {
@@ -94,14 +96,17 @@ export const podcastsDirectory = {
     updatedAt: '2010-01-01 10:00',
     name: 'Profil',
     parentDirectory: null,
+    usage: [],
 };
 
 export const schulweitDirectory = {
-    id: '8745',
+    id: '8746',
     insertedAt: '2010-01-01 10:00',
     updatedAt: '2010-01-01 10:00',
     name: 'Schulweit',
     parentDirectory: null,
+    user: null,
+    usage: [],
 };
 
 /*
@@ -119,6 +124,7 @@ export const imageFile = {
     insertedAt: '2001-01-01 14:15',
     updatedAt: '2001-01-01 14:15',
     fileConversions: [],
+    usage: [],
 };
 
 export const otherImageFile = {
@@ -130,6 +136,7 @@ export const otherImageFile = {
     insertedAt: '2001-01-01 14:15',
     updatedAt: '2001-01-01 14:15',
     fileConversions: [],
+    usage: [],
 };
 
 export const documentFile = {
@@ -141,6 +148,7 @@ export const documentFile = {
     insertedAt: '1848-02-21 00:00',
     updatedAt: '1848-02-21 00:00',
     fileConversions: [],
+    usage: [],
 };
 
 export const convertedDocumentFile = {
@@ -151,6 +159,7 @@ export const convertedDocumentFile = {
     mimeType: 'application/pdf',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
+    usage: [],
     fileConversions: [
         {
             id: '55451',
@@ -187,6 +196,7 @@ export const movieFile = {
     mimeType: 'video/mp4',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
+    usage: [],
     fileConversions: [
         {
             id: '75001',
@@ -255,6 +265,7 @@ export const audioFile = {
     mimeType: 'audio/wav',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
+    usage: [],
     fileConversions: [
         {
             id: '99001',
@@ -283,6 +294,7 @@ export const powerpointFile = {
     mimeType: 'application/mspowerpoint',
     insertedAt: '2001-01-21 00:00',
     updatedAt: '2001-01-21 00:00',
+    usage: [],
     fileConversions: [
         {
             id: '21',

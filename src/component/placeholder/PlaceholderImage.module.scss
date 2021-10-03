@@ -1,0 +1,15 @@
+.root {
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    background-repeat: no-repeat;
+    text-align: center;
+    display: flex;
+    background-size: contain;
+    background-position: center center;
+    align-items: center;
+
+    &.withDescription {
+        background-size: 35%;
+        background-position: top center;
+        align-items: flex-end;
+    }
+}

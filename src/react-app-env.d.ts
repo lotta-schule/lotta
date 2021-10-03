@@ -1,15 +1,11 @@
-/// <reference types="react-scripts" />
 declare namespace NodeJS {
     export interface ProcessEnv {
         PUBLIC_URL: string;
-        REACT_APP_APP_ENVIRONMENT: string;
-        REACT_APP_APP_REVISION: string;
-        REACT_APP_API_URL: string;
-        REACT_APP_API_SOCKET_URL: string;
-        REACT_APP_AUTH_URL: string;
-        REACT_APP_FILE_URL?: string;
-        REACT_APP_MATOMO_URL: string;
-        REACT_APP_APP_BASE_DOMAIN: string;
-        REACT_APP_SENTRY_DSN: string;
+        APP_ENVIRONMENT: string;
+        API_SOCKET_URL: string;
+        SENTRY_DSN: string;
+        API_URL: string;
+        AUTH_URL: string;
+        FORCE_BASE_URL?: string;
     }
 }

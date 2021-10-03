@@ -10,72 +10,29 @@ import {
 } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {
-    makeStyles,
     LinearProgress,
     Table,
     TableBody,
     TableRow,
     TableCell,
-    Typography,
-    Link,
     Tooltip,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
-import { darken } from '@material-ui/core/styles';
 import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
-import { GetScheduleQuery } from 'api/query/GetScheduleQuery';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
 import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
-import { CollisionLink } from 'component/general/CollisionLink';
+import Link from 'next/link';
+import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
 import clsx from 'clsx';
+
+import styles from './Schedule.module.scss';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
 type DateString = string;
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'auto',
-        height: '100%',
-        '& td': {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
-        },
-    },
-    date: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-        '& a': {
-            color: theme.palette.secondary.main,
-        },
-        '& > span': {
-            // the actual date
-            display: 'flex',
-            alignItems: 'center',
-        },
-    },
-    selectCoursesLinkWrapper: {
-        padding: theme.spacing(0, 0.5),
-    },
-    updated: {
-        color: darken(theme.palette.error.main, 0.3),
-        fontWeight: 'bolder',
-    },
-    notes: {
-        marginBottom: '0.5em',
-        paddingLeft: '0.3em',
-        borderLeft: '2px solid',
-        borderColor: theme.palette.secondary.main,
-    },
-}));
 
 export interface ScheduleProps {
     widget: WidgetModel<ScheduleWidgetConfig>;
@@ -85,12 +42,9 @@ const dateToDateString = (date: Date | string) =>
     format(new Date(date), 'yyyy-MM-dd');
 
 export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
-    const styles = useStyles();
     const currentUser = useCurrentUser();
-    const [
-        isSelectCoursesDialogOpen,
-        setIsSelectCoursesDialogOpen,
-    ] = React.useState(false);
+    const [isSelectCoursesDialogOpen, setIsSelectCoursesDialogOpen] =
+        React.useState(false);
     const [selectedCourses, setSelectedCourses] = React.useState<
         string[] | null
     >(null);
@@ -231,9 +185,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                             ? [
                                   <TableRow key={index * 2 + 1}>
                                       <TableCell colSpan={4} align={'right'}>
-                                          <Typography variant={'subtitle2'}>
-                                              {line.comment}
-                                          </Typography>
+                                          {line.comment}
                                       </TableCell>
                                   </TableRow>,
                               ]
@@ -245,13 +197,13 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
             return [
                 <TableRow key={-1}>
                     <TableCell colSpan={4} align={'center'}>
-                        <Typography>Kein Vertretungsplan</Typography>
+                        Kein Vertretungsplan
                     </TableCell>
                 </TableRow>,
             ];
         }
         return rows;
-    }, [styles, currentScheduleData, selectedCourses, currentUser]);
+    }, [currentScheduleData, selectedCourses, currentUser]);
 
     if (!currentUser) {
         return (
@@ -270,9 +222,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
         return (
             <>
                 <ErrorMessage error={new Error(errorMessage)} />
-                <Link component={CollisionLink} to={'/profile'}>
-                    Mein Profil öffnen
-                </Link>
+                <Link href={'/profile'}>Mein Profil öffnen</Link>
             </>
         );
     }
@@ -285,20 +235,16 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
         return (
             <div className={styles.root}>
                 {['11', '12'].indexOf(currentUser.class) > -1 && (
-                    <Typography
-                        variant={'body2'}
-                        className={styles.selectCoursesLinkWrapper}
-                    >
-                        <Link
-                            color={'secondary'}
+                    <div className={styles.selectCoursesLinkWrapper}>
+                        <a
                             href={'#'}
                             onClick={() => setIsSelectCoursesDialogOpen(true)}
                         >
                             Kurse wählen
-                        </Link>
-                    </Typography>
+                        </a>
+                    </div>
                 )}
-                <Typography variant={'caption'} className={styles.date}>
+                <div className={styles.date}>
                     {lastScheduleData?.schedule ? (
                         <Tooltip title={lastScheduleData.schedule.head.date}>
                             <Button
@@ -344,7 +290,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                     ) : (
                         <div style={{ width: 48 }} />
                     )}
-                </Typography>
+                </div>
                 {currentScheduleData.schedule.body && (
                     <>
                         <Table size={'small'}>
@@ -365,9 +311,8 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                             ])}
                             onClose={() => {
                                 try {
-                                    const persistedCourseList = localStorage.getItem(
-                                        LOCALSTORAGE_KEY
-                                    );
+                                    const persistedCourseList =
+                                        localStorage.getItem(LOCALSTORAGE_KEY);
                                     if (persistedCourseList) {
                                         setSelectedCourses(
                                             JSON.parse(persistedCourseList)
@@ -385,10 +330,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                             .filter(Boolean)
                             .map((supervision, i) => (
                                 <li key={i}>
-                                    <Typography variant={'subtitle2'}>
-                                        {supervision.time}{' '}
-                                        {supervision.location}
-                                    </Typography>
+                                    {supervision.time} {supervision.location}
                                 </li>
                             ))}
                     </ul>
@@ -398,9 +340,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                         {currentScheduleData.schedule.footer.comments.map(
                             (comment, i) => (
                                 <li key={i} className={styles.notes}>
-                                    <Typography variant={'subtitle2'}>
-                                        {comment}
-                                    </Typography>
+                                    {comment}
                                 </li>
                             )
                         )}
@@ -411,3 +351,4 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
     }
     return null;
 });
+Schedule.displayName = 'Schedule';

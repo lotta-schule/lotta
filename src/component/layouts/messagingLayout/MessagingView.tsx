@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LinearProgress, makeStyles, Typography } from '@material-ui/core';
+import { LinearProgress } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ChatType, ThreadRepresentation } from 'model';
@@ -14,49 +14,9 @@ import { useMessages } from './useMessages';
 import { Button } from 'component/general/button/Button';
 import clsx from 'clsx';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        flexDirection: 'row',
-        padding: theme.spacing(1, 0),
-        width: '100%',
-    },
-    sideView: {
-        position: 'relative',
-        flex: '0 0 20em',
-        overflow: 'auto',
-        [theme.breakpoints.down('sm')]: {
-            display: 'none',
-            '&.active': {
-                display: 'block',
-                marginRight: theme.spacing(1),
-            },
-        },
-    },
-    messageView: {
-        marginLeft: theme.spacing(2),
-        padding: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
-        flex: '1 2 100%',
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        [theme.breakpoints.down('sm')]: {
-            marginLeft: 0,
-        },
-    },
-    noMessagesWrapper: {
-        display: 'flex',
-        flexGrow: 1,
-        flexShrink: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: theme.palette.text.disabled,
-    },
-}));
+import styles from './MessagingView.module.scss';
 
 export const MessagingView = React.memo(() => {
-    const styles = useStyles();
     const isMobile = useIsMobile();
     const currentUser = useCurrentUser();
 
@@ -65,14 +25,10 @@ export const MessagingView = React.memo(() => {
 
     const { data, loading: isLoading, error } = useMessages();
 
-    const [
-        selectedThread,
-        setSelectedThread,
-    ] = React.useState<ThreadRepresentation | null>(null);
-    const [
-        newMessageThread,
-        setNewMessageThread,
-    ] = React.useState<ThreadRepresentation | null>(null);
+    const [selectedThread, setSelectedThread] =
+        React.useState<ThreadRepresentation | null>(null);
+    const [newMessageThread, setNewMessageThread] =
+        React.useState<ThreadRepresentation | null>(null);
 
     const [isSidebarActive, setIsSidebarActive] = React.useState(true);
 
@@ -156,10 +112,8 @@ export const MessagingView = React.memo(() => {
             <MessagesThread messages={messages} />
         ) : (
             <div className={styles.noMessagesWrapper}>
-                <Typography variant={'body2'}>
-                    Du hast noch keine Nachrichten mit{' '}
-                    {selectedThread.counterpart.name} ausgetauscht.
-                </Typography>
+                Du hast noch keine Nachrichten mit{' '}
+                {selectedThread.counterpart.name} ausgetauscht.
             </div>
         );
         return (
@@ -168,7 +122,7 @@ export const MessagingView = React.memo(() => {
                 <ComposeMessage threadRepresentation={selectedThread} />
             </>
         );
-    }, [getMessagesForThread, selectedThread, styles.noMessagesWrapper]);
+    }, [getMessagesForThread, selectedThread]);
 
     if (isLoading) {
         return <LinearProgress />;
@@ -181,7 +135,9 @@ export const MessagingView = React.memo(() => {
     return (
         <section ref={sectionElRef} className={styles.root}>
             <aside
-                className={clsx(styles.sideView, { active: isSidebarActive })}
+                className={clsx(styles.sideView, {
+                    [styles.active]: isSidebarActive,
+                })}
             >
                 <MessageToolbar
                     onToggle={() => setIsSidebarActive(false)}
@@ -219,3 +175,4 @@ export const MessagingView = React.memo(() => {
         </section>
     );
 });
+MessagingView.displayName = 'MessagingView';

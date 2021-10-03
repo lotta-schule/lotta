@@ -1,0 +1,35 @@
+.root {
+    margin: 'auto';
+}
+
+.cardHeader {
+    padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
+}
+
+.button {
+    margin: calc(0.5 * var(--lotta-spacing)) 0;
+}
+
+.labelWrapper {
+    margin: 0;
+    display: flex;
+    .typography {
+        display: flex;
+        align-items: center;
+        & > * {
+            display: inline-block;
+        }
+    }
+}
+
+.label {
+    flex-grow: 1;
+}
+
+.switch {
+    // TODO: Maybe find better color
+    color: rgba(var(--lotta-banner-background-color1), 1);
+    .switchChecked {
+        color: rgba(var(--lotta-secondary-color), 1);
+    }
+}

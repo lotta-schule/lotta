@@ -1,20 +1,16 @@
-import React, { memo, useEffect, useState } from 'react';
+import * as React from 'react';
 import {
     List,
     ListItem,
     ListItemText,
-    makeStyles,
     Divider,
     Tooltip,
-    Typography,
     LinearProgress,
 } from '@material-ui/core';
 import { useApolloClient } from '@apollo/client';
 import { format, intervalToDuration } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { FiberManualRecord } from '@material-ui/icons';
-import { lighten } from '@material-ui/core/styles';
-import { GetCalendarQuery } from 'api/query/GetCalendarQuery';
 import { CalendarEventModel } from 'model/CalendarEventModel';
 import {
     WidgetModel,
@@ -22,76 +18,26 @@ import {
     CalendarWidgetCalendarConfig,
 } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 import clsx from 'clsx';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        height: `calc(100% - ${theme.spacing(2)}px)`,
-    },
-    list: {
-        overflow: 'auto',
-        marginBottom: '1em',
-    },
-    listItemTextDate: {
-        width: '7.5em',
-        flexShrink: 0,
-        '&.has-dot': {
-            paddingLeft: '1em',
-            '& > svg': {
-                marginLeft: '-1em',
-            },
-        },
-    },
-    listItemTextEventDescription: {
-        paddingLeft: '.5em',
-        textAlign: 'right',
-        hyphens: 'auto',
-        wordBreak: 'break-word',
-    },
-    calendarColorDot: {
-        verticalAlign: 'sub',
-        paddingRight: '.5em',
-    },
-    tableline: {
-        '&:hover': {
-            backgroundColor: lighten(theme.palette.text.secondary, 0.8),
-        },
-    },
-    figcaption: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        padding: theme.spacing(1),
-        width: '100%',
-        backgroundColor: theme.palette.background.paper,
-        '& > figure': {
-            display: 'inline-flex',
-            alignItems: 'center',
-            width: '50%',
-            padding: theme.spacing(0.5),
-        },
-    },
-}));
+import styles from './Calendar.module.scss';
 
 export interface CalendarProps {
     widget: WidgetModel<CalendarWidgetConfig>;
 }
 
-export const Calendar = memo<CalendarProps>(({ widget }) => {
-    const styles = useStyles();
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [events, setEvents] = useState<
+export const Calendar = React.memo<CalendarProps>(({ widget }) => {
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [events, setEvents] = React.useState<
         (CalendarEventModel & { calendar: CalendarWidgetCalendarConfig })[]
     >([]);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = React.useState<Error | null>(null);
 
     const { calendars } = widget.configuration;
     const apolloClient = useApolloClient();
 
-    useEffect(() => {
+    React.useEffect(() => {
         setIsLoading(true);
         setError(null);
         Promise.all(
@@ -129,9 +75,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                 {calendars && calendars.length > 1 && (
                     <figcaption className={styles.figcaption}>
                         {calendars.map((calendar, i) => (
-                            <Typography
-                                variant={'body2'}
-                                component={'figure'}
+                            <figure
                                 key={i}
                                 aria-label={`Legende: ${calendar.name}`}
                             >
@@ -141,7 +85,7 @@ export const Calendar = memo<CalendarProps>(({ widget }) => {
                                     className={styles.calendarColorDot}
                                 />
                                 <figcaption>{calendar.name}</figcaption>
-                            </Typography>
+                            </figure>
                         ))}
                     </figcaption>
                 )}

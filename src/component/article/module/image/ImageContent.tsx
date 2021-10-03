@@ -1,32 +1,30 @@
 import * as React from 'react';
 import { File } from 'util/model';
 import { FileModel } from 'model';
-import { makeStyles, Theme } from '@material-ui/core';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
+import { useServerData } from 'component/ServerDataContext';
 import Img, { ImgProps } from 'react-cloudimage-responsive';
 import clsx from 'clsx';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    clickableImage: {
-        cursor: 'pointer',
-    },
-}));
+import styles from './ImageContent.module.scss';
 
 export interface ImageContentProps extends ImgProps {
     file?: FileModel | null;
 }
 
 export const ImageContent = React.memo<ImageContentProps>(
-    ({ file, ...otherProps }) => {
-        const styles = useStyles();
-        const imageSource = file ? File.getFileRemoteLocation(file) : null;
+    ({ file, className, ...props }) => {
+        const { baseUrl } = useServerData();
+        const imageSource = file
+            ? File.getFileRemoteLocation(baseUrl, file)
+            : null;
         return imageSource ? (
             <Img
                 src={imageSource}
-                {...otherProps}
+                {...props}
                 className={clsx(
-                    { [styles.clickableImage]: !!otherProps.onClick },
-                    otherProps.className
+                    { [styles.clickableImage]: !!props.onClick },
+                    className
                 )}
             />
         ) : (
@@ -34,3 +32,4 @@ export const ImageContent = React.memo<ImageContentProps>(
         );
     }
 );
+ImageContent.displayName = 'ImageContent';

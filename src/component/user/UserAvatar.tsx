@@ -5,6 +5,7 @@ import { UserModel } from 'model';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useIsRetina } from 'util/useIsRetina';
+import { useServerData } from 'component/ServerDataContext';
 
 export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
     user: UserModel;
@@ -14,8 +15,10 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
 
 export const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
     ({ user, size, ...otherProps }, ref) => {
+        const { baseUrl } = useServerData();
         const retinaMultiplier = useIsRetina() ? 2 : 1;
         const src = User.getAvatarUrl(
+            baseUrl,
             user,
             size ? size * retinaMultiplier : undefined
         );
@@ -34,6 +37,7 @@ export const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
         );
     }
 );
+UserAvatar.displayName = 'UserAvatar';
 
 export const CurrentUserAvatar = React.forwardRef<
     HTMLDivElement,
@@ -44,3 +48,4 @@ export const CurrentUserAvatar = React.forwardRef<
         <UserAvatar ref={ref} user={currentUser} {...props} />
     ) : null;
 });
+CurrentUserAvatar.displayName = 'CurrentUserAvatar';

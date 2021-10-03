@@ -6,17 +6,17 @@ const resources = {
         translation: {
             files: {
                 file: 'Datei',
-                files: '{{count}} Datei',
-                files_plural: '{{count}} Dateien',
+                files_one: '{{count}} Datei',
+                files_other: '{{count}} Dateien',
                 format: 'Format',
-                formats: '{{count}} Format',
-                formats_plural: '{{count}} Formate',
+                formats_one: '{{count}} Format',
+                formats_other: '{{count}} Formate',
                 explorer: {
                     filesAreBeingUploaded: '$t(files.file) wird hochgeladen',
-                    filesAreBeingUploaded_plural:
+                    filesAreBeingUploaded_other:
                         '$t(files.files, {"count": {{count}}}) werden hochgeladen',
-                    dropFilesToUpload: 'Loslassen, um Datei hochzuladen.',
-                    dropFilesToUpload_plural:
+                    dropFilesToUpload_one: 'Loslassen, um Datei hochzuladen.',
+                    dropFilesToUpload_other:
                         'Loslassen, um $t(files.files, {"count": {{count}}}) hochzuladen.',
                     markedFiles:
                         '$t(files.files, {"count": {{count}}}) von $t(files.files, {"count": {{total}}}) ausgewählt.',
@@ -48,9 +48,9 @@ const resources = {
             },
             administration: {
                 result: 'Ergebnis',
-                results: '{{count}} Ergebnis',
-                results_plural: '{{count}} Ergebnisse',
-                results_0: '0 Ergebnisse',
+                results_one: '{{count}} Ergebnis',
+                results_other: '{{count}} Ergebnisse',
+                results_zero: '0 Ergebnisse',
             },
         },
     },

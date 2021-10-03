@@ -1,0 +1,68 @@
+.root {
+    position: relative;
+    border-width: 0;
+    border-color: transparent;
+    border-style: solid;
+    overflow: initial;
+    &.isEditModeEnabled {
+        border-width: 1px;
+    }
+    &.dragging {
+        border-color: rgba(var(--lotta-secondary-color), 1);
+        .dragbar {
+            background-color: rgba(var(--lotta-secondary-color), 1);
+            opacity: 1;
+        }
+    }
+    &:hover,
+    &:focus-within,
+    &.active {
+        border-color: rgba(var(--lotta-banner-background-color), 1);
+        .dragbar {
+            opacity: 0.8;
+        }
+    }
+}
+
+.dragbar {
+    opacity: 0;
+    height: 2em;
+    width: 100%;
+    background-color: rgba(var(--lotta-banner-background-color), 1);
+    display: flex;
+    justify-content: space-between;
+    transition: opacity 250ms ease-in;
+    & > span {
+        display: flex;
+    }
+}
+
+.leftButtonSection {
+    display: flex;
+    & > * {
+        margin-right: var(--lotta-spacing);
+    }
+}
+
+.dragbarButton {
+    padding: 0 5px;
+    height: 28px;
+    width: 28px;
+}
+
+.buttonIcon {
+    color: rgba(var(--lotta-banner-background-color), 1);
+}
+
+.activeButtonIcon {
+    color: rgba(var(--lotta-primary-color), 1);
+}
+
+.configSection {
+    position: absolute;
+    top: 2.25em;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+}

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import * as React from 'react';
 import chunk from 'lodash/chunk';
 import {
     DialogTitle,
@@ -7,11 +7,12 @@ import {
     FormGroup,
     FormControlLabel,
     Checkbox,
-    makeStyles,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { LOCALSTORAGE_KEY } from './Schedule';
+
+import styles from './SelectCoursesDialog.module.scss';
 
 const COLUMNS_COUNT = 2;
 
@@ -21,29 +22,15 @@ export interface SelectCoursesDialogProps {
     onClose(): void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    courseNamesListsWrapper: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
-    formGroup: {
-        width: '50%',
-    },
-}));
-
-export const SelectCoursesDialog = memo<SelectCoursesDialogProps>(
+export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(
     ({ isOpen, possibleCourses, onClose }) => {
-        const styles = useStyles();
+        const [selectedCourses, setSelectedCourses] =
+            React.useState<string[]>(possibleCourses);
 
-        const [selectedCourses, setSelectedCourses] = useState<string[]>(
-            possibleCourses
-        );
-
-        useEffect(() => {
+        React.useEffect(() => {
             try {
-                const persistedCourseList = localStorage.getItem(
-                    LOCALSTORAGE_KEY
-                );
+                const persistedCourseList =
+                    localStorage.getItem(LOCALSTORAGE_KEY);
                 if (persistedCourseList) {
                     setSelectedCourses(JSON.parse(persistedCourseList));
                 }
@@ -114,3 +101,4 @@ export const SelectCoursesDialog = memo<SelectCoursesDialogProps>(
         );
     }
 );
+SelectCoursesDialog.displayName = 'SelectCoursesDialog';

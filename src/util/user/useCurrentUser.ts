@@ -1,41 +1,26 @@
-import { UserModel } from 'model';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
+import * as React from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { useQuery } from '@apollo/client';
-import { useEffect } from 'react';
-import { configureScope } from '@sentry/react';
-import Matomo from 'matomo-ts';
+import { UserModel } from 'model';
+import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
 export const useCurrentUser = () => {
-    const { data, loading, called } = useQuery<{
+    const { data } = useQuery<{
         currentUser: UserModel | null;
     }>(GetCurrentUserQuery);
     const currentUser = data?.currentUser ?? null;
 
-    useEffect(() => {
-        // Sentry Error tracking
-        configureScope((scope) => {
-            scope.setUser(
-                currentUser
-                    ? {
-                          id: currentUser.id,
-                          username: currentUser.nickname ?? currentUser.name,
-                      }
-                    : null
-            );
-        });
-
-        // Matomo Site Analytics
-        if (window._paq) {
-            if (currentUser) {
-                Matomo.default().setUserId(currentUser.id);
-            } else {
-                Matomo.default().resetUserId();
-            }
+    React.useEffect(() => {
+        if (currentUser) {
+            Sentry.setUser({
+                id: currentUser.id,
+                username: currentUser.nickname ?? currentUser.name,
+                email: currentUser.email,
+            });
+        } else {
+            Sentry.configureScope((scope) => scope.setUser(null));
         }
     }, [currentUser]);
 
-    if (loading || !called) {
-        return undefined;
-    }
-    return data?.currentUser || null;
+    return currentUser;
 };

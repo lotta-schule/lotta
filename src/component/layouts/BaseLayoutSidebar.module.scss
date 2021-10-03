@@ -1,0 +1,10 @@
+@import "breakpoints";
+
+.root {
+  position: relative;
+  padding-left: var(--lotta-spacing);
+}
+
+.drawer {
+  padding: 0;
+}

@@ -3,50 +3,27 @@ import { Add, DragHandle, Delete } from '@material-ui/icons';
 import {
     Grid,
     TextField,
-    makeStyles,
     Checkbox,
     FormGroup,
     FormControlLabel,
     Divider,
 } from '@material-ui/core';
+import { Button } from 'component/general/button/Button';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
 import { FormElementConfiguration } from './FormElementConfiguration';
-import { Button } from 'component/general/button/Button';
+
+import styles from './Edit.module.scss';
 
 export interface EditProps {
     contentModule: ContentModuleModel;
     onUpdateModule(contentModule: ContentModuleModel): void;
 }
 
-export const useStyles = makeStyles((theme) => ({
-    downloadItemWrapper: {
-        marginBottom: theme.spacing(2),
-    },
-    downloadWrapperHeader: {
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-    },
-    inputWrapper: {
-        '& > div': {
-            padding: theme.spacing(1),
-        },
-    },
-    inputSettings: {
-        borderLeftColor: theme.palette.grey[200],
-        borderLeftWidth: theme.spacing(1),
-        borderLeftStyle: 'solid',
-        borderRadius: theme.spacing(1),
-    },
-}));
-
 export const Edit = React.memo<EditProps>(
     ({ contentModule, onUpdateModule }) => {
-        const styles = useStyles();
-
         const configuration: FormConfiguration = {
             destination: '',
             elements: [],
@@ -119,14 +96,15 @@ export const Edit = React.memo<EditProps>(
                                                             onClick={() =>
                                                                 updateConfiguration(
                                                                     {
-                                                                        elements: configuration.elements.filter(
-                                                                            (
-                                                                                _el,
-                                                                                i
-                                                                            ) =>
-                                                                                i !==
-                                                                                index
-                                                                        ),
+                                                                        elements:
+                                                                            configuration.elements.filter(
+                                                                                (
+                                                                                    _el,
+                                                                                    i
+                                                                                ) =>
+                                                                                    i !==
+                                                                                    index
+                                                                            ),
                                                                     }
                                                                 )
                                                             }
@@ -165,23 +143,24 @@ export const Edit = React.memo<EditProps>(
                                                                 ) =>
                                                                     updateConfiguration(
                                                                         {
-                                                                            elements: configuration.elements.map(
-                                                                                (
-                                                                                    el,
-                                                                                    i
-                                                                                ) => {
-                                                                                    if (
-                                                                                        i ===
-                                                                                        index
-                                                                                    ) {
-                                                                                        return {
-                                                                                            ...element,
-                                                                                            ...updatedElementOptions,
-                                                                                        };
+                                                                            elements:
+                                                                                configuration.elements.map(
+                                                                                    (
+                                                                                        el,
+                                                                                        i
+                                                                                    ) => {
+                                                                                        if (
+                                                                                            i ===
+                                                                                            index
+                                                                                        ) {
+                                                                                            return {
+                                                                                                ...element,
+                                                                                                ...updatedElementOptions,
+                                                                                            };
+                                                                                        }
+                                                                                        return el;
                                                                                     }
-                                                                                    return el;
-                                                                                }
-                                                                            ),
+                                                                                ),
                                                                         }
                                                                     )
                                                                 }
@@ -298,4 +277,4 @@ export const Edit = React.memo<EditProps>(
         );
     }
 );
-export default Edit;
+Edit.displayName = 'FormEdit';

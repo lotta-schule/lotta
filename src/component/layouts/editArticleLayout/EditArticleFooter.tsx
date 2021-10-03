@@ -2,8 +2,6 @@ import * as React from 'react';
 import {
     Card,
     CardContent,
-    makeStyles,
-    Typography,
     Popper,
     Grow,
     Paper,
@@ -17,7 +15,6 @@ import {
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { ButtonGroup } from 'component/general/button/ButtonGroup';
-import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { CategorySelect } from './CategorySelect';
 import { GroupSelect } from '../../edit/GroupSelect';
@@ -30,68 +27,13 @@ import { ArticleModel, ID } from 'model';
 import { Category, User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
 import { ArticleStateEditor } from 'component/article/ArticleStateEditor';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
+import { useRouter } from 'next/router';
+import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 import clsx from 'clsx';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        borderRadius: '0',
-        overflow: 'visible',
-        padding: theme.spacing(1),
-    },
-    gridItem: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        '& > :nth-child(2)': {
-            flexGrow: 1,
-            padding: theme.spacing(1),
-        },
-        [theme.breakpoints.down('md')]: {
-            width: '100%',
-        },
-    },
-    buttonWrapper: {
-        display: 'flex',
-    },
-    cancelButton: {
-        borderColor: theme.palette.secondary.main,
-        color: theme.palette.secondary.main,
-        marginRight: theme.spacing(1),
-    },
-    deleteButtonDivider: {
-        marginTop: theme.spacing(1),
-    },
-    deleteButton: {
-        color: theme.palette.error.contrastText,
-        borderColor: theme.palette.error.main,
-        backgroundColor: theme.palette.error.main,
-        marginTop: theme.spacing(2),
-        '& hover': {
-            backgroundColor: [theme.palette.error.main, 0.8],
-        },
-    },
-    leftIcon: {
-        marginRight: theme.spacing(1),
-    },
-    iconSmall: {
-        fontSize: 20,
-    },
-    searchUserField: {
-        border: `1px solid ${theme.palette.divider}`,
-    },
-    isPublishedInformation: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: theme.spacing(1),
-    },
-    popper: {
-        zIndex: 1,
-    },
-}));
+import styles from './EditArticleFooter.module.scss';
 
 interface EditArticleFooterProps {
     article: ArticleModel;
@@ -103,18 +45,14 @@ interface EditArticleFooterProps {
 
 export const EditArticleFooter = React.memo<EditArticleFooterProps>(
     ({ article, style, isLoading, onUpdate, onSave }) => {
-        const styles = useStyles();
         const currentUser = useCurrentUser();
-        const history = useHistory();
+        const router = useRouter();
 
-        const [
-            isSelfRemovalDialogOpen,
-            setIsSelfRemovalDialogOpen,
-        ] = React.useState(false);
+        const [isSelfRemovalDialogOpen, setIsSelfRemovalDialogOpen] =
+            React.useState(false);
         const [isDatesEditorOpen, setIsDatesEditorOpen] = React.useState(false);
-        const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] = React.useState(
-            false
-        );
+        const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] =
+            React.useState(false);
         const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
         const saveOptionsMenuAnchorRef = React.useRef<HTMLButtonElement>(null);
 
@@ -127,9 +65,9 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
             },
             onCompleted: () => {
                 if (article.category) {
-                    history.push(Category.getPath(article.category));
+                    router.push(Category.getPath(article.category));
                 } else {
-                    history.push('/');
+                    router.push('/');
                 }
             },
         });
@@ -154,11 +92,11 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                 data-testid="EditArticleFooter"
             >
                 <CardContent>
-                    <Typography variant="h5">Beitrags-Einstellungen</Typography>
+                    <h5>Beitrags-Einstellungen</h5>
                 </CardContent>
                 <Grid container>
                     <Grid item md={4} className={styles.gridItem}>
-                        <Typography variant={'h6'}>Sichtbarkeit</Typography>
+                        <h6>Sichtbarkeit</h6>
                         <div>
                             <GroupSelect
                                 label={null}
@@ -188,9 +126,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                         </div>
                     </Grid>
                     <Grid item md={4} className={styles.gridItem}>
-                        <Typography variant={'h6'}>
-                            Kategorie zuordnen
-                        </Typography>
+                        <h6>Kategorie zuordnen</h6>
                         <div>
                             <CategorySelect
                                 selectedCategory={article.category || null}
@@ -202,7 +138,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                         <div />
                     </Grid>
                     <Grid item md={4} className={styles.gridItem}>
-                        <Typography variant={'h6'}>Veröffentlichung</Typography>
+                        <h6>Veröffentlichung</h6>
                         <ArticleStateEditor
                             article={article}
                             onUpdate={onUpdate}
@@ -210,7 +146,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                         <div className={styles.buttonWrapper}>
                             <Button
                                 className={styles.cancelButton}
-                                onClick={() => history.go(-1)}
+                                onClick={() => router.back()}
                             >
                                 abbrechen
                             </Button>
@@ -299,9 +235,10 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                                     <MenuItem
                                                         onClick={() =>
                                                             onSave({
-                                                                updatedAt: new Date(
-                                                                    article.updatedAt
-                                                                ).toISOString(),
+                                                                updatedAt:
+                                                                    new Date(
+                                                                        article.updatedAt
+                                                                    ).toISOString(),
                                                             })
                                                         }
                                                     >
@@ -344,10 +281,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                         <Button onClick={() => setIsDeleteModalOpen(false)}>
                             abbrechen
                         </Button>
-                        <Button
-                            color={'secondary'}
-                            onClick={() => deleteArticle()}
-                        >
+                        <Button onClick={() => deleteArticle()}>
                             endgültig löschen
                         </Button>
                     </DialogActions>
@@ -374,7 +308,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                             abbrechen
                         </Button>
                         <Button
-                            color={'secondary'}
                             onClick={() => {
                                 onUpdate({
                                     ...article,
@@ -394,3 +327,4 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
         );
     }
 );
+EditArticleFooter.displayName = 'EditArticleFooter';

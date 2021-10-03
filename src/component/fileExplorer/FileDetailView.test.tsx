@@ -3,8 +3,8 @@ import { render, waitFor } from 'test/util';
 import { MockedProvider } from '@apollo/client/testing';
 import { FileDetailView } from './FileDetailView';
 import { FileModel, FileModelType, UserModel } from 'model';
-import { GetFileDetailsQuery } from 'api/query/GetFileDetailsQuery';
 import { SomeUser, movieFile, schulweitDirectory } from 'test/fixtures';
+import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 
 describe('component/fileExplorer/FileDetailView', () => {
     const user: UserModel = SomeUser;
@@ -71,8 +71,7 @@ describe('component/fileExplorer/FileDetailView', () => {
                             {
                                 usage: 'banner',
                                 category: {
-                                    title:
-                                        'Als Banner kann man das auch nehmen',
+                                    title: 'Als Banner kann man das auch nehmen',
                                     bannerImageFile: {
                                         ...usedFile,
                                     },

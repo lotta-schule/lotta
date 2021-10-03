@@ -1,0 +1,5 @@
+mutation DestroyAccount($transferFileIds: [ID!]) {
+    user: destroyAccount(transferFileIds: $transferFileIds) {
+        id
+    }
+}

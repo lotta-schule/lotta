@@ -1,6 +1,6 @@
-import React, { FunctionComponent, memo } from 'react';
-import { ContentModuleModel } from '../../../../model';
+import * as React from 'react';
 import { CardContent } from '@material-ui/core';
+import { ContentModuleModel } from 'model';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
@@ -10,7 +10,7 @@ export interface VideoProps {
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
-export const Video: FunctionComponent<VideoProps> = memo(
+export const Video = React.memo<VideoProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
         <CardContent style={{ padding: 0 }} data-testid="VideoContentModule">
             {isEditModeEnabled && onUpdateModule ? (
@@ -24,3 +24,4 @@ export const Video: FunctionComponent<VideoProps> = memo(
         </CardContent>
     )
 );
+Video.displayName = 'Video';

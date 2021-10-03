@@ -1,0 +1,15 @@
+.root {
+    padding-right: calc(2 * var(--lotta-spacing));
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    & > p {
+        font-size: 0.9rem;
+        &:nth-child(2) {
+            color: rgba(var(--lotta-label-text-color), 1);
+        }
+    }
+}

@@ -1,32 +1,10 @@
 import * as React from 'react';
-import { makeStyles } from '@material-ui/styles';
-import {
-    Theme,
-    Typography,
-    Accordion,
-    AccordionSummary,
-} from '@material-ui/core';
+import { Accordion, AccordionSummary } from '@material-ui/core';
 import { WidgetModel } from 'model';
 import { WidgetIcon } from 'component/widgets/WidgetIcon';
 import clsx from 'clsx';
 
-const useStyles = makeStyles((theme: Theme) => {
-    return {
-        heading: {
-            marginBottom: theme.spacing(3),
-        },
-        expansionSummary: {
-            backgroundColor: theme.palette.grey[200],
-            '& > div > div': {
-                display: 'flex',
-                alignItems: 'center',
-            },
-        },
-        selected: {
-            fontWeight: 'bolder',
-        },
-    };
-});
+import styles from './WidgetNavigation.module.scss';
 
 export interface WidgetNavigationProps {
     widgets: WidgetModel[];
@@ -36,13 +14,9 @@ export interface WidgetNavigationProps {
 
 export const WidgetNavigation = React.memo<WidgetNavigationProps>(
     ({ widgets, selectedWidget, onSelectWidget }) => {
-        const styles = useStyles();
-
         return (
             <>
-                <Typography variant="h5" className={styles.heading}>
-                    Alle Marginalen
-                </Typography>
+                <h5 className={styles.heading}>Alle Marginalen</h5>
                 <div style={{ paddingBottom: '5em' }}>
                     {widgets.map((widget) => (
                         <Accordion key={widget.id} expanded={false}>
@@ -52,7 +26,7 @@ export const WidgetNavigation = React.memo<WidgetNavigationProps>(
                                 className={styles.expansionSummary}
                                 onClick={() => onSelectWidget(widget)}
                             >
-                                <Typography component={'div'} variant={'body1'}>
+                                <div>
                                     <WidgetIcon
                                         icon={widget.configuration?.icon}
                                         size={36}
@@ -67,7 +41,7 @@ export const WidgetNavigation = React.memo<WidgetNavigationProps>(
                                     >
                                         {widget.title}
                                     </span>
-                                </Typography>
+                                </div>
                             </AccordionSummary>
                         </Accordion>
                     ))}
@@ -76,3 +50,4 @@ export const WidgetNavigation = React.memo<WidgetNavigationProps>(
         );
     }
 );
+WidgetNavigation.displayName = 'WidgetNavigation';

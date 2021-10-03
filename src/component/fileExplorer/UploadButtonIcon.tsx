@@ -1,11 +1,11 @@
-import React, { memo, FunctionComponent, MouseEventHandler } from 'react';
+import * as React from 'react';
 import { AddBox } from '@material-ui/icons';
 
 export interface UploadButtonIconProps {
-    onClick?: MouseEventHandler<HTMLDivElement>;
+    onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
-export const UploadButtonIcon: FunctionComponent<UploadButtonIconProps> = memo(
+export const UploadButtonIcon = React.memo<UploadButtonIconProps>(
     ({ onClick }) => (
         <div
             style={{
@@ -31,3 +31,4 @@ export const UploadButtonIcon: FunctionComponent<UploadButtonIconProps> = memo(
         </div>
     )
 );
+UploadButtonIcon.displayName = 'UploadButtonIcon';

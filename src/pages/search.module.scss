@@ -1,0 +1,29 @@
+.inputSection {
+  background-color: rgba(var(--lotta-box-background-color), 1);
+  margin-bottom: var(--lotta-spacing);
+  padding-top: calc(var(--lotta-spacing) * 2);
+  padding: var(--lotta-spacing);
+}
+
+.advancedSettingsButton {
+    float: 'right';
+    margin-top: var(--lotta-spacing);
+}
+
+.advancedSettings {
+  overflow: hidden;
+  clear: right;
+  h3 {
+    font-size: 1.4rem;
+    margin-bottom: var(--lotta-spacing);
+  }
+}
+
+.result {
+  margin-top: var(--lotta-spacing);
+}
+
+.description {
+  margin-bottom: calc(var(--lotta-spacing) * 2);
+}
+

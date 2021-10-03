@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
-import { GetTagsQuery } from 'api/query/GetTagsQuery';
 import { TagsSelect } from './TagsSelect';
 import { FetchResult } from '@apollo/client';
+import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/editArticleLayouut/TagsSelect', () => {

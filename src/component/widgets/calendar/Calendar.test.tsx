@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'test/util';
 import { CalendarKlassenarbeiten, CalendarResponse } from 'test/fixtures';
 import { Calendar } from './Calendar';
-import { GetCalendarQuery } from 'api/query/GetCalendarQuery';
+import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 
 describe('component/widgets/Calendar', () => {
     const mocks = [

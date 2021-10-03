@@ -16,7 +16,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
         render(
             <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
             {},
-            { currentUser: SomeUser, useCache: true }
+            { currentUser: SomeUser }
         );
     });
 
@@ -28,7 +28,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     disableLink
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.getByRole('heading', { name: /article title/i })
@@ -45,7 +45,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.getByRole('heading', { name: /article title/i })
@@ -65,7 +65,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     onUpdateArticle={jest.fn()}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.getByRole('textbox', { name: /article title/i })
@@ -83,7 +83,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     onUpdateArticle={fn}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             userEvent.type(
                 screen.getByRole('textbox', { name: /article title/i }),
@@ -98,7 +98,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.getByText(
@@ -114,7 +114,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     onUpdateArticle={jest.fn()}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.getByRole('textbox', { name: /article preview text/i })
@@ -134,7 +134,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     onUpdateArticle={fn}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             userEvent.type(
                 screen.getByRole('textbox', { name: /article preview text/i }),
@@ -152,7 +152,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('img', { name: /vorschaubild/i })
@@ -168,7 +168,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     }}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.getByRole('img', { name: /vorschaubild/i })
@@ -186,7 +186,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                         onUpdateArticle={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUser, useCache: true }
+                    { currentUser: SomeUser }
                 );
                 expect(screen.getByTestId('EditOverlay')).toBeVisible();
             });
@@ -198,7 +198,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(screen.getByTestId('Tag')).toHaveTextContent(
                 'La Revolucion'
@@ -209,7 +209,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             const tag = screen.getByTestId('Tag');
             expect(
@@ -224,7 +224,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     onUpdateArticle={jest.fn()}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             const tag = screen.getByTestId('Tag');
             expect(tag.querySelector('svg')).toBeVisible();
@@ -238,7 +238,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     onUpdateArticle={fn}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             const tag = screen.getByTestId('Tag');
             userEvent.click(tag.querySelector('svg')!);
@@ -256,7 +256,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     onUpdateArticle={fn}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             userEvent.type(
                 screen.getByRole('textbox', { name: /tag hinzufügen/i }),
@@ -276,7 +276,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(screen.getByText('11.10.2020')).toBeVisible();
         });
@@ -293,7 +293,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     article={WeihnachtsmarktWithUsers}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(screen.getByTestId('AuthorAvatarsList')).toBeVisible();
             expect(
@@ -309,7 +309,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                         onUpdateArticle={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUser, useCache: true }
+                    { currentUser: SomeUser }
                 );
                 expect(
                     screen.getByRole('textbox', { name: /autor hinzufügen/i })
@@ -324,7 +324,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                         onUpdateArticle={fn}
                     />,
                     {},
-                    { currentUser: KeinErSieEsUser, useCache: true }
+                    { currentUser: KeinErSieEsUser }
                 );
                 const avatarsList = screen.getByTestId('AuthorAvatarsList');
                 expect(avatarsList.querySelector('button')).toBeVisible();
@@ -343,7 +343,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                             onUpdateArticle={onUpdate}
                         />,
                         {},
-                        { currentUser: SomeUser, useCache: true }
+                        { currentUser: SomeUser }
                     );
                     userEvent.click(
                         screen.getByRole('button', { name: /che entfernen/i })
@@ -377,7 +377,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                             onUpdateArticle={onUpdate}
                         />,
                         {},
-                        { currentUser: SomeUser, useCache: true }
+                        { currentUser: SomeUser }
                     );
                     userEvent.click(
                         screen.getByRole('button', { name: /che entfernen/i })
@@ -415,7 +415,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: admin, useCache: true }
+                { currentUser: admin }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag bearbeiten/i })
@@ -429,7 +429,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     disableEdit
                 />,
                 {},
-                { currentUser: admin, useCache: true }
+                { currentUser: admin }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag bearbeiten/i })
@@ -442,7 +442,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag bearbeiten/i })
@@ -456,7 +456,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     disableEdit
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag bearbeiten/i })
@@ -467,7 +467,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag bearbeiten/i })
@@ -481,7 +481,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     disableEdit
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag bearbeiten/i })
@@ -496,7 +496,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: admin, useCache: true }
+                { currentUser: admin }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
@@ -510,7 +510,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     disablePin
                 />,
                 {},
-                { currentUser: admin, useCache: true }
+                { currentUser: admin }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
@@ -523,7 +523,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     article={{ ...Weihnachtsmarkt, users: [SomeUser] }}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
@@ -537,7 +537,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     disablePin
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
@@ -548,7 +548,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
             const screen = render(
                 <ArticlePreviewStandardLayout article={Weihnachtsmarkt} />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })
@@ -562,7 +562,7 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     disablePin
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 screen.queryByRole('button', { name: /beitrag .+ anpinnen/i })

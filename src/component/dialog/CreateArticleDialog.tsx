@@ -9,11 +9,11 @@ import { Button } from 'component/general/button/Button';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
 import { ArticleModel, ArticleModelInput } from '../../model';
-import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
 import { useMutation } from '@apollo/client';
-import { GetOwnArticlesQuery } from 'api/query/GetOwnArticles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';
+import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
 
 export interface CreateArticleDialogProps {
     isOpen: boolean;

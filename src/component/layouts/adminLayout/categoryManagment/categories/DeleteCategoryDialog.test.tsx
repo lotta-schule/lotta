@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { ComputerExperten, FaecherCategory } from 'test/fixtures';
-import { DeleteCategoryMutation } from 'api/mutation/DeleteCategoryMutation';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import userEvent from '@testing-library/user-event';
-import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
+import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';
+import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 
 const mocks = [
     {

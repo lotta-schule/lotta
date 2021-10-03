@@ -20,13 +20,12 @@ describe('component/article/module/form/FormElementConfiguration', () => {
                 />
             );
             expect(
-                screen.getByRole('button', { name: /texteingabefeld/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('button', { name: /email/i })
-            ).toBeVisible();
-            userEvent.click(screen.getByRole('button', { name: /email/i }));
-            userEvent.click(screen.getByRole('option', { name: /farbe/i }));
+                screen.getByRole('combobox', { name: /art der eingabe/i })
+            ).toHaveValue('input');
+            userEvent.selectOptions(
+                screen.getByRole('combobox', { name: /texteingabevariation/i }),
+                'color'
+            );
             expect(updateElementFn).toHaveBeenLastCalledWith({ type: 'color' });
             expect(
                 screen.getByRole('textbox', { name: /name/i })
@@ -91,13 +90,15 @@ describe('component/article/module/form/FormElementConfiguration', () => {
                 />
             );
             expect(
-                screen.getByRole('button', { name: /auswahlbereich/i })
-            ).toBeVisible();
+                screen.getByRole('combobox', { name: /art der eingabe/i })
+            ).toHaveValue('selection');
             expect(
-                screen.getByRole('button', { name: /checkbox/i })
-            ).toBeVisible();
-            userEvent.click(screen.getByRole('button', { name: /checkbox/i }));
-            userEvent.click(screen.getByRole('option', { name: /radio/i }));
+                screen.getByRole('combobox', { name: /auswahlfeldvariation/i })
+            ).toHaveValue('checkbox');
+            userEvent.selectOptions(
+                screen.getByRole('combobox', { name: /auswahlfeldvariation/i }),
+                'radio'
+            );
             expect(updateElementFn).toHaveBeenLastCalledWith({ type: 'radio' });
             expect(
                 screen.getByRole('textbox', { name: /name/i })
@@ -132,8 +133,8 @@ describe('component/article/module/form/FormElementConfiguration', () => {
                 />
             );
             expect(
-                screen.getByRole('button', { name: /datei-anhang/i })
-            ).toBeVisible();
+                screen.getByRole('combobox', { name: /art der eingabe/i })
+            ).toHaveValue('file');
             expect(
                 screen.getByRole('textbox', { name: /name/i })
             ).toBeVisible();

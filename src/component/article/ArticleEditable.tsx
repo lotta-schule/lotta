@@ -1,23 +1,10 @@
 import * as React from 'react';
-import { ArticleModel, ContentModuleModel } from '../../model';
+import { ArticleModel, ContentModuleModel } from 'model';
+import { ArticleTitle } from './ArticleTitle';
 import { ContentModule } from './module/ContentModule';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { makeStyles, CircularProgress } from '@material-ui/core';
-import { fade } from '@material-ui/core/styles/colorManipulator';
-import { ArticleTitle } from './ArticleTitle';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        padding: '0.5em',
-        backgroundColor: theme.palette.background.paper,
-        borderRadius: theme.shape.borderRadius,
-        boxShadow: `1px 1px 2px ${fade(theme.palette.text.primary, 0.2)}`,
-    },
-    contentModules: {
-        marginTop: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
-    },
-}));
+import styles from './ArticleEditable.module.scss';
 
 interface ArticleEditableProps {
     article: ArticleModel;
@@ -26,7 +13,6 @@ interface ArticleEditableProps {
 
 export const ArticleEditable = React.memo<ArticleEditableProps>(
     ({ article, onUpdateArticle }) => {
-        const styles = useStyles();
         const moveContentModulePosition = (
             moduleId: ContentModuleModel['id'],
             sourceIndex: number,
@@ -58,146 +44,139 @@ export const ArticleEditable = React.memo<ArticleEditableProps>(
             <article className={styles.root} data-testid={'ArticleEditable'}>
                 <ArticleTitle article={article} onUpdate={onUpdateArticle} />
                 <section className={styles.contentModules}>
-                    <React.Suspense fallback={<CircularProgress />}>
-                        <DragDropContext
-                            onDragEnd={({
+                    <DragDropContext
+                        onDragEnd={({ draggableId, destination, source }) => {
+                            if (!destination) {
+                                return;
+                            }
+
+                            if (
+                                destination.droppableId ===
+                                    source.droppableId &&
+                                destination.index === source.index
+                            ) {
+                                return;
+                            }
+
+                            moveContentModulePosition(
                                 draggableId,
-                                destination,
-                                source,
-                            }) => {
-                                if (!destination) {
-                                    return;
-                                }
-
-                                if (
-                                    destination.droppableId ===
-                                        source.droppableId &&
-                                    destination.index === source.index
-                                ) {
-                                    return;
-                                }
-
-                                moveContentModulePosition(
-                                    draggableId,
-                                    source.index,
-                                    destination.index
-                                );
-                            }}
-                        >
-                            <Droppable droppableId={String(article.id)}>
-                                {(provided) => (
-                                    <section
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
-                                    >
-                                        {[...article.contentModules]
-                                            .sort(
-                                                (cm1, cm2) =>
-                                                    cm1.sortKey - cm2.sortKey
-                                            )
-                                            .map((contentModule, index) => (
-                                                <Draggable
-                                                    key={contentModule.id}
-                                                    draggableId={String(
-                                                        contentModule.id
-                                                    )}
-                                                    index={index}
-                                                >
-                                                    {(
-                                                        {
-                                                            draggableProps,
-                                                            dragHandleProps,
-                                                            innerRef,
-                                                        },
-                                                        snapshot
-                                                    ) => (
-                                                        <ContentModule
-                                                            index={index}
-                                                            contentModule={
-                                                                contentModule
-                                                            }
-                                                            isEditModeEnabled
-                                                            cardProps={{
-                                                                innerRef,
-                                                                ...draggableProps,
-                                                            }}
-                                                            dragbarProps={
-                                                                dragHandleProps
-                                                            }
-                                                            isDragging={
-                                                                snapshot.isDragging
-                                                            }
-                                                            onMoveUp={
-                                                                index === 0
-                                                                    ? undefined
-                                                                    : () => {
-                                                                          moveContentModulePosition(
-                                                                              contentModule.id,
-                                                                              index,
-                                                                              index -
-                                                                                  1
-                                                                          );
-                                                                      }
-                                                            }
-                                                            onMoveDown={
-                                                                index + 1 ===
-                                                                article
-                                                                    .contentModules
-                                                                    .length
-                                                                    ? undefined
-                                                                    : () => {
-                                                                          moveContentModulePosition(
-                                                                              contentModule.id,
-                                                                              index,
-                                                                              index +
-                                                                                  1
-                                                                          );
-                                                                      }
-                                                            }
-                                                            onUpdateModule={(
-                                                                updatedModule
-                                                            ) => {
-                                                                onUpdateArticle(
-                                                                    {
-                                                                        ...article,
-                                                                        contentModules: article.contentModules.map(
-                                                                            (
-                                                                                contentModule
-                                                                            ) =>
-                                                                                contentModule.id ===
-                                                                                updatedModule.id
-                                                                                    ? updatedModule
-                                                                                    : contentModule
-                                                                        ),
-                                                                    }
-                                                                );
-                                                            }}
-                                                            onRemoveContentModule={() =>
-                                                                onUpdateArticle(
-                                                                    {
-                                                                        ...article,
-                                                                        contentModules: article.contentModules.filter(
-                                                                            (
-                                                                                currentModule
-                                                                            ) =>
-                                                                                contentModule.id !==
-                                                                                currentModule.id
-                                                                        ),
-                                                                    }
-                                                                )
-                                                            }
-                                                        />
-                                                    )}
-                                                </Draggable>
-                                            ))}
-                                        {provided.placeholder}
-                                    </section>
-                                )}
-                            </Droppable>
-                        </DragDropContext>
-                    </React.Suspense>
+                                source.index,
+                                destination.index
+                            );
+                        }}
+                    >
+                        <Droppable droppableId={String(article.id)}>
+                            {(provided) => (
+                                <section
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                >
+                                    {[...article.contentModules]
+                                        .sort(
+                                            (cm1, cm2) =>
+                                                cm1.sortKey - cm2.sortKey
+                                        )
+                                        .map((contentModule, index) => (
+                                            <Draggable
+                                                key={contentModule.id}
+                                                draggableId={String(
+                                                    contentModule.id
+                                                )}
+                                                index={index}
+                                            >
+                                                {(
+                                                    {
+                                                        draggableProps,
+                                                        dragHandleProps,
+                                                        innerRef,
+                                                    },
+                                                    snapshot
+                                                ) => (
+                                                    <ContentModule
+                                                        index={index}
+                                                        contentModule={
+                                                            contentModule
+                                                        }
+                                                        isEditModeEnabled
+                                                        elementProps={{
+                                                            ref: innerRef,
+                                                            ...draggableProps,
+                                                        }}
+                                                        dragbarProps={
+                                                            dragHandleProps
+                                                        }
+                                                        isDragging={
+                                                            snapshot.isDragging
+                                                        }
+                                                        onMoveUp={
+                                                            index === 0
+                                                                ? undefined
+                                                                : () => {
+                                                                      moveContentModulePosition(
+                                                                          contentModule.id,
+                                                                          index,
+                                                                          index -
+                                                                              1
+                                                                      );
+                                                                  }
+                                                        }
+                                                        onMoveDown={
+                                                            index + 1 ===
+                                                            article
+                                                                .contentModules
+                                                                .length
+                                                                ? undefined
+                                                                : () => {
+                                                                      moveContentModulePosition(
+                                                                          contentModule.id,
+                                                                          index,
+                                                                          index +
+                                                                              1
+                                                                      );
+                                                                  }
+                                                        }
+                                                        onUpdateModule={(
+                                                            updatedModule
+                                                        ) => {
+                                                            onUpdateArticle({
+                                                                ...article,
+                                                                contentModules:
+                                                                    article.contentModules.map(
+                                                                        (
+                                                                            contentModule
+                                                                        ) =>
+                                                                            contentModule.id ===
+                                                                            updatedModule.id
+                                                                                ? updatedModule
+                                                                                : contentModule
+                                                                    ),
+                                                            });
+                                                        }}
+                                                        onRemoveContentModule={() =>
+                                                            onUpdateArticle({
+                                                                ...article,
+                                                                contentModules:
+                                                                    article.contentModules.filter(
+                                                                        (
+                                                                            currentModule
+                                                                        ) =>
+                                                                            contentModule.id !==
+                                                                            currentModule.id
+                                                                    ),
+                                                            })
+                                                        }
+                                                    />
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                    {provided.placeholder}
+                                </section>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </section>
             </article>
         );
     }
 );
+ArticleEditable.displayName = 'ArticleEditable';

@@ -1,5 +1,5 @@
-import React, { memo, useCallback } from 'react';
-import { TableCell, makeStyles } from '@material-ui/core';
+import * as React from 'react';
+import { TableCell } from '@material-ui/core';
 import {
     AutoSizer,
     Column,
@@ -10,15 +10,7 @@ import {
 } from 'react-virtualized';
 import clsx from 'clsx';
 
-declare module '@material-ui/core/styles/withStyles' {
-    // Augment the BaseCSSProperties so that we can control jss-rtl
-    interface BaseCSSProperties {
-        /*
-         * Used to control if the rule-set should be affected by rtl transformation
-         */
-        flip?: boolean;
-    }
-}
+import styles from './VirtualizedTable.module.scss';
 
 interface ColumnData {
     dataKey: string;
@@ -42,46 +34,7 @@ interface MuiVirtualizedTableProps<T = any> {
     rowGetter(row: Row): T;
 }
 
-const useStyles = makeStyles((theme) => ({
-    flexContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        boxSizing: 'border-box',
-        backgroundColor: theme.palette.background.paper,
-    },
-    table: {
-        backgroundColor: theme.palette.background.paper,
-        // temporary right-to-left patch, waiting for
-        // https://github.com/bvaughn/react-virtualized/issues/454
-        '& .ReactVirtualized__Table__headerRow': {
-            flip: false,
-            paddingRight:
-                theme.direction === 'rtl' ? '0px !important' : undefined,
-        },
-    },
-    tableRow: {
-        cursor: 'pointer',
-    },
-    tableRowHover: {
-        '&:hover': {
-            backgroundColor: theme.palette.grey[200],
-        },
-    },
-    tableCell: {
-        flex: 1,
-    },
-    noClick: {
-        cursor: 'initial',
-    },
-    flexGrow: {
-        flexGrow: 1,
-    },
-    forceFlexGrow: {
-        flex: '1 !important',
-    },
-}));
-
-export const VirtualizedTable = memo<MuiVirtualizedTableProps>(
+export const VirtualizedTable = React.memo<MuiVirtualizedTableProps>(
     ({
         className,
         height,
@@ -91,15 +44,13 @@ export const VirtualizedTable = memo<MuiVirtualizedTableProps>(
         rowHeight,
         ...tableProps
     }) => {
-        const styles = useStyles();
-
         const getRowClassName = ({ index }: Row) => {
             return clsx(styles.tableRow, styles.flexContainer, {
                 [styles.tableRowHover]: index !== -1 && onRowClick != null,
             });
         };
 
-        const cellRenderer: TableCellRenderer = useCallback(
+        const cellRenderer: TableCellRenderer = React.useCallback(
             ({ cellData, columnIndex }) => {
                 return (
                     <TableCell
@@ -127,10 +78,10 @@ export const VirtualizedTable = memo<MuiVirtualizedTableProps>(
                     </TableCell>
                 );
             },
-            [columns, styles, rowHeight, onRowClick]
+            [columns, rowHeight, onRowClick]
         );
 
-        const headerRenderer = useCallback(
+        const headerRenderer = React.useCallback(
             ({
                 label,
                 columnIndex,
@@ -156,7 +107,7 @@ export const VirtualizedTable = memo<MuiVirtualizedTableProps>(
                     </TableCell>
                 );
             },
-            [styles, headerHeight, columns]
+            [headerHeight, columns]
         );
 
         return (
@@ -201,3 +152,4 @@ export const VirtualizedTable = memo<MuiVirtualizedTableProps>(
         );
     }
 );
+VirtualizedTable.displayName = 'VirtualizedTable';

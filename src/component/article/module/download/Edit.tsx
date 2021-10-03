@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { ContentModuleModel, FileModel } from '../../../../model';
-import { CardContent, Typography, TextareaAutosize } from '@material-ui/core';
+import { ContentModuleModel, FileModel } from 'model';
+import { CardContent, TextareaAutosize } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { FileSize } from 'util/FileSize';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { DragHandle, Delete } from '@material-ui/icons';
-import { useStyles } from './Download';
+
+import styles from './Download.module.scss';
 
 export interface EditProps {
     contentModule: ContentModuleModel;
@@ -15,8 +16,6 @@ export interface EditProps {
 
 export const Edit = React.memo<EditProps>(
     ({ contentModule, onUpdateModule }) => {
-        const styles = useStyles();
-
         const getConfiguration = (file: FileModel) => {
             if (
                 contentModule.configuration &&
@@ -126,14 +125,14 @@ export const Edit = React.memo<EditProps>(
                                                             <DragHandle />
                                                         </span>
                                                         <div>
-                                                            <Typography
+                                                            <div
                                                                 className={
                                                                     styles.downloadDescription
                                                                 }
                                                             >
                                                                 {file.filename}
-                                                            </Typography>
-                                                            <Typography
+                                                            </div>
+                                                            <div
                                                                 className={
                                                                     styles.secondaryHeading
                                                                 }
@@ -141,7 +140,7 @@ export const Edit = React.memo<EditProps>(
                                                                 {new FileSize(
                                                                     file.filesize
                                                                 ).humanize()}
-                                                            </Typography>
+                                                            </div>
                                                         </div>
                                                         <Button
                                                             icon={<Delete />}
@@ -175,23 +174,25 @@ export const Edit = React.memo<EditProps>(
                                                             onBlur={(event) =>
                                                                 onUpdateModule({
                                                                     ...contentModule,
-                                                                    configuration: {
-                                                                        ...contentModule.configuration,
-                                                                        files: {
-                                                                            ...contentModule
-                                                                                .configuration
-                                                                                .files,
-                                                                            [file.id]: {
-                                                                                ...getConfiguration(
-                                                                                    file
-                                                                                ),
-                                                                                description:
-                                                                                    event
-                                                                                        .target
-                                                                                        .value,
+                                                                    configuration:
+                                                                        {
+                                                                            ...contentModule.configuration,
+                                                                            files: {
+                                                                                ...contentModule
+                                                                                    .configuration
+                                                                                    .files,
+                                                                                [file.id]:
+                                                                                    {
+                                                                                        ...getConfiguration(
+                                                                                            file
+                                                                                        ),
+                                                                                        description:
+                                                                                            event
+                                                                                                .target
+                                                                                                .value,
+                                                                                    },
                                                                             },
                                                                         },
-                                                                    },
                                                                 })
                                                             }
                                                         />
@@ -254,4 +255,4 @@ export const Edit = React.memo<EditProps>(
         );
     }
 );
-export default Edit;
+Edit.displayName = 'FormEdit';

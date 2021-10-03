@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import * as React from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -13,9 +13,9 @@ import { useUploads } from './context/UploadQueueContext';
 import { useTranslation } from 'react-i18next';
 import fileExplorerContext from './context/FileExplorerContext';
 
-export const ActiveUploadsModal = memo(() => {
+export const ActiveUploadsModal = React.memo(() => {
     const { t } = useTranslation();
-    const [state, dispatch] = useContext(fileExplorerContext);
+    const [state, dispatch] = React.useContext(fileExplorerContext);
     const uploads = useUploads();
 
     return (
@@ -62,3 +62,4 @@ export const ActiveUploadsModal = memo(() => {
         </Dialog>
     );
 });
+ActiveUploadsModal.displayName = 'ActiveUploadsModal';

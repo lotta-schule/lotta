@@ -1,8 +1,10 @@
-import React, { memo } from 'react';
-import { ContentModuleModel } from '../../../../model';
-import { CardContent, makeStyles } from '@material-ui/core';
+import * as React from 'react';
+import { ContentModuleModel } from 'model';
+import { CardContent } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
+
+import styles from './Text.module.scss';
 
 export interface TextProps {
     contentModule: ContentModuleModel;
@@ -10,29 +12,8 @@ export interface TextProps {
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        margin: '0 16.6%',
-        [theme.breakpoints.down('sm')]: {
-            margin: 0,
-        },
-        '& a': {
-            textDecoration: 'none',
-            color: theme.palette.secondary.main,
-        },
-        '& p, & ul, & ol': {
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(1),
-        },
-        '& ul, & ol': {
-            ...theme.typography.body1,
-        },
-    },
-}));
-
-export const Text = memo<TextProps>(
+export const Text = React.memo<TextProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-        const styles = useStyles();
         return (
             <CardContent
                 className={styles.root}
@@ -50,3 +31,4 @@ export const Text = memo<TextProps>(
         );
     }
 );
+Text.displayName = 'Text';

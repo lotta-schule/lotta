@@ -3,7 +3,7 @@ import { render, waitFor } from 'test/util';
 import { schuelerGroup, SomeUser, SomeUserin } from 'test/fixtures';
 import { MessageToolbar } from './MessageToolbar';
 import { ChatType } from 'model';
-import { SearchUsersQuery } from 'api/query/SearchUsersQuery';
+import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/adminLayout/MessageToolbar', () => {
@@ -16,7 +16,7 @@ describe('component/layouts/adminLayout/MessageToolbar', () => {
                 onCreateMessageThread={() => {}}
             />,
             {},
-            { useCache: true, currentUser: SomeUserWithGroups }
+            { currentUser: SomeUserWithGroups }
         );
     });
 
@@ -27,7 +27,7 @@ describe('component/layouts/adminLayout/MessageToolbar', () => {
                 onCreateMessageThread={() => {}}
             />,
             {},
-            { useCache: true, currentUser: SomeUserWithGroups }
+            { currentUser: SomeUserWithGroups }
         );
 
         userEvent.click(
@@ -46,7 +46,7 @@ describe('component/layouts/adminLayout/MessageToolbar', () => {
                     onCreateMessageThread={() => {}}
                 />,
                 {},
-                { useCache: true, currentUser: SomeUser }
+                { currentUser: SomeUser }
             );
 
             userEvent.click(
@@ -84,7 +84,7 @@ describe('component/layouts/adminLayout/MessageToolbar', () => {
                     onCreateMessageThread={onCreateMessageThread}
                 />,
                 {},
-                { useCache: true, currentUser: SomeUserin, additionalMocks }
+                { currentUser: SomeUserin, additionalMocks }
             );
 
             userEvent.click(
@@ -125,7 +125,7 @@ describe('component/layouts/adminLayout/MessageToolbar', () => {
                     onCreateMessageThread={onCreateMessageThread}
                 />,
                 {},
-                { useCache: true, currentUser: SomeUserWithGroups }
+                { currentUser: SomeUserWithGroups }
             );
 
             userEvent.click(

@@ -1,0 +1,36 @@
+.flexContainer {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+}
+
+.table {
+    background-color: rgba(var(--lotta-box-background-color), 1);
+}
+
+.tableRow {
+    cursor: 'pointer';
+}
+
+.tableRowHover {
+    &:hover {
+        background-color: rgba(var(--lotta-banner-background-color1), 1);
+    }
+}
+
+.tableCell {
+    flex: 1;
+}
+
+.noClick {
+    cursor: initial;
+}
+
+.flexGrow {
+    flex-grow: 1;
+}
+
+.forceFlexGrow {
+    flex: 1 !important;
+}

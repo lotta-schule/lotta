@@ -11,7 +11,7 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
-import { RequestHisecTokenMutation } from 'api/mutation/RequestHisecTokenMutation';
+import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 
 export interface RequestHisecTokenDialogProps {
     isOpen: boolean;

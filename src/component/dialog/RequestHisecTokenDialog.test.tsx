@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
-import { RequestHisecTokenMutation } from 'api/mutation/RequestHisecTokenMutation';
+import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/dialog/RequestHisecToken', () => {

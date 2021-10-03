@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import * as React from 'react';
 import {
     AddCircle,
     PersonOutlineOutlined,
@@ -13,79 +13,26 @@ import {
 } from '@material-ui/icons';
 import { CreateArticleDialog } from 'component/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'component/user/UserAvatar';
-import {
-    Grid,
-    makeStyles,
-    Menu,
-    MenuItem,
-    Divider,
-    Badge,
-} from '@material-ui/core';
+import { Grid, Menu, MenuItem, Divider, Badge } from '@material-ui/core';
 import { LoginDialog } from '../../dialog/LoginDialog';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
 import { ArticleModel } from '../../../model';
 import { RegisterDialog } from 'component/dialog/RegisterDialog';
-import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { useQuery } from '@apollo/client';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useNewMessagesBadgeNumber } from './useNewMessagesBadgeNumber';
-import useRouter from 'use-react-router';
-import clsx from 'clsx';
+import { useRouter } from 'next/router';
 import { NavigationButton } from 'component/general/button/NavigationButton';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
+import Link from 'next/link';
+import clsx from 'clsx';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexShrink: 0,
-        height: '100%',
-        justifyContent: 'center',
-        paddingRight: theme.spacing(1),
-    },
-    nav: {
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    button: {
-        width: '100%',
-        justifyContent: 'left',
-    },
-    leftIcon: {
-        marginRight: theme.spacing(1),
-    },
-    iconSmall: {
-        fontSize: 20,
-    },
-    badge: {
-        left: '-2.5em',
-        transform: 'scale(1) translate(0%, 0%)',
-    },
-    menu: {
-        boxShadow: '4px 4px 10px #ccc6',
-        border: '1px solid',
-        borderColor: '#bdbdbd',
-        marginTop: '2.5em',
-        '& ul': {
-            padding: 0,
-        },
-        '& li': {
-            paddingTop: theme.spacing(1.5),
-            paddingBottom: theme.spacing(1.5),
-        },
-    },
-    avatarContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: theme.spacing(1, 0, 1, 0),
-    },
-}));
+import styles from './UserNavigation.module.scss';
 
-export const UserNavigation = memo(() => {
-    const styles = useStyles();
-
+export const UserNavigation = React.memo(() => {
     const currentUser = useCurrentUser();
-    const { history } = useRouter();
+    const router = useRouter();
     const { data: unpublishedArticlesData } = useQuery<{
         articles: ArticleModel[];
     }>(GetUnpublishedArticlesQuery, {
@@ -94,20 +41,17 @@ export const UserNavigation = memo(() => {
     const newMessagesBadgeNumber = useNewMessagesBadgeNumber();
     const onLogout = useOnLogout();
 
-    const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
-    const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false);
-    const [createArticleModalIsOpen, setCreateArticleModalIsOpen] = useState(
-        false
-    );
+    const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);
+    const [registerModalIsOpen, setRegisterModalIsOpen] = React.useState(false);
+    const [createArticleModalIsOpen, setCreateArticleModalIsOpen] =
+        React.useState(false);
 
     const unpublishedBadgeNumber = unpublishedArticlesData?.articles.filter(
         (article) => !article.readyToPublish || !article.published
     ).length;
 
-    const [
-        profileMenuAnchorEl,
-        setProfileMenuAnchorEl,
-    ] = useState<HTMLElement | null>(null);
+    const [profileMenuAnchorEl, setProfileMenuAnchorEl] =
+        React.useState<HTMLElement | null>(null);
 
     let nav;
     if (currentUser) {
@@ -135,33 +79,35 @@ export const UserNavigation = memo(() => {
                                 'usernavigation-button'
                             )}
                         ></NavigationButton>
-                        <NavigationButton
-                            onClick={() => history.push('/search')}
-                            icon={<SearchRounded />}
-                            label={'Suche'}
-                            className={clsx(
-                                'secondary',
-                                'small',
-                                'usernavigation-button'
-                            )}
-                        ></NavigationButton>
-                        <NavigationButton
-                            onClick={() => history.push('/messaging')}
-                            icon={
-                                <Badge
-                                    badgeContent={newMessagesBadgeNumber}
-                                    color={'primary'}
-                                >
-                                    <Forum color={'secondary'} />
-                                </Badge>
-                            }
-                            label={'Nachrichten'}
-                            className={clsx(
-                                'secondary',
-                                'small',
-                                'usernavigation-button'
-                            )}
-                        ></NavigationButton>
+                        <Link href={'/search'} passHref>
+                            <NavigationButton
+                                icon={<SearchRounded />}
+                                label={'Suche'}
+                                className={clsx(
+                                    'secondary',
+                                    'small',
+                                    'usernavigation-button'
+                                )}
+                            ></NavigationButton>
+                        </Link>
+                        <Link href={'/messaging'} passHref>
+                            <NavigationButton
+                                icon={
+                                    <Badge
+                                        badgeContent={newMessagesBadgeNumber}
+                                        color={'primary'}
+                                    >
+                                        <Forum color={'secondary'} />
+                                    </Badge>
+                                }
+                                label={'Nachrichten'}
+                                className={clsx(
+                                    'secondary',
+                                    'small',
+                                    'usernavigation-button'
+                                )}
+                            ></NavigationButton>
+                        </Link>
                         <NavigationButton
                             icon={<AccountCircle />}
                             className={clsx(
@@ -190,7 +136,7 @@ export const UserNavigation = memo(() => {
                                     key={'profile'}
                                     onClick={() => {
                                         setProfileMenuAnchorEl(null);
-                                        history.push('/profile');
+                                        router.push('/profile');
                                     }}
                                 >
                                     <PersonOutlineOutlined
@@ -202,7 +148,7 @@ export const UserNavigation = memo(() => {
                                     key={'files'}
                                     onClick={() => {
                                         setProfileMenuAnchorEl(null);
-                                        history.push('/profile/files');
+                                        router.push('/profile/files');
                                     }}
                                 >
                                     <FolderOutlined color={'secondary'} />
@@ -212,7 +158,7 @@ export const UserNavigation = memo(() => {
                                     key={'ownArticles'}
                                     onClick={() => {
                                         setProfileMenuAnchorEl(null);
-                                        history.push('/profile/articles');
+                                        router.push('/profile/articles');
                                     }}
                                 >
                                     <AssignmentOutlined color={'secondary'} />
@@ -225,9 +171,7 @@ export const UserNavigation = memo(() => {
                                               key={'administration'}
                                               onClick={() => {
                                                   setProfileMenuAnchorEl(null);
-                                                  history.push(
-                                                      '/admin/system/general'
-                                                  );
+                                                  router.push('/admin');
                                               }}
                                           >
                                               <SecurityOutlined
@@ -239,7 +183,7 @@ export const UserNavigation = memo(() => {
                                               key={'open-articles'}
                                               onClick={() => {
                                                   setProfileMenuAnchorEl(null);
-                                                  history.push(
+                                                  router.push(
                                                       '/admin/unpublished'
                                                   );
                                               }}
@@ -275,7 +219,7 @@ export const UserNavigation = memo(() => {
                             isOpen={createArticleModalIsOpen}
                             onAbort={() => setCreateArticleModalIsOpen(false)}
                             onConfirm={(article) => {
-                                history.push(
+                                router.push(
                                     Article.getPath(article, { edit: true })
                                 );
                             }}
@@ -302,11 +246,13 @@ export const UserNavigation = memo(() => {
                     label={'Registrieren'}
                     className={clsx('secondary', 'small')}
                 ></NavigationButton>
-                <NavigationButton
-                    onClick={() => history.push('/search')}
-                    label={'Suche'}
-                    className={clsx('secondary', 'small')}
-                ></NavigationButton>
+                <Link href={'/search'} passHref>
+                    <NavigationButton
+                        onClick={() => router.push('/search')}
+                        label={'Suche'}
+                        className={clsx('secondary', 'small')}
+                    ></NavigationButton>
+                </Link>
                 <RegisterDialog
                     isOpen={registerModalIsOpen}
                     onRequestClose={() => {
@@ -328,3 +274,4 @@ export const UserNavigation = memo(() => {
         </>
     );
 });
+UserNavigation.displayName = 'UserNavigation';

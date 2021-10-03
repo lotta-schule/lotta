@@ -12,9 +12,9 @@ import { useQuery, useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
-import { GetArticlesQuery } from 'api/query/GetArticlesQuery';
-import { DeleteCategoryMutation } from 'api/mutation/DeleteCategoryMutation';
-import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
+import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';
+import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
+import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 
 export interface DeleteCategoryDialogProps {
     isOpen: boolean;

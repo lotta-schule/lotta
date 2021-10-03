@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-    Checkbox,
-    FormControlLabel,
-    NoSsr,
-    Theme,
-    Typography,
-    makeStyles,
-} from '@material-ui/core';
+import { Checkbox, FormControlLabel, NoSsr } from '@material-ui/core';
 import { useAutocomplete } from '@material-ui/lab';
 import { Check, Close } from '@material-ui/icons';
 import { useUserGroups } from 'util/tenant/useUserGroups';
@@ -14,6 +7,8 @@ import { UserGroupModel } from 'model/UserGroupModel';
 import { Button } from 'component/general/button/Button';
 import { Input } from 'component/general/form/input/Input';
 import clsx from 'clsx';
+
+import styles from './GroupSelect.module.scss';
 
 export interface GroupSelectProps {
     className?: string;
@@ -33,100 +28,9 @@ export interface GroupSelectProps {
     onSelectGroups(groups: UserGroupModel[]): void;
 }
 
-const useStyles = makeStyles<Theme, { row?: boolean }>((theme) => ({
-    root: {
-        margin: theme.spacing(1, 0),
-        position: 'relative',
-    },
-    publicGroupSelectionLabel: {
-        margin: 0,
-    },
-    inputWrapper: {
-        color: 'inherit',
-    },
-    tag: {
-        display: ({ row }) => (row ? 'inline-flex' : 'flex'),
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        height: 24,
-        margin: 2,
-        lineHeight: 22,
-        backgroundColor: '#fafafa',
-        border: `1px solid #e8e8e8`,
-        borderRadius: 2,
-        boxSizing: 'content-box',
-        padding: theme.spacing(0, 1, 0, 2),
-        outline: 0,
-        overflow: 'hidden',
-
-        '&.is-admin-group': {
-            fontStyle: 'italic',
-        },
-
-        '&:focus': {
-            borderColor: '#40a9ff',
-            backgroundColor: '#e6f7ff',
-        },
-
-        '& span': {
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-        },
-
-        '& svg': {
-            fontSize: 12,
-            cursor: 'pointer',
-        },
-    },
-    listBox: {
-        margin: theme.spacing(1, 0, 0),
-        width: '100%',
-        padding: 0,
-        position: 'absolute',
-        top: '100%',
-        left: 0,
-        listStyle: 'none',
-        backgroundColor: theme.palette.background.paper,
-        overflow: 'auto',
-        maxHeight: 250,
-        zIndex: 10000,
-
-        '& li': {
-            padding: theme.spacing(1, 2),
-            display: 'flex',
-
-            '& span': {
-                flexGrow: 1,
-            },
-
-            '& svg': {
-                color: 'transparent',
-                transition: 'color ease-in 250ms',
-            },
-        },
-
-        '& li[aria-selected="true"]': {
-            '& svg': {
-                color: theme.palette.secondary.main,
-            },
-        },
-
-        '& li[data-focus="true"]': {
-            backgroundColor: theme.palette.grey.A100,
-            cursor: 'pointer',
-
-            '& svg': {
-                color: theme.palette.text.disabled,
-            },
-        },
-    },
-}));
-
 export const GroupSelect = React.memo<GroupSelectProps>(
     ({
         className,
-        variant,
         label,
         disabled,
         row,
@@ -137,7 +41,6 @@ export const GroupSelect = React.memo<GroupSelectProps>(
         filterSelection,
         onSelectGroups,
     }) => {
-        const styles = useStyles({ row });
         const groups = useUserGroups().filter(filterSelection ?? (() => true));
 
         const [searchtext, setSearchtext] = React.useState('');
@@ -209,12 +112,12 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                     data-testid="GroupSelect"
                 >
                     <div {...getRootProps()} data-testid="GroupSelectSelection">
-                        <Typography role={'heading'} {...getInputLabelProps()}>
+                        <h4 {...getInputLabelProps()}>
                             {label ?? 'Sichtbarkeit:'}
-                        </Typography>
+                        </h4>
                         <div
                             ref={setAnchorEl}
-                            className={clsx(styles.inputWrapper, { focused })}
+                            className={clsx(styles.inputWrapper)}
                         >
                             {hidePublicGroupSelection !== true && (
                                 <FormControlLabel
@@ -247,30 +150,23 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                             {value
                                 .sort(groupSorter)
                                 .map((option: UserGroupModel, i: number) => {
-                                    const {
-                                        className,
-                                        onDelete,
-                                        ...props
-                                    } = getTagProps({ index: i }) as any;
+                                    const { className, onDelete, ...props } =
+                                        getTagProps({ index: i }) as any;
                                     return (
                                         <div
+                                            key={i}
                                             className={clsx(
                                                 styles.tag,
                                                 className,
                                                 {
-                                                    'is-admin-group': isAdminGroup(
-                                                        option
-                                                    ),
+                                                    [styles.row]: row,
+                                                    'is-admin-group':
+                                                        isAdminGroup(option),
                                                 }
                                             )}
                                             {...props}
                                         >
-                                            <Typography
-                                                variant={'body1'}
-                                                component={'span'}
-                                            >
-                                                {option.name}
-                                            </Typography>
+                                            <span>{option.name}</span>
                                             <Button
                                                 small
                                                 variant={'error'}
@@ -298,13 +194,11 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                             {...getListboxProps()}
                         >
                             {groupedOptions.map((option, index) => (
-                                <li {...getOptionProps({ option, index })}>
-                                    <Typography
-                                        variant={'body1'}
-                                        component={'span'}
-                                    >
-                                        {option.name}
-                                    </Typography>
+                                <li
+                                    key={index}
+                                    {...getOptionProps({ option, index })}
+                                >
+                                    <span>{option.name}</span>
                                     <Check fontSize={'small'} />
                                 </li>
                             ))}

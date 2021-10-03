@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# next
+.next
+
 # dependencies
 /node_modules
 /.pnp
@@ -35,3 +38,6 @@ yarn-error.log*
 
 # Rest Report
 test-report.html
+
+# Sentry
+.sentryclirc

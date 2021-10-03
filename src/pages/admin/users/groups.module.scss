@@ -1,0 +1,9 @@
+.createButton {
+    float: right;
+    margin-bottom: calc(3 * var(--lotta-spacing));
+}
+
+.draghandleIcon {
+    color: rgba(var(--lotta-disabled-color), 1);
+    margin-right: calc(2 * var(--lotta-spacing));
+}

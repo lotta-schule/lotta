@@ -13,10 +13,10 @@ import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScree
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { DirectoryModel } from 'model';
-import { UpdateDirectoryMutation } from 'api/mutation/UpdateDirectoryMutation';
 import fileExplorerContext from './context/FileExplorerContext';
+import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 export const MoveDirectoryDialog = memo(() => {
     const [state, dispatch] = useContext(fileExplorerContext);
@@ -27,10 +27,8 @@ export const MoveDirectoryDialog = memo(() => {
                   state.currentPath.length - 1
               ] as DirectoryModel)
     );
-    const [
-        isCreateNewFolderDialogOpen,
-        setIsCreateNewFolderDialogOpen,
-    ] = useState(false);
+    const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
+        useState(false);
 
     const [moveDirectory, { error, loading: isLoading }] = useMutation<{
         directory: DirectoryModel;

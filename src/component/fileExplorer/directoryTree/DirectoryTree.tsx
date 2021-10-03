@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import * as React from 'react';
 import { TreeView } from '@material-ui/lab';
 import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
 import { DirectoryTreeItem } from './DirectoryTreeItem';
@@ -12,12 +12,12 @@ export interface DirectoryTreeProps {
     onSelectDirectory(directory: DirectoryModel | null): void;
 }
 
-export const DirectoryTree = memo<DirectoryTreeProps>(
+export const DirectoryTree = React.memo<DirectoryTreeProps>(
     ({ defaultExpandedDirectoryIds, selectedDirectory, onSelectDirectory }) => {
-        const [expandedDirectoryIds, setExpandedDirectoryIds] = useState(
+        const [expandedDirectoryIds, setExpandedDirectoryIds] = React.useState(
             defaultExpandedDirectoryIds
         );
-        useEffect(() => {
+        React.useEffect(() => {
             setExpandedDirectoryIds(defaultExpandedDirectoryIds);
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [[...defaultExpandedDirectoryIds].sort().join('')]);
@@ -49,3 +49,4 @@ export const DirectoryTree = memo<DirectoryTreeProps>(
         );
     }
 );
+DirectoryTree.displayName = 'DirectoryTree';

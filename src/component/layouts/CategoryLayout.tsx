@@ -1,43 +1,25 @@
 import * as React from 'react';
+import { useQuery } from '@apollo/client';
+import { Grid } from '@material-ui/core';
 import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
-import { Grid, Typography, makeStyles, Theme } from '@material-ui/core';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
 import { BaseLayoutSidebar } from './BaseLayoutSidebar';
-import { ArticleLayout } from './ArticleLayout';
 import { WidgetsList } from './WidgetsList';
-import { useQuery } from '@apollo/client';
-import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { File, User } from 'util/model';
 import { Header } from 'component/general/Header';
+import { useServerData } from 'component/ServerDataContext';
+import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
+import clsx from 'clsx';
+import getConfig from 'next/config';
 
-const useStyles = makeStyles<Theme, { twoColumns: boolean }>((theme) => ({
-    gridItem: {
-        display: 'flex',
-        '&:nth-child(2n)': {
-            paddingLeft: ({ twoColumns }) =>
-                twoColumns ? theme.spacing(0.5) : 'initial',
-        },
-        '&:nth-child(2n+1)': {
-            paddingRight: ({ twoColumns }) =>
-                twoColumns ? theme.spacing(0.5) : 'initial',
-        },
-        '& > *': {
-            width: '100%',
-        },
-    },
-    articles: {
-        marginTop: theme.spacing(1),
-    },
-    userNavigationGridItem: {
-        [theme.breakpoints.down('sm')]: {
-            display: 'none',
-        },
-        maxWidth: '35%',
-    },
-}));
+import styles from './CategoryLayout.module.scss';
+
+const {
+    publicRuntimeConfig: { cloudimageToken },
+} = getConfig();
 
 export interface CategoryLayoutProps {
     category: CategoryModel;
@@ -46,9 +28,8 @@ export interface CategoryLayoutProps {
 
 export const CategoryLayout = React.memo<CategoryLayoutProps>(
     ({ category, articles }) => {
-        const styles = useStyles({
-            twoColumns: category.layoutName === '2-columns',
-        });
+        const { baseUrl } = useServerData();
+        const twoColumnsLayout = category.layoutName === '2-columns';
         const user = useCurrentUser();
 
         const {
@@ -71,23 +52,19 @@ export const CategoryLayout = React.memo<CategoryLayoutProps>(
             }
         );
 
-        if (articles && articles.length === 1 && articles[0].id) {
-            return <ArticleLayout articleId={articles[0].id} />;
-        }
-
         const bannerImageUrl =
             (category.bannerImageFile &&
-                `https://afdptjdxen.cloudimg.io/crop/950x120/foil1/${File.getFileRemoteLocation(
+                `https://${cloudimageToken}.cloudimg.io/crop/950x120/foil1/${File.getFileRemoteLocation(
+                    baseUrl,
                     category.bannerImageFile
                 )}`) ||
             undefined;
+
         return (
             <>
                 <BaseLayoutMainContent>
                     <Header bannerImageUrl={bannerImageUrl}>
-                        <Typography variant={'h2'} data-testid="title">
-                            {category.title}
-                        </Typography>
+                        <h2 data-testid="title">{category.title}</h2>
                     </Header>
                     <Grid container wrap={'wrap'} className={styles.articles}>
                         {articles &&
@@ -113,12 +90,11 @@ export const CategoryLayout = React.memo<CategoryLayoutProps>(
                                 .map((article) => (
                                     <Grid
                                         item
-                                        xs={
-                                            category.layoutName === '2-columns'
-                                                ? 6
-                                                : 12
-                                        }
-                                        className={styles.gridItem}
+                                        xs={twoColumnsLayout ? 6 : 12}
+                                        className={clsx(styles.gridItem, {
+                                            [styles['two-columns']]:
+                                                twoColumnsLayout,
+                                        })}
                                         key={article.id}
                                     >
                                         <ArticlePreview

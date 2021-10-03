@@ -6,9 +6,9 @@ import {
     VivaLaRevolucion,
 } from 'test/fixtures';
 import { RelatedArticlesList } from './RelatedArticlesList';
-import { GetArticlesForTag } from 'api/query/GetArticlesForTagQuery';
 import { FetchResult } from '@apollo/client';
 import { ArticleModel } from 'model';
+import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
 describe('component/article/RelatedArticlesList', () => {
     const getAdditionalMocks = (

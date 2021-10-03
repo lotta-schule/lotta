@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MemoryHistory } from 'history';
+import { Router } from 'next/router';
 import { FaecherCategory, FrancaisCategory } from 'test/fixtures/Tenant';
 import { render, waitFor } from 'test/util';
 import { Navbar } from './Navbar';
@@ -13,53 +13,66 @@ describe('component/layouts/navigation/Navbar', () => {
         const screen = render(<Navbar />);
 
         await waitFor(async () => {
-            expect(screen.queryAllByRole('button')).toHaveLength(4);
+            expect(
+                screen
+                    .queryAllByRole('button')
+                    .filter(
+                        (button) =>
+                            button.getAttribute('data-testid') !==
+                            'MobileMenuButton'
+                    )
+            ).toHaveLength(4);
         });
     });
 
-    it('it should render the correct amount of main categories', async () => {
+    it('it should render the correct amount of subcategories categories', async () => {
         const screen = render(
             <Navbar />,
             {},
-            {
-                defaultPathEntries: [`/c/${FaecherCategory.id}`],
-            }
+            { router: { as: `/c/${FaecherCategory.id}` } }
         );
 
         await waitFor(async () => {
-            expect(screen.queryAllByRole('button')).toHaveLength(10);
+            expect(
+                screen
+                    .queryAllByRole('button')
+                    .filter(
+                        (button) =>
+                            button.getAttribute('data-testid') !==
+                            'MobileMenuButton'
+                    )
+            ).toHaveLength(10);
         });
     });
 
+    // Problems mocking scrollIntoView
     it('should scroll to active nav item', async () => {
-        Element.prototype.scrollIntoView = jest.fn();
-
-        let history: MemoryHistory;
-        const changeLocationFn = jest.fn();
+        let router: Router;
+        const onPushLocation = jest.fn();
         const screen = render(
             <Navbar />,
             {},
             {
-                defaultPathEntries: [`/c/${FaecherCategory.id}`],
-                getHistory: (h) => (history = h),
-                onChangeLocation: changeLocationFn,
+                router: {
+                    as: `/c/${FaecherCategory.id}`,
+                    onPush: onPushLocation,
+                    getInstance: (_router: Router) => (router = _router),
+                },
             }
         );
-
-        await waitFor(async () => {
-            expect(history).not.toBeNull();
-        });
-
-        expect(screen.getByTestId('nav-level2')).toHaveProperty(
-            'scrollLeft',
-            0
-        );
-
-        history!.push(`/c/${FrancaisCategory.id}`);
 
         await waitFor(() => {
-            expect(changeLocationFn).toHaveBeenCalled();
+            expect(screen.getByTestId('nav-level2')).toHaveProperty(
+                'scrollLeft',
+                0
+            );
         });
-        expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
+
+        await router!.push(`/c/${FrancaisCategory.id}`);
+
+        await waitFor(() => {
+            expect(onPushLocation).toHaveBeenCalled();
+        });
+        expect(Element.prototype.scroll).toHaveBeenCalled();
     });
 });

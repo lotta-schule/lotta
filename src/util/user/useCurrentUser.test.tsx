@@ -4,13 +4,14 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react-hooks';
 import { UserModel } from 'model';
 import { useCurrentUser } from './useCurrentUser';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
 import { SomeUser } from 'test/fixtures';
+import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
 describe('util/user/useCurrentUser', () => {
     const createWrapperForUser = (
         currentUser: UserModel | null = null
     ): FunctionComponent => {
+        // eslint-disable-next-line react/display-name
         return ({ children }) => (
             <MockedProvider
                 mocks={[
@@ -25,13 +26,6 @@ describe('util/user/useCurrentUser', () => {
             </MockedProvider>
         );
     };
-
-    it('should return undefined if the user is loading', () => {
-        const screen = renderHook(() => useCurrentUser(), {
-            wrapper: createWrapperForUser(null),
-        });
-        expect(screen.result.current).not.toBeDefined();
-    });
 
     it('should return null if the user is not logged in', async () => {
         const screen = renderHook(() => useCurrentUser(), {
