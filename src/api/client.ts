@@ -42,7 +42,7 @@ const sendRefreshRequest = async () => {
     }
 };
 
-export const checkExpiredToken = async (firstRun: boolean = false) => {
+export const checkExpiredToken = async () => {
     const accessToken = localStorage.getItem('id');
     if (accessToken) {
         try {
@@ -55,12 +55,12 @@ export const checkExpiredToken = async (firstRun: boolean = false) => {
         } catch (e) {
             localStorage.clear();
         }
-    } else if (firstRun) {
-        // when there are no tokens in localstorage, have a try refreshing,
-        // there may be a refresh token saved as HTTPOnly Cookie
-        await sendRefreshRequest();
     }
 };
+
+if (isBrowser) {
+    checkExpiredToken();
+}
 
 let cachedApolloClient: ApolloClient<NormalizedCacheObject> | null = null;
 export const getApolloClient = () => {
