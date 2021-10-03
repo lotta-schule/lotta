@@ -1,69 +1,65 @@
-import React, {
-    memo,
-    useEffect,
-    useRef,
-    useState,
-    KeyboardEvent,
-    FocusEvent,
-    FormEvent,
-} from 'react';
-import { ContentModuleModel } from '../../../../model';
-import { Typography } from '@material-ui/core';
+import * as React from 'react';
+import { ContentModuleModel } from 'model';
 import get from 'lodash/get';
+import clsx from 'clsx';
+
+import styles from './Title.module.scss';
 
 interface EditProps {
     contentModule: ContentModuleModel<{ title: string }>;
     onUpdateModule(contentModule: ContentModuleModel<{ title: string }>): void;
 }
 
-export const Edit = memo<EditProps>(({ contentModule, onUpdateModule }) => {
-    const requestBlurRef = useRef(false);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [title, setTitle] = useState(contentModule.content?.title ?? '');
+export const Edit = React.memo<EditProps>(
+    ({ contentModule, onUpdateModule }) => {
+        const requestBlurRef = React.useRef(false);
+        const inputRef = React.useRef<HTMLInputElement>(null);
+        const [title, setTitle] = React.useState(
+            contentModule.content?.title ?? ''
+        );
 
-    useEffect(() => {
-        if (contentModule.content?.title) {
-            setTitle(contentModule.content.title);
-        }
-    }, [contentModule.content]);
-
-    useEffect(() => {
-        if (requestBlurRef.current) {
-            inputRef.current!.blur();
-            requestBlurRef.current = false;
-        }
-    }, [title]);
-
-    const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Escape') {
-            requestBlurRef.current = true;
-            setTitle(contentModule.content?.title ?? ''); // reset to initial value
-        }
-    };
-
-    const variant = `h${get(contentModule.configuration, 'level', 4)}` as
-        | 'h4'
-        | 'h5'
-        | 'h6';
-
-    return (
-        <Typography
-            component={'input'}
-            variant={variant}
-            gutterBottom
-            ref={inputRef}
-            value={title}
-            onKeyDown={onKeyDown}
-            onChange={(e: FormEvent<HTMLInputElement>) =>
-                setTitle(e.currentTarget.value)
+        React.useEffect(() => {
+            if (contentModule.content?.title) {
+                setTitle(contentModule.content.title);
             }
-            style={{ width: '100%', outline: 'none', border: 0 }}
-            onBlur={(_e: FocusEvent<HTMLInputElement>) => {
-                onUpdateModule({
-                    ...contentModule,
-                    content: { title },
-                });
-            }}
-        />
-    );
-});
+        }, [contentModule.content]);
+
+        React.useEffect(() => {
+            if (requestBlurRef.current) {
+                inputRef.current!.blur();
+                requestBlurRef.current = false;
+            }
+        }, [title]);
+
+        const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Escape') {
+                requestBlurRef.current = true;
+                setTitle(contentModule.content?.title ?? ''); // reset to initial value
+            }
+        };
+
+        const variant = `h${get(contentModule.configuration, 'level', 4)}` as
+            | 'h4'
+            | 'h5'
+            | 'h6';
+
+        return (
+            <input
+                ref={inputRef}
+                value={title}
+                className={clsx(styles.edit, styles[variant])}
+                onKeyDown={onKeyDown}
+                onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                    setTitle(e.currentTarget.value)
+                }
+                onBlur={(_e: React.FocusEvent<HTMLInputElement>) => {
+                    onUpdateModule({
+                        ...contentModule,
+                        content: { title },
+                    });
+                }}
+            />
+        );
+    }
+);
+Edit.displayName = 'TitleEdit';

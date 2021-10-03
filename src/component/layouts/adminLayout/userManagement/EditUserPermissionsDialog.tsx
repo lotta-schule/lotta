@@ -13,13 +13,13 @@ import {
 } from '@material-ui/core';
 import { ID, UserModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
-import { GetUserQuery } from 'api/query/GetUserQuery';
 import { useQuery, useMutation } from '@apollo/client';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
 import { useUserGroups } from 'util/tenant/useUserGroups';
+import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
+import GetUserQuery from 'api/query/GetUserQuery.graphql';
 
 const useStyles = makeStyles((theme: Theme) => ({
     header: {
@@ -36,8 +36,8 @@ export interface EditUserPermissionsDialogProps {
     onClose(): void;
 }
 
-export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDialogProps> = memo(
-    ({ user, onClose }) => {
+export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDialogProps> =
+    memo(({ user, onClose }) => {
         const styles = useStyles();
         const allUserGroups = useUserGroups();
 
@@ -183,5 +183,4 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                 </DialogActions>
             </ResponsiveFullScreenDialog>
         );
-    }
-);
+    });

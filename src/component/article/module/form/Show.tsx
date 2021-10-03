@@ -1,37 +1,19 @@
 import * as React from 'react';
-import { makeStyles } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
 import { useMutation } from '@apollo/client';
-import { SendFormResponseMutation } from 'api/mutation/SendFormResponseMutation';
 import { SuccessMessage } from 'component/general/SuccessMessage';
 import { Button } from 'component/general/button/Button';
+import SendFormResponseMutation from 'api/mutation/SendFormResponseMutation.graphql';
+
+import styles from './Show.module.scss';
 
 export interface ShowProps {
     contentModule: ContentModuleModel<{}, FormConfiguration>;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        padding: theme.spacing(1, 2),
-        margin: '0 16.6%',
-        [theme.breakpoints.down('sm')]: {
-            margin: 0,
-        },
-    },
-    submitButton: {
-        float: 'right',
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-    },
-    formElement: {
-        marginBottom: theme.spacing(2),
-    },
-}));
-
 export const Show = React.memo<ShowProps>(({ contentModule }) => {
-    const styles = useStyles();
     const [sendFormResponse, { loading: isLoading, data }] = useMutation(
         SendFormResponseMutation
     );

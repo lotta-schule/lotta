@@ -2,8 +2,8 @@ import * as React from 'react';
 import { render, waitFor, getMetaTagValue } from 'test/util';
 import { Schulfest, MusikCategory } from 'test/fixtures';
 import { ArticleLayout } from './ArticleLayout';
-import { GetArticlesForTag } from 'api/query/GetArticlesForTagQuery';
-import { GetArticleQuery } from 'api/query/GetArticleQuery';
+import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
 describe('component/article/ArticleLayout', () => {
     const testSetupOptions = {
@@ -31,7 +31,7 @@ describe('component/article/ArticleLayout', () => {
 
     it('should show the correct title in the Browser header', async () => {
         const screen = render(
-            <ArticleLayout articleId={Schulfest.id} />,
+            <ArticleLayout article={Schulfest} />,
             {},
             testSetupOptions
         );
@@ -43,17 +43,5 @@ describe('component/article/ArticleLayout', () => {
             );
             expect(getMetaTagValue('og:type')).toEqual('article');
         });
-    });
-
-    it('should not render the widgets list', async () => {
-        const screen = render(
-            <ArticleLayout articleId={Schulfest.id} />,
-            {},
-            testSetupOptions
-        );
-        await screen.findByTestId('Article'); // wait until Article is loaded
-        const sidebar = await screen.findByTestId('BaseLayoutSidebar');
-        expect(sidebar).not.toBeNull();
-        expect(sidebar).toHaveStyle({ width: 0 });
     });
 });

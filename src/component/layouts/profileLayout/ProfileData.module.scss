@@ -1,0 +1,43 @@
+@import 'breakpoints';
+
+.root {
+    .gridContainer {
+        @media screen and (max-width: $max-sm) {
+            flex-direction: column-reverse;
+        }
+        & > div {
+            padding: var(--lotta-spacing);
+            position: relative;
+        }
+    }
+
+    .divider {
+        margin-top: calc(2 * var(--lotta-spacing));
+        margin-bottom: calc(2 * var(--lotta-spacing));
+        width: 80%;
+        @media screen and (max-width: $max-sm) {
+            width: 100%;
+        }
+    }
+
+    .groupList {
+        margin-bottom: 60px;
+    }
+
+    .groupListItem {
+        padding-top: 0;
+    }
+
+    .dangerSection {
+        width: 100%;
+        position: absolute;
+        bottom: var(--lotta-spacing);
+        left: var(--lotta-spacing);
+        @media screen and (max-width: $max-sm) {
+            position: relative;
+            bottom: initial;
+            left: initial;
+            margin-bottom: calc(2 * var(--lotta-spacing));
+        }
+    }
+}

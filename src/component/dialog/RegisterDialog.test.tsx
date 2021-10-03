@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { render, waitFor } from 'test/util';
 import { RegisterDialog } from './RegisterDialog';
+import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/dialog/RegisterDialog', () => {

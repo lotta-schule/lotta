@@ -1,0 +1,51 @@
+.root {
+    background: rgba(var(--lotta-box-background-color), 1);
+    border-color: transparent;
+    margin: var(--lotta-spacing) 0;
+    padding: var(--lotta-spacing);
+    overflow: auto;
+    display: block;
+    width: 100%;
+    text-transform: none;
+    letter-spacing: 0;
+    border-radius: 0;
+    &:hover {
+        background-color: rgba(
+            var(--lotta-banner-background-color1),
+            1
+        ) !important;
+        filter: none;
+    }
+
+    &.selected {
+        position: initial;
+        top: calc(65px + calc(0.5 * var(--lotta-spacing)));
+        z-index: 1;
+        border-left-width: calc(0.5 * var(--lotta-spacing));
+        border-left-style: solid;
+        border-left-color: rgba(var(--lotta-secondary-color), 1);
+        border-color: transparent;
+        /* TODO: This was unspecified gray before. Must find Var */
+        background-color: rgba(var(--lotta-banner-background-color1), 1);
+    }
+}
+
+.buttonLabel {
+    text-align: left;
+    align-self: center;
+    font-size: 0.9rem;
+    color: rgba(var(--lotta-text-color), 1);
+}
+
+.userAvatar {
+    float: left;
+    margin-right: var(--lotta-spacing);
+    width: 40px; // TODO: why 40px? Use var?
+    height: 40px;
+}
+
+.dateLabel {
+    color: rgba(var(--lotta-text-color), 1);
+    font-size: 0.8rem;
+    text-align: left;
+}

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import './radio.scss';
+
+import styles from './radio.module.scss';
 
 export type RadioProps = {
     label?: string;
@@ -15,7 +16,7 @@ export const Radio = React.forwardRef<any, RadioProps>(
                 '--control-indicator-color': featureColor.join(', '),
             } as React.CSSProperties);
         return (
-            <label style={customStyle} className={'lotta-radio'}>
+            <label style={customStyle} className={styles.root}>
                 {label}
                 {children}
                 <input
@@ -25,11 +26,12 @@ export const Radio = React.forwardRef<any, RadioProps>(
                         props['aria-label'] ||
                         (!props['aria-labelledby'] ? label : undefined)
                     }
-                    className={clsx(className, 'lotta-radio')}
+                    className={clsx(className, styles.root)}
                     type={'radio'}
                 />
-                <div className={'lotta-radio__control-indicator'} />
+                <div className={styles.controlIndicator} />
             </label>
         );
     }
 );
+Radio.displayName = 'Radio';

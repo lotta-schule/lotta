@@ -18,6 +18,11 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import { faUser, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from '@material-ui/core';
+import getConfig from 'next/config';
+
+const {
+    publicRuntimeConfig: { cloudimageToken },
+} = getConfig();
 
 export const File = {
     getIconForDirectory(directory: DirectoryModel) {
@@ -100,10 +105,15 @@ export const File = {
         }
     },
 
-    getPreviewImageLocation(file?: FileModel, size: string = '200x200') {
+    getPreviewImageLocation(
+        baseUrl: string,
+        file?: FileModel,
+        size: string = '200x200'
+    ) {
         if (file) {
             if (file.fileType === FileModelType.Image) {
-                return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${File.getFileRemoteLocation(
+                return `https://${cloudimageToken}.cloudimg.io/bound/${size}/foil1/${File.getFileRemoteLocation(
+                    baseUrl,
                     file
                 )}`;
             } else {
@@ -111,7 +121,8 @@ export const File = {
                     /^gif/.test(fc.format)
                 );
                 if (imageConversionFile) {
-                    return `https://afdptjdxen.cloudimg.io/bound/${size}/foil1/${File.getFileConversionRemoteLocation(
+                    return `https://${cloudimageToken}.cloudimg.io/bound/${size}/foil1/${File.getFileConversionRemoteLocation(
+                        baseUrl,
                         imageConversionFile
                     )}`;
                 }
@@ -137,15 +148,14 @@ export const File = {
         return this.canEditDirectory(directory, user);
     },
 
-    getFileRemoteLocation(file: FileModel) {
-        const baseUrl =
-            process.env.REACT_APP_FILE_URL || window.location.origin;
+    getFileRemoteLocation(baseUrl: string, file: FileModel) {
         return [baseUrl, 'storage', 'f', file.id].join('/');
     },
 
-    getFileConversionRemoteLocation(fileConversion: FileConversionModel) {
-        const baseUrl =
-            process.env.REACT_APP_FILE_URL || window.location.origin;
+    getFileConversionRemoteLocation(
+        baseUrl: string,
+        fileConversion: FileConversionModel
+    ) {
         return [baseUrl, 'storage', 'fc', fileConversion.id].join('/');
     },
 };

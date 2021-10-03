@@ -1,11 +1,7 @@
-import React, { memo, useState } from 'react';
-import {
-    makeStyles,
-    IconButton,
-    GridList,
-    GridListTile,
-} from '@material-ui/core';
+import * as React from 'react';
+import { GridList, GridListTile } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
+import { Button } from 'component/general/button/Button';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { FileSorter } from '../Config';
@@ -13,21 +9,7 @@ import { ImageImage } from '../../image/ImageImage';
 import { ImageOverlay, ImageOverlayProps } from '../imageOverlay/ImageOverlay';
 import uniqBy from 'lodash/uniqBy';
 
-const useStyles = makeStyles(() => ({
-    img: {
-        '& img': {
-            maxWidth: '100%',
-            objectFit: 'cover',
-            height: '20vw',
-        },
-    },
-    deleteButton: {
-        position: 'absolute',
-        right: '1.5em',
-        top: '.5em',
-        zIndex: 200,
-    },
-}));
+import styles from './Gallery.module.scss';
 
 export interface GalleryProps {
     contentModule: ContentModuleModel;
@@ -35,10 +17,9 @@ export interface GalleryProps {
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
-export const Gallery = memo<GalleryProps>(
+export const Gallery = React.memo<GalleryProps>(
     ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
-        const styles = useStyles();
-        const [selectedFileIndex, setSelectedFileIndex] = useState<
+        const [selectedFileIndex, setSelectedFileIndex] = React.useState<
             number | null
         >(null);
 
@@ -73,8 +54,7 @@ export const Gallery = memo<GalleryProps>(
                             style={{ position: 'relative', height: '100%' }}
                         >
                             {isEditModeEnabled && onUpdateModule && (
-                                <IconButton
-                                    color={'secondary'}
+                                <Button
                                     className={styles.deleteButton}
                                     onClick={() => {
                                         onUpdateModule({
@@ -84,9 +64,8 @@ export const Gallery = memo<GalleryProps>(
                                             ),
                                         });
                                     }}
-                                >
-                                    <Delete />
-                                </IconButton>
+                                    icon={<Delete />}
+                                />
                             )}
                             <ImageImage
                                 isEditModeEnabled={isEditModeEnabled}
@@ -103,9 +82,10 @@ export const Gallery = memo<GalleryProps>(
                                                 ...contentModule.configuration
                                                     .files,
                                                 [newFile.id]: {
-                                                    caption: getConfiguration(
-                                                        newFile
-                                                    ).caption,
+                                                    caption:
+                                                        getConfiguration(
+                                                            newFile
+                                                        ).caption,
                                                     sortKey: index * 10,
                                                 },
                                             },
@@ -200,3 +180,4 @@ export const Gallery = memo<GalleryProps>(
         );
     }
 );
+Gallery.displayName = 'Gallery';

@@ -1,5 +1,5 @@
-import React, { Reducer, memo, useReducer } from 'react';
-import { makeStyles, Theme, Paper, Toolbar } from '@material-ui/core';
+import * as React from 'react';
+import { Paper, Toolbar } from '@material-ui/core';
 import { FileModel } from 'model';
 import { useTranslation } from 'react-i18next';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
@@ -17,13 +17,9 @@ import {
 import { Action, reducer } from './context/reducer';
 import { MoveDirectoryDialog } from './MoveDirectoryDialog';
 import { Button } from 'component/general/button/Button';
+import clsx from 'clsx';
 
-const useStyles = makeStyles<Theme>((theme: Theme) => ({
-    bottomToolbar: {
-        display: 'flex',
-        justifyContent: 'flex-end',
-    },
-}));
+import styles from './FileExplorer.module.scss';
 
 export interface FileExplorerProps {
     style?: React.CSSProperties;
@@ -33,13 +29,12 @@ export interface FileExplorerProps {
     onSelect?(file: FileModel[] | FileModel): void;
 }
 
-export const FileExplorer = memo<FileExplorerProps>(
+export const FileExplorer = React.memo<FileExplorerProps>(
     ({ style, className, multiple, fileFilter, onSelect }) => {
         const { t } = useTranslation();
-        const styles = useStyles();
 
-        const [state, dispatch] = useReducer<
-            Reducer<typeof defaultState, Action>
+        const [state, dispatch] = React.useReducer<
+            React.Reducer<typeof defaultState, Action>
         >(reducer, {
             ...defaultState,
             mode: onSelect
@@ -51,10 +46,7 @@ export const FileExplorer = memo<FileExplorerProps>(
 
         return (
             <Provider value={[state, dispatch]}>
-                <Paper
-                    style={{ position: 'relative', outline: 'none', ...style }}
-                    className={className}
-                >
+                <Paper style={style} className={clsx(styles.root, className)}>
                     <ActiveUploadsModal />
                     <FileUsageModal />
                     <CreateNewDirectoryDialog
@@ -95,4 +87,5 @@ export const FileExplorer = memo<FileExplorerProps>(
         );
     }
 );
+FileExplorer.displayName = 'FileExplorer';
 export default FileExplorer;

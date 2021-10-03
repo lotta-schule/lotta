@@ -1,0 +1,19 @@
+@import 'breakpoints';
+
+.root {
+    padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
+    margin: 0 16.6%;
+    @media screen and (max-width: $max-sm) {
+        margin: 0;
+    }
+}
+
+.submitButton {
+    float: right;
+    margin-top: calc(2 * var(--lotta-spacing));
+    margin-bottom: calc(2 * var(--lotta-spacing));
+}
+
+.formElement {
+    margin-bottom: calc(2 * var(--lotta-spacing));
+}

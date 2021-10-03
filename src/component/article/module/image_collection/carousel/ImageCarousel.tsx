@@ -1,45 +1,18 @@
 import * as React from 'react';
 import { File } from 'util/model';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Button, MobileStepper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import { FileSorter } from '../Config';
 import { ContentModuleModel, FileModel } from 'model';
+import { useServerData } from 'component/ServerDataContext';
 import SwipeableViews from 'react-swipeable-views';
+import getConfig from 'next/config';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '100%',
-        fontFamily: 'Muli',
-        border: '1px solid #bdbdbd',
-        borderRadius: theme.shape.borderRadius,
-    },
-    header: {
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: theme.spacing(1),
-        background: 'none',
-        borderBottom: '1px solid #bdbdbd',
-    },
-    imgContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        '& img': {
-            maxWidth: '100%',
-            maxHeight: '100%',
-        },
-    },
-    subtitle: {
-        position: 'absolute',
-        width: 'auto',
-        zIndex: 1,
-        background: theme.palette.primary.contrastText,
-        bottom: 0,
-        padding: '0 .5em',
-    },
-}));
+import styles from './ImageCarousel.module.scss';
+
+const {
+    publicRuntimeConfig: { cloudimageToken },
+} = getConfig();
 
 export interface ImageCarouselProps {
     contentModule: ContentModuleModel;
@@ -47,8 +20,7 @@ export interface ImageCarouselProps {
 
 export const ImageCarousel = React.memo<ImageCarouselProps>(
     ({ contentModule }) => {
-        const styles = useStyles();
-        const theme = useTheme();
+        const { baseUrl } = useServerData();
         const [activeStep, setActiveStep] = React.useState(0);
         const filesConfiguration: {
             [id: string]: { caption: string; sortKey: number };
@@ -102,11 +74,7 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                             disabled={activeStep === maxSteps - 1}
                         >
                             Nächstes Bild
-                            {theme.direction === 'rtl' ? (
-                                <KeyboardArrowLeft />
-                            ) : (
-                                <KeyboardArrowRight />
-                            )}
+                            <KeyboardArrowRight />
                         </Button>
                     }
                     backButton={
@@ -115,11 +83,7 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                             onClick={handleBack}
                             disabled={activeStep === 0}
                         >
-                            {theme.direction === 'rtl' ? (
-                                <KeyboardArrowRight />
-                            ) : (
-                                <KeyboardArrowLeft />
-                            )}
+                            <KeyboardArrowLeft />
                             Letztes Bild
                         </Button>
                     }
@@ -127,7 +91,7 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                 <SwipeableViews
                     index={activeStep}
                     onChangeIndex={handleStepChange}
-                    axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+                    axis={'x'}
                     enableMouseEvents
                     style={{ paddingBottom: '0.5em' }}
                 >
@@ -143,12 +107,16 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                             )}
                             {Math.abs(activeStep - index) <= 2 ? (
                                 <img
-                                    src={`https://afdptjdxen.cloudimg.io/fit/800x500/foil1/${File.getFileRemoteLocation(
+                                    src={`https://${cloudimageToken}.cloudimg.io/fit/800x500/foil1/${File.getFileRemoteLocation(
+                                        baseUrl,
                                         file
                                     )}`}
                                     alt={
                                         getConfiguration(file).caption ||
-                                        File.getFileRemoteLocation(file)
+                                        File.getFileRemoteLocation(
+                                            baseUrl,
+                                            file
+                                        )
                                     }
                                 />
                             ) : null}

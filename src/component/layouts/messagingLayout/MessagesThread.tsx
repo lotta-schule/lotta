@@ -2,23 +2,15 @@ import * as React from 'react';
 import { MessageModel } from 'model';
 import { MessageBubble } from './MessageBubble';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { makeStyles } from '@material-ui/core';
+
+import styles from './MessagesThread.module.scss';
 
 export interface MessagesThreadProps {
     messages: MessageModel[];
 }
 
-const useStyles = makeStyles(() => ({
-    root: {
-        overflow: 'auto',
-        flexGrow: 1,
-        flexShrink: 1,
-    },
-}));
-
 export const MessagesThread = React.memo<MessagesThreadProps>(
     ({ messages }) => {
-        const styles = useStyles();
         const currentUser = useCurrentUser();
 
         const sortedMessages = messages.sort((message1, message2) => {
@@ -68,3 +60,4 @@ export const MessagesThread = React.memo<MessagesThreadProps>(
         );
     }
 );
+MessagesThread.displayName = 'MessagesThread';

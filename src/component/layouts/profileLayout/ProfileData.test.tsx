@@ -2,8 +2,8 @@ import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup, elternGroup, lehrerGroup } from 'test/fixtures';
 import { ProfileData } from './ProfileData';
-import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/profileLayout/ProfileData', () => {
@@ -12,7 +12,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             const screen = render(
                 <ProfileData />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 await screen.findByLabelText(/vor- und nachname/i)
@@ -23,7 +23,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             const screen = render(
                 <ProfileData />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(await screen.findByLabelText(/Email-Adresse/i)).toHaveValue(
                 'user@lotta.schule'
@@ -37,7 +37,7 @@ describe('component/layouts/profileLayout/ProfileData', () => {
             const screen = render(
                 <ProfileData />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(
                 await screen.findByLabelText(/vor- und nachname/i)
@@ -53,7 +53,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 {},
                 {
                     currentUser: { ...SomeUser, hideFullName: true },
-                    useCache: true,
                 }
             );
             expect(
@@ -102,7 +101,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 {},
                 {
                     currentUser: SomeUser,
-                    useCache: true,
                     additionalMocks: mocks,
                 }
             );
@@ -149,7 +147,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                         groups: [adminGroup, lehrerGroup, elternGroup],
                         assignedGroups: [adminGroup, lehrerGroup],
                     },
-                    useCache: true,
                 }
             );
             const groupsList = await screen.findByTestId(
@@ -168,7 +165,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 <ProfileData />,
                 {},
                 {
-                    useCache: true,
                     currentUser: { ...SomeUser, hideFullName: true },
                     additionalMocks: [
                         {
@@ -201,7 +197,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 {},
                 {
                     currentUser: { ...SomeUser, hideFullName: true },
-                    useCache: true,
                 }
             );
             const changePasswordButton = (
@@ -226,7 +221,6 @@ describe('component/layouts/profileLayout/ProfileData', () => {
                 {},
                 {
                     currentUser: SomeUser,
-                    useCache: true,
                 }
             );
             const changeEmailButton = await screen.findByText('Email ändern');

@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { makeStyles, NoSsr } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import { Transition, animated } from 'react-spring';
 import { flatten, uniq } from 'lodash';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
 import { Tag } from 'component/general/tag/Tag';
+
+import styles from './EnrollmentTokensEditor.module.scss';
 
 export interface EnrollmentTokensEditorProps {
     disabled?: boolean;
@@ -12,19 +14,8 @@ export interface EnrollmentTokensEditorProps {
     setTokens(tokens: string[]): void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    tag: {
-        width: '100%',
-        overflow: 'hidden',
-        justifyContent: 'space-between',
-        borderRadius: theme.shape.borderRadius,
-        marginBottom: theme.spacing(1),
-    },
-}));
-
 export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
     ({ disabled, tokens, setTokens }) => {
-        const styles = useStyles();
         const [inputValue, setInputValue] = React.useState('');
 
         React.useEffect(() => {
@@ -86,8 +77,9 @@ export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
                                     }
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
-                                        const value = (e.target as HTMLInputElement)
-                                            .value;
+                                        const value = (
+                                            e.target as HTMLInputElement
+                                        ).value;
                                         if (value) {
                                             setTokens(uniq([...tokens, value]));
                                         }
@@ -132,3 +124,4 @@ export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
         );
     }
 );
+EnrollmentTokensEditor.displayName = 'EnrollmentTokensEditor';

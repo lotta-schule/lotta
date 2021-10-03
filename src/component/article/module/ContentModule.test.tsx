@@ -3,7 +3,7 @@ import { render, waitFor } from 'test/util';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { Klausurenplan, ComputerExperten } from 'test/fixtures';
 import { ContentModule } from './ContentModule';
-import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
+import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/article/module/ContentModule', () => {
@@ -74,14 +74,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={textContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -99,7 +98,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={textContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -148,14 +147,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={titleContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -173,7 +171,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={titleContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -196,7 +194,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={titleContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -251,14 +249,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -276,7 +273,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -336,14 +333,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageCollectionContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -361,7 +357,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageCollectionContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -384,7 +380,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={imageCollectionContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -441,14 +437,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -466,7 +461,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -524,14 +519,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -549,7 +543,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={videoContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -607,14 +601,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={downloadContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -632,7 +625,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={downloadContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -655,7 +648,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={downloadContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -710,14 +703,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={formContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -749,7 +741,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={formContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -786,7 +778,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={formContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -855,14 +847,13 @@ describe('component/article/module/ContentModule', () => {
                 );
                 const dragHandle = screen.getByTitle(/ziehen zum verschieben/i);
                 expect(dragHandle).toBeInTheDocument();
-                expect(dragHandle).not.toBeVisible();
             });
 
             it('config bar should open a menu when clicking on settings button', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={tableContentModule}
                         index={0}
                         onUpdateModule={() => {}}
@@ -880,7 +871,7 @@ describe('component/article/module/ContentModule', () => {
                 const screen = render(
                     <ContentModule
                         isEditModeEnabled
-                        cardProps={{ style: { opacity: 0.8 } }}
+                        elementProps={{ style: { opacity: 0.8 } }}
                         contentModule={tableContentModule}
                         index={0}
                         onUpdateModule={() => {}}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip, Typography, makeStyles, Link } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -8,64 +8,21 @@ import { File, User } from 'util/model';
 import { FileSize } from 'util/FileSize';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { GetFileDetailsQuery } from 'api/query/GetFileDetailsQuery';
 import { useTranslation } from 'react-i18next';
+import { useServerData } from 'component/ServerDataContext';
+import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 import fileExplorerContext from './context/FileExplorerContext';
+
+import styles from './FileDetailView.module.scss';
 
 export interface FileDetailViewProps {
     file: FileModel;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'stretch',
-        height: '100%',
-    },
-    filename: {
-        fontSize: '1.1rem',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        width: '100%',
-        whiteSpace: 'nowrap',
-        paddingBottom: theme.spacing(2),
-    },
-    filePreview: {
-        backgroundColor: '#000',
-        flexShrink: 1,
-        overflow: 'auto',
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        margin: theme.spacing(0, -1),
-        '& img': {
-            maxWidth: 200,
-            maxHeight: 200,
-        },
-    },
-    infoList: {
-        marginTop: theme.spacing(1),
-        borderTop: `1px solid ${theme.palette.divider}`,
-        '& li': {
-            marginTop: theme.spacing(1),
-            overflow: 'auto',
-        },
-        '& li > :last-child': {
-            float: 'right',
-        },
-    },
-    userAvatar: {
-        width: '.9em',
-        height: '.9em',
-        display: 'inline-block',
-        marginRight: '.25em',
-    },
-}));
-
 export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
+    const { baseUrl } = useServerData();
     const { t } = useTranslation();
     const [, dispatch] = React.useContext(fileExplorerContext);
-    const styles = useStyles();
     const { data, error } = useQuery<{ file: FileModel }, { id: ID }>(
         GetFileDetailsQuery,
         {
@@ -80,14 +37,12 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
     return (
         <div className={styles.root}>
             <Tooltip title={get('filename')}>
-                <Typography variant={'h3'} className={styles.filename}>
-                    {get('filename')}
-                </Typography>
+                <h3 className={styles.filename}>{get('filename')}</h3>
             </Tooltip>
-            {File.getPreviewImageLocation(file) && (
+            {File.getPreviewImageLocation(baseUrl, file) && (
                 <div className={styles.filePreview}>
                     <img
-                        src={File.getPreviewImageLocation(file)!}
+                        src={File.getPreviewImageLocation(baseUrl, file)!}
                         alt={`Vorschau der Datei ${get('filename')}`}
                         data-testid="PreviewImage"
                     />
@@ -139,13 +94,14 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
                             {data.file.usage.length > 0 && (
                                 <>
                                     &nbsp;(
-                                    <Link
+                                    <a
+                                        href={'#'}
                                         onClick={() =>
                                             dispatch({ type: 'showFileUsage' })
                                         }
                                     >
                                         ansehen
-                                    </Link>
+                                    </a>
                                     )&nbsp;
                                 </>
                             )}
@@ -155,7 +111,7 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
                 {!!data?.file?.fileConversions?.length && (
                     <>
                         <li data-testid="FileConversionsListItem">
-                            <strong>Umwandlungen:</strong>
+                            <strong>Umwandlungen: </strong>
                             <span>
                                 <Tooltip
                                     title={
@@ -173,9 +129,8 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
                                 >
                                     <span>
                                         {t('files.formats', {
-                                            count:
-                                                data.file.fileConversions
-                                                    .length,
+                                            count: data.file.fileConversions
+                                                .length,
                                         })}
                                     </span>
                                 </Tooltip>

@@ -4,7 +4,8 @@ import { ArrowUpwardRounded } from '@material-ui/icons';
 import { useSpring, animated } from 'react-spring';
 import { useScrollEvent } from 'util/useScrollEvent';
 import { useWindowSize } from 'util/useWindowSize';
-import './scroll-to-top-button.scss';
+
+import styles from './scroll-to-top-button.module.scss';
 
 const AnimatedButton = animated(Button);
 
@@ -26,7 +27,7 @@ export const ScrollToTopButton = React.memo(() => {
     return (
         <AnimatedButton
             style={props}
-            className={'lotta-scroll-to-top-button'}
+            className={styles.root}
             title={'Zum Anfang der Seite scrollen'}
             icon={<ArrowUpwardRounded />}
             onClick={() => {

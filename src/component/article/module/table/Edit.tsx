@@ -5,7 +5,6 @@ import {
     TableCell,
     TableRow,
     TextField,
-    makeStyles,
     Tooltip,
     TextFieldProps,
 } from '@material-ui/core';
@@ -24,43 +23,14 @@ import {
     TableConfiguration,
 } from './Table';
 
+import styles from './Table.module.scss';
+
 interface EditProps {
     contentModule: ContentModuleModel<TableContent, TableConfiguration>;
     onUpdateModule(
         contentModule: ContentModuleModel<TableContent, TableConfiguration>
     ): void;
 }
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'grid',
-        gridTemplateRows: `${theme.mixins.toolbar.minHeight}px auto`,
-        gridTemplateColumns: `auto ${theme.mixins.toolbar.minHeight}px`,
-    },
-    upperToolbar: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        gridRow: 1,
-        gridColumn: 1,
-    },
-    asideToolbar: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        gridRow: 2,
-        gridColumn: 2,
-    },
-    table: {
-        gridRow: 2,
-        gridColumn: 1,
-        '& td': {
-            padding: theme.spacing(1),
-            border: `1px solid ${theme.palette.divider}`,
-        },
-    },
-}));
 
 export interface EditTableCellProps
     extends Omit<
@@ -97,11 +67,10 @@ const EditTableCell = React.memo<EditTableCellProps>(
         );
     }
 );
+EditTableCell.displayName = 'TableEditTableCell';
 
 export const Edit = React.memo<EditProps>(
     ({ contentModule, onUpdateModule }) => {
-        const styles = useStyles();
-
         const tableRef = React.useRef<HTMLTableElement>(null);
         const requestFocusOnNextUpdate = React.useRef(false);
 
@@ -295,7 +264,7 @@ export const Edit = React.memo<EditProps>(
         }, [rowCount]);
 
         return (
-            <div className={styles.root}>
+            <div className={styles.edit}>
                 <div className={styles.upperToolbar}>
                     <Tooltip
                         title={'letzte Spalte entfernen'}
@@ -455,3 +424,4 @@ export const Edit = React.memo<EditProps>(
         );
     }
 );
+Edit.displayName = 'TableEdit';

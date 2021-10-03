@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import {
     Checkbox,
     FormControlLabel,
@@ -28,7 +28,7 @@ export interface FormElementProps {
     onSetValue(value: string | string[]): void;
 }
 
-export const FormElement = memo<FormElementProps>(
+export const FormElement = React.memo<FormElementProps>(
     ({ element, isEditModeEnabled, value, onSetValue }) => {
         const currentUser = useCurrentUser();
         const formElement = (() => {
@@ -63,10 +63,11 @@ export const FormElement = memo<FormElementProps>(
                                                             : false
                                                     }
                                                     onChange={(_e, checked) => {
-                                                        const values = (value instanceof
-                                                        Array
-                                                            ? value
-                                                            : [value]
+                                                        const values = (
+                                                            value instanceof
+                                                            Array
+                                                                ? value
+                                                                : [value]
                                                         ).filter(Boolean);
                                                         if (checked) {
                                                             onSetValue([
@@ -321,3 +322,4 @@ export const FormElement = memo<FormElementProps>(
         return null;
     }
 );
+FormElement.displayName = 'FormElement';

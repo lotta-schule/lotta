@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Toolbar, createStyles, makeStyles, Theme } from '@material-ui/core';
+import { Toolbar } from '@material-ui/core';
 import {
     FormatBold,
     FormatItalic,
@@ -19,19 +19,7 @@ import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategory } from 'util/categories/useCategory';
 import { useCategories } from 'util/categories/useCategories';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        toolbar: {
-            position: 'sticky',
-            backgroundColor: theme.palette.background.paper,
-            padding: theme.spacing(1),
-            zIndex: 100,
-        },
-        toolbarButtonGroup: {
-            marginRight: theme.spacing(0.5),
-        },
-    })
-);
+import styles from './EditToolbar.module.scss';
 
 export interface EditToolbarProps {
     onRequestSave?(): void;
@@ -58,10 +46,9 @@ export const EditToolbar = React.memo<EditToolbarProps>(({ onRequestSave }) => {
                 ? 104
                 : 64,
     });
-    const styles = useStyles();
 
     return (
-        <AnimatedToolbar style={props} className={styles.toolbar}>
+        <AnimatedToolbar style={props} className={styles.root}>
             <ButtonGroup className={styles.toolbarButtonGroup}>
                 <EditToolbarMarkButton mark={'bold'}>
                     <FormatBold />

@@ -69,3 +69,4 @@ export const ArticleDatesEditor = React.memo<ArticleDatesEditorProps>(
         );
     }
 );
+ArticleDatesEditor.displayName = 'ArticleDatesEditor';

@@ -32,7 +32,7 @@ describe('component/article/ArticleStateEditor', () => {
             const screen = render(
                 <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
                 {},
-                { currentUser: SomeUserin, useCache: true }
+                { currentUser: SomeUserin }
             );
             expect(screen.getByRole('radio', { name: /draft/i })).toBeChecked();
         });
@@ -45,7 +45,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 expect(
                     screen.getByRole('radio', { name: /submitted/i })
@@ -59,7 +59,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 expect(
                     screen.getByRole('radio', { name: /published/i })
@@ -74,7 +74,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={onUpdate}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 userEvent.click(
                     screen.getByRole('radio', { name: /submitted/i })
@@ -95,7 +95,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 expect(
                     screen.getByRole('radio', { name: /submitted/i })
@@ -109,7 +109,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 expect(
                     screen.getByRole('radio', { name: /published/i })
@@ -124,7 +124,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={onUpdate}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 userEvent.click(
                     screen.getByRole('radio', { name: /published/i })
@@ -149,7 +149,7 @@ describe('component/article/ArticleStateEditor', () => {
             const screen = render(
                 <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
                 {},
-                { currentUser: SomeUserin, useCache: true }
+                { currentUser: SomeUserin }
             );
             expect(
                 screen.getByRole('radio', { name: /submitted/i })
@@ -164,7 +164,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 expect(
                     screen.getByRole('radio', { name: /draft/i })
@@ -178,7 +178,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 expect(
                     screen.getByRole('radio', { name: /published/i })
@@ -193,7 +193,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={onUpdate}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 userEvent.click(screen.getByRole('radio', { name: /draft/i }));
                 expect(onUpdate).toHaveBeenCalledWith({
@@ -212,7 +212,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 expect(
                     screen.getByRole('radio', { name: /submitted/i })
@@ -226,7 +226,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 expect(
                     screen.getByRole('radio', { name: /published/i })
@@ -241,7 +241,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={onUpdate}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 userEvent.click(
                     screen.getByRole('radio', { name: /published/i })
@@ -267,7 +267,7 @@ describe('component/article/ArticleStateEditor', () => {
             const screen = render(
                 <ArticleStateEditor article={article} onUpdate={jest.fn()} />,
                 {},
-                { currentUser: SomeUserin, useCache: true }
+                { currentUser: SomeUserin }
             );
             expect(
                 screen.getByRole('radio', { name: /published/i })
@@ -282,7 +282,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 expect(
                     screen.getByRole('radio', { name: /draft/i })
@@ -296,7 +296,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: SomeUserin, useCache: true }
+                    { currentUser: SomeUserin }
                 );
                 expect(
                     screen.getByRole('radio', { name: /submitted/i })
@@ -312,7 +312,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 expect(
                     screen.getByRole('radio', { name: /draft/i })
@@ -326,7 +326,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={jest.fn()}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 expect(
                     screen.getByRole('radio', { name: /submitted/i })
@@ -341,7 +341,7 @@ describe('component/article/ArticleStateEditor', () => {
                         onUpdate={onUpdate}
                     />,
                     {},
-                    { currentUser: adminUser, useCache: true }
+                    { currentUser: adminUser }
                 );
                 userEvent.click(screen.getByRole('radio', { name: /draft/i }));
                 expect(onUpdate).toHaveBeenCalledWith({

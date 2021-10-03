@@ -1,26 +1,13 @@
 import * as React from 'react';
-import {
-    TableRow,
-    TableCell,
-    Link,
-    makeStyles,
-    Theme,
-} from '@material-ui/core';
+import { TableRow, TableCell } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
-import { DeleteDirectoryMutation } from 'api/mutation/DeleteDirectoryMutation';
 import { DirectoryModel, FileModel } from 'model';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
-
-const useStyles = makeStyles<Theme, { isLoading: boolean }>((theme) => ({
-    link: {
-        color: ({ isLoading }) =>
-            isLoading ? 'inherit' : theme.palette.secondary.main,
-    },
-}));
+import DeleteDirectoryMutation from 'api/mutation/DeleteDirectoryMutation.graphql';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 export const EmptyDirectoryTableRow = React.memo(() => {
     const [state, dispatch] = React.useContext(fileExplorerContext);
@@ -67,7 +54,6 @@ export const EmptyDirectoryTableRow = React.memo(() => {
             },
         }
     );
-    const styles = useStyles({ isLoading });
 
     return (
         <TableRow style={{ cursor: 'inherit' }}>
@@ -91,8 +77,8 @@ export const EmptyDirectoryTableRow = React.memo(() => {
                     </em>
                 </p>
                 <p>
-                    <Link
-                        className={styles.link}
+                    <a
+                        style={isLoading ? { color: 'inherit' } : {}}
                         onClick={() => {
                             if (!isLoading) {
                                 deleteDirectory();
@@ -100,7 +86,7 @@ export const EmptyDirectoryTableRow = React.memo(() => {
                         }}
                     >
                         Ordner löschen
-                    </Link>
+                    </a>
                 </p>
             </TableCell>
         </TableRow>

@@ -1,65 +1,30 @@
-import React, { memo } from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import * as React from 'react';
 import {
     Grid,
     FormControlLabel,
-    Typography,
     Switch,
     CircularProgress,
 } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
 import { WidgetIcon } from 'component/widgets/WidgetIcon';
+import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            margin: 'auto',
-        },
-        cardHeader: {
-            padding: theme.spacing(1, 2),
-        },
-        button: {
-            margin: theme.spacing(0.5, 0),
-        },
-        labelWrapper: {
-            margin: 0,
-            display: 'flex',
-            '& $typography': {
-                // Typography
-                display: 'flex',
-                alignItems: 'center',
-                '& > *': {
-                    display: 'inline-block',
-                },
-            },
-        },
-        typography: {},
-        label: {
-            flexGrow: 1,
-        },
-        switch: {
-            color: theme.palette.grey[300],
-            '&$switchChecked': {
-                color: theme.palette.secondary.main,
-            },
-        },
-        switchChecked: {},
-    })
-);
+import styles from './CategoryWidgetSelector.module.scss';
 
 export interface CategoryWidgetSelectorProps {
     selectedWidgets: WidgetModel[];
     setSelectedWidgets(widgets: WidgetModel[]): void;
 }
 
-export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(
+export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
     ({ selectedWidgets, setSelectedWidgets }) => {
-        const styles = useStyles();
-
-        const { data, loading: isLoadingPossibleWidgets, error } = useQuery<{
+        const {
+            data,
+            loading: isLoadingPossibleWidgets,
+            error,
+        } = useQuery<{
             widgets: WidgetModel[];
         }>(GetWidgetsQuery);
         const allWidgets = data ? data.widgets || [] : [];
@@ -122,12 +87,9 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(
                                     />
                                 }
                                 label={
-                                    <Typography
-                                        component={'div'}
-                                        className={styles.typography}
-                                    >
+                                    <div className={styles.typography}>
                                         Alle Marginalen aktivieren
-                                    </Typography>
+                                    </div>
                                 }
                                 labelPlacement={'start'}
                             />
@@ -154,16 +116,13 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(
                                     />
                                 }
                                 label={
-                                    <Typography
-                                        component={'div'}
-                                        className={styles.typography}
-                                    >
+                                    <div className={styles.typography}>
                                         <WidgetIcon
                                             icon={widget.configuration.icon}
                                             size={36}
                                         />
                                         {widget.title}
-                                    </Typography>
+                                    </div>
                                 }
                                 labelPlacement={'start'}
                             />
@@ -174,3 +133,4 @@ export const CategoryWidgetSelector = memo<CategoryWidgetSelectorProps>(
         );
     }
 );
+CategoryWidgetSelector.displayName = 'CategoryWidgetSelector';

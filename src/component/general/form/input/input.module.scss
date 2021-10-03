@@ -1,0 +1,26 @@
+.root {
+    position: relative;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid rgba(var(--lotta-disabled-color), 1);
+    padding: 0.5em;
+    outline: none;
+    &:focus {
+        border-bottom: 1px solid rgba(var(--lotta-primary-color), 1);
+        background-color: rgba(var(--lotta-primary-color), 0.1);
+        border-top-left-radius: 0.5em;
+        border-top-right-radius: 0.5em;
+    }
+    &.inline {
+      appearance: none;
+      padding: 0;
+      background-color: transparent;
+      border: none;
+      padding: 0.5em;
+      &:focus {
+          border: none;
+          border-radius: 0.5em;
+           background-color: rgba(var(--lotta-primary-color), 0.1);
+      }
+    }
+}

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { LoginMutation } from 'api/mutation/LoginMutation';
 import { render, waitFor } from 'test/util';
 import { LoginDialog } from './LoginDialog';
 import { SomeUser } from 'test/fixtures';
+import LoginMutation from 'api/mutation/LoginMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/dialog/LoginDialog', () => {

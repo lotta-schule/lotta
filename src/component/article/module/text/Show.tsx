@@ -43,3 +43,4 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
         </Slate>
     );
 });
+Show.displayName = 'TextShow';

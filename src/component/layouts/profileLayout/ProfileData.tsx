@@ -10,16 +10,14 @@ import {
     Typography,
     Badge,
     Divider,
-    makeStyles,
     List,
     ListItemText,
     ListItem,
     ListSubheader,
 } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
+import { Button } from 'component/general/button/Button';
 import { Clear } from '@material-ui/icons';
-import { UpdateProfileMutation } from 'api/mutation/UpdateProfileMutation';
 import { UpdateEmailDialog } from 'component/dialog/UpdateEmailDialog';
 import { File, User } from 'util/model';
 import { FileModelType, UserModel, FileModel } from 'model';
@@ -29,52 +27,17 @@ import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
 import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
-import { useHistory } from 'react-router-dom';
 import { NavigationButton } from 'component/general/button/NavigationButton';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
+import { useServerData } from 'component/ServerDataContext';
+import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
+import Link from 'next/link';
 
-export const useStyles = makeStyles((theme) => ({
-    gridContainer: {
-        [theme.breakpoints.down('sm')]: {
-            flexDirection: 'column-reverse',
-        },
-        '& > div': {
-            padding: theme.spacing(1),
-            position: 'relative',
-        },
-    },
-    divider: {
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-        width: '80%',
-        [theme.breakpoints.down('sm')]: {
-            width: '100%',
-        },
-    },
-    groupList: {
-        marginBottom: 60,
-    },
-    groupListItem: {
-        paddingTop: 0,
-    },
-    dangerSection: {
-        width: '100%',
-        position: 'absolute',
-        bottom: theme.spacing(1),
-        left: theme.spacing(1),
-        [theme.breakpoints.down('sm')]: {
-            position: 'relative',
-            bottom: 'initial',
-            left: 'initial',
-            marginBottom: theme.spacing(2),
-        },
-    },
-}));
+import styles from './ProfileData.module.scss';
 
 export const ProfileData = React.memo(() => {
-    const styles = useStyles();
-    const { push } = useHistory();
+    const { baseUrl } = useServerData();
 
     const currentUser = useCurrentUser()!;
 
@@ -93,15 +56,11 @@ export const ProfileData = React.memo(() => {
         currentUser.enrollmentTokens ?? []
     );
 
-    const [
-        isShowUpdatePasswordDialog,
-        setIsShowUpdatePasswordDialog,
-    ] = React.useState(false);
+    const [isShowUpdatePasswordDialog, setIsShowUpdatePasswordDialog] =
+        React.useState(false);
 
-    const [
-        isShowUpdateEmailDialog,
-        setIsShowUpdateEmailDialog,
-    ] = React.useState(false);
+    const [isShowUpdateEmailDialog, setIsShowUpdateEmailDialog] =
+        React.useState(false);
 
     const [updateProfile, { error, loading: isLoading }] = useMutation<{
         user: UserModel;
@@ -109,7 +68,7 @@ export const ProfileData = React.memo(() => {
     const getFieldError = useGetFieldError(error);
 
     return (
-        <Card>
+        <Card className={styles.root}>
             <CardContent>
                 <Typography variant={'h4'}>Meine Daten</Typography>
                 <ErrorMessage error={error} />
@@ -132,6 +91,7 @@ export const ProfileData = React.memo(() => {
                                 src={
                                     avatarImageFile
                                         ? File.getFileRemoteLocation(
+                                              baseUrl,
                                               avatarImageFile
                                           )
                                         : User.getDefaultAvatarUrl(currentUser)
@@ -175,12 +135,11 @@ export const ProfileData = React.memo(() => {
                         </List>
                         <section className={styles.dangerSection}>
                             <Divider className={styles.divider} />
-                            <Button
-                                variant={'error'}
-                                onClick={() => push('/profile/delete')}
-                            >
-                                Benutzerkonto löschen
-                            </Button>
+                            <Link href={'/profile/delete'} passHref>
+                                <Button variant={'error'}>
+                                    Benutzerkonto löschen
+                                </Button>
+                            </Link>
                         </section>
                     </Grid>
                     <Grid item md={8}>
@@ -347,3 +306,4 @@ export const ProfileData = React.memo(() => {
         </Card>
     );
 });
+ProfileData.displayName = 'ProfileData';

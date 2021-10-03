@@ -1,0 +1,55 @@
+@import 'breakpoints';
+
+.root {
+    @media screen and (max-width: $max-sm) {
+        thead {
+            display: none;
+        }
+        tr {
+            display: block;
+            margin-bottom: calc(2 * var(--lotta-spacing));
+        }
+        td {
+            display: block;
+            &:first-child,
+            &:nth-child(2) {
+                display: inline-block;
+            }
+            &:nth-child(2) {
+                float: right;
+            }
+            &:empty {
+                display: none;
+            }
+            &:not(:last-child) {
+                border: none;
+            }
+            &:last-child {
+                padding-bottom: calc(2 * var(--lotta-spacing));
+            }
+        }
+    }
+}
+
+.link {
+    display: 'inline-flex';
+    align-items: 'center';
+}
+
+.previewImage {
+    height: 40;
+    width: 40;
+    object-fit: cover;
+}
+
+.usersList {
+    li {
+        display: flex;
+    }
+}
+
+.userAvatar {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+}

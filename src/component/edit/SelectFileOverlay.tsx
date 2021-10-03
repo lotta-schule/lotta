@@ -3,10 +3,7 @@ import { FileModel } from '../../model';
 import { EditOverlay } from './EditOverlay';
 import { DialogTitle, CircularProgress } from '@material-ui/core';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-
-const FileExplorer = React.lazy(
-    () => import('component/fileExplorer/FileExplorer')
-);
+import FileExplorer from 'component/fileExplorer/FileExplorer';
 
 interface SelectFileOverlayProps {
     label: string;
@@ -16,31 +13,36 @@ interface SelectFileOverlayProps {
     onSelectFile(file: FileModel | null): void;
 }
 
-export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> = React.memo(
-    ({ children, label, allowDeletion, fileFilter, style, onSelectFile }) => {
-        const [
-            isSelectFileDialogOpen,
-            setIsSelectFileDialogOpen,
-        ] = React.useState(false);
-        const onClickRemove = allowDeletion
-            ? () => onSelectFile(null)
-            : undefined;
-        return (
-            <>
-                <EditOverlay
-                    style={style}
-                    label={label}
-                    onClick={() => setIsSelectFileDialogOpen(true)}
-                    onClickRemove={onClickRemove}
-                >
-                    {children}
-                </EditOverlay>
-                <ResponsiveFullScreenDialog
-                    open={isSelectFileDialogOpen}
-                    onClose={() => setIsSelectFileDialogOpen(false)}
-                    fullWidth
-                >
-                    <React.Suspense fallback={<CircularProgress />}>
+export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> =
+    React.memo(
+        ({
+            children,
+            label,
+            allowDeletion,
+            fileFilter,
+            style,
+            onSelectFile,
+        }) => {
+            const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] =
+                React.useState(false);
+            const onClickRemove = allowDeletion
+                ? () => onSelectFile(null)
+                : undefined;
+            return (
+                <>
+                    <EditOverlay
+                        style={style}
+                        label={label}
+                        onClick={() => setIsSelectFileDialogOpen(true)}
+                        onClickRemove={onClickRemove}
+                    >
+                        {children}
+                    </EditOverlay>
+                    <ResponsiveFullScreenDialog
+                        open={isSelectFileDialogOpen}
+                        onClose={() => setIsSelectFileDialogOpen(false)}
+                        fullWidth
+                    >
                         <DialogTitle>Datei auswählen</DialogTitle>
                         <FileExplorer
                             style={{ padding: '0 .5em' }}
@@ -50,9 +52,9 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
                                 onSelectFile(file);
                             }}
                         />
-                    </React.Suspense>
-                </ResponsiveFullScreenDialog>
-            </>
-        );
-    }
-);
+                    </ResponsiveFullScreenDialog>
+                </>
+            );
+        }
+    );
+SelectFileOverlay.displayName = 'SelectFileOverlay';

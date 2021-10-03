@@ -8,7 +8,7 @@ import {
     LinearProgress,
 } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
-import { GetContentModuleResults } from 'api/query/GetContentModuleResults';
+import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
 import { FormConfiguration } from './Form';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { format } from 'date-fns';
@@ -24,7 +24,11 @@ export interface FormResultsDialogProps {
 
 export const FormResultsDialog = memo<FormResultsDialogProps>(
     ({ isOpen, onRequestClose, contentModule }) => {
-        const { data, loading: isLoading, error } = useQuery<
+        const {
+            data,
+            loading: isLoading,
+            error,
+        } = useQuery<
             { contentModuleResults: ContentModuleResultModel[] },
             { contentModuleId: ID }
         >(GetContentModuleResults, {

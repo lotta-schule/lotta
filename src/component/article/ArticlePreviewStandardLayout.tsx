@@ -1,11 +1,7 @@
 import * as React from 'react';
 import {
-    Typography,
-    Link,
     Grid,
-    makeStyles,
     Input as MuiInput,
-    Theme,
     Container,
     DialogTitle,
     DialogContent,
@@ -13,157 +9,34 @@ import {
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { Edit, Place } from '@material-ui/icons';
-import { fade } from '@material-ui/core/styles';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, File, User } from 'util/model';
 import { useMutation } from '@apollo/client';
-import { ToggleArticlePinMutation } from 'api/mutation/ToggleArticlePin';
-import { CollisionLink } from '../general/CollisionLink';
 import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
 import { Article as ArticleUtil } from 'util/model/Article';
 import { useIsRetina } from 'util/useIsRetina';
-import { useHistory } from 'react-router-dom';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { TagsSelect } from 'component/layouts/editArticleLayout/TagsSelect';
 import { Tag } from 'component/general/tag/Tag';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { Input } from 'component/general/form/input/Input';
-import clsx from 'clsx';
+import { useServerData } from 'component/ServerDataContext';
+import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
 import Img from 'react-cloudimage-responsive';
+import Link from 'next/link';
+import getConfig from 'next/config';
+import clsx from 'clsx';
 
-const useStyle = makeStyles<Theme, { isEmbedded?: boolean; narrow?: boolean }>(
-    (theme) => ({
-        container: {
-            position: 'relative',
-            backgroundColor: theme.palette.background.paper,
-            padding: theme.spacing(1),
-            marginBottom: theme.spacing(1),
-            borderRadius: theme.shape.borderRadius,
-            boxShadow: ({ isEmbedded }) =>
-                isEmbedded
-                    ? 'initial'
-                    : `1px 1px 2px ${fade(theme.palette.text.primary, 0.2)}`,
-            '&:hover': {
-                '& .edit-button': {
-                    color: theme.palette.secondary.main,
-                },
-            },
-        },
-        containerGrid: {
-            flexWrap: 'wrap',
-            [theme.breakpoints.up('sm')]: {
-                flexWrap: ({ narrow }) => (narrow ? 'wrap' : 'nowrap'),
-            },
-        },
-        previewImage: {
-            width: '100%',
-            height: ({ narrow }) => (narrow ? 'auto' : '100%'),
-            objectFit: 'cover',
-            flexShrink: 0,
-            flexGrow: 0,
-            backgroundPosition: '0 0',
-        },
-        mainSection: {
-            paddingLeft: theme.spacing(1.5),
-            paddingRight: theme.spacing(1),
-            flexGrow: 1,
-            [theme.breakpoints.down('xs')]: {
-                border: 0,
-                padding: theme.spacing(0.5),
-                width: '100%',
-            },
-            [theme.breakpoints.down('xs')]: {
-                paddingRight: 40, // Make place for button + margin
-            },
-        },
-        editSection: {
-            [theme.breakpoints.down('xs')]: {
-                position: 'absolute',
-                minWidth: 40, // button + margin => 32+8
-                bottom: 0,
-                right: 0,
-            },
-        },
-        imageSection: {
-            width: '100%',
-            flexShrink: 0,
-            [theme.breakpoints.up('sm')]: {
-                width: ({ narrow }) => (narrow ? '100%' : '30%'),
-            },
-        },
-        title: {
-            ...(theme.overrides &&
-                (theme.overrides as any).LottaArticlePreview &&
-                (theme.overrides as any).LottaArticlePreview.title),
-            fontSize: '1.4rem',
-            wordBreak: 'break-word',
-            hyphens: 'auto',
-            [theme.breakpoints.down('sm')]: {
-                fontSize: '1.2rem',
-                lineHeight: 1.05,
-            },
-        },
-        previewSection: {
-            marginBottom: theme.spacing(1),
-            color: theme.palette.grey[600],
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            height: '3.2em',
-            display: ({ narrow }) => (narrow ? 'block' : 'flex'),
-            [theme.breakpoints.down('xs')]: {
-                padding: theme.spacing(0.5),
-            },
-            [theme.breakpoints.down('sm')]: {
-                display: 'flex !important',
-                lineHeight: 1.5,
-                '& span:last-child': {
-                    textAlign: 'right',
-                },
-            },
-            '& span': {
-                [theme.breakpoints.down('md')]: {
-                    display: ({ narrow }) => (narrow ? 'block' : 'initial'),
-                    width: ({ narrow }) => (narrow ? '100%' : 'auto'),
-                },
-            },
-        },
-        buttonSection: {
-            textAlign: 'right',
-            paddingTop: theme.spacing(1),
-            [theme.breakpoints.down('xs')]: {
-                padding: theme.spacing(0.5),
-            },
-        },
-        editButton: {
-            color: theme.palette.grey[400],
-        },
-        pinButton: {
-            color: theme.palette.grey[400],
-            '&.active': {
-                color: theme.palette.secondary.main,
-            },
-        },
-        dateGridItem: {
-            display: 'flex',
-            alignItems: 'baseline',
-        },
-        date: {
-            paddingTop: theme.spacing(1),
-            marginRight: theme.spacing(2),
-            [theme.breakpoints.down('xs')]: {
-                padding: theme.spacing(0.5),
-            },
-        },
-        link: {
-            width: '100%',
-        },
-    })
-);
+import styles from './ArticlePreviewStandardLayout.module.scss';
+
+const {
+    publicRuntimeConfig: { cloudimageToken },
+} = getConfig();
 
 interface ArticlePreviewProps {
     article: ArticleModel;
@@ -186,13 +59,12 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
         narrow,
         onUpdateArticle,
     }) => {
+        const { baseUrl } = useServerData();
         const isMobile = useIsMobile();
-        const { push } = useHistory();
         const retinaMultiplier = useIsRetina() ? 2 : 1;
 
         const currentUser = useCurrentUser();
 
-        const styles = useStyle({ isEmbedded, narrow });
         const showEditSection =
             User.canEditArticle(currentUser, article) ||
             User.isAdmin(currentUser);
@@ -211,20 +83,23 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
             disableLink ? (
                 content
             ) : (
-                <Link
-                    component={CollisionLink}
-                    color="inherit"
-                    underline="none"
-                    to={Article.getPath(article)}
-                    className={styles.link}
-                >
-                    {content ?? ''}
+                <Link href={Article.getPath(article)}>
+                    <a
+                        color={'inherit'}
+                        style={{ textDecoration: 'none' }}
+                        className={styles.link}
+                    >
+                        {content ?? ''}
+                    </a>
                 </Link>
             );
 
         return (
             <Container
-                className={styles.container}
+                className={clsx(styles.root, {
+                    [styles.narrow]: narrow,
+                    [styles.isEmbedded]: isEmbedded,
+                })}
                 data-testid="ArticlePreviewStandardLayout"
             >
                 <Grid container className={styles.containerGrid}>
@@ -246,6 +121,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                         operation={'width'}
                                         size={'300x200'}
                                         src={File.getFileRemoteLocation(
+                                            baseUrl,
                                             article.previewImageFile
                                         )}
                                     />
@@ -260,13 +136,15 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                         {!onUpdateArticle &&
                             maybeLinked(
                                 article.previewImageFile && (
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         className={styles.previewImage}
-                                        src={`https://afdptjdxen.cloudimg.io/bound/${
+                                        src={`https://${cloudimageToken}.cloudimg.io/bound/${
                                             400 * retinaMultiplier
                                         }x${
                                             300 * retinaMultiplier
                                         }/foil1/${File.getFileRemoteLocation(
+                                            baseUrl,
                                             article.previewImageFile
                                         )}`}
                                         alt={`Vorschaubild zu ${article.title}`}
@@ -291,14 +169,14 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             />
                         )}
                         {!onUpdateArticle && (
-                            <Typography
-                                gutterBottom
+                            <div
                                 className={styles.title}
                                 role={'heading'}
+                                aria-level={1}
                                 aria-label={'Article title'}
                             >
                                 {maybeLinked(article.title)}
-                            </Typography>
+                            </div>
                         )}
                         {!!onUpdateArticle && (
                             <MuiInput
@@ -323,13 +201,12 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             />
                         )}
                         {!onUpdateArticle && (
-                            <Typography
+                            <div
                                 className={styles.previewSection}
-                                variant={'subtitle2'}
                                 aria-label={'Article preview Text'}
                             >
                                 {article.preview}
-                            </Typography>
+                            </div>
                         )}
                         {!!onUpdateArticle && (
                             <TagsSelect
@@ -345,16 +222,14 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             ))}
                         <Grid container>
                             <Grid item className={styles.dateGridItem}>
-                                <Typography
+                                <time
                                     className={clsx(styles.date, 'dt-updated')}
-                                    component={'time'}
-                                    variant={'subtitle1'}
                                     dateTime={article.updatedAt}
                                 >
                                     {format(new Date(article.updatedAt), 'P', {
                                         locale: de,
                                     }) + ' '}
-                                </Typography>
+                                </time>
                             </Grid>
                             <Grid item style={{ flexGrow: 1 }}>
                                 <AuthorAvatarsList
@@ -456,27 +331,25 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                                 article
                                             ) &&
                                                 !disableEdit && (
-                                                    <Button
-                                                        aria-label="Beitrag bearbeiten"
-                                                        className={clsx(
-                                                            styles.editButton,
-                                                            'edit-button'
+                                                    <Link
+                                                        href={ArticleUtil.getPath(
+                                                            article,
+                                                            { edit: true }
                                                         )}
-                                                        onClick={(
-                                                            e: React.MouseEvent
-                                                        ) => {
-                                                            e.stopPropagation();
-                                                            push(
-                                                                ArticleUtil.getPath(
-                                                                    article,
-                                                                    {
-                                                                        edit: true,
-                                                                    }
-                                                                )
-                                                            );
-                                                        }}
-                                                        icon={<Edit />}
-                                                    />
+                                                        passHref
+                                                    >
+                                                        <Button
+                                                            aria-label="Beitrag bearbeiten"
+                                                            style={{
+                                                                width: '3em' /* I dont know why this is necessary */,
+                                                            }}
+                                                            className={clsx(
+                                                                styles.editButton,
+                                                                'edit-button'
+                                                            )}
+                                                            icon={<Edit />}
+                                                        />
+                                                    </Link>
                                                 )}
                                             {User.isAdmin(currentUser) &&
                                                 !disablePin && (

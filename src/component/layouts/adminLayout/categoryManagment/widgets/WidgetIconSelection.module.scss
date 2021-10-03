@@ -1,0 +1,19 @@
+.iconScrollbar {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: calc(2 * var(--lotta-spacing));
+    height: 4em;
+}
+
+.overlayTextDescription {
+    margin-bottom: var(--lotta-spacing);
+}
+
+.iconPreview {
+    float: right;
+}
+
+.label {
+    top: -0.4em;
+    left: 0.8em;
+}

@@ -1,9 +1,8 @@
-import React, { memo, lazy } from 'react';
+import * as React from 'react';
 import { CardContent } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { Show } from './Show';
-
-const Edit = lazy(() => import('./Edit'));
+import { Edit } from './Edit';
 
 export interface FormProps {
     contentModule: ContentModuleModel;
@@ -36,7 +35,7 @@ export interface FormConfiguration {
     elements: FormElement[];
 }
 
-export const Form = memo<FormProps>(
+export const Form = React.memo<FormProps>(
     ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
         return (
             <CardContent data-testid="FormContentModule">
@@ -51,3 +50,4 @@ export const Form = memo<FormProps>(
         );
     }
 );
+Form.displayName = 'Form';

@@ -2,8 +2,8 @@ import React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, SomeUserin } from 'test/fixtures';
 import { ComposeMessage } from './ComposeMessage';
-import { SendMessageMutation } from 'api/mutation/SendMessageMutation';
 import { ChatType } from 'model';
+import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/messagingLayout/ComposeMessage', () => {
@@ -52,6 +52,7 @@ describe('component/layouts/messagingLayout/ComposeMessage', () => {
                             data: {
                                 message: {
                                     id: 1,
+                                    content: 'Hallo!',
                                     senderUser: SomeUser,
                                     recipientUser: SomeUserin,
                                     recipientGroup: null,
@@ -103,6 +104,7 @@ describe('component/layouts/messagingLayout/ComposeMessage', () => {
                             data: {
                                 message: {
                                     id: 1,
+                                    content: 'Hallo!',
                                     senderUser: SomeUser,
                                     recipientUser: SomeUserin,
                                     recipientGroup: null,

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { CircularProgress, Input } from '@material-ui/core';
 import { useAutocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
-import { GetTagsQuery } from 'api/query/GetTagsQuery';
 import { Tag } from 'component/general/tag/Tag';
+import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 
 export interface TagsSelectProps {
     value: string[];
@@ -62,6 +62,7 @@ export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
         <div id={'tags-select'} {...getRootProps()}>
             {value.map((tag, index) => (
                 <Tag
+                    key={tag}
                     {...getOptionProps({ option: tag, index })}
                     onDelete={() => onChange(value.filter((v) => v !== tag))}
                 >
@@ -103,7 +104,7 @@ export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
                 />
                 {groupedOptions.length > 0 ? (
                     <ul
-                        data-testid="TagsSelectCombobox"
+                        data-testid={'TagsSelectCombobox'}
                         style={{
                             position: 'absolute',
                             top: '2em',
@@ -113,7 +114,10 @@ export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
                         {...getListboxProps()}
                     >
                         {groupedOptions.map((option, index) => (
-                            <li {...getOptionProps({ option, index })}>
+                            <li
+                                key={option}
+                                {...getOptionProps({ option, index })}
+                            >
                                 {option}
                             </li>
                         ))}
@@ -123,3 +127,4 @@ export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
         </div>
     );
 });
+TagsSelect.displayName = 'TagsSelect';

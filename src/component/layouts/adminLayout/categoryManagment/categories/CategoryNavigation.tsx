@@ -15,7 +15,7 @@ import { MoreVert } from '@material-ui/icons';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID } from 'model/ID';
 import { useMutation } from '@apollo/client';
-import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
+import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import findIndex from 'lodash/findIndex';
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -67,10 +67,8 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
 
         const [categories] = useCategories();
 
-        const [
-            expandedMainCategoryId,
-            setExpandedMainCategoryId,
-        ] = React.useState<ID | null>(null);
+        const [expandedMainCategoryId, setExpandedMainCategoryId] =
+            React.useState<ID | null>(null);
 
         const homepageCategory = (categories || []).find(
             (category) => category.isHomepage
@@ -296,8 +294,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                         styles.subcategories
                                                                                     }
                                                                                     style={{
-                                                                                        cursor:
-                                                                                            'pointer',
+                                                                                        cursor: 'pointer',
                                                                                     }}
                                                                                     onClick={() =>
                                                                                         onSelectCategory(

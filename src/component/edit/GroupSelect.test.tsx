@@ -353,27 +353,6 @@ describe('component/edit/GroupSelect', () => {
             expect(selectedOption).toBeVisible();
         });
 
-        it('should not show checkmark when element is not selected', async () => {
-            const screen = render(
-                <GroupSelect
-                    selectedGroups={[lehrerGroup]}
-                    onSelectGroups={() => {}}
-                />,
-                {}
-            );
-
-            userEvent.click(
-                await screen.findByPlaceholderText(/gruppe suchen/i)
-            );
-
-            const selectedOption = screen.getByRole('option', {
-                name: 'Schüler',
-                selected: false,
-            });
-            const icon = selectedOption.querySelector('svg');
-            expect(icon).toHaveStyle({ color: 'transparent' });
-        });
-
         describe('selecting a group', () => {
             const tenantWith2AdminGroups = {
                 ...tenant,

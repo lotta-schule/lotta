@@ -1,0 +1,102 @@
+.root {
+    position: relative;
+    border-color: 2px solid transparent;
+    transition: ease-out 250ms all;
+    border: 2px dashed transparent;
+    outline: none;
+    flex-grow: 1;
+    flex-shrink: 1;
+
+    .isDragActive {
+        background-color: rgba(var(--lotta-secondary-color), 0.1);
+        border: 2px dashed;
+        border-color: rgba(var(--lotta-secondary-color), 1);
+    }
+    .dragHelpText {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #333;
+        font-size: 1.2rem;
+        text-shadow: 1px 1px 4px #f52;
+    }
+    &.isEditable {
+        .table {
+            tr > td,
+            tr > th {
+                &:nth-child(1) {
+                    display: none;
+                }
+            }
+        }
+    }
+    .table {
+        display: flex;
+        flex-direction: column;
+        thead {
+            display: flex;
+            width: 100%;
+        }
+        tbody {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow-y: scroll;
+            height: 600px;
+            max-height: 50vh;
+            tr {
+                cursor: pointer;
+            }
+        }
+        tr {
+            display: flex;
+            width: 100%;
+            flex-shrink: 0;
+            box-sizing: border-box;
+
+            &:global(.selected),
+            &:global(.selected):hover {
+                background-color: rgba(var(--lotta-secondary-color), 0.2);
+            }
+            & > td,
+            & > th {
+                user-select: none;
+                padding: var(--lotta-spacing);
+                box-sizing: border-box;
+                &:nth-child(1) {
+                    width: 10%;
+                }
+                &:nth-child(2) {
+                    width: 2em;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+                &:nth-child(3) {
+                    width: auto;
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                }
+                &:nth-child(5) {
+                    width: 3em;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+            }
+            & > td {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                flex-grow: 0;
+                flex-shrink: 0;
+            }
+        }
+    }
+}

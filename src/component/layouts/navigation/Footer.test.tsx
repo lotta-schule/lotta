@@ -1,9 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { MockedProvider } from '@apollo/client/testing';
-import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { Footer } from './Footer';
 import { allCategories } from 'test/fixtures';
+import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 
 describe('component/layouts/Footer', () => {
     let categoriesHaveBeenFetched = false;

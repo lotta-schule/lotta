@@ -1,8 +1,10 @@
-import React, { memo } from 'react';
-import { ContentModuleModel } from '../../../../model';
-import { CardContent, makeStyles } from '@material-ui/core';
+import * as React from 'react';
+import { ContentModuleModel } from 'model';
+import { CardContent } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
+
+import styles from './Table.module.scss';
 
 export interface TableCell {
     text: string;
@@ -20,21 +22,8 @@ export interface TableProps {
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        paddingTop: 30,
-        paddingBottom: 0,
-        margin: '0 16.6%',
-        overflow: 'auto',
-        [theme.breakpoints.down('sm')]: {
-            margin: 0,
-        },
-    },
-}));
-
-export const Table = memo<TableProps>(
+export const Table = React.memo<TableProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-        const styles = useStyles();
         return (
             <CardContent
                 className={styles.root}
@@ -53,3 +42,4 @@ export const Table = memo<TableProps>(
         );
     }
 );
+Table.displayName = 'Table';

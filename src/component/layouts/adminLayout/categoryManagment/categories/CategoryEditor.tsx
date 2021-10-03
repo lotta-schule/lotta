@@ -10,7 +10,6 @@ import {
 import { Delete } from '@material-ui/icons';
 import { CategoryModel, WidgetModel, ID } from 'model';
 import { useMutation, useQuery } from '@apollo/client';
-import { UpdateCategoryMutation } from 'api/mutation/UpdateCategoryMutation';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
@@ -18,14 +17,16 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
 import { Category, File, RedirectType } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
-import { DeleteCategoryDialog } from './DeleteCategoryDialog';
-import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { Button } from 'component/general/button/Button';
 import { animated, useSpring } from 'react-spring';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
 import { Select } from 'component/general/form/select/Select';
 import { Radio, RadioGroup } from 'component/general/form/radio';
+import { useServerData } from 'component/ServerDataContext';
+import { DeleteCategoryDialog } from './DeleteCategoryDialog';
+import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
+import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
 
@@ -63,6 +64,7 @@ export interface CategoryEditorProps {
 
 export const CategoryEditor = React.memo<CategoryEditorProps>(
     ({ selectedCategory, onSelectCategory }) => {
+        const { baseUrl } = useServerData();
         const styles = useStyles();
 
         const [categories] = useCategories();
@@ -70,10 +72,8 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
         const [category, setCategory] = React.useState<CategoryModel | null>(
             null
         );
-        const [
-            isDeleteCategoryDialogOpen,
-            setIsDeleteCategoryDialogOpen,
-        ] = React.useState(false);
+        const [isDeleteCategoryDialogOpen, setIsDeleteCategoryDialogOpen] =
+            React.useState(false);
 
         const [selectedWidgets, setSelectedWidgets] = React.useState<
             WidgetModel[]
@@ -89,13 +89,11 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                 },
             ],
         });
-        const {
-            data: currentWidgetsData,
-            error: currentWidgetsError,
-        } = useQuery(GetCategoryWidgetsQuery, {
-            variables: { categoryId: category?.id ?? null },
-            skip: !category?.id,
-        });
+        const { data: currentWidgetsData, error: currentWidgetsError } =
+            useQuery(GetCategoryWidgetsQuery, {
+                variables: { categoryId: category?.id ?? null },
+                skip: !category?.id,
+            });
         React.useEffect(() => {
             if (currentWidgetsData) {
                 setSelectedWidgets(currentWidgetsData.widgets);
@@ -203,6 +201,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                             operation={'cover'}
                             size={'900x150'}
                             src={File.getFileRemoteLocation(
+                                baseUrl,
                                 category.bannerImageFile
                             )}
                         />
@@ -223,7 +222,8 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                         onChange={(_, checked) =>
                                             setCategory({
                                                 ...category,
-                                                hideArticlesFromHomepage: checked,
+                                                hideArticlesFromHomepage:
+                                                    checked,
                                             })
                                         }
                                         value={'hideArticlesFromHomepage'}

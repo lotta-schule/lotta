@@ -1,5 +1,10 @@
 import { UserModel, ArticleModel } from 'model';
 import { File } from './File';
+import getConfig from 'next/config';
+
+const {
+    publicRuntimeConfig: { cloudimageToken },
+} = getConfig();
 
 export const User = {
     getName(user?: UserModel | null) {
@@ -13,9 +18,10 @@ export const User = {
         return user?.nickname || user?.name || '';
     },
 
-    getAvatarUrl(user?: UserModel | null, size: number = 100) {
+    getAvatarUrl(baseUrl: string, user?: UserModel | null, size: number = 100) {
         return user?.avatarImageFile
-            ? `https://afdptjdxen.cloudimg.io/bound/${size}x${size}/foil1/${File.getFileRemoteLocation(
+            ? `https://${cloudimageToken}.cloudimg.io/bound/${size}x${size}/foil1/${File.getFileRemoteLocation(
+                  baseUrl,
                   user.avatarImageFile
               )}`
             : User.getDefaultAvatarUrl(user);

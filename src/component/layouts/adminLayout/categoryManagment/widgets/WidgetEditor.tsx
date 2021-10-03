@@ -1,35 +1,19 @@
 import * as React from 'react';
-import { Divider, Typography, makeStyles } from '@material-ui/core';
+import { ID, WidgetModel, WidgetModelType } from 'model';
+import { Divider } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
-import { WidgetModel, WidgetModelType } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { useMutation } from '@apollo/client';
-import { ID } from 'model/ID';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
-import { UpdateWidgetMutation } from 'api/mutation/UpdateWidgetMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
 import { WidgetIconSelection } from './WidgetIconSelection';
+import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
 
-const useStyles = makeStyles((theme) => ({
-    input: {
-        marginTop: theme.spacing(3),
-        marginBottom: theme.spacing(3),
-        width: '100%',
-    },
-    button: {
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-    },
-    divider: {
-        clear: 'both',
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-    },
-}));
+import styles from './WidgetEditor.module.scss';
 
 export interface WidgetEditorProps {
     selectedWidget: WidgetModel | null;
@@ -38,13 +22,9 @@ export interface WidgetEditorProps {
 
 export const WidgetEditor = React.memo<WidgetEditorProps>(
     ({ selectedWidget, onSelectWidget }) => {
-        const styles = useStyles();
-
         const [widget, setWidget] = React.useState<WidgetModel | null>(null);
-        const [
-            isDeleteWidgetDialogOpen,
-            setIsDeleteWidgetDialogOpen,
-        ] = React.useState(false);
+        const [isDeleteWidgetDialogOpen, setIsDeleteWidgetDialogOpen] =
+            React.useState(false);
 
         const [mutateWidget, { loading: isLoading, error }] = useMutation<
             { widget: WidgetModel },
@@ -86,14 +66,12 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
 
         return (
             <>
-                <Typography variant="h5">
+                <h5>
                     {selectedWidget
                         ? selectedWidget.title
                         : widget && widget.title}
-                </Typography>
-                <Typography color={'textSecondary'} variant={'subtitle2'}>
-                    {widget.type}
-                </Typography>
+                </h5>
+                <div>{widget.type}</div>
                 <ErrorMessage error={error} />
                 <Label label="Name des Widget">
                     <Input
@@ -177,3 +155,4 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
         );
     }
 );
+WidgetEditor.displayName = 'WidgetEditor';

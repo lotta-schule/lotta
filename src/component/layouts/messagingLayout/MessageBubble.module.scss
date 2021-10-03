@@ -1,0 +1,69 @@
+.root {
+    padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
+    margin-bottom: calc(4 * var(--lotta-spacing));
+    cursor: default;
+    position: relative;
+    margin-left: initial;
+    margin-right: 3em;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(var(--lotta-primary-color), 1);
+    background-color: rgba(var(--lotta-primary-color), 0.3);
+    border-radius: var(--lotta-border-radius);
+    overflow: hidden;
+
+    &::after {
+        content: initial;
+        border-left-width: 20;
+        border-left-style: solid;
+        border-left-color: rgba(var(--lotta-box-background-color));
+        border-top-width: 20px;
+        border-top-style: solid;
+        border-top-color: rgba(var(--lotta-primary-color), 0.3);
+        background-color: rgba(var(--lotta-primary-color), 1);
+        bottom: -20px;
+        position: absolute;
+        left: 20px;
+        right: initial;
+    }
+
+    &.isActive {
+        margin-left: 3em;
+        margin-right: initial;
+        border-color: rgba(var(--lotta-secondary-color), 1);
+        background-color: rgba(var(--lotta-secondary-color), 0.3);
+        &::after {
+            content: '';
+            border-top-color: rgba(var(--lotta-secondary-color), 0.3);
+            background-color: rgba(var(--lotta-secondary-color), 1);
+            left: initial;
+            right: 20px;
+        }
+    }
+
+    .message {
+        padding-bottom: var(--lotta-spacing);
+    }
+
+    .senderUser {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .senderUserAvatar {
+        height: 1em;
+        width: 1em;
+        display: inline-block;
+        margin-right: 0.25em;
+    }
+
+    .messageInformation {
+        display: flex;
+        justify-content: space-between;
+        padding-top: var(--lotta-spacing);
+        border-top-width: 1px;
+        border-top-style: solid;
+        border-top-color: rgba(var(--lotta-secondary-color), 0.7);
+    }
+}

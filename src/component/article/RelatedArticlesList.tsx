@@ -1,22 +1,12 @@
 import * as React from 'react';
 import { ArticleModel } from 'model';
 import { useQuery } from '@apollo/client';
-import { Typography, makeStyles, LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@material-ui/core';
 import { useTransition, animated } from 'react-spring';
-import { GetArticlesForTag } from 'api/query/GetArticlesForTagQuery';
 import { ArticlePreviewDensedLayout } from './ArticlePreviewDensedLayout';
+import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1),
-        textTransform: 'uppercase',
-        letterSpacing: 4,
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.text.secondary,
-        padding: theme.spacing(2),
-    },
-}));
+import styles from './RelatedArticlesList.module.scss';
 
 export interface RelatedArticlesListProps {
     tag: string;
@@ -24,7 +14,6 @@ export interface RelatedArticlesListProps {
 
 export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
     ({ tag }) => {
-        const styles = useStyles();
         const { data, loading: isLoading } = useQuery<
             { articles: ArticleModel[] },
             { tag: string }
@@ -51,9 +40,9 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
         }
         return (
             <section>
-                <Typography variant={'h6'} className={styles.root}>
+                <h6 className={styles.root}>
                     Weitere Beiträge zum Thema <strong>{tag}</strong>
-                </Typography>
+                </h6>
                 {transitions((props, article) => {
                     return (
                         <animated.div style={props}>

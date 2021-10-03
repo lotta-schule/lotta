@@ -10,8 +10,8 @@ import {
 } from 'test/fixtures';
 import { ArticleModel } from 'model';
 import { MockedResponse } from '@apollo/client/testing';
-import { GetCategoryWidgetsQuery } from 'api/query/GetCategoryWidgetsQuery';
 import { CategoryLayout } from './CategoryLayout';
+import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 
 describe('component/article/CategoryLayout', () => {
     const categoryWidgetsMock = (_categoryId: string): MockedResponse => ({

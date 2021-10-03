@@ -1,0 +1,8 @@
+.root {
+    padding: 1em;
+    margin: var(--lotta-spacing) 0 0 0;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    button {
+        width: 100%;
+    }
+}

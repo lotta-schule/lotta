@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { GetGroupQuery } from 'api/query/GetGroupQuery';
 import {
     adminGroup,
     elternGroup,
@@ -9,7 +8,8 @@ import {
 } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { EditGroupForm } from './EditGroupForm';
-import { UpdateUserGroupMutation } from 'api/mutation/UpdateUserGroupMutation';
+import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
+import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
 const additionalMocks = [

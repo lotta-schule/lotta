@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Grow, Theme, makeStyles } from '@material-ui/core';
+import { Grow } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles';
 import clsx from 'clsx';
+
+import styles from './Message.module.scss';
 
 export interface MessageProps extends React.HTMLProps<HTMLDivElement> {
     message?: string | null;
@@ -10,32 +12,22 @@ export interface MessageProps extends React.HTMLProps<HTMLDivElement> {
     children?: any;
 }
 
-const useStyles = makeStyles<Theme, { enabled: boolean; color: string }>(
-    (theme) => ({
-        root: {
-            backgroundColor: ({ color }) => fade(color, 0.5),
-            color: theme.palette.error.contrastText,
-            borderColor: ({ color }) => color,
-            borderWidth: ({ enabled }) => (enabled ? 1 : 0),
-            borderStyle: 'solid',
-            marginBottom: ({ enabled }) => (enabled ? theme.spacing(1) : 0),
-            padding: ({ enabled }) => (enabled ? theme.spacing(1) : 0),
-            borderRadius: theme.shape.borderRadius,
-            transition: 'all ease-in 150ms',
-        },
-    })
-);
-
 export const Message = React.memo<MessageProps>(
     ({ message, color, className, children, ...otherProps }) => {
-        const styles = useStyles({ enabled: !!message, color });
+        const otherStyle: React.CSSProperties = {
+            backgroundColor: fade(color, 0.5),
+            borderColor: color,
+        };
 
         return (
             <Grow in={!!message}>
                 <div
                     role={'alert'}
                     aria-label={message || undefined}
-                    className={clsx(styles.root, className)}
+                    style={otherStyle}
+                    className={clsx(styles.root, className, {
+                        [styles.enabled]: !!message,
+                    })}
                     {...otherProps}
                 >
                     {message}
@@ -45,3 +37,4 @@ export const Message = React.memo<MessageProps>(
         );
     }
 );
+Message.displayName = 'Message';

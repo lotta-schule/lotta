@@ -1,34 +1,24 @@
-import React, { memo, useContext } from 'react';
-import { makeStyles, CircularProgress, Theme } from '@material-ui/core';
+import * as React from 'react';
+import { CircularProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, DirectoryModel } from 'model';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
-import fileExplorerContext from './context/FileExplorerContext';
 import { Input } from 'component/general/form/input/Input';
+import fileExplorerContext from './context/FileExplorerContext';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
+import clsx from 'clsx';
 
-const useStyles = makeStyles<Theme, { error: boolean }>((theme) => ({
-    root: {
-        width: '100%',
-        borderTop: ({ error }) =>
-            `1px solid ${
-                error ? theme.palette.error.main : theme.palette.secondary.main
-            }`,
-        paddingTop: theme.spacing(0.5),
-        paddingBottom: theme.spacing(0.5),
-        display: 'flex',
-        justifyContent: 'space-between',
-    },
-    mainContent: {
-        fontSize: '.8em',
-    },
-}));
+import styles from './FileTableFooter.module.scss';
 
-export const FileTableFooter = memo(() => {
+export const FileTableFooter = React.memo(() => {
     const { t } = useTranslation();
-    const [state, dispatch] = useContext(fileExplorerContext);
+    const [state, dispatch] = React.useContext(fileExplorerContext);
 
-    const { data, error, loading: isLoading } = useQuery<{
+    const {
+        data,
+        error,
+        loading: isLoading,
+    } = useQuery<{
         files: FileModel[];
         directories: DirectoryModel[];
     }>(GetDirectoriesAndFilesQuery, {
@@ -38,7 +28,6 @@ export const FileTableFooter = memo(() => {
         },
         skip: state.currentPath.length < 2,
     });
-    const styles = useStyles({ error: !!error });
 
     const mainContent = (() => {
         if (state.currentPath.length < 2) {
@@ -73,7 +62,7 @@ export const FileTableFooter = memo(() => {
     })();
 
     return (
-        <section className={styles.root}>
+        <section className={clsx(styles.root, { [styles.isError]: !!error })}>
             <div className={styles.mainContent}>{mainContent}</div>
             <div>
                 <Input
@@ -91,3 +80,4 @@ export const FileTableFooter = memo(() => {
         </section>
     );
 });
+FileTableFooter.displayName = 'FileTableFooter';

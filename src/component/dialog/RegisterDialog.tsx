@@ -5,10 +5,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Typography,
     Grid,
-    makeStyles,
-    Theme,
     FormGroup,
     FormControlLabel,
 } from '@material-ui/core';
@@ -17,15 +14,11 @@ import { useGetFieldError } from 'util/useGetFieldError';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { useMutation } from '@apollo/client';
-import { RegisterMutation } from 'api/mutation/RegisterMutation';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
+import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    margin: {
-        marginBottom: theme.spacing(3),
-    },
-}));
+import styles from './RegisterDialog.module.scss';
 
 export interface RegisterDialogProps {
     isOpen: boolean;
@@ -37,7 +30,6 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
         const [register, { error, loading: isLoading, data }] = useMutation<{
             register: boolean;
         }>(RegisterMutation);
-        const styles = useStyles();
 
         const getFieldError = useGetFieldError(error);
 
@@ -157,12 +149,12 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             </Label>
                         </Grid>
                     </Grid>
-                    <Typography variant="caption">
+                    <div>
                         Bitte gib hier deinen richtigen, vollständigen Namen an,
                         damit wir sehen ob du wirklich Schüler/Lehrer an deiner
                         Schule bist. Deinen Spitznamen kannst du jederzeit in
                         deinem Profil ändern.
-                    </Typography>
+                    </div>
                     <Label label={'Spitzname'}>
                         <Input
                             id="nickname"
@@ -201,20 +193,16 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             }
                         />
                     </FormGroup>
-                    <Typography
-                        variant="caption"
-                        component={'div'}
-                        className={styles.margin}
-                    >
+                    <div className={styles.margin}>
                         Verstecke deinen vollständigen Namen, damit er nur vom
                         Administrator deiner Schule gesehen werden kann. Dein
                         Name taucht nicht in den von dir erstellten Artikeln
                         oder in deinem Profil auf. Stattdessen wird dein
                         Spitzname angezeigt.
-                    </Typography>
-                    <Typography variant="body1" className={styles.margin}>
+                    </div>
+                    <div className={styles.margin}>
                         Hast du einen Anmeldeschlüssel?
-                    </Typography>
+                    </div>
                     <Label label="Anmeldeschlüssel:">
                         <Input
                             id="code"
@@ -224,12 +212,12 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             onChange={(e) => setGroupKey(e.currentTarget.value)}
                         />
                     </Label>
-                    <Typography variant="caption">
+                    <div>
                         Gib hier einen Anmeldeschlüssel ein, um deine
                         Nutzerrechte zu erhalten (Schüler, Lehrer, etc.). Du
                         kannst Anmeldeschlüssel auch später in deinem Profil
                         bearbeiten.
-                    </Typography>
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -253,3 +241,4 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
         );
     }
 );
+RegisterDialog.displayName = 'RegisterDialog';

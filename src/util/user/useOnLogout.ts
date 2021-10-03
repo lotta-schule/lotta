@@ -1,15 +1,17 @@
-import { LogoutMutation } from 'api/mutation/LogoutMutation';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { useHistory } from 'react-router-dom';
+import { useRouter } from 'next/router';
+import LogoutMutation from 'api/mutation/LogoutMutation.graphql';
 
 export const useOnLogout = () => {
     const apolloClient = useApolloClient();
-    const history = useHistory();
+    const router = useRouter();
     const [logout] = useMutation(LogoutMutation, {
         onCompleted: () => {
-            history.push('/');
+            document.cookie =
+                'AuthToken=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
             localStorage.clear();
             apolloClient.resetStore();
+            router.push('/');
         },
     });
 

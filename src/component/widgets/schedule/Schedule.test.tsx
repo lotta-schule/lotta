@@ -2,7 +2,7 @@ import React from 'react';
 import { render, waitFor } from 'test/util';
 import { ScheduleResponse, SomeUserin, VPSchuelerWidget } from 'test/fixtures';
 import { Schedule } from './Schedule';
-import { GetScheduleQuery } from 'api/query/GetScheduleQuery';
+import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
 
 describe('component/widgets/Schedule', () => {
     const pupil = {
@@ -85,7 +85,7 @@ describe('component/widgets/Schedule', () => {
         render(
             <Schedule widget={VPSchuelerWidget} />,
             {},
-            { currentUser: pupil, additionalMocks: mocks, useCache: true }
+            { currentUser: pupil, additionalMocks: mocks }
         );
     });
 
@@ -97,7 +97,6 @@ describe('component/widgets/Schedule', () => {
                 {
                     currentUser: SomeUserin,
                     additionalMocks: mocks,
-                    useCache: true,
                 }
             );
             expect(
@@ -116,7 +115,7 @@ describe('component/widgets/Schedule', () => {
             const screen = render(
                 <Schedule widget={VPSchuelerWidget} />,
                 {},
-                { currentUser: pupil, additionalMocks: mocks, useCache: true }
+                { currentUser: pupil, additionalMocks: mocks }
             );
             await waitFor(() => {
                 expect(didLoadCurrentSchedule).toEqual(true);
@@ -140,7 +139,7 @@ describe('component/widgets/Schedule', () => {
             const screen = render(
                 <Schedule widget={VPSchuelerWidget} />,
                 {},
-                { currentUser: pupil, additionalMocks: mocks, useCache: true }
+                { currentUser: pupil, additionalMocks: mocks }
             );
             await waitFor(() => {
                 expect(didLoadCurrentSchedule).toEqual(true);
@@ -188,7 +187,6 @@ describe('component/widgets/Schedule', () => {
             {
                 currentUser: pupil,
                 additionalMocks: mocksWithError,
-                useCache: true,
             }
         );
         await waitFor(() => {
@@ -226,7 +224,6 @@ describe('component/widgets/Schedule', () => {
             {
                 currentUser: pupil,
                 additionalMocks: mocksWithError,
-                useCache: true,
             }
         );
         await waitFor(() => {

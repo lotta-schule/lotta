@@ -1,12 +1,14 @@
 import * as React from 'react';
+import { ContentModuleModel } from 'model';
 import { File } from 'util/model';
-import { ContentModuleModel } from '../../../../model';
+import { useServerData } from 'component/ServerDataContext';
 
 interface AudioAudioProps {
     contentModule: ContentModuleModel;
 }
 
 export const AudioAudio = React.memo<AudioAudioProps>(({ contentModule }) => {
+    const { baseUrl } = useServerData();
     const file =
         contentModule.files &&
         contentModule.files.length > 0 &&
@@ -24,11 +26,12 @@ export const AudioAudio = React.memo<AudioAudioProps>(({ contentModule }) => {
         >
             {(audioFiles || []).map((af) => (
                 <source
-                    key={File.getFileConversionRemoteLocation(af)}
-                    src={File.getFileConversionRemoteLocation(af)}
+                    key={File.getFileConversionRemoteLocation(baseUrl, af)}
+                    src={File.getFileConversionRemoteLocation(baseUrl, af)}
                     type={af.mimeType}
                 />
             ))}
         </audio>
     );
 });
+AudioAudio.displayName = 'AudioAudio';

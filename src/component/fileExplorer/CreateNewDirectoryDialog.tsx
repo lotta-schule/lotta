@@ -13,11 +13,11 @@ import { Input } from 'component/general/form/input/Input';
 import { DirectoryModel, FileModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
-import { CreateDirectoryMutation } from 'api/mutation/CreateDirectoryMutation';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import CreateDirectoryMutation from 'api/mutation/CreateDirectoryMutation.graphql';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 export interface CreateNewFolderDialogProps {
     basePath?: ({ id: null } | { id: ID; name: string })[];

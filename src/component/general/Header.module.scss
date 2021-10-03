@@ -1,0 +1,55 @@
+@import 'breakpoints';
+
+.root {
+    border-radius: 0;
+    box-shadow: none;
+    padding: var(--lotta-spacing);
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    h2 {
+        color: rgba(var(--lotta-text-color));
+        padding: var(--lotta-spacing);
+        font-size: 1.5rem;
+        letter-spacing: 5;
+        text-transform: uppercase;
+    }
+    .subheader {
+        min-height: 120px;
+        background-size: cover;
+        width: 100%;
+        @media screen and (max-width: $max-sm) {
+            max-width: initial;
+        }
+        flex-shrink: 1;
+        flex-grow: 1;
+        position: relative;
+        &::after {
+            position: absolute;
+            display: none;
+            content: '';
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #ffffff00 75%, #ffffffff 98%);
+        }
+    }
+    &.hasBannerImage .subheader::after {
+        display: block;
+    }
+
+    .bannerheading {
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        font-size: 1.5em;
+        text-shadow: 1px 1px 15px #fff;
+        padding: 0.6em;
+        color: rgba(var(--lotta-contrast-text-color), 1);
+    }
+
+    .userNavigationGridItem {
+        padding-left: var(--lotta-spacing);
+        @media screen and (max-width: $max-sm) {
+            display: none;
+        }
+    }
+}

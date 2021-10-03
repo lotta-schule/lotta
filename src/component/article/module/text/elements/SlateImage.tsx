@@ -7,7 +7,6 @@ import {
 } from 'slate-react';
 import { ButtonGroup } from 'component/general/button/ButtonGroup';
 import { Button } from 'component/general/button/Button';
-import { makeStyles, Theme } from '@material-ui/core';
 import {
     FormatAlignRight,
     FormatAlignLeft,
@@ -18,45 +17,18 @@ import {
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
 import { Image } from '../SlateCustomTypes';
+import getConfig from 'next/config';
+
+import styles from './SlateImage.module.scss';
+import clsx from 'clsx';
+
+const {
+    publicRuntimeConfig: { cloudimageToken },
+} = getConfig();
 
 export type SlateImageProps = Omit<RenderElementProps, 'children'> & {
     children: any;
 };
-
-const useStyles = makeStyles<
-    Theme,
-    {
-        isEditing: boolean;
-        isSelected: boolean;
-        alignment?: string;
-        size?: string;
-    }
->((theme) => ({
-    root: {
-        position: 'relative',
-        float: ({ alignment }) => (alignment === 'left' ? 'left' : 'right'),
-        boxSizing: 'border-box',
-        maxWidth: ({ size }) => {
-            switch (size) {
-                case 'large':
-                    return '50%';
-                case 'small':
-                    return '20%';
-                default:
-                    // case 'middle'
-                    return '30%';
-            }
-        },
-        margin: theme.spacing(1),
-        cursor: ({ isEditing }) => (isEditing ? 'inherit' : 'pointer'),
-        border: ({ isSelected }) =>
-            isSelected ? `1px solid ${theme.palette.secondary.main}` : 'none',
-        '& img': {
-            maxWidth: '100%',
-            maxHeight: '100%',
-        },
-    },
-}));
 
 export const SlateImage = React.memo<SlateImageProps>(
     ({ element, attributes, children }) => {
@@ -64,11 +36,10 @@ export const SlateImage = React.memo<SlateImageProps>(
         const isEditing = !useReadOnly();
         const editor = useSlateStatic();
         const isSelected = useSelected();
-        const styles = useStyles({ isEditing, isSelected, ...element });
         const [showOverlay, setShowOverlay] = React.useState(false);
 
         const src = imageElement.src;
-        const imageUrl = `https://afdptjdxen.cloudimg.io/width/400/foil1/${src}`;
+        const imageUrl = `https://${cloudimageToken}.cloudimg.io/width/400/foil1/${src}`;
 
         const setElementOptions = React.useCallback(
             (options: Partial<Image>) => {
@@ -82,8 +53,30 @@ export const SlateImage = React.memo<SlateImageProps>(
             [editor]
         );
 
+        const style: React.CSSProperties = {
+            float: imageElement.alignment === 'left' ? 'left' : 'right',
+            maxWidth: (() => {
+                switch (imageElement.size) {
+                    case 'large':
+                        return '50%';
+                    case 'small':
+                        return '20%';
+                    default:
+                        // case 'middle'
+                        return '30%';
+                }
+            })(),
+        };
+
         return (
-            <span className={styles.root} {...attributes}>
+            <span
+                className={clsx(styles.root, {
+                    [styles.isEditing]: isEditing,
+                    [styles.isSelected]: isSelected,
+                })}
+                style={style}
+                {...attributes}
+            >
                 <span contentEditable={false}>
                     <img
                         src={imageUrl}
@@ -121,7 +114,10 @@ export const SlateImage = React.memo<SlateImageProps>(
                             />
                             <Button
                                 small
-                                selected={imageElement.alignment === 'right' || imageElement.alignment === undefined}
+                                selected={
+                                    imageElement.alignment === 'right' ||
+                                    imageElement.alignment === undefined
+                                }
                                 onMouseDown={setElementOptions({
                                     alignment: 'right',
                                 })}
@@ -139,7 +135,10 @@ export const SlateImage = React.memo<SlateImageProps>(
                             />
                             <Button
                                 small
-                                selected={imageElement.size === 'middle' || ! imageElement.size}
+                                selected={
+                                    imageElement.size === 'middle' ||
+                                    !imageElement.size
+                                }
                                 onMouseDown={setElementOptions({
                                     size: 'middle',
                                 })}
@@ -161,3 +160,4 @@ export const SlateImage = React.memo<SlateImageProps>(
         );
     }
 );
+SlateImage.displayName = 'SlateImage';

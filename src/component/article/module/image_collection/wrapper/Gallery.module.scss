@@ -1,0 +1,14 @@
+.img {
+    img {
+        max-width: 100%;
+        object-fit: cover;
+        height: 20vw;
+    }
+}
+
+.deleteButton {
+    position: absolute;
+    right: 1.5em;
+    top: 0.5em;
+    z-index: 200;
+}

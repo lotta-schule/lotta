@@ -1,0 +1,26 @@
+.root {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: rgba(var(--lotta-box-background-color));
+    border-bottom: 1px solid rgba(var(--lotta-box-background-color));
+    padding: var(--lotta-spacing);
+
+    [role='combobox'] {
+        width: 100%;
+    }
+
+    .popover {
+        min-height: 50vh;
+    }
+
+    .tabsPanel {
+        margin-top: var(--lotta-spacing);
+    }
+
+    .input {
+        min-width: 30vw;
+        width: 15em;
+        max-width: 100%;
+    }
+}

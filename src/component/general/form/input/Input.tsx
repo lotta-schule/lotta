@@ -1,6 +1,7 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import './input.scss';
+
+import styles from './input.module.scss';
 
 export type InputProps = {
     /**
@@ -14,9 +15,10 @@ export const Input = React.forwardRef<any, InputProps>(
         <input
             {...props}
             ref={ref}
-            className={clsx(className, 'lotta-input', {
-                'lotta-input__inline': inline,
+            className={clsx(className, styles.root, {
+                [styles.inline]: inline,
             })}
         />
     )
 );
+Input.displayName = 'Input';

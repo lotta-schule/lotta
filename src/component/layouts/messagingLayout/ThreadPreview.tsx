@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { makeStyles, Typography, Badge } from '@material-ui/core';
+import { Badge } from '@material-ui/core';
 import { UserModel, UserGroupModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { Button } from 'component/general/button/Button';
@@ -9,52 +9,7 @@ import { User } from 'util/model';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        background: theme.palette.background.paper,
-        borderColor: 'transparent',
-        margin: theme.spacing(1, 0),
-        padding: theme.spacing(1),
-        overflow: 'auto',
-        display: 'block',
-        width: '100%',
-        textTransform: 'none',
-        letterSpacing: 0,
-        borderRadius: 0,
-
-        '&.selected': {
-            position: 'initial',
-            top: `calc(65px + (0.5 * ${theme.spacing(1)})px)`,
-            zIndex: 1,
-            borderLeftWidth: `calc(0.5 * ${theme.spacing(1)}px)`,
-            borderLeftStyle: 'solid',
-            borderLeftColor: theme.palette.secondary.main,
-            borderColor: 'transparent',
-            backgroundColor: theme.palette.grey[100],
-        },
-        '&:hover': {
-            backgroundColor: [theme.palette.grey[100], '!important'],
-            filter: ['none', '!important'],
-        },
-    },
-    buttonLabel: {
-        textAlign: 'left',
-        alignSelf: 'center',
-        fontSize: '0.9rem',
-        color: theme.palette.text.primary,
-    },
-    userAvatar: {
-        float: 'left',
-        marginRight: theme.spacing(1),
-        width: 40,
-        height: 40,
-    },
-    dateLabel: {
-        color: theme.palette.grey[400],
-        fontSize: '0.8rem',
-        textAlign: 'left',
-    },
-}));
+import styles from './ThreadPreview.module.scss';
 
 export interface ThreadPreviewProps {
     counterpart: UserModel | UserGroupModel;
@@ -65,7 +20,6 @@ export interface ThreadPreviewProps {
 
 export const ThreadPreview = React.memo<ThreadPreviewProps>(
     ({ selected, counterpart, date, onClick }) => {
-        const styles = useStyles();
         const newMessagesBadgeNumber = useNewMessagesBadgeNumber(
             (counterpart as UserModel).avatarImageFile !== undefined
                 ? { user: counterpart as UserModel }
@@ -75,7 +29,7 @@ export const ThreadPreview = React.memo<ThreadPreviewProps>(
         return (
             <Button
                 onClick={onClick}
-                className={clsx(styles.root, { selected })}
+                className={clsx(styles.root, { [styles.selected]: selected })}
             >
                 {(counterpart as UserModel).avatarImageFile && (
                     <UserAvatar
@@ -84,21 +38,19 @@ export const ThreadPreview = React.memo<ThreadPreviewProps>(
                         classes={{ root: styles.userAvatar }}
                     />
                 )}
-                <Typography
-                    variant={'subtitle1'}
-                    className={styles.buttonLabel}
-                >
+                <div className={styles.buttonLabel}>
                     <Badge
                         badgeContent={newMessagesBadgeNumber}
                         color={'primary'}
                     >
                         {User.getName(counterpart as UserModel)}
                     </Badge>
-                </Typography>
-                <Typography variant={'body2'} className={styles.dateLabel}>
+                </div>
+                <div className={styles.dateLabel}>
                     {date && format(date, 'P', { locale: de })}
-                </Typography>
+                </div>
             </Button>
         );
     }
 );
+ThreadPreview.displayName = 'ThreadPreview';

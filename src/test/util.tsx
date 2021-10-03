@@ -4,8 +4,6 @@ import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { createMemoryHistory, MemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
 import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
@@ -13,7 +11,7 @@ import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { TenantModel, UserModel } from 'model';
 import { theme } from '../theme';
 import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
-import { i18n } from 'i18n';
+import { i18n } from '../i18n';
 import {
     reducer as fileExplorerStateReducer,
     Action as FileExploreerStateAction,
@@ -23,72 +21,89 @@ import fileExplorerContext, {
     defaultState as defaultFileExplorerState,
 } from 'component/fileExplorer/context/FileExplorerContext';
 import DateFnsUtils from '@date-io/date-fns';
+import { createRouter, Router } from 'next/router';
+import { RouterContext } from 'next/dist/shared/lib/router-context';
 
 export interface TestSetupOptions {
-    defaultPathEntries?: string[];
-    getHistory?: (history: MemoryHistory) => void;
-    onChangeLocation?: (location: Location) => void;
     currentUser?: UserModel;
     additionalMocks?: MockedResponse[];
-    useCache?: boolean;
     tenant?: TenantModel;
+    router?: {
+        getInstance?: (router: Router) => void;
+        pathname?: string;
+        as?: string;
+        query?: any;
+        initialProps?: any;
+        onPush?: Router['push'];
+        onReplace?: Router['replace'];
+    };
 }
 
-const ProviderFactory = (options: TestSetupOptions): React.FC => ({
-    children,
-}) => {
-    const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
-        pick(options, ['currentUser', 'tenant'])
-    );
+const ProviderFactory =
+    (options: TestSetupOptions): React.FC =>
+    ({ children }) => {
+        const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
+            pick(options, ['currentUser', 'tenant'])
+        );
 
-    const history = createMemoryHistory({
-        initialEntries: options.defaultPathEntries || ['/'],
-    });
-    options?.getHistory?.(history);
-    if (options.onChangeLocation) {
-        history.listen((...args) => {
-            options.onChangeLocation!(...((args as unknown) as [any]));
+        const testRouter = createRouter(
+            options?.router?.pathname ?? '',
+            { ...options?.router?.query },
+            options?.router?.as ?? '',
+            {
+                initialProps: { ...options?.router?.initialProps },
+                pageLoader: {
+                    getPageList: jest.fn(() => []),
+                    getDataHref: jest.fn(() => '/'),
+                    _isSsg: jest.fn(async () => false),
+                    loadPage: jest.fn(async () => null),
+                },
+                App: jest.fn(),
+                Component: jest.fn(),
+            } as any
+        );
+        options?.router?.getInstance?.(testRouter);
+        testRouter.push = async (url: any, ...args) => {
+            window.history?.replaceState({}, '', url);
+            return options?.router?.onPush
+                ? options?.router?.onPush(url, ...args)
+                : Promise.resolve(true);
+        };
+        if (options?.router?.onReplace) {
+            testRouter.replace = options?.router?.onReplace;
+        }
+
+        const testTheme = createMuiTheme({
+            ...theme,
+            transitions: { create: () => 'none' },
         });
-    }
-    const testTheme = createMuiTheme({
-        ...theme,
-        transitions: { create: () => 'none' },
-    });
-    return (
-        <ThemeProvider theme={testTheme}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
-                <I18nextProvider i18n={i18n}>
-                    <CloudimageProvider
-                        config={{ token: 'ABCDEF', lazyLoading: false }}
-                    >
-                        <MockedProvider
-                            mocks={[
-                                ...defaultMocks,
-                                ...(options.additionalMocks || []),
-                            ]}
-                            addTypename={false}
-                            cache={options.useCache ? cache : undefined}
-                        >
-                            <UploadQueueProvider>
-                                <React.Suspense
-                                    fallback={
-                                        <span data-testid="LazyLoadIndicator">
-                                            Lazy Load ES6 Module
-                                        </span>
-                                    }
+        return (
+            <RouterContext.Provider value={testRouter}>
+                <ThemeProvider theme={testTheme}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
+                        <I18nextProvider i18n={i18n}>
+                            <CloudimageProvider
+                                config={{ token: 'ABCDEF', lazyLoading: false }}
+                            >
+                                <MockedProvider
+                                    mocks={[
+                                        ...defaultMocks,
+                                        ...(options.additionalMocks || []),
+                                    ]}
+                                    addTypename={false}
+                                    cache={cache}
                                 >
-                                    <Router history={history}>
+                                    <UploadQueueProvider>
                                         {children}
-                                    </Router>
-                                </React.Suspense>
-                            </UploadQueueProvider>
-                        </MockedProvider>
-                    </CloudimageProvider>
-                </I18nextProvider>
-            </MuiPickersUtilsProvider>
-        </ThemeProvider>
-    );
-};
+                                    </UploadQueueProvider>
+                                </MockedProvider>
+                            </CloudimageProvider>
+                        </I18nextProvider>
+                    </MuiPickersUtilsProvider>
+                </ThemeProvider>
+            </RouterContext.Provider>
+        );
+    };
 
 const customRender = (
     ui: React.ReactElement,
@@ -122,27 +137,27 @@ export interface TestFileExplorerContextProviderProps {
     defaultValue?: Partial<typeof defaultFileExplorerState>;
     onUpdateState?(currentState: typeof defaultFileExplorerState): void;
 }
-export const TestFileExplorerContextProvider: React.FC<TestFileExplorerContextProviderProps> = ({
-    children,
-    defaultValue,
-    onUpdateState,
-}) => {
-    const [state, dispatch] = React.useReducer<
-        React.Reducer<typeof defaultFileExplorerState, FileExploreerStateAction>
-    >(fileExplorerStateReducer, {
-        ...defaultFileExplorerState,
-        ...defaultValue,
-    });
-    React.useEffect(() => {
-        onUpdateState?.(state);
-        // eslint-disable-next-line
-    }, [state]);
-    return (
-        <fileExplorerContext.Provider value={[state, dispatch]}>
-            {children}
-        </fileExplorerContext.Provider>
-    );
-};
+export const TestFileExplorerContextProvider: React.FC<TestFileExplorerContextProviderProps> =
+    ({ children, defaultValue, onUpdateState }) => {
+        const [state, dispatch] = React.useReducer<
+            React.Reducer<
+                typeof defaultFileExplorerState,
+                FileExploreerStateAction
+            >
+        >(fileExplorerStateReducer, {
+            ...defaultFileExplorerState,
+            ...defaultValue,
+        });
+        React.useEffect(() => {
+            onUpdateState?.(state);
+            // eslint-disable-next-line
+        }, [state]);
+        return (
+            <fileExplorerContext.Provider value={[state, dispatch]}>
+                {children}
+            </fileExplorerContext.Provider>
+        );
+    };
 
 // override render method
 export { customRender as render };

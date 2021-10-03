@@ -6,7 +6,7 @@ export const Widget = {
     getIcon(widget: WidgetModel) {
         return widget.iconImageFile
             ? createElement('img', {
-                  src: File.getFileRemoteLocation(widget.iconImageFile),
+                  src: File.getFileRemoteLocation('/', widget.iconImageFile),
                   style: { width: '1.5rem', height: '1.5rem' },
               })
             : Widget.getIconForType(widget.type);

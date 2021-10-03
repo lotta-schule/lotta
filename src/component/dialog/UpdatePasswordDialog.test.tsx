@@ -2,9 +2,9 @@ import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
-import { UpdatePasswordMutation } from 'api/mutation/UpdatePasswordMutation';
-import { RequestHisecTokenMutation } from 'api/mutation/RequestHisecTokenMutation';
 import { MockedResponse } from '@apollo/client/testing';
+import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
+import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => {

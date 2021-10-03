@@ -13,9 +13,9 @@ import {
     powerpointFile,
     profilDirectory,
 } from 'test/fixtures';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import { FileTable } from './FileTable';
 import { defaultState, FileExplorerMode } from './context/FileExplorerContext';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/fileExplorer/FileTable', () => {

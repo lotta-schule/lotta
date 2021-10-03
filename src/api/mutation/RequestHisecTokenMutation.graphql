@@ -1,0 +1,3 @@
+mutation RequestHisecToken($password: String!) {
+    token: requestHisecToken(password: $password)
+}

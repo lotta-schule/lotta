@@ -1,6 +1,5 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import './button-group.scss';
 
 export interface ButtonGroupProps {
     fullWidth?: boolean;

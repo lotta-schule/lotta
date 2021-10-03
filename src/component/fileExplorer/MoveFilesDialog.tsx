@@ -11,12 +11,12 @@ import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { UpdateFileMutation } from 'api/mutation/UpdateFileMutation';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
 import fileExplorerContext from './context/FileExplorerContext';
+import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 export const MoveFilesDialog = memo(() => {
     const [state, dispatch] = useContext(fileExplorerContext);
@@ -27,10 +27,8 @@ export const MoveFilesDialog = memo(() => {
                   state.currentPath.length - 1
               ] as DirectoryModel)
     );
-    const [
-        isCreateNewFolderDialogOpen,
-        setIsCreateNewFolderDialogOpen,
-    ] = useState(false);
+    const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
+        useState(false);
 
     const [moveFile, { error, loading: isLoading }] = useMutation(
         UpdateFileMutation,
@@ -139,8 +137,8 @@ export const MoveFilesDialog = memo(() => {
                                     const { data } = await moveFile({
                                         variables: {
                                             id: file.id,
-                                            parentDirectoryId: selectedDirectory!
-                                                .id,
+                                            parentDirectoryId:
+                                                selectedDirectory!.id,
                                         },
                                     });
                                     if (data) {

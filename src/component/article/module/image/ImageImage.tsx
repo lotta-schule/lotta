@@ -1,9 +1,10 @@
-import React, { memo, MouseEvent } from 'react';
-import { FileModelType, FileModel } from '../../../../model';
+import * as React from 'react';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
+import { FileModelType, FileModel } from 'model';
 import { ImageContent, ImageContentProps } from './ImageContent';
 import { ImageCaption } from './ImageCaption';
-import { makeStyles, Theme } from '@material-ui/core';
+
+import styles from './ImageImage.module.scss';
 
 interface ImageImageProps extends Omit<ImageContentProps, 'onClick'> {
     isEditModeEnabled: boolean;
@@ -11,21 +12,10 @@ interface ImageImageProps extends Omit<ImageContentProps, 'onClick'> {
     caption: string;
     onUpdateFile(file: FileModel): void;
     onUpdateCaption(caption: string): void;
-    onSelect?(e: MouseEvent<HTMLImageElement>): void;
+    onSelect?(e: React.MouseEvent<HTMLImageElement>): void;
 }
 
-const useStyles = makeStyles<Theme>((theme) => ({
-    image: {
-        margin: 0,
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1),
-        [theme.breakpoints.down('xs')]: {
-            padding: 0,
-        },
-    },
-}));
-
-export const ImageImage = memo<ImageImageProps>(
+export const ImageImage = React.memo<ImageImageProps>(
     ({
         isEditModeEnabled,
         file,
@@ -46,9 +36,8 @@ export const ImageImage = memo<ImageImageProps>(
         ) : (
             <ImageContent onClick={onSelect} file={file} {...otherProps} />
         );
-        const styles = useStyles();
         return (
-            <figure className={styles.image}>
+            <figure className={styles.root}>
                 {imageContent}
                 <ImageCaption
                     isEditModeEnabled={isEditModeEnabled}
@@ -59,3 +48,4 @@ export const ImageImage = memo<ImageImageProps>(
         );
     }
 );
+ImageImage.displayName = 'ImageImage';

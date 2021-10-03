@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { useTheme } from '@material-ui/core';
 import { Message } from './Message';
 
@@ -7,7 +7,7 @@ export interface SuccessMessageProps {
     className?: string;
 }
 
-export const SuccessMessage = memo<SuccessMessageProps>(
+export const SuccessMessage = React.memo<SuccessMessageProps>(
     ({ message, className }) => {
         const theme = useTheme();
         return (
@@ -19,3 +19,4 @@ export const SuccessMessage = memo<SuccessMessageProps>(
         );
     }
 );
+SuccessMessage.displayName = 'SuccessMessage';

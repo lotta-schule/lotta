@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { adminGroup, SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { EditArticleFooter } from './EditArticleFooter';
-import { DeleteArticleMutation } from 'api/mutation/DeleteArticleMutation';
+import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
@@ -14,7 +14,7 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
                 onSave={() => {}}
             />,
             {},
-            { currentUser: SomeUser, useCache: true }
+            { currentUser: SomeUser }
         );
     });
 
@@ -27,7 +27,7 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
                     onSave={() => {}}
                 />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
 
             expect(
@@ -44,7 +44,7 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
                     onSave={() => {}}
                 />,
                 {},
-                { currentUser: adminUser, useCache: true }
+                { currentUser: adminUser }
             );
 
             expect(
@@ -67,7 +67,7 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
                     onSave={onSave}
                 />,
                 {},
-                { currentUser: { ...SomeUser }, useCache: true }
+                { currentUser: { ...SomeUser } }
             );
             userEvent.click(screen.getByRole('button', { name: /speichern/i }));
             expect(onSave).toHaveBeenCalled();
@@ -77,7 +77,9 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
     describe('delete article', () => {
         it('show the modal and delete the article on confirmation', async () => {
             const onDelete = jest.fn(() => ({
-                data: { deleteArticle: { id: Weihnachtsmarkt.id } },
+                data: {
+                    deleteArticle: { article: { id: Weihnachtsmarkt.id } },
+                },
             }));
             const mocks = [
                 {
@@ -98,7 +100,6 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
                 {
                     currentUser: { ...SomeUser },
                     additionalMocks: mocks,
-                    useCache: true,
                 }
             );
             userEvent.click(
@@ -124,7 +125,7 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
                     onSave={() => {}}
                 />,
                 {},
-                { currentUser: { ...SomeUser }, useCache: true }
+                { currentUser: { ...SomeUser } }
             );
             userEvent.click(
                 screen.getByRole('button', { name: /beitrag löschen/i })

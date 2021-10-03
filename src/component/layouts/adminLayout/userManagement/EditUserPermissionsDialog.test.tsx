@@ -1,10 +1,10 @@
 import React from 'react';
 import { MockedResponse } from '@apollo/client/testing';
-import { GetUserQuery } from 'api/query/GetUserQuery';
 import { render, waitFor } from 'test/util';
 import { SomeUser, adminGroup, lehrerGroup, elternGroup } from 'test/fixtures';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
-import { UpdateUserMutation } from 'api/mutation/UpdateUserMutation';
+import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
+import GetUserQuery from 'api/query/GetUserQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog', () => {
@@ -90,10 +90,9 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
                         query: UpdateUserMutation,
                         variables: {
                             id: user.id,
-                            groups: [
-                                adminGroup.id,
-                                elternGroup.id,
-                            ].map((id) => ({ id })),
+                            groups: [adminGroup.id, elternGroup.id].map(
+                                (id) => ({ id })
+                            ),
                         },
                     },
                     result: () => {

@@ -1,0 +1,10 @@
+.root {
+    position: sticky;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    padding: var(--lotta-spacing);
+    z-index: 100;
+}
+
+.buttonGroup {
+    margin-right: calc(0.5 * var(--lotta-spacing));
+}

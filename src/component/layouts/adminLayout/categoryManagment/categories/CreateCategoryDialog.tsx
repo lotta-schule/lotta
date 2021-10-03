@@ -9,9 +9,7 @@ import {
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { CategoryModel } from 'model';
-import { CreateCategoryMutation } from 'api/mutation/CreateCategoryMutation';
 import { useMutation } from '@apollo/client';
-import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { CategorySelect } from '../../../editArticleLayout/CategorySelect';
@@ -19,6 +17,8 @@ import { animated, useSpring } from 'react-spring';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
 import { Radio, RadioGroup } from 'component/general/form/radio';
+import CreateCategoryMutation from 'api/mutation/CreateCategoryMutation.graphql';
+import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 
 enum CategoryPosition {
     Main,
@@ -50,10 +50,8 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
         const [categoryPosition, setCategoryPosition] = React.useState(
             CategoryPosition.Main
         );
-        const [
-            parentCategory,
-            setParentCategory,
-        ] = React.useState<CategoryModel | null>(null);
+        const [parentCategory, setParentCategory] =
+            React.useState<CategoryModel | null>(null);
         const [createCategory, { loading: isLoading, error }] = useMutation<
             { category: CategoryModel },
             { category: any }

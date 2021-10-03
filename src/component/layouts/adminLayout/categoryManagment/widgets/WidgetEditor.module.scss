@@ -1,0 +1,13 @@
+.input {
+    margin: calc(3 * var(--lotta-spacing)) calc(3 * var(--lotta-spacing));
+    width: 100%;
+}
+
+.button {
+    margin: calc(2 * var(--lotta-spacing)) calc(2 * var(--lotta-spacing));
+}
+
+.divider {
+    clear: both;
+    margin: calc(2 * var(--lotta-spacing)) calc(2 * var(--lotta-spacing));
+}

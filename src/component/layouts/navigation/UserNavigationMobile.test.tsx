@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from 'test/util';
 import { UserNavigationMobile } from './UserNavigationMobile';
-import { GetUnpublishedArticlesQuery } from 'api/query/GetUnpublishedArticles';
 import { SomeUser, adminGroup } from 'test/fixtures';
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
 
 describe('component/layouts/UserNavigationMobile', () => {
     describe('logged out user', () => {
@@ -25,7 +25,7 @@ describe('component/layouts/UserNavigationMobile', () => {
             const screen = render(
                 <UserNavigationMobile />,
                 {},
-                { currentUser: SomeUser, useCache: true }
+                { currentUser: SomeUser }
             );
             expect(screen.queryAllByRole('button')).toHaveLength(7);
             expect(screen.queryByTestId('LoginButton')).toBeNull();
@@ -56,7 +56,6 @@ describe('component/layouts/UserNavigationMobile', () => {
                             result: { data: { articles: [] } },
                         },
                     ],
-                    useCache: true,
                 }
             );
             expect(screen.queryAllByRole('button')).toHaveLength(9);

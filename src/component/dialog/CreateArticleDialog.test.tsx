@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { CreateArticleDialog } from './CreateArticleDialog';
-import { CreateArticleMutation } from 'api/mutation/CreateArticleMutation';
+import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
 describe('component/layouts/adminLayout/userManagment/CreateArticleDialog', () => {

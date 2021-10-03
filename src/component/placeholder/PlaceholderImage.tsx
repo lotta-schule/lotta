@@ -1,5 +1,7 @@
-import React, { FunctionComponent, memo } from 'react';
-import { Theme, makeStyles, Typography } from '@material-ui/core';
+import * as React from 'react';
+import clsx from 'clsx';
+
+import styles from './PlaceholderImage.module.scss';
 
 export interface PlaceholderImageProps {
     width: number | string;
@@ -8,34 +10,20 @@ export interface PlaceholderImageProps {
     description?: string | React.ReactElement;
 }
 
-const useStyles = makeStyles<
-    Theme,
-    { iconSource: string; description?: string | React.ReactElement }
->((theme) => ({
-    root: {
-        backgroundImage: ({ iconSource }) => `url("${iconSource}")`,
-        backgroundColor: theme.palette.grey[200],
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: ({ description }) => (description ? '35%' : 'contain'),
-        backgroundPosition: ({ description }) =>
-            description ? 'top center' : 'center center',
-        display: 'flex',
-        alignItems: ({ description }) => (description ? 'flex-end' : 'center'),
-        textAlign: 'center',
-    },
-}));
-
-export const PlaceholderImage: FunctionComponent<PlaceholderImageProps> = memo(
+export const PlaceholderImage = React.memo<PlaceholderImageProps>(
     ({ width, height, icon, description }) => {
         const iconSource =
             icon === 'video' ? '/img/SwitchVideo.svg' : '/img/Photo.svg';
-        const styles = useStyles({ iconSource, description });
         return (
-            <div style={{ width, height }} className={styles.root}>
-                <Typography variant={'h5'} style={{ margin: '1em auto' }}>
-                    {description}
-                </Typography>
+            <div
+                style={{ width, height, backgroundImage: `url(${iconSource})` }}
+                className={clsx(styles.root, {
+                    [styles.withDescription]: !!description,
+                })}
+            >
+                <h5 style={{ margin: '1em auto' }}>{description}</h5>
             </div>
         );
     }
 );
+PlaceholderImage.displayName = 'PlaceholderImage';

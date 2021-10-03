@@ -1,9 +1,8 @@
-import React, { memo, lazy } from 'react';
-import { ContentModuleModel } from '../../../../model';
+import * as React from 'react';
+import { ContentModuleModel } from 'model';
 import { CardContent } from '@material-ui/core';
 import { Show } from './Show';
-
-const Edit = lazy(() => import('./Edit'));
+import { Edit } from './Edit';
 
 export interface AudioProps {
     contentModule: ContentModuleModel;
@@ -11,7 +10,7 @@ export interface AudioProps {
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
-export const Audio = memo<AudioProps>(
+export const Audio = React.memo<AudioProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
         <CardContent data-testid="AudioContentModule">
             {isEditModeEnabled && onUpdateModule ? (
@@ -25,3 +24,4 @@ export const Audio = memo<AudioProps>(
         </CardContent>
     )
 );
+Audio.displayName = 'Audio';

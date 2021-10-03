@@ -1,0 +1,22 @@
+.downloadItemWrapper {
+    margin-bottom: calc(2 * var(--lotta-spacing));
+}
+
+.downloadWrapperHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.inputWrapper {
+    & > div {
+        padding: var(--lotta-spacing);
+    }
+}
+
+.inputSettings {
+    border-left-color: rgba(var(--lotta-banner-background-color), 1);
+    border-left-width: var(--lotta-spacing);
+    border-left-style: solid;
+    border-radius: var(--lotta-spacing);
+}

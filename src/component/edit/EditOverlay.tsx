@@ -1,35 +1,8 @@
 import * as React from 'react';
-import { makeStyles, Theme } from '@material-ui/core';
-import { fade } from '@material-ui/core/styles';
 import { Clear } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        border: `2px solid ${theme.palette.secondary.main}`,
-        position: 'relative',
-        '&:hover > div': {
-            display: 'flex',
-        },
-    },
-    overlay: {
-        backgroundColor: fade(theme.palette.grey[200], 0.4),
-        backdropFilter: 'blur(10px)',
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        display: 'none',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 100,
-    },
-    removeButton: {
-        border: 'none',
-        position: 'absolute',
-        top: theme.spacing(1),
-        right: theme.spacing(1),
-    },
-}));
+import styles from './EditOverlay.module.scss';
 
 interface EditOverlayProps {
     label: string;
@@ -41,7 +14,6 @@ interface EditOverlayProps {
 
 export const EditOverlay = React.memo<EditOverlayProps>(
     ({ children, label, onClickRemove, style, onClick }) => {
-        const styles = useStyles();
         return (
             <div
                 className={styles.root}
@@ -64,3 +36,4 @@ export const EditOverlay = React.memo<EditOverlayProps>(
         );
     }
 );
+EditOverlay.displayName = 'EditOverlay';

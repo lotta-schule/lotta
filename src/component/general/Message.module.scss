@@ -1,0 +1,15 @@
+.root {
+    color: rgba(var(--lotta-contrast-text-color));
+    border-width: 0;
+    border-style: solid;
+    margin-bottom: 0;
+    padding: 0;
+    border-radius: var(--lotta-border-radius);
+    transition: all ease-in 150ms;
+}
+
+.enabled.root {
+    border-width: 1px;
+    margin-bottom: var(--lotta-spacing);
+    padding: var(--lotta-spacing);
+}

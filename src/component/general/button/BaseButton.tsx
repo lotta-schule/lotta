@@ -1,7 +1,5 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import './base-button.scss';
-import { CollisionLink } from '../CollisionLink';
 
 export type BaseButtonProps = {
     /**
@@ -56,11 +54,7 @@ export const BaseButton = React.forwardRef<any, BaseButtonProps>(
         },
         ref
     ) => {
-        const ComponentClass = props.to
-            ? CollisionLink
-            : props.href
-            ? 'a'
-            : ('button' as any);
+        const ComponentClass = props.href ? 'a' : ('button' as any);
         return React.createElement(
             ComponentClass,
             {
@@ -80,3 +74,4 @@ export const BaseButton = React.forwardRef<any, BaseButtonProps>(
         );
     }
 );
+BaseButton.displayName = 'BaseButton';

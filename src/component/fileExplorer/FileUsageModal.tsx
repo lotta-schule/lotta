@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import * as React from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -7,38 +7,28 @@ import {
     ListItemAvatar,
     ListItemText,
     ListItemSecondaryAction,
-    makeStyles,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { OpenInNew } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
 import { FileModel, ID, FileModelUsageLocation } from 'model';
-import { GetFileDetailsQuery } from 'api/query/GetFileDetailsQuery';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, Category, File, User } from 'util/model';
 import { useTranslation } from 'react-i18next';
+import { useServerData } from 'component/ServerDataContext';
+import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 import fileExplorerContext from './context/FileExplorerContext';
 import Img from 'react-cloudimage-responsive';
 
-const useStyles = makeStyles((theme) => ({
-    listItemText: {
-        padding: theme.spacing(0, 1),
-    },
-    listItemTextLine: {
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-    },
-}));
+import styles from './FileUsageModal.module.scss';
 
-export const FileUsageModal = memo(() => {
-    const styles = useStyles();
+export const FileUsageModal = React.memo(() => {
+    const { baseUrl } = useServerData();
     const { t } = useTranslation();
     const current_user = useCurrentUser();
-    const [{ showFileUsage, markedFiles }, dispatch] = useContext(
-        fileExplorerContext
-    );
+    const [{ showFileUsage, markedFiles }, dispatch] =
+        React.useContext(fileExplorerContext);
 
     const { data } = useQuery<{ file: FileModel }, { id: ID }>(
         GetFileDetailsQuery,
@@ -51,19 +41,18 @@ export const FileUsageModal = memo(() => {
     const hasSecondaryAction = (usage: FileModelUsageLocation) =>
         usage.article || usage.category || usage.user?.id === current_user?.id;
 
-    const getSecondaryActionCallback = (usage: FileModelUsageLocation) => (
-        _e: React.MouseEvent<any>
-    ) => {
-        if (usage.user) {
-            window.open('/profile');
-        }
-        if (usage.category) {
-            window.open(Category.getPath(usage.category));
-        }
-        if (usage.article) {
-            window.open(Article.getPath(usage.article));
-        }
-    };
+    const getSecondaryActionCallback =
+        (usage: FileModelUsageLocation) => (_e: React.MouseEvent<any>) => {
+            if (usage.user) {
+                window.open('/profile');
+            }
+            if (usage.category) {
+                window.open(Category.getPath(usage.category));
+            }
+            if (usage.article) {
+                window.open(Article.getPath(usage.article));
+            }
+        };
 
     const getPrimaryTextForUsage = (usage: FileModelUsageLocation) => {
         if (usage.article) {
@@ -83,6 +72,7 @@ export const FileUsageModal = memo(() => {
 
     return (
         <Dialog
+            className={styles.root}
             open={showFileUsage && markedFiles.length === 1}
             onClose={() => dispatch({ type: 'hideFileUsage' })}
         >
@@ -98,6 +88,7 @@ export const FileUsageModal = memo(() => {
                                     operation={'cover'}
                                     size={'150x100'}
                                     src={File.getFileRemoteLocation(
+                                        baseUrl,
                                         usage.article.previewImageFile
                                     )}
                                     alt={`Vorschaubild zu ${usage.article.title}`}
@@ -110,6 +101,7 @@ export const FileUsageModal = memo(() => {
                                     operation={'cover'}
                                     size={'150x100'}
                                     src={File.getFileRemoteLocation(
+                                        baseUrl,
                                         usage.tenant.configuration.logoImageFile
                                     )}
                                     alt={`Logo von ${usage.tenant.title}`}
@@ -144,3 +136,4 @@ export const FileUsageModal = memo(() => {
         </Dialog>
     );
 });
+FileUsageModal.displayName = 'FileUsageModal';

@@ -1,10 +1,10 @@
 import { tenant, allCategories } from 'test/fixtures';
-import { GetTenantQuery } from 'api/query/GetTenantQuery';
-import { GetCurrentUserQuery } from 'api/query/GetCurrentUser';
-import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
 import { TenantModel, UserModel } from 'model';
 import { InMemoryCache } from '@apollo/client';
-import { ReceiveMessageSubscription } from 'api/subscription/ReceiveMessageSubscription';
+import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
+import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
+import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
+import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 export interface ApolloMocksOptions {
     currentUser?: UserModel;

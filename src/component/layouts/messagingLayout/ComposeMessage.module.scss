@@ -1,0 +1,20 @@
+.root {
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    .form {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    .textField {
+        flex-grow: 1;
+    }
+
+    .button {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+}

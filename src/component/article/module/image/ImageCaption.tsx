@@ -1,19 +1,6 @@
-import React, { FunctionComponent, memo, FocusEvent } from 'react';
-import { Typography, makeStyles, Theme } from '@material-ui/core';
-import clsx from 'clsx';
+import * as React from 'react';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        padding: theme.spacing(0, 1),
-    },
-    figcaption: {
-        borderBottom: `1px solid ${theme.palette.secondary.main}`,
-        borderTop: 'none',
-        borderLeft: 'none',
-        borderRight: 'none',
-        width: '100%',
-    },
-}));
+import styles from './ImageCaption.module.scss';
 
 interface ImageCaptionProps {
     isEditModeEnabled: boolean;
@@ -21,30 +8,33 @@ interface ImageCaptionProps {
     onUpdate(caption: string): void;
 }
 
-export const ImageCaption: FunctionComponent<ImageCaptionProps> = memo(
+export const ImageCaption = React.memo<ImageCaptionProps>(
     ({ isEditModeEnabled, value, onUpdate }) => {
-        const styles = useStyles();
-
+        if (isEditModeEnabled) {
+            return (
+                <figcaption className={styles.root}>
+                    <input
+                        contentEditable
+                        placeholder={'Bildbeschreibung'}
+                        defaultValue={value}
+                        className={styles.figcaption}
+                        onBlur={
+                            isEditModeEnabled
+                                ? (e: React.FocusEvent<HTMLInputElement>) =>
+                                      onUpdate(
+                                          (e.target as HTMLInputElement).value
+                                      )
+                                : undefined
+                        }
+                    />
+                </figcaption>
+            );
+        }
         return (
             <figcaption className={styles.root}>
-                <Typography
-                    variant={'subtitle2'}
-                    placeholder={
-                        isEditModeEnabled ? 'Bildbeschreibung' : undefined
-                    }
-                    component={isEditModeEnabled ? 'input' : 'span'}
-                    contentEditable={isEditModeEnabled}
-                    defaultValue={value}
-                    children={isEditModeEnabled ? undefined : value}
-                    className={clsx({ [styles.figcaption]: isEditModeEnabled })}
-                    onBlur={
-                        isEditModeEnabled
-                            ? (e: FocusEvent<HTMLInputElement>) =>
-                                  onUpdate((e.target as HTMLInputElement).value)
-                            : undefined
-                    }
-                />
+                <span>{value}</span>
             </figcaption>
         );
     }
 );
+ImageCaption.displayName = 'ImageCaption';

@@ -19,11 +19,12 @@ import { Button } from 'component/general/button/Button';
 import { File } from 'util/model/File';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { useServerData } from 'component/ServerDataContext';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
-import clsx from 'clsx';
 import uniqBy from 'lodash/uniqBy';
+import clsx from 'clsx';
 
 export interface FileTableRowProps {
     file: FileModel;
@@ -32,11 +33,10 @@ export interface FileTableRowProps {
 
 export const FileTableRow = React.memo<FileTableRowProps>(
     ({ file, onMark }) => {
+        const { baseUrl } = useServerData();
         const currentUser = useCurrentUser();
-        const [
-            editMenuAnchorEl,
-            setEditMenuAnchorEl,
-        ] = React.useState<null | HTMLElement>(null);
+        const [editMenuAnchorEl, setEditMenuAnchorEl] =
+            React.useState<null | HTMLElement>(null);
         const [isRenamingFile, setIsRenamingFile] = React.useState(false);
         const [state, dispatch] = React.useContext(fileExplorerContext);
 
@@ -108,7 +108,7 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                                     (f) => f.id === file.id
                                 ) !== undefined
                             }
-                            onChange={(e, checked) => {
+                            onChange={(_e, checked) => {
                                 dispatch({
                                     type: 'setSelectedFiles',
                                     files: checked
@@ -152,7 +152,10 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                                         e.stopPropagation()
                                     }
                                     component={'a'}
-                                    href={File.getFileRemoteLocation(file)}
+                                    href={File.getFileRemoteLocation(
+                                        baseUrl,
+                                        file
+                                    )}
                                     download={file.filename}
                                 >
                                     <CloudDownloadOutlined
@@ -196,3 +199,4 @@ export const FileTableRow = React.memo<FileTableRowProps>(
         );
     }
 );
+FileTableRow.displayName = 'FileTableRow';

@@ -1,46 +1,40 @@
-FROM node:15-alpine AS build
+ARG SENTRY_AUTH_TOKEN
 
-# build tools
-RUN apk add --update --no-cache \
-    python \
-    make \
-    g++
+FROM node:16-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
 
-ARG APP_ENVIRONMENT
-ARG APP_REVISION
-ARG API_URL
-ARG API_SOCKET_URL
-ARG AUTH_URL
-ARG CLOUDIMG_TOKEN
-ARG SENTRY_DSN
-ARG MATOMO_URL
-ARG FILE_REPLACEMENT_URL
+# Rebuild the source code only when needed
+FROM node:16-alpine AS builder
+ARG SENTRY_AUTH_TOKEN
+WORKDIR /app
+COPY . .
+COPY --from=deps /app/node_modules ./node_modules
+RUN SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} npm run build && npm install --production --ignore-scripts --prefer-offline
 
-ENV CI=true
-ENV REACT_APP_APP_ENVIRONMENT ${APP_ENVIRONMENT}
-ENV REACT_APP_APP_REVISION ${APP_REVISION}
-ENV REACT_APP_APP_BASE_DOMAIN ${APP_BASE_DOMAIN}
-ENV REACT_APP_API_URL ${API_URL}
-ENV REACT_APP_API_SOCKET_URL ${API_SOCKET_URL}
-ENV REACT_APP_AUTH_URL ${AUTH_URL}
-ENV REACT_APP_CLOUDIMG_TOKEN ${CLOUDIMG_TOKEN}
-ENV REACT_APP_SENTRY_DSN ${SENTRY_DSN}
-ENV REACT_APP_MATOMO_URL ${MATOMO_URL}
-ENV REACT_APP_FILE_REPLACEMENT_URL ${FILE_REPLACEMENT_URL}
+FROM node:alpine AS runner
+WORKDIR /app
 
-ADD . /src
-WORKDIR /src
-RUN npm install
-RUN NODE_ENV=production npm run build
-RUN npm prune --production
+ENV NODE_ENV production
 
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
 
-# Dockerfile continued
-FROM nginx
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-WORKDIR /usr/src/service
+USER nextjs
 
-# Copy files from build stage
-COPY --from=build /src/build /usr/share/nginx/html
+EXPOSE 3000
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+CMD ["npm", "run", "start:prod"]

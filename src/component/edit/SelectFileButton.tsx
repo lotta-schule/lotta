@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FileModel } from '../../model';
 import { DialogTitle } from '@material-ui/core';
+import { FileModel } from 'model';
 import { Button, ButtonProps } from 'component/general/button/Button';
 import {
     FileExplorer,
@@ -28,10 +28,8 @@ export const SelectFileButton = React.memo<SelectFileButtonProps>(
         buttonComponentProps,
         onChangeFileExplorerVisibility,
     }) => {
-        const [
-            isSelectFileDialogOpen,
-            setIsSelectFileDialogOpen,
-        ] = React.useState(false);
+        const [isSelectFileDialogOpen, setIsSelectFileDialogOpen] =
+            React.useState(false);
         const fileExplorerOptions: Partial<FileExplorerProps> = {};
 
         React.useEffect(() => {
@@ -73,3 +71,4 @@ export const SelectFileButton = React.memo<SelectFileButtonProps>(
         );
     }
 );
+SelectFileButton.displayName = 'SelectFileButton';

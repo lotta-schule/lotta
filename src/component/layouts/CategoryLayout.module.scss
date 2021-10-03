@@ -1,0 +1,20 @@
+@import "breakpoints.scss";
+
+.gridItem {
+  display: flex;
+  &.two-columns {
+    &:nth-child(2n) {
+      padding-left: calc(var(--lotta-spacing) / 2);
+    }
+    &:nth-child(2n+1) {
+      padding-right: calc(var(--lotta-spacing) / 2);
+    }
+  }
+  & > * {
+    width: 100%;
+  }
+}
+
+.articles {
+  margin-top: var(--lotta-spacing);
+}

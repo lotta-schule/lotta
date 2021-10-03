@@ -8,11 +8,11 @@ import {
 import { Button } from 'component/general/button/Button';
 import { WidgetModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
-import { GetCategoriesQuery } from 'api/query/GetCategoriesQuery';
-import { GetWidgetsQuery } from 'api/query/GetWidgetsQuery';
-import { DeleteWidgetMutation } from 'api/mutation/DeleteWidgetMutation';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import DeleteWidgetMutation from 'api/mutation/DeleteWidgetMutation.graphql';
+import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
+import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 export interface DeleteWidgetDialogProps {
     isOpen: boolean;

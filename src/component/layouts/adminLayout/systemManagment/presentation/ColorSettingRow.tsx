@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { theme } from 'theme';
 import { Input } from 'component/general/form/input/Input';
+
+import styles from './ColorSettingsRow.module.scss';
 
 export interface ColorSettingRowProps {
     label: string;
@@ -10,27 +12,8 @@ export interface ColorSettingRowProps {
     onChange(value: string): void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        paddingRight: theme.spacing(2),
-    },
-    description: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        '& > p': {
-            fontSize: '.9rem',
-            '&:nth-child(2)': {
-                color: theme.palette.text.hint,
-            },
-        },
-    },
-}));
-
 export const ColorSettingRow = React.memo<ColorSettingRowProps>(
     ({ label, hint, value, onChange }) => {
-        const styles = useStyles();
-
         return (
             <Grid container alignItems={'center'} className={styles.root}>
                 <Grid
@@ -59,3 +42,4 @@ export const ColorSettingRow = React.memo<ColorSettingRowProps>(
         );
     }
 );
+ColorSettingRow.displayName = 'ColorSettingRow';

@@ -1,36 +1,22 @@
-import React, { memo, useCallback, useEffect } from 'react';
-import { Grid, makeStyles, Theme, Drawer } from '@material-ui/core';
+import * as React from 'react';
+import { Grid, Drawer } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';
 import { Footer } from './navigation/Footer';
 import { WidgetsList } from './WidgetsList';
-import useRouter from 'use-react-router';
+import { useRouter } from 'next/router';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        position: 'relative',
-        [theme.breakpoints.down('md')]: {
-            paddingLeft: 0,
-        },
-        [theme.breakpoints.up('md')]: {
-            paddingLeft: '0.5em',
-        },
-    },
-    drawer: {
-        padding: 0,
-    },
-}));
+import styles from './BaseLayoutSidebar.module.scss';
 
 export interface BaseLayoutSidebarProps {
     isEmpty?: boolean;
     children?: any;
 }
 
-export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(
+export const BaseLayoutSidebar = React.memo<BaseLayoutSidebarProps>(
     ({ children, isEmpty }) => {
-        const styles = useStyles();
-
+        const router = useRouter();
         const isMobile = useIsMobile();
         const client = useApolloClient();
 
@@ -42,7 +28,7 @@ export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(
             `
         );
         const isMobileDrawerOpen = !!data?.isMobileDrawerOpen;
-        const closeDrawer = useCallback(() => {
+        const closeDrawer = React.useCallback(() => {
             client.writeQuery({
                 query: gql`
                     {
@@ -53,13 +39,9 @@ export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(
             });
         }, [client]);
 
-        const {
-            location: { pathname },
-        } = useRouter();
-
-        useEffect(() => {
+        React.useEffect(() => {
             closeDrawer();
-        }, [closeDrawer, pathname]);
+        }, [closeDrawer, router.pathname]);
 
         if (isMobile) {
             return (
@@ -102,3 +84,4 @@ export const BaseLayoutSidebar = memo<BaseLayoutSidebarProps>(
         }
     }
 );
+BaseLayoutSidebar.displayName = 'BaseLayoutSidebar';

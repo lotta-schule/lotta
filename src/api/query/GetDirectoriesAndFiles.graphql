@@ -1,0 +1,34 @@
+query GetDirectoriesAndFiles($parentDirectoryId: ID) {
+    directories(parentDirectoryId: $parentDirectoryId) {
+        id
+        insertedAt
+        updatedAt
+        name
+        user {
+            id
+        }
+        parentDirectory {
+            id
+        }
+    }
+    files(parentDirectoryId: $parentDirectoryId) {
+        id
+        insertedAt
+        updatedAt
+        filename
+        filesize
+        mimeType
+        fileType
+        userId
+        fileConversions {
+            id
+            insertedAt
+            updatedAt
+            format
+            mimeType
+        }
+        parentDirectory {
+            id
+        }
+    }
+}

@@ -3,7 +3,9 @@ import { useCategories } from './useCategories';
 import find from 'lodash/find';
 import { ID } from 'model/ID';
 
-export const useCategory = (categoryId?: ID): CategoryModel | null => {
+export const useCategory = (
+    categoryId: ID | null | undefined
+): CategoryModel | null => {
     const [allCategories] = useCategories();
     return categoryId
         ? find<CategoryModel>(

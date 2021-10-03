@@ -1,40 +1,21 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { FormElement, FormElementOption } from './Form';
-import {
-    Select,
-    MenuItem,
-    TextField,
-    FormControlLabel,
-    Checkbox,
-    makeStyles,
-} from '@material-ui/core';
+import { FormControlLabel, Checkbox, TextField } from '@material-ui/core';
 import { PlusOne } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
+import { Select } from 'component/general/form/select/Select';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
+
+import styles from './FormElementConfiguration.module.scss';
 
 export interface FormElementConfigurationProps {
     element: FormElement;
     updateElement(elm: Partial<FormElement>): void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    configurationProperty: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1),
-    },
-    option: {
-        paddingLeft: theme.spacing(1),
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1),
-        borderLeftWidth: 2,
-        borderLeftStyle: 'inset',
-        borderTopLeftRadius: 2,
-        borderBottomLeftRadius: 2,
-    },
-}));
-
-export const FormElementConfiguration = memo<FormElementConfigurationProps>(
-    ({ element, updateElement }) => {
-        const styles = useStyles();
+export const FormElementConfiguration =
+    React.memo<FormElementConfigurationProps>(({ element, updateElement }) => {
         const updateOption = (
             index: number,
             option: Partial<FormElementOption>
@@ -49,108 +30,125 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(
             });
         return (
             <div>
-                <Select
-                    fullWidth
-                    className={styles.configurationProperty}
-                    value={element.element}
+                <Label
                     label={'Art der Eingabe'}
-                    onChange={(e) =>
-                        updateElement({
-                            element: e.target.value as
-                                | 'input'
-                                | 'selection'
-                                | 'file',
-                            type:
-                                e.target.value === 'input'
-                                    ? 'text'
-                                    : e.target.value === 'file'
-                                    ? ''
-                                    : 'checkbox',
-                            options:
-                                e.target.value === 'selection'
-                                    ? [
-                                          {
-                                              selected: false,
-                                              label: 'Auswahl Nummer 1',
-                                              value: 'a1',
-                                          },
-                                      ]
-                                    : [],
-                        })
-                    }
+                    className={styles.configurationProperty}
                 >
-                    <MenuItem value={'input'}>Texteingabefeld</MenuItem>
-                    <MenuItem value={'selection'}>Auswahlbereich</MenuItem>
-                    <MenuItem value={'file'}>Datei-Anhang</MenuItem>
-                </Select>
-                {element.element === 'input' && !element.multiline && (
                     <Select
-                        fullWidth
+                        value={element.element}
+                        onChange={(e) =>
+                            updateElement({
+                                element: e.currentTarget.value as
+                                    | 'input'
+                                    | 'selection'
+                                    | 'file',
+                                type:
+                                    e.currentTarget.value === 'input'
+                                        ? 'text'
+                                        : e.currentTarget.value === 'file'
+                                        ? ''
+                                        : 'checkbox',
+                                options:
+                                    e.currentTarget.value === 'selection'
+                                        ? [
+                                              {
+                                                  selected: false,
+                                                  label: 'Auswahl Nummer 1',
+                                                  value: 'a1',
+                                              },
+                                          ]
+                                        : [],
+                            })
+                        }
+                    >
+                        <option value={'input'}>Texteingabefeld</option>
+                        <option value={'selection'}>Auswahlbereich</option>
+                        <option value={'file'}>Datei-Anhang</option>
+                    </Select>
+                </Label>
+                {element.element === 'input' && !element.multiline && (
+                    <Label
                         label={'Texteingabevariation'}
                         className={styles.configurationProperty}
-                        value={element.type}
-                        onChange={(e) =>
-                            updateElement({ type: e.target.value as string })
-                        }
                     >
-                        <MenuItem value={'text'}>Text</MenuItem>
-                        <MenuItem value={'email'}>Email</MenuItem>
-                        <MenuItem value={'url'}>Web-Adresse</MenuItem>
-                        <MenuItem value={'tel'}>Telefonnummer</MenuItem>
-                        <MenuItem value={'time'}>Zeit</MenuItem>
-                        <MenuItem value={'color'}>Farbe</MenuItem>
-                        <MenuItem value={'number'}>Zahl</MenuItem>
-                        <MenuItem value={'password'}>Passwort</MenuItem>
-                    </Select>
+                        <Select
+                            value={element.type}
+                            onChange={(e) =>
+                                updateElement({
+                                    type: e.currentTarget.value as string,
+                                })
+                            }
+                        >
+                            <option value={'text'}>Text</option>
+                            <option value={'email'}>Email</option>
+                            <option value={'url'}>Web-Adresse</option>
+                            <option value={'tel'}>Telefonnummer</option>
+                            <option value={'time'}>Zeit</option>
+                            <option value={'color'}>Farbe</option>
+                            <option value={'number'}>Zahl</option>
+                            <option value={'password'}>Passwort</option>
+                        </Select>
+                    </Label>
                 )}
                 {element.element === 'selection' && (
-                    <Select
-                        fullWidth
-                        className={styles.configurationProperty}
-                        value={element.type}
+                    <Label
                         label={'Auswahlfeldvariation'}
-                        onChange={(e) =>
-                            updateElement({ type: e.target.value as string })
-                        }
+                        className={styles.configurationProperty}
                     >
-                        <MenuItem value={'checkbox'}>Checkbox</MenuItem>
-                        <MenuItem value={'radio'}>Radio-Buttons</MenuItem>
-                        <MenuItem value={'select'}>Select-Feld</MenuItem>
-                    </Select>
+                        <Select
+                            value={element.type}
+                            onChange={(e) =>
+                                updateElement({
+                                    type: e.currentTarget.value as string,
+                                })
+                            }
+                        >
+                            <option value={'checkbox'}>Checkbox</option>
+                            <option value={'radio'}>Radio-Buttons</option>
+                            <option value={'select'}>Select-Feld</option>
+                        </Select>
+                    </Label>
                 )}
-                <TextField
-                    fullWidth
-                    className={styles.configurationProperty}
-                    id={'form-input-name'}
-                    label={'Name'}
-                    value={element.name ?? ''}
-                    onChange={(e) =>
-                        updateElement({ name: e.target.value as string })
-                    }
-                />
-                <TextField
-                    fullWidth
-                    className={styles.configurationProperty}
-                    id={'form-input-label'}
+                <Label label={'Name'} className={styles.configurationProperty}>
+                    <Input
+                        id={'form-input-name'}
+                        value={element.name ?? ''}
+                        onChange={(e) =>
+                            updateElement({
+                                name: e.currentTarget.value as string,
+                            })
+                        }
+                    />
+                </Label>
+                <Label
                     label={'Aufschrift'}
-                    value={element.label ?? ''}
-                    onChange={(e) =>
-                        updateElement({ label: e.target.value as string })
-                    }
-                />
-                <TextField
-                    fullWidth
-                    multiline
                     className={styles.configurationProperty}
-                    id={'form-input-description-text'}
+                >
+                    <Input
+                        id={'form-input-label'}
+                        value={element.label ?? ''}
+                        onChange={(e) =>
+                            updateElement({
+                                label: e.currentTarget.value as string,
+                            })
+                        }
+                    />
+                </Label>
+                <Label
                     label={'Beschriftung'}
-                    value={element.descriptionText ?? ''}
-                    onChange={(e) =>
-                        updateElement({
-                            descriptionText: e.target.value as string,
-                        })
-                    }
-                />
+                    className={styles.configurationProperty}
+                >
+                    <TextField
+                        multiline
+                        id={'form-input-description-text'}
+                        value={element.descriptionText ?? ''}
+                        onChange={(e) =>
+                            updateElement({
+                                descriptionText: e.target.value as string,
+                            })
+                        }
+                    />
+                </Label>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -187,30 +185,34 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(
                     <div>
                         {element.options?.map((option, i) => (
                             <section key={i} className={styles.option}>
-                                <TextField
-                                    fullWidth
-                                    className={styles.configurationProperty}
-                                    id={`form-input-option-${i}-label`}
+                                <Label
                                     label={'Aufschrift'}
-                                    value={option.label ?? ''}
-                                    onChange={(e) =>
-                                        updateOption(i, {
-                                            label: e.target.value,
-                                        })
-                                    }
-                                />
-                                <TextField
-                                    fullWidth
                                     className={styles.configurationProperty}
-                                    id={`form-input-option-${i}-value`}
+                                >
+                                    <Input
+                                        id={`form-input-option-${i}-label`}
+                                        value={option.label ?? ''}
+                                        onChange={(e) =>
+                                            updateOption(i, {
+                                                label: e.currentTarget.value,
+                                            })
+                                        }
+                                    />
+                                </Label>
+                                <Label
                                     label={'Wert'}
-                                    value={option.value ?? ''}
-                                    onChange={(e) =>
-                                        updateOption(i, {
-                                            value: e.target.value,
-                                        })
-                                    }
-                                />
+                                    className={styles.configurationProperty}
+                                >
+                                    <TextField
+                                        id={`form-input-option-${i}-value`}
+                                        value={option.value ?? ''}
+                                        onChange={(e) =>
+                                            updateOption(i, {
+                                                value: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Label>
                                 <FormControlLabel
                                     className={styles.configurationProperty}
                                     control={
@@ -221,18 +223,19 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(
                                             onChange={(_e, checked) => {
                                                 if (element.type === 'radio') {
                                                     updateElement({
-                                                        options: element.options?.map(
-                                                            (
-                                                                _option,
-                                                                _index
-                                                            ) => ({
-                                                                ..._option,
-                                                                selected:
-                                                                    checked &&
-                                                                    i ===
-                                                                        _index,
-                                                            })
-                                                        ),
+                                                        options:
+                                                            element.options?.map(
+                                                                (
+                                                                    _option,
+                                                                    _index
+                                                                ) => ({
+                                                                    ..._option,
+                                                                    selected:
+                                                                        checked &&
+                                                                        i ===
+                                                                            _index,
+                                                                })
+                                                            ),
                                                     });
                                                 } else {
                                                     updateOption(i, {
@@ -272,5 +275,5 @@ export const FormElementConfiguration = memo<FormElementConfigurationProps>(
                 )}
             </div>
         );
-    }
-);
+    });
+FormElementConfiguration.displayName = 'FormElementConfiguration';

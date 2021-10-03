@@ -1,40 +1,20 @@
 import * as React from 'react';
 import { Button } from 'component/general/button/Button';
 import { ChatType, MessageModel, ThreadRepresentation } from 'model';
-import { makeStyles, TextField, Toolbar } from '@material-ui/core';
+import { TextField, Toolbar } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
-import { SendMessageMutation } from 'api/mutation/SendMessageMutation';
-import { GetMessagesQuery } from 'api/query/GetMessagesQuery';
+import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
+import GetMessagesQuery from 'api/query/GetMessagesQuery.graphql';
+
+import styles from './ComposeMessage.module.scss';
 
 export interface ComposeMessageProps {
     threadRepresentation: ThreadRepresentation;
 }
 
-const useStyles = makeStyles(() => ({
-    root: {
-        flexGrow: 0,
-        flexShrink: 0,
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'baseline',
-        width: '100%',
-    },
-    textField: {
-        flexGrow: 1,
-    },
-    button: {
-        flexGrow: 0,
-        flexShrink: 0,
-    },
-}));
-
 export const ComposeMessage = React.memo<ComposeMessageProps>(
     ({ threadRepresentation }) => {
-        const styles = useStyles();
-
         const inputRef = React.useRef<HTMLInputElement>(null);
         const [content, setContent] = React.useState('');
 

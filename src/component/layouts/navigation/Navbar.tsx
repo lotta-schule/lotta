@@ -1,88 +1,20 @@
 import * as React from 'react';
-import {
-    AppBar,
-    Toolbar,
-    Button,
-    Theme,
-    Grid,
-    IconButton,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { AppBar, Toolbar, Grid } from '@material-ui/core';
 import { Menu } from '@material-ui/icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from '../../../util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
-import { fade } from '@material-ui/core/styles';
 import { useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';
 import { NavigationButton } from 'component/general/button/NavigationButton';
 import { Category } from 'util/model';
+import { Button } from 'component/general/button/Button';
 import clsx from 'clsx';
+import Link from 'next/link';
 
-const useStyles = makeStyles<Theme>((theme) => ({
-    root: {
-        position: 'sticky',
-        top: 0,
-        zIndex: 2000,
-        '& a': {
-            marginLeft: theme.spacing(2),
-            marginRight: theme.spacing(2),
-            flexGrow: 1,
-        },
-    },
-    padding: {
-        [theme.breakpoints.down('sm')]: {
-            paddingRight: 'calc(3rem - 4px)', // I am not sure why 4px but I think its because of the shadow maybe?
-        },
-    },
-    secondaryAppBar: {
-        backgroundColor: fade(theme.palette.background.paper, 0.9),
-        maxHeight: 40,
-        borderTop: `1.5px solid ${theme.palette.secondary.main}`,
-        boxShadow: `0px 2px 2px ${fade(theme.palette.text.primary, 0.2)}`,
-    },
-    navButtonSecond: {
-        flexGrow: 1,
-        flexShrink: 0,
-        color: theme.palette.primary.dark,
-        '&.selected': {
-            color: theme.palette.secondary.main,
-            fontWeight: '600',
-        },
-    },
-    mobileBurgerMenuButton: {
-        position: 'absolute',
-        right: 0,
-        backgroundColor: theme.palette.primary.main,
-        alignItems: 'center',
-        boxShadow: '-2px 0px 2px #00000057',
-        display: 'none',
-        height: '100%',
-        zIndex: 2001,
-        [theme.breakpoints.down('sm')]: {
-            display: 'flex',
-            width: '3rem',
-        },
-    },
-    iconButton: {
-        color: theme.palette.primary.contrastText,
-    },
-    placeholder: {
-        display: 'none',
-        [theme.breakpoints.down('sm')]: {
-            minWidth: 1,
-            padding: 0,
-            height: '100%',
-            display: 'flex',
-        },
-        menu: {
-            color: theme.palette.primary.contrastText,
-        },
-    },
-}));
+import styles from './Navbar.module.scss';
 
 export const Navbar = React.memo(() => {
-    const styles = useStyles();
     const wrapperRef = React.useRef<HTMLElement>(null);
 
     const apolloClient = useApolloClient();
@@ -119,13 +51,21 @@ export const Navbar = React.memo(() => {
             category.category && category.category.id === categoriesHierarchy[0]
     );
 
-    React.useLayoutEffect(() => {
+    const scrollNavitemIntoView = (el: HTMLElement) => {
+        const container = el.parentElement?.parentElement;
+        container?.scroll?.({
+            left: el.offsetLeft - el.clientWidth + 8,
+            behavior: 'smooth',
+        });
+    };
+
+    React.useEffect(() => {
         wrapperRef.current
-            ?.querySelectorAll('.selected')
+            ?.querySelectorAll<HTMLElement>('.selected')
             .forEach((selectedNavItem) => {
-                selectedNavItem.scrollIntoView({ behavior: 'smooth' });
+                scrollNavitemIntoView(selectedNavItem);
             });
-    }, [currentCategoryId]);
+    }, [currentCategoryId, categories]);
 
     return (
         <nav className={clsx(styles.root, 'navbar')} ref={wrapperRef}>
@@ -134,33 +74,39 @@ export const Navbar = React.memo(() => {
                     <AppBar position={'sticky'}>
                         <Toolbar>
                             {homepageCategory && (
-                                <NavigationButton
-                                    key={'home'}
-                                    to={'/'}
-                                    className={clsx(styles.navButton, {
-                                        selected: currentCategoryId === null,
-                                    })}
-                                >
-                                    {homepageCategory.title}
-                                </NavigationButton>
+                                <Link href={'/'} passHref>
+                                    <NavigationButton
+                                        key={'home'}
+                                        className={clsx(styles.navButton, {
+                                            selected:
+                                                currentCategoryId === null,
+                                        })}
+                                    >
+                                        {homepageCategory.title}
+                                    </NavigationButton>
+                                </Link>
                             )}
                             {mainCategories.map((category) => (
-                                <NavigationButton
+                                <Link
                                     key={category.id}
-                                    to={
+                                    href={
                                         category.redirect
                                             ? category.redirect
                                             : Category.getPath(category)
                                     }
-                                    className={clsx(styles.navButton, {
-                                        selected:
-                                            categoriesHierarchy.indexOf(
-                                                category.id
-                                            ) > -1,
-                                    })}
+                                    passHref
                                 >
-                                    {category.title}
-                                </NavigationButton>
+                                    <NavigationButton
+                                        className={clsx(styles.navButton, {
+                                            selected:
+                                                categoriesHierarchy.indexOf(
+                                                    category.id
+                                                ) > -1,
+                                        })}
+                                    >
+                                        {category.title}
+                                    </NavigationButton>
+                                </Link>
                             ))}
                             <Button className={styles.placeholder}>{''}</Button>
                         </Toolbar>
@@ -172,14 +118,13 @@ export const Navbar = React.memo(() => {
                     sm={1}
                     className={styles.mobileBurgerMenuButton}
                 >
-                    <IconButton
+                    <Button
+                        data-testid={'MobileMenuButton'}
                         className={styles.iconButton}
-                        size={'small'}
                         onClick={() => openDrawer()}
                         style={{ margin: '0 auto' }}
-                    >
-                        <Menu className={clsx(styles.menu)} />
-                    </IconButton>
+                        icon={<Menu className={clsx(styles.menu)} />}
+                    />
                 </Grid>
             </Grid>
             {subcategories.length > 0 && (
@@ -190,27 +135,32 @@ export const Navbar = React.memo(() => {
                 >
                     <Toolbar style={{ minHeight: '0', height: '40px' }}>
                         {subcategories.map((category) => (
-                            <NavigationButton
+                            <Link
                                 key={category.id}
-                                to={
+                                href={
                                     category.redirect
                                         ? category.redirect
                                         : Category.getPath(category)
                                 }
-                                className={clsx(
-                                    styles.navButtonSecond,
-                                    'secondary',
-                                    'small',
-                                    {
-                                        selected:
-                                            categoriesHierarchy.indexOf(
-                                                category.id
-                                            ) > -1,
-                                    }
-                                )}
+                                passHref
                             >
-                                {category.title}
-                            </NavigationButton>
+                                <NavigationButton
+                                    key={category.id}
+                                    className={clsx(
+                                        styles.navButtonSecond,
+                                        'secondary',
+                                        'small',
+                                        {
+                                            selected:
+                                                categoriesHierarchy.indexOf(
+                                                    category.id
+                                                ) > -1,
+                                        }
+                                    )}
+                                >
+                                    {category.title}
+                                </NavigationButton>
+                            </Link>
                         ))}
                     </Toolbar>
                 </AppBar>
@@ -218,3 +168,4 @@ export const Navbar = React.memo(() => {
         </nav>
     );
 });
+Navbar.displayName = 'Navbar';

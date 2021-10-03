@@ -1,18 +1,10 @@
-import React, { memo } from 'react';
-import { makeStyles } from '@material-ui/core';
+import * as React from 'react';
 import { FileTable } from './FileTable';
 import { Sidebar } from './Sidebar';
 
-const useStyles = makeStyles(() => ({
-    root: {
-        display: 'flex',
-        flexDirection: 'row',
-        overflow: 'auto',
-    },
-}));
+import styles from './FilesView.module.scss';
 
-export const FilesView = memo(() => {
-    const styles = useStyles();
+export const FilesView = React.memo(() => {
     return (
         <section className={styles.root}>
             <FileTable />
@@ -20,3 +12,4 @@ export const FilesView = memo(() => {
         </section>
     );
 });
+FilesView.displayName = 'FilesView';

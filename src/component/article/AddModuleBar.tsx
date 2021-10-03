@@ -1,38 +1,27 @@
 import * as React from 'react';
-import { makeStyles } from '@material-ui/styles';
-import { Theme, Typography, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import {
-    TextFormat,
-    FormatAlignLeft,
-    Image,
-    BurstMode,
     Audiotrack,
-    MovieCreation,
-    FileCopyOutlined,
+    BurstMode,
     Feedback,
+    FileCopyOutlined,
+    FormatAlignLeft,
+    Image as ImageIcon,
+    MovieCreation,
     TableChart,
+    TextFormat,
 } from '@material-ui/icons';
 import { ContentModuleModel, ContentModuleType, ID } from 'model';
 import { AddModuleButton } from './AddModuleButton';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        padding: '1em',
-        margin: '0.5em 0 0 0',
-        backgroundColor: theme.palette.background.paper,
-        '& button': {
-            width: '100%',
-        },
-    },
-}));
+import styles from './AddModuleBar.module.scss';
 
 export interface AddModuleBarProps {
     onAddModule(module: ContentModuleModel): void;
 }
 
 export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
-    const styles = useStyles();
     const currentUser = useCurrentUser();
 
     const createId = (): ID =>
@@ -49,9 +38,9 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
 
     return (
         <div className={styles.root} data-testid="AddModuleBar">
-            <Typography style={{ marginBottom: '1em' }}>
+            <div style={{ marginBottom: '1em' }}>
                 Wähle ein Modul aus, das du zum Beitrag hinzufügen möchtest.
-            </Typography>
+            </div>
             <Grid
                 container
                 direction={'row'}
@@ -149,7 +138,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                 <Grid item xs={4} sm={3} md={2}>
                     <AddModuleButton
                         label={'Bild'}
-                        icon={<Image />}
+                        icon={<ImageIcon />}
                         onClick={() => {
                             createModule({ type: ContentModuleType.IMAGE });
                         }}
@@ -188,3 +177,4 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
         </div>
     );
 });
+AddModuleBar.displayName = 'AddModuleBar';

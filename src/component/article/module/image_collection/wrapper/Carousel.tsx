@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import * as React from 'react';
 import { ContentModuleModel } from 'model';
 import { ImageCarousel } from '../carousel/ImageCarousel';
 import { Gallery } from './Gallery';
@@ -9,7 +9,7 @@ export interface CarouselProps {
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
-export const Carousel = memo<CarouselProps>(
+export const Carousel = React.memo<CarouselProps>(
     ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
         if (isEditModeEnabled) {
             return (
@@ -23,3 +23,4 @@ export const Carousel = memo<CarouselProps>(
         return <ImageCarousel contentModule={contentModule} />;
     }
 );
+Carousel.displayName = 'Carousel';

@@ -1,7 +1,7 @@
-import { client } from 'api/client';
-import { UploadFileMutation } from 'api/mutation/UploadFileMutation';
-import { GetDirectoriesAndFilesQuery } from 'api/query/GetDirectoriesAndFiles';
+import { getApolloClient } from 'api/client';
 import { UploadModel, FileModel, DirectoryModel } from 'model';
+import UploadFileMutation from 'api/mutation/UploadFileMutation.graphql';
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 export class Upload implements UploadModel {
     public id = String(new Date().getTime() + Math.random() * 1000);
@@ -30,7 +30,7 @@ export class Upload implements UploadModel {
         onFinish: (file: FileModel) => void,
         onError: (error: Error) => void
     ): Upload {
-        client
+        getApolloClient()
             .mutate<{ file: FileModel }>({
                 mutation: UploadFileMutation,
                 variables: {

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from 'react';
+import * as React from 'react';
 import { CardContent } from '@material-ui/core';
 import { Carousel } from './wrapper/Carousel';
 import { ContentModuleModel } from '../../../../model';
@@ -14,7 +14,7 @@ export interface ImageProps {
     ) => void;
 }
 
-export const ImageCollection: FunctionComponent<ImageProps> = memo(
+export const ImageCollection = React.memo<ImageProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
         const imageStyle: ImageStyle = get(
             contentModule.configuration,
@@ -91,3 +91,4 @@ export const ImageCollection: FunctionComponent<ImageProps> = memo(
         );
     }
 );
+ImageCollection.displayName = 'ImageCollection';

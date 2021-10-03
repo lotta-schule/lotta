@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Typography } from '@material-ui/core';
 import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
 import { Editor, Element, Range, Text, Transforms, Node } from 'slate';
 import {
@@ -48,11 +47,7 @@ export const renderElement = ({
             );
         }
         case 'paragraph':
-            return (
-                <Typography variant={'body1'} component={'p'} {...attributes}>
-                    {children}
-                </Typography>
-            );
+            return <p {...attributes}>{children}</p>;
         case 'link':
             const href = element.href;
             let isSameHost = false;

@@ -1,6 +1,6 @@
-import React, { memo, useState } from 'react';
-import { ContentModuleModel } from '../../../../model';
-import { Button } from '@material-ui/core';
+import * as React from 'react';
+import { ContentModuleModel } from 'model';
+import { Button } from 'component/general/button/Button';
 import { FormResultsDialog } from './FormResultsDialog';
 
 interface ConfigProps {
@@ -9,13 +9,11 @@ interface ConfigProps {
     onRequestClose(): void;
 }
 
-export const Config = memo<ConfigProps>(({ contentModule }) => {
-    const [isResultsDialogOpen, setIsResultsDialogOpen] = useState(false);
+export const Config = React.memo<ConfigProps>(({ contentModule }) => {
+    const [isResultsDialogOpen, setIsResultsDialogOpen] = React.useState(false);
     return (
         <div data-testid="FormContentModuleConfiguration">
             <Button
-                fullWidth
-                color={'primary'}
                 aria-label={'gespeicherte Daten zeigen'}
                 style={{ float: 'right' }}
                 onClick={() => setIsResultsDialogOpen(true)}
@@ -30,3 +28,4 @@ export const Config = memo<ConfigProps>(({ contentModule }) => {
         </div>
     );
 });
+Config.displayName = 'FormConfig';

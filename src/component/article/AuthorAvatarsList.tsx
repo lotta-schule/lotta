@@ -9,7 +9,7 @@ import { Close } from '@material-ui/icons';
 import { SearchUserField } from 'component/layouts/adminLayout/userManagement/SearchUserField';
 import clsx from 'clsx';
 
-import './authors-avatars-list.scss';
+import styles from './authors-avatars-list.module.scss';
 
 export interface AuthorAvatarsListProps {
     users: UserModel[];
@@ -78,14 +78,14 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
         return (
             <div
                 data-testid={'AuthorAvatarsList'}
-                className={clsx('lotta-authors-avatars-list', className)}
+                className={clsx(styles.root, className)}
             >
                 {users && (
                     <AvatarGroup
                         max={max ?? 3}
                         classes={{
                             root: 'avatar-group',
-                            avatar: 'avatar',
+                            avatar: styles.avatar,
                         }}
                     >
                         {users.map((user) => getAvatar(user))}
@@ -105,3 +105,4 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
         );
     }
 );
+AuthorAvatarsList.displayName = 'AuthorAvatarsList';

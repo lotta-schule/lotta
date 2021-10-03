@@ -1,19 +1,10 @@
-import React, { memo } from 'react';
-import {
-    FormControl,
-    Select,
-    InputLabel,
-    MenuItem,
-    makeStyles,
-} from '@material-ui/core';
+import * as React from 'react';
 import { ContentModuleModel, FileModel } from 'model';
+import { Label } from 'component/general/label/Label';
+import { Select } from 'component/general/form/select/Select';
 import get from 'lodash/get';
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        marginBottom: theme.spacing(1),
-    },
-}));
+import styles from '../Config.module.scss';
 
 export enum ImageStyle {
     GALLERY = 1,
@@ -34,35 +25,41 @@ interface ConfigProps {
     onRequestClose(): void;
 }
 
-export const FileSorter = (
-    contendModule: ContentModuleModel,
-    getConfiguration: (f: FileModel) => any
-) => (file1: FileModel, file2: FileModel) => {
-    const sorting = get(contendModule.configuration, 'sorting', Sorting.NONE);
-    switch (sorting) {
-        case Sorting.FILENAME_ASC:
-            return file1.filename.localeCompare(file2.filename);
-        case Sorting.FILENAME_DESC:
-            return file2.filename.localeCompare(file1.filename);
-        case Sorting.FILE_UPLOAD_DATE_ASC:
-            return (
-                new Date(file1.insertedAt).getTime() -
-                new Date(file2.insertedAt).getTime()
-            );
-        case Sorting.FILE_UPLOAD_DATE_DESC:
-            return (
-                new Date(file2.insertedAt).getTime() -
-                new Date(file1.insertedAt).getTime()
-            );
-        default:
-            return (
-                getConfiguration(file1).sortKey -
-                getConfiguration(file2).sortKey
-            );
-    }
-};
+export const FileSorter =
+    (
+        contendModule: ContentModuleModel,
+        getConfiguration: (f: FileModel) => any
+    ) =>
+    (file1: FileModel, file2: FileModel) => {
+        const sorting = get(
+            contendModule.configuration,
+            'sorting',
+            Sorting.NONE
+        );
+        switch (sorting) {
+            case Sorting.FILENAME_ASC:
+                return file1.filename.localeCompare(file2.filename);
+            case Sorting.FILENAME_DESC:
+                return file2.filename.localeCompare(file1.filename);
+            case Sorting.FILE_UPLOAD_DATE_ASC:
+                return (
+                    new Date(file1.insertedAt).getTime() -
+                    new Date(file2.insertedAt).getTime()
+                );
+            case Sorting.FILE_UPLOAD_DATE_DESC:
+                return (
+                    new Date(file2.insertedAt).getTime() -
+                    new Date(file1.insertedAt).getTime()
+                );
+            default:
+                return (
+                    getConfiguration(file1).sortKey -
+                    getConfiguration(file2).sortKey
+                );
+        }
+    };
 
-export const Config = memo<ConfigProps>(
+export const Config = React.memo<ConfigProps>(
     ({ contentModule, onUpdateModule, onRequestClose }) => {
         const imageStyle: ImageStyle = get(
             contentModule.configuration,
@@ -74,73 +71,63 @@ export const Config = memo<ConfigProps>(
             'sorting',
             Sorting.NONE
         );
-        const styles = useStyles();
 
         return (
             <form data-testid="ImageCollectionContentModuleConfiguration">
-                <FormControl fullWidth className={styles.formControl}>
-                    <InputLabel htmlFor="image-style">Stil</InputLabel>
+                <Label className={styles.formControl} label={'Stil'}>
                     <Select
-                        fullWidth
                         value={imageStyle}
                         onChange={(event) => {
                             onUpdateModule({
                                 ...contentModule,
                                 configuration: {
                                     ...contentModule.configuration,
-                                    imageStyle: event.target.value,
+                                    imageStyle: event.currentTarget.value,
                                 },
                             });
                             onRequestClose();
                         }}
-                        inputProps={{
-                            name: 'image-style',
-                            id: 'image-style',
-                        }}
+                        name={'image-style'}
+                        id={'image-style'}
                     >
-                        <MenuItem value={ImageStyle.GALLERY}>Galerie</MenuItem>
-                        <MenuItem value={ImageStyle.CAROUSEL}>
-                            Carousel
-                        </MenuItem>
+                        <option value={ImageStyle.GALLERY}>Galerie</option>
+                        <option value={ImageStyle.CAROUSEL}>Carousel</option>
                     </Select>
-                </FormControl>
+                </Label>
 
-                <FormControl fullWidth className={styles.formControl}>
-                    <InputLabel htmlFor="sorting">Sortierung</InputLabel>
+                <Label className={styles.formControl} label={'Sortierung'}>
                     <Select
-                        fullWidth
                         value={sorting}
                         onChange={(event) => {
                             onUpdateModule({
                                 ...contentModule,
                                 configuration: {
                                     ...contentModule.configuration,
-                                    sorting: event.target.value,
+                                    sorting: event.currentTarget.value,
                                 },
                             });
                             onRequestClose();
                         }}
-                        inputProps={{
-                            name: 'sorting',
-                            id: 'sorting',
-                        }}
+                        name={'sorting'}
+                        id={'sorting'}
                     >
-                        <MenuItem value={Sorting.NONE}>Eigene</MenuItem>
-                        <MenuItem value={Sorting.FILENAME_ASC}>
+                        <option value={Sorting.NONE}>Eigene</option>
+                        <option value={Sorting.FILENAME_ASC}>
                             Dateiname (aufsteigend)
-                        </MenuItem>
-                        <MenuItem value={Sorting.FILENAME_DESC}>
+                        </option>
+                        <option value={Sorting.FILENAME_DESC}>
                             Dateiname (absteigend)
-                        </MenuItem>
-                        <MenuItem value={Sorting.FILE_UPLOAD_DATE_ASC}>
+                        </option>
+                        <option value={Sorting.FILE_UPLOAD_DATE_ASC}>
                             Hochlade-Datum (aufsteigend)
-                        </MenuItem>
-                        <MenuItem value={Sorting.FILE_UPLOAD_DATE_DESC}>
+                        </option>
+                        <option value={Sorting.FILE_UPLOAD_DATE_DESC}>
                             Hochlade-Datum (absteigend)
-                        </MenuItem>
+                        </option>
                     </Select>
-                </FormControl>
+                </Label>
             </form>
         );
     }
 );
+Config.displayName = 'ImageCollectionConfig';

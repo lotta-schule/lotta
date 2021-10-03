@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { makeStyles, Theme, Container } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import { ArticleModel } from 'model';
 import { Header } from 'component/general/Header';
 import { User } from 'util/model';
@@ -11,16 +11,8 @@ export interface ArticleTitleProps {
     onUpdate?: (article: ArticleModel) => void;
 }
 
-const useStyles = makeStyles<Theme>(() => ({
-    container: {
-        paddingLeft: 0,
-        paddingRight: 0,
-    },
-}));
-
 export const ArticleTitle = React.memo<ArticleTitleProps>(
     ({ article, onUpdate }) => {
-        const styles = useStyles();
         const currentUser = useCurrentUser();
 
         const showEditSection =
@@ -28,7 +20,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
             (User.canEditArticle(currentUser, article) ||
                 User.isAdmin(currentUser));
         return (
-            <Container className={styles.container}>
+            <Container style={{ paddingLeft: 0, paddingRight: 0 }}>
                 <Header>
                     <ArticlePreviewStandardLayout
                         article={article}
