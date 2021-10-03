@@ -5,20 +5,18 @@ import {
     AccordionDetails,
     Grid,
 } from '@material-ui/core';
-import { AddCircle, ExpandMore, DragHandle } from '@material-ui/icons';
+import { AddCircle, ExpandMore, DragHandle, Group } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
+import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
 import { Button } from 'component/general/button/Button';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { EditGroupForm } from 'component/layouts/adminLayout/userManagement/EditGroupForm';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
 import { CreateUserGroupDialog } from 'component/layouts/adminLayout/userManagement/CreateUserGroupDialog';
 import { GetServerSidePropsContext } from 'next';
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
-import Link from 'next/link';
 
 import styles from './groups.module.scss';
 
@@ -47,11 +45,14 @@ export const Groups = () => {
     });
 
     return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">Administration</h2>
-            </Header>
-            <Link href={'/admin'}>&lt; Administration</Link>
+        <AdminLayout
+            title={
+                <>
+                    <Group /> Gruppen
+                </>
+            }
+            hasHomeLink
+        >
             <Grid container>
                 <Grid item sm={8}></Grid>
                 <Grid item sm={4}>
@@ -184,7 +185,7 @@ export const Groups = () => {
                     )}
                 </Droppable>
             </DragDropContext>
-        </BaseLayoutMainContent>
+        </AdminLayout>
     );
 };
 

@@ -20,69 +20,71 @@
             background-color: rgba(var(--lotta-primary-color), 0.1);
         }
     }
-}
 
-.lotta-base-button[disabled] {
-    color: rgba(var(--lotta-disabled-color), 1);
-    border-color: rgba(var(--lotta-disabled-color), 1);
-}
-
-.lotta-base-button:hover:not([disabled]) {
-    background-color: rgba(var(--lotta-primary-color), 0.1);
-    transition: linear;
-    transition-duration: 0.2s;
-}
-
-.lotta-base-button.selected {
-    border: 1px solid rgba(var(--lotta-primary-color), 1);
-    background-color: rgba(var(--lotta-primary-color), 0.2);
-    filter: brightness(90%);
-
-    &:hover {
-        filter: brightness(0.9);
+    &[disabled] {
+        color: rgba(var(--lotta-disabled-color), 1);
+        border-color: rgba(var(--lotta-disabled-color), 1);
     }
-    &:active {
-        filter: brightness(70%);
-    }
-}
 
-.lotta-base-button.full-width {
-    width: 100%;
-}
-
-/**
-  * Custom styles for different variants
-  */
-.lotta-base-button.variant__fill {
-    background-color: rgba(var(--lotta-primary-color), 1);
-    color: rgba(var(--lotta-contrast-text-color), 1);
-    border: none;
-    &:hover {
+    &:hover:not([disabled]) {
+        background-color: rgba(var(--lotta-primary-color), 0.1);
         transition: linear;
         transition-duration: 0.2s;
-        background: rgba(var(--lotta-primary-color), 1);
-        box-shadow: inset 0 0 20px #00000024;
     }
-    &:active {
-        background: rgba(var(--lotta-primary-color), 1);
-        box-shadow: inset 0 0 20px #0000004f;
-        filter: none;
-    }
-}
 
-.lotta-base-button.variant__error {
-    background-color: rgba(var(--lotta-error-color), 1);
-    color: #fff;
-    border: none;
-    &:hover {
-        transition: linear;
-        transition-duration: 0.2s;
-        background-color: rgba(var(--lotta-error-color), 1);
-        box-shadow: inset 0 0 20px #00000024;
+    &.selected {
+        border: 1px solid rgba(var(--lotta-primary-color), 1);
+        background-color: rgba(var(--lotta-primary-color), 0.2);
+        filter: brightness(90%);
+
+        &:hover {
+            filter: brightness(0.9);
+        }
+        &:active {
+            filter: brightness(70%);
+        }
     }
-    &:active {
+
+    &.full-width {
+        width: 100%;
+    }
+
+    /**
+      * Custom styles for different variants
+      */
+    &.variant__fill {
         background-color: rgba(var(--lotta-primary-color), 1);
-        box-shadow: inset 0 0 20px #0000004f;
-        filter: none;
+        color: rgba(var(--lotta-contrast-text-color), 1);
+        border: none;
+        &:hover {
+            transition: linear;
+            transition-duration: 0.2s;
+            background: rgba(var(--lotta-primary-color), 1);
+            box-shadow: inset 0 0 20px #00000024;
+        }
+        &:active {
+            background: rgba(var(--lotta-primary-color), 1);
+            box-shadow: inset 0 0 20px #0000004f;
+            filter: none;
+        }
+    }
+    &.variant__borderless {
+        border: none;
+    }
+    &.variant__error {
+        background-color: rgba(var(--lotta-error-color), 1);
+        color: #fff;
+        border: none;
+        &:hover {
+            transition: linear;
+            transition-duration: 0.2s;
+            background-color: rgba(var(--lotta-error-color), 1);
+            box-shadow: inset 0 0 20px #00000024;
+        }
+        &:active {
+            background-color: rgba(var(--lotta-primary-color), 1);
+            box-shadow: inset 0 0 20px #0000004f;
+            filter: none;
+        }
     }
 }

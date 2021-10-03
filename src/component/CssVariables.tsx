@@ -52,10 +52,7 @@ export const CssVariables = React.memo(() => {
             pageBackgroundColor: decomposeColor(
                 theme.palette.background.default
             ).values.slice(0, 3),
-            dividerColor: decomposeColor(theme.palette.divider).values.slice(
-                0,
-                3
-            ),
+            dividerColor: [200, 200, 200],
             bannerBackgroundColor1: [54, 123, 240],
             bannerBackgroundColor2: [54, 123, 240],
             typographyTitleFontFamily: (theme.overrides as any)

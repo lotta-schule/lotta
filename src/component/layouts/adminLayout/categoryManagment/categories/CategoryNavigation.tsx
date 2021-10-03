@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { CategoryModel } from 'model';
-import { makeStyles } from '@material-ui/styles';
 import {
-    Theme,
-    Typography,
     Accordion,
     AccordionSummary,
     AccordionDetails,
@@ -16,45 +13,8 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID } from 'model/ID';
 import { useMutation } from '@apollo/client';
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
-import findIndex from 'lodash/findIndex';
 
-const useStyles = makeStyles((theme: Theme) => {
-    return {
-        heading: {
-            marginBottom: theme.spacing(3),
-        },
-        moveCategoryHandlerIcon: {
-            verticalAlign: 'bottom',
-            marginRight: theme.spacing(3),
-        },
-        expansionSummary: {
-            backgroundColor: theme.palette.grey[200],
-            borderRadius: 4,
-            border: '1px solid',
-            borderColor: theme.palette.divider,
-            marginBottom: theme.spacing(1),
-            '&:hover': {
-                borderColor: theme.palette.grey[400],
-            },
-        },
-        subcategories: {
-            borderRadius: 4,
-            border: '1px solid',
-            borderColor: theme.palette.divider,
-            marginBottom: theme.spacing(1),
-            backgroundColor: theme.palette.background.paper,
-            color: theme.palette.grey[700],
-            '&:hover': {
-                borderColor: theme.palette.grey[400],
-            },
-        },
-        before: {
-            '&::before': {
-                display: 'none',
-            },
-        },
-    };
-});
+import styles from './CategoryNavigation.module.scss';
 
 export interface CategoryNavigationProps {
     selectedCategory: CategoryModel | null;
@@ -63,8 +23,6 @@ export interface CategoryNavigationProps {
 
 export const CategoryNavigation = React.memo<CategoryNavigationProps>(
     ({ selectedCategory, onSelectCategory }) => {
-        const styles = useStyles();
-
         const [categories] = useCategories();
 
         const [expandedMainCategoryId, setExpandedMainCategoryId] =
@@ -121,10 +79,8 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
         }, [selectedCategory]);
 
         return (
-            <>
-                <Typography variant="h5" className={styles.heading}>
-                    Alle Kategorien
-                </Typography>
+            <div className={styles.root}>
+                <h4 className={styles.heading}>Alle Kategorien</h4>
 
                 {homepageCategory && (
                     <Accordion
@@ -136,14 +92,12 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                             className={styles.expansionSummary}
                             onClick={() => onSelectCategory(homepageCategory)}
                         >
-                            <Typography variant="body1">
-                                <b>{homepageCategory.title}</b>
-                            </Typography>
+                            <b>{homepageCategory.title}</b>
                         </AccordionSummary>
                     </Accordion>
                 )}
-                <p>&nbsp;</p>
 
+                <h6>Hauptkategorien</h6>
                 <DragDropContext
                     onDragEnd={({ destination, source, draggableId }) => {
                         if (!destination) {
@@ -160,9 +114,9 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                 : getSubcategoriesForCategory({
                                       id: destination.droppableId,
                                   });
-                        const sourceIndex = findIndex(initialCategoriesArray, {
-                            id: draggableId,
-                        });
+                        const sourceIndex = initialCategoriesArray.findIndex(
+                            (category) => category.id === draggableId
+                        );
                         const newCategoriesArray = [...initialCategoriesArray];
                         newCategoriesArray.splice(sourceIndex, 1);
                         newCategoriesArray.splice(
@@ -234,7 +188,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                         );
                                                     }}
                                                 >
-                                                    <Typography variant="body1">
+                                                    <div>
                                                         <span
                                                             {...dragHandleProps}
                                                         >
@@ -245,7 +199,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                             />
                                                         </span>
                                                         <b>{category.title}</b>
-                                                    </Typography>
+                                                    </div>
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Droppable
@@ -306,7 +260,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                     }
                                                                                     {...draggableProps}
                                                                                 >
-                                                                                    <Typography>
+                                                                                    <div>
                                                                                         <span
                                                                                             {...dragHandleProps}
                                                                                         >
@@ -319,7 +273,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                         {
                                                                                             subcategory.title
                                                                                         }
-                                                                                    </Typography>
+                                                                                    </div>
                                                                                 </ListItem>
                                                                             )}
                                                                         </Draggable>
@@ -340,9 +294,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                     </Droppable>
                 </DragDropContext>
 
-                <Typography variant="h6" className={styles.heading}>
-                    Seitenleistenkategorien
-                </Typography>
+                <h5 className={styles.heading}>Seitenleistenkategorien</h5>
                 {sidenavCategories.map((category) => (
                     <Accordion
                         className={styles.before}
@@ -353,13 +305,11 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                             className={styles.expansionSummary}
                             onClick={() => onSelectCategory(category)}
                         >
-                            <Typography variant="body1">
-                                <b>{category.title}</b>
-                            </Typography>
+                            <b>{category.title}</b>
                         </AccordionSummary>
                     </Accordion>
                 ))}
-            </>
+            </div>
         );
     }
 );

@@ -1,8 +1,9 @@
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 export default createProxyMiddleware({
-    target: process.env.AUTH_URL,
+    target: process.env.API_URL,
     changeOrigin: true,
+    pathRewrite: { '^/api/auth': '/auth' },
     xfwd: true,
 });
 

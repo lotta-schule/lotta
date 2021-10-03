@@ -1,0 +1,9 @@
+.root {
+    .header {
+        margin-bottom: calc(3 * var(--lotta-spacing));
+    }
+    .margin {
+        margin-top: calc(2 * var(--lotta-spacing));
+        margin-bottom: calc(2 * var(--lotta-spacing));
+    }
+}

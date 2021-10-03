@@ -1,15 +1,13 @@
 import * as React from 'react';
 import {
     Divider,
-    makeStyles,
-    Theme,
     FormControl,
     Checkbox,
     FormControlLabel,
 } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
-import { CategoryModel, WidgetModel, ID } from 'model';
 import { useMutation, useQuery } from '@apollo/client';
+import { CategoryModel, WidgetModel, ID } from 'model';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
@@ -27,35 +25,10 @@ import { useServerData } from 'component/ServerDataContext';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
-import clsx from 'clsx';
 import Img from 'react-cloudimage-responsive';
+import clsx from 'clsx';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    input: {
-        marginTop: theme.spacing(1.5),
-        width: '100%',
-    },
-    title: {
-        fontSize: '1.5rem',
-    },
-    heading: {
-        marginTop: theme.spacing(5),
-        paddingTop: theme.spacing(3),
-        marginBottom: theme.spacing(1),
-    },
-    switchBase: {
-        color: 'gray',
-    },
-    saveButton: {
-        float: 'right',
-        marginBottom: theme.spacing(2),
-    },
-    deleteDivider: {
-        clear: 'both',
-        marginBottom: theme.spacing(2),
-        marginTop: theme.spacing(2),
-    },
-}));
+import styles from './CategoryEditor.module.scss';
 
 export interface CategoryEditorProps {
     selectedCategory: CategoryModel | null;
@@ -65,7 +38,6 @@ export interface CategoryEditorProps {
 export const CategoryEditor = React.memo<CategoryEditorProps>(
     ({ selectedCategory, onSelectCategory }) => {
         const { baseUrl } = useServerData();
-        const styles = useStyles();
 
         const [categories] = useCategories();
 
@@ -155,11 +127,11 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
 
         return (
             <>
-                <h5 className={styles.title}>
+                <h3 className={styles.title}>
                     {selectedCategory
                         ? selectedCategory.title
                         : category && category.title}
-                </h5>
+                </h3>
                 <ErrorMessage error={error || currentWidgetsError} />
                 <Label label={'Name der Kategorie'}>
                     <Input
@@ -185,9 +157,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     />
                 )}
 
-                <h6 className={clsx(styles.input, styles.heading)}>
+                <h4 className={clsx(styles.input, styles.heading)}>
                     Wähle ein Banner für diese Kategorie
-                </h6>
+                </h4>
 
                 <SelectFileOverlay
                     label={'Banner ändern'}
@@ -260,9 +232,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
 
                 {!category.isHomepage && (
                     <>
-                        <h6 className={clsx(styles.input, styles.heading)}>
+                        <h4 className={clsx(styles.input, styles.heading)}>
                             Die Kategorie als Weiterleitung
-                        </h6>
+                        </h4>
 
                         <RadioGroup
                             name={'category-redirect-type'}
@@ -372,9 +344,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     </>
                 )}
 
-                <h6 className={clsx(styles.input, styles.heading)}>
+                <h4 className={clsx(styles.input, styles.heading)}>
                     Wähle die marginalen Module für diese Kategorie
-                </h6>
+                </h4>
                 <CategoryWidgetSelector
                     selectedWidgets={selectedWidgets}
                     setSelectedWidgets={(widgets) =>

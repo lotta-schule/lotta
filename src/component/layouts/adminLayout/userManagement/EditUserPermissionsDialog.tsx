@@ -1,19 +1,16 @@
-import React, { Fragment, FunctionComponent, memo } from 'react';
+import * as React from 'react';
 import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    Button,
-    Typography,
     Grid,
     CircularProgress,
-    Theme,
-    makeStyles,
     Divider,
 } from '@material-ui/core';
+import { useQuery, useMutation } from '@apollo/client';
 import { ID, UserModel } from 'model';
 import { UserAvatar } from 'component/user/UserAvatar';
-import { useQuery, useMutation } from '@apollo/client';
+import { Button } from 'component/general/button/Button';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -21,24 +18,15 @@ import { useUserGroups } from 'util/tenant/useUserGroups';
 import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
 
-const useStyles = makeStyles((theme: Theme) => ({
-    header: {
-        marginBottom: theme.spacing(3),
-    },
-    margin: {
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-    },
-}));
+import styles from './EditUserPermissionDialog.module.scss';
 
 export interface EditUserPermissionsDialogProps {
     user: UserModel;
     onClose(): void;
 }
 
-export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDialogProps> =
-    memo(({ user, onClose }) => {
-        const styles = useStyles();
+export const EditUserPermissionsDialog =
+    React.memo<EditUserPermissionsDialogProps>(({ user, onClose }) => {
         const allUserGroups = useUserGroups();
 
         const { data, loading, error } = useQuery<
@@ -91,7 +79,11 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
             );
 
         return (
-            <ResponsiveFullScreenDialog open={true} fullWidth>
+            <ResponsiveFullScreenDialog
+                open={true}
+                className={styles.root}
+                fullWidth
+            >
                 <DialogTitle data-testid="DialogTitle">
                     {user.name}s Details
                 </DialogTitle>
@@ -103,30 +95,20 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                         className={styles.header}
                     >
                         <Grid item xs={3}>
-                            <UserAvatar user={user} size={200} />
+                            <UserAvatar user={user} size={100} />
                         </Grid>
                         <Grid item xs={9}>
-                            <Typography variant="h6" data-testid="UserName">
-                                {user.name}
-                            </Typography>
+                            <h6 data-testid="UserName">{user.name}</h6>
                             {user.nickname && (
-                                <Typography
-                                    variant="body2"
-                                    data-testid="UserNickname"
-                                >
+                                <p data-testid="UserNickname">
                                     <strong>{user.nickname}</strong>
-                                </Typography>
+                                </p>
                             )}
-                            <Typography variant="body1" data-testid="UserEmail">
-                                {user.email}
-                            </Typography>
+                            <p data-testid="UserEmail">{user.email}</p>
                             {user.class && (
-                                <Typography
-                                    variant="body2"
-                                    data-testid="UserClass"
-                                >
+                                <p data-testid="UserClass">
                                     Klasse: {user.class}
-                                </Typography>
+                                </p>
                             )}
                         </Grid>
                     </Grid>
@@ -161,10 +143,10 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                                     Über Einschreibeschlüssel zugewiesene
                                     Gruppen:
                                     {dynamicGroups.map((group, i, arr) => (
-                                        <Fragment key={group.id}>
+                                        <React.Fragment key={group.id}>
                                             <em>{group.name}</em>
                                             {i !== arr.length - 1 && <>, </>}
-                                        </Fragment>
+                                        </React.Fragment>
                                     ))}
                                 </span>
                             )}
@@ -172,12 +154,7 @@ export const EditUserPermissionsDialog: FunctionComponent<EditUserPermissionsDia
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        data-testid="AbortButton"
-                        onClick={() => onClose()}
-                        color="secondary"
-                        variant="outlined"
-                    >
+                    <Button data-testid="AbortButton" onClick={() => onClose()}>
                         Abbrechen
                     </Button>
                 </DialogActions>

@@ -141,12 +141,13 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         process.env.FORCE_BASE_URL ??
         (context.ctx.req &&
             `${getProtocol()}://${context.ctx.req.headers.host}`);
+
+    await maybeChangeRefreshToken(context);
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,
         context: {
             headers: context.ctx.req?.headers,
         },
-        errorPolicy: 'all',
     });
     const tenant = data?.tenant ?? null;
     if (context.ctx.req) {
@@ -160,7 +161,6 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
             },
         };
     }
-    await maybeChangeRefreshToken(context);
     const { data: userData } = await getApolloClient().query({
         query: GetCurrentUserQuery,
         context: {

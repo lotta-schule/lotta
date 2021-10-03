@@ -52,6 +52,7 @@ export const UserNavigationMobile = React.memo(() => {
             <>
                 <nav className={styles.root}>
                     <BaseButton
+                        variant={'borderless'}
                         className={styles.button}
                         onClick={() => {
                             onLogout();
@@ -62,6 +63,7 @@ export const UserNavigationMobile = React.memo(() => {
                         <span className={styles.label}>Abmelden</span>
                     </BaseButton>
                     <BaseButton
+                        variant={'borderless'}
                         className={styles.button}
                         onClick={() => {
                             setCreateArticleModalIsOpen(true);
@@ -73,6 +75,7 @@ export const UserNavigationMobile = React.memo(() => {
                     </BaseButton>
                     <Link href={'/search'} passHref>
                         <BaseButton
+                            variant={'borderless'}
                             className={styles.button}
                             data-testid="SearchButton"
                         >
@@ -82,6 +85,7 @@ export const UserNavigationMobile = React.memo(() => {
                     </Link>
                     <Link href={'/profile'} passHref>
                         <BaseButton
+                            variant={'borderless'}
                             className={styles.button}
                             data-testid="ProfileButton"
                         >
@@ -91,6 +95,7 @@ export const UserNavigationMobile = React.memo(() => {
                     </Link>
                     <Link href={'/profile/files'} passHref>
                         <BaseButton
+                            variant={'borderless'}
                             className={styles.button}
                             data-testid="ProfileFilesButton"
                         >
@@ -100,6 +105,7 @@ export const UserNavigationMobile = React.memo(() => {
                     </Link>
                     <Link href={'/profile/articles'} passHref>
                         <BaseButton
+                            variant={'borderless'}
                             className={styles.button}
                             data-testid="OwnArticlesButton"
                         >
@@ -109,6 +115,7 @@ export const UserNavigationMobile = React.memo(() => {
                     </Link>
                     <Link href={'/profile/messaging'} passHref>
                         <BaseButton
+                            variant={'borderless'}
                             className={styles.button}
                             data-testid="MessagingButton"
                         >
@@ -126,6 +133,7 @@ export const UserNavigationMobile = React.memo(() => {
                         <>
                             <Link href={'/admin'} passHref>
                                 <BaseButton
+                                    variant={'borderless'}
                                     className={styles.button}
                                     data-testid="AdminButton"
                                 >
@@ -134,7 +142,10 @@ export const UserNavigationMobile = React.memo(() => {
                                 </BaseButton>
                             </Link>
                             <Link href={'/admin/unpublished'} passHref>
-                                <BaseButton className={styles.button}>
+                                <BaseButton
+                                    variant={'borderless'}
+                                    className={styles.button}
+                                >
                                     <Badge
                                         badgeContent={unpublishedBadgeNumber}
                                         className={styles.badge}
@@ -174,12 +185,14 @@ export const UserNavigationMobile = React.memo(() => {
         <div>
             <Button
                 fullWidth
+                variant={'borderless'}
                 onClick={() => setLoginModalIsOpen(true)}
                 data-testid="LoginButton"
             >
                 Anmelden
             </Button>
             <Button
+                variant={'borderless'}
                 fullWidth
                 onClick={() => setRegisterModalIsOpen(true)}
                 data-testid="RegisterButton"
@@ -187,7 +200,11 @@ export const UserNavigationMobile = React.memo(() => {
                 Registrieren
             </Button>
             <Link href={'/search'} passHref>
-                <Button fullWidth data-testid="SearchButton">
+                <Button
+                    fullWidth
+                    data-testid="SearchButton"
+                    variant={'borderless'}
+                >
                     Suche
                 </Button>
             </Link>

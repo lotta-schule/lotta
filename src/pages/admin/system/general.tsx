@@ -16,14 +16,13 @@ import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
 import { Button } from 'component/general/button/Button';
 import { Input } from 'component/general/form/input/Input';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
 import { useServerData } from 'component/ServerDataContext';
 import { GetServerSidePropsContext } from 'next';
+import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
+import { Tune } from '@material-ui/icons';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 import Img from 'react-cloudimage-responsive';
 import Link from 'next/link';
-
 import styles from '../admin.module.scss';
 
 export const General = () => {
@@ -36,13 +35,16 @@ export const General = () => {
         useMutation(UpdateTenantMutation);
 
     return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">Administration</h2>
-            </Header>
-            <Link href={'/admin'}>&lt; Administration</Link>
+        <AdminLayout
+            title={
+                <>
+                    <Tune /> Grundeinstellungen
+                </>
+            }
+            hasHomeLink
+        >
             <ErrorMessage error={error} />
-            <h6>Name der Seite</h6>
+            <h3>Name der Seite</h3>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={6}>
                     <Input
@@ -52,7 +54,7 @@ export const General = () => {
                 </Grid>
             </Grid>
 
-            <h6>Logo der Seite</h6>
+            <h3>Logo der Seite</h3>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={6}>
                     <Card>
@@ -89,7 +91,7 @@ export const General = () => {
                 </Grid>
             </Grid>
 
-            <h6>Domains</h6>
+            <h3>Domains</h3>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={12}>
                     <Table size={'small'}>
@@ -131,7 +133,7 @@ export const General = () => {
                     </Button>
                 </Grid>
             </Grid>
-        </BaseLayoutMainContent>
+        </AdminLayout>
     );
 };
 

@@ -4,7 +4,6 @@ import {
     DialogContent,
     DialogActions,
     FormControl,
-    makeStyles,
     LinearProgress,
 } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
@@ -20,6 +19,8 @@ import { Radio, RadioGroup } from 'component/general/form/radio';
 import CreateCategoryMutation from 'api/mutation/CreateCategoryMutation.graphql';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 
+import styles from './CreateCategoryDialog.module.scss';
+
 enum CategoryPosition {
     Main,
     Sub,
@@ -32,20 +33,8 @@ export interface CreateCategoryDialogProps {
     onConfirm(category: CategoryModel): void;
 }
 
-const useStyles = makeStyles((theme) => ({
-    categoryPositionSet: {
-        marginTop: theme.spacing(3),
-        width: '100%',
-    },
-    categorySelect: {
-        margin: theme.spacing(1, 0),
-    },
-}));
-
 export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
     ({ isOpen, onAbort, onConfirm }) => {
-        const styles = useStyles();
-
         const [title, setTitle] = React.useState('');
         const [categoryPosition, setCategoryPosition] = React.useState(
             CategoryPosition.Main

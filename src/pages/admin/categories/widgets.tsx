@@ -1,25 +1,23 @@
 import * as React from 'react';
 import { Grid, CircularProgress, Menu, MenuItem } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { Add as AddCircleIcon } from '@material-ui/icons';
-import { WidgetModel, WidgetModelType } from 'model';
+import { Add as AddCircleIcon, Slideshow } from '@material-ui/icons';
 import { useQuery, useMutation } from '@apollo/client';
+import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
+import { Button } from 'component/general/button/Button';
+import { WidgetModel, WidgetModelType } from 'model';
 import { Widget } from 'util/model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { WidgetEditor } from 'component/layouts/adminLayout/categoryManagment/widgets/WidgetEditor';
 import { WidgetNavigation } from 'component/layouts/adminLayout/categoryManagment/widgets/WidgetNavigation';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
 import { GetServerSidePropsContext } from 'next';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 import CreateWidgetMutation from 'api/mutation/CreateWidgetMutation.graphql';
-import Link from 'next/link';
 import clsx from 'clsx';
 
 import styles from './widgets.module.scss';
 
-export const Widgets = React.memo(() => {
+export const Widgets = () => {
     const [selectedWidget, setSelectedWidget] =
         React.useState<WidgetModel | null>(null);
 
@@ -69,12 +67,15 @@ export const Widgets = React.memo(() => {
     }
 
     return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">Administration</h2>
-            </Header>
-            <Link href={'/admin'}>&lt; Administration</Link>
-            <h4 className={styles.headline}>
+        <AdminLayout
+            title={
+                <>
+                    <Slideshow /> Marginalen
+                </>
+            }
+            hasHomeLink
+        >
+            <h3 className={styles.headline}>
                 Marginalen
                 <PopupState
                     variant={'popover'}
@@ -130,7 +131,7 @@ export const Widgets = React.memo(() => {
                         </>
                     )}
                 </PopupState>
-            </h4>
+            </h3>
             <ErrorMessage error={errorCreateWidget} />
             <Grid container>
                 <Grid item xs={12} sm={5} className={styles.navigationWrapper}>
@@ -149,9 +150,9 @@ export const Widgets = React.memo(() => {
                     )}
                 </Grid>
             </Grid>
-        </BaseLayoutMainContent>
+        </AdminLayout>
     );
-});
+};
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
     return {
