@@ -1,47 +1,30 @@
 import * as React from 'react';
-import { UserGroupModel, ID, UserGroupInputModel } from 'model';
-import { useUserGroups } from 'util/tenant/useUserGroups';
 import {
     CircularProgress,
     Checkbox,
     FormControl,
-    Input,
-    InputLabel,
     FormHelperText,
     FormControlLabel,
-    Button,
-    Typography,
-    makeStyles,
 } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
+import { UserGroupModel, ID, UserGroupInputModel } from 'model';
+import { useUserGroups } from 'util/tenant/useUserGroups';
+import { Button } from 'component/general/button/Button';
+import { Label } from 'component/general/label/Label';
+import { Input } from 'component/general/form/input/Input';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import { EnrollmentTokensEditor } from 'component/layouts/EnrollmentTokensEditor';
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 
+import styles from './EditGroupForm.module.scss';
+
 export interface EditGroupFormProps {
     group: UserGroupModel;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-    },
-    saveButton: {
-        alignSelf: 'flex-end',
-    },
-    deleteButton: {
-        alignSelf: 'flex-start',
-        backgroundColor: theme.palette.error.main,
-        color: theme.palette.getContrastText(theme.palette.error.main),
-    },
-}));
-
 export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
-    const styles = useStyles();
     const groups = useUserGroups();
 
     const [name, setName] = React.useState(group.name);
@@ -89,27 +72,14 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
         >
             <ErrorMessage error={loadDetailsError || updateError} />
             <FormControl>
-                <InputLabel htmlFor="group-name">Gruppenname</InputLabel>
-                <Input
-                    id="group-name"
-                    aria-describedby="group-name-help-text"
-                    disabled={isLoadingUpdateGroup}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    onBlur={() => {
-                        updateGroup({
-                            variables: {
-                                id: group.id,
-                                group: {
-                                    isAdminGroup: group.isAdminGroup,
-                                    enrollmentTokens,
-                                    name,
-                                },
-                            },
-                        });
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
+                <Label label={'Gruppenname'}>
+                    <Input
+                        id="group-name"
+                        aria-describedby="group-name-help-text"
+                        disabled={isLoadingUpdateGroup}
+                        value={name}
+                        onChange={(e) => setName(e.currentTarget.value)}
+                        onBlur={() => {
                             updateGroup({
                                 variables: {
                                     id: group.id,
@@ -120,9 +90,23 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                                     },
                                 },
                             });
-                        }
-                    }}
-                />
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                updateGroup({
+                                    variables: {
+                                        id: group.id,
+                                        group: {
+                                            isAdminGroup: group.isAdminGroup,
+                                            enrollmentTokens,
+                                            name,
+                                        },
+                                    },
+                                });
+                            }
+                        }}
+                    />
+                </Label>
                 <FormHelperText id="group-name-help-text">
                     Gib der Gruppe einen verständlichen Namen
                 </FormHelperText>
@@ -147,12 +131,12 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                     }}
                 />
             </FormControl>
-            <Typography variant={'caption'}>Einschreibeschlüssel</Typography>
-            <Typography variant={'body2'}>
+            <p>Einschreibeschlüssel</p>
+            <p>
                 Nutzer, die bei der Registrierung einen
                 Einschreibeschlüsselverwenden, werden automatisch dieser Gruppe
                 zugeordnet.
-            </Typography>
+            </p>
             <EnrollmentTokensEditor
                 disabled={isLoadingUpdateGroup}
                 tokens={enrollmentTokens}
@@ -173,8 +157,6 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                 <>
                     <Button
                         className={styles.deleteButton}
-                        variant={'contained'}
-                        size={'small'}
                         onClick={() => setIsDeleteUserGroupDialogOpen(true)}
                     >
                         Gruppe "{group.name}" löschen

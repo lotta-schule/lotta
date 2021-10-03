@@ -6,9 +6,9 @@ import {
     Theme,
     useTheme,
     FormControl,
-    MenuItem,
-    Divider,
 } from '@material-ui/core';
+import { Palette } from '@material-ui/icons';
+import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
 import { Label } from 'component/general/label/Label';
 import { Select } from 'component/general/form/select/Select';
 import { useMutation } from '@apollo/client';
@@ -24,15 +24,12 @@ import {
     headerFonts,
 } from 'component/layouts/adminLayout/systemManagment/presentation/fonts';
 import { Button } from 'component/general/button/Button';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
 import { useServerData } from 'component/ServerDataContext';
 import { get, merge } from 'lodash';
 import { GetServerSidePropsContext } from 'next';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 import Img from 'react-cloudimage-responsive';
 import createTypography from '@material-ui/core/styles/createTypography';
-import Link from 'next/link';
 import Head from 'next/head';
 
 import styles from '../admin.module.scss';
@@ -75,14 +72,17 @@ export const Presentation = () => {
     }, [theme]);
 
     return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">Administration</h2>
-            </Header>
-            <Link href={'/admin'}>&lt; Administration</Link>
+        <AdminLayout
+            title={
+                <>
+                    <Palette /> Darstellung
+                </>
+            }
+            hasHomeLink
+        >
             <ErrorMessage error={error} />
             <section className={styles.section}>
-                <h6>Vorlagen</h6>
+                <h3>Vorlagen</h3>
                 <Grid container>
                     {allThemes.map(({ title, theme: partialTheme }, index) => {
                         return (
@@ -99,7 +99,7 @@ export const Presentation = () => {
             </section>
 
             <section className={styles.section}>
-                <h6>Farben</h6>
+                <h3>Farben</h3>
                 <ErrorMessage error={error} />
                 <Grid container className={styles.gridContainer}>
                     <Grid item sm={6}>
@@ -223,7 +223,7 @@ export const Presentation = () => {
             </section>
 
             <section className={styles.section}>
-                <h6>Schriften</h6>
+                <h3>Schriften</h3>
                 <Grid container>
                     <Grid item sm={6}>
                         <FormControl fullWidth>
@@ -232,6 +232,11 @@ export const Presentation = () => {
                                     value={getFromTheme(
                                         'overrides.LottaArticlePreview.title.fontFamily'
                                     )}
+                                    style={{
+                                        fontFamily: getFromTheme(
+                                            'overrides.LottaArticlePreview.title.fontFamily'
+                                        ),
+                                    }}
                                     onChange={(e) =>
                                         setCustomTheme(
                                             merge({}, customTheme, {
@@ -248,33 +253,38 @@ export const Presentation = () => {
                                         )
                                     }
                                 >
-                                    {headerFonts.map(({ name, url }) => (
-                                        <MenuItem value={name} key={name}>
-                                            <span style={{ fontFamily: name }}>
-                                                {name}
-                                            </span>
-                                            <Head>
+                                    {headerFonts
+                                        .concat(textFonts)
+                                        .map(({ url }) => (
+                                            <Head key={url}>
                                                 <link
                                                     rel={'stylesheet'}
                                                     href={url}
                                                 />
                                             </Head>
-                                        </MenuItem>
-                                    ))}
-                                    <Divider />
-                                    {textFonts.map(({ name, url }) => (
-                                        <MenuItem value={name} key={name}>
-                                            <span style={{ fontFamily: name }}>
+                                        ))}
+                                    <optgroup>
+                                        {headerFonts.map(({ name }) => (
+                                            <option
+                                                value={name}
+                                                style={{ fontFamily: name }}
+                                                key={name}
+                                            >
                                                 {name}
-                                            </span>
-                                            <Head>
-                                                <link
-                                                    rel={'stylesheet'}
-                                                    href={url}
-                                                />
-                                            </Head>
-                                        </MenuItem>
-                                    ))}
+                                            </option>
+                                        ))}
+                                    </optgroup>
+                                    <optgroup>
+                                        {textFonts.map(({ name }) => (
+                                            <option
+                                                value={name}
+                                                style={{ fontFamily: name }}
+                                                key={name}
+                                            >
+                                                {name}
+                                            </option>
+                                        ))}
+                                    </optgroup>
                                 </Select>
                             </Label>
                         </FormControl>
@@ -286,6 +296,11 @@ export const Presentation = () => {
                                     value={getFromTheme(
                                         'typography.fontFamily'
                                     )}
+                                    style={{
+                                        fontFamily: getFromTheme(
+                                            'typography.fontFamily'
+                                        ),
+                                    }}
                                     onChange={(e) =>
                                         setCustomTheme(
                                             merge({}, customTheme, {
@@ -301,18 +316,14 @@ export const Presentation = () => {
                                         )
                                     }
                                 >
-                                    {textFonts.map(({ name, url }) => (
-                                        <MenuItem value={name} key={name}>
-                                            <span style={{ fontFamily: name }}>
-                                                {name}
-                                            </span>
-                                            <Head>
-                                                <link
-                                                    rel={'stylesheet'}
-                                                    href={url}
-                                                />
-                                            </Head>
-                                        </MenuItem>
+                                    {textFonts.map(({ name }) => (
+                                        <option
+                                            style={{ fontFamily: name }}
+                                            value={name}
+                                            key={name}
+                                        >
+                                            {name}
+                                        </option>
                                     ))}
                                 </Select>
                             </Label>
@@ -350,7 +361,7 @@ export const Presentation = () => {
                     </Grid>
                 </Grid>
             </section>
-        </BaseLayoutMainContent>
+        </AdminLayout>
     );
 };
 

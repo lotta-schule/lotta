@@ -12,11 +12,10 @@ import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Input } from 'component/general/form/input/Input';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
 import { GetServerSidePropsContext } from 'next';
+import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
+import { AccountCircle } from '@material-ui/icons';
 import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
-import Link from 'next/link';
 import clsx from 'clsx';
 
 import styles from './list.module.scss';
@@ -84,11 +83,14 @@ export const List = () => {
     }, [data, filterText, selectedGroupsFilter]);
 
     return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">Administration</h2>
-            </Header>
-            <Link href={'/admin'}>&lt; Administration</Link>
+        <AdminLayout
+            title={
+                <>
+                    <AccountCircle /> Nutzer
+                </>
+            }
+            hasHomeLink
+        >
             <SearchUserField
                 className={clsx(styles.searchUserField, styles.headline)}
                 onSelectUser={setSelectedUser}
@@ -172,7 +174,7 @@ export const List = () => {
                     user={selectedUser}
                 />
             )}
-        </BaseLayoutMainContent>
+        </AdminLayout>
     );
 };
 

@@ -1,0 +1,9 @@
+.root {
+    .categoryPositionSet {
+        margin-top: calc(3 * var(--lotta-spacing));
+        width: 100%;
+    }
+    .categorySelect {
+        margin: var(--lotta-spacing) 0;
+    }
+}

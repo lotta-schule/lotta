@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Card, CardContent, Grid } from '@material-ui/core';
+import { BarChart } from '@material-ui/icons';
+import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useTenant } from 'util/tenant/useTenant';
 import { FileSize } from 'util/FileSize';
@@ -7,10 +9,7 @@ import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getApolloClient } from 'api/client';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
 import GetUsageQuery from 'api/query/GetUsageQuery.graphql';
-import Link from 'next/link';
 
 import styles from '../admin.module.scss';
 
@@ -34,11 +33,14 @@ export const Usage = ({
     };
 
     return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">Administration</h2>
-            </Header>
-            <Link href={'/admin'}>&lt; Administration</Link>
+        <AdminLayout
+            title={
+                <>
+                    <BarChart /> Nutzung
+                </>
+            }
+            hasHomeLink
+        >
             <ErrorMessage error={error} />
             <Card variant={'outlined'}>
                 <CardContent>
@@ -104,7 +106,7 @@ export const Usage = ({
                     </Grid>
                 </Grid>
             ))}
-        </BaseLayoutMainContent>
+        </AdminLayout>
     );
 };
 

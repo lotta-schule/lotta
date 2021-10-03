@@ -10,12 +10,7 @@ export type BaseButtonProps = {
     /**
      * Chose from different styles
      */
-    variant?: 'default' | 'fill' | 'error';
-
-    /**
-     * Makes the button an internal link
-     */
-    to?: string;
+    variant?: 'default' | 'fill' | 'borderless' | 'error';
 
     /**
      * Wether the button should have a width of 100%

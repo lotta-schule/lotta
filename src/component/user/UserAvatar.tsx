@@ -28,6 +28,7 @@ export const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
                 ref={ref}
                 data-testid={'Avatar'}
                 src={src}
+                style={size ? { width: size, height: size } : {}}
                 alt={`Profilbild von ${User.getNickname(user)}`}
                 imgProps={{
                     'aria-label': `Profilbild von ${User.getNickname(user)}`,

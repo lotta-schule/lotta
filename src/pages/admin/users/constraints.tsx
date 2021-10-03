@@ -1,22 +1,20 @@
 import * as React from 'react';
 import { Checkbox, FormControlLabel, Grid, Slider } from '@material-ui/core';
+import { CropFree, SdStorage } from '@material-ui/icons';
+import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
 import { Button } from 'component/general/button/Button';
-import { SdStorage } from '@material-ui/icons';
 import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
 import { GetServerSidePropsContext } from 'next';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
-import Link from 'next/link';
 
 const MEGABYTE = 1024 * 1024;
 
-export const Constraints = React.memo(() => {
+export const Constraints = () => {
     const tenant = useTenant();
     const lastSetLimitRef = React.useRef(20);
     const [value, setValue] = React.useState(
@@ -53,12 +51,15 @@ export const Constraints = React.memo(() => {
     );
 
     return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">Administration</h2>
-            </Header>
-            <Link href={'/admin'}>&lt; Administration</Link>
-            <h5>Speicherplatz-Beschränkungen</h5>
+        <AdminLayout
+            title={
+                <>
+                    <CropFree /> Beschränkungen
+                </>
+            }
+            hasHomeLink
+        >
+            <h3>Speicherplatz-Beschränkungen</h3>
             <div>
                 <p id={`user-storage-limit`}>
                     Freier Speicher für jeden Nutzer
@@ -152,9 +153,9 @@ export const Constraints = React.memo(() => {
                     Speichern
                 </Button>
             </div>
-        </BaseLayoutMainContent>
+        </AdminLayout>
     );
-});
+};
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
     return {

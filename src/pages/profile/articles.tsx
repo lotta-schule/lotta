@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { ArticleModel } from 'model';
 import { Card, CardContent } from '@material-ui/core';
+import { ArticleModel } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ArticlesList } from 'component/profile/ArticlesList';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
+import { BaseLayoutSidebar } from 'component/layouts/BaseLayoutSidebar';
 import { getApolloClient } from 'api/client';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
 
 export const Articles = ({
@@ -12,13 +14,18 @@ export const Articles = ({
     loadArticlesError: error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     return (
-        <Card>
-            <CardContent>
-                <h4>Meine Beiträge</h4>
-                <ErrorMessage error={error} />
-                {articles && <ArticlesList articles={articles} />}
-            </CardContent>
-        </Card>
+        <>
+            <BaseLayoutMainContent>
+                <Card>
+                    <CardContent>
+                        <h2>Meine Beiträge</h2>
+                        <ErrorMessage error={error} />
+                        {articles && <ArticlesList articles={articles} />}
+                    </CardContent>
+                </Card>
+            </BaseLayoutMainContent>
+            <BaseLayoutSidebar isEmpty />
+        </>
     );
 };
 
