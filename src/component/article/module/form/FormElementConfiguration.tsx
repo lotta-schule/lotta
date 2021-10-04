@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { FormElement, FormElementOption } from './Form';
-import { FormControlLabel, Checkbox, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import { PlusOne } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
-import { Select } from 'component/general/form/select/Select';
-import { Label } from 'component/general/label/Label';
+import { Checkbox } from 'component/general/form/checkbox';
 import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { Select } from 'component/general/form/select/Select';
+import { FormElement, FormElementOption } from './Form';
 
 import styles from './FormElementConfiguration.module.scss';
 
@@ -149,36 +150,26 @@ export const FormElementConfiguration =
                         }
                     />
                 </Label>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={element.required ?? false}
-                            className={styles.configurationProperty}
-                            value={'required'}
-                            color={'primary'}
-                            onChange={(e) =>
-                                updateElement({ required: e.target.checked })
-                            }
-                        />
-                    }
+                <Checkbox
                     label={'Pflichtfeld'}
+                    checked={element.required ?? false}
+                    className={styles.configurationProperty}
+                    value={'required'}
+                    onChange={(e) =>
+                        updateElement({ required: e.currentTarget.checked })
+                    }
                 />
                 {element.element === 'input' && (
-                    <FormControlLabel
+                    <Checkbox
                         className={styles.configurationProperty}
-                        control={
-                            <Checkbox
-                                checked={element.multiline ?? false}
-                                value={'multiline'}
-                                color={'primary'}
-                                onChange={(e) =>
-                                    updateElement({
-                                        multiline: e.target.checked,
-                                    })
-                                }
-                            />
-                        }
+                        checked={element.multiline ?? false}
                         label={'mehrzeilig'}
+                        value={'multiline'}
+                        onChange={(e) =>
+                            updateElement({
+                                multiline: e.currentTarget.checked,
+                            })
+                        }
                     />
                 )}
                 {element.element === 'selection' && (
@@ -213,39 +204,31 @@ export const FormElementConfiguration =
                                         }
                                     />
                                 </Label>
-                                <FormControlLabel
+                                <Checkbox
                                     className={styles.configurationProperty}
-                                    control={
-                                        <Checkbox
-                                            checked={option.selected ?? false}
-                                            value={'checked'}
-                                            color={'primary'}
-                                            onChange={(_e, checked) => {
-                                                if (element.type === 'radio') {
-                                                    updateElement({
-                                                        options:
-                                                            element.options?.map(
-                                                                (
-                                                                    _option,
-                                                                    _index
-                                                                ) => ({
-                                                                    ..._option,
-                                                                    selected:
-                                                                        checked &&
-                                                                        i ===
-                                                                            _index,
-                                                                })
-                                                            ),
-                                                    });
-                                                } else {
-                                                    updateOption(i, {
-                                                        selected: checked,
-                                                    });
-                                                }
-                                            }}
-                                        />
-                                    }
+                                    checked={option.selected ?? false}
                                     label={'vorausgewählt'}
+                                    value={'checked'}
+                                    onChange={(e) => {
+                                        if (element.type === 'radio') {
+                                            updateElement({
+                                                options: element.options?.map(
+                                                    (_option, _index) => ({
+                                                        ..._option,
+                                                        selected:
+                                                            e.currentTarget
+                                                                .checked &&
+                                                            i === _index,
+                                                    })
+                                                ),
+                                            });
+                                        } else {
+                                            updateOption(i, {
+                                                selected:
+                                                    e.currentTarget.checked,
+                                            });
+                                        }
+                                    }}
                                 />
                             </section>
                         ))}

@@ -5,22 +5,22 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    Checkbox,
     CircularProgress,
 } from '@material-ui/core';
-import { every, range, some, uniqBy } from 'lodash';
-import { Button } from 'component/general/button/Button';
-import { useQuery } from '@apollo/client';
 import { ArrowBackRounded } from '@material-ui/icons';
+import { useQuery } from '@apollo/client';
+import { every, range, uniqBy } from 'lodash';
 import { useDropzone } from 'react-dropzone';
+import { useTranslation } from 'react-i18next';
 import { FileModel, FileModelType, DirectoryModel } from 'model';
-import { DirectoryTableRow } from './DirectoryTableRow';
+import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox/Checkbox';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { DirectoryTableRow } from './DirectoryTableRow';
 import { FileTableRow } from './FileTableRow';
 import { FileTableFooter } from './FileTableFooter';
 import { useCreateUpload } from './context/UploadQueueContext';
 import { EmptyDirectoryTableRow } from './EmptyDirectoryTableRow';
-import { useTranslation } from 'react-i18next';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
@@ -304,26 +304,7 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                 (data?.files?.length ?? 0) > 0 && (
                                     <Checkbox
                                         style={{ padding: 0 }}
-                                        indeterminate={
-                                            !every(
-                                                filteredSortedFiles.filter(
-                                                    (f) =>
-                                                        f.fileType !==
-                                                        FileModelType.Directory
-                                                ),
-                                                (f) =>
-                                                    state.selectedFiles.includes(
-                                                        f
-                                                    )
-                                            ) &&
-                                            some(
-                                                state.selectedFiles,
-                                                (selectedFile) =>
-                                                    filteredSortedFiles.includes(
-                                                        selectedFile
-                                                    )
-                                            )
-                                        }
+                                        label={''}
                                         checked={every(
                                             filteredSortedFiles.filter(
                                                 (f) =>
@@ -333,14 +314,12 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                             (f) =>
                                                 state.selectedFiles.includes(f)
                                         )}
-                                        inputProps={{
-                                            'aria-label': 'Alle wählen',
-                                        }}
-                                        onChange={(e, checked) => {
+                                        aria-label={'Alle wählen'}
+                                        onChange={(e) => {
                                             e.preventDefault();
                                             dispatch({
                                                 type: 'setSelectedFiles',
-                                                files: checked
+                                                files: e.currentTarget.checked
                                                     ? uniqBy(
                                                           [
                                                               ...state.selectedFiles,

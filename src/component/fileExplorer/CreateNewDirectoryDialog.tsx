@@ -4,16 +4,15 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    FormControlLabel,
-    Checkbox,
 } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { Label } from 'component/general/label/Label';
-import { Input } from 'component/general/form/input/Input';
-import { DirectoryModel, FileModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { DirectoryModel, FileModel, ID } from 'model';
+import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import CreateDirectoryMutation from 'api/mutation/CreateDirectoryMutation.graphql';
@@ -99,17 +98,13 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
                         </Label>
                         {User.isAdmin(currentUser) &&
                             basePath?.slice(-1)[0].id === null && (
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={isPublic}
-                                            onChange={(_e, checked) =>
-                                                setIsPublic(checked)
-                                            }
-                                        />
-                                    }
+                                <Checkbox
+                                    checked={isPublic}
                                     label={
                                         'Diesen Ordner für alle registrierten Nutzer sichtbar machen. Administratoren dürfen öffentliche Ordner bearbeiten.'
+                                    }
+                                    onChange={(e) =>
+                                        setIsPublic(e.currentTarget.checked)
                                     }
                                 />
                             )}

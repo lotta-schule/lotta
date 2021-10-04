@@ -1,21 +1,19 @@
 import * as React from 'react';
 import {
-    Checkbox,
     DialogTitle,
     DialogContent,
     DialogContentText,
     DialogActions,
     Grid,
-    FormGroup,
-    FormControlLabel,
 } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { useGetFieldError } from 'util/useGetFieldError';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { useMutation } from '@apollo/client';
+import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
+import { useGetFieldError } from 'util/useGetFieldError';
+import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
 
 import styles from './RegisterDialog.module.scss';
@@ -178,21 +176,13 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             />
                         )}
                     </Label>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={isHideFullName}
-                                    onChange={(_e, checked) =>
-                                        setIsHideFullName(checked)
-                                    }
-                                />
-                            }
-                            label={
-                                'Deinen vollständen Namen öffentlich verstecken'
-                            }
-                        />
-                    </FormGroup>
+                    <Checkbox
+                        checked={isHideFullName}
+                        label={'Deinen vollständen Namen öffentlich verstecken'}
+                        onChange={(e) =>
+                            setIsHideFullName(e.currentTarget.checked)
+                        }
+                    />
                     <div className={styles.margin}>
                         Verstecke deinen vollständigen Namen, damit er nur vom
                         Administrator deiner Schule gesehen werden kann. Dein

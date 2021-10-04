@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
     TableRow,
     TableCell,
-    Checkbox,
     Menu,
     MenuItem,
     Divider,
@@ -16,9 +15,10 @@ import {
 } from '@material-ui/icons';
 import { FileModel, DirectoryModel } from 'model';
 import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
 import { File } from 'util/model/File';
-import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useServerData } from 'component/ServerDataContext';
 import fileExplorerContext, {
     FileExplorerMode,
@@ -103,15 +103,16 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                     {state.mode === FileExplorerMode.SelectMultiple && (
                         <Checkbox
                             style={{ padding: 0 }}
+                            label={''}
                             checked={
                                 state.selectedFiles.find(
                                     (f) => f.id === file.id
                                 ) !== undefined
                             }
-                            onChange={(_e, checked) => {
+                            onChange={(e) => {
                                 dispatch({
                                     type: 'setSelectedFiles',
-                                    files: checked
+                                    files: e.currentTarget.checked
                                         ? uniqBy(
                                               [...state.selectedFiles, file],
                                               'id'

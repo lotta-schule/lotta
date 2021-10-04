@@ -3,11 +3,7 @@ import {
     Avatar,
     Card,
     CardContent,
-    Checkbox,
-    FormGroup,
-    FormControlLabel,
     Grid,
-    Typography,
     Badge,
     Divider,
     List,
@@ -15,21 +11,22 @@ import {
     ListItem,
     ListSubheader,
 } from '@material-ui/core';
+import { Clear } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { Button } from 'component/general/button/Button';
-import { Clear } from '@material-ui/icons';
+import { Checkbox } from 'component/general/form/checkbox';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { NavigationButton } from 'component/general/button/NavigationButton';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
 import { UpdateEmailDialog } from 'component/dialog/UpdateEmailDialog';
 import { File, User } from 'util/model';
 import { FileModelType, UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
 import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
-import { NavigationButton } from 'component/general/button/NavigationButton';
-import { Input } from 'component/general/form/input/Input';
-import { Label } from 'component/general/label/Label';
 import { useServerData } from 'component/ServerDataContext';
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
 import Link from 'next/link';
@@ -70,7 +67,7 @@ export const ProfileData = React.memo(() => {
     return (
         <Card className={styles.root}>
             <CardContent>
-                <Typography variant={'h4'}>Meine Daten</Typography>
+                <h4>Meine Daten</h4>
                 <ErrorMessage error={error} />
                 <Grid container className={styles.gridContainer}>
                     <Grid item xs md={4}>
@@ -207,28 +204,22 @@ export const ProfileData = React.memo(() => {
                             />
                         </Label>
 
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={isHideFullName!}
-                                        onChange={(_e, checked) =>
-                                            setIsHideFullName(checked)
-                                        }
-                                    />
-                                }
-                                label={
-                                    'Deinen vollständigen Namen öffentlich verstecken'
-                                }
-                            />
-                        </FormGroup>
-                        <Typography variant="caption" component={'div'}>
+                        <Checkbox
+                            checked={isHideFullName!}
+                            label={
+                                'Deinen vollständigen Namen öffentlich verstecken'
+                            }
+                            onChange={(e) =>
+                                setIsHideFullName(e.currentTarget.checked)
+                            }
+                        />
+                        <div>
                             Verstecke deinen vollständigen Namen, damit er nur
                             vom Administrator deiner Schule gesehen werden kann.
                             Dein Name taucht nicht in den von dir erstellten
                             Artikeln oder in deinem Profil auf. Stattdessen wird
                             dein Spitzname angezeigt.
-                        </Typography>
+                        </div>
                         <Label label="Deine Klasse / Dein Kürzel:">
                             <Input
                                 autoFocus
@@ -251,9 +242,7 @@ export const ProfileData = React.memo(() => {
                             </small>
                         </p>
                         <Divider className={styles.divider} />
-                        <Typography variant={'h5'}>
-                            Meine Einschreibeschlüssel
-                        </Typography>
+                        <h5>Meine Einschreibeschlüssel</h5>
                         <EnrollmentTokensEditor
                             disabled={isLoading}
                             tokens={enrollmentTokens}
