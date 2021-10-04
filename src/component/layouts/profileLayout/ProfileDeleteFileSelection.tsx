@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { FileModel } from 'model';
-import { Article, Category, File } from 'util/model';
 import {
-    Checkbox,
     Tooltip,
     TableContainer,
     Table,
@@ -11,6 +8,9 @@ import {
     TableBody,
     TableCell,
 } from '@material-ui/core';
+import { FileModel } from 'model';
+import { Article, Category, File } from 'util/model';
+import { Checkbox } from 'component/general/form/checkbox';
 import { useServerData } from 'component/ServerDataContext';
 import Link from 'next/link';
 
@@ -44,20 +44,17 @@ export const ProfileDeleteFileSelection =
                             <TableRow>
                                 <TableCell>
                                     <Checkbox
+                                        label={''}
                                         value={allFilesValue}
-                                        indeterminate={
-                                            allFilesValue === 'mixed'
-                                        }
                                         checked={allFilesValue === 'on'}
-                                        onChange={(_e, checked) => {
+                                        onChange={(e) => {
                                             onSelectFiles(
-                                                checked ? [...files] : []
+                                                e.currentTarget.checked
+                                                    ? [...files]
+                                                    : []
                                             );
                                         }}
-                                        inputProps={{
-                                            'aria-label':
-                                                'Alle Dateien übergeben',
-                                        }}
+                                        aria-label={'Alle Dateien übergeben'}
                                     />
                                 </TableCell>
                                 <TableCell>Ordner</TableCell>
@@ -163,12 +160,13 @@ export const ProfileDeleteFileSelection =
                                     >
                                         <TableCell>
                                             <Checkbox
+                                                label={''}
                                                 checked={isSelected}
-                                                inputProps={{
-                                                    'aria-labelledby': `file-${file.id}-filename`,
-                                                }}
-                                                onChange={(_e, checked) => {
-                                                    if (checked) {
+                                                aria-labelledby={`file-${file.id}-filename`}
+                                                onChange={(e) => {
+                                                    if (
+                                                        e.currentTarget.checked
+                                                    ) {
                                                         onSelectFiles([
                                                             ...selectedFiles,
                                                             file,

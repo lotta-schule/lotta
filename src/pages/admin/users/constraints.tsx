@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { Checkbox, FormControlLabel, Grid, Slider } from '@material-ui/core';
+import { Grid, Slider } from '@material-ui/core';
 import { CropFree, SdStorage } from '@material-ui/icons';
 import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
 import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
-import { Label } from 'component/general/label/Label';
-import { Input } from 'component/general/form/input/Input';
 import { GetServerSidePropsContext } from 'next';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
@@ -80,33 +81,34 @@ export const Constraints = () => {
                     </small>
                 </p>
 
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={!isLimitSet}
-                            onChange={(_e, checked) =>
-                                setValue(checked ? -1 : lastSetLimitRef.current)
-                            }
-                        />
-                    }
+                <Checkbox
+                    checked={!isLimitSet}
                     label={
                         'Datenmenge, die Nutzer hochladen können, nicht begrenzen'
                     }
+                    onChange={(e) =>
+                        setValue(
+                            e.currentTarget.checked
+                                ? -1
+                                : lastSetLimitRef.current
+                        )
+                    }
                 />
 
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={isLimitSet}
-                            onChange={(_e, checked) =>
-                                setValue(checked ? lastSetLimitRef.current : -1)
-                            }
-                        />
-                    }
+                <Checkbox
+                    checked={isLimitSet}
                     label={
                         'Datenmenge, die Nutzer hochladen können, begrenzen auf:'
                     }
+                    onChange={(e) =>
+                        setValue(
+                            e.currentTarget.checked
+                                ? lastSetLimitRef.current
+                                : -1
+                        )
+                    }
                 />
+
                 <animated.div style={springProps}>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>

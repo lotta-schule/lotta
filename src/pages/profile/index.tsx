@@ -3,9 +3,6 @@ import {
     Avatar,
     Card,
     CardContent,
-    Checkbox,
-    FormGroup,
-    FormControlLabel,
     Grid,
     Badge,
     Divider,
@@ -14,21 +11,22 @@ import {
     ListItem,
     ListSubheader,
 } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
 import { Clear } from '@material-ui/icons';
+import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
+import { EnrollmentTokensEditor } from 'component/layouts/EnrollmentTokensEditor';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { NavigationButton } from 'component/general/button/NavigationButton';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { UpdateEmailDialog } from 'component/dialog/UpdateEmailDialog';
+import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
 import { File, User } from 'util/model';
 import { FileModelType, UserModel, FileModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { useGetFieldError } from 'util/useGetFieldError';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { UpdatePasswordDialog } from 'component/dialog/UpdatePasswordDialog';
-import { EnrollmentTokensEditor } from 'component/layouts/EnrollmentTokensEditor';
-import { NavigationButton } from 'component/general/button/NavigationButton';
-import { Input } from 'component/general/form/input/Input';
-import { Label } from 'component/general/label/Label';
 import { useServerData } from 'component/ServerDataContext';
 import { GetServerSidePropsContext } from 'next';
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
@@ -206,21 +204,16 @@ export const Profile = () => {
                             />
                         </Label>
 
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={isHideFullName!}
-                                        onChange={(_e, checked) =>
-                                            setIsHideFullName(checked)
-                                        }
-                                    />
-                                }
-                                label={
-                                    'Deinen vollständigen Namen öffentlich verstecken'
-                                }
-                            />
-                        </FormGroup>
+                        <Checkbox
+                            checked={isHideFullName!}
+                            label={
+                                'Deinen vollständigen Namen öffentlich verstecken'
+                            }
+                            onChange={(e) =>
+                                setIsHideFullName(e.currentTarget.checked)
+                            }
+                        />
+
                         <div>
                             Verstecke deinen vollständigen Namen, damit er nur
                             vom Administrator deiner Schule gesehen werden kann.
@@ -228,6 +221,7 @@ export const Profile = () => {
                             Artikeln oder in deinem Profil auf. Stattdessen wird
                             dein Spitzname angezeigt.
                         </div>
+
                         <Label label="Deine Klasse / Dein Kürzel:">
                             <Input
                                 autoFocus
@@ -249,7 +243,9 @@ export const Profile = () => {
                                 erhalten.
                             </small>
                         </p>
+
                         <Divider className={styles.divider} />
+
                         <h5>Meine Einschreibeschlüssel</h5>
                         <EnrollmentTokensEditor
                             disabled={isLoading}
@@ -262,6 +258,7 @@ export const Profile = () => {
                                 Gruppen einzutragen.
                             </small>
                         </p>
+
                         <Button
                             type={'submit'}
                             style={{ float: 'right' }}

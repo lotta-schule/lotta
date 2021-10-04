@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { Add, DragHandle, Delete } from '@material-ui/icons';
-import {
-    Grid,
-    TextField,
-    Checkbox,
-    FormGroup,
-    FormControlLabel,
-    Divider,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
+import { Grid, TextField, Divider } from '@material-ui/core';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
@@ -184,72 +178,54 @@ export const Edit = React.memo<EditProps>(
                         </Button>
                     </Grid>
                     <Grid item xs={7}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={
-                                            configuration.destination !==
-                                            undefined
-                                        }
-                                        onChange={(_e, checked) =>
-                                            updateConfiguration({
-                                                destination: checked
-                                                    ? ''
-                                                    : undefined,
-                                            })
-                                        }
-                                    />
-                                }
-                                label={'Formulardaten per Email versenden'}
-                            />
-                            <TextField
-                                fullWidth
-                                id={'form-destination'}
-                                label={'Formular an folgende Email senden:'}
-                                value={configuration.destination ?? ''}
-                                disabled={
-                                    configuration.destination === undefined
-                                }
-                                onChange={(e) =>
-                                    updateConfiguration({
-                                        destination: e.target.value,
-                                    })
-                                }
-                            />
-                            <Divider />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={
-                                            configuration.save_internally ===
-                                            true
-                                        }
-                                        onChange={(_e, checked) =>
-                                            updateConfiguration({
-                                                save_internally: checked,
-                                            })
-                                        }
-                                    />
-                                }
-                                label={
-                                    <div>
-                                        <span style={{ display: 'block' }}>
-                                            Formulardaten speichern
-                                        </span>
-                                        {!!configuration.elements.find(
-                                            (el) => el.element === 'file'
-                                        ) && (
-                                            <small>
-                                                Datei-Anhänge werden nur per
-                                                Email versandt und nicht
-                                                gespeichert.
-                                            </small>
-                                        )}
-                                    </div>
-                                }
-                            />
-                        </FormGroup>
+                        <Checkbox
+                            checked={configuration.destination !== undefined}
+                            onChange={(e) =>
+                                updateConfiguration({
+                                    destination: e.currentTarget.checked
+                                        ? ''
+                                        : undefined,
+                                })
+                            }
+                            label={'Formulardaten per Email versenden'}
+                        />
+                        <TextField
+                            fullWidth
+                            id={'form-destination'}
+                            label={'Formular an folgende Email senden:'}
+                            value={configuration.destination ?? ''}
+                            disabled={configuration.destination === undefined}
+                            onChange={(e) =>
+                                updateConfiguration({
+                                    destination: e.target.value,
+                                })
+                            }
+                        />
+                        <Divider />
+                        <Checkbox
+                            checked={configuration.save_internally === true}
+                            onChange={(e) =>
+                                updateConfiguration({
+                                    save_internally: e.currentTarget.checked,
+                                })
+                            }
+                            label={
+                                <div>
+                                    <span style={{ display: 'block' }}>
+                                        Formulardaten speichern
+                                    </span>
+                                    {!!configuration.elements.find(
+                                        (el) => el.element === 'file'
+                                    ) && (
+                                        <small>
+                                            Datei-Anhänge werden nur per Email
+                                            versandt und nicht gespeichert.
+                                        </small>
+                                    )}
+                                </div>
+                            }
+                            aria-label={'Formulardaten speichern'}
+                        />
                     </Grid>
                 </Grid>
                 <Button

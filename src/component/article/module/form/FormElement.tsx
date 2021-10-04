@@ -1,20 +1,11 @@
 import * as React from 'react';
-import {
-    Checkbox,
-    FormControlLabel,
-    TextField,
-    Typography,
-    FormGroup,
-    FormControl,
-    RadioGroup,
-    Radio,
-    InputLabel,
-    Select,
-    MenuItem,
-    FormLabel,
-} from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { ButtonGroup } from 'component/general/button/ButtonGroup';
+import { Checkbox } from 'component/general/form/checkbox';
+import { Radio, RadioGroup } from 'component/general/form/radio';
+import { Label } from 'component/general/label/Label';
+import { Select } from 'component/general/form/select/Select';
 import { SelectFileButton } from 'component/edit/SelectFileButton';
 import { FormElement as FormElementInterface } from './Form';
 import { FileModel } from 'model';
@@ -35,113 +26,72 @@ export const FormElement = React.memo<FormElementProps>(
             if (element.element === 'selection') {
                 if (element.type === 'checkbox') {
                     return (
-                        <FormControl
-                            required={element.required}
-                            component={'fieldset'}
-                        >
-                            <FormLabel
-                                id={`form-checkbox-label-${element.name!}`}
-                            >
-                                {element.label}
-                            </FormLabel>
-                            <FormGroup row={false}>
-                                {element.options?.map((option, i) => {
-                                    return (
-                                        <FormControlLabel
-                                            key={i}
-                                            control={
-                                                <Checkbox
-                                                    name={element.name}
-                                                    value={option.value}
-                                                    color={'secondary'}
-                                                    disabled={isEditModeEnabled}
-                                                    checked={
-                                                        value instanceof Array
-                                                            ? value.indexOf(
-                                                                  option.value
-                                                              ) > -1
-                                                            : false
-                                                    }
-                                                    onChange={(_e, checked) => {
-                                                        const values = (
-                                                            value instanceof
-                                                            Array
-                                                                ? value
-                                                                : [value]
-                                                        ).filter(Boolean);
-                                                        if (checked) {
-                                                            onSetValue([
-                                                                ...values,
-                                                                option.value,
-                                                            ]);
-                                                        } else {
-                                                            onSetValue(
-                                                                values.filter(
-                                                                    (v) =>
-                                                                        v !==
-                                                                        option.value
-                                                                )
-                                                            );
-                                                        }
-                                                    }}
-                                                />
+                        <Label label={element.label ?? ''}>
+                            {element.options?.map((option, i) => {
+                                return (
+                                    <Checkbox
+                                        key={i}
+                                        name={element.name}
+                                        label={option.label}
+                                        value={option.value}
+                                        disabled={isEditModeEnabled}
+                                        checked={
+                                            value instanceof Array
+                                                ? value.indexOf(option.value) >
+                                                  -1
+                                                : false
+                                        }
+                                        onChange={(e) => {
+                                            const values = (
+                                                value instanceof Array
+                                                    ? value
+                                                    : [value]
+                                            ).filter(Boolean);
+                                            if (e.currentTarget.checked) {
+                                                onSetValue([
+                                                    ...values,
+                                                    option.value,
+                                                ]);
+                                            } else {
+                                                onSetValue(
+                                                    values.filter(
+                                                        (v) =>
+                                                            v !== option.value
+                                                    )
+                                                );
                                             }
-                                            label={option.label}
-                                        />
-                                    );
-                                })}
-                            </FormGroup>
-                        </FormControl>
+                                        }}
+                                    />
+                                );
+                            })}
+                        </Label>
                     );
                 } else if (element.type === 'radio') {
                     return (
-                        <FormControl
-                            required={element.required}
-                            component={'fieldset'}
-                        >
-                            <FormLabel id={`form-radio-label-${element.name!}`}>
-                                {element.label}
-                            </FormLabel>
+                        <Label label={element.label ?? ''}>
                             <RadioGroup
-                                row={false}
+                                name={element.name}
                                 value={value ?? ''}
                                 onChange={(_e, value) => onSetValue(value)}
+                                required={element.required}
                             >
                                 {element.options?.map((option, i) => {
                                     return (
-                                        <FormControlLabel
+                                        <Radio
                                             key={i}
-                                            control={
-                                                <Radio
-                                                    name={element.name}
-                                                    value={option.value}
-                                                    title={
-                                                        option.label ??
-                                                        option.value
-                                                    }
-                                                    color={'secondary'}
-                                                    disabled={isEditModeEnabled}
-                                                />
-                                            }
-                                            label={option.label}
+                                            name={element.name}
+                                            value={option.value}
+                                            label={option.label ?? option.value}
+                                            disabled={isEditModeEnabled}
                                         />
                                     );
                                 })}
                             </RadioGroup>
-                        </FormControl>
+                        </Label>
                     );
                 } else if (element.type === 'select') {
                     return (
-                        <FormControl
-                            required={element.required}
-                            component={'fieldset'}
-                            fullWidth
-                        >
-                            <InputLabel
-                                htmlFor={`form-select-${element.name!}`}
-                            >
-                                {element.label}
-                            </InputLabel>
+                        <Label label={element.label ?? ''}>
                             <Select
                                 value={
                                     value ??
@@ -149,7 +99,7 @@ export const FormElement = React.memo<FormElementProps>(
                                         ?.value ??
                                     ''
                                 }
-                                onChange={({ target: { value } }) =>
+                                onChange={({ currentTarget: { value } }) =>
                                     onSetValue(value as string)
                                 }
                                 required={element.required}
@@ -157,13 +107,13 @@ export const FormElement = React.memo<FormElementProps>(
                             >
                                 {element.options?.map((option, i) => {
                                     return (
-                                        <MenuItem key={i} value={option.value}>
+                                        <option key={i} value={option.value}>
                                             {option.label}
-                                        </MenuItem>
+                                        </option>
                                     );
                                 })}
                             </Select>
-                        </FormControl>
+                        </Label>
                     );
                 }
             }
@@ -311,9 +261,7 @@ export const FormElement = React.memo<FormElementProps>(
             return (
                 <section>
                     {element.descriptionText && (
-                        <Typography variant={'body1'}>
-                            {element.descriptionText}
-                        </Typography>
+                        <p>{element.descriptionText}</p>
                     )}
                     {formElement}
                 </section>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormControl, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Checkbox } from 'component/general/form/checkbox';
 import { ContentModuleModel } from 'model';
 import get from 'lodash/get';
 
@@ -19,26 +19,20 @@ export const Config = React.memo<ConfigProps>(
 
         return (
             <form data-testid="DownloadContentModuleConfiguration">
-                <FormControl fullWidth>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={!hidePreviews}
-                                onChange={(_, checked) =>
-                                    onUpdateModule({
-                                        ...contentModule,
-                                        configuration: {
-                                            ...contentModule.configuration,
-                                            hidePreviews: !checked,
-                                        },
-                                    })
-                                }
-                                name={'hidePreviews'}
-                            />
-                        }
-                        label={'Vorschaubilder anzeigen'}
-                    />
-                </FormControl>
+                <Checkbox
+                    label={'Vorschaubilder anzeigen'}
+                    checked={!hidePreviews}
+                    onChange={(e) =>
+                        onUpdateModule({
+                            ...contentModule,
+                            configuration: {
+                                ...contentModule.configuration,
+                                hidePreviews: !e.currentTarget.checked,
+                            },
+                        })
+                    }
+                    name={'hidePreviews'}
+                />
             </form>
         );
     }

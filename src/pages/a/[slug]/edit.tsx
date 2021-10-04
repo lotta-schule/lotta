@@ -38,7 +38,7 @@ export const EditArticleRoute = ({
     return (
         <>
             <BaseLayoutMainContent>
-                <EditArticleLayout article={data.article} />
+                <EditArticleLayout article={data?.article ?? article} />
             </BaseLayoutMainContent>
             <BaseLayoutSidebar isEmpty />
         </>

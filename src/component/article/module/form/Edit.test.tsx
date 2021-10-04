@@ -32,6 +32,8 @@ describe('component/article/modules/form/Edit', () => {
         },
         files: [],
         sortKey: 0,
+        insertedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
     };
 
     it('should render', () => {

@@ -1,14 +1,8 @@
 import * as React from 'react';
-import chunk from 'lodash/chunk';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    FormGroup,
-    FormControlLabel,
-    Checkbox,
-} from '@material-ui/core';
+import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { chunk } from 'lodash';
 import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
 import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { LOCALSTORAGE_KEY } from './Schedule';
 
@@ -70,25 +64,17 @@ export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(
                         {chunk(
                             possibleCourses,
                             Math.ceil(possibleCourses.length / COLUMNS_COUNT)
-                        ).map((courses, i) => (
-                            <FormGroup key={i} className={styles.formGroup}>
-                                {courses.map((courseName) => (
-                                    <FormControlLabel
-                                        key={courseName}
-                                        control={
-                                            <Checkbox
-                                                checked={isSelected(courseName)}
-                                                onChange={() =>
-                                                    toggle(courseName)
-                                                }
-                                                value={courseName}
-                                            />
-                                        }
-                                        label={courseName}
-                                    />
-                                ))}
-                            </FormGroup>
-                        ))}
+                        ).map((courses, i) =>
+                            courses.map((courseName) => (
+                                <Checkbox
+                                    key={`${i}-courseName`}
+                                    label={courseName}
+                                    value={courseName}
+                                    checked={isSelected(courseName)}
+                                    onChange={() => toggle(courseName)}
+                                />
+                            ))
+                        )}
                     </div>
                 </DialogContent>
                 <DialogActions>

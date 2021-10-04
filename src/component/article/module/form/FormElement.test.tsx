@@ -150,26 +150,15 @@ describe('component/article/module/form/FormElement', () => {
                     onSetValue={setValueFn}
                 />
             );
-            expect(screen.getByRole('button')).toHaveTextContent(
-                /zweiter buchstabe/i
-            );
-            expect(screen.getByRole('textbox', { hidden: true })).toHaveValue(
-                'B'
-            );
 
-            userEvent.click(screen.getByRole('button'));
+            expect(
+                screen.getByRole('combobox', { name: /blabla1/i })
+            ).toHaveValue('B');
+
             expect(screen.getAllByRole('option')).toHaveLength(3);
-            expect(
-                screen.getByRole('option', { name: /erster buchstabe/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('option', { name: /zweiter buchstabe/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('option', { name: /dritter buchstabe/i })
-            ).toBeVisible();
-            userEvent.click(
-                screen.getByRole('option', { name: /erster buchstabe/i })
+            userEvent.selectOptions(
+                screen.getByRole('combobox', { name: /blabla1/i }),
+                screen.getByRole('option', { name: /erster/i })
             );
             expect(setValueFn).toHaveBeenCalledWith('A');
         });

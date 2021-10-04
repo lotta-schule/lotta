@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Checkbox, FormControlLabel, NoSsr } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import { useAutocomplete } from '@material-ui/lab';
 import { Check, Close } from '@material-ui/icons';
-import { useUserGroups } from 'util/tenant/useUserGroups';
-import { UserGroupModel } from 'model/UserGroupModel';
+import { UserGroupModel } from 'model';
 import { Button } from 'component/general/button/Button';
+import { Checkbox } from 'component/general/form/checkbox';
 import { Input } from 'component/general/form/input/Input';
+import { useUserGroups } from 'util/tenant/useUserGroups';
 import clsx from 'clsx';
 
 import styles from './GroupSelect.module.scss';
@@ -120,7 +121,9 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                             className={clsx(styles.inputWrapper)}
                         >
                             {hidePublicGroupSelection !== true && (
-                                <FormControlLabel
+                                <Checkbox
+                                    disabled={disabled}
+                                    checked={selectedGroups.length === 0}
                                     label={
                                         <i>
                                             {publicGroupSelectionLabel ??
@@ -128,23 +131,13 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                                         </i>
                                     }
                                     className={styles.publicGroupSelectionLabel}
-                                    disabled={disabled}
-                                    control={
-                                        <Checkbox
-                                            disabled={disabled}
-                                            checked={
-                                                selectedGroups.length === 0
-                                            }
-                                            size={'small'}
-                                            onChange={(event) => {
-                                                if (event.target.checked) {
-                                                    onSelectGroups([]);
-                                                } else {
-                                                    onSelectGroups([...groups]);
-                                                }
-                                            }}
-                                        />
-                                    }
+                                    onChange={(e) => {
+                                        if (e.currentTarget.checked) {
+                                            onSelectGroups([]);
+                                        } else {
+                                            onSelectGroups([...groups]);
+                                        }
+                                    }}
                                 />
                             )}
                             {value
