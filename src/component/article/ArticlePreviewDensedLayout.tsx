@@ -88,7 +88,7 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                     )}
                     <Grid item xs>
                         <CardContent className={styles.cardContent}>
-                            <h5 className={styles.articleTitle}>
+                            <h3 className={styles.articleTitle}>
                                 {!isEmbedded &&
                                     currentUser &&
                                     currentUser.lastSeen &&
@@ -102,7 +102,7 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                         />
                                     )}
                                 {maybeLinked(article.title)}
-                            </h5>
+                            </h3>
                             <span
                                 className={clsx(styles.previewText, {
                                     [styles.previewTextLimitedHeight]:

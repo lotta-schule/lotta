@@ -1,3 +1,5 @@
+@import 'colors';
+
 .root {
     display: flex;
     flex-direction: column;
@@ -34,7 +36,7 @@
 
     .tableline {
         &:hover {
-            background-color: rgba(var(--lotta-secondary-color), 0.4);
+            background-color: l_color(highlight, 0.3);
         }
     }
 

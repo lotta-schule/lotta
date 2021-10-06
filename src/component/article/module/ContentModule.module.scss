@@ -1,3 +1,5 @@
+@import 'colors';
+
 .root {
     position: relative;
     border-width: 0;
@@ -8,16 +10,16 @@
         border-width: 1px;
     }
     &.dragging {
-        border-color: rgba(var(--lotta-secondary-color), 1);
+        border-color: l_color(secondary);
         .dragbar {
-            background-color: rgba(var(--lotta-secondary-color), 1);
+            background-color: l_color(secondary);
             opacity: 1;
         }
     }
     &:hover,
     &:focus-within,
     &.active {
-        border-color: rgba(var(--lotta-banner-background-color), 1);
+        border-color: l_color(highlight);
         .dragbar {
             opacity: 0.8;
         }
@@ -28,7 +30,7 @@
     opacity: 0;
     height: 2em;
     width: 100%;
-    background-color: rgba(var(--lotta-banner-background-color), 1);
+    background-color: l_color(highlight);
     display: flex;
     justify-content: space-between;
     transition: opacity 250ms ease-in;
@@ -51,7 +53,7 @@
 }
 
 .buttonIcon {
-    color: rgba(var(--lotta-banner-background-color), 1);
+    color: l_color(highlight);
 }
 
 .activeButtonIcon {

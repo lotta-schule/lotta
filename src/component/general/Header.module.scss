@@ -9,7 +9,8 @@
         color: rgba(var(--lotta-text-color));
         padding: var(--lotta-spacing);
         font-size: 1.5rem;
-        letter-spacing: 5;
+        font-weight: 100;
+        letter-spacing: calc(0.5 * var(--lotta-spacing));
         text-transform: uppercase;
     }
     .subheader {

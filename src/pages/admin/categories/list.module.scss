@@ -1,9 +1,11 @@
+@import 'colors';
+
 .root {
     padding: 2px;
     display: flex;
     align-items: center;
     width: 400px;
-    background-color: rgba(var(--lotta-banner-background-color1), 1);
+    background-color: l_color(highlight, 0.3);
     border-radius: var(--lotta-border-radius);
 }
 

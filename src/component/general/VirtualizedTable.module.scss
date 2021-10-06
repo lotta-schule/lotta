@@ -1,3 +1,5 @@
+@import 'colors';
+
 .flexContainer {
     display: flex;
     align-items: center;
@@ -14,8 +16,8 @@
 }
 
 .tableRowHover {
-    &:hover {
-        background-color: rgba(var(--lotta-banner-background-color1), 1);
+    &:hover > div > div {
+        background-color: l_color(highlight, 0.3);
     }
 }
 

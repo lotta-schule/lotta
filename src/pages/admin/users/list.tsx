@@ -92,7 +92,7 @@ export const List = () => {
             hasHomeLink
         >
             <SearchUserField
-                className={clsx(styles.searchUserField, styles.headline)}
+                className={clsx(styles.headline)}
                 onSelectUser={setSelectedUser}
             />
 

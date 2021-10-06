@@ -1,3 +1,5 @@
+@import 'colors';
+
 .root {
     margin: 'auto';
 }
@@ -26,10 +28,7 @@
     flex-grow: 1;
 }
 
-.switch {
-    // TODO: Maybe find better color
-    color: rgba(var(--lotta-banner-background-color1), 1);
-    .switchChecked {
-        color: rgba(var(--lotta-secondary-color), 1);
-    }
+.typography {
+    display: flex;
+    align-items: center;
 }

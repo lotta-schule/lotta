@@ -1,3 +1,5 @@
+@import 'colors';
+
 .root {
     margin: var(--lotta-spacing) 0;
     position: relative;
@@ -84,7 +86,7 @@
     }
 
     li[data-focus='true'] {
-        background-color: rgba(var(--lotta-banner-background-color1), 1);
+        background-color: l_color(highlight, 0.3);
         cursor: pointer;
 
         svg {

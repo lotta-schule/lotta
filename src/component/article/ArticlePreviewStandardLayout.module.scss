@@ -1,4 +1,5 @@
 @import 'breakpoints';
+@import 'colors';
 
 .root {
     position: relative;
@@ -84,7 +85,7 @@
 
     .previewSection {
         margin-bottom: var(--lotta-spacing);
-        color: rgba(var(--lotta-banner-background-color1), 1);
+        color: l_color(label-text);
         overflow: hidden;
         text-overflow: ellipsis;
         height: 3.2em;
@@ -125,13 +126,13 @@
     }
 
     .editButton {
-        color: rgba(var(--lotta-banner-background-color1), 1);
+        color: l_color(highlight);
     }
 
     .pinButton {
-        color: rgba(var(--lotta-banner-background-color1), 1);
+        color: l_color(highlight);
         &.active {
-            color: rgba(var(--lotta-secondary-color, 1));
+            color: l_color(primary);
         }
     }
 

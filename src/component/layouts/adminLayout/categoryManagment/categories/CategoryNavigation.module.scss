@@ -1,3 +1,5 @@
+@import 'colors';
+
 .root {
     .heading {
         margin-bottom: calc(3 * var(--lotta-spacing));
@@ -7,13 +9,13 @@
         margin-right: calc(3 * var(--lotta-spacing));
     }
     .expansionSummary {
-        background-color: rgba(var(--lotta-banner-background-color-1), 1);
+        background-color: l_color(highlight, 0.3);
         border-radius: var(--lotta-border-radius);
         border: 1px solid;
         border-color: rgba(var(--lotta-divider-color), 1);
         margin-bottom: var(--lotta-spacing);
         &:hover {
-            border-color: rgba(var(--lotta-banner-background-color-1), 1);
+            border-color: l_color(primary);
         }
     }
     .subcategories {
@@ -22,9 +24,9 @@
         border-color: rgba(var(--lotta-divider-color), 1);
         margin-bottom: var(--lotta-spacing);
         background-color: rgba(var(--lotta-box-background-color), 1);
-        color: rgba(var(--lotta-banner-background-color1), 1);
+        color: l_color(text);
         &:hover {
-            border-color: rgba(var(--lotta-banner-background-color-1), 1);
+            border-color: l_color(primary);
         }
     }
     .before::before {

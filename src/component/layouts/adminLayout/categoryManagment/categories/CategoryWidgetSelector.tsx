@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-    Grid,
-    FormControlLabel,
-    Switch,
-    CircularProgress,
-} from '@material-ui/core';
+import { Grid, FormControlLabel, CircularProgress } from '@material-ui/core';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
@@ -12,6 +7,7 @@ import { WidgetIcon } from 'component/widgets/WidgetIcon';
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 import styles from './CategoryWidgetSelector.module.scss';
+import { Checkbox } from 'component/general/form/checkbox';
 
 export interface CategoryWidgetSelectorProps {
     selectedWidgets: WidgetModel[];
@@ -68,53 +64,21 @@ export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
                 >
                     {allWidgets.length > 1 && (
                         <Grid item xs={12}>
-                            <FormControlLabel
-                                classes={{
-                                    root: styles.labelWrapper,
-                                    label: styles.label,
-                                }}
-                                style={{ marginLeft: 5 }}
-                                control={
-                                    <Switch
-                                        color={'secondary'}
-                                        classes={{
-                                            switchBase: styles.switch,
-                                            checked: styles.switchChecked,
-                                        }}
-                                        checked={isAllWidgetsSelected}
-                                        onChange={() => handleToggleAll()}
-                                        name={'select-all-widgets'}
-                                    />
-                                }
+                            <Checkbox
                                 label={
                                     <div className={styles.typography}>
                                         Alle Marginalen aktivieren
                                     </div>
                                 }
-                                labelPlacement={'start'}
+                                checked={isAllWidgetsSelected}
+                                onChange={() => handleToggleAll()}
                             />
                         </Grid>
                     )}
 
                     {allWidgets.map((widget) => (
                         <Grid key={widget.id} item xs={12}>
-                            <FormControlLabel
-                                classes={{
-                                    root: styles.labelWrapper,
-                                    label: styles.label,
-                                }}
-                                control={
-                                    <Switch
-                                        classes={{
-                                            switchBase: styles.switch,
-                                            checked: styles.switchChecked,
-                                        }}
-                                        color={'secondary'}
-                                        checked={isWidgetSelected(widget)}
-                                        onChange={() => handleToggle(widget)}
-                                        name={`widget-${widget.id}`}
-                                    />
-                                }
+                            <Checkbox
                                 label={
                                     <div className={styles.typography}>
                                         <WidgetIcon
@@ -124,7 +88,8 @@ export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
                                         {widget.title}
                                     </div>
                                 }
-                                labelPlacement={'start'}
+                                checked={isWidgetSelected(widget)}
+                                onChange={() => handleToggle(widget)}
                             />
                         </Grid>
                     ))}

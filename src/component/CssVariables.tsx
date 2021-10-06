@@ -53,6 +53,7 @@ export const CssVariables = React.memo(() => {
                 theme.palette.background.default
             ).values.slice(0, 3),
             dividerColor: [200, 200, 200],
+            highlightColor: [200, 200, 200],
             bannerBackgroundColor1: [54, 123, 240],
             bannerBackgroundColor2: [54, 123, 240],
             typographyTitleFontFamily: (theme.overrides as any)
