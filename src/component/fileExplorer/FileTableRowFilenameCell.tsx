@@ -1,18 +1,12 @@
 import * as React from 'react';
+import { TableCell, Tooltip } from '@material-ui/core';
+import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
-import {
-    InputAdornment,
-    TableCell,
-    TextField,
-    Tooltip,
-    CircularProgress,
-} from '@material-ui/core';
-import { Done } from '@material-ui/icons';
-import { useMutation } from '@apollo/client';
-import { Button } from 'component/general/button/Button';
+import { Input } from 'component/general/form/input/Input';
 import { useServerData } from 'component/ServerDataContext';
 import fileExplorerContext from './context/FileExplorerContext';
+
 import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';
 import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';
 
@@ -36,6 +30,7 @@ export const FileTableRowFilenameCell =
             );
 
             const renamingInputRef = React.useRef<HTMLInputElement>();
+
             React.useLayoutEffect(() => {
                 if (renamingInputRef.current) {
                     renamingInputRef.current.focus();
@@ -50,62 +45,58 @@ export const FileTableRowFilenameCell =
                 setNewFilename(file?.filename ?? directory!.name);
             }, [directory, file, isRenaming]);
 
-            const [updateFile, { loading: isLoadingUpdateFile }] = useMutation(
-                UpdateFileMutation,
-                {
-                    variables: {
-                        id: file?.id,
-                        filename: newFilename,
-                    },
-                    optimisticResponse: ({ id, filename }) => {
-                        renamingInputRef.current?.blur();
-                        return {
-                            __typename: 'Mutation',
-                            file: {
-                                __typename: 'File',
-                                id,
-                                filename,
-                                parentDirectory: {
-                                    __typename: 'Directory',
-                                    id: currentPath[currentPath.length - 1]!.id,
-                                },
-                                updatedAt: new Date().toISOString(),
-                            },
-                        } as any;
-                    },
-                    onCompleted: () => {
-                        onCompleteRenaming();
-                        renamingInputRef.current?.blur();
-                    },
-                }
-            );
-            const [updateDirectory, { loading: isLoadingUpdateDirectory }] =
-                useMutation(UpdateDirectoryMutation, {
-                    variables: {
-                        id: directory?.id,
-                        name: newFilename,
-                    },
-                    optimisticResponse: ({ id, name }) => {
-                        renamingInputRef.current?.blur();
-                        return {
-                            __typename: 'Mutation',
-                            directory: {
+            const [updateFile] = useMutation(UpdateFileMutation, {
+                variables: {
+                    id: file?.id,
+                    filename: newFilename,
+                },
+                optimisticResponse: ({ id, filename }) => {
+                    renamingInputRef.current?.blur();
+                    return {
+                        __typename: 'Mutation',
+                        file: {
+                            __typename: 'File',
+                            id,
+                            filename,
+                            parentDirectory: {
                                 __typename: 'Directory',
-                                id,
-                                name,
-                                parentDirectory: {
-                                    __typename: 'Directory',
-                                    id: currentPath[currentPath.length - 1]!.id,
-                                },
-                                updatedAt: new Date().toISOString(),
+                                id: currentPath[currentPath.length - 1]!.id,
                             },
-                        } as any;
-                    },
-                    onCompleted: () => {
-                        onCompleteRenaming();
-                        renamingInputRef.current?.blur();
-                    },
-                });
+                            updatedAt: new Date().toISOString(),
+                        },
+                    } as any;
+                },
+                onCompleted: () => {
+                    onCompleteRenaming();
+                    renamingInputRef.current?.blur();
+                },
+            });
+            const [updateDirectory] = useMutation(UpdateDirectoryMutation, {
+                variables: {
+                    id: directory?.id,
+                    name: newFilename,
+                },
+                optimisticResponse: ({ id, name }) => {
+                    renamingInputRef.current?.blur();
+                    return {
+                        __typename: 'Mutation',
+                        directory: {
+                            __typename: 'Directory',
+                            id,
+                            name,
+                            parentDirectory: {
+                                __typename: 'Directory',
+                                id: currentPath[currentPath.length - 1]!.id,
+                            },
+                            updatedAt: new Date().toISOString(),
+                        },
+                    } as any;
+                },
+                onCompleted: () => {
+                    onCompleteRenaming();
+                    renamingInputRef.current?.blur();
+                },
+            });
 
             const move = () => {
                 if (file) {
@@ -127,41 +118,13 @@ export const FileTableRowFilenameCell =
                                 }
                             }}
                         >
-                            <TextField
-                                fullWidth
-                                inputRef={renamingInputRef}
+                            <Input
+                                autoFocus
+                                ref={renamingInputRef}
                                 value={newFilename}
-                                onChange={(e) => setNewFilename(e.target.value)}
-                                InputProps={{
-                                    endAdornment:
-                                        isLoadingUpdateFile ||
-                                        isLoadingUpdateDirectory ? (
-                                            <InputAdornment position={'end'}>
-                                                <CircularProgress
-                                                    style={{
-                                                        width: '1em',
-                                                        height: '1em',
-                                                    }}
-                                                />
-                                            </InputAdornment>
-                                        ) : (
-                                            <InputAdornment position={'end'}>
-                                                <Button
-                                                    icon={<Done />}
-                                                    aria-label={'OK'}
-                                                    disabled={
-                                                        newFilename.length < 1
-                                                    }
-                                                    onMouseDown={(
-                                                        e: React.MouseEvent<any>
-                                                    ) => {
-                                                        e.preventDefault();
-                                                        move();
-                                                    }}
-                                                />
-                                            </InputAdornment>
-                                        ),
-                                }}
+                                onChange={(e) =>
+                                    setNewFilename(e.currentTarget.value)
+                                }
                             />
                         </form>
                     </TableCell>

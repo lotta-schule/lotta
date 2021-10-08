@@ -1,22 +1,21 @@
 import * as React from 'react';
+import { range } from 'lodash';
 import {
     Table,
     TableBody,
     TableCell,
     TableRow,
-    TextField,
     Tooltip,
-    TextFieldProps,
 } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
 import {
     SkipPrevious,
     SkipNext,
     ExpandLess,
     ExpandMore,
 } from '@material-ui/icons';
-import { range } from 'lodash';
-import { ContentModuleModel } from '../../../../model';
+import { Button } from 'component/general/button/Button';
+import { Input, InputProps } from 'component/general/form/input/Input';
+import { ContentModuleModel } from 'model';
 import {
     TableCell as TableCellInterface,
     TableContent,
@@ -33,10 +32,7 @@ interface EditProps {
 }
 
 export interface EditTableCellProps
-    extends Omit<
-        TextFieldProps,
-        'value' | 'variant' | 'style' | 'defaultValue' | 'onChange'
-    > {
+    extends Omit<InputProps, 'value' | 'style' | 'onChange'> {
     cell: TableCellInterface;
     onChange(cell: TableCellInterface): void;
     position: { row: number; column: number };
@@ -50,18 +46,16 @@ const EditTableCell = React.memo<EditTableCellProps>(
         }, [cell.text]);
         return (
             <TableCell>
-                <TextField
-                    multiline
-                    variant={'standard'}
-                    style={{ width: '100%', border: 0 }}
+                <Input
+                    multiline={true}
                     value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    onBlur={(e) => onChange({ ...cell, text: e.target.value })}
-                    inputProps={{
-                        'data-row': row,
-                        'data-column': column,
-                    }}
-                    {...props}
+                    onChange={(e) => setText(e.currentTarget.value)}
+                    onBlur={(e) =>
+                        onChange({ ...cell, text: e.currentTarget.value })
+                    }
+                    data-row={row}
+                    data-column={column}
+                    {...(props as any)}
                 />
             </TableCell>
         );
@@ -170,18 +164,8 @@ export const Edit = React.memo<EditProps>(
                     );
 
                     const relativePastePosition = {
-                        row: parseInt(
-                            e.currentTarget.querySelector<HTMLInputElement>(
-                                '[data-row]'
-                            )!.dataset.row!,
-                            10
-                        ),
-                        column: parseInt(
-                            e.currentTarget.querySelector<HTMLInputElement>(
-                                '[data-row]'
-                            )!.dataset.column!,
-                            10
-                        ),
+                        row: parseInt(e.currentTarget.dataset.row!, 10),
+                        column: parseInt(e.currentTarget.dataset.column!, 10),
                     };
                     const newTableDimensions = {
                         rowsCount: Math.max(

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
     Grid,
-    Input as MuiInput,
     Container,
     DialogTitle,
     DialogContent,
@@ -179,10 +178,9 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             </div>
                         )}
                         {!!onUpdateArticle && (
-                            <MuiInput
-                                fullWidth
+                            <Input
                                 multiline
-                                disableUnderline
+                                inline
                                 placeholder={
                                     'Füge dem Beitrag einen kurzen Vorschautext hinzu.'
                                 }
@@ -195,9 +193,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                     });
                                 }}
                                 className={styles.previewSection}
-                                inputProps={{
-                                    'aria-label': 'Article preview text',
-                                }}
+                                aria-label={'Article preview text'}
                             />
                         )}
                         {!onUpdateArticle && (

@@ -1,20 +1,19 @@
 import * as React from 'react';
 import {
     CircularProgress,
-    Checkbox,
     FormControl,
     FormHelperText,
-    FormControlLabel,
 } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
 import { UserGroupModel, ID, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { Button } from 'component/general/button/Button';
-import { Label } from 'component/general/label/Label';
-import { Input } from 'component/general/form/input/Input';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
+import { Checkbox } from 'component/general/form/checkbox';
 import { EnrollmentTokensEditor } from 'component/layouts/EnrollmentTokensEditor';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 
@@ -111,26 +110,23 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                     Gib der Gruppe einen verständlichen Namen
                 </FormHelperText>
             </FormControl>
-            <FormControl>
-                <FormControlLabel
-                    control={<Checkbox />}
-                    disabled={isLoadingUpdateGroup || isSoleAdminGroup}
-                    label={'Diese Gruppe hat universelle Administratorrechte'}
-                    checked={!!group.isAdminGroup}
-                    onChange={(_, checked) => {
-                        updateGroup({
-                            variables: {
-                                id: group.id,
-                                group: {
-                                    name,
-                                    enrollmentTokens,
-                                    isAdminGroup: checked,
-                                },
+            <Checkbox
+                label={'Diese Gruppe hat universelle Administratorrechte'}
+                disabled={isLoadingUpdateGroup || isSoleAdminGroup}
+                checked={!!group.isAdminGroup}
+                onChange={(e) => {
+                    updateGroup({
+                        variables: {
+                            id: group.id,
+                            group: {
+                                name,
+                                enrollmentTokens,
+                                isAdminGroup: e.currentTarget.checked,
                             },
-                        });
-                    }}
-                />
-            </FormControl>
+                        },
+                    });
+                }}
+            />
             <p>Einschreibeschlüssel</p>
             <p>
                 Nutzer, die bei der Registrierung einen

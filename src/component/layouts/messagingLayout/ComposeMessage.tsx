@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { Button } from 'component/general/button/Button';
-import { ChatType, MessageModel, ThreadRepresentation } from 'model';
-import { TextField, Toolbar } from '@material-ui/core';
+import { Toolbar } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
+import { Button } from 'component/general/button/Button';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { Input } from 'component/general/form/input/Input';
+import { ChatType, MessageModel, ThreadRepresentation } from 'model';
 import { useMutation } from '@apollo/client';
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 import GetMessagesQuery from 'api/query/GetMessagesQuery.graphql';
@@ -83,18 +85,19 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
         return (
             <Toolbar className={styles.root}>
                 <form className={styles.form} onSubmit={onSubmit}>
-                    <TextField
-                        multiline
-                        inputRef={inputRef}
-                        className={styles.textField}
-                        label={'Nachricht schreiben'}
-                        error={!!error}
-                        disabled={isLoading}
-                        helperText={error?.message}
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        onKeyPress={onKeypress}
-                    />
+                    <div>
+                        <Input
+                            multiline
+                            ref={inputRef}
+                            className={styles.textField}
+                            label={'Nachricht schreiben'}
+                            disabled={isLoading}
+                            value={content}
+                            onChange={(e) => setContent(e.currentTarget.value)}
+                            onKeyPress={onKeypress}
+                        />
+                        {!!error && <ErrorMessage error={error} />}
+                    </div>
                     <Button
                         className={styles.button}
                         type={'submit'}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { Input, InputProps } from 'component/general/form/input/Input';
+import { Input } from 'component/general/form/input/Input';
 
 export default {
     title: 'Form/Input',
@@ -8,7 +8,7 @@ export default {
     argTypes: {},
 } as Meta;
 
-const Template: Story<Omit<InputProps, 'ref'>> = (args) => <Input {...args} />;
+const Template: Story = (args) => <Input {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
@@ -19,4 +19,10 @@ export const Inline = Template.bind({});
 Inline.args = {
     ...Default.args,
     inline: true,
+};
+
+export const Multiline = Template.bind({});
+Multiline.args = {
+    ...Default.args,
+    multiline: true,
 };
