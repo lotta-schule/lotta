@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { ContentModuleModel, FileModel } from 'model';
-import { CardContent, TextareaAutosize } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { FileSize } from 'util/FileSize';
-import { SelectFileButton } from 'component/edit/SelectFileButton';
-import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { CardContent } from '@material-ui/core';
 import { DragHandle, Delete } from '@material-ui/icons';
+import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { ContentModuleModel, FileModel } from 'model';
+import { Button } from 'component/general/button/Button';
+import { Input } from 'component/general/form/input/Input';
+import { SelectFileButton } from 'component/edit/SelectFileButton';
+import { FileSize } from 'util/FileSize';
 
 import styles from './Download.module.scss';
 
@@ -161,7 +162,8 @@ export const Edit = React.memo<EditProps>(
                                                             styles.downloadDescription
                                                         }
                                                     >
-                                                        <TextareaAutosize
+                                                        <Input
+                                                            multiline
                                                             className={
                                                                 styles.textArea
                                                             }

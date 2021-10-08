@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { TextField } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
 import { ButtonGroup } from 'component/general/button/ButtonGroup';
 import { Checkbox } from 'component/general/form/checkbox';
@@ -11,6 +10,7 @@ import { FormElement as FormElementInterface } from './Form';
 import { FileModel } from 'model';
 import { Close } from '@material-ui/icons';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Input } from 'component/general/form/input/Input';
 
 export interface FormElementProps {
     element: FormElementInterface;
@@ -119,25 +119,26 @@ export const FormElement = React.memo<FormElementProps>(
             }
             if (element.element === 'input') {
                 return (
-                    <TextField
-                        fullWidth
-                        disabled={isEditModeEnabled}
-                        name={element.name}
-                        type={element.type}
-                        label={element.label || undefined}
-                        placeholder={element.placeholder}
-                        required={element.required}
-                        multiline={element.multiline}
-                        rows={element.rows ?? 4}
-                        value={value ?? ''}
-                        onChange={({ target: { value } }) => onSetValue(value)}
-                        inputProps={{
-                            'aria-label':
+                    <Label label={element.label || ''}>
+                        <Input
+                            disabled={isEditModeEnabled}
+                            name={element.name}
+                            type={element.type}
+                            placeholder={element.placeholder}
+                            required={element.required}
+                            multiline={element.multiline}
+                            rows={element.rows ?? 4}
+                            value={value ?? ''}
+                            onChange={(e: any) =>
+                                onSetValue(e.currentTarget.value)
+                            }
+                            aria-label={
                                 element.label ??
                                 element.descriptionText ??
-                                element.name,
-                        }}
-                    />
+                                element.name
+                            }
+                        />
+                    </Label>
                 );
             }
             if (element.element === 'file') {

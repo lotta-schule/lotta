@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { TextField } from '@material-ui/core';
 import { PlusOne } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
@@ -139,13 +138,13 @@ export const FormElementConfiguration =
                     label={'Beschriftung'}
                     className={styles.configurationProperty}
                 >
-                    <TextField
+                    <Input
                         multiline
                         id={'form-input-description-text'}
                         value={element.descriptionText ?? ''}
                         onChange={(e) =>
                             updateElement({
-                                descriptionText: e.target.value as string,
+                                descriptionText: e.currentTarget.value,
                             })
                         }
                     />
@@ -194,12 +193,12 @@ export const FormElementConfiguration =
                                     label={'Wert'}
                                     className={styles.configurationProperty}
                                 >
-                                    <TextField
+                                    <Input
                                         id={`form-input-option-${i}-value`}
                                         value={option.value ?? ''}
                                         onChange={(e) =>
                                             updateOption(i, {
-                                                value: e.target.value,
+                                                value: e.currentTarget.value,
                                             })
                                         }
                                     />

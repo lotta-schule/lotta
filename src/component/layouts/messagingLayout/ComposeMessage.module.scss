@@ -7,10 +7,14 @@
         flex-direction: row;
         align-items: baseline;
         width: 100%;
+        & > div:first-child {
+            /* text input wrapper */
+            flex-grow: 1;
+        }
     }
 
     .textField {
-        flex-grow: 1;
+        resize: none;
     }
 
     .button {

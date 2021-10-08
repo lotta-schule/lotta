@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Add, DragHandle, Delete } from '@material-ui/icons';
-import { Grid, TextField, Divider } from '@material-ui/core';
+import { Grid, Divider } from '@material-ui/core';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
@@ -189,18 +191,20 @@ export const Edit = React.memo<EditProps>(
                             }
                             label={'Formulardaten per Email versenden'}
                         />
-                        <TextField
-                            fullWidth
-                            id={'form-destination'}
-                            label={'Formular an folgende Email senden:'}
-                            value={configuration.destination ?? ''}
-                            disabled={configuration.destination === undefined}
-                            onChange={(e) =>
-                                updateConfiguration({
-                                    destination: e.target.value,
-                                })
-                            }
-                        />
+                        <Label label={'Formular an folgende Email senden:'}>
+                            <Input
+                                id={'form-destination'}
+                                value={configuration.destination ?? ''}
+                                disabled={
+                                    configuration.destination === undefined
+                                }
+                                onChange={(e) =>
+                                    updateConfiguration({
+                                        destination: e.currentTarget.value,
+                                    })
+                                }
+                            />
+                        </Label>
                         <Divider />
                         <Checkbox
                             checked={configuration.save_internally === true}
