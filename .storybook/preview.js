@@ -2,6 +2,8 @@ import * as React from 'react';
 import { deDE } from '@material-ui/core/locale';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 import { setThemeDecorator } from './addons/css-vars-theme/setThemeDecorator';
+import { OverlayProvider } from '@react-aria/overlays';
+
 import '../src/index.scss';
 import '../src/component/general/button/base-button.scss';
 import '../src/component/general/button/button.scss';
@@ -32,14 +34,16 @@ export const decorators = [
     setThemeDecorator,
     (Story) => (
         <ThemeProvider theme={muiTheme}>
-            <style>
-                {`
-            body {
-                    padding: 8px;
-                }
-            `}
-            </style>
-            <Story />
+            <OverlayProvider>
+                <style>
+                    {`
+                body {
+                        padding: 8px;
+                    }
+                `}
+                </style>
+                <Story />
+            </OverlayProvider>
         </ThemeProvider>
     ),
 ];

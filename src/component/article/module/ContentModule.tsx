@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Popover, Box, Divider } from '@material-ui/core';
+import { Popover, Box } from '@material-ui/core';
 import {
     MoreVert,
     Delete,
@@ -27,6 +27,7 @@ import {
     usePopupState,
 } from 'material-ui-popup-state/hooks';
 import { Button } from 'component/general/button/Button';
+import { Divider } from 'component/general/divider/Divider';
 import clsx from 'clsx';
 
 import styles from './ContentModule.module.scss';

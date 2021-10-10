@@ -1,16 +1,17 @@
 import * as React from 'react';
+import { useMutation } from '@apollo/client';
 import { ID, WidgetModel, WidgetModelType } from 'model';
-import { Divider } from '@material-ui/core';
 import { Button } from 'component/general/button/Button';
+import { Divider } from 'component/general/divider/Divider';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { GroupSelect } from 'component/edit/GroupSelect';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
-import { GroupSelect } from 'component/edit/GroupSelect';
-import { useMutation } from '@apollo/client';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
-import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';
 import { WidgetIconSelection } from './WidgetIconSelection';
+
 import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
 
 import styles from './WidgetEditor.module.scss';

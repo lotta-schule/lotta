@@ -3,23 +3,24 @@ import {
     List,
     ListItem,
     ListItemText,
-    Divider,
     Tooltip,
     LinearProgress,
 } from '@material-ui/core';
+import { FiberManualRecord } from '@material-ui/icons';
 import { useApolloClient } from '@apollo/client';
 import { format, intervalToDuration } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { FiberManualRecord } from '@material-ui/icons';
 import { CalendarEventModel } from 'model/CalendarEventModel';
 import {
     WidgetModel,
     CalendarWidgetConfig,
     CalendarWidgetCalendarConfig,
 } from 'model';
+import { Divider } from 'component/general/divider/Divider';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 import clsx from 'clsx';
+
+import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 
 import styles from './Calendar.module.scss';
 

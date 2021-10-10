@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { Divider } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { animated, useSpring } from 'react-spring';
 import { Button } from '../button/Button';
-import clsx from 'clsx';
-
-import styles from './dialog.module.scss';
+import { Divider } from '../divider/Divider';
 import { FocusScope } from '@react-aria/focus';
 import { useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
 import { useDialog } from '@react-aria/dialog';
+import clsx from 'clsx';
+
+import styles from './dialog.module.scss';
 
 interface DialogProps extends Omit<React.HTMLProps<HTMLDivElement>, 'ref'> {
     className?: string;

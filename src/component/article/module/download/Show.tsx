@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { File } from 'util/model';
-import { CardContent, Grid, Divider } from '@material-ui/core';
+import { CardContent, Grid } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { BackgroundImg } from 'react-cloudimage-responsive';
 import { CloudDownload } from '@material-ui/icons';
 import { Button } from 'component/general/button/Button';
+import { Divider } from 'component/general/divider/Divider';
 import { useServerData } from 'component/ServerDataContext';
 
 import styles from './Download.module.scss';

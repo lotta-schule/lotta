@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Divider } from '@material-ui/core';
 import { CalendarWidgetConfig } from 'model';
-import { Label } from 'component/general/label/Label';
-import { Input } from 'component/general/form/input/Input';
-import { Select } from 'component/general/form/select/Select';
 import { Button } from 'component/general/button/Button';
+import { Divider } from 'component/general/divider/Divider';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { Select } from 'component/general/form/select/Select';
 
 import styles from './WidgetConfiguration.module.scss';
 
