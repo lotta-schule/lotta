@@ -35,7 +35,7 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
             ).toBeNull();
         });
 
-        it('should show dates button when user is not admin and open ArticleDatesEditor', () => {
+        it('should show dates button when user is not admin and open 1rticleDatesEditor', async () => {
             const adminUser = { ...SomeUser, groups: [adminGroup] };
             const screen = render(
                 <EditArticleFooter
@@ -53,7 +53,9 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
             userEvent.click(
                 screen.getByRole('button', { name: /edit dates/i })
             );
-            expect(screen.getByTestId('ArticleDatesEditor')).toBeVisible();
+            await waitFor(() => {
+                expect(screen.getByTestId('ArticleDatesEditor')).toBeVisible();
+            });
         });
     });
 
@@ -106,10 +108,12 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
                 screen.getByRole('button', { name: /beitrag löschen/i })
             );
             await waitFor(() => {
-                expect(screen.getByRole('presentation')).toBeVisible();
+                expect(screen.getByRole('dialog')).toBeVisible();
             });
             userEvent.click(
-                screen.getByRole('button', { name: /endgültig löschen/ })
+                screen.getByRole('button', {
+                    name: /Beitrag endgültig löschen/,
+                })
             );
 
             await waitFor(() => {
@@ -130,10 +134,14 @@ describe('component/layouts/editArticleLayout/EditArticleFooter', () => {
             userEvent.click(
                 screen.getByRole('button', { name: /beitrag löschen/i })
             );
-            expect(screen.queryByRole('presentation')).toBeVisible();
-            userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
             await waitFor(() => {
-                expect(screen.queryByRole('presentation')).toBeNull();
+                expect(screen.queryByRole('dialog')).toBeVisible();
+            });
+            userEvent.click(
+                screen.getByRole('button', { name: /beitrag behalten/i })
+            );
+            await waitFor(() => {
+                expect(screen.queryByRole('dialog')).toBeNull();
             });
         });
     });

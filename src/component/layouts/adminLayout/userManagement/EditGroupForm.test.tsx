@@ -228,7 +228,7 @@ describe('component/layouts/adminLayouts/userManagment/EditGroupForm', () => {
                 await screen.findByRole('button', { name: /löschen/i })
             );
             await waitFor(() => {
-                expect(screen.getByRole('presentation')).toBeVisible();
+                expect(screen.getByRole('dialog')).toBeVisible();
             });
         });
 

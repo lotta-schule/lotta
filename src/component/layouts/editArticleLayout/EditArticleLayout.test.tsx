@@ -341,8 +341,8 @@ describe('component/layouts/editArticleLayout/EditArticleLayout', () => {
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
             await waitFor(() => {
-                expect(screen.getByRole('presentation')).toBeInTheDocument();
-                expect(screen.getByRole('presentation')).toHaveTextContent(
+                expect(screen.getByRole('dialog')).toBeInTheDocument();
+                expect(screen.getByRole('dialog')).toHaveTextContent(
                     /beitrag.*aktualisiert/i
                 );
             });

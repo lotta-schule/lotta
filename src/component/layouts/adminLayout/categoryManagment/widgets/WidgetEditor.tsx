@@ -145,7 +145,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                 <DeleteWidgetDialog
                     isOpen={isDeleteWidgetDialogOpen}
                     widget={widget}
-                    onClose={() => setIsDeleteWidgetDialogOpen(false)}
+                    onRequestClose={() => setIsDeleteWidgetDialogOpen(false)}
                     onConfirm={() => {
                         setIsDeleteWidgetDialogOpen(false);
                         onSelectWidget(null);

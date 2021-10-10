@@ -8,30 +8,32 @@ import {
     ClickAwayListener,
     MenuList,
     MenuItem,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
     Grid,
 } from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { ButtonGroup } from 'component/general/button/ButtonGroup';
-import { useMutation } from '@apollo/client';
-import { CategorySelect } from './CategorySelect';
-import { GroupSelect } from '../../edit/GroupSelect';
 import {
     ArrowDropDown as ArrowDropDownIcon,
     Event,
     Warning,
 } from '@material-ui/icons';
+import { useMutation } from '@apollo/client';
+import { CategorySelect } from './CategorySelect';
+import { GroupSelect } from '../../edit/GroupSelect';
 import { ArticleModel, ID } from 'model';
 import { Category, User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { ArticleStateEditor } from 'component/article/ArticleStateEditor';
+import { Button } from 'component/general/button/Button';
+import { ButtonGroup } from 'component/general/button/ButtonGroup';
+import {
+    Dialog,
+    DialogContent,
+    DialogActions,
+} from 'component/general/dialog/Dialog';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
 import { useRouter } from 'next/router';
-import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 import clsx from 'clsx';
+
+import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 
 import styles from './EditArticleFooter.module.scss';
 
@@ -265,8 +267,11 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                         </div>
                     </Grid>
                 </Grid>
-                <ResponsiveFullScreenDialog open={isDeleteModalOpen}>
-                    <DialogTitle>Beitrag löschen</DialogTitle>
+                <Dialog
+                    open={isDeleteModalOpen}
+                    title={'Beitrag löschen'}
+                    onRequestClose={() => setIsDeleteModalOpen(false)}
+                >
                     <DialogContent>
                         <p>
                             Möchtest du den Beitrag "{article.title}" wirklich
@@ -279,17 +284,21 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => setIsDeleteModalOpen(false)}>
-                            abbrechen
+                            Beitrag behalten
                         </Button>
-                        <Button onClick={() => deleteArticle()}>
-                            endgültig löschen
+                        <Button
+                            variant={'error'}
+                            onClick={() => deleteArticle()}
+                        >
+                            Beitrag endgültig löschen
                         </Button>
                     </DialogActions>
-                </ResponsiveFullScreenDialog>
-                <ResponsiveFullScreenDialog open={isSelfRemovalDialogOpen}>
-                    <DialogTitle>
-                        Dich selbst aus dem Beitrag entfernen
-                    </DialogTitle>
+                </Dialog>
+                <Dialog
+                    open={isSelfRemovalDialogOpen}
+                    title={'Dich selbst aus dem Beitrag entfernen'}
+                    onRequestClose={() => setIsSelfRemovalDialogOpen(false)}
+                >
                     <DialogContent>
                         <p>
                             Möchtest du dich selbst wirklich aus dem Beitrag "
@@ -322,7 +331,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                             endgültig entfernen
                         </Button>
                     </DialogActions>
-                </ResponsiveFullScreenDialog>
+                </Dialog>
             </Card>
         );
     }

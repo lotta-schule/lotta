@@ -170,7 +170,7 @@ export const List = () => {
             )}
             {selectedUser && (
                 <EditUserPermissionsDialog
-                    onClose={() => setSelectedUser(null)}
+                    onRequestClose={() => setSelectedUser(null)}
                     user={selectedUser}
                 />
             )}

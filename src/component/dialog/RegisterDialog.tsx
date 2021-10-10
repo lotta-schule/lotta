@@ -1,19 +1,18 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Grid,
-} from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
 import { useGetFieldError } from 'util/useGetFieldError';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+
 import RegisterMutation from 'api/mutation/RegisterMutation.graphql';
 
 import styles from './RegisterDialog.module.scss';
@@ -41,15 +40,10 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
 
         const content = data?.register ? (
             <>
-                <DialogTitle>Anmeldung erfolgreich.</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Dein Benutzerkonto wurde erfolgreich eingerichtet.
-                    </DialogContentText>
-                    <DialogContentText>
-                        Melde dich mit dem Passwort, das du via E-Mail zugesandt
-                        bekommen hast, an.
-                    </DialogContentText>
+                    Dein Benutzerkonto wurde erfolgreich eingerichtet. Melde
+                    dich mit dem Passwort, das du via E-Mail zugesandt bekommen
+                    hast, an.
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -79,12 +73,9 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                     });
                 }}
             >
-                <DialogTitle>Auf der Website registrieren.</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Gib hier deine Daten <b>korrekt</b> an, um dich als
-                        Nutzer zu registrieren.
-                    </DialogContentText>
+                    Gib hier deine Daten <b>korrekt</b> an, um dich als Nutzer
+                    zu registrieren.
                     <ErrorMessage error={formError || error} />
                     <Label label={'Deine Email-Adresse:'}>
                         <Input
@@ -225,9 +216,13 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
         );
 
         return (
-            <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+            <Dialog
+                onRequestClose={onRequestClose}
+                title={'Benutzerkonto erstellen'}
+                open={isOpen}
+            >
                 {content}
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

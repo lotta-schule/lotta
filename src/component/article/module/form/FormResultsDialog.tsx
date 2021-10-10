@@ -1,20 +1,16 @@
-import React, { memo, useMemo, useCallback } from 'react';
-import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import {
-    DialogTitle,
-    DialogContent,
-    Typography,
-    LinearProgress,
-} from '@material-ui/core';
+import * as React from 'react';
+import { Typography, LinearProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
-import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
-import { FormConfiguration } from './Form';
-import { ErrorMessage } from 'component/general/ErrorMessage';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
+import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
 import { Button } from 'component/general/button/Button';
+import { Dialog, DialogContent } from 'component/general/dialog/Dialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { FormConfiguration } from './Form';
+
+import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
 
 export interface FormResultsDialogProps {
     isOpen: boolean;
@@ -22,7 +18,7 @@ export interface FormResultsDialogProps {
     contentModule: ContentModuleModel<{}, FormConfiguration>;
 }
 
-export const FormResultsDialog = memo<FormResultsDialogProps>(
+export const FormResultsDialog = React.memo<FormResultsDialogProps>(
     ({ isOpen, onRequestClose, contentModule }) => {
         const {
             data,
@@ -34,7 +30,7 @@ export const FormResultsDialog = memo<FormResultsDialogProps>(
         >(GetContentModuleResults, {
             variables: { contentModuleId: contentModule.id },
         });
-        const downloadCsv = useCallback(() => {
+        const downloadCsv = React.useCallback(() => {
             const replacer = (_key: string, value: unknown) =>
                 value === null ? '' : value;
             const header =
@@ -72,7 +68,7 @@ export const FormResultsDialog = memo<FormResultsDialogProps>(
             });
             saveAs(csv, 'formulardaten.csv');
         }, [data]);
-        const content = useMemo(() => {
+        const content = React.useMemo(() => {
             if (isLoading) {
                 return <LinearProgress />;
             }
@@ -94,14 +90,13 @@ export const FormResultsDialog = memo<FormResultsDialogProps>(
             );
         }, [data, downloadCsv, error, isLoading]);
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={isOpen}
-                onClose={() => onRequestClose()}
-                fullWidth
+                onRequestClose={() => onRequestClose()}
+                title={'Formulardaten'}
             >
-                <DialogTitle>Formulardaten</DialogTitle>
                 <DialogContent>{content}</DialogContent>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

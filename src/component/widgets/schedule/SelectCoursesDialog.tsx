@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { chunk } from 'lodash';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { LOCALSTORAGE_KEY } from './Schedule';
 
 import styles from './SelectCoursesDialog.module.scss';
@@ -13,11 +16,11 @@ const COLUMNS_COUNT = 2;
 export interface SelectCoursesDialogProps {
     isOpen: boolean;
     possibleCourses: string[];
-    onClose(): void;
+    onRequestClose(): void;
 }
 
 export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(
-    ({ isOpen, possibleCourses, onClose }) => {
+    ({ isOpen, possibleCourses, onRequestClose }) => {
         const [selectedCourses, setSelectedCourses] =
             React.useState<string[]>(possibleCourses);
 
@@ -53,12 +56,15 @@ export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(
             } catch (e) {
                 console.error(e);
             }
-            onClose();
+            onRequestClose();
         };
 
         return (
-            <ResponsiveFullScreenDialog open={isOpen} fullWidth>
-                <DialogTitle>Kurse filtern</DialogTitle>
+            <Dialog
+                open={isOpen}
+                onRequestClose={onRequestClose}
+                title={'Kurse filtern'}
+            >
                 <DialogContent>
                     <div className={styles.courseNamesListsWrapper}>
                         {chunk(
@@ -78,12 +84,12 @@ export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => onClose()}>Abbrechen</Button>
+                    <Button onClick={() => onRequestClose()}>Abbrechen</Button>
                     <Button type={'submit'} onClick={() => saveAndClose()}>
                         Filter speichern
                     </Button>
                 </DialogActions>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

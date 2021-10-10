@@ -331,7 +331,7 @@ describe('component/layouts/adminLayout/categoryManagment/CategoryEditor', () =>
             ).toBeNull();
         });
 
-        it('should show delete dialog on click', () => {
+        it('should show delete dialog on click', async () => {
             const screen = render(
                 <CategoryEditor
                     selectedCategory={FaecherCategory}
@@ -340,7 +340,9 @@ describe('component/layouts/adminLayout/categoryManagment/CategoryEditor', () =>
             );
 
             userEvent.click(screen.getByRole('button', { name: /löschen/i }));
-            expect(screen.getByRole('dialog')).toBeVisible();
+            await waitFor(() => {
+                expect(screen.getByRole('dialog')).toBeVisible();
+            });
         });
     });
 });

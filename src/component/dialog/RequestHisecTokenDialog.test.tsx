@@ -2,8 +2,9 @@ import * as React from 'react';
 import { render, screen, waitFor } from 'test/util';
 import { SomeUser } from 'test/fixtures';
 import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
-import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 import userEvent from '@testing-library/user-event';
+
+import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 
 describe('component/dialog/RequestHisecToken', () => {
     it('should render the component', () => {
@@ -45,7 +46,8 @@ describe('component/dialog/RequestHisecToken', () => {
                 {},
                 { currentUser: SomeUser }
             );
-            userEvent.type(screen.getByLabelText(/passwort/i), 'test');
+
+            userEvent.type(screen.getByLabelText('Passwort:'), 'test');
 
             screen.rerender(
                 <RequestHisecTokenDialog
@@ -59,7 +61,7 @@ describe('component/dialog/RequestHisecToken', () => {
                     onRequestClose={() => {}}
                 />
             );
-            expect(screen.getByLabelText(/passwort/i)).toHaveValue('');
+            expect(screen.getByLabelText('Passwort:')).toHaveValue('');
         });
     });
 
@@ -69,7 +71,7 @@ describe('component/dialog/RequestHisecToken', () => {
             {},
             { currentUser: SomeUser }
         );
-        expect(screen.getByLabelText(/passwort/i)).toHaveFocus();
+        expect(screen.getByLabelText('Passwort:')).toHaveFocus();
         expect(
             screen.queryByRole('button', { name: /senden/i })
         ).toBeDisabled();
@@ -81,7 +83,7 @@ describe('component/dialog/RequestHisecToken', () => {
             {},
             { currentUser: SomeUser }
         );
-        expect(screen.getByLabelText(/passwort/i)).toHaveAttribute(
+        expect(screen.getByLabelText('Passwort:')).toHaveAttribute(
             'autocomplete',
             'current-password'
         );
@@ -94,7 +96,7 @@ describe('component/dialog/RequestHisecToken', () => {
             { currentUser: SomeUser }
         );
         expect(screen.getByRole('button', { name: /senden/ })).toBeDisabled();
-        userEvent.type(screen.getByLabelText(/passwort/i), 'pw123');
+        userEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
         expect(
             screen.getByRole('button', { name: /senden/ })
         ).not.toBeDisabled();
@@ -119,7 +121,7 @@ describe('component/dialog/RequestHisecToken', () => {
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(screen.getByLabelText(/passwort/i), 'pw123');
+            userEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
             userEvent.click(screen.getByRole('button', { name: /senden/ }));
 
             await waitFor(() => {

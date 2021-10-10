@@ -1,21 +1,20 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    FormControl,
-    LinearProgress,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { CategoryModel } from 'model';
+import { FormControl, LinearProgress } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { CategorySelect } from '../../../editArticleLayout/CategorySelect';
 import { animated, useSpring } from 'react-spring';
-import { Label } from 'component/general/label/Label';
+import { CategoryModel } from 'model';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 import { Radio, RadioGroup } from 'component/general/form/radio';
+import { CategorySelect } from '../../../editArticleLayout/CategorySelect';
+
 import CreateCategoryMutation from 'api/mutation/CreateCategoryMutation.graphql';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 
@@ -82,7 +81,11 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
         }, [isOpen]);
 
         return (
-            <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+            <Dialog
+                open={isOpen}
+                onRequestClose={() => onAbort()}
+                title={'Kategorie erstellen'}
+            >
                 {isLoading && <LinearProgress />}
                 <form
                     onSubmit={(e) => {
@@ -105,7 +108,6 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                         });
                     }}
                 >
-                    <DialogTitle>Kategorie erstellen</DialogTitle>
                     <DialogContent>
                         <ErrorMessage error={error} />
                         <Label label="Name der Kategorie:">
@@ -188,7 +190,7 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                         </Button>
                     </DialogActions>
                 </form>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

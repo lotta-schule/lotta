@@ -1,17 +1,16 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { Label } from 'component/general/label/Label';
-import { Input } from 'component/general/form/input/Input';
-import { ArticleModel, ArticleModelInput } from '../../model';
 import { useMutation } from '@apollo/client';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { ArticleModel, ArticleModelInput } from 'model';
+
 import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';
 import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
 
@@ -61,18 +60,19 @@ export const CreateArticleDialog = React.memo<CreateArticleDialogProps>(
             setTitle('');
         };
         return (
-            <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+            <Dialog
+                open={isOpen}
+                onRequestClose={onAbort}
+                title={'Beitrag erstellen'}
+            >
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
                         createArticle();
                     }}
                 >
-                    <DialogTitle>Beitrag erstellen</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
-                            Wähle zunächst einen Titel für deinen Beitrag
-                        </DialogContentText>
+                        Wähle zunächst einen Titel für deinen Beitrag
                         <ErrorMessage error={error} />
                         <Label label="Titel des Beitrags:">
                             <Input
@@ -101,7 +101,7 @@ export const CreateArticleDialog = React.memo<CreateArticleDialogProps>(
                         </Button>
                     </DialogActions>
                 </form>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

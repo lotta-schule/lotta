@@ -4,38 +4,39 @@ import {
     CardContent,
     CardActions,
     Collapse,
-    DialogActions,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
     Grow,
     LinearProgress,
     Tabs,
     Tab,
 } from '@material-ui/core';
-import { ArticleModel, FileModel } from 'model';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { Button } from 'component/general/button/Button';
-import { useQuery, useApolloClient, useMutation } from '@apollo/client';
-import { useTenant } from 'util/tenant/useTenant';
-import { ArticlesList } from 'component/profile/ArticlesList';
-import { ProfileDeleteFileSelection } from 'component/layouts/profileLayout/ProfileDeleteFileSelection';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import FileExplorer from 'component/fileExplorer/FileExplorer';
 import {
     NavigateNext,
     NavigateBefore,
     Warning,
     DeleteForever,
 } from '@material-ui/icons';
-import { useRouter } from 'next/router';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
+import { useQuery, useApolloClient, useMutation } from '@apollo/client';
+import { ArticleModel, FileModel } from 'model';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { BaseLayoutSidebar } from 'component/layouts/BaseLayoutSidebar';
+import { useTenant } from 'util/tenant/useTenant';
+import { ArticlesList } from 'component/profile/ArticlesList';
+import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
+import { ProfileDeleteFileSelection } from 'component/layouts/profileLayout/ProfileDeleteFileSelection';
+import { useRouter } from 'next/router';
 import { GetServerSidePropsContext } from 'next';
+import FileExplorer from 'component/fileExplorer/FileExplorer';
+import clsx from 'clsx';
+
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
 import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
 import GetRelevantFilesInUsageQuery from 'api/query/GetRelevantFilesInUsage.graphql';
-import clsx from 'clsx';
 
 import styles from './delete.module.scss';
 
@@ -456,22 +457,18 @@ export const Delete = React.memo(() => {
                         {cardActions}
                     </Card>
                 </Collapse>
-                <ResponsiveFullScreenDialog
+                <Dialog
                     open={isConfirmDialogOpen}
-                    onClose={() => setIsConfirmDialogOpen(false)}
-                    aria-labelledby={'alert-dialog-title'}
-                    aria-describedby={'alert-dialog-description'}
+                    onRequestClose={() => setIsConfirmDialogOpen(false)}
+                    title={'Benutzerkonto wirklich löschen?'}
                 >
-                    <DialogTitle id={'alert-dialog-title'}>
-                        Benutzerkonto wirklich löschen?
-                    </DialogTitle>
                     <DialogContent>
                         <ErrorMessage error={destroyAccountError} />
-                        <DialogContentText id={'alert-dialog-description'}>
+                        <p>
                             Das Benutzerkonto wird endgültig und
                             unwiederbringlich gelöscht. Daten können nicht
                             wiederhergestellt werden.
-                        </DialogContentText>
+                        </p>
                     </DialogContent>
                     <DialogActions>
                         <Button
@@ -489,7 +486,7 @@ export const Delete = React.memo(() => {
                             Jetzt alle Daten endgültig löschen
                         </Button>
                     </DialogActions>
-                </ResponsiveFullScreenDialog>
+                </Dialog>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar isEmpty />
         </>

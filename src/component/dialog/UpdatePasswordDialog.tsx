@@ -1,17 +1,16 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
 import { useMutation } from '@apollo/client';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
-import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
+import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
+
 import UpdatePasswordMutation from 'api/mutation/UpdatePasswordMutation.graphql';
 
 export interface UpdatePasswordDialogProps {
@@ -50,7 +49,11 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
 
         return (
             <>
-                <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+                <Dialog
+                    open={isOpen}
+                    title={'Passwort ändern'}
+                    onRequestClose={onRequestClose}
+                >
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -58,23 +61,17 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                         }}
                         data-testid="UpdatePasswordDialog"
                     >
-                        <DialogTitle>Passwort ändern</DialogTitle>
                         <DialogContent>
-                            <DialogContentText>
-                                {!isFirstPasswordChange && (
-                                    <>
-                                        Wähle ein neues Passwort und bestätige
-                                        es.
-                                    </>
-                                )}
-                                {isFirstPasswordChange && (
-                                    <>
-                                        Du meldest dich zum ersten Mal. Wähle
-                                        ein sicheres Passwort dass du in Zukunft
-                                        nutzen kannst.
-                                    </>
-                                )}
-                            </DialogContentText>
+                            {!isFirstPasswordChange && (
+                                <>Wähle ein neues Passwort und bestätige es.</>
+                            )}
+                            {isFirstPasswordChange && (
+                                <>
+                                    Du meldest dich zum ersten Mal. Wähle ein
+                                    sicheres Passwort dass du in Zukunft nutzen
+                                    kannst.
+                                </>
+                            )}
                             <ErrorMessage error={error} />
                             <Label label={'Neues Passwort:'}>
                                 <Input
@@ -129,7 +126,7 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
                             </Button>
                         </DialogActions>
                     </form>
-                </ResponsiveFullScreenDialog>
+                </Dialog>
                 <RequestHisecTokenDialog
                     isOpen={showRequestHisecToken}
                     withCurrentPassword={withCurrentPassword}

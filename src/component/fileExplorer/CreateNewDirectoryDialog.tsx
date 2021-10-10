@@ -1,18 +1,16 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel, ID } from 'model';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import CreateDirectoryMutation from 'api/mutation/CreateDirectoryMutation.graphql';
@@ -21,14 +19,11 @@ import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphq
 export interface CreateNewFolderDialogProps {
     basePath?: ({ id: null } | { id: ID; name: string })[];
     open: boolean;
-    onClose(
-        event: {},
-        reason: 'backdropClick' | 'escapeKeyDown' | 'auto'
-    ): void;
+    onRequestClose(): void;
 }
 
 export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
-    ({ basePath, open, onClose }) => {
+    ({ basePath, open, onRequestClose }) => {
         const parentDirectoryId = basePath?.[basePath.length - 1].id ?? null;
         const currentUser = useCurrentUser();
         const [name, setName] = React.useState('');
@@ -63,15 +58,15 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
                 });
             },
             onCompleted: () => {
-                onClose({}, 'auto');
+                onRequestClose();
             },
         });
 
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={open}
-                onClose={onClose}
-                aria-labelledby="create-new-folder-dialog-title"
+                onRequestClose={onRequestClose}
+                title={'Neuen Ordner erstellen'}
             >
                 <form
                     onSubmit={(e) => {
@@ -79,14 +74,11 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
                         createDirectory();
                     }}
                 >
-                    <DialogTitle id="create-new-folder-dialog-title">
-                        Neuen Ordner erstellen
-                    </DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
+                        <p>
                             Wähle einen Namen für den Ordner, den du erstellen
                             möchtest.
-                        </DialogContentText>
+                        </p>
                         <ErrorMessage error={error} />
                         <Label label={'Name des Ordners'}>
                             <Input
@@ -110,11 +102,7 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
                             )}
                     </DialogContent>
                     <DialogActions>
-                        <Button
-                            onClick={(e: React.MouseEvent) =>
-                                onClose(e, 'auto')
-                            }
-                        >
+                        <Button onClick={() => onRequestClose()}>
                             Abbrechen
                         </Button>
                         <Button type={'submit'} disabled={isLoading}>
@@ -122,7 +110,7 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
                         </Button>
                     </DialogActions>
                 </form>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

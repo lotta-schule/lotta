@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import userEvent from '@testing-library/user-event';
-import { render } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { Config } from './Config';
 
@@ -22,7 +22,7 @@ describe('component/article/module/form/Config', () => {
         );
     });
 
-    it('should show the "See data" button and open the dialog when clicked', () => {
+    it('should show the "See data" button and open the dialog when clicked', async () => {
         const screen = render(
             <Config
                 contentModule={form}
@@ -32,6 +32,8 @@ describe('component/article/module/form/Config', () => {
         );
         expect(screen.getByRole('button', { name: /daten/i })).toBeVisible();
         userEvent.click(screen.getByRole('button', { name: /daten/i }));
-        expect(screen.getByRole('presentation')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByRole('dialog')).toBeVisible();
+        });
     });
 });

@@ -29,16 +29,19 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
         it('should show user information', async () => {
             const user = { ...SomeUser, groups: [], assignedGroups: [] };
             const screen = render(
-                <EditUserPermissionsDialog user={user} onClose={() => {}} />,
+                <EditUserPermissionsDialog
+                    user={user}
+                    onRequestClose={() => {}}
+                />,
                 {},
                 { additionalMocks: mocks(user) }
             );
             await waitFor(() => {
                 expect(userInfoLoaded).toEqual(true);
             });
-            expect(screen.queryByTestId('DialogTitle')).toHaveTextContent(
-                'Ernesto Guevara'
-            );
+            expect(
+                screen.getByRole('dialog', { name: /Ernesto Guevara/ })
+            ).toBeVisible();
             expect(screen.queryByTestId('UserNickname')).toHaveTextContent(
                 'Che'
             );
@@ -56,14 +59,17 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
                 assignedGroups: [adminGroup],
             };
             const screen = render(
-                <EditUserPermissionsDialog user={user} onClose={() => {}} />,
+                <EditUserPermissionsDialog
+                    user={user}
+                    onRequestClose={() => {}}
+                />,
                 {},
                 { additionalMocks: mocks(user) }
             );
             await waitFor(() => {
-                expect(screen.queryByTestId('DialogTitle')).toHaveTextContent(
-                    'Ernesto Guevara'
-                );
+                expect(
+                    screen.getByRole('dialog', { name: /Ernesto Guevara/ })
+                ).toBeVisible();
             });
 
             const assignedGroups = await screen.findByTestId(
@@ -112,7 +118,10 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
                 },
             ];
             const screen = render(
-                <EditUserPermissionsDialog user={user} onClose={() => {}} />,
+                <EditUserPermissionsDialog
+                    user={user}
+                    onRequestClose={() => {}}
+                />,
                 {},
                 { additionalMocks }
             );
@@ -166,7 +175,10 @@ describe('component/layouts/adminLayout/userManagment/EditUserPermissionsDialog'
                 },
             ];
             const screen = render(
-                <EditUserPermissionsDialog user={user} onClose={() => {}} />,
+                <EditUserPermissionsDialog
+                    user={user}
+                    onRequestClose={() => {}}
+                />,
                 {},
                 { additionalMocks }
             );

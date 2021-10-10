@@ -25,8 +25,9 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
 import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
 import Link from 'next/link';
-import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
 import clsx from 'clsx';
+
+import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
 
 import styles from './Schedule.module.scss';
 
@@ -309,7 +310,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                                     (schedule) => schedule.lessonName
                                 ) ?? []),
                             ])}
-                            onClose={() => {
+                            onRequestClose={() => {
                                 try {
                                     const persistedCourseList =
                                         localStorage.getItem(LOCALSTORAGE_KEY);

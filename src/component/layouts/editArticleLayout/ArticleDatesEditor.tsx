@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { Button } from 'component/general/button/Button';
-import { Input } from 'component/general/form/input/Input';
-import { Label } from 'component/general/label/Label';
 import { format } from 'date-fns';
 import { ArticleModel } from 'model';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
+import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
 
 export interface ArticleDatesEditorProps {
     article: ArticleModel;
@@ -21,11 +24,12 @@ export const ArticleDatesEditor = React.memo<ArticleDatesEditorProps>(
         );
 
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={isOpen}
                 data-testid={'ArticleDatesEditor'}
+                title={'Beitragsdaten ändern'}
+                onRequestClose={onAbort}
             >
-                <DialogTitle>Beitragsdaten ändern</DialogTitle>
                 <DialogContent>
                     <Label label={'Beitrag wurde erstellt am:'}>
                         <Input
@@ -65,7 +69,7 @@ export const ArticleDatesEditor = React.memo<ArticleDatesEditorProps>(
                         OK
                     </Button>
                 </DialogActions>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

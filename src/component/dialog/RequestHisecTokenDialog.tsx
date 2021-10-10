@@ -1,16 +1,15 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
 import { useMutation } from '@apollo/client';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
+
 import RequestHisecTokenMutation from 'api/mutation/RequestHisecTokenMutation.graphql';
 
 export interface RequestHisecTokenDialogProps {
@@ -43,9 +42,10 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
         }, [withCurrentPassword, requestHisecToken, isOpen]);
 
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={isOpen && !withCurrentPassword}
-                fullWidth
+                onRequestClose={() => onRequestClose(null)}
+                title={'Durch Passwort bestätigen'}
             >
                 <form
                     onSubmit={(e) => {
@@ -54,12 +54,9 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
                     }}
                     data-testid="RequestHisecTokenDialog"
                 >
-                    <DialogTitle>Durch Passwort bestätigen</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
-                            Bitte bestätige die Änderung mit deinem aktuellen
-                            Passwort.
-                        </DialogContentText>
+                        Bitte bestätige die Änderung mit deinem aktuellen
+                        Passwort.
                         <ErrorMessage error={error} />
                         <Label label={'Passwort:'}>
                             <Input
@@ -92,7 +89,7 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
                         </Button>
                     </DialogActions>
                 </form>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );
