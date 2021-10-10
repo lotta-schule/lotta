@@ -348,28 +348,24 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     userEvent.click(
                         screen.getByRole('button', { name: /che entfernen/i })
                     );
-                    expect(screen.getByRole('presentation')).toBeVisible();
+                    await waitFor(() => {
+                        expect(screen.getByRole('dialog')).toBeVisible();
+                    });
                     expect(
-                        screen
-                            .getByRole('presentation')
-                            .querySelectorAll('button')
+                        screen.getByRole('dialog').querySelectorAll('button')
                     ).toHaveLength(2);
                     expect(
-                        screen
-                            .getByRole('presentation')
-                            .querySelectorAll('button')[0]
+                        screen.getByRole('dialog').querySelectorAll('button')[0]
                     ).toHaveTextContent(/abbrechen/i);
                     userEvent.click(
-                        screen
-                            .getByRole('presentation')
-                            .querySelectorAll('button')[0]
+                        screen.getByRole('dialog').querySelectorAll('button')[0]
                     );
                     await waitFor(() => {
-                        expect(screen.queryByRole('presentation')).toBeNull();
+                        expect(screen.queryByRole('dialog')).toBeNull();
                     });
                 });
 
-                it('show a warning when user tries to remove him/herself and remove user on confirm', () => {
+                it('show a warning when user tries to remove him/herself and remove user on confirm', async () => {
                     const onUpdate = jest.fn();
                     const screen = render(
                         <ArticlePreviewStandardLayout
@@ -382,21 +378,17 @@ describe('component/article/ArticlePreviewStandardLayout', () => {
                     userEvent.click(
                         screen.getByRole('button', { name: /che entfernen/i })
                     );
-                    expect(screen.getByRole('presentation')).toBeVisible();
+                    await waitFor(() => {
+                        expect(screen.getByRole('dialog')).toBeVisible();
+                    });
                     expect(
-                        screen
-                            .getByRole('presentation')
-                            .querySelectorAll('button')
+                        screen.getByRole('dialog').querySelectorAll('button')
                     ).toHaveLength(2);
                     expect(
-                        screen
-                            .getByRole('presentation')
-                            .querySelectorAll('button')[1]
+                        screen.getByRole('dialog').querySelectorAll('button')[1]
                     ).toHaveTextContent(/entfernen/i);
                     userEvent.click(
-                        screen
-                            .getByRole('presentation')
-                            .querySelectorAll('button')[1]
+                        screen.getByRole('dialog').querySelectorAll('button')[1]
                     );
 
                     expect(onUpdate).toHaveBeenCalledWith({

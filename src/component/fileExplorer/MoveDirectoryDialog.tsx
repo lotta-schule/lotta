@@ -1,26 +1,25 @@
-import React, { memo, useState, useContext } from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Tooltip,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
+import * as React from 'react';
+import { Tooltip } from '@material-ui/core';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
-import { DirectoryTree } from './directoryTree/DirectoryTree';
-import { ErrorMessage } from 'component/general/ErrorMessage';
 import { DirectoryModel } from 'model';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { DirectoryTree } from './directoryTree/DirectoryTree';
+import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import fileExplorerContext from './context/FileExplorerContext';
+
 import UpdateDirectoryMutation from 'api/mutation/UpdateDirectoryMutation.graphql';
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
-export const MoveDirectoryDialog = memo(() => {
-    const [state, dispatch] = useContext(fileExplorerContext);
-    const [selectedDirectory, setSelectedDirectory] = useState(
+export const MoveDirectoryDialog = React.memo(() => {
+    const [state, dispatch] = React.useContext(fileExplorerContext);
+    const [selectedDirectory, setSelectedDirectory] = React.useState(
         state.currentPath[state.currentPath.length - 1].id === null
             ? null
             : (state.currentPath[
@@ -28,7 +27,7 @@ export const MoveDirectoryDialog = memo(() => {
               ] as DirectoryModel)
     );
     const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
-        useState(false);
+        React.useState(false);
 
     const [moveDirectory, { error, loading: isLoading }] = useMutation<{
         directory: DirectoryModel;
@@ -88,18 +87,13 @@ export const MoveDirectoryDialog = memo(() => {
     });
 
     return (
-        <ResponsiveFullScreenDialog
-            fullWidth
-            maxWidth={'sm'}
+        <Dialog
             open={state.showMoveDirectory}
-            aria-labelledby={'select-directories-tree-dialog'}
-            onClose={() => dispatch({ type: 'hideMoveDirectory' })}
+            onRequestClose={() => dispatch({ type: 'hideMoveDirectory' })}
+            title={'Ordner verschieben'}
         >
-            <DialogTitle id={'select-directories-tree-dialog-title'}>
-                Ordner verschieben
-            </DialogTitle>
             <DialogContent>
-                <DialogContentText>Wähle ein Zielort</DialogContentText>
+                Wähle ein Zielort
                 <ErrorMessage error={error} />
                 <Tooltip title={'Ordner erstellen'}>
                     <Button
@@ -119,7 +113,7 @@ export const MoveDirectoryDialog = memo(() => {
                 <CreateNewDirectoryDialog
                     basePath={state.currentPath}
                     open={isCreateNewFolderDialogOpen}
-                    onClose={() => setIsCreateNewFolderDialogOpen(false)}
+                    onRequestClose={() => setIsCreateNewFolderDialogOpen(false)}
                 />
             </DialogContent>
             <DialogActions>
@@ -164,6 +158,7 @@ export const MoveDirectoryDialog = memo(() => {
                     Ordner verschieben
                 </Button>
             </DialogActions>
-        </ResponsiveFullScreenDialog>
+        </Dialog>
     );
 });
+MoveDirectoryDialog.displayName = 'MoveDirectoryDialog';

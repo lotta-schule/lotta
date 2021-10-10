@@ -374,7 +374,9 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                         <DeleteCategoryDialog
                             isOpen={isDeleteCategoryDialogOpen}
                             categoryToDelete={category}
-                            onClose={() => setIsDeleteCategoryDialogOpen(false)}
+                            onRequestClose={() =>
+                                setIsDeleteCategoryDialogOpen(false)
+                            }
                             onConfirm={() => {
                                 setIsDeleteCategoryDialogOpen(false);
                                 onSelectCategory(null);

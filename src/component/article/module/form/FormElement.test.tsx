@@ -285,7 +285,7 @@ describe('component/article/module/form/FormElement', () => {
                 screen.getByRole('button', { name: /meine dateien/i })
             );
             await waitFor(() =>
-                expect(screen.getByRole('presentation')).toBeVisible()
+                expect(screen.getByRole('dialog')).toBeVisible()
             );
             await waitFor(() => expect(didCallFiles).toEqual(true));
             await waitFor(() =>

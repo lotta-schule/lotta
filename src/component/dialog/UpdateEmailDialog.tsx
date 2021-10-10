@@ -1,17 +1,16 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
 import { useMutation } from '@apollo/client';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
-import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
 import { Button } from 'component/general/button/Button';
-import { Label } from 'component/general/label/Label';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+import { RequestHisecTokenDialog } from './RequestHisecTokenDialog';
+
 import UpdateEmailMutation from 'api/mutation/UpdateEmailMutation.graphql';
 
 export interface UpdateEmailDialogProps {
@@ -40,7 +39,11 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
 
         return (
             <>
-                <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+                <Dialog
+                    open={isOpen}
+                    onRequestClose={onRequestClose}
+                    title={'Email ändern'}
+                >
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -48,11 +51,8 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
                         }}
                         data-testid="UpdateEmailDialog"
                     >
-                        <DialogTitle>Email ändern</DialogTitle>
                         <DialogContent>
-                            <DialogContentText>
-                                Wähle eine neue Email-Adresse.
-                            </DialogContentText>
+                            Wähle eine neue Email-Adresse.
                             <ErrorMessage error={error} />
                             <Label label={'Neue Email:'}>
                                 <Input
@@ -86,7 +86,7 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
                             </Button>
                         </DialogActions>
                     </form>
-                </ResponsiveFullScreenDialog>
+                </Dialog>
                 <RequestHisecTokenDialog
                     isOpen={showRequestHisecToken}
                     onRequestClose={(authToken) => {

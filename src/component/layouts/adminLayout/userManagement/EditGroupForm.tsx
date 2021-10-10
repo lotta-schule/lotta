@@ -160,7 +160,9 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                     <DeleteUserGroupDialog
                         isOpen={isDeleteUserGroupDialogOpen}
                         group={group}
-                        onClose={() => setIsDeleteUserGroupDialogOpen(false)}
+                        onRequestClose={() =>
+                            setIsDeleteUserGroupDialogOpen(false)
+                        }
                         onConfirm={() => setIsDeleteUserGroupDialogOpen(false)}
                     />
                 </>

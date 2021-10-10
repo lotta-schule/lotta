@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { schuelerGroup, SomeUser, SomeUserin } from 'test/fixtures';
 import { MessageToolbar } from './MessageToolbar';

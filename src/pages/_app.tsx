@@ -29,6 +29,7 @@ import 'component/general/button/base-button.scss';
 import 'component/general/button/button.scss';
 import 'component/general/button/button-group.scss';
 import 'component/general/button/navigation-button.scss';
+import { OverlayProvider } from '@react-aria/overlays';
 
 const {
     publicRuntimeConfig: { cloudimageToken },
@@ -90,32 +91,33 @@ const LottaWebApp = ({ Component, pageProps }: AppProps) => {
             <ApolloProvider client={client}>
                 <ThemeProvider theme={theme}>
                     <I18nextProvider i18n={i18n}>
-                        {' '}
                         <MuiPickersUtilsProvider
                             utils={DateFnsUtils}
                             locale={de}
                         >
-                            {' '}
                             <CloudimageProvider
                                 config={{
                                     token: cloudimageToken,
                                 }}
                             >
-                                {' '}
-                                <Authentication>
-                                    <UploadQueueProvider>
-                                        <Head>
-                                            <meta charSet="utf-8" />
-                                            <meta
-                                                name="viewport"
-                                                content="width=device-width, initial-scale=1"
-                                            />
-                                        </Head>
-                                        <App tenant={tenant}>
-                                            <Component {...componentProps} />
-                                        </App>
-                                    </UploadQueueProvider>
-                                </Authentication>
+                                <OverlayProvider>
+                                    <Authentication>
+                                        <UploadQueueProvider>
+                                            <Head>
+                                                <meta charSet="utf-8" />
+                                                <meta
+                                                    name="viewport"
+                                                    content="width=device-width, initial-scale=1"
+                                                />
+                                            </Head>
+                                            <App tenant={tenant}>
+                                                <Component
+                                                    {...componentProps}
+                                                />
+                                            </App>
+                                        </UploadQueueProvider>
+                                    </Authentication>
+                                </OverlayProvider>
                             </CloudimageProvider>
                         </MuiPickersUtilsProvider>
                     </I18nextProvider>

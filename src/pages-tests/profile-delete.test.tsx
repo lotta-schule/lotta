@@ -283,7 +283,9 @@ describe('component/layouts/profileLayout/ProfileDelete', () => {
         expect(await screen.findByRole('dialog')).toBeVisible();
 
         userEvent.click(
-            await screen.findByRole('button', { name: /endgültig löschen/i })
+            await screen.findByRole('button', {
+                name: /jetzt alle daten endgültig löschen/i,
+            })
         );
 
         await waitFor(() => {

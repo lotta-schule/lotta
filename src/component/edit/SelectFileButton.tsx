@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { DialogTitle } from '@material-ui/core';
 import { FileModel } from 'model';
 import { Button, ButtonProps } from 'component/general/button/Button';
+import { Dialog } from 'component/general/dialog/Dialog';
 import {
     FileExplorer,
     FileExplorerProps,
 } from 'component/fileExplorer/FileExplorer';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 
 interface SelectFileButtonProps {
     label: string | JSX.Element;
@@ -50,12 +49,11 @@ export const SelectFileButton = React.memo<SelectFileButtonProps>(
                     },
                     label
                 )}
-                <ResponsiveFullScreenDialog
+                <Dialog
                     open={isSelectFileDialogOpen}
-                    onClose={() => setIsSelectFileDialogOpen(false)}
-                    fullWidth
+                    onRequestClose={() => setIsSelectFileDialogOpen(false)}
+                    title={'Datei auswählen'}
                 >
-                    <DialogTitle>Datei auswählen</DialogTitle>
                     <FileExplorer
                         style={{ padding: '0 .5em' }}
                         fileFilter={fileFilter}
@@ -66,7 +64,7 @@ export const SelectFileButton = React.memo<SelectFileButtonProps>(
                         }}
                         {...fileExplorerOptions}
                     />
-                </ResponsiveFullScreenDialog>
+                </Dialog>
             </>
         );
     }

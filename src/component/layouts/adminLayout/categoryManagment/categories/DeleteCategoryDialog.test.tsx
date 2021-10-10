@@ -32,7 +32,7 @@ describe('component/layouts/adminLayout/userManagment/DeleteCategoryDialog', () 
                 isOpen
                 categoryToDelete={FaecherCategory}
                 onConfirm={() => {}}
-                onClose={() => {}}
+                onRequestClose={() => {}}
             />,
             {},
             { additionalMocks: mocks }
@@ -45,7 +45,7 @@ describe('component/layouts/adminLayout/userManagment/DeleteCategoryDialog', () 
                 isOpen
                 categoryToDelete={FaecherCategory}
                 onConfirm={() => {}}
-                onClose={() => {}}
+                onRequestClose={() => {}}
             />,
             {},
             { additionalMocks: mocks }
@@ -61,7 +61,7 @@ describe('component/layouts/adminLayout/userManagment/DeleteCategoryDialog', () 
                 isOpen
                 categoryToDelete={FaecherCategory}
                 onConfirm={() => {}}
-                onClose={() => {}}
+                onRequestClose={() => {}}
             />,
             {},
             { additionalMocks: mocks }
@@ -71,14 +71,14 @@ describe('component/layouts/adminLayout/userManagment/DeleteCategoryDialog', () 
         });
     });
 
-    it('should call onClose when clicking the "Abort" button', async () => {
-        const onClose = jest.fn();
+    it('should call onRequestClose when clicking the "Abort" button', async () => {
+        const onRequestClose = jest.fn();
         render(
             <DeleteCategoryDialog
                 isOpen
                 categoryToDelete={FaecherCategory}
                 onConfirm={() => {}}
-                onClose={onClose}
+                onRequestClose={onRequestClose}
             />,
             {},
             { additionalMocks: mocks }
@@ -86,7 +86,7 @@ describe('component/layouts/adminLayout/userManagment/DeleteCategoryDialog', () 
         userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
 
         await waitFor(() => {
-            expect(onClose).toHaveBeenCalled();
+            expect(onRequestClose).toHaveBeenCalled();
         });
     });
 
@@ -98,7 +98,7 @@ describe('component/layouts/adminLayout/userManagment/DeleteCategoryDialog', () 
                     isOpen
                     categoryToDelete={FaecherCategory}
                     onConfirm={onConfirm}
-                    onClose={() => {}}
+                    onRequestClose={() => {}}
                 />,
                 {},
                 { additionalMocks: mocks }

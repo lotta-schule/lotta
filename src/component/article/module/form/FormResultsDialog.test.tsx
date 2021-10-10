@@ -85,7 +85,7 @@ describe('src/component/article/module/form/FormResultsDialog', () => {
             {},
             { additionalMocks: [...mocks] }
         );
-        expect(screen.queryByRole('presentation')).toBeNull();
+        expect(screen.queryByRole('dialog')).toBeNull();
     });
 
     it('should show dialog when isOpen is set', () => {
@@ -98,7 +98,7 @@ describe('src/component/article/module/form/FormResultsDialog', () => {
             {},
             { additionalMocks: [...mocks] }
         );
-        expect(screen.queryByRole('presentation')).toBeVisible();
+        expect(screen.queryByRole('dialog')).toBeVisible();
         expect(
             screen.queryByRole('heading', { name: /formulardaten/i })
         ).toBeVisible();

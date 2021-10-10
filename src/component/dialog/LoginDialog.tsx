@@ -1,21 +1,20 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
 import { useApolloClient, useMutation } from '@apollo/client';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ResponsiveFullScreenDialog } from './ResponsiveFullScreenDialog';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import { UserModel } from 'model';
 import { Label } from 'component/general/label/Label';
 import { Input } from 'component/general/form/input/Input';
+import Link from 'next/link';
+
 import LoginMutation from 'api/mutation/LoginMutation.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
-import Link from 'next/link';
 
 import styles from './LoginDialog.module.scss';
 
@@ -62,10 +61,11 @@ export const LoginDialog = React.memo<LoginDialogProps>(
 
         return (
             <>
-                <ResponsiveFullScreenDialog
+                <Dialog
                     open={isOpen}
                     className={styles.root}
-                    fullWidth
+                    title={'Auf der Website anmelden'}
+                    onRequestClose={onRequestClose}
                 >
                     <form
                         onSubmit={(e) => {
@@ -73,11 +73,8 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                             login({ variables: { username: email, password } });
                         }}
                     >
-                        <DialogTitle>Auf der Website anmelden</DialogTitle>
                         <DialogContent>
-                            <DialogContentText>
-                                Melde dich hier mit deinen Zugangsdaten an.
-                            </DialogContentText>
+                            Melde dich hier mit deinen Zugangsdaten an.
                             <ErrorMessage error={error} />
                             <Label label={'Deine Email-Adresse:'}>
                                 <Input
@@ -120,7 +117,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                             <Button type={'submit'}>Anmelden</Button>
                         </DialogActions>
                     </form>
-                </ResponsiveFullScreenDialog>
+                </Dialog>
                 <UpdatePasswordDialog
                     isFirstPasswordChange
                     withCurrentPassword={password}

@@ -1,22 +1,20 @@
-import React, { memo, useContext, useEffect } from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Typography,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
+import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { FileModel, DirectoryModel } from 'model';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import fileExplorerContext from './context/FileExplorerContext';
+
 import DeleteFileMutation from 'api/mutation/DeleteFileMutation.graphql';
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
-export const DeleteFilesDialog = memo(() => {
-    const [state, dispatch] = useContext(fileExplorerContext);
+export const DeleteFilesDialog = React.memo(() => {
+    const [state, dispatch] = React.useContext(fileExplorerContext);
 
     const [deleteFile, { error, loading: isLoading }] = useMutation(
         DeleteFileMutation,
@@ -49,35 +47,28 @@ export const DeleteFilesDialog = memo(() => {
         }
     );
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (state.showDeleteFiles) {
         }
     }, [state.showDeleteFiles]);
 
     return (
-        <ResponsiveFullScreenDialog
+        <Dialog
             open={state.showDeleteFiles}
-            onClose={() => dispatch({ type: 'hideDeleteFiles' })}
-            aria-labelledby="select-directory-tree-dialog"
+            onRequestClose={() => dispatch({ type: 'hideDeleteFiles' })}
+            title={'Dateien löschen'}
         >
-            <DialogTitle id="select-directory-tree-dialog-title">
-                Dateien löschen
-            </DialogTitle>
             <ErrorMessage error={error} />
             <DialogContent>
-                <DialogContentText>
-                    Möchtest du die folgenden Dateien wirklich löschen? Sie sind
-                    dann unwiederbringlich verloren.
-                </DialogContentText>
-                <DialogContentText>
-                    Sollten Sie in Beiträgen, Modulen oder als Profilbild
-                    verwendet werden, wird die Referenz auch dort entfernt.
-                </DialogContentText>
-                <Typography variant={'body1'} component={'ul'}>
+                Möchtest du die folgenden Dateien wirklich löschen? Sie sind
+                dann unwiederbringlich verloren. Sollten Sie in Beiträgen,
+                Modulen oder als Profilbild verwendet werden, wird die Referenz
+                auch dort entfernt.
+                <ul>
                     {state.markedFiles.map((file) => (
                         <li key={file.id}>{file.filename}</li>
                     ))}
-                </Typography>
+                </ul>
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => dispatch({ type: 'hideDeleteFiles' })}>
@@ -114,6 +105,6 @@ export const DeleteFilesDialog = memo(() => {
                     Dateien endgültig löschen
                 </Button>
             </DialogActions>
-        </ResponsiveFullScreenDialog>
+        </Dialog>
     );
 });

@@ -1,17 +1,16 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { TenantModel, UserGroupModel } from 'model';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Button } from 'component/general/button/Button';
-import { Label } from 'component/general/label/Label';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
+import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
+import { Label } from 'component/general/label/Label';
+
 import CreateUserGroupMutation from 'api/mutation/CreateUserGroupMutation.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
@@ -55,7 +54,11 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
             setName('');
         };
         return (
-            <ResponsiveFullScreenDialog open={isOpen} fullWidth>
+            <Dialog
+                open={isOpen}
+                onRequestClose={onAbort}
+                title={'Nutzergruppe erstellen'}
+            >
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
@@ -68,11 +71,8 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
                         });
                     }}
                 >
-                    <DialogTitle>Nutzergruppe erstellen</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
-                            Erstelle eine neue Gruppe
-                        </DialogContentText>
+                        <p>Erstelle eine neue Gruppe</p>
                         <ErrorMessage error={error} />
                         <Label label="Name der Gruppe:">
                             <Input
@@ -100,7 +100,7 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
                         </Button>
                     </DialogActions>
                 </form>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

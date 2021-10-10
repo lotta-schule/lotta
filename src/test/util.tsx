@@ -23,6 +23,7 @@ import fileExplorerContext, {
 import DateFnsUtils from '@date-io/date-fns';
 import { createRouter, Router } from 'next/router';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
+import { OverlayProvider } from '@react-aria/overlays';
 
 export interface TestSetupOptions {
     currentUser?: UserModel;
@@ -85,18 +86,20 @@ const ProviderFactory =
                             <CloudimageProvider
                                 config={{ token: 'ABCDEF', lazyLoading: false }}
                             >
-                                <MockedProvider
-                                    mocks={[
-                                        ...defaultMocks,
-                                        ...(options.additionalMocks || []),
-                                    ]}
-                                    addTypename={false}
-                                    cache={cache}
-                                >
-                                    <UploadQueueProvider>
-                                        {children}
-                                    </UploadQueueProvider>
-                                </MockedProvider>
+                                <OverlayProvider>
+                                    <MockedProvider
+                                        mocks={[
+                                            ...defaultMocks,
+                                            ...(options.additionalMocks || []),
+                                        ]}
+                                        addTypename={false}
+                                        cache={cache}
+                                    >
+                                        <UploadQueueProvider>
+                                            {children}
+                                        </UploadQueueProvider>
+                                    </MockedProvider>
+                                </OverlayProvider>
                             </CloudimageProvider>
                         </I18nextProvider>
                     </MuiPickersUtilsProvider>

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { FileModel } from '../../model';
+import { FileModel } from 'model';
 import { EditOverlay } from './EditOverlay';
-import { DialogTitle, CircularProgress } from '@material-ui/core';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { Dialog } from 'component/general/dialog/Dialog';
 import FileExplorer from 'component/fileExplorer/FileExplorer';
 
 interface SelectFileOverlayProps {
@@ -38,12 +37,11 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
                     >
                         {children}
                     </EditOverlay>
-                    <ResponsiveFullScreenDialog
+                    <Dialog
                         open={isSelectFileDialogOpen}
-                        onClose={() => setIsSelectFileDialogOpen(false)}
-                        fullWidth
+                        onRequestClose={() => setIsSelectFileDialogOpen(false)}
+                        title={'Datei auswählen'}
                     >
-                        <DialogTitle>Datei auswählen</DialogTitle>
                         <FileExplorer
                             style={{ padding: '0 .5em' }}
                             fileFilter={fileFilter}
@@ -52,7 +50,7 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
                                 onSelectFile(file);
                             }}
                         />
-                    </ResponsiveFullScreenDialog>
+                    </Dialog>
                 </>
             );
         }

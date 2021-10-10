@@ -1,15 +1,14 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { WidgetModel, ID } from 'model';
 import { useMutation } from '@apollo/client';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { WidgetModel, ID } from 'model';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+
 import DeleteWidgetMutation from 'api/mutation/DeleteWidgetMutation.graphql';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
@@ -17,15 +16,12 @@ import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 export interface DeleteWidgetDialogProps {
     isOpen: boolean;
     widget: WidgetModel;
-    onClose(
-        event: {},
-        reason: 'backdropClick' | 'escapeKeyDown' | 'auto'
-    ): void;
+    onRequestClose(): void;
     onConfirm(): void;
 }
 
 export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
-    ({ isOpen, widget, onClose, onConfirm }) => {
+    ({ isOpen, widget, onRequestClose, onConfirm }) => {
         const [deleteWidget, { loading: isLoading, error }] = useMutation<
             { widget: WidgetModel },
             { id: ID }
@@ -52,24 +48,21 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
         });
 
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={isOpen}
-                onClose={onClose}
-                aria-labelledby="delete-user-widget-dialog"
+                onRequestClose={onRequestClose}
+                title={'Gruppe löschen'}
             >
-                <DialogTitle id="delete-user-widget-dialog-title">
-                    Gruppe löschen
-                </DialogTitle>
                 <DialogContent>
                     <ErrorMessage error={error} />
-                    <DialogContentText>
+                    <p>
                         Möchtest du die Marginale "{widget.title}" wirklich
                         löschen? Sie ist dann unwiederbringlich verloren.
-                    </DialogContentText>
+                    </p>
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={(e: React.MouseEvent) => onClose(e, 'auto')}
+                        onClick={(e: React.MouseEvent) => onRequestClose()}
                         disabled={isLoading}
                     >
                         Abbrechen
@@ -83,7 +76,7 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
                         Marginale endgültig löschen
                     </Button>
                 </DialogActions>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

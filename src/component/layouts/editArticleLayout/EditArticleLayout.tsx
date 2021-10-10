@@ -1,26 +1,25 @@
 import * as React from 'react';
+import { useMutation, useSubscription } from '@apollo/client';
 import { ArticleModel, ID } from 'model';
 import { Button } from 'component/general/button/Button';
-import { ArticleEditable as Article } from '../../article/ArticleEditable';
-import { EditArticleFooter } from './EditArticleFooter';
-import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { AddModuleBar } from 'component/article/AddModuleBar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article as ArticleUtil } from 'util/model/Article';
-import { useMutation, useSubscription } from '@apollo/client';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
-import {
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-} from '@material-ui/core';
-import { useRouter } from 'next/router';
 import { useBeforeUnloadConfirmation } from 'util/useBeforeUnloadConfirmation';
+import { ArticleEditable as Article } from '../../article/ArticleEditable';
+import { EditArticleFooter } from './EditArticleFooter';
+import { BaseLayoutMainContent } from '../BaseLayoutMainContent';
+import { useRouter } from 'next/router';
+import omit from 'lodash/omit';
+
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
 import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
-import omit from 'lodash/omit';
 
 export interface ArticleLayoutProps {
     article: ArticleModel;
@@ -213,21 +212,24 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                             });
                         }}
                     />
-                    <ResponsiveFullScreenDialog
+                    <Dialog
                         open={isUpdatedArticleModalVisible}
+                        onRequestClose={() =>
+                            setIsUpdatedArticleModalVisible(false)
+                        }
+                        title={
+                            'Beitrag wurde von einem anderen Nutzer aktualisiert.'
+                        }
                     >
-                        <DialogTitle>
-                            Beitrag wurde von einem anderen Nutzer aktualisiert.
-                        </DialogTitle>
                         <DialogContent>
-                            <DialogContentText>
+                            <p>
                                 Module des Beitrags von einem Nutzer verändert.
-                            </DialogContentText>
-                            <DialogContentText>
+                            </p>
+                            <p>
                                 Möchtest du den veränderten Beitrag laden?
                                 Allerdings gehen dadurch deine Änderungen
                                 verloren.
-                            </DialogContentText>
+                            </p>
                         </DialogContent>
                         <DialogActions>
                             <Button
@@ -247,7 +249,7 @@ export const EditArticleLayout = React.memo<ArticleLayoutProps>(
                                 Änderungen laden
                             </Button>
                         </DialogActions>
-                    </ResponsiveFullScreenDialog>
+                    </Dialog>
                 </BaseLayoutMainContent>
             </>
         );

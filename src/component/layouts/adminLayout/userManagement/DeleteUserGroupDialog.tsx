@@ -1,30 +1,26 @@
-import React, { memo } from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    Button,
-    DialogActions,
-} from '@material-ui/core';
-import { TenantModel, UserGroupModel, ID } from 'model';
+import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { TenantModel, UserGroupModel, ID } from 'model';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+
 import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 export interface DeleteUserGroupDialogProps {
     isOpen: boolean;
     group: UserGroupModel;
-    onClose(
-        event: {},
-        reason: 'backdropClick' | 'escapeKeyDown' | 'auto'
-    ): void;
+    onRequestClose(): void;
     onConfirm(): void;
 }
 
-export const DeleteUserGroupDialog = memo<DeleteUserGroupDialogProps>(
-    ({ isOpen, group, onClose, onConfirm }) => {
+export const DeleteUserGroupDialog = React.memo<DeleteUserGroupDialogProps>(
+    ({ isOpen, group, onRequestClose, onConfirm }) => {
         const [deleteUserGroup, { loading: isLoading, error }] = useMutation<
             { group: UserGroupModel },
             { id: ID }
@@ -53,36 +49,31 @@ export const DeleteUserGroupDialog = memo<DeleteUserGroupDialogProps>(
         });
 
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={isOpen}
-                onClose={onClose}
-                aria-labelledby="delete-user-group-dialog"
+                onRequestClose={onRequestClose}
+                title={'Gruppe löschen'}
             >
-                <DialogTitle id="delete-user-group-dialog-title">
-                    Gruppe löschen
-                </DialogTitle>
                 <DialogContent>
                     <ErrorMessage error={error} />
-                    <DialogContentText>
+                    <p>
                         Möchtest du die Nutzergruppe "{group.name}" wirklich
                         löschen? Sie ist dann unwiederbringlich verloren.
-                    </DialogContentText>
-                    <DialogContentText>
+                    </p>
+                    <p>
                         Beiträge und Kategorien, die <em>ausschließlich</em> für
                         diese Gruppe sichtbar waren, werden dann öffentlich
                         sichtbar.
-                    </DialogContentText>
+                    </p>
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        color={'primary'}
-                        onClick={(e) => onClose(e, 'auto')}
+                        onClick={() => onRequestClose()}
                         disabled={isLoading}
                     >
                         Abbrechen
                     </Button>
                     <Button
-                        color={'secondary'}
                         onClick={() =>
                             deleteUserGroup({ variables: { id: group.id } })
                         }
@@ -91,7 +82,7 @@ export const DeleteUserGroupDialog = memo<DeleteUserGroupDialogProps>(
                         Gruppe endgültig löschen
                     </Button>
                 </DialogActions>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

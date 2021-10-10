@@ -1,20 +1,18 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Grid,
-    CircularProgress,
-    Divider,
-} from '@material-ui/core';
+import { Grid, CircularProgress, Divider } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
 import { ID, UserModel } from 'model';
-import { UserAvatar } from 'component/user/UserAvatar';
 import { Button } from 'component/general/button/Button';
-import { GroupSelect } from 'component/edit/GroupSelect';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
+import { GroupSelect } from 'component/edit/GroupSelect';
+import { UserAvatar } from 'component/user/UserAvatar';
 import { useUserGroups } from 'util/tenant/useUserGroups';
+
 import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
 
@@ -22,11 +20,11 @@ import styles from './EditUserPermissionDialog.module.scss';
 
 export interface EditUserPermissionsDialogProps {
     user: UserModel;
-    onClose(): void;
+    onRequestClose(): void;
 }
 
 export const EditUserPermissionsDialog =
-    React.memo<EditUserPermissionsDialogProps>(({ user, onClose }) => {
+    React.memo<EditUserPermissionsDialogProps>(({ user, onRequestClose }) => {
         const allUserGroups = useUserGroups();
 
         const { data, loading, error } = useQuery<
@@ -79,14 +77,12 @@ export const EditUserPermissionsDialog =
             );
 
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={true}
+                onRequestClose={onRequestClose}
                 className={styles.root}
-                fullWidth
+                title={`${user.name}s Details`}
             >
-                <DialogTitle data-testid="DialogTitle">
-                    {user.name}s Details
-                </DialogTitle>
                 <DialogContent>
                     <ErrorMessage error={error || updateUserError} />
                     <Grid
@@ -154,10 +150,13 @@ export const EditUserPermissionsDialog =
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button data-testid="AbortButton" onClick={() => onClose()}>
+                    <Button
+                        data-testid="AbortButton"
+                        onClick={() => onRequestClose()}
+                    >
                         Abbrechen
                     </Button>
                 </DialogActions>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     });

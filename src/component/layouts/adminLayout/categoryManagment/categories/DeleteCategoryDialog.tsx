@@ -1,17 +1,16 @@
 import * as React from 'react';
-import {
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    LinearProgress,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
-import { ArticleModel, CategoryModel, ID } from 'model';
+import { LinearProgress } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
+import { ArticleModel, CategoryModel, ID } from 'model';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { useCategories } from 'util/categories/useCategories';
+
 import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
@@ -19,15 +18,12 @@ import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 export interface DeleteCategoryDialogProps {
     isOpen: boolean;
     categoryToDelete: CategoryModel;
-    onClose(
-        event: {},
-        reason: 'backdropClick' | 'escapeKeyDown' | 'auto'
-    ): void;
+    onRequestClose(): void;
     onConfirm(): void;
 }
 
 export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
-    ({ isOpen, categoryToDelete, onClose, onConfirm }) => {
+    ({ isOpen, categoryToDelete, onRequestClose, onConfirm }) => {
         const [categories] = useCategories();
         const { data: articlesData, loading: isLoadingArticles } = useQuery<
             { articles: ArticleModel[] },
@@ -73,22 +69,19 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
         });
 
         return (
-            <ResponsiveFullScreenDialog
+            <Dialog
                 open={isOpen}
-                onClose={onClose}
-                aria-labelledby="delete-category-dialog"
+                onRequestClose={onRequestClose}
+                title={'Kategorie löschen'}
             >
                 {isLoading && <LinearProgress />}
-                <DialogTitle id="delete-category-dialog-title">
-                    Kategorie löschen
-                </DialogTitle>
                 <DialogContent>
                     <ErrorMessage error={error} />
-                    <DialogContentText>
+                    <p>
                         Möchtest du die folgende Kategorie wirklich löschen? Sie
                         ist dann unwiederbringlich verloren.
-                    </DialogContentText>
-                    <DialogContentText>
+                    </p>
+                    <p>
                         Alle Beiträge, die dieser Kategorie zugeordnet sind,
                         sind dann ohne Kategorie und nur über direkten Link
                         erreichbar.
@@ -101,9 +94,9 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                                 articlesData && articlesData.articles.length
                             )}
                         </em>
-                    </DialogContentText>
+                    </p>
                     {!categoryToDelete.isSidenav && (
-                        <DialogContentText>
+                        <p>
                             Unterkategorien, die dieser Kategorie zugeordnet
                             waren, werden zu Hauptkategorien.
                             <br />
@@ -118,12 +111,12 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                                     ).length
                                 }
                             </em>
-                        </DialogContentText>
+                        </p>
                     )}
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={(e: React.MouseEvent) => onClose(e, 'auto')}
+                        onClick={(e: React.MouseEvent) => onRequestClose()}
                         disabled={isLoading}
                     >
                         Abbrechen
@@ -139,7 +132,7 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                         Kategorie endgültig löschen
                     </Button>
                 </DialogActions>
-            </ResponsiveFullScreenDialog>
+            </Dialog>
         );
     }
 );

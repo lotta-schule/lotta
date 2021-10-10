@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-    Grid,
-    Container,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-} from '@material-ui/core';
-import { Button } from 'component/general/button/Button';
+import { Grid, Container } from '@material-ui/core';
 import { Edit, Place } from '@material-ui/icons';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -18,18 +11,24 @@ import { AuthorAvatarsList } from './AuthorAvatarsList';
 import { useIsMobile } from 'util/useIsMobile';
 import { Article as ArticleUtil } from 'util/model/Article';
 import { useIsRetina } from 'util/useIsRetina';
+import { Button } from 'component/general/button/Button';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+} from 'component/general/dialog/Dialog';
 import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { TagsSelect } from 'component/layouts/editArticleLayout/TagsSelect';
 import { Tag } from 'component/general/tag/Tag';
-import { ResponsiveFullScreenDialog } from 'component/dialog/ResponsiveFullScreenDialog';
 import { Input } from 'component/general/form/input/Input';
 import { useServerData } from 'component/ServerDataContext';
-import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
 import Img from 'react-cloudimage-responsive';
 import Link from 'next/link';
 import getConfig from 'next/config';
 import clsx from 'clsx';
+
+import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
 
 import styles from './ArticlePreviewStandardLayout.module.scss';
 
@@ -264,12 +263,12 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                             : undefined
                                     }
                                 />
-                                <ResponsiveFullScreenDialog
+                                <Dialog
                                     open={isSelfRemovalDialogOpen}
+                                    title={
+                                        'Dich selbst aus dem Beitrag entfernen'
+                                    }
                                 >
-                                    <DialogTitle>
-                                        Dich selbst aus dem Beitrag entfernen
-                                    </DialogTitle>
                                     <DialogContent>
                                         <p>
                                             Möchtest du dich selbst wirklich aus
@@ -312,7 +311,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                             endgültig entfernen
                                         </Button>
                                     </DialogActions>
-                                </ResponsiveFullScreenDialog>
+                                </Dialog>
                             </Grid>
                         </Grid>
                     </Grid>
