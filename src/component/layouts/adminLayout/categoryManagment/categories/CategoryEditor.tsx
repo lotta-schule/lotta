@@ -1,32 +1,29 @@
 import * as React from 'react';
-import {
-    Divider,
-    FormControl,
-    Checkbox,
-    FormControlLabel,
-} from '@material-ui/core';
+import { FormControl, Checkbox, FormControlLabel } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { useMutation, useQuery } from '@apollo/client';
-import { CategoryModel, WidgetModel, ID } from 'model';
-import { GroupSelect } from 'component/edit/GroupSelect';
-import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
-import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { useCategories } from 'util/categories/useCategories';
-import { Category, File, RedirectType } from 'util/model';
-import { CategoryWidgetSelector } from './CategoryWidgetSelector';
-import { Button } from 'component/general/button/Button';
 import { animated, useSpring } from 'react-spring';
-import { Label } from 'component/general/label/Label';
+import { CategoryModel, WidgetModel, ID } from 'model';
+import { useCategories } from 'util/categories/useCategories';
+import { SelectFileOverlay } from 'component/edit/SelectFileOverlay';
+import { Button } from 'component/general/button/Button';
+import { Divider } from 'component/general/divider/Divider';
+import { ErrorMessage } from 'component/general/ErrorMessage';
+import { GroupSelect } from 'component/edit/GroupSelect';
 import { Input } from 'component/general/form/input/Input';
-import { Select } from 'component/general/form/select/Select';
+import { Label } from 'component/general/label/Label';
+import { PlaceholderImage } from 'component/placeholder/PlaceholderImage';
 import { Radio, RadioGroup } from 'component/general/form/radio';
+import { Select } from 'component/general/form/select/Select';
 import { useServerData } from 'component/ServerDataContext';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
-import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
-import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
+import { Category, File, RedirectType } from 'util/model';
+import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import Img from 'react-cloudimage-responsive';
 import clsx from 'clsx';
+
+import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
+import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 
 import styles from './CategoryEditor.module.scss';
 

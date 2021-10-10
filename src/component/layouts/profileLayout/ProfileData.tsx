@@ -5,7 +5,6 @@ import {
     CardContent,
     Grid,
     Badge,
-    Divider,
     List,
     ListItemText,
     ListItem,
@@ -15,6 +14,7 @@ import { Clear } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
+import { Divider } from 'component/general/divider/Divider';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
@@ -28,8 +28,9 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { EnrollmentTokensEditor } from '../EnrollmentTokensEditor';
 import { useServerData } from 'component/ServerDataContext';
-import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
 import Link from 'next/link';
+
+import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
 
 import styles from './ProfileData.module.scss';
 

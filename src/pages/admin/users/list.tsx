@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LinearProgress, Divider, Grid } from '@material-ui/core';
+import { LinearProgress, Grid } from '@material-ui/core';
 import { EditUserPermissionsDialog } from 'component/layouts/adminLayout/userManagement/EditUserPermissionsDialog';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
@@ -11,12 +11,14 @@ import { SearchUserField } from 'component/layouts/adminLayout/userManagement/Se
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { Divider } from 'component/general/divider/Divider';
 import { Input } from 'component/general/form/input/Input';
 import { GetServerSidePropsContext } from 'next';
 import { AdminLayout } from 'component/layouts/adminLayout/AdminLayout';
 import { AccountCircle } from '@material-ui/icons';
-import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
 import clsx from 'clsx';
+
+import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
 
 import styles from './list.module.scss';
 

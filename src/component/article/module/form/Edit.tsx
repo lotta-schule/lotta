@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Add, DragHandle, Delete } from '@material-ui/icons';
-import { Grid, Divider } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
+import { Divider } from 'component/general/divider/Divider';
 import { Input } from 'component/general/form/input/Input';
 import { Label } from 'component/general/label/Label';
 import { ContentModuleModel } from 'model';

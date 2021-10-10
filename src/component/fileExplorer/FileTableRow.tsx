@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-    TableRow,
-    TableCell,
-    Menu,
-    MenuItem,
-    Divider,
-} from '@material-ui/core';
+import { TableRow, TableCell, Menu, MenuItem } from '@material-ui/core';
 import {
     MoreVert,
     CreateOutlined,
@@ -16,6 +10,7 @@ import {
 import { FileModel, DirectoryModel } from 'model';
 import { Button } from 'component/general/button/Button';
 import { Checkbox } from 'component/general/form/checkbox';
+import { Divider } from 'component/general/divider/Divider';
 import { File } from 'util/model/File';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';

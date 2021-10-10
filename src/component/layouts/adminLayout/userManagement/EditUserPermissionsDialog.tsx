@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, CircularProgress, Divider } from '@material-ui/core';
+import { Grid, CircularProgress } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
 import { ID, UserModel } from 'model';
 import { Button } from 'component/general/button/Button';
@@ -8,6 +8,7 @@ import {
     DialogActions,
     DialogContent,
 } from 'component/general/dialog/Dialog';
+import { Divider } from 'component/general/divider/Divider';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { GroupSelect } from 'component/edit/GroupSelect';
 import { UserAvatar } from 'component/user/UserAvatar';
