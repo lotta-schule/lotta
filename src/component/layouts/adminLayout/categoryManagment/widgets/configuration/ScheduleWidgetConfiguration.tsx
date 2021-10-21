@@ -15,7 +15,7 @@ export const ScheduleWidgetConfiguration =
     React.memo<ScheduleWidgetConfigurationProps>(
         ({ configuration, setConfiguration }) => {
             return (
-                <div>
+                <div data-testid={'ScheduleWidgetConfiguration'}>
                     <Label label={'Typ'}>
                         <Select
                             value={configuration.type}

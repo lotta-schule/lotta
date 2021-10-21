@@ -124,6 +124,10 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                                 <Checkbox
                                     disabled={disabled}
                                     checked={selectedGroups.length === 0}
+                                    aria-label={
+                                        publicGroupSelectionLabel ??
+                                        'für alle sichtbar'
+                                    }
                                     label={
                                         <i>
                                             {publicGroupSelectionLabel ??

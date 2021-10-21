@@ -17,7 +17,7 @@ export const CalendarWidgetConfiguration =
     React.memo<CalendarWidgetConfigurationProps>(
         ({ configuration, setConfiguration }) => {
             return (
-                <div>
+                <div data-testid={'CalendarWidgetConfiguration'}>
                     {(configuration.calendars || []).map((calendar, index) => (
                         <div key={index}>
                             <Label label="URL des Kalenders">

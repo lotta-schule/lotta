@@ -24,6 +24,11 @@ export const Widget = {
                     src: '/img/calendar.svg',
                     style: { width: '1.5rem', height: '1.5rem' },
                 });
+            case WidgetModelType.IFrame:
+                return createElement('img', {
+                    src: '/img/profile.svg',
+                    style: { width: '1.5rem', height: '1.5rem' },
+                });
             default:
                 return createElement('img', {
                     src: '/img/profile.svg',
