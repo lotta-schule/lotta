@@ -127,6 +127,20 @@ export const Widgets = () => {
                                     )}{' '}
                                     &nbsp; VPlan-Marginale erstellen
                                 </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        onClickCreateWidget(
+                                            'IFrame',
+                                            WidgetModelType.IFrame
+                                        );
+                                        popupState.close();
+                                    }}
+                                >
+                                    {Widget.getIconForType(
+                                        WidgetModelType.IFrame
+                                    )}{' '}
+                                    &nbsp; IFrame-Marginale erstellen
+                                </MenuItem>
                             </Menu>
                         </>
                     )}

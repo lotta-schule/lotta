@@ -5,9 +5,8 @@ import { UserGroupModel } from './UserGroupModel';
 export enum WidgetModelType {
     UserNavigationMobile = '{0}',
     Calendar = 'CALENDAR',
-    VPlan = 'VPLAN',
-    TagCloud = 'TAGCLOUD',
     Schedule = 'SCHEDULE',
+    IFrame = 'IFRAME',
 }
 
 export interface WidgetIconModel {
@@ -42,4 +41,8 @@ export interface ScheduleWidgetConfig {
     schoolId: string;
     username: string;
     password: string;
+}
+
+export interface IFrameWidgetConfig {
+    url: string;
 }

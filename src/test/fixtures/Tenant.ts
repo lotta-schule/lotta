@@ -10,6 +10,7 @@ import {
     ScheduleWidgetConfig,
     WidgetModel,
     WidgetModelType,
+    IFrameWidgetConfig,
 } from 'model';
 
 /**
@@ -274,7 +275,7 @@ export const allCategories = [
 export const VPSchuelerWidget: WidgetModel<ScheduleWidgetConfig> = {
     id: '91800',
     title: 'VP Schüler',
-    type: WidgetModelType.VPlan,
+    type: WidgetModelType.Schedule,
     groups: [],
     configuration: {
         type: 'IndiwareStudent',
@@ -287,7 +288,7 @@ export const VPSchuelerWidget: WidgetModel<ScheduleWidgetConfig> = {
 export const VPLehrerWidget: WidgetModel<ScheduleWidgetConfig> = {
     id: '91801',
     title: 'VP Lehrer',
-    type: WidgetModelType.VPlan,
+    type: WidgetModelType.Schedule,
     groups: [],
     configuration: {
         type: 'IndiwareTeacher',
@@ -298,9 +299,9 @@ export const VPLehrerWidget: WidgetModel<ScheduleWidgetConfig> = {
 };
 
 export const CalendarKlassenarbeiten: WidgetModel<CalendarWidgetConfig> = {
-    id: '91801',
+    id: '91802',
     title: 'VP Lehrer',
-    type: WidgetModelType.VPlan,
+    type: WidgetModelType.Calendar,
     groups: [],
     configuration: {
         calendars: [
@@ -311,6 +312,16 @@ export const CalendarKlassenarbeiten: WidgetModel<CalendarWidgetConfig> = {
                 days: 14,
             },
         ],
+    },
+};
+
+export const GangamStyleWidget: WidgetModel<IFrameWidgetConfig> = {
+    id: '91803',
+    title: 'GangamStyle',
+    type: WidgetModelType.IFrame,
+    groups: [],
+    configuration: {
+        url: 'https://www.youtube-nocookie.com/embed/9bZkp7q19f0?controls=0',
     },
 };
 

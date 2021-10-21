@@ -15,6 +15,7 @@ import { WidgetIconSelection } from './WidgetIconSelection';
 import UpdateWidgetMutation from 'api/mutation/UpdateWidgetMutation.graphql';
 
 import styles from './WidgetEditor.module.scss';
+import { IFrameWidgetConfiguration } from './configuration/IFrameWidgetConfiguration';
 
 export interface WidgetEditorProps {
     selectedWidget: WidgetModel | null;
@@ -76,7 +77,6 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                 <ErrorMessage error={error} />
                 <Label label="Name des Widget">
                     <Input
-                        className={styles.input}
                         value={widget.title}
                         onChange={(e) =>
                             setWidget({
@@ -102,7 +102,6 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                 <Divider className={styles.divider} />
 
                 <GroupSelect
-                    className={styles.input}
                     selectedGroups={widget.groups || []}
                     disableAdminGroupsExclusivity
                     onSelectGroups={(groups) =>
@@ -120,6 +119,14 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                 )}
                 {widget.type === WidgetModelType.Schedule && (
                     <ScheduleWidgetConfiguration
+                        configuration={widget.configuration || {}}
+                        setConfiguration={(configuration) =>
+                            setWidget({ ...widget, configuration })
+                        }
+                    />
+                )}
+                {widget.type === WidgetModelType.IFrame && (
+                    <IFrameWidgetConfiguration
                         configuration={widget.configuration || {}}
                         setConfiguration={(configuration) =>
                             setWidget({ ...widget, configuration })

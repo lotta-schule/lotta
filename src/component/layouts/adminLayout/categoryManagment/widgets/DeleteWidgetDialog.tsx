@@ -51,7 +51,7 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
             <Dialog
                 open={isOpen}
                 onRequestClose={onRequestClose}
-                title={'Gruppe löschen'}
+                title={'Marginale löschen'}
             >
                 <DialogContent>
                     <ErrorMessage error={error} />

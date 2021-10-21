@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
 import { Paper } from '@material-ui/core';
+import { UserNavigationMobile } from 'component/layouts/navigation/UserNavigationMobile';
 import { Calendar } from './calendar/Calendar';
 import { Schedule } from './schedule/Schedule';
-import { UserNavigationMobile } from 'component/layouts/navigation/UserNavigationMobile';
+import { IFrame } from './iframe/IFrame';
 
 import styles from './Widget.module.scss';
 
@@ -23,6 +24,9 @@ export const Widget = React.memo<WidgetProps>(({ widget }) => {
             )}
             {widget.type === WidgetModelType.Schedule && (
                 <Schedule widget={widget} />
+            )}
+            {widget.type === WidgetModelType.IFrame && (
+                <IFrame widget={widget} />
             )}
         </Paper>
     );
