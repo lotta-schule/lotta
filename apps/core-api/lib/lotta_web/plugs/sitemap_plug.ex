@@ -24,10 +24,10 @@ defmodule LottaWeb.SitemapPlug do
     |> send_resp(
       200,
       case query_params do
-        %{"categories" => ""} ->
+        %{"categories" => nil} ->
           get_categories_body(conn)
 
-        %{"articles" => "", "date" => date} ->
+        %{"articles" => nil, "date" => date} ->
           get_articles_body(conn, Date.from_iso8601!(date))
 
         _ ->

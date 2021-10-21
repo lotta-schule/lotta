@@ -5,9 +5,9 @@ defmodule LottaWeb.Schema.Tenants.Widget do
 
   enum :widget_type do
     value(:calendar, as: "calendar")
-    value(:vplan, as: "vplan")
     value(:schedule, as: "schedule")
     value(:tagcloud, as: "tagcloud")
+    value(:iframe, as: "iframe")
   end
 
   object :widget do
