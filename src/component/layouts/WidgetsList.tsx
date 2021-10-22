@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
 import { useIsMobile } from 'util/useIsMobile';
-import { useLocalStorage } from 'util/useLocalStorage';
 import { Tabs, Tab } from '@material-ui/core';
 import { Widget } from 'component/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
@@ -35,6 +34,24 @@ export const WidgetsList = React.memo<WidgetsListProps>(
             ? [WidgetUtil.getProfileWidget(), ...widgets]
             : widgets;
 
+        const [currentTabIndex, setCurrentTabIndex] = React.useState<
+            number | null
+        >(null);
+        React.useEffect(() => {
+            const storedIndex = localStorage.getItem(
+                'widgetlist-last-selected-item-index'
+            );
+            setCurrentTabIndex(storedIndex ? parseInt(storedIndex) : 0);
+        }, []);
+        React.useEffect(() => {
+            if (currentTabIndex !== null) {
+                localStorage.setItem(
+                    'widgetlist-last-selected-item-index',
+                    String(currentTabIndex)
+                );
+            }
+        }, [currentTabIndex]);
+
         React.useLayoutEffect(() => {
             if (wrapperRef.current) {
                 wrapperRef.current.style.height = `calc(100vh - ${
@@ -55,10 +72,9 @@ export const WidgetsList = React.memo<WidgetsListProps>(
             [wrapperRef.current, isMobile, widgets.length]
         );
 
-        const [currentTabIndex, setCurrentTabIndex] = useLocalStorage(
-            'widgetlist-last-selected-item-index',
-            0
-        );
+        if (currentTabIndex === null) {
+            return null;
+        }
 
         const activeTabIndex =
             currentTabIndex < shownWidgets.length ? currentTabIndex : 0;
