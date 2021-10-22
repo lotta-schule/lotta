@@ -75,14 +75,7 @@ export const BaseLayout = React.memo(({ children }) => {
                         )}
                     </Grid>
                     <Grid item md={9} className={styles.titleGridItem}>
-                        <h1
-                            style={{
-                                fontFamily:
-                                    'var(--lotta-typography-title-font-family)',
-                            }}
-                        >
-                            {tenant.title}
-                        </h1>
+                        <h1>{tenant.title}</h1>
                     </Grid>
                 </Grid>
             </header>
