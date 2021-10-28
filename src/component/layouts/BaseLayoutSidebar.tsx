@@ -46,7 +46,7 @@ export const BaseLayoutSidebar = React.memo<BaseLayoutSidebarProps>(
         if (isMobile) {
             return (
                 <Drawer
-                    data-testid="BaseLayoutSidebar"
+                    data-testid={'BaseLayoutSidebar'}
                     classes={{ paper: styles.drawer }}
                     anchor={'right'}
                     open={isMobileDrawerOpen}
