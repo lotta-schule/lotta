@@ -400,6 +400,31 @@ describe('component/article/module/ContentModule', () => {
         });
     });
 
+    describe('Image ContentModule', () => {
+        const dividerContentModule: ContentModuleModel = {
+            id: '101100',
+            sortKey: 10,
+            type: ContentModuleType.DIVIDER,
+            files: [],
+            updatedAt: new Date().toString(),
+            insertedAt: new Date().toString(),
+            content: {},
+            configuration: {},
+        };
+
+        it('should render module in show mode', () => {
+            const screen = render(
+                <ContentModule
+                    contentModule={dividerContentModule}
+                    index={0}
+                    onUpdateModule={() => {}}
+                    onRemoveContentModule={() => {}}
+                />
+            );
+            expect(screen.getByTestId('DividerContentModule')).toBeVisible();
+        });
+    });
+
     describe('Video ContentModule', () => {
         const videoContentModule = {
             id: '101100',

@@ -21,6 +21,7 @@ import { Audio } from './audio/Audio';
 import { Download } from './download/Download';
 import { Form } from './form/Form';
 import { Table } from './table/Table';
+import { Divider as DividerCM } from './divider/Divider';
 import {
     bindTrigger,
     bindPopover,
@@ -227,6 +228,13 @@ export const ContentModule = React.memo<ContentModuleProps>(
                 )}
                 {contentModule.type === ContentModuleType.IMAGE_COLLECTION && (
                     <ImageCollection
+                        contentModule={contentModule}
+                        isEditModeEnabled={isEditModeEnabled}
+                        onUpdateModule={onUpdateModule}
+                    />
+                )}
+                {contentModule.type === ContentModuleType.DIVIDER && (
+                    <DividerCM
                         contentModule={contentModule}
                         isEditModeEnabled={isEditModeEnabled}
                         onUpdateModule={onUpdateModule}
