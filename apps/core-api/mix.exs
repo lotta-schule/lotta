@@ -65,7 +65,7 @@ defmodule Lotta.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.3"},
+      {:phoenix, "~> 1.6"},
       {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.2"},
       {:ecto_sql, "~> 3.6"},
@@ -81,12 +81,12 @@ defmodule Lotta.MixProject do
       {:comeonin, "~> 5.3.1"},
       {:argon2_elixir, "~> 2.4.0"},
       {:bcrypt_elixir, "~> 2.3.0"},
-      {:guardian, "~> 2.1.1"},
+      {:guardian, "~> 2.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.15"},
-      {:sweet_xml, "~> 0.6.6"},
-      {:poison, "~> 4.0.1"},
+      {:sweet_xml, "~> 0.7"},
+      {:poison, "~> 5.0"},
       {:uuid, "~> 1.1.8"},
       {:bamboo, "~> 2.0"},
       {:bamboo_phoenix, "~> 1.0"},
@@ -97,7 +97,7 @@ defmodule Lotta.MixProject do
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:elasticsearch, "~> 1.0"},
-      {:reverse_proxy_plug, "~> 1.3"},
+      {:reverse_proxy_plug, "~> 2.1"},
       # Test
       {:mock, "~> 0.3", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
