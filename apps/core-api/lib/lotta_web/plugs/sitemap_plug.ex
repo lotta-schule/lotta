@@ -13,6 +13,8 @@ defmodule LottaWeb.SitemapPlug do
 
   def init(opts), do: opts
 
+  defguardp is_empty(subject) when is_nil(subject) or subject == ""
+
   def call(conn, _) do
     query_params =
       conn
@@ -24,10 +26,10 @@ defmodule LottaWeb.SitemapPlug do
     |> send_resp(
       200,
       case query_params do
-        %{"categories" => nil} ->
+        %{"categories" => categories} when is_empty(categories) ->
           get_categories_body(conn)
 
-        %{"articles" => nil, "date" => date} ->
+        %{"articles" => articles, "date" => date} when is_empty(articles) ->
           get_articles_body(conn, Date.from_iso8601!(date))
 
         _ ->
