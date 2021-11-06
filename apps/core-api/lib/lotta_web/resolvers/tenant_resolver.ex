@@ -5,14 +5,10 @@ defmodule LottaWeb.TenantResolver do
   alias Lotta.Tenants
 
   def resolve_configuration(_parent, _info) do
-    IO.inspect("TENANT NOT FOUND AND RETURN: ")
-    IO.inspect(Tenants.get_configuration())
     {:ok, Tenants.get_configuration()}
   end
 
   def get(_args, %{context: %{tenant: tenant}}) do
-    IO.inspect("TENANT FOUND AND RETURN: ")
-    IO.inspect(tenant)
     {:ok, tenant}
   end
 
