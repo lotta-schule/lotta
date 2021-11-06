@@ -52,12 +52,6 @@ config :lotta, LottaWeb.Endpoint,
   secret_key_base: System.fetch_env!("SECRET_KEY_BASE"),
   live_view: [signing_salt: System.fetch_env!("LIVE_VIEW_SALT_SECRET")]
 
-config :lotta, CockpitWeb.Endpoint,
-  url: [host: System.get_env("COCKPIT_HOSTNAME", "cockpit.lotta.schule")],
-  http: [:inet6, port: String.to_integer(System.get_env("COCKPIT_PORT") || "4001")],
-  secret_key_base: System.fetch_env!("SECRET_KEY_BASE"),
-  live_view: [signing_salt: System.fetch_env!("LIVE_VIEW_SALT_SECRET")]
-
 config :lotta, Lotta.Storage.RemoteStorage,
   default_storage: System.get_env("REMOTE_STORAGE_DEFAULT_STORE"),
   prefix: System.fetch_env!("REMOTE_STORAGE_PREFIX"),
@@ -89,7 +83,6 @@ config :lotta, Lotta.Mailer,
   base_uri: "https://api.eu.mailgun.net/v3"
 
 config :lotta, LottaWeb.Endpoint, server: true
-config :lotta, CockpitWeb.Endpoint, server: true
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,

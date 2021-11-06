@@ -30,13 +30,6 @@ config :lotta, LottaWeb.Endpoint,
   pubsub_server: Lotta.PubSub,
   live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
 
-config :lotta, CockpitWeb.Endpoint,
-  url: [host: "localhost"],
-  secret_key_base: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B",
-  render_errors: [view: CockpitWeb.ErrorView, accepts: ~w(json)],
-  pubsub_server: Lotta.PubSub,
-  live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
-
 config :lotta, Lotta.Elasticsearch.Cluster,
   url: "http://localhost:9200",
   api: Elasticsearch.API.HTTP,

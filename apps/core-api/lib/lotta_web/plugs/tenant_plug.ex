@@ -16,6 +16,7 @@ defmodule LottaWeb.TenantPlug do
 
   defp put_tenant(conn) do
     tenant = tenant_by_slug_header(conn) || tenant_by_host_header(conn)
+    IO.inspect("TENANT: #{inspect(tenant)}")
 
     if tenant do
       Repo.put_prefix(tenant.prefix)

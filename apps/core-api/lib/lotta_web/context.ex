@@ -26,10 +26,13 @@ defmodule LottaWeb.Context do
 
   @impl true
   def call(conn, _blueprint) do
+    IO.inspect("NOW IN Context")
     context =
       %__MODULE__{}
       |> maybe_put_user(conn)
+      |> IO.inspect()
       |> maybe_put_tenant(conn)
+      |> IO.inspect()
 
     conn
     |> Absinthe.Plug.put_options(context: context)

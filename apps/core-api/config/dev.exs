@@ -47,13 +47,6 @@ config :lotta, LottaWeb.Endpoint,
   check_origin: false,
   watchers: []
 
-config :lotta, CockpitWeb.Endpoint,
-  http: [port: 4001],
-  debug_errors: true,
-  code_reloader: false,
-  check_origin: false,
-  watchers: []
-
 config :lotta, LottaWeb.Auth.AccessToken,
   issuer: "lotta",
   secret_key: "JM1gXuiWLLO766ayWjaee4Ed/8nmwssLoDbmtt0+yct7jO8TmFsCeOQhDcqQ+v2D"

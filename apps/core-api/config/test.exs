@@ -55,10 +55,6 @@ config :lotta, LottaWeb.Endpoint,
   http: [port: 4002],
   server: false
 
-config :lotta, CockpitWeb.Endpoint,
-  http: [port: 4003],
-  server: false
-
 config :junit_formatter,
   print_report_file: true,
   include_filename?: true,

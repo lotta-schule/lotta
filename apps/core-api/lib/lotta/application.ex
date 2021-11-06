@@ -16,7 +16,6 @@ defmodule Lotta.Application do
           {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
           Lotta.Repo,
           LottaWeb.Endpoint,
-          CockpitWeb.Endpoint,
           {Absinthe.Subscription, LottaWeb.Endpoint},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
           Lotta.Elasticsearch.Cluster,

@@ -1,9 +1,0 @@
-<h2>Alle Lottas</h2>
-
-<ul class="list-group">
-  <%= for tenant <- @tenants do %>
-    <%= link tenant.title, to: Routes.tenant_path(@conn, :show, tenant), class: "list-group-item list-group-item-action" %>
-  <% end %>
-</ul>
-
-<span style="float: right"><%= link "Neuer Kunde", to: Routes.tenant_path(@conn, :new) %></span>

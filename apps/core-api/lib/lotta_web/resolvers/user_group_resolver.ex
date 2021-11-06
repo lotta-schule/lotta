@@ -36,7 +36,7 @@ defmodule LottaWeb.UserGroupResolver do
   def all(_args, %{
         context: %Context{current_user: %User{is_admin?: is_admin, all_groups: user_groups}}
       }) do
-    all_groups = Accounts.list_user_groups()
+    all_groups = IO.inspect(Accounts.list_user_groups())
 
     {:ok, if(is_admin, do: all_groups, else: user_groups)}
   end
