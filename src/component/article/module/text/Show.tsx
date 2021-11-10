@@ -16,7 +16,9 @@ interface ShowProps {
 }
 
 export const Show = React.memo<ShowProps>(({ contentModule }) => {
-    const [editorState, setEditorState] = React.useState<Node[]>([]);
+    const [editorState, setEditorState] = React.useState<Node[]>(
+        getNormalizedSlateState(contentModule.content?.nodes ?? [])
+    );
 
     React.useEffect(() => {
         setEditorState(

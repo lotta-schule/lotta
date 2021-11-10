@@ -11,6 +11,7 @@ export enum ContentModuleType {
     DOWNLOAD = 'DOWNLOAD',
     FORM = 'FORM',
     TABLE = 'TABLE',
+    DIVIDER = 'DIVIDER',
 }
 
 export interface ContentModuleModel<C = any, T = any> {
