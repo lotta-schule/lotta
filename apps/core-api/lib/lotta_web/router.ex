@@ -50,6 +50,12 @@ defmodule LottaWeb.Router do
     )
   end
 
+  scope "/admin-api" do
+    pipe_through([:admin_auth, :json_api])
+
+    post("/create-test", LottaWeb.TenantController, :create_test)
+  end
+
   scope "/_debug" do
     # health endpoint
     forward("/health", LottaWeb.HealthPlug)
@@ -77,4 +83,8 @@ defmodule LottaWeb.Router do
   end
 
   def absinthe_before_send(conn, _blueprint), do: conn
+
+  defp admin_auth(conn, _opts) do
+    Plug.BasicAuth.basic_auth(conn, Application.get_env(:lotta, :admin_api_key))
+  end
 end
