@@ -1,22 +1,46 @@
 @import 'breakpoints';
 
-.gridContainer {
-    @media screen and (max-width: $max-sm) {
-        flex-direction: column-reverse;
+.root {
+    margin: 0;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+
+    .BoxContent {
+        padding: calc(2 * var(--lotta-spacing));
     }
-    & > div {
+
+    .BoxContainer {
+        display: flex;
         padding: var(--lotta-spacing);
-        position: relative;
+    }
+
+    .Sidebar {
+        width: 30%;
+        padding: var(--lotta-spacing);
+    }
+
+    .Main {
+        width: 70%;
+        padding: var(--lotta-spacing);
+    }
+
+    .avatar {
+        margin-bottom: var(--lotta-spacing);
+    }
+}
+
+.buttonList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    button {
+        margin: var(--lotta-spacing);
     }
 }
 
 .divider {
     margin-top: calc(2 * var(--lotta-spacing));
     margin-bottom: calc(2 * var(--lotta-spacing));
-    width: 80%;
-    @media screen and (max-width: $max-sm) {
-        width: 100%;
-    }
+    width: 100%;
 }
 
 .groupList {
@@ -28,8 +52,7 @@
 }
 
 .dangerSection {
-    width: 100%;
-    position: absolute;
+    width: auto;
     bottom: var(--lotta-spacing);
     left: var(--lotta-spacing);
     @media screen and (max-width: $max-sm) {

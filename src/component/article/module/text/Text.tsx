@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
-import { CardContent } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
@@ -15,10 +14,7 @@ export interface TextProps {
 export const Text = React.memo<TextProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
         return (
-            <CardContent
-                className={styles.root}
-                data-testid="TextContentModule"
-            >
+            <div className={styles.root} data-testid="TextContentModule">
                 {isEditModeEnabled && onUpdateModule ? (
                     <Edit
                         contentModule={contentModule}
@@ -27,7 +23,7 @@ export const Text = React.memo<TextProps>(
                 ) : (
                     <Show contentModule={contentModule} />
                 )}
-            </CardContent>
+            </div>
         );
     }
 );

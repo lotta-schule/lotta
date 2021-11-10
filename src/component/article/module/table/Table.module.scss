@@ -2,8 +2,8 @@
 @import 'colors';
 
 .root {
+    padding: var(--lotta-spacing);
     padding-top: 30px;
-    padding-bottom: 0px;
     margin: 0 16.6%;
     overflow: auto;
     @media screen and (max-width: $max-sm) {

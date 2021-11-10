@@ -3,6 +3,7 @@ import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
 import { BaseLayoutSidebar } from 'component/layouts/BaseLayoutSidebar';
 import { Card, CardContent, Typography } from '@material-ui/core';
 import { GetServerSidePropsContext } from 'next';
+import { Box } from 'component/general/layout/Box';
 
 import styles from './privacy.module.scss';
 
@@ -10,17 +11,13 @@ export const Privacy = () => {
     return (
         <>
             <BaseLayoutMainContent>
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h3'}>
-                            Datenschutzerklärung
-                        </Typography>
-                    </CardContent>
-                </Card>
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>Einleitung</Typography>
-                        <Typography variant={'body1'}>
+                <Box className={styles.root}>
+                    <Box className={styles.card}>
+                        <h1>Datenschutzerklärung</h1>
+                    </Box>
+                    <Card className={styles.card}>
+                        <h2>Einleitung</h2>
+                        <p>
                             Mit der folgenden Datenschutzerklärung möchten wir
                             dich darüber aufklären, welche Arten deiner
                             personenbezogenen Daten (nachfolgend auch kurz als
@@ -34,17 +31,12 @@ export const Privacy = () => {
                             externer Onlinepräsenzen, wie z.B. unserer
                             Social-Media-Profile (nachfolgend zusammenfassend
                             bezeichnet als &quot;Onlineangebot&quot;).
-                        </Typography>
-                        <Typography variant={'subtitle1'}>
+                        </p>
+                        <p className={styles.subtitle}>
                             Stand: 28. August 2019
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>Verantwortlicher</Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h3>Verantwortlicher</h3>
+                        <p>
                             <strong>EinsA GbR</strong>
                             <br />
                             Wilhelminenstraße 10
@@ -57,25 +49,17 @@ export const Privacy = () => {
                             <br />
                             vertretungsberechtigte Person:{' '}
                             <strong>Eike Wiewiorra</strong>
-                        </Typography>
-                    </CardContent>
-                </Card>
+                        </p>
 
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Übersicht der Verarbeitungen
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        <h3>Übersicht der Verarbeitungen</h3>
+                        <p>
                             Die nachfolgende Übersicht fasst die Arten der
                             verarbeiteten Daten und die Zwecke ihrer
                             Verarbeitung zusammen und verweist auf die
                             betroffenen Personen.
-                        </Typography>
-                        <Typography variant={'h5'}>
-                            Arten der verarbeiteten Daten
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h4>Arten der verarbeiteten Daten</h4>
+                        <p>
                             <ul>
                                 <li>Bestandsdaten (z.B. Namen, Klasse).</li>
                                 <li>
@@ -92,24 +76,20 @@ export const Privacy = () => {
                                     Interesse an Inhalten, Zugriffszeiten).
                                 </li>
                             </ul>
-                        </Typography>
+                        </p>
 
-                        <Typography variant={'h5'}>
-                            Kategorien betroffener Personen
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        <h4>Kategorien betroffener Personen</h4>
+                        <p>
                             <ul>
                                 <li>
                                     Nutzer (z.B. Webseitenbesucher, Nutzer von
                                     Onlinediensten).
                                 </li>
                             </ul>
-                        </Typography>
+                        </p>
 
-                        <Typography variant={'h5'}>
-                            Zwecke der Verarbeitung
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        <h4>Zwecke der Verarbeitung</h4>
+                        <p>
                             <ul>
                                 <li>Content Delivery Network (CDN).</li>
                                 <li>Sicherheitsmaßnahmen.</li>
@@ -121,24 +101,20 @@ export const Privacy = () => {
                                     Verwaltung und Beantwortung von Anfragen.
                                 </li>
                             </ul>
-                        </Typography>
-                    </CardContent>
-                </Card>
+                        </p>
+                    </Card>
 
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Maßgebliche Rechtsgrundlagen
-                        </Typography>
-                        <Typography variant={'body1'}>
+                    <Card className={styles.card}>
+                        <h2>Maßgebliche Rechtsgrundlagen</h2>
+                        <p>
                             Im Folgenden teilen wir die Rechtsgrundlagen der
                             Datenschutzgrundverordnung (DSGVO), auf deren Basis
                             wir die personenbezogenen Daten verarbeiten, mit.
                             Bitte beachte, dass zusätzlich zu den Regelungen der
                             DSGVO die nationalen Datenschutzvorgaben in deinem
                             bzw. unserem Wohn- und Sitzland gelten können.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <ul>
                                 <li>
                                     <strong>
@@ -177,8 +153,8 @@ export const Privacy = () => {
                                     erfordern, überwiegen.
                                 </li>
                             </ul>
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <strong>
                                 Nationale Datenschutzregelungen in Deutschland:
                             </strong>
@@ -203,16 +179,9 @@ export const Privacy = () => {
                             von Beschäftigten. Ferner können
                             Landesdatenschutzgesetze der einzelnen Bundesländer
                             zur Anwendung gelangen.
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Sicherheitsmaßnahmen
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h2>Sicherheitsmaßnahmen</h2>
+                        <p>
                             Wir treffen nach Maßgabe der gesetzlichen Vorgaben
                             unter Berücksichtigung des Stands der Technik, der
                             Implementierungskosten und der Art, des Umfangs, der
@@ -222,8 +191,8 @@ export const Privacy = () => {
                             natürlicher Personen geeignete technische und
                             organisatorische Maßnahmen, um ein dem Risiko
                             angemessenes Schutzniveau zu gewährleisten.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Zu den Maßnahmen gehören insbesondere die Sicherung
                             der Vertraulichkeit, Integrität und Verfügbarkeit
                             von Daten durch Kontrolle des physischen und
@@ -239,16 +208,9 @@ export const Privacy = () => {
                             sowie Verfahren entsprechend dem Prinzip des
                             Datenschutzes, durch Technikgestaltung und durch
                             datenschutzfreundliche Voreinstellungen.
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Datenverarbeitung in Drittländern
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h2>Datenverarbeitung in Drittländern</h2>
+                        <p>
                             Sofern wir Daten in einem Drittland (d.h., außerhalb
                             der Europäischen Union (EU), des Europäischen
                             Wirtschaftsraums (EWR)) verarbeiten oder die
@@ -257,8 +219,8 @@ export const Privacy = () => {
                             Übermittlung von Daten an andere Personen, Stellen
                             oder Unternehmen stattfindet, erfolgt dies nur im
                             Einklang mit den gesetzlichen Vorgaben.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Vorbehaltlich ausdrücklicher Einwilligung oder
                             vertraglich oder gesetzlich erforderlicher
                             Übermittlung verarbeiten oder lassen wir die Daten
@@ -280,8 +242,8 @@ export const Privacy = () => {
                                 https://ec.europa.eu/info/law/law-topic/data-protection/international-dimension-data-protection_de
                             </a>
                             ).
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Alle von Nutzern hochgeladenen Daten werden von uns
                             beim Unternehmen
                             <a
@@ -293,8 +255,8 @@ export const Privacy = () => {
                             </a>
                             auf Servern mit Standorten innerhalb der EU
                             gespeichert.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Alle von Nutzern hochgeladenen Bilder werden zum
                             Schnelleren Abruf zum Unternehmen
                             <a
@@ -305,8 +267,8 @@ export const Privacy = () => {
                                 Scaleflex
                             </a>
                             hochgeladen und von auch von dort wieder bezogen.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Alle von Nutzern hochgeladenen Video und
                             Audiodateien werden zum Unternehmen
                             <a
@@ -319,24 +281,17 @@ export const Privacy = () => {
                             zur Umwandlung hochgeladen. Sie werden aber bei
                             Digitalocean auf Servern innerhalb der EU
                             gespeichert.
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Einsatz von Cookies
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h2>Einsatz von Cookies</h2>
+                        <p>
                             Als "Cookies" werden kleine Dateien bezeichnet, die
                             auf Geräten der Nutzer gespeichert werden. Mittels
                             Cookies können unterschiedliche Angaben gespeichert
                             werden. Zu den Angaben können z.B. der Loginstatus,
                             oder die Stelle, an der ein Video geschaut wurde,
                             gehören.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Cookies werden im Regelfall auch dann eingesetzt,
                             wenn die Interessen eines Nutzers oder sein
                             Verhalten (z.B. Betrachten bestimmter Inhalte,
@@ -352,13 +307,13 @@ export const Privacy = () => {
                             wenn Angaben der Nutzer anhand pseudonymer
                             Onlinekennzeichnungen gespeichert werden, auch als
                             "Nutzer-IDs" bezeichnet).
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Soweit wir Cookies oder "Tracking"-Technologien
                             einsetzen, informieren wir Sie gesondert in unserer
                             Datenschutzerklärung.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <strong>Hinweise zu Rechtsgrundlagen:</strong> Die
                             Rechtsgrundlage der Verarbeitung Ihrer Daten ist
                             unserer berechtigten Interessen (z.B.
@@ -366,8 +321,8 @@ export const Privacy = () => {
                             Onlineangebotes und dessen Verbesserung) oder, wenn
                             der Einsatz von Cookies erforderlich ist, um unsere
                             vertraglichen Verpflichtungen zu erfüllen.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <strong>Widerruf und Widerspruch (Opt-Out):</strong>{' '}
                             Du hast jederzeit die Möglichkeit, eine erteilte
                             Einwilligung zu widerrufen oder der Verarbeitung
@@ -384,16 +339,9 @@ export const Privacy = () => {
                             Für andere Möglichkeiten, schreib uns doch einfach
                             eine Email und wir können mit dir weitere Lösungen
                             besprechen.
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Registrierung und Anmeldung
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h2>Registrierung und Anmeldung</h2>
+                        <p>
                             Nutzer können ein Nutzerkonto anlegen. Im Rahmen der
                             Registrierung werden den Nutzern die erforderlichen
                             Pflichtangaben mitgeteilt und zu Zwecken der
@@ -404,8 +352,8 @@ export const Privacy = () => {
                             E-Mail-Adresse). Die im Rahmen der Registrierung
                             eingegebenen Daten werden für die Zwecke der Nutzung
                             des Nutzerkontos und dessen Zwecks verwendet.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Die Nutzer können über Vorgänge, die für deren
                             Nutzerkonto relevant sind, wie z.B. technische
                             Änderungen, per E-Mail informiert werden. Wenn
@@ -417,8 +365,8 @@ export const Privacy = () => {
                             berechtigt, sämtliche während der Vertragsdauer
                             gespeicherte Daten des Nutzers unwiederbringlich zu
                             löschen.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Im Rahmen der Inanspruchnahme unserer
                             Registrierungs- und Anmeldefunktionen sowie der
                             Nutzung des Nutzerkontos speichern wir die
@@ -431,8 +379,8 @@ export const Privacy = () => {
                             denn, sie ist zur Verfolgung unserer Ansprüche
                             erforderlich oder es besteht hierzu besteht eine
                             gesetzliche Verpflichtung.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <ul>
                                 <li>
                                     <strong>Verarbeitete Datenarten:</strong>{' '}
@@ -463,16 +411,10 @@ export const Privacy = () => {
                                     6 Abs. 1 S. 1 lit. f. DSGVO).
                                 </li>
                             </ul>
-                        </Typography>
-                    </CardContent>
-                </Card>
+                        </p>
 
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Bereitstellung des Onlineangebotes
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        <h2>Bereitstellung des Onlineangebotes</h2>
+                        <p>
                             Um unser Onlineangebot sicher und effizient
                             bereitstellen zu können, nehmen wir die Leistungen
                             von einem oder mehreren Webhosting-Anbietern in
@@ -483,8 +425,8 @@ export const Privacy = () => {
                             Rechenkapazität, Speicherplatz und Datenbankdienste
                             sowie Sicherheitsleistungen und technische
                             Wartungsleistungen in Anspruch nehmen.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Zu den im Rahmen der Bereitstellung des
                             Hostingangebotes verarbeiteten Daten können alle die
                             Nutzer unseres Onlineangebotes betreffenden Angaben
@@ -494,8 +436,8 @@ export const Privacy = () => {
                             von Onlineangeboten an Browser ausliefern zu können,
                             und alle innerhalb unseres Onlineangebotes oder von
                             Webseiten getätigten Eingaben.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             Content-Delivery-Network: Wir setzen ein
                             "Content-Delivery-Network" (CDN) ein. Ein CDN ist
                             ein Dienst, mit dessen Hilfe Inhalte eines
@@ -504,8 +446,8 @@ export const Privacy = () => {
                             regional verteilter und über das Internet
                             verbundener Server schneller und sicherer
                             ausgeliefert werden können.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <ul>
                                 <li>
                                     <strong>Verarbeitete Datenarten:</strong>{' '}
@@ -530,11 +472,9 @@ export const Privacy = () => {
                                     lit. f. DSGVO).
                                 </li>
                             </ul>
-                        </Typography>
-                        <Typography variant={'h5'}>
-                            Eingesetzte Dienste und Diensteanbieter:
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h4>Eingesetzte Dienste und Diensteanbieter:</h4>
+                        <p>
                             <ul>
                                 <li>
                                     <strong>DigitalOcean:</strong>{' '}
@@ -557,16 +497,11 @@ export const Privacy = () => {
                                     https://privacy.scaleflex.it/go/scaleflex-privacy-center/en/data-privacy-addendum
                                 </li>
                             </ul>
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
+                        </p>
+                        <h2>
                             Änderung und Aktualisierung der Datenschutzerklärung
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </h2>
+                        <p>
                             Wir bitten dich, dich regelmäßig über den Inhalt
                             unserer Datenschutzerklärung zu informieren. Wir
                             passen die Datenschutzerklärung an, sobald die
@@ -576,16 +511,9 @@ export const Privacy = () => {
                             Mitwirkungshandlung deinerseits (z.B. Einwilligung)
                             oder eine sonstige individuelle Benachrichtigung
                             erforderlich wird.
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Rechte der betroffenen Personen
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h2>Rechte der betroffenen Personen</h2>
+                        <p>
                             Wir bitten dich, dich regelmäßig über den Inhalt
                             unserer Datenschutzerklärung zu informieren. Wir
                             passen die Datenschutzerklärung an, sobald die
@@ -595,8 +523,8 @@ export const Privacy = () => {
                             Mitwirkungshandlung deinerseits (z.B. Einwilligung)
                             oder eine sonstige individuelle Benachrichtigung
                             erforderlich wird.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <ul>
                                 <li>
                                     <strong>Widerspruchsrecht:</strong> Sie
@@ -680,11 +608,9 @@ export const Privacy = () => {
                                     gegen die DSGVO verstößt.
                                 </li>
                             </ul>
-                        </Typography>
-                        <Typography variant={'h5'}>
-                            Für uns zuständige Aufsichtsbehörde:
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h4>Für uns zuständige Aufsichtsbehörde:</h4>
+                        <p>
                             <strong>Andreas Schurig</strong>
                             <br />
                             Devrientstraße 5<br />
@@ -695,16 +621,9 @@ export const Privacy = () => {
                             <br />
                             Telefax: 03 51/85471-109
                             <br />
-                        </Typography>
-                    </CardContent>
-                </Card>
-
-                <Card className={styles.card}>
-                    <CardContent>
-                        <Typography variant={'h4'}>
-                            Begriffsdefinitionen
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <h2>Begriffsdefinitionen</h2>
+                        <p>
                             In diesem Abschnitt erhalten Sie eine Übersicht über
                             die in dieser Datenschutzerklärung verwendeten
                             Begrifflichkeiten. Viele der Begriffe sind dem
@@ -713,8 +632,8 @@ export const Privacy = () => {
                             verbindlich. Die nachfolgenden Erläuterungen sollen
                             dagegen vor allem dem Verständnis dienen. Die
                             Begriffe sind alphabetisch sortiert.
-                        </Typography>
-                        <Typography variant={'body1'}>
+                        </p>
+                        <p>
                             <ul>
                                 <li>
                                     <strong>
@@ -770,9 +689,9 @@ export const Privacy = () => {
                                     Übermitteln oder das Löschen.
                                 </li>
                             </ul>
-                        </Typography>
-                    </CardContent>
-                </Card>
+                        </p>
+                    </Card>
+                </Box>
             </BaseLayoutMainContent>
             <BaseLayoutSidebar isEmpty />
         </>

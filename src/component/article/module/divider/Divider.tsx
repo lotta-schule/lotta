@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
-import { CardContent } from '@material-ui/core';
 import { Divider as LottaDivider } from 'component/general/divider/Divider';
 
 export interface DividerProps {
@@ -10,8 +9,8 @@ export interface DividerProps {
 }
 
 export const Divider = React.memo<DividerProps>(() => (
-    <CardContent data-testid="DividerContentModule">
+    <div data-testid="DividerContentModule">
         <LottaDivider />
-    </CardContent>
+    </div>
 ));
 Divider.displayName = 'Divider';

@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import './box.scss';
+import './Box.module.scss';
 
 interface BoxProps {
     className?: string;

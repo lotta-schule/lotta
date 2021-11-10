@@ -2,6 +2,7 @@
 
 .root {
     margin: 0 16.6%;
+    padding: var(--lotta-spacing);
     @media screen and (max-width: $max-sm) {
         margin: 0;
     }
