@@ -96,7 +96,7 @@ sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || env || "staging"
 
 config :lotta, :admin_api_key,
   username: "admin",
-  admin_api_key: System.get_env("COCKPIT_ADMIN_API_KEY", "")
+  password: System.get_env("COCKPIT_ADMIN_API_KEY", "")
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
