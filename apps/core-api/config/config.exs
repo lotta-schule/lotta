@@ -22,10 +22,6 @@ config :lotta, :live_view,
   username: "admin",
   password: "password"
 
-  config :lotta, :admin_api,
-    username: "admin",
-    password: System.get_env("COCKPIT_ADMIN_API_KEY")
-
 # Configures the endpoints
 config :lotta, LottaWeb.Endpoint,
   url: [host: "localhost"],
