@@ -65,19 +65,19 @@ export const CssVariables = React.memo(() => {
         [theme]
     );
 
-    React.useEffect(() => {
-        const root = document?.querySelector<HTMLElement>(':root');
-        if (root) {
-            Object.keys(cssVariables).forEach((jsName) => {
-                const varName = `--lotta-${kebabCase(jsName)}`;
-                root.style.setProperty(
-                    varName,
-                    getCssValue(cssVariables[jsName])
-                );
-            });
-        }
-    }, [cssVariables]);
-
-    return null;
+    return (
+        <style>{`
+            :root {
+                ${Object.keys(cssVariables)
+                    .map(
+                        (jsName) =>
+                            `--lotta-${kebabCase(jsName)}: ${getCssValue(
+                                cssVariables[jsName]
+                            )};`
+                    )
+                    .join('\n')}
+            }
+        `}</style>
+    );
 });
 CssVariables.displayName = 'CssVariables';
