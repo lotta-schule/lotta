@@ -68,7 +68,7 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.20",
     "material-ui-popup-state": "^1.9.3",
-    "next": "^12.0.3",
+    "next": "^12.0.4-canary.11",
     "phoenix": "^1.6.2",
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
