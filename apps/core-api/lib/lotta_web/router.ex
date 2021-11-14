@@ -2,7 +2,6 @@ defmodule LottaWeb.Router do
   @moduledoc """
   Phoenix router
   """
-
   use LottaWeb, :router
 
   import Phoenix.LiveDashboard.Router

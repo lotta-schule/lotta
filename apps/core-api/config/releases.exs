@@ -101,9 +101,6 @@ config :lotta, :admin_api_key,
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
   environment_name: sentry_environment,
-  included_environments: ~w(production staging),
-  enable_source_code_context: true,
-  root_source_code_path: File.cwd!(),
   release:
     (case(sentry_environment) do
        "production" ->
