@@ -33,10 +33,10 @@
 }
 
 .tabRoot {
-    line-height: 1px;
-    text-transform: initial;
+    line-height: 1px !important;
+    text-transform: initial !important;
     // TODO: Why 60px? This is unclear, a named css-variable would be clearer
-    min-width: 60px;
+    min-width: 60px !important;
     filter: grayscale(0.95) opacity(0.8);
 }
 
