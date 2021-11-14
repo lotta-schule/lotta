@@ -29,6 +29,8 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { useServerData } from 'component/ServerDataContext';
 import { GetServerSidePropsContext } from 'next';
+import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
+import { Header } from 'component/general/Header';
 import Link from 'next/link';
 
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
@@ -66,239 +68,255 @@ export const Profile = () => {
     const getFieldError = useGetFieldError(error);
 
     return (
-        <Card>
-            <CardContent>
-                <h4>Meine Daten</h4>
-                <ErrorMessage error={error} />
-                <Grid container className={styles.gridContainer}>
-                    <Grid item xs md={4}>
-                        <Badge
-                            overlap={'circle'}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            badgeContent={
-                                <NavigationButton
-                                    onClick={() => setAvatarImageFile(null)}
-                                    icon={<Clear />}
+        <BaseLayoutMainContent>
+            <Header bannerImageUrl={'/bannerProfil.png'}>
+                <h2>Meine Daten</h2>
+            </Header>
+
+            <Card>
+                <CardContent>
+                    <h4>Meine Daten</h4>
+                    <ErrorMessage error={error} />
+                    <Grid container className={styles.gridContainer}>
+                        <Grid item xs md={4}>
+                            <Badge
+                                overlap={'circle'}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                badgeContent={
+                                    <NavigationButton
+                                        onClick={() => setAvatarImageFile(null)}
+                                        icon={<Clear />}
+                                    />
+                                }
+                            >
+                                <Avatar
+                                    src={
+                                        avatarImageFile
+                                            ? File.getFileRemoteLocation(
+                                                  baseUrl,
+                                                  avatarImageFile
+                                              )
+                                            : User.getDefaultAvatarUrl(
+                                                  currentUser
+                                              )
+                                    }
+                                    alt={User.getNickname(currentUser)}
                                 />
-                            }
-                        >
-                            <Avatar
-                                src={
-                                    avatarImageFile
-                                        ? File.getFileRemoteLocation(
-                                              baseUrl,
-                                              avatarImageFile
-                                          )
-                                        : User.getDefaultAvatarUrl(currentUser)
+                            </Badge>
+                            <br />
+                            <SelectFileButton
+                                buttonComponentProps={{
+                                    color: 'secondary',
+                                    size: 'small',
+                                    disabled: isLoading,
+                                }}
+                                fileFilter={(f) =>
+                                    f.fileType === FileModelType.Image
                                 }
-                                alt={User.getNickname(currentUser)}
+                                label={'Profilbild ändern'}
+                                onSelect={(file: FileModel) =>
+                                    setAvatarImageFile(file)
+                                }
                             />
-                        </Badge>
-                        <br />
-                        <SelectFileButton
-                            buttonComponentProps={{
-                                color: 'secondary',
-                                size: 'small',
-                                disabled: isLoading,
-                            }}
-                            fileFilter={(f) =>
-                                f.fileType === FileModelType.Image
-                            }
-                            label={'Profilbild ändern'}
-                            onSelect={(file: FileModel) =>
-                                setAvatarImageFile(file)
-                            }
-                        />
-                        <Divider className={styles.divider} />
-                        <List
-                            className={styles.groupList}
-                            dense
-                            subheader={
-                                <ListSubheader>Meine Gruppen</ListSubheader>
-                            }
-                            data-testid="ProfileData-GroupsList"
-                        >
-                            {[...currentUser.groups]
-                                .sort((g1, g2) => g2.sortKey - g1.sortKey)
-                                .map((group) => (
-                                    <ListItem key={group.id}>
-                                        <ListItemText>
-                                            {group.name}
-                                        </ListItemText>
-                                    </ListItem>
-                                ))}
-                        </List>
-                        <section className={styles.dangerSection}>
                             <Divider className={styles.divider} />
-                            <Link href={'/profile/delete'} passHref>
-                                <Button variant={'error'}>
-                                    Benutzerkonto löschen
-                                </Button>
-                            </Link>
-                        </section>
-                    </Grid>
-                    <Grid item md={8}>
-                        <Label label="Deine Email-Adresse:">
-                            <Input
-                                autoFocus
-                                disabled
-                                id="email"
-                                value={currentUser.email}
-                                placeholder="beispiel@medienportal.org"
-                                type="email"
-                                maxLength={100}
-                            />
-                        </Label>
-                        <Grid container>
-                            <Grid item sm={6}>
-                                <Button
-                                    style={{ border: 0 }}
-                                    onClick={() =>
-                                        setIsShowUpdateEmailDialog(true)
-                                    }
-                                >
-                                    Email ändern
-                                </Button>
-                            </Grid>
-                            <Grid item sm={6}>
-                                <Button
-                                    onClick={() =>
-                                        setIsShowUpdatePasswordDialog(true)
-                                    }
-                                    style={{ float: 'right', border: 0 }}
-                                >
-                                    Passwort ändern
-                                </Button>
-                            </Grid>
+                            <List
+                                className={styles.groupList}
+                                dense
+                                subheader={
+                                    <ListSubheader>Meine Gruppen</ListSubheader>
+                                }
+                                data-testid="ProfileData-GroupsList"
+                            >
+                                {[...currentUser.groups]
+                                    .sort((g1, g2) => g2.sortKey - g1.sortKey)
+                                    .map((group) => (
+                                        <ListItem key={group.id}>
+                                            <ListItemText>
+                                                {group.name}
+                                            </ListItemText>
+                                        </ListItem>
+                                    ))}
+                            </List>
+                            <section className={styles.dangerSection}>
+                                <Divider className={styles.divider} />
+                                <Link href={'/profile/delete'} passHref>
+                                    <Button variant={'error'}>
+                                        Benutzerkonto löschen
+                                    </Button>
+                                </Link>
+                            </section>
                         </Grid>
-                        <Label label="Dein Vor- und Nachname">
-                            <Input
-                                autoFocus
-                                id="name"
-                                placeholder="Minnie Musterchen"
-                                onChange={(e) => setName(e.currentTarget.value)}
-                                maxLength={100}
-                                disabled={isLoading}
-                                value={name}
-                                type="name"
-                            />
-                        </Label>
-                        <ErrorMessage error={getFieldError('name') || null} />
-                        <Label label="Dein Spitzname">
-                            <Input
-                                autoFocus
-                                id="nickname"
-                                value={nickname}
-                                onChange={(e) =>
-                                    setNickname(e.currentTarget.value)
-                                }
-                                placeholder="El Professore"
-                                type="text"
-                                disabled={isLoading}
-                                maxLength={25}
-                            />
+                        <Grid item md={8}>
+                            <Label label="Deine Email-Adresse:">
+                                <Input
+                                    autoFocus
+                                    disabled
+                                    id="email"
+                                    value={currentUser.email}
+                                    placeholder="beispiel@medienportal.org"
+                                    type="email"
+                                    maxLength={100}
+                                />
+                            </Label>
+                            <Grid container>
+                                <Grid item sm={6}>
+                                    <Button
+                                        style={{ border: 0 }}
+                                        onClick={() =>
+                                            setIsShowUpdateEmailDialog(true)
+                                        }
+                                    >
+                                        Email ändern
+                                    </Button>
+                                </Grid>
+                                <Grid item sm={6}>
+                                    <Button
+                                        onClick={() =>
+                                            setIsShowUpdatePasswordDialog(true)
+                                        }
+                                        style={{ float: 'right', border: 0 }}
+                                    >
+                                        Passwort ändern
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            <Label label="Dein Vor- und Nachname">
+                                <Input
+                                    autoFocus
+                                    id="name"
+                                    placeholder="Minnie Musterchen"
+                                    onChange={(e) =>
+                                        setName(e.currentTarget.value)
+                                    }
+                                    maxLength={100}
+                                    disabled={isLoading}
+                                    value={name}
+                                    type="name"
+                                />
+                            </Label>
                             <ErrorMessage
-                                error={getFieldError('nickname') || null}
+                                error={getFieldError('name') || null}
                             />
-                        </Label>
+                            <Label label="Dein Spitzname">
+                                <Input
+                                    autoFocus
+                                    id="nickname"
+                                    value={nickname}
+                                    onChange={(e) =>
+                                        setNickname(e.currentTarget.value)
+                                    }
+                                    placeholder="El Professore"
+                                    type="text"
+                                    disabled={isLoading}
+                                    maxLength={25}
+                                />
+                                <ErrorMessage
+                                    error={getFieldError('nickname') || null}
+                                />
+                            </Label>
 
-                        <Checkbox
-                            checked={isHideFullName!}
-                            label={
-                                'Deinen vollständigen Namen öffentlich verstecken'
-                            }
-                            onChange={(e) =>
-                                setIsHideFullName(e.currentTarget.checked)
-                            }
-                        />
-
-                        <div>
-                            Verstecke deinen vollständigen Namen, damit er nur
-                            vom Administrator deiner Schule gesehen werden kann.
-                            Dein Name taucht nicht in den von dir erstellten
-                            Artikeln oder in deinem Profil auf. Stattdessen wird
-                            dein Spitzname angezeigt.
-                        </div>
-
-                        <Label label="Deine Klasse / Dein Kürzel:">
-                            <Input
-                                autoFocus
-                                id="classOrShortName"
-                                value={classOrShortName}
-                                onChange={(e) =>
-                                    setClassOrShortName(e.currentTarget.value)
+                            <Checkbox
+                                checked={isHideFullName!}
+                                label={
+                                    'Deinen vollständigen Namen öffentlich verstecken'
                                 }
-                                placeholder="7/4"
-                                disabled={isLoading}
-                                maxLength={25}
+                                onChange={(e) =>
+                                    setIsHideFullName(e.currentTarget.checked)
+                                }
                             />
-                        </Label>
-                        <ErrorMessage error={getFieldError('class') || null} />
-                        <p>
-                            <small>
-                                Gib hier deine Klasse oder dein Kürzel ein.
-                                Damit kannst du Zugriff auf deinen Stundenplan
-                                erhalten.
-                            </small>
-                        </p>
 
-                        <Divider className={styles.divider} />
+                            <div>
+                                Verstecke deinen vollständigen Namen, damit er
+                                nur vom Administrator deiner Schule gesehen
+                                werden kann. Dein Name taucht nicht in den von
+                                dir erstellten Artikeln oder in deinem Profil
+                                auf. Stattdessen wird dein Spitzname angezeigt.
+                            </div>
 
-                        <h5>Meine Einschreibeschlüssel</h5>
-                        <EnrollmentTokensEditor
-                            disabled={isLoading}
-                            tokens={enrollmentTokens}
-                            setTokens={setEnrollmentTokens}
-                        />
-                        <p>
-                            <small>
-                                Nutze Einschreibeschlüssel, um dich selbst in
-                                Gruppen einzutragen.
-                            </small>
-                        </p>
+                            <Label label="Deine Klasse / Dein Kürzel:">
+                                <Input
+                                    autoFocus
+                                    id="classOrShortName"
+                                    value={classOrShortName}
+                                    onChange={(e) =>
+                                        setClassOrShortName(
+                                            e.currentTarget.value
+                                        )
+                                    }
+                                    placeholder="7/4"
+                                    disabled={isLoading}
+                                    maxLength={25}
+                                />
+                            </Label>
+                            <ErrorMessage
+                                error={getFieldError('class') || null}
+                            />
+                            <p>
+                                <small>
+                                    Gib hier deine Klasse oder dein Kürzel ein.
+                                    Damit kannst du Zugriff auf deinen
+                                    Stundenplan erhalten.
+                                </small>
+                            </p>
 
-                        <Button
-                            type={'submit'}
-                            style={{ float: 'right' }}
-                            disabled={isLoading}
-                            onClick={() =>
-                                updateProfile({
-                                    variables: {
-                                        user: {
-                                            name,
-                                            nickname,
-                                            class: classOrShortName,
-                                            hideFullName: isHideFullName,
-                                            avatarImageFile: avatarImageFile
-                                                ? { id: avatarImageFile.id }
-                                                : null,
-                                            enrollmentTokens,
+                            <Divider className={styles.divider} />
+
+                            <h5>Meine Einschreibeschlüssel</h5>
+                            <EnrollmentTokensEditor
+                                disabled={isLoading}
+                                tokens={enrollmentTokens}
+                                setTokens={setEnrollmentTokens}
+                            />
+                            <p>
+                                <small>
+                                    Nutze Einschreibeschlüssel, um dich selbst
+                                    in Gruppen einzutragen.
+                                </small>
+                            </p>
+
+                            <Button
+                                type={'submit'}
+                                style={{ float: 'right' }}
+                                disabled={isLoading}
+                                onClick={() =>
+                                    updateProfile({
+                                        variables: {
+                                            user: {
+                                                name,
+                                                nickname,
+                                                class: classOrShortName,
+                                                hideFullName: isHideFullName,
+                                                avatarImageFile: avatarImageFile
+                                                    ? { id: avatarImageFile.id }
+                                                    : null,
+                                                enrollmentTokens,
+                                            },
                                         },
-                                    },
-                                })
-                            }
-                        >
-                            Speichern
-                        </Button>
-                        <UpdatePasswordDialog
-                            isOpen={isShowUpdatePasswordDialog}
-                            onRequestClose={() =>
-                                setIsShowUpdatePasswordDialog(false)
-                            }
-                        />
-                        <UpdateEmailDialog
-                            isOpen={isShowUpdateEmailDialog}
-                            onRequestClose={() =>
-                                setIsShowUpdateEmailDialog(false)
-                            }
-                        />
+                                    })
+                                }
+                            >
+                                Speichern
+                            </Button>
+                            <UpdatePasswordDialog
+                                isOpen={isShowUpdatePasswordDialog}
+                                onRequestClose={() =>
+                                    setIsShowUpdatePasswordDialog(false)
+                                }
+                            />
+                            <UpdateEmailDialog
+                                isOpen={isShowUpdateEmailDialog}
+                                onRequestClose={() =>
+                                    setIsShowUpdateEmailDialog(false)
+                                }
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </BaseLayoutMainContent>
     );
 };
 

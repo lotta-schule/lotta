@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { Card, CardContent } from '@material-ui/core';
 import { FileExplorer } from 'component/fileExplorer/FileExplorer';
+import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
+import { Header } from 'component/general/Header';
 import { GetServerSidePropsContext } from 'next';
 
 export const Files = () => {
     return (
-        <Card style={{ width: '100%' }}>
-            <CardContent>
-                <h4>Dateien und Medien</h4>
-                <FileExplorer />
-            </CardContent>
-        </Card>
+        <BaseLayoutMainContent>
+            <Header bannerImageUrl={'/bannerProfil.png'}>
+                <h2>Dateien und Medien</h2>
+            </Header>
+
+            <Card style={{ width: '100%' }}>
+                <CardContent>
+                    <FileExplorer />
+                </CardContent>
+            </Card>
+        </BaseLayoutMainContent>
     );
 };
 

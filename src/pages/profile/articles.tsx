@@ -5,8 +5,10 @@ import { ErrorMessage } from 'component/general/ErrorMessage';
 import { ArticlesList } from 'component/profile/ArticlesList';
 import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
 import { BaseLayoutSidebar } from 'component/layouts/BaseLayoutSidebar';
+import { Header } from 'component/general/Header';
 import { getApolloClient } from 'api/client';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+
 import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
 
 export const Articles = ({
@@ -16,9 +18,12 @@ export const Articles = ({
     return (
         <>
             <BaseLayoutMainContent>
+                <Header bannerImageUrl={'/bannerProfil.png'}>
+                    <h2>Meine Beiträge</h2>
+                </Header>
+
                 <Card>
                     <CardContent>
-                        <h2>Meine Beiträge</h2>
                         <ErrorMessage error={error} />
                         {articles && <ArticlesList articles={articles} />}
                     </CardContent>
