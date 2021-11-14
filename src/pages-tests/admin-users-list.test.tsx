@@ -12,6 +12,8 @@ import GetUsersQuery from 'api/query/GetUsersQuery.graphql';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
+const adminUser = { ...SomeUser, groups: [adminGroup] };
+
 describe('pages/admin/users/list', () => {
     // For react-virtualized, must setup offsetHeight and offsetWidth
     const originalOffsetHeight = Object.getOwnPropertyDescriptor(
@@ -81,7 +83,11 @@ describe('pages/admin/users/list', () => {
     });
 
     it('should render a List without error', () => {
-        render(<List />, {}, { currentUser: SomeUser, additionalMocks: mocks });
+        render(
+            <List />,
+            {},
+            { currentUser: adminUser, additionalMocks: mocks }
+        );
     });
 
     describe('fetch and show user data', () => {
@@ -90,7 +96,7 @@ describe('pages/admin/users/list', () => {
                 <List />,
                 {},
                 {
-                    currentUser: SomeUser,
+                    currentUser: adminUser,
                     additionalMocks: mocks,
                 }
             );
@@ -112,7 +118,7 @@ describe('pages/admin/users/list', () => {
                 <List />,
                 {},
                 {
-                    currentUser: SomeUser,
+                    currentUser: adminUser,
                     additionalMocks: mocks,
                 }
             );
@@ -132,7 +138,7 @@ describe('pages/admin/users/list', () => {
                 <List />,
                 {},
                 {
-                    currentUser: SomeUser,
+                    currentUser: adminUser,
                     additionalMocks: mocks,
                 }
             );
@@ -157,7 +163,7 @@ describe('pages/admin/users/list', () => {
                 <List />,
                 {},
                 {
-                    currentUser: SomeUser,
+                    currentUser: adminUser,
                     additionalMocks: mocks,
                 }
             );
@@ -177,7 +183,7 @@ describe('pages/admin/users/list', () => {
                 <List />,
                 {},
                 {
-                    currentUser: SomeUser,
+                    currentUser: adminUser,
                     additionalMocks: mocks,
                 }
             );
