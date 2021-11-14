@@ -97,7 +97,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                     </Accordion>
                 )}
 
-                <h6>Hauptkategorien</h6>
+                <h6>Hauptnavigation</h6>
                 <DragDropContext
                     onDragEnd={({ destination, source, draggableId }) => {
                         if (!destination) {
@@ -294,7 +294,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                     </Droppable>
                 </DragDropContext>
 
-                <h5 className={styles.heading}>Seitenleistenkategorien</h5>
+                <h5 className={styles.heading}>Randnavigation</h5>
                 {sidenavCategories.map((category) => (
                     <Accordion
                         className={styles.before}
