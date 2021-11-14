@@ -43,7 +43,7 @@ query GetFileDetailsQuery($id: ID) {
                     }
                 }
             }
-            ... on FileTenantUsageLocation {
+            ... on FileSystemUsageLocation {
                 usage
             }
             ... on FileUserUsageLocation {
