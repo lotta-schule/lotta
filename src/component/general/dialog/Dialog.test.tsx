@@ -3,24 +3,35 @@ import { render } from 'test/util';
 import { Dialog } from './Dialog';
 
 describe('general/dialog', () => {
-    describe('open / close', () => {
-        it('should not show the dialog when not open', () => {
-            const screen = render(
-                <Dialog title={'Achtung!'}>lorem ipsum dolor sit amet</Dialog>
-            );
+    it('should render the component in the "dialogContainer" element and remove it', () => {
+        const screen = render(<Dialog open title={'Achtung!'} />);
+        const dialogContainer = document.getElementById(
+            'dialogContainer'
+        ) as HTMLDivElement;
+        expect(dialogContainer.childElementCount).toEqual(1);
+        expect(dialogContainer).toContainElement(screen.getByRole('dialog'));
 
-            expect(screen.queryByRole('dialog')).toBeNull();
-        });
+        // remove again
+        screen.rerender(<>empty</>);
+        expect(dialogContainer.hasChildNodes()).toBe(false);
+    });
 
-        it('should show the dialog when open', () => {
-            const screen = render(
-                <Dialog title={'Achtung!'} open>
-                    lorem ipsum dolor sit amet
-                </Dialog>
-            );
+    it('should not show the dialog when not open', () => {
+        const screen = render(
+            <Dialog title={'Achtung!'}>lorem ipsum dolor sit amet</Dialog>
+        );
 
-            expect(screen.getByRole('dialog')).toBeVisible();
-        });
+        expect(screen.queryByRole('dialog')).toBeNull();
+    });
+
+    it('should show the dialog when open', () => {
+        const screen = render(
+            <Dialog title={'Achtung!'} open>
+                lorem ipsum dolor sit amet
+            </Dialog>
+        );
+
+        expect(screen.getByRole('dialog')).toBeVisible();
     });
 
     describe('close button', () => {

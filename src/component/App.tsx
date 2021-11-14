@@ -29,7 +29,6 @@ export const App: React.FC<AppProps> = ({ tenant, children }) => {
             <CssVariables />
             <AppHead />
             <BaseLayout>{children}</BaseLayout>
-            <div id={'dialogContainer'} />
         </ThemeProvider>
     );
 };

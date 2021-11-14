@@ -41,6 +41,8 @@ export const Dialog: React.FC<DialogProps & { open?: boolean }> = ({
             .appendChild(element.current);
     }
 
+    React.useEffect(() => () => element.current?.remove(), []);
+
     React.useEffect(() => {
         if (open) {
             const onKeyDown = (e: KeyboardEvent) => {
