@@ -182,32 +182,34 @@ export const UserNavigationMobile = React.memo(() => {
         );
     }
     return (
-        <div>
-            <Button
-                fullWidth
-                variant={'borderless'}
-                onClick={() => setLoginModalIsOpen(true)}
-                data-testid="LoginButton"
-            >
-                Anmelden
-            </Button>
-            <Button
-                variant={'borderless'}
-                fullWidth
-                onClick={() => setRegisterModalIsOpen(true)}
-                data-testid="RegisterButton"
-            >
-                Registrieren
-            </Button>
-            <Link href={'/search'} passHref>
+        <>
+            <div>
                 <Button
                     fullWidth
-                    data-testid="SearchButton"
                     variant={'borderless'}
+                    onClick={() => setLoginModalIsOpen(true)}
+                    data-testid="LoginButton"
                 >
-                    Suche
+                    Anmelden
                 </Button>
-            </Link>
+                <Button
+                    variant={'borderless'}
+                    fullWidth
+                    onClick={() => setRegisterModalIsOpen(true)}
+                    data-testid="RegisterButton"
+                >
+                    Registrieren
+                </Button>
+                <Link href={'/search'} passHref>
+                    <Button
+                        fullWidth
+                        data-testid="SearchButton"
+                        variant={'borderless'}
+                    >
+                        Suche
+                    </Button>
+                </Link>
+            </div>
             <LoginDialog
                 isOpen={loginModalIsOpen}
                 onRequestClose={() => {
@@ -220,6 +222,6 @@ export const UserNavigationMobile = React.memo(() => {
                     setRegisterModalIsOpen(false);
                 }}
             />
-        </div>
+        </>
     );
 });

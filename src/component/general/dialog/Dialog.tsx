@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { Close } from '@material-ui/icons';
 import { animated, useSpring } from 'react-spring';
 import { Button } from '../button/Button';
@@ -24,10 +25,21 @@ export const Dialog: React.FC<DialogProps & { open?: boolean }> = ({
     style,
     ...props
 }) => {
+    const isBrowser = typeof window !== 'undefined';
+
     const springProps = useSpring({
         to: { opacity: open ? 1 : 0 },
         ...style,
     });
+
+    const element = React.useRef<HTMLDivElement | null>(null);
+
+    if (isBrowser && element.current === null) {
+        element.current = document.createElement('div');
+        document
+            .getElementById('dialogContainer')!
+            .appendChild(element.current);
+    }
 
     React.useEffect(() => {
         if (open) {
@@ -44,16 +56,17 @@ export const Dialog: React.FC<DialogProps & { open?: boolean }> = ({
         }
     }, [onRequestClose, open]);
 
-    if (!open) {
+    if (!open || !isBrowser) {
         return null;
     }
 
-    return (
+    return ReactDOM.createPortal(
         <DialogShell
             style={springProps as any}
             onRequestClose={onRequestClose}
             {...props}
-        />
+        />,
+        element.current as HTMLDivElement
     );
 };
 
@@ -74,32 +87,34 @@ export const DialogShell: React.FC<DialogProps> = ({
 
     return (
         <animated.div className={styles.root} style={style} {...underlayProps}>
-            <FocusScope contain restoreFocus autoFocus>
-                <animated.div
-                    {...otherProps}
-                    {...overlayProps}
-                    {...dialogProps}
-                    {...modalProps}
-                    className={clsx(styles.dialog, className)}
-                    ref={ref}
-                    style={style}
-                >
-                    <section>
-                        {onRequestClose && (
-                            <Button
-                                small
-                                title={'schließen'}
-                                className={styles.close}
-                                onClick={() => onRequestClose()}
-                                icon={<Close />}
-                            />
-                        )}
-                        <h3 {...titleProps}>{title}</h3>
-                        <Divider />
-                    </section>
-                    {children}
-                </animated.div>
-            </FocusScope>
+            <animated.div
+                {...otherProps}
+                {...overlayProps}
+                {...dialogProps}
+                {...modalProps}
+                className={clsx(styles.dialog, className)}
+                ref={ref}
+                style={style}
+            >
+                <FocusScope contain autoFocus>
+                    <div>
+                        <section>
+                            {onRequestClose && (
+                                <Button
+                                    small
+                                    title={'schließen'}
+                                    className={styles.close}
+                                    onClick={() => onRequestClose()}
+                                    icon={<Close />}
+                                />
+                            )}
+                            <h3 {...titleProps}>{title}</h3>
+                            <Divider />
+                        </section>
+                        {children}
+                    </div>
+                </FocusScope>
+            </animated.div>
         </animated.div>
     );
 };

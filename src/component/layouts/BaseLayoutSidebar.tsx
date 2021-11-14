@@ -46,6 +46,12 @@ export const BaseLayoutSidebar = React.memo<BaseLayoutSidebarProps>(
         if (isMobile) {
             return (
                 <Drawer
+                    /* disable all fancy pancy a11y features because it breaks when 
+                    we want to use our own fancy pancy a11y features for nested dialogs */
+                    disableAutoFocus
+                    disableEnforceFocus
+                    disableRestoreFocus
+                    disableEscapeKeyDown
                     data-testid={'BaseLayoutSidebar'}
                     classes={{ paper: styles.drawer }}
                     anchor={'right'}
