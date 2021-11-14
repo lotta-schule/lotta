@@ -58,7 +58,7 @@ export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
 
                 <Grid
                     container
-                    justify="center"
+                    justifyContent="center"
                     alignItems="center"
                     data-testid="WidgetsSelectionList"
                 >

@@ -88,7 +88,7 @@ export const EditUserPermissionsDialog =
                     <ErrorMessage error={error || updateUserError} />
                     <Grid
                         container
-                        justify={'space-evenly'}
+                        justifyContent={'space-evenly'}
                         className={styles.header}
                     >
                         <Grid item xs={3}>

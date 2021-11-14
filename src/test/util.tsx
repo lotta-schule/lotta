@@ -16,7 +16,7 @@ import {
     reducer as fileExplorerStateReducer,
     Action as FileExploreerStateAction,
 } from 'component/fileExplorer/context/reducer';
-import { createMuiTheme } from '@material-ui/core';
+import { createTheme } from '@material-ui/core';
 import fileExplorerContext, {
     defaultState as defaultFileExplorerState,
 } from 'component/fileExplorer/context/FileExplorerContext';
@@ -74,7 +74,7 @@ const ProviderFactory =
             testRouter.replace = options?.router?.onReplace;
         }
 
-        const testTheme = createMuiTheme({
+        const testTheme = createTheme({
             ...theme,
             transitions: { create: () => 'none' },
         });

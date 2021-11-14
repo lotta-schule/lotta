@@ -57,7 +57,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                             <Grid
                                 container
                                 direction={'row'}
-                                justify={'flex-start'}
+                                justifyContent={'flex-start'}
                                 alignItems={'stretch'}
                                 spacing={1}
                                 style={{ position: 'relative' }}

@@ -50,7 +50,11 @@ export const Usage = ({
                 </CardContent>
             </Card>
             {/* Wär doch cool hier mal einen richtigen Grafen zu zeigen */}
-            <Grid container className={styles.gridContainer} justify={'center'}>
+            <Grid
+                container
+                className={styles.gridContainer}
+                justifyContent={'center'}
+            >
                 <Grid item xs={2}>
                     &nbsp;
                 </Grid>

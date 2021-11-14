@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ThemeProvider } from '@material-ui/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import { deDE } from '@material-ui/core/locale';
 import { TenantModel } from 'model';
 import { theme } from '../theme';
@@ -18,7 +18,7 @@ export const App: React.FC<AppProps> = ({ tenant, children }) => {
         <ThemeProvider
             theme={() => {
                 if (tenant.configuration.customTheme) {
-                    return createMuiTheme(
+                    return createTheme(
                         merge({}, theme, tenant.configuration.customTheme),
                         deDE
                     );

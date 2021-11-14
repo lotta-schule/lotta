@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Grow } from '@material-ui/core';
-import { fade } from '@material-ui/core/styles';
+import { alpha } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import styles from './Message.module.scss';
@@ -15,7 +15,7 @@ export interface MessageProps extends React.HTMLProps<HTMLDivElement> {
 export const Message = React.memo<MessageProps>(
     ({ message, color, className, children, ...otherProps }) => {
         const otherStyle: React.CSSProperties = {
-            backgroundColor: fade(color, 0.5),
+            backgroundColor: alpha(color, 0.5),
             borderColor: color,
         };
 

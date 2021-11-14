@@ -83,7 +83,7 @@ export const BaseLayout = React.memo(({ children }) => {
             <main className={styles.main}>
                 <Grid
                     container
-                    justify={'flex-start'}
+                    justifyContent={'flex-start'}
                     className={styles.mainGrid}
                     wrap={'nowrap'}
                 >

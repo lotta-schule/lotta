@@ -333,7 +333,7 @@ export const Presentation = () => {
             </section>
 
             <section>
-                <Grid container justify={'flex-end'}>
+                <Grid container justifyContent={'flex-end'}>
                     <Grid item sm={6} md={4} lg={3}>
                         <Button
                             fullWidth
