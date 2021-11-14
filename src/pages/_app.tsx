@@ -88,6 +88,15 @@ const LottaWebApp = ({ Component, pageProps }: AppProps) => {
             : requestBaseUrl ?? window.location.origin;
     return (
         <ServerDataContextProvider value={{ baseUrl }}>
+            <Head>
+                {/* viewport meta tags are not allowed in _document */}
+                {/* see https://nextjs.org/docs/messages/no-document-viewport-meta */}
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+            </Head>
+
             <ApolloProvider client={client}>
                 <ThemeProvider theme={theme}>
                     <I18nextProvider i18n={i18n}>

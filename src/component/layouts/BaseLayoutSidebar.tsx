@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Drawer } from '@material-ui/core';
+import { Grid, Drawer, NoSsr } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';
@@ -58,7 +58,13 @@ export const BaseLayoutSidebar = React.memo<BaseLayoutSidebarProps>(
                     open={isMobileDrawerOpen}
                     onClose={() => closeDrawer()}
                 >
-                    {isEmpty ? <WidgetsList widgets={[]} /> : children}
+                    {isEmpty ? (
+                        <NoSsr>
+                            <WidgetsList widgets={[]} />
+                        </NoSsr>
+                    ) : (
+                        children
+                    )}
                     <Footer />
                 </Drawer>
             );

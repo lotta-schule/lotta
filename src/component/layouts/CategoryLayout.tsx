@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
-import { Grid } from '@material-ui/core';
+import { Grid, NoSsr } from '@material-ui/core';
 import { CategoryModel, ArticleModel, WidgetModel } from '../../model';
 import { ArticlePreview } from '../article/ArticlePreview';
 import { BaseLayoutMainContent } from './BaseLayoutMainContent';
@@ -11,9 +11,10 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { File, User } from 'util/model';
 import { Header } from 'component/general/Header';
 import { useServerData } from 'component/ServerDataContext';
-import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import clsx from 'clsx';
 import getConfig from 'next/config';
+
+import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 
 import styles from './CategoryLayout.module.scss';
 
@@ -115,7 +116,9 @@ export const CategoryLayout = React.memo<CategoryLayoutProps>(
                     }
                 >
                     {widgetsError && <ErrorMessage error={widgetsError} />}
-                    <WidgetsList widgets={widgets} />
+                    <NoSsr>
+                        <WidgetsList widgets={widgets} />
+                    </NoSsr>
                 </BaseLayoutSidebar>
             </>
         );
