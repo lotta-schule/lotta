@@ -98,7 +98,7 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                     {!categoryToDelete.isSidenav && (
                         <p>
                             Unterkategorien, die dieser Kategorie zugeordnet
-                            waren, werden zu Hauptkategorien.
+                            waren, werden in die Hauptnavigation einsortiert.
                             <br />
                             <em>
                                 Unterkategorien:&nbsp;

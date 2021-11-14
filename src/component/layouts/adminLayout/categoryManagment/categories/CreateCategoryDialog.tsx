@@ -138,11 +138,11 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                 >
                                     <Radio
                                         value={CategoryPosition.Main}
-                                        label={'Hauptkategorie'}
+                                        label={'Hauptnavigation'}
                                     />
                                     <Radio
                                         value={CategoryPosition.Sub}
-                                        label={'Unterkategorie'}
+                                        label={'Subnavigation'}
                                     />
                                     <animated.div
                                         style={parentCategorySpringProps}
@@ -162,7 +162,7 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                     </animated.div>
                                     <Radio
                                         value={CategoryPosition.Side}
-                                        label={'Seitenleistenkategorie'}
+                                        label={'Randnavigation'}
                                     />
                                 </RadioGroup>
                             </Label>

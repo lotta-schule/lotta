@@ -189,7 +189,7 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
 
             userEvent.type(screen.getByRole('textbox'), 'Test');
             userEvent.click(
-                screen.getByRole('radio', { name: /unterkategorie/i })
+                screen.getByRole('radio', { name: /subnavigation/i })
             );
             expect(
                 screen.getByRole('button', { name: /erstellen/ })
@@ -224,7 +224,7 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
 
             userEvent.type(screen.getByRole('textbox'), 'Test');
             userEvent.click(
-                screen.getByRole('radio', { name: /unterkategorie/i })
+                screen.getByRole('radio', { name: /subnavigation/i })
             );
             await new Promise((resolve) => setTimeout(resolve, 500));
             userEvent.selectOptions(
@@ -265,7 +265,7 @@ describe('component/layouts/adminLayout/userManagment/CreateCategoryDialog', () 
 
             userEvent.type(screen.getByRole('textbox'), 'Test');
             userEvent.click(
-                screen.getByRole('radio', { name: /seitenleistenkategorie/i })
+                screen.getByRole('radio', { name: /randnavigation/i })
             );
             userEvent.click(screen.getByRole('button', { name: /erstellen/ }));
 
