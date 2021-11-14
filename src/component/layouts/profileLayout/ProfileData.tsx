@@ -73,7 +73,7 @@ export const ProfileData = React.memo(() => {
                 <Grid container className={styles.gridContainer}>
                     <Grid item xs md={4}>
                         <Badge
-                            overlap={'circle'}
+                            overlap={'circular'}
                             anchorOrigin={{
                                 vertical: 'top',
                                 horizontal: 'right',
