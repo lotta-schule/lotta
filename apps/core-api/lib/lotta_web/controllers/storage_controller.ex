@@ -16,7 +16,7 @@ defmodule LottaWeb.StorageController do
       |> put_view(LottaWeb.ErrorView)
       |> render(:"404")
     else
-      redirect(conn, external: Storage.get_http_url(file, download: !is_empty(params["download"])))
+      redirect(conn, external: Storage.get_http_url(file, download: !is_nil(params["download"])))
     end
   end
 
@@ -30,10 +30,8 @@ defmodule LottaWeb.StorageController do
       |> render(:"404")
     else
       redirect(conn,
-        external: Storage.get_http_url(file_conversion, download: !is_empty(params["download"]))
+        external: Storage.get_http_url(file_conversion, download: !is_nil(params["download"]))
       )
     end
   end
-
-  defp is_empty(subject), do: is_nil(subject) || subject == ""
 end
