@@ -366,19 +366,28 @@ defmodule Lotta.Storage do
   ## Examples
   iex> get_http_url(Repo.get(123))
   "https://somebucket/file.jpg"
+
+  iex> get_http_url(Repo.get(123), download: true)
+  "https://somebucket/file.jpg?response-content-disposition=attachment"
   """
   @doc since: "2.5.0"
+  @spec get_http_url(
+          Lotta.Storage.File.t() | Lotta.Storage.FileConversion.t() | nil,
+          RemoteStorage.get_http_url_options()
+        ) :: String.t() | nil
   @spec get_http_url(Lotta.Storage.File.t() | Lotta.Storage.FileConversion.t() | nil) ::
           String.t() | nil
-  def get_http_url(nil), do: nil
+  def get_http_url(file, opts \\ [])
 
-  def get_http_url(file) do
+  def get_http_url(nil, _opts), do: nil
+
+  def get_http_url(file, opts) do
     entity =
       file
       |> Repo.preload(:remote_storage_entity)
       |> Map.get(:remote_storage_entity)
 
-    if entity, do: RemoteStorage.get_http_url(entity)
+    if entity, do: RemoteStorage.get_http_url(entity, opts)
   end
 
   @doc """

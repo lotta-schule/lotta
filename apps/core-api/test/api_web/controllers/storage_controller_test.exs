@@ -24,13 +24,13 @@ defmodule LottaWeb.StorageControllerTest do
   end
 
   describe "File / FileConversion proxy" do
-    test "Should return the file when requested via proxy", %{f: file} do
+    test "Should redirect to the file when requested", %{f: file} do
       conn =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> get("/storage/f/#{file.id}")
 
-      assert response(conn, 200)
+      assert response(conn, 302)
     end
   end
 end

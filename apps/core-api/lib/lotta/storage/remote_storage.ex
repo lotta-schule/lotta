@@ -7,6 +7,8 @@ defmodule Lotta.Storage.RemoteStorage do
           config: map()
         }
 
+  @type get_http_url_options :: [{:download, boolean()}]
+
   @doc """
   Get the config for a given store (identified by name). Returns an :error-Tuple if the store is not available
 
@@ -98,11 +100,11 @@ defmodule Lotta.Storage.RemoteStorage do
   @doc """
   Get the http URL for a given entity: Returns null if the URL cannot be found.
   """
-  @spec get_http_url(RemoteStorageEntity.t()) :: String.t() | nil
-  def get_http_url(%RemoteStorageEntity{} = remote_storage_entity) do
+  @spec get_http_url(RemoteStorageEntity.t(), get_http_url_options() | nil) :: String.t() | nil
+  def get_http_url(%RemoteStorageEntity{} = remote_storage_entity, opts \\ []) do
     with {:ok, strategy} <- get_strategy(remote_storage_entity.store_name),
          {:ok, config} <- config_for_store(remote_storage_entity.store_name) do
-      strategy.get_http_url(remote_storage_entity, config)
+      strategy.get_http_url(remote_storage_entity, opts, config)
     else
       _ ->
         nil

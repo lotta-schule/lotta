@@ -79,12 +79,12 @@ defmodule Lotta.RemoteStorageTest do
 
     test "get_http_url/1 should call correct strategy's get_http_url" do
       with_mock RemoteStorage.Strategy.S3,
-        get_http_url: fn entity, _config ->
+        get_http_url: fn entity, _options, _config ->
           "http://" <> entity.path
         end do
         entity = %RemoteStorageEntity{store_name: "minio", path: "/some"}
         RemoteStorage.get_http_url(entity)
-        assert called(RemoteStorage.Strategy.S3.get_http_url(:_, :_))
+        assert called(RemoteStorage.Strategy.S3.get_http_url(:_, :_, :_))
       end
     end
 

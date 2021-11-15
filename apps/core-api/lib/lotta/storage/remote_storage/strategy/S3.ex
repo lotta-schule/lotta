@@ -9,7 +9,10 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     |> S3.upload(
       config[:config][:bucket],
       path,
-      grant_read: [uri: "http://acs.amazonaws.com/groups/global/AllUsers", uri: "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"],
+      grant_read: [
+        uri: "http://acs.amazonaws.com/groups/global/AllUsers",
+        uri: "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+      ],
       content_type: content_type
     )
     |> ExAws.request()
@@ -38,7 +41,14 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
     end
   end
 
-  def get_http_url(%RemoteStorageEntity{path: path}, config) do
-    "#{config[:config][:endpoint]}/#{config[:config][:bucket]}/#{path}"
+  def get_http_url(%RemoteStorageEntity{path: path}, options, config) do
+    requestDownload = Keyword.get(options, :download) == true
+    baseUrl = "#{config[:config][:endpoint]}/#{config[:config][:bucket]}/#{path}"
+
+    if requestDownload do
+      "#{baseUrl}?response-content-disposition=attachment"
+    else
+      baseUrl
+    end
   end
 end

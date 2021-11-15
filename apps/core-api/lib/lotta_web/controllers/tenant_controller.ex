@@ -23,7 +23,7 @@ defmodule LottaWeb.TenantController do
         send_resp(conn, :internal_server_error, Jason.encode!(inspect(reason)))
     end
   end
-  
+
   defp atomize_keys(map) do
     Enum.reduce(map, %{}, fn
       {key, val}, acc when is_atom(key) ->
@@ -33,5 +33,4 @@ defmodule LottaWeb.TenantController do
         Map.put(acc, String.to_atom(key), val)
     end)
   end
-
 end
