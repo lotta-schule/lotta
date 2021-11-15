@@ -77,13 +77,11 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                         }}
                                         href={File.getFileRemoteLocation(
                                             baseUrl,
-                                            file
+                                            file,
+                                            'download'
                                         )}
                                         target={'_blank'}
                                         icon={<CloudDownload />}
-                                        {...({
-                                            download: file.filename,
-                                        } as any)}
                                         role={'link'}
                                     >
                                         download
