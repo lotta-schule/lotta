@@ -3,7 +3,7 @@ defmodule Lotta.TenantsTest do
 
   use Lotta.DataCase, async: true
   alias Lotta.Tenants
-  alias Lotta.Tenants.{CustomDomain, Tenant}
+  alias Lotta.Tenants.Tenant
 
   @prefix "tenant_test"
 

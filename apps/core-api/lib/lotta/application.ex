@@ -17,7 +17,7 @@ defmodule Lotta.Application do
           Lotta.Repo,
           LottaWeb.Endpoint,
           {Absinthe.Subscription, LottaWeb.Endpoint},
-          {Lotta.TenantCacheServer, name: Lotta.TenantCacheServer},
+          {Lotta.TenantCacheServer, name: {:global, Lotta.TenantCacheServer}},
           {Redix, Application.fetch_env!(:lotta, :redis_connection)},
           Lotta.Elasticsearch.Cluster,
           Lotta.Queue.MediaConversionRequestPublisher,

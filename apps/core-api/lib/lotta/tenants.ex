@@ -14,7 +14,6 @@ defmodule Lotta.Tenants do
 
   alias Lotta.Tenants.{
     Category,
-    CustomDomain,
     Configuration,
     DefaultContent,
     Tenant,
@@ -39,13 +38,7 @@ defmodule Lotta.Tenants do
     if is_nil(prefix) do
       raise TenantNotSetError
     else
-      TenantCacheServer.get_tenant_by_prefix(prefix) ||
-        Repo.one!(
-          from(t in Tenant,
-            prefix: "public",
-            where: t.prefix == ^Repo.get_prefix()
-          )
-        )
+      get_tenant_by_prefix(prefix)
     end
   end
 
@@ -81,7 +74,7 @@ defmodule Lotta.Tenants do
     |> Repo.transaction(timeout: 120_000)
     |> case do
       {:ok, %{tenant: tenant}} ->
-        TenantCacheServer.update(tenant)
+        TenantCacheServer.update_tenant(tenant)
         {:ok, tenant}
 
       {:error, failed_operation, failed_value, _changes_so_far} ->
@@ -143,7 +136,7 @@ defmodule Lotta.Tenants do
 
     if match?({:ok, _}, result) do
       {:ok, tenant} = result
-      TenantCacheServer.update(tenant)
+      TenantCacheServer.update_tenant(tenant)
     end
 
     result
@@ -238,7 +231,7 @@ defmodule Lotta.Tenants do
           )
 
         tenant = Map.put(tenant, :configuration, config)
-        TenantCacheServer.update(tenant)
+        TenantCacheServer.update_tenant(tenant)
         {:ok, tenant}
 
       {:error, changeset, _} ->
