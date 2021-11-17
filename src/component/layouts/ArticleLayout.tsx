@@ -25,7 +25,7 @@ export const ArticleLayout = React.memo<ArticleLayoutProps>(
         const tenant = useTenant();
 
         return (
-            <>
+            <div className={styles.root}>
                 <Head>
                     <title>
                         {article.title} &nbsp; {tenant.title}
@@ -53,7 +53,7 @@ export const ArticleLayout = React.memo<ArticleLayoutProps>(
                 {article.tags?.map((tag) => (
                     <RelatedArticlesList key={tag} tag={tag} />
                 ))}
-            </>
+            </div>
         );
     }
 );
