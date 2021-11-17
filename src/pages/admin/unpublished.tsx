@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Card, CardContent } from '@material-ui/core';
 import { ArticleModel } from 'model';
 import { ArticlesList } from 'component/profile/ArticlesList';
 import { ErrorMessage } from 'component/general/ErrorMessage';
@@ -6,6 +7,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getApolloClient } from 'api/client';
 import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
 import { Header } from 'component/general/Header';
+
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
 
 export const Unpublished = ({
@@ -19,7 +21,11 @@ export const Unpublished = ({
             </Header>
             <ErrorMessage error={error} />
 
-            {articles && <ArticlesList articles={articles} />}
+            <Card>
+                <CardContent>
+                    {articles && <ArticlesList articles={articles} />}
+                </CardContent>
+            </Card>
         </BaseLayoutMainContent>
     );
 };
