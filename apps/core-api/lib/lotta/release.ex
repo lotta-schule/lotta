@@ -33,7 +33,7 @@ defmodule Lotta.Release do
     Repo.put_dynamic_repo(pid)
 
     Enum.map(
-      Lotta.Tenants.list_tenants(),
+      Repo.all(Lotta.Tenants.Tenant, prefix: "public"),
       fn tenant ->
         Lotta.Tenants.TenantSelector.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
       end
