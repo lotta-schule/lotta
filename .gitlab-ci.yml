@@ -29,6 +29,13 @@ test:
       junit: junit.xml
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+sast:
+  stage: test
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
 lint:
   stage: test
   image: node:16
