@@ -100,6 +100,7 @@ defmodule Lotta.MixProject do
       {:elasticsearch, "~> 1.0"},
       # Test
       {:mock, "~> 0.3", only: :test},
+      {:excoveralls, "~> 0.14", only: :test},
       {:junit_formatter, "~> 3.2", only: :test},
       # Prod
       {:libcluster, "~> 3.2", only: :prod},
@@ -111,8 +112,6 @@ defmodule Lotta.MixProject do
       {:telemetry_poller, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6"},
       {:phoenix_live_dashboard, "~> 0.4"},
-      # test
-      {:excoveralls, "~> 0.14", only: :test}
     ]
   end
 
