@@ -37,17 +37,17 @@ defmodule Lotta.Content do
           Article.t()
         ]
   def list_articles(category_id, user, filter) do
-    query =
-      user
-      |> Article.get_published_articles_query()
+    query = Article.get_published_articles_query(user)
 
-    if is_nil(category_id) do
-      from [..., c] in query, where: c.hide_articles_from_homepage != true
-    else
-      from a in query, where: a.category_id == ^category_id
-    end
-    |> filter_query(filter)
-    |> Repo.all()
+    query =
+      if is_nil(category_id) do
+        from [..., c] in query, where: c.hide_articles_from_homepage != true
+      else
+        from a in query, where: a.category_id == ^category_id
+      end
+      
+
+    Repo.all(filter_query(query, filter))
   end
 
   @doc """
@@ -123,7 +123,7 @@ defmodule Lotta.Content do
   @doc since: "1.0.0"
   @spec list_user_articles(User.t()) :: [Article.t()]
   def list_user_articles(user) do
-    Ecto.Query.from(a in Article,
+    from(a in Article,
       join: au in "article_users",
       on: au.article_id == a.id,
       where: au.user_id == ^user.id,

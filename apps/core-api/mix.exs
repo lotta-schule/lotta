@@ -69,6 +69,7 @@ defmodule Lotta.MixProject do
       {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.2"},
       {:ecto_sql, "~> 3.6"},
+      {:ecto_psql_extras, "~> 0.6"},
       {:absinthe, "~> 1.6.3", override: true},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},

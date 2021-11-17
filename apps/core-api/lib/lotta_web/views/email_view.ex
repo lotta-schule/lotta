@@ -75,19 +75,6 @@ defmodule LottaWeb.EmailView do
   def tenant_url(nil), do: "https://lotta.schule"
   def tenant_url(tenant), do: LottaWeb.Urls.get_tenant_url(tenant)
 
-  def logo_url(tenant) do
-    image_file =
-      tenant
-      |> Tenants.get_configuration()
-      |> Map.get(:logo_image_file, nil)
-
-    if is_nil(image_file) do
-      default_logo_data_url()
-    else
-      Storage.get_http_url(image_file)
-    end
-  end
-
   @doc """
   Returns a string representing a list of users.
   This is simply achieved by a comma separated list of the users' nickname or name
