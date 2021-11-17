@@ -32,8 +32,7 @@ config :ex_aws, :s3,
   scheme: "http://",
   port: 9000
 
-  config :lotta, :admin_api_key,
-    username: "admin", password: "test123"
+config :lotta, :admin_api_key, username: "admin", password: "test123"
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

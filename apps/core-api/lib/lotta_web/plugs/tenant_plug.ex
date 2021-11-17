@@ -1,7 +1,7 @@
 defmodule LottaWeb.TenantPlug do
   import Plug.Conn
 
-  alias Lotta.{Repo, Tenants}
+  alias Lotta.{Repo, TenantCacheServer, Tenants}
 
   @behaviour Plug
 
@@ -55,11 +55,11 @@ defmodule LottaWeb.TenantPlug do
 
     case Regex.run(Regex.compile!("(.*)\.#{Regex.escape(base_url)}"), host) do
       [_string, slug] ->
-        Tenants.get_tenant_by_slug(slug)
+        TenantCacheServer.get_tenant_by_slug(slug)
 
       _e ->
         # Not a slug.<base-url> domain, so check if there is a CustomDomain
-        Tenants.get_by_custom_domain(host)
+        TenantCacheServer.get_tenant_by_custom_domain(host)
     end
   end
 end
