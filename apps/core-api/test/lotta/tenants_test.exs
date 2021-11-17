@@ -19,5 +19,18 @@ defmodule Lotta.TenantsTest do
     test "should get tenant by slug" do
       assert %Tenant{slug: "test"} = Tenants.get_tenant_by_slug("test")
     end
+
+    test "should get tenant by custom domain" do
+      tenant = Tenants.get_tenant_by_slug("test")
+
+      domain = %CustomDomain{
+        host: "test-domain.com",
+        is_main_domain: true,
+        tenant_id: tenant.id
+      }
+
+      Repo.insert!(domain)
+      assert %Tenant{slug: "test"} = Tenants.get_by_custom_domain("test-domain.com")
+    end
   end
 end

@@ -25,8 +25,6 @@ defmodule Lotta.Tenants.Tenant do
     field :prefix, :string
     field :configuration, :map, virtual: true
 
-    has_many :domains, Lotta.Tenants.CustomDomain
-
     timestamps()
   end
 

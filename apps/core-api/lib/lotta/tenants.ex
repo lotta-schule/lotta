@@ -10,7 +10,6 @@ defmodule Lotta.Tenants do
   alias Lotta.Repo
   alias Lotta.Accounts.User
   alias Lotta.Storage.File
-  alias Lotta.TenantCacheServer
 
   alias Lotta.Tenants.{
     Category,
@@ -39,13 +38,11 @@ defmodule Lotta.Tenants do
     if is_nil(prefix) do
       raise TenantNotSetError
     else
-      TenantCacheServer.get_tenant_by_prefix(prefix) ||
-        Repo.one!(
-          from(t in Tenant,
-            prefix: "public",
-            where: t.prefix == ^Repo.get_prefix()
-          )
-        )
+      from(t in Tenant,
+        prefix: "public",
+        where: t.prefix == ^Repo.get_prefix()
+      )
+      |> Repo.one!()
     end
   end
 
@@ -55,7 +52,7 @@ defmodule Lotta.Tenants do
   @doc since: "2.6.0"
   @spec list_tenants() :: [Tenant.t()]
   def list_tenants() do
-    TenantCacheServer.list_tenants()
+    Repo.all(Tenant, prefix: "public")
   end
 
   @doc """
@@ -81,7 +78,6 @@ defmodule Lotta.Tenants do
     |> Repo.transaction(timeout: 120_000)
     |> case do
       {:ok, %{tenant: tenant}} ->
-        TenantCacheServer.update(tenant)
         {:ok, tenant}
 
       {:error, failed_operation, failed_value, _changes_so_far} ->
@@ -100,11 +96,10 @@ defmodule Lotta.Tenants do
   Get a Tenant by id. Return nil if no tenant is found
   """
   @doc since: "2.6.0"
-  @spec get_tenant(Tenant.id() | String.t()) :: Tenant.t() | nil
-  def get_tenant(id) when is_bitstring(id),
-    do: TenantCacheServer.get_tenant(String.to_integer(id))
-
-  def get_tenant(id) when is_integer(id), do: TenantCacheServer.get_tenant(id)
+  @spec get_tenant(Tenant.id()) :: Tenant.t() | nil
+  def get_tenant(id) do
+    Repo.get(Tenant, id, prefix: "public")
+  end
 
   @doc """
   Get a tenant by its slug.
@@ -112,7 +107,10 @@ defmodule Lotta.Tenants do
   @doc since: "2.6.0"
   @spec get_tenant_by_slug(String.t()) :: Tenant.t() | nil
   def get_tenant_by_slug(slug) do
-    TenantCacheServer.get_tenant_by_slug(slug)
+    from(t in Tenant,
+      where: t.slug == ^slug
+    )
+    |> Repo.one(prefix: "public")
   end
 
   @doc """
@@ -121,7 +119,24 @@ defmodule Lotta.Tenants do
   @doc since: "2.6.0"
   @spec get_tenant_by_prefix(String.t()) :: Tenant.t() | nil
   def get_tenant_by_prefix(prefix) do
-    TenantCacheServer.get_tenant_by_prefix(prefix)
+    from(t in Tenant,
+      where: t.prefix == ^prefix
+    )
+    |> Repo.one(prefix: "public")
+  end
+
+  @doc """
+  Get a tenant by its custom domain
+  """
+  @doc since: "2.6.0"
+  @spec get_by_custom_domain(String.t()) :: Tenant.t() | nil
+  def get_by_custom_domain(host) do
+    from(t in Tenant,
+      join: d in CustomDomain,
+      on: d.tenant_id == t.id,
+      where: d.host == ^host
+    )
+    |> Repo.one(prefix: "public")
   end
 
   @doc """
@@ -136,17 +151,9 @@ defmodule Lotta.Tenants do
   @spec update_tenant(Tenant.t(), map()) ::
           {:ok, Tenant.t()} | {:error, Ecto.Changeset.t(Tenant.t())}
   def update_tenant(tenant, args) do
-    result =
-      tenant
-      |> Tenant.update_changeset(args)
-      |> Repo.update()
-
-    if match?({:ok, _}, result) do
-      {:ok, tenant} = result
-      TenantCacheServer.update(tenant)
-    end
-
-    result
+    tenant
+    |> Tenant.update_changeset(args)
+    |> Repo.update()
   end
 
   @doc """
@@ -237,9 +244,7 @@ defmodule Lotta.Tenants do
             )
           )
 
-        tenant = Map.put(tenant, :configuration, config)
-        TenantCacheServer.update(tenant)
-        {:ok, tenant}
+        {:ok, Map.put(tenant, :configuration, config)}
 
       {:error, changeset, _} ->
         {:error, changeset}
@@ -298,8 +303,7 @@ defmodule Lotta.Tenants do
   Get media and storage usage for a given tenant.
   """
   @spec get_usage(Tenant.t() | nil) :: {:ok, list(map())} | {:error, term()}
-  def get_usage(nil), do: Usage.get_usage(current())
-  def get_usage(tenant), do: Usage.get_usage(tenant)
+  def get_usage(tenant \\ current()), do: Usage.get_usage(tenant)
 
   @doc """
   Returns the list of all categories accessible by the user.
