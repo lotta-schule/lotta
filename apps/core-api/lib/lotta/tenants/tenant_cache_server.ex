@@ -43,16 +43,29 @@ defmodule Lotta.TenantCacheServer do
 
   @impl true
   def handle_cast({:group_update, tenant, group}, {tenants, groups}) do
-    {:noreply, {tenants, 
-      Map.put(groups, tenant.prefix, [group | Enum.filter(groups, &(&1.id != group.id))])
-    }}
+    {:noreply,
+     {tenants,
+      Map.put(
+        groups,
+        tenant.prefix,
+        [
+          group
+          | Enum.filter(Map.get(groups, tenant.prefix, []), &(&1.id != group.id))
+        ]
+      )}}
   end
 
   @impl true
   def handle_cast({:group_delete, tenant, group}, {tenants, groups}) do
-    {:noreply, {tenants, 
-      Map.put(groups, tenant.prefix, Enum.filter(groups, &(&1.id != group.id)))
-    }}
+    {:noreply,
+     {tenants,
+      Map.put(
+        groups,
+        tenant.prefix,
+        [
+          Enum.filter(Map.get(groups, tenant.prefix, []), &(&1.id != group.id))
+        ]
+      )}}
   end
 
   @doc """
@@ -169,7 +182,7 @@ defmodule Lotta.TenantCacheServer do
       from(g in UserGroup,
         join: t in GroupEnrollmentToken,
         on: g.id == t.group_id,
-        where: t.token in ^Enum.map(tokens, &(&1)),
+        where: t.token in ^Enum.map(tokens, & &1),
         distinct: true
       )
       |> Repo.all(prefix: tenant.prefix)
