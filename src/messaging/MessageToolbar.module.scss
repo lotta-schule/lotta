@@ -9,8 +9,11 @@
     [role='combobox'] {
         width: 100%;
     }
+}
 
-    .popover {
+.popover {
+    .box {
+        overflow: visible;
         min-height: 50vh;
     }
 

@@ -51,6 +51,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                 )}
                 <Popover
                     {...bindPopover(popupState)}
+                    className={styles.popover}
                     aria-label={'Empfänger wählen'}
                     anchorOrigin={{
                         vertical: 'top',
@@ -61,7 +62,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                         horizontal: 'right',
                     }}
                 >
-                    <Box p={3} className={styles.popover}>
+                    <Box p={3} className={styles.box}>
                         <Tabs
                             value={newMessageType}
                             onChange={(_e, value) => setNewMessageType(value)}
