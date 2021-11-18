@@ -1,52 +1,33 @@
-import type { AppContext, AppProps } from 'next/app';
 import * as React from 'react';
-import { ApolloProvider } from '@apollo/client';
-import { CloudimageProvider } from 'react-cloudimage-responsive';
-import { I18nextProvider } from 'react-i18next';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { ThemeProvider } from '@material-ui/styles';
-import { de } from 'date-fns/locale';
-import { App } from 'component/App';
-import { Authentication } from 'component/Authentication';
-import { ServerDownError } from 'component/ServerDownError';
-import { TenantNotFoundError } from 'component/TenantNotFoundError';
-import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
+import type { AppContext, AppProps } from 'next/app';
+import { ServerDownError } from 'layouts/error/ServerDownError';
+import { TenantNotFoundError } from 'layouts/error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
-import { i18n } from '../i18n';
-import { theme } from 'theme';
 import { add } from 'date-fns';
-import { ServerDataContextProvider } from 'component/ServerDataContext';
+import { AppContextProviders } from 'layouts/AppContextProviders';
+
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 import axios from 'axios';
-import DateFnsUtils from '@date-io/date-fns';
-import Head from 'next/head';
-import getConfig from 'next/config';
 
 import 'index.scss';
 import 'component/general/button/base-button.scss';
 import 'component/general/button/button.scss';
 import 'component/general/button/button-group.scss';
 import 'component/general/button/navigation-button.scss';
-import { OverlayProvider } from '@react-aria/overlays';
 
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
-
-const LottaWebApp = ({ Component, pageProps }: AppProps) => {
-    const firstBrowserInit = React.useRef(false);
-
-    const {
-        error,
-        tenant,
+const LottaWebApp = ({
+    Component,
+    pageProps: {
         categories,
         currentUser,
+        error,
         requestBaseUrl,
+        tenant,
         ...componentProps
-    } = pageProps;
-
+    },
+}: AppProps) => {
     if (error) {
         return <ServerDownError error={error} />;
     }
@@ -55,77 +36,15 @@ const LottaWebApp = ({ Component, pageProps }: AppProps) => {
         return <TenantNotFoundError />;
     }
 
-    const client = getApolloClient();
-    if (!firstBrowserInit.current) {
-        client.writeQuery({
-            query: GetTenantQuery,
-            data: { tenant },
-        });
-        if (categories) {
-            client.writeQuery({
-                query: GetCategoriesQuery,
-                data: { categories },
-            });
-        }
-        if (currentUser) {
-            client.writeQuery({
-                query: GetCurrentUserQuery,
-                data: { currentUser },
-            });
-        }
-        if (typeof window !== 'undefined') {
-            const authToken = document.cookie.match(/AuthToken=(.+);?/i)?.[1];
-            if (authToken) {
-                localStorage.setItem('id', authToken);
-            }
-        }
-        firstBrowserInit.current = true;
-    }
-
-    const baseUrl =
-        typeof window === undefined
-            ? requestBaseUrl
-            : requestBaseUrl ?? window.location.origin;
     return (
-        <ServerDataContextProvider value={{ baseUrl }}>
-            <Head>
-                {/* viewport meta tags are not allowed in _document */}
-                {/* see https://nextjs.org/docs/messages/no-document-viewport-meta */}
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-            </Head>
-
-            <ApolloProvider client={client}>
-                <ThemeProvider theme={theme}>
-                    <I18nextProvider i18n={i18n}>
-                        <MuiPickersUtilsProvider
-                            utils={DateFnsUtils}
-                            locale={de}
-                        >
-                            <CloudimageProvider
-                                config={{
-                                    token: cloudimageToken,
-                                }}
-                            >
-                                <OverlayProvider>
-                                    <Authentication>
-                                        <UploadQueueProvider>
-                                            <App tenant={tenant}>
-                                                <Component
-                                                    {...componentProps}
-                                                />
-                                            </App>
-                                        </UploadQueueProvider>
-                                    </Authentication>
-                                </OverlayProvider>
-                            </CloudimageProvider>
-                        </MuiPickersUtilsProvider>
-                    </I18nextProvider>
-                </ThemeProvider>
-            </ApolloProvider>
-        </ServerDataContextProvider>
+        <AppContextProviders
+            tenant={tenant}
+            categories={categories}
+            currentUser={currentUser}
+            requestBaseUrl={requestBaseUrl}
+        >
+            <Component {...componentProps} />
+        </AppContextProviders>
     );
 };
 

@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { ArticleModel } from 'model';
-import { ID } from 'model/ID';
+import { ArticleModel, ID } from 'model';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { getApolloClient } from 'api/client';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { BaseLayoutSidebar } from 'component/layouts/BaseLayoutSidebar';
-import { EditArticleLayout } from 'component/layouts/editArticleLayout/EditArticleLayout';
 import { useQuery } from '@apollo/client';
+import { Main, Sidebar } from 'layouts/base';
+import { EditArticlePage } from 'layouts/article/edit/EditArticlePage';
+
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 
-export const EditArticleRoute = ({
+const EditArticleRoute = ({
     article,
-    loadArticleError,
+    loadArticleError: error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     if (!article) {
         throw new Error('Article is not valid.');
@@ -31,16 +30,16 @@ export const EditArticleRoute = ({
         variables: { id: article.id },
     });
 
-    if (loadArticleError) {
-        return <ErrorMessage error={loadArticleError} />;
+    if (error) {
+        return <ErrorMessage error={error} />;
     }
 
     return (
         <>
-            <BaseLayoutMainContent>
-                <EditArticleLayout article={data?.article ?? article} />
-            </BaseLayoutMainContent>
-            <BaseLayoutSidebar isEmpty />
+            <Main>
+                <EditArticlePage article={data?.article ?? article} />
+            </Main>
+            <Sidebar isEmpty />
         </>
     );
 };

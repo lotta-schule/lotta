@@ -3,10 +3,11 @@ import { ArticleModel } from 'model';
 import { useQuery } from '@apollo/client';
 import { LinearProgress } from '@material-ui/core';
 import { useTransition, animated } from 'react-spring';
-import { ArticlePreviewDensedLayout } from './ArticlePreviewDensedLayout';
-import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
+import { ArticlePreviewDensedLayout } from 'layouts/article/preview';
 
 import styles from './RelatedArticlesList.module.scss';
+
+import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
 export interface RelatedArticlesListProps {
     tag: string;

@@ -1,21 +1,20 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useQuery } from '@apollo/client';
-import { ArticleModel, ArticleFilter } from 'model';
-import { CategoryLayout } from 'component/layouts/CategoryLayout';
+import { ArticleModel, ArticleFilter, ID } from 'model';
 import { useCategory } from 'util/categories/useCategory';
-import { ID } from 'model/ID';
 import { useScrollEvent } from 'util/useScrollEvent';
 import { ErrorMessage } from 'component/general/ErrorMessage';
 import { getApolloClient } from 'api/client';
-import { ArticleLayout } from 'component/layouts/ArticleLayout';
+import { CategoryPage } from 'layouts/category/CategoryPage';
+import { ArticlePage } from 'layouts/article/ArticlePage';
 
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 
 const PREFETCH_COUNT = 10;
 
-export const CategoryRoute = ({
+const CategoryRoute = ({
     articles,
     categoryId,
     soloArticle,
@@ -154,7 +153,7 @@ export const CategoryRoute = ({
     useScrollEvent(maybeFetchMoreArticles, 250);
 
     if (soloArticle) {
-        return <ArticleLayout article={soloArticle} />;
+        return <ArticlePage article={soloArticle} />;
     }
 
     if (error) {
@@ -173,7 +172,7 @@ export const CategoryRoute = ({
           )
         : loadedArticles;
 
-    return <CategoryLayout category={category} articles={articlesToShow} />;
+    return <CategoryPage category={category} articles={articlesToShow} />;
 };
 
 export const getServerSideProps = async ({

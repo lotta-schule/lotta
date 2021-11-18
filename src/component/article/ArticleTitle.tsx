@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Container } from '@material-ui/core';
 import { ArticleModel } from 'model';
-import { Header } from 'component/general/Header';
+import { Header } from 'layouts/base';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ArticlePreviewStandardLayout } from './ArticlePreviewStandardLayout';
+import { ArticlePreviewStandardLayout } from 'layouts/article/preview/ArticlePreviewStandardLayout';
 
 export interface ArticleTitleProps {
     article: ArticleModel;

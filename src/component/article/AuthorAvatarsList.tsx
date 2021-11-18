@@ -6,7 +6,7 @@ import { User } from 'util/model';
 import { UserAvatar } from 'component/user/UserAvatar';
 import { Button } from 'component/general/button/Button';
 import { Close } from '@material-ui/icons';
-import { SearchUserField } from 'component/layouts/adminLayout/userManagement/SearchUserField';
+import { SearchUserField } from 'layouts/administration/users/SearchUserField';
 import clsx from 'clsx';
 
 import styles from './authors-avatars-list.module.scss';

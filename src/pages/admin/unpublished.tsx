@@ -1,33 +1,16 @@
 import * as React from 'react';
-import { Card, CardContent } from '@material-ui/core';
 import { ArticleModel } from 'model';
-import { ArticlesList } from 'component/profile/ArticlesList';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getApolloClient } from 'api/client';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { Header } from 'component/general/Header';
+import { UnpublishedArticlesPage } from 'layouts/administration/UnpublishedArticlesPage';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
 
-export const Unpublished = ({
+const UnpublishedRoute = ({
     articles,
     loadArticlesError: error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    return (
-        <BaseLayoutMainContent>
-            <Header bannerImageUrl={'/bannerAdmin.png'}>
-                <h2 data-testid="title">freizugebende Beiträge</h2>
-            </Header>
-            <ErrorMessage error={error} />
-
-            <Card>
-                <CardContent>
-                    {articles && <ArticlesList articles={articles} />}
-                </CardContent>
-            </Card>
-        </BaseLayoutMainContent>
-    );
+    return <UnpublishedArticlesPage articles={articles} error={error} />;
 };
 
 export const getServerSideProps = async ({
@@ -51,4 +34,4 @@ export const getServerSideProps = async ({
     };
 };
 
-export default Unpublished;
+export default UnpublishedRoute;

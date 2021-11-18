@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
 import { Paper } from '@material-ui/core';
-import { UserNavigationMobile } from 'component/layouts/navigation/UserNavigationMobile';
+import { UserNavigationMobile } from 'layouts/base/navigation/UserNavigationMobile';
 import { Calendar } from './calendar/Calendar';
 import { Schedule } from './schedule/Schedule';
 import { IFrame } from './iframe/IFrame';
