@@ -1,0 +1,13 @@
+@import 'breakpoints';
+
+.root {
+    @media screen and (min-width: $min-md) {
+        .helpText {
+            padding-left: calc(var(--lotta-spacing) * 2);
+        }
+
+        .gridContainer {
+            flex-direction: row-reverse;
+        }
+    }
+}

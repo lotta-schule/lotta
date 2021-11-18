@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { ArticleModel } from 'model';
-import { ID } from 'model/ID';
-import { ErrorMessage } from 'component/general/ErrorMessage';
 import { getApolloClient } from 'api/client';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { BaseLayoutSidebar } from 'component/layouts/BaseLayoutSidebar';
-import { ArticleLayout } from 'component/layouts/ArticleLayout';
+import { Main, Sidebar } from 'layout';
+import { ArticleModel, ID } from 'model';
+import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { ArticlePage } from 'article/ArticlePage';
+
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 
-export const ArticleRoute = ({
+const ArticleRoute = ({
     article,
     loadArticleError,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -28,10 +27,10 @@ export const ArticleRoute = ({
 
     return (
         <>
-            <BaseLayoutMainContent>
-                <ArticleLayout article={article} />
-            </BaseLayoutMainContent>
-            <BaseLayoutSidebar isEmpty />
+            <Main>
+                <ArticlePage article={article} />
+            </Main>
+            <Sidebar isEmpty />
         </>
     );
 };

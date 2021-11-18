@@ -1,11 +1,11 @@
 import React from 'react';
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { Box } from '../component/general/layout/Box';
-import { Page } from '../component/general/layout/Page';
-import { Banner } from 'component/general/layout/Banner';
-import { UserMenu } from 'component/general/navigation/UserMenu';
-import { Header } from 'component/general/layout/Header';
+import { Box } from '../shared/general/layout/Box';
+import { Page } from '../shared/general/layout/Page';
+import { Banner } from 'shared/general/layout/Banner';
+import { UserMenu } from 'shared/general/navigation/UserMenu';
+import { Header } from 'shared/general/layout/Header';
 
 const loremIpsumContent = (
     <>

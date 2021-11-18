@@ -12,9 +12,11 @@ module.exports = {
         {
             name: '@storybook/preset-scss',
             options: {
+                cssLoaderOptions: { modules: true },
                 sassLoaderOptions: {
+                    includePaths: [path.resolve(process.cwd(), 'styles')],
                     sassOptions: {
-                        includePaths: [path.resolve(process.cwd(), './styles')],
+                        modules: true,
                     },
                 },
             },
@@ -25,6 +27,30 @@ module.exports = {
     ],
     webpackFinal: async (config) => {
         config.resolve.modules.push(path.resolve(__dirname, '../src'));
+
+        config.module.rules.push({
+            test: /\.scss$/,
+            use: [
+                'style-loader',
+                'css-loader',
+                {
+                    loader: 'sass-loader',
+                    options: {
+                        sassOptions: {
+                            includePaths: [
+                                path.resolve(process.cwd(), 'styles'),
+                            ],
+                        },
+                    },
+                },
+            ],
+            include: path.resolve(__dirname, '../'),
+        });
+
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            '~': path.resolve(process.cwd(), 'node_modules'),
+        };
 
         return config;
     },

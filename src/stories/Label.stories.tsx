@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { Label, LabelProps } from 'component/general/label/Label';
-import { Input } from 'component/general/form/input/Input';
-import { Select } from 'component/general/form/select/Select';
+import { Label, LabelProps } from 'shared/general/label/Label';
+import { Input } from 'shared/general/form/input/Input';
+import { Select } from 'shared/general/form/select/Select';
 
 export default {
     title: 'Label/Default',

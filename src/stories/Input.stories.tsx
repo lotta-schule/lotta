@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { Input } from 'component/general/form/input/Input';
+import { Input } from 'shared/general/form/input/Input';
 
 export default {
     title: 'Form/Input',

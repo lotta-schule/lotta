@@ -1,37 +1,16 @@
 import * as React from 'react';
-import { Card, CardContent } from '@material-ui/core';
-import { ArticleModel } from 'model';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ArticlesList } from 'component/profile/ArticlesList';
-import { BaseLayoutMainContent } from 'component/layouts/BaseLayoutMainContent';
-import { BaseLayoutSidebar } from 'component/layouts/BaseLayoutSidebar';
-import { Header } from 'component/general/Header';
 import { getApolloClient } from 'api/client';
+import { ArticleModel } from 'model';
+import { ArticlesPage } from 'profile/ArticlesPage';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 
 import GetOwnArticlesQuery from 'api/query/GetOwnArticles.graphql';
 
-export const Articles = ({
+const ArticlesRoute = ({
     articles,
     loadArticlesError: error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    return (
-        <>
-            <BaseLayoutMainContent>
-                <Header bannerImageUrl={'/bannerProfil.png'}>
-                    <h2>Meine Beiträge</h2>
-                </Header>
-
-                <Card>
-                    <CardContent>
-                        <ErrorMessage error={error} />
-                        {articles && <ArticlesList articles={articles} />}
-                    </CardContent>
-                </Card>
-            </BaseLayoutMainContent>
-            <BaseLayoutSidebar isEmpty />
-        </>
-    );
+    return <ArticlesPage articles={articles} error={error} />;
 };
 
 export const getServerSideProps = async ({
@@ -55,4 +34,4 @@ export const getServerSideProps = async ({
     };
 };
 
-export default Articles;
+export default ArticlesRoute;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { Checkbox, CheckboxProps } from 'component/general/form/checkbox';
+import { Checkbox, CheckboxProps } from 'shared/general/form/checkbox';
 
 export default {
     title: 'Form/Checkbox',

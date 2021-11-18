@@ -1,0 +1,24 @@
+@import 'colors';
+
+.root {
+    .container {
+        padding-top: calc(3 * var(--lotta-spacing));
+        padding-bottom: calc(3 * var(--lotta-spacing));
+        padding-left: calc(2 * var(--lotta-spacing));
+        padding-right: calc(2 * var(--lotta-spacing));
+    }
+
+    .headlines {
+        margin-bottom: calc(4 * var(--lotta-spacing));
+    }
+
+    .button {
+        margin-bottom: var(--lotta-spacing);
+        float: right;
+        margin-top: var(--lotta-spacing);
+    }
+
+    .padding {
+        padding-right: calc(4 * var(--lotta-spacing));
+    }
+}

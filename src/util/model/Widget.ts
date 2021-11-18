@@ -26,12 +26,12 @@ export const Widget = {
                 });
             case WidgetModelType.IFrame:
                 return createElement('img', {
-                    src: '/img/profile.svg',
+                    src: '/img/articlesList.svg',
                     style: { width: '1.5rem', height: '1.5rem' },
                 });
             default:
                 return createElement('img', {
-                    src: '/img/profile.svg',
+                    src: '/img/articlesList.svg',
                     style: { width: '1.5rem', height: '1.5rem' },
                 });
         }

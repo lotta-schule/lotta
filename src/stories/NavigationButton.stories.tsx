@@ -5,7 +5,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import {
     NavigationButton,
     NavigationButtonProps,
-} from '../component/general/button/NavigationButton';
+} from '../shared/general/button/NavigationButton';
 import { Close } from '@material-ui/icons';
 
 export default {

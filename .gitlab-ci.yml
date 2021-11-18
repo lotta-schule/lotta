@@ -9,6 +9,7 @@ variables:
   # DOCKER_DRIVER: overlay2
   # TODO: Set correct certs dir to /certs according to this article: https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
   DOCKER_TLS_CERTDIR: "/certs"
+  SAST_EXCLUDED_PATHS: "*.test.*, *.graphql"
 
 cache:
   key: "lotta-web-node-modules"
@@ -33,6 +34,9 @@ test:
 # SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
 include:
   - template: Security/SAST.gitlab-ci.yml
+
+semgrep-sast:
+  cache: {}
 
 lint:
   stage: test
@@ -79,7 +83,7 @@ build docker image:production:
       --build-arg APP_BASE_DOMAIN
       --build-arg API_URL="/api"
       --build-arg AUTH_URL="/auth"
-      --build-arg API_SOCKET_URL="/api/user-socket"
+      --build-arg API_SOCKET_URL="/api/userAvatar-socket"
       --build-arg CLOUDIMG_TOKEN
       --build-arg SENTRY_DSN
       --build-arg MATOMO_URL
@@ -97,7 +101,7 @@ deploy:staging:
   image:
     name: lotta/ionos-helm-deploy:latest
   script:
-  - /user/local/bin/setup.sh
+  - /userAvatar/local/bin/setup.sh
   - curl -sL https://sentry.io/get-cli/ | bash
   - sentry-cli releases new $CI_COMMIT_SHA
   - helm repo add lotta $LOTTA_HELM_REPO_URL
@@ -108,7 +112,7 @@ deploy:staging:
     --set image.tag=$CI_COMMIT_SHA
     --set app.environment=staging
     --set api.url="http://lotta-core:4000"
-    --set api.socketUrl="wss://core.staging.lotta.schule/api/user-socket"
+    --set api.socketUrl="wss://core.staging.lotta.schule/api/userAvatar-socket"
     --set cloudimage.token=$CLOUDIMG_TOKEN
     --set sentry.dsn=$SENTRY_DSN
     --set imagePullSecrets[0].name=regcred
@@ -128,7 +132,7 @@ deploy:production:
   image:
     name: lotta/ionos-helm-deploy:latest
   script:
-  - /user/local/bin/setup.sh
+  - /userAvatar/local/bin/setup.sh
   - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d "{ \"version\":\"api-$CI_COMMIT_TAG\", \"refs\":[{ \"repository\":\"$CI_PROJECT_PATH\", \"commit\":\"$CI_COMMIT_SHA\", \"previousCommit\":\"$CI_COMMIT_BEFORE_SHA\" }], \"projects\":[\"web\"] }"
   - helm repo add lotta $LOTTA_HELM_REPO_URL
   - helm repo update
