@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RequestResetPage } from 'layouts/password/RequestResetPage';
+import { RequestResetPage } from 'password/RequestResetPage';
 import { GetServerSidePropsContext } from 'next';
 
 const RequestResetRoute = () => {

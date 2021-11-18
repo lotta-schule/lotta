@@ -2,8 +2,8 @@ import React from 'react';
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import { Header } from '../component/general/layout/Header';
-import { Box } from '../component/general/layout/Box';
+import { Header } from '../shared/general/layout/Header';
+import { Box } from '../shared/general/layout/Box';
 
 export default {
     title: 'Layout/Header',

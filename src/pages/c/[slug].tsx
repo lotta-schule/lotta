@@ -4,10 +4,10 @@ import { useQuery } from '@apollo/client';
 import { ArticleModel, ArticleFilter, ID } from 'model';
 import { useCategory } from 'util/categories/useCategory';
 import { useScrollEvent } from 'util/useScrollEvent';
-import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { getApolloClient } from 'api/client';
-import { CategoryPage } from 'layouts/category/CategoryPage';
-import { ArticlePage } from 'layouts/article/ArticlePage';
+import { CategoryPage } from 'category/CategoryPage';
+import { ArticlePage } from 'article/ArticlePage';
 
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';

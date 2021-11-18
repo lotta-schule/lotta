@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Slideshow } from '@material-ui/icons';
-import { AdminPage } from 'layouts/administration/AdminPage';
-import { WidgetList } from 'layouts/administration/categories/WidgetList';
+import { AdminPage } from 'administration/AdminPage';
+import { WidgetList } from 'administration/categories/WidgetList';
 import { GetServerSidePropsContext } from 'next';
 
 const WidgetsRoute = () => {

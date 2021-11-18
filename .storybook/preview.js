@@ -5,10 +5,10 @@ import { setThemeDecorator } from './addons/css-vars-theme/setThemeDecorator';
 import { OverlayProvider } from '@react-aria/overlays';
 
 import '../src/index.scss';
-import '../src/component/general/button/base-button.scss';
-import '../src/component/general/button/button.scss';
-import '../src/component/general/button/button-group.scss';
-import '../src/component/general/button/navigation-button.scss';
+import '../src/shared/general/button/base-button.scss';
+import '../src/shared/general/button/button.scss';
+import '../src/shared/general/button/button-group.scss';
+import '../src/shared/general/button/navigation-button.scss';
 
 export const parameters = {
     actions: { argTypesRegex: '^on[A-Z].*' },

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GetServerSidePropsContext } from 'next';
-import { DeletePage } from 'layouts/profile/DeletePage';
+import { DeletePage } from 'profile/DeletePage';
 
 const DeleteRoute = () => {
     return <DeletePage />;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Palette } from '@material-ui/icons';
-import { Presentation } from 'layouts/administration/system/Presentation';
-import { AdminPage } from 'layouts/administration/AdminPage';
+import { Presentation } from 'administration/system/Presentation';
+import { AdminPage } from 'administration/AdminPage';
 import { GetServerSidePropsContext } from 'next';
 
 const PresentationRoute = () => {

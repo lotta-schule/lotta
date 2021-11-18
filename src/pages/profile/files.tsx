@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MediaPage } from 'layouts/profile/MediaPage';
+import { MediaPage } from 'profile/MediaPage';
 import { GetServerSidePropsContext } from 'next';
 
 const FilesRoute = () => {

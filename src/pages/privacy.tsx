@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PrivacyPage } from 'layouts/privacy/PrivacyPage';
+import { PrivacyPage } from 'privacy/PrivacyPage';
 import { GetServerSidePropsContext } from 'next';
 
 const PrivacyRoute = () => {

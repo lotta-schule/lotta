@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { Divider } from 'component/general/divider/Divider';
+import { Divider } from 'shared/general/divider/Divider';
 
 export default {
     title: 'utils/Divider',

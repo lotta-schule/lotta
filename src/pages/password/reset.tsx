@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GetServerSidePropsContext } from 'next';
-import { ResetPage } from 'layouts/password/ResetPage';
+import { ResetPage } from 'password/ResetPage';
 
 const ResetRoute = () => {
     return <ResetPage />;

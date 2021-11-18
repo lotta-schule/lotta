@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AccountCircle } from '@material-ui/icons';
-import { AdminPage } from 'layouts/administration/AdminPage';
-import { UserList } from 'layouts/administration/users/UserList';
+import { AdminPage } from 'administration/AdminPage';
+import { UserList } from 'administration/users/UserList';
 import { GetServerSidePropsContext } from 'next';
 
 const ListRoute = () => {

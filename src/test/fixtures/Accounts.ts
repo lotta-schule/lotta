@@ -322,7 +322,7 @@ export const SomeUser = {
     insertedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     lastSeen: new Date().toISOString(),
-    email: 'user@lotta.schule',
+    email: 'userAvatar@lotta.schule',
     name: 'Ernesto Guevara',
     class: '5/1',
     groups: [],

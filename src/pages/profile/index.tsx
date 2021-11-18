@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ProfilePage } from 'layouts/profile/ProfilePage';
+import { ProfilePage } from 'profile/ProfilePage';
 import { GetServerSidePropsContext } from 'next';
 
 const ProfileRoute = () => {

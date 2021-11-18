@@ -5,7 +5,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { de } from 'date-fns/locale';
-import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
+import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { TenantModel, UserModel } from 'model';
@@ -15,11 +15,11 @@ import { i18n } from '../i18n';
 import {
     reducer as fileExplorerStateReducer,
     Action as FileExploreerStateAction,
-} from 'component/fileExplorer/context/reducer';
+} from 'shared/fileExplorer/context/reducer';
 import { createTheme } from '@material-ui/core';
 import fileExplorerContext, {
     defaultState as defaultFileExplorerState,
-} from 'component/fileExplorer/context/FileExplorerContext';
+} from 'shared/fileExplorer/context/FileExplorerContext';
 import DateFnsUtils from '@date-io/date-fns';
 import { createRouter, Router } from 'next/router';
 import { RouterContext } from 'next/dist/shared/lib/router-context';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GetServerSidePropsContext } from 'next';
-import { AdminPage } from 'layouts/administration/AdminPage';
-import { Navigation } from 'layouts/administration/Navigation';
+import { AdminPage } from 'administration/AdminPage';
+import { Navigation } from 'administration/Navigation';
 
 const AdminRoute = () => {
     return <AdminPage title={'Start'} component={Navigation} />;

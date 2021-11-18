@@ -1,10 +1,10 @@
 import * as React from 'react';
 import type { AppContext, AppProps } from 'next/app';
-import { ServerDownError } from 'layouts/error/ServerDownError';
-import { TenantNotFoundError } from 'layouts/error/TenantNotFoundError';
+import { ServerDownError } from 'error/ServerDownError';
+import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
 import { add } from 'date-fns';
-import { AppContextProviders } from 'layouts/AppContextProviders';
+import { AppContextProviders } from 'layout/AppContextProviders';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
@@ -12,10 +12,10 @@ import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 import axios from 'axios';
 
 import 'index.scss';
-import 'component/general/button/base-button.scss';
-import 'component/general/button/button.scss';
-import 'component/general/button/button-group.scss';
-import 'component/general/button/navigation-button.scss';
+import 'shared/general/button/base-button.scss';
+import 'shared/general/button/button.scss';
+import 'shared/general/button/button-group.scss';
+import 'shared/general/button/navigation-button.scss';
 
 const LottaWebApp = ({
     Component,
@@ -140,7 +140,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
     if (expires.getTime() < new Date().getTime() + 10_000) {
         // token has/will expire in next 10 seconds, so don't
         // bother refreshing it, could be too late, let the
-        // user just sign in again
+        // userAvatar just sign in again
         Cookies.set('SignInRefreshToken', null, { httpOnly: true });
         return;
     }

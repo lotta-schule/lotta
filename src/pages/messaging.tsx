@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MessagingPage } from 'layouts/messaging/MessagingPage';
+import { MessagingPage } from 'messaging/MessagingPage';
 import { GetServerSidePropsContext } from 'next';
 
 const MessagingRoute = () => {

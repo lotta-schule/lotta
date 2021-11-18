@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ArticleModel } from 'model';
 import { getApolloClient } from 'api/client';
-import { UnpublishedArticlesPage } from 'layouts/administration/UnpublishedArticlesPage';
+import { UnpublishedArticlesPage } from 'administration/UnpublishedArticlesPage';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';

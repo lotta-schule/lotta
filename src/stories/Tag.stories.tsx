@@ -1,6 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { Tag } from 'component/general/tag/Tag';
+import { Tag } from 'shared/general/tag/Tag';
 import { actions } from '@storybook/addon-actions';
 
 export default {

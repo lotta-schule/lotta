@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { BarChart } from '@material-ui/icons';
 import { getApolloClient } from 'api/client';
-import { AdminPage } from 'layouts/administration/AdminPage';
-import { Usage } from 'layouts/administration/system/Usage';
+import { AdminPage } from 'administration/AdminPage';
+import { Usage } from 'administration/system/Usage';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 
 import GetUsageQuery from 'api/query/GetUsageQuery.graphql';

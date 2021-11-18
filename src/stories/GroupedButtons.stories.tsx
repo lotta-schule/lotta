@@ -4,9 +4,9 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import {
     ButtonGroup,
     ButtonGroupProps,
-} from '../component/general/button/ButtonGroup';
+} from '../shared/general/button/ButtonGroup';
 import { FormatBold, FormatItalic, FormatUnderlined } from '@material-ui/icons';
-import { Button } from 'component/general/button/Button';
+import { Button } from 'shared/general/button/Button';
 
 export default {
     title: 'Buttons/ButtonGroup',

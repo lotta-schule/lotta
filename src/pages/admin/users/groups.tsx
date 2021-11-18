@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Group } from '@material-ui/icons';
-import { AdminPage } from 'layouts/administration/AdminPage';
-import { GroupList } from 'layouts/administration/users/GroupList';
+import { AdminPage } from 'administration/AdminPage';
+import { GroupList } from 'administration/users/GroupList';
 import { GetServerSidePropsContext } from 'next';
 
 const GroupsRoute = () => {

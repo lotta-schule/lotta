@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getApolloClient } from 'api/client';
-import { Main, Sidebar } from 'layouts/base';
+import { Main, Sidebar } from 'layout';
 import { ArticleModel, ID } from 'model';
-import { ErrorMessage } from 'component/general/ErrorMessage';
-import { ArticlePage } from 'layouts/article/ArticlePage';
+import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { ArticlePage } from 'article/ArticlePage';
 
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 

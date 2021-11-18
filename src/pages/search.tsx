@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SearchPage } from 'layouts/search/SearchPage';
+import { SearchPage } from 'search/SearchPage';
 import { GetServerSidePropsContext } from 'next';
 
 const SearchRoute = () => {

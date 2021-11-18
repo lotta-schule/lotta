@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CropFree } from '@material-ui/icons';
-import { AdminPage } from 'layouts/administration/AdminPage';
-import { ConstraintList } from 'layouts/administration/users/ConstraintsList';
+import { AdminPage } from 'administration/AdminPage';
+import { ConstraintList } from 'administration/users/ConstraintsList';
 import { GetServerSidePropsContext } from 'next';
 
 const ConstraintsRoute = () => {

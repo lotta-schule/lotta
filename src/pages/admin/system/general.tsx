@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tune } from '@material-ui/icons';
-import { AdminPage } from 'layouts/administration/AdminPage';
-import { GeneralSettings } from 'layouts/administration/system/GeneralSettings';
+import { AdminPage } from 'administration/AdminPage';
+import { GeneralSettings } from 'administration/system/GeneralSettings';
 import { GetServerSidePropsContext } from 'next';
 
 const GeneralRoute = () => {
