@@ -27,7 +27,8 @@ module.exports = {
     moduleDirectories: ['node_modules', '<rootDir>/src'],
     testEnvironment: 'jsdom',
     collectCoverageFrom: [
-        '**/*.{js,jsx,ts,tsx}',
+        'src/**/*.{js,jsx,ts,tsx}',
+        '!src/stories/**',
         '!**/*.d.ts',
         '!**/node_modules/**',
     ],
