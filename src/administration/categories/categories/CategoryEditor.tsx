@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormControl, Checkbox, FormControlLabel } from '@material-ui/core';
+import { FormControl, FormControlLabel } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { useMutation, useQuery } from '@apollo/client';
 import { animated, useSpring } from 'react-spring';
@@ -19,6 +19,7 @@ import { useServerData } from 'shared/ServerDataContext';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { Category, File, RedirectType } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
+import { Checkbox } from 'shared/general/form/checkbox';
 import Img from 'react-cloudimage-responsive';
 import clsx from 'clsx';
 
@@ -180,30 +181,19 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                 </SelectFileOverlay>
 
                 {!category.isHomepage && (
-                    <>
-                        <FormControl className={styles.input}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={
-                                            category.hideArticlesFromHomepage
-                                        }
-                                        onChange={(_, checked) =>
-                                            setCategory({
-                                                ...category,
-                                                hideArticlesFromHomepage:
-                                                    checked,
-                                            })
-                                        }
-                                        value={'hideArticlesFromHomepage'}
-                                    />
-                                }
-                                label={
-                                    'Beiträge dieser Kategorie auf der Startseite verstecken'
-                                }
-                            />
-                        </FormControl>
-                    </>
+                    <Checkbox
+                        isSelected={category.hideArticlesFromHomepage}
+                        onChange={(isSelected) =>
+                            setCategory({
+                                ...category,
+                                hideArticlesFromHomepage: isSelected,
+                            })
+                        }
+                        value={'hideArticlesFromHomepage'}
+                    >
+                        'Beiträge dieser Kategorie auf der Startseite
+                        verstecken'
+                    </Checkbox>
                 )}
 
                 <FormControl className={styles.input}>

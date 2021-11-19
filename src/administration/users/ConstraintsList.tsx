@@ -74,32 +74,22 @@ export const ConstraintList = () => {
                 </p>
 
                 <Checkbox
-                    checked={!isLimitSet}
-                    label={
-                        'Datenmenge, die Nutzer hochladen können, nicht begrenzen'
+                    isSelected={!isLimitSet}
+                    onChange={(isSelected) =>
+                        setValue(isSelected ? -1 : lastSetLimitRef.current)
                     }
-                    onChange={(e) =>
-                        setValue(
-                            e.currentTarget.checked
-                                ? -1
-                                : lastSetLimitRef.current
-                        )
-                    }
-                />
+                >
+                    Datenmenge, die Nutzer hochladen können, nicht begrenzen
+                </Checkbox>
 
                 <Checkbox
-                    checked={isLimitSet}
-                    label={
-                        'Datenmenge, die Nutzer hochladen können, begrenzen auf:'
+                    isSelected={isLimitSet}
+                    onChange={(isSelected) =>
+                        setValue(isSelected ? lastSetLimitRef.current : -1)
                     }
-                    onChange={(e) =>
-                        setValue(
-                            e.currentTarget.checked
-                                ? lastSetLimitRef.current
-                                : -1
-                        )
-                    }
-                />
+                >
+                    Datenmenge, die Nutzer hochladen können, begrenzen auf:
+                </Checkbox>
 
                 <animated.div style={springProps}>
                     <Grid container spacing={2} alignItems="center">

@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { Grid, FormControlLabel, CircularProgress } from '@material-ui/core';
+import { Grid, CircularProgress } from '@material-ui/core';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
 import { WidgetIcon } from 'category/widgets/WidgetIcon';
-import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
+import { Checkbox } from 'shared/general/form/checkbox';
 
 import styles from './CategoryWidgetSelector.module.scss';
-import { Checkbox } from 'shared/general/form/checkbox';
+
+import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
 
 export interface CategoryWidgetSelectorProps {
     selectedWidgets: WidgetModel[];
@@ -65,32 +66,30 @@ export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
                     {allWidgets.length > 1 && (
                         <Grid item xs={12}>
                             <Checkbox
-                                label={
-                                    <div className={styles.typography}>
-                                        Alle Marginalen aktivieren
-                                    </div>
-                                }
-                                checked={isAllWidgetsSelected}
+                                isSelected={isAllWidgetsSelected}
                                 onChange={() => handleToggleAll()}
-                            />
+                            >
+                                <div className={styles.typography}>
+                                    Alle Marginalen aktivieren
+                                </div>
+                            </Checkbox>
                         </Grid>
                     )}
 
                     {allWidgets.map((widget) => (
                         <Grid key={widget.id} item xs={12}>
                             <Checkbox
-                                label={
-                                    <div className={styles.typography}>
-                                        <WidgetIcon
-                                            icon={widget.configuration.icon}
-                                            size={36}
-                                        />
-                                        {widget.title}
-                                    </div>
-                                }
-                                checked={isWidgetSelected(widget)}
+                                isSelected={isWidgetSelected(widget)}
                                 onChange={() => handleToggle(widget)}
-                            />
+                            >
+                                <div className={styles.typography}>
+                                    <WidgetIcon
+                                        icon={widget.configuration.icon}
+                                        size={36}
+                                    />
+                                    {widget.title}
+                                </div>
+                            </Checkbox>
                         </Grid>
                     ))}
                 </Grid>

@@ -20,19 +20,20 @@ export const Config = React.memo<ConfigProps>(
         return (
             <form data-testid="DownloadContentModuleConfiguration">
                 <Checkbox
-                    label={'Vorschaubilder anzeigen'}
-                    checked={!hidePreviews}
-                    onChange={(e) =>
+                    isSelected={!hidePreviews}
+                    onChange={(isSelected) =>
                         onUpdateModule({
                             ...contentModule,
                             configuration: {
                                 ...contentModule.configuration,
-                                hidePreviews: !e.currentTarget.checked,
+                                hidePreviews: !isSelected,
                             },
                         })
                     }
                     name={'hidePreviews'}
-                />
+                >
+                    Vorschaubilder anzeigen
+                </Checkbox>
             </form>
         );
     }

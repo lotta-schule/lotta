@@ -44,14 +44,11 @@ export const ProfileDeleteFileSelection =
                             <TableRow>
                                 <TableCell>
                                     <Checkbox
-                                        label={''}
                                         value={allFilesValue}
-                                        checked={allFilesValue === 'on'}
-                                        onChange={(e) => {
+                                        isSelected={allFilesValue === 'on'}
+                                        onChange={(isSelected) => {
                                             onSelectFiles(
-                                                e.currentTarget.checked
-                                                    ? [...files]
-                                                    : []
+                                                isSelected ? [...files] : []
                                             );
                                         }}
                                         aria-label={'Alle Dateien übergeben'}
@@ -160,13 +157,10 @@ export const ProfileDeleteFileSelection =
                                     >
                                         <TableCell>
                                             <Checkbox
-                                                label={''}
-                                                checked={isSelected}
+                                                isSelected={isSelected}
                                                 aria-labelledby={`file-${file.id}-filename`}
-                                                onChange={(e) => {
-                                                    if (
-                                                        e.currentTarget.checked
-                                                    ) {
+                                                onChange={(isSelected) => {
+                                                    if (isSelected) {
                                                         onSelectFiles([
                                                             ...selectedFiles,
                                                             file,

@@ -1,36 +1,51 @@
 import * as React from 'react';
+import { type ToggleProps } from '@react-types/checkbox';
+import { VisuallyHidden } from '@react-aria/visually-hidden';
+import { useFocusRing } from '@react-aria/focus';
+import { useToggleState } from '@react-stately/toggle';
+import { useCheckbox } from '@react-aria/checkbox';
 import clsx from 'clsx';
 
 import styles from './Checkbox.module.scss';
 
 export type CheckboxProps = {
-    /* The label can be either a string, or any Element or React shared. */
-    label: any;
-
     featureColor?: [red: number, green: number, blue: number];
-} & Omit<React.HTMLProps<HTMLInputElement>, 'type'>;
 
-export const Checkbox = React.forwardRef<any, CheckboxProps>(
-    ({ label, className, featureColor, ...props }, ref) => {
+    className?: string;
+    style?: React.CSSProperties;
+
+    children?: React.ReactNode;
+} & ToggleProps & React.AriaAttributes;
+
+export const Checkbox = React.memo<CheckboxProps>(
+    ({ children, style, className, featureColor, ...props }) => {
         const customStyle =
             featureColor &&
             ({
                 '--control-indicator-color': featureColor.join(', '),
             } as React.CSSProperties);
+
+        const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+        const state = useToggleState(props);
+        const { inputProps } = useCheckbox(props, state, ref);
+        const { isFocusVisible, focusProps } = useFocusRing();
+
         return (
-            <label style={customStyle} className={clsx(styles.root)}>
-                <input
-                    {...props}
-                    ref={ref}
-                    aria-label={
-                        props['aria-label'] ||
-                        (!props['aria-labelledby'] ? label : undefined)
-                    }
-                    className={clsx(className, styles.Checkbox)}
-                    type={'checkbox'}
-                />
-                <div className={styles.ControlIndicator} />
-                {typeof label === 'string' ? <span>{label}</span> : label}
+            <label style={{...style, ...customStyle}} className={clsx(className, styles.root)}>
+                <VisuallyHidden>
+                    <input
+                        {...inputProps}
+                        {...focusProps}
+                        ref={ref}
+                        className={clsx(className, styles.input)}
+                    />
+                </VisuallyHidden>
+                <div className={clsx(styles.controlIndicator, {
+                    [styles.isSelected]: state.isSelected,
+                    [styles.isFocusVisible]: isFocusVisible,
+                    [styles.isDisabled]: props.isDisabled
+                })} />
+                {children}
             </label>
         );
     }

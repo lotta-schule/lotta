@@ -97,17 +97,20 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                 <TableCell>
                     {state.mode === FileExplorerMode.SelectMultiple && (
                         <Checkbox
+                            isReadOnly
+                            aria-label={`Datei ${file.filename} auswählen`}
+                            className={'select-file-checkbox'}
                             style={{ padding: 0 }}
-                            label={''}
-                            checked={
+                            isSelected={
                                 state.selectedFiles.find(
                                     (f) => f.id === file.id
                                 ) !== undefined
                             }
-                            onChange={(e) => {
+                            onChange={(isSelected) => {
+                                console.log(isSelected);
                                 dispatch({
                                     type: 'setSelectedFiles',
-                                    files: e.currentTarget.checked
+                                    files: isSelected
                                         ? uniqBy(
                                               [...state.selectedFiles, file],
                                               'id'

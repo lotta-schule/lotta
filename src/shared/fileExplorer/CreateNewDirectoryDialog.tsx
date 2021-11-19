@@ -13,6 +13,7 @@ import { Input } from 'shared/general/form/input/Input';
 import { Label } from 'shared/general/label/Label';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+
 import CreateDirectoryMutation from 'api/mutation/CreateDirectoryMutation.graphql';
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
@@ -91,14 +92,13 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
                         {User.isAdmin(currentUser) &&
                             basePath?.slice(-1)[0].id === null && (
                                 <Checkbox
-                                    checked={isPublic}
-                                    label={
-                                        'Diesen Ordner für alle registrierten Nutzer sichtbar machen. Administratoren dürfen öffentliche Ordner bearbeiten.'
-                                    }
-                                    onChange={(e) =>
-                                        setIsPublic(e.currentTarget.checked)
-                                    }
-                                />
+                                    isSelected={isPublic}
+                                    onChange={setIsPublic}
+                                >
+                                    Diesen Ordner für alle registrierten Nutzer
+                                    sichtbar machen. Administratoren dürfen
+                                    öffentliche Ordner bearbeiten.
+                                </Checkbox>
                             )}
                     </DialogContent>
                     <DialogActions>
