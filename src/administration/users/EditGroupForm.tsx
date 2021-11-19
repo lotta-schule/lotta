@@ -111,22 +111,23 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                 </FormHelperText>
             </FormControl>
             <Checkbox
-                label={'Diese Gruppe hat universelle Administratorrechte'}
-                disabled={isLoadingUpdateGroup || isSoleAdminGroup}
-                checked={!!group.isAdminGroup}
-                onChange={(e) => {
+                isDisabled={isLoadingUpdateGroup || isSoleAdminGroup}
+                isSelected={!!group.isAdminGroup}
+                onChange={(isSelected) => {
                     updateGroup({
                         variables: {
                             id: group.id,
                             group: {
                                 name,
                                 enrollmentTokens,
-                                isAdminGroup: e.currentTarget.checked,
+                                isAdminGroup: isSelected,
                             },
                         },
                     });
                 }}
-            />
+            >
+                Diese Gruppe hat universelle Administratorrechte
+            </Checkbox>
             <p>Einschreibeschlüssel</p>
             <p>
                 Nutzer, die bei der Registrierung einen

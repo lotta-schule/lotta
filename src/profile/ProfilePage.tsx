@@ -140,7 +140,7 @@ export const ProfilePage = () => {
                             </List>
                             <section className={styles.dangerSection}>
                                 <Divider className={styles.divider} />
-                                <Link href={'/articlesList/delete'} passHref>
+                                <Link href={'/profile/delete'} passHref>
                                     <Button variant={'error'}>
                                         Benutzerkonto löschen
                                     </Button>
@@ -217,14 +217,11 @@ export const ProfilePage = () => {
                             </Label>
 
                             <Checkbox
-                                checked={isHideFullName!}
-                                label={
-                                    'Deinen vollständigen Namen öffentlich verstecken'
-                                }
-                                onChange={(e) =>
-                                    setIsHideFullName(e.currentTarget.checked)
-                                }
-                            />
+                                isSelected={isHideFullName!}
+                                onChange={setIsHideFullName}
+                            >
+                                Deinen vollständigen Namen öffentlich verstecken
+                            </Checkbox>
 
                             <div>
                                 Verstecke deinen vollständigen Namen, damit er

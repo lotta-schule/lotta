@@ -83,7 +83,7 @@ export const UserNavigationMobile = React.memo(() => {
                             <span className={styles.label}>Suche</span>
                         </BaseButton>
                     </Link>
-                    <Link href={'/articlesList'} passHref>
+                    <Link href={'/profile'} passHref>
                         <BaseButton
                             variant={'borderless'}
                             className={styles.button}
@@ -93,7 +93,7 @@ export const UserNavigationMobile = React.memo(() => {
                             <span className={styles.label}>Profil</span>
                         </BaseButton>
                     </Link>
-                    <Link href={'/articlesList/files'} passHref>
+                    <Link href={'/profile/files'} passHref>
                         <BaseButton
                             variant={'borderless'}
                             className={styles.button}
@@ -103,7 +103,7 @@ export const UserNavigationMobile = React.memo(() => {
                             <span className={styles.label}>Dateien</span>
                         </BaseButton>
                     </Link>
-                    <Link href={'/articlesList/articles'} passHref>
+                    <Link href={'/profile/articles'} passHref>
                         <BaseButton
                             variant={'borderless'}
                             className={styles.button}
@@ -113,7 +113,7 @@ export const UserNavigationMobile = React.memo(() => {
                             <span className={styles.label}>Meine Beiträge</span>
                         </BaseButton>
                     </Link>
-                    <Link href={'/articlesList/messaging'} passHref>
+                    <Link href={'/profile/messaging'} passHref>
                         <BaseButton
                             variant={'borderless'}
                             className={styles.button}

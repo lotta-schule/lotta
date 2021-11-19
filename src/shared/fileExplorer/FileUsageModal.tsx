@@ -44,7 +44,7 @@ export const FileUsageModal = React.memo(() => {
     const getSecondaryActionCallback =
         (usage: FileModelUsageLocation) => (_e: React.MouseEvent<any>) => {
             if (usage.user) {
-                window.open('/articlesList');
+                window.open('/profile');
             }
             if (usage.category) {
                 window.open(Category.getPath(usage.category));

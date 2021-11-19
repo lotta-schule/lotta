@@ -223,7 +223,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
         return (
             <>
                 <ErrorMessage error={new Error(errorMessage)} />
-                <Link href={'/articlesList'}>Mein Profil öffnen</Link>
+                <Link href={'/profile'}>Mein Profil öffnen</Link>
             </>
         );
     }

@@ -90,7 +90,7 @@ describe('shared/widgets/Schedule', () => {
     });
 
     describe("Pupil's Schedule", () => {
-        it('should show an information and a link to articlesList if userAvatar has no class', () => {
+        it('should show an information and a link to profile if userAvatar has no class', () => {
             const screen = render(
                 <Schedule widget={VPSchuelerWidget} />,
                 {},
@@ -107,7 +107,7 @@ describe('shared/widgets/Schedule', () => {
             ).toBeVisible();
             expect(screen.getByRole('link')).toHaveAttribute(
                 'href',
-                '/articlesList'
+                '/profile'
             );
         });
 

@@ -304,8 +304,8 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                 (data?.files?.length ?? 0) > 0 && (
                                     <Checkbox
                                         style={{ padding: 0 }}
-                                        label={''}
-                                        checked={every(
+                                        aria-label={'Alle wählen'}
+                                        isSelected={every(
                                             filteredSortedFiles.filter(
                                                 (f) =>
                                                     f.fileType !==
@@ -314,12 +314,10 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                             (f) =>
                                                 state.selectedFiles.includes(f)
                                         )}
-                                        aria-label={'Alle wählen'}
-                                        onChange={(e) => {
-                                            e.preventDefault();
+                                        onChange={(isSelected) => {
                                             dispatch({
                                                 type: 'setSelectedFiles',
-                                                files: e.currentTarget.checked
+                                                files: isSelected
                                                     ? uniqBy(
                                                           [
                                                               ...state.selectedFiles,
@@ -390,13 +388,27 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                     state.mode ===
                                     FileExplorerMode.SelectMultiple
                                 ) {
-                                    dispatch({
-                                        type: 'setSelectedFiles',
-                                        files: uniqBy(
-                                            [...state.selectedFiles, file],
-                                            'id'
-                                        ),
-                                    });
+                                    if (
+                                        state.selectedFiles.find(
+                                            (sf) => sf.id === file.id
+                                        )
+                                    ) {
+                                        // file is already selected. Deselect
+                                        dispatch({
+                                            type: 'setSelectedFiles',
+                                            files: state.selectedFiles.filter(
+                                                (sf) => sf.id != file.id
+                                            ),
+                                        });
+                                    } else {
+                                        dispatch({
+                                            type: 'setSelectedFiles',
+                                            files: [
+                                                ...state.selectedFiles,
+                                                file,
+                                            ],
+                                        });
+                                    }
                                 } else {
                                     toggleFileMarked(e, file);
                                 }

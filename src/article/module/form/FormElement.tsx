@@ -32,22 +32,22 @@ export const FormElement = React.memo<FormElementProps>(
                                     <Checkbox
                                         key={i}
                                         name={element.name}
-                                        label={option.label}
                                         value={option.value}
-                                        disabled={isEditModeEnabled}
-                                        checked={
+                                        isDisabled={isEditModeEnabled}
+                                        aria-label={option.label}
+                                        isSelected={
                                             value instanceof Array
                                                 ? value.indexOf(option.value) >
                                                   -1
                                                 : false
                                         }
-                                        onChange={(e) => {
+                                        onChange={(isSelected) => {
                                             const values = (
                                                 value instanceof Array
                                                     ? value
                                                     : [value]
                                             ).filter(Boolean);
-                                            if (e.currentTarget.checked) {
+                                            if (isSelected) {
                                                 onSetValue([
                                                     ...values,
                                                     option.value,
@@ -61,7 +61,9 @@ export const FormElement = React.memo<FormElementProps>(
                                                 );
                                             }
                                         }}
-                                    />
+                                    >
+                                        {option.label}
+                                    </Checkbox>
                                 );
                             })}
                         </Label>

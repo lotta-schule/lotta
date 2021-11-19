@@ -161,7 +161,7 @@ describe('shared/layouts/profileLayout/ProfileData', () => {
     });
 
     describe('Profile picture', () => {
-        it('should open the file selection dialog when "Change articlesList picture" is selected', async () => {
+        it('should open the file selection dialog when "Change profile picture" is selected', async () => {
             const screen = render(
                 <ProfilePage />,
                 {},

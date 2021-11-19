@@ -150,26 +150,28 @@ export const FormElementConfiguration =
                     />
                 </Label>
                 <Checkbox
-                    label={'Pflichtfeld'}
-                    checked={element.required ?? false}
+                    isSelected={element.required ?? false}
                     className={styles.configurationProperty}
                     value={'required'}
-                    onChange={(e) =>
-                        updateElement({ required: e.currentTarget.checked })
+                    onChange={(isSelected) =>
+                        updateElement({ required: isSelected })
                     }
-                />
+                >
+                    Pflichtfeld
+                </Checkbox>
                 {element.element === 'input' && (
                     <Checkbox
                         className={styles.configurationProperty}
-                        checked={element.multiline ?? false}
-                        label={'mehrzeilig'}
+                        isSelected={element.multiline ?? false}
                         value={'multiline'}
-                        onChange={(e) =>
+                        onChange={(isSelected) =>
                             updateElement({
-                                multiline: e.currentTarget.checked,
+                                multiline: isSelected,
                             })
                         }
-                    />
+                    >
+                        mehrzeilig
+                    </Checkbox>
                 )}
                 {element.element === 'selection' && (
                     <div>
@@ -205,30 +207,29 @@ export const FormElementConfiguration =
                                 </Label>
                                 <Checkbox
                                     className={styles.configurationProperty}
-                                    checked={option.selected ?? false}
-                                    label={'vorausgewählt'}
+                                    isSelected={option.selected ?? false}
                                     value={'checked'}
-                                    onChange={(e) => {
+                                    onChange={(isSelected) => {
                                         if (element.type === 'radio') {
                                             updateElement({
                                                 options: element.options?.map(
                                                     (_option, _index) => ({
                                                         ..._option,
                                                         selected:
-                                                            e.currentTarget
-                                                                .checked &&
+                                                            isSelected &&
                                                             i === _index,
                                                     })
                                                 ),
                                             });
                                         } else {
                                             updateOption(i, {
-                                                selected:
-                                                    e.currentTarget.checked,
+                                                selected: isSelected,
                                             });
                                         }
                                     }}
-                                />
+                                >
+                                    vorausgewählt
+                                </Checkbox>
                             </section>
                         ))}
                         <Button

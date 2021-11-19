@@ -122,27 +122,24 @@ export const GroupSelect = React.memo<GroupSelectProps>(
                         >
                             {hidePublicGroupSelection !== true && (
                                 <Checkbox
-                                    disabled={disabled}
-                                    checked={selectedGroups.length === 0}
+                                    isDisabled={disabled}
+                                    isSelected={selectedGroups.length === 0}
                                     aria-label={
                                         publicGroupSelectionLabel ??
                                         'für alle sichtbar'
                                     }
-                                    label={
-                                        <i>
-                                            {publicGroupSelectionLabel ??
-                                                'für alle sichtbar'}
-                                        </i>
-                                    }
                                     className={styles.publicGroupSelectionLabel}
-                                    onChange={(e) => {
-                                        if (e.currentTarget.checked) {
-                                            onSelectGroups([]);
-                                        } else {
-                                            onSelectGroups([...groups]);
-                                        }
+                                    onChange={(isSelected) => {
+                                        onSelectGroups(
+                                            isSelected ? [] : [...groups]
+                                        );
                                     }}
-                                />
+                                >
+                                    <i>
+                                        {publicGroupSelectionLabel ??
+                                            'für alle sichtbar'}
+                                    </i>
+                                </Checkbox>
                             )}
                             {value
                                 .sort(groupSorter)

@@ -74,11 +74,12 @@ export const SelectCoursesDialog = React.memo<SelectCoursesDialogProps>(
                             courses.map((courseName) => (
                                 <Checkbox
                                     key={`${i}-courseName`}
-                                    label={courseName}
                                     value={courseName}
-                                    checked={isSelected(courseName)}
+                                    isSelected={isSelected(courseName)}
                                     onChange={() => toggle(courseName)}
-                                />
+                                >
+                                    {courseName}
+                                </Checkbox>
                             ))
                         )}
                     </div>

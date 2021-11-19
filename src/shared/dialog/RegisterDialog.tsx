@@ -168,12 +168,11 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                         )}
                     </Label>
                     <Checkbox
-                        checked={isHideFullName}
-                        label={'Deinen vollständen Namen öffentlich verstecken'}
-                        onChange={(e) =>
-                            setIsHideFullName(e.currentTarget.checked)
-                        }
-                    />
+                        isSelected={isHideFullName}
+                        onChange={setIsHideFullName}
+                    >
+                        Deinen vollständen Namen öffentlich verstecken
+                    </Checkbox>
                     <div className={styles.margin}>
                         Verstecke deinen vollständigen Namen, damit er nur vom
                         Administrator deiner Schule gesehen werden kann. Dein

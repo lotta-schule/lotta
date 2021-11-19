@@ -182,16 +182,15 @@ export const Edit = React.memo<EditProps>(
                     </Grid>
                     <Grid item xs={7}>
                         <Checkbox
-                            checked={configuration.destination !== undefined}
-                            onChange={(e) =>
+                            isSelected={configuration.destination !== undefined}
+                            onChange={(isSelected) =>
                                 updateConfiguration({
-                                    destination: e.currentTarget.checked
-                                        ? ''
-                                        : undefined,
+                                    destination: isSelected ? '' : undefined,
                                 })
                             }
-                            label={'Formulardaten per Email versenden'}
-                        />
+                        >
+                            Formulardaten per Email versenden
+                        </Checkbox>
                         <Label label={'Formular an folgende Email senden:'}>
                             <Input
                                 id={'form-destination'}
@@ -208,29 +207,28 @@ export const Edit = React.memo<EditProps>(
                         </Label>
                         <Divider />
                         <Checkbox
-                            checked={configuration.save_internally === true}
-                            onChange={(e) =>
+                            isSelected={configuration.save_internally === true}
+                            onChange={(isSelected) =>
                                 updateConfiguration({
-                                    save_internally: e.currentTarget.checked,
+                                    save_internally: isSelected,
                                 })
                             }
-                            label={
-                                <div>
-                                    <span style={{ display: 'block' }}>
-                                        Formulardaten speichern
-                                    </span>
-                                    {!!configuration.elements.find(
-                                        (el) => el.element === 'file'
-                                    ) && (
-                                        <small>
-                                            Datei-Anhänge werden nur per Email
-                                            versandt und nicht gespeichert.
-                                        </small>
-                                    )}
-                                </div>
-                            }
                             aria-label={'Formulardaten speichern'}
-                        />
+                        >
+                            <div>
+                                <span style={{ display: 'block' }}>
+                                    Formulardaten speichern
+                                </span>
+                                {!!configuration.elements.find(
+                                    (el) => el.element === 'file'
+                                ) && (
+                                    <small>
+                                        Datei-Anhänge werden nur per Email
+                                        versandt und nicht gespeichert.
+                                    </small>
+                                )}
+                            </div>
+                        </Checkbox>
                     </Grid>
                 </Grid>
                 <Button
