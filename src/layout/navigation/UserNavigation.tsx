@@ -125,7 +125,7 @@ export const UserNavigation = React.memo(() => {
                             Mein Profil <ExpandMore color={'secondary'} />
                         </NavigationButton>
                         <Menu
-                            id={'articlesList-menu'}
+                            id={'profile-menu'}
                             anchorEl={profileMenuAnchorEl}
                             open={Boolean(profileMenuAnchorEl)}
                             onClose={() => {
@@ -138,7 +138,7 @@ export const UserNavigation = React.memo(() => {
                                     key={'profile'}
                                     onClick={() => {
                                         setProfileMenuAnchorEl(null);
-                                        router.push('/articlesList');
+                                        router.push('/profile');
                                     }}
                                 >
                                     <PersonOutlineOutlined
@@ -150,7 +150,7 @@ export const UserNavigation = React.memo(() => {
                                     key={'files'}
                                     onClick={() => {
                                         setProfileMenuAnchorEl(null);
-                                        router.push('/articlesList/files');
+                                        router.push('/profile/files');
                                     }}
                                 >
                                     <FolderOutlined color={'secondary'} />
@@ -160,7 +160,7 @@ export const UserNavigation = React.memo(() => {
                                     key={'ownArticles'}
                                     onClick={() => {
                                         setProfileMenuAnchorEl(null);
-                                        router.push('/articlesList/articles');
+                                        router.push('/profile/articles');
                                     }}
                                 >
                                     <AssignmentOutlined color={'secondary'} />

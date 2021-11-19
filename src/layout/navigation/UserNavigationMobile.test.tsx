@@ -13,7 +13,7 @@ describe('shared/layouts/UserNavigationMobile', () => {
             expect(screen.queryByTestId('RegisterButton')).not.toBeNull();
             expect(screen.queryByTestId('SearchButton')).not.toBeNull();
 
-            // admin and articlesList and messages button should not be visible
+            // admin and profile and messages button should not be visible
             expect(screen.queryByTestId('ProfileButton')).toBeNull();
             expect(screen.queryByTestId('AdminButton')).toBeNull();
             expect(screen.queryByTestId('MessagingButton')).toBeNull();
@@ -21,7 +21,7 @@ describe('shared/layouts/UserNavigationMobile', () => {
     });
 
     describe('non-admin userAvatar', () => {
-        it('should render articlesList and createArticle buttons, but not admin buttons', () => {
+        it('should render profile and createArticle buttons, but not admin buttons', () => {
             const screen = render(
                 <UserNavigationMobile />,
                 {},
@@ -38,13 +38,13 @@ describe('shared/layouts/UserNavigationMobile', () => {
             expect(screen.queryByTestId('ProfileFilesButton')).toBeVisible();
             expect(screen.queryByTestId('MessagingButton')).toBeVisible();
 
-            // admin and articlesList button should not be visible
+            // admin and profile button should not be visible
             expect(screen.queryByTestId('AdminButton')).toBeNull();
         });
     });
 
     describe('admin userAvatar', () => {
-        it('should render articlesList and createArticle buttons, and also admin buttons', () => {
+        it('should render profile and createArticle buttons, and also admin buttons', () => {
             const screen = render(
                 <UserNavigationMobile />,
                 {},

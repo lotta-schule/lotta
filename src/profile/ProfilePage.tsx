@@ -140,7 +140,7 @@ export const ProfilePage = () => {
                             </List>
                             <section className={styles.dangerSection}>
                                 <Divider className={styles.divider} />
-                                <Link href={'/articlesList/delete'} passHref>
+                                <Link href={'/profile/delete'} passHref>
                                     <Button variant={'error'}>
                                         Benutzerkonto löschen
                                     </Button>
