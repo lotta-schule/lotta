@@ -83,6 +83,9 @@ build docker image:staging:
         docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA lotta/web:canary
         docker push lotta/web:canary
       fi
+  only:
+    refs:
+      - develop
 
 build docker image:production:
   image: docker:20.10.9
