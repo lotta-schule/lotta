@@ -55,7 +55,9 @@ build docker image:
   script:
     - docker pull $CI_REGISTRY_IMAGE:canary || true
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --build-arg SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN .
+    - docker build \
+      -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA \
+      --build-arg SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN .
     - docker push $CI_REGISTRY_IMAGE
     - |
       if [ $CI_COMMIT_REF_NAME == "develop" ]; then
@@ -76,19 +78,11 @@ build docker image:production:
   script:
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
     - docker pull lotta/web:stable
-    - docker build -t lotta/web:$CI_COMMIT_TAG
-      --build-arg APP_ENVIRONMENT=production
-      --build-arg APP_REVISION=$CI_COMMIT_TAG
-      --build-arg APP_BASE_DOMAIN
-      --build-arg API_URL="/api"
-      --build-arg AUTH_URL="/auth"
-      --build-arg API_SOCKET_URL="/api/user-socket"
-      --build-arg CLOUDIMG_TOKEN
-      --build-arg SENTRY_DSN
-      --build-arg MATOMO_URL
-      --build-arg FILE_REPLACEMENT_URL .
-    - docker tag lotta/web:$CI_COMMIT_TAG lotta/web:stable
-    - docker tag lotta/web:$CI_COMMIT_TAG lotta/web:latest
+    - docker build \
+      -t lotta/web:stable \
+      -t lotta/web:latest \
+      -t lotta/web:$CI_COMMIT_TAG \
+      --build-arg SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN .
     - docker push lotta/web
   only:
     - tags
@@ -133,14 +127,26 @@ deploy:production:
     name: lotta/ionos-helm-deploy:latest
   script:
   - /user/local/bin/setup.sh
-  - curl "https://sentry.io/api/0/organizations/$SENTRY_ORGANIZATION_SLUG/releases/" -X POST -X POST -H "Authorization:Bearer $SENTRY_API_TOKEN" -H 'Content-Type:application/json' -d "{ \"version\":\"api-$CI_COMMIT_TAG\", \"refs\":[{ \"repository\":\"$CI_PROJECT_PATH\", \"commit\":\"$CI_COMMIT_SHA\", \"previousCommit\":\"$CI_COMMIT_BEFORE_SHA\" }], \"projects\":[\"web\"] }"
+  - curl -sL https://sentry.io/get-cli/ | bash
+  - sentry-cli releases new $CI_COMMIT_TAG
   - helm repo add lotta $LOTTA_HELM_REPO_URL
   - helm repo update
   - helm upgrade --install lotta-web lotta/lotta-web
     --namespace lotta
+    --reuse-values
+    --set autoscaling.enabled=true
+    --set autoscaling.minReplicas=2
+    --set autoscaling.maxReplicas=3
     --set image.tag=$CI_COMMIT_TAG
+    --set app.environment=production
+    --set api.url="http://lotta-core:4000"
+    --set api.socketUrl="wss://core.lotta.schule/api/user-socket"
+    --set cloudimage.token=$CLOUDIMG_TOKEN
+    --set sentry.dsn=$SENTRY_DSN
     --set ingress.hosts[0].name="*.lotta.schule"
     --set ingress.hosts[0].tls=true
     --set ingress.hosts[0].tlsSecret="wildcard-lotta-schule-tls"
+  - sentry-cli releases finalize $CI_COMMIT_SHA
+  - sentry-cli releases deploys $CI_COMMIT_SHA new -e staging
   only:
     - tags
