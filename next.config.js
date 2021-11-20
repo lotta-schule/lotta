@@ -25,6 +25,10 @@ const nextConfig = {
                 source: '/',
                 destination: '/c/0',
             },
+            {
+                source: '/auth/:path*',
+                destination: '/api/auth/:path*',
+            },
         ];
     },
     async redirects() {
