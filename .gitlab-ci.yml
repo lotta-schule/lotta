@@ -53,20 +53,18 @@ build docker image:
   environment:
     name: staging
   script:
-    - docker pull lotta/web:canary
+    - docker pull $CI_REGISTRY_IMAGE:canary
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-      --build-arg SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN .
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --build-arg SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN .
     - docker push $CI_REGISTRY_IMAGE
     - |
       if [ $CI_COMMIT_REF_NAME == "develop" ]; then
         echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USER --password-stdin
+        docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:canary
+        docker push $CI_REGISTRY_IMAGE:canary
         docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA lotta/web:canary
         docker push lotta/web:canary
       fi
-      # only:
-      #   refs:
-      #     - develop
 
 build docker image:production:
   image: docker:19.03.0
