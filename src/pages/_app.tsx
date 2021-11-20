@@ -69,7 +69,18 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,
         context: {
-            headers: context.ctx.req?.headers,
+            headers: {
+                ...context.ctx.req?.headers,
+                // that's an ugly workaround because before SSR authentication
+                // headers were not passed to the GetTenantQuery and I would like
+                // to keep it like this for now for simplicity.
+                // That's because if  not, the user will always get a "last_seen"
+                // value that's from the GetTenantQuery, so just when opening the
+                // page, instead of the date of his last visit.
+                // This leeds to him not getting the correct count of how much unread
+                // messages he got since them, messing it all up.
+                authorization: null,
+            },
         },
     });
     const tenant = data?.tenant ?? null;
