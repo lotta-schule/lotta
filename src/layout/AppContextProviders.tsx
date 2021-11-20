@@ -5,7 +5,6 @@ import { deDE } from '@material-ui/core/locale';
 import { CategoryModel, TenantModel, UserModel } from 'model';
 import { theme } from '../theme';
 import { AppHead } from './AppHead';
-import { BaseLayout } from './BaseLayout';
 import { ApolloProvider } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';

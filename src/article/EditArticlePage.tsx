@@ -50,14 +50,21 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
         useMutation<{ article: ArticleModel }, { id: ID; article: any }>(
             UpdateArticleMutation,
             {
-                onCompleted: ({ article }) => {
+                onCompleted: () => {
                     setIsArticleDirty(false);
-                    if (article) {
-                        router.push(ArticleUtil.getPath(article));
-                    }
                 },
             }
         );
+
+    React.useEffect(() => {
+        // We want to wait for a response from the UpdateArticleMutation (updatedArticleData is set)
+        // As well as be sure that isArticleDirty state has been set to false
+        // before redirecting the user back to the article page, in order not to see the
+        // "Do you really want to leave" screen
+        if (updatedArticleData?.article && isArticleDirty === false) {
+            console.log(router.push(ArticleUtil.getPath(article)));
+        }
+    }, [updatedArticleData, isArticleDirty]);
 
     useSubscription<{ article: ArticleModel }, { id: ID }>(
         ArticleIsUpdatedSubscription,
