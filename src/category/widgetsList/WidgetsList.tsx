@@ -82,6 +82,7 @@ export const WidgetsList = React.memo<WidgetsListProps>(
         const swipeableViews = (
             <SwipeableViews
                 axis={'x'}
+                slideStyle={{ overflow: 'hidden' }}
                 index={activeTabIndex}
                 onChangeIndex={(newIndex) => setCurrentTabIndex(newIndex)}
                 className={styles.swipeableViewsContainer}
