@@ -56,7 +56,7 @@ export const WidgetsList = React.memo<WidgetsListProps>(
             if (wrapperRef.current) {
                 wrapperRef.current.style.height = `calc(100vh - ${
                     wrapperRef.current.getBoundingClientRect().top
-                }px)`;
+                }px - var(--lotta-spacing))`;
             }
         }, []);
 
@@ -65,7 +65,7 @@ export const WidgetsList = React.memo<WidgetsListProps>(
                 if (wrapperRef.current && !isMobile && widgets.length > 0) {
                     wrapperRef.current.style.height = `calc(100vh - ${
                         wrapperRef.current.getBoundingClientRect().top
-                    }px)`;
+                    }px - var(--lotta-spacing))`;
                 }
             },
             200,
@@ -97,6 +97,11 @@ export const WidgetsList = React.memo<WidgetsListProps>(
                 className={clsx(styles.root, {
                     [styles.hasSecondNavigation]: isSecondNavigationOpen,
                 })}
+                style={{
+                    height: `calc(100vh - ${
+                        isSecondNavigationOpen ? '112px' : '72px'
+                    } - var(--lotta-spacing))`,
+                }}
                 data-testid={'WidgetsList'}
                 ref={wrapperRef}
             >
