@@ -28,7 +28,7 @@ export const CalendarWidgetConfiguration =
                                         setConfiguration({
                                             ...configuration,
                                             calendars:
-                                                configuration.calendars.map(
+                                                configuration.calendars?.map(
                                                     (cal, i) => {
                                                         return i === index
                                                             ? {
@@ -39,7 +39,7 @@ export const CalendarWidgetConfiguration =
                                                               }
                                                             : cal;
                                                     }
-                                                ),
+                                                ) ?? [],
                                         })
                                     }
                                 />
@@ -54,7 +54,7 @@ export const CalendarWidgetConfiguration =
                                         setConfiguration({
                                             ...configuration,
                                             calendars:
-                                                configuration.calendars.map(
+                                                configuration.calendars?.map(
                                                     (cal, i) => {
                                                         return i === index
                                                             ? {
@@ -67,7 +67,7 @@ export const CalendarWidgetConfiguration =
                                                               }
                                                             : cal;
                                                     }
-                                                ),
+                                                ) ?? [],
                                         })
                                     }
                                 >
@@ -99,7 +99,7 @@ export const CalendarWidgetConfiguration =
                                                     setConfiguration({
                                                         ...configuration,
                                                         calendars:
-                                                            configuration.calendars.map(
+                                                            configuration.calendars?.map(
                                                                 (cal, i) => {
                                                                     return i ===
                                                                         index
@@ -129,7 +129,7 @@ export const CalendarWidgetConfiguration =
                                                     setConfiguration({
                                                         ...configuration,
                                                         calendars:
-                                                            configuration.calendars.map(
+                                                            configuration.calendars?.map(
                                                                 (cal, i) => {
                                                                     return i ===
                                                                         index
@@ -155,7 +155,7 @@ export const CalendarWidgetConfiguration =
                                                 setConfiguration({
                                                     ...configuration,
                                                     calendars:
-                                                        configuration.calendars.filter(
+                                                        configuration.calendars?.filter(
                                                             (_c, i) =>
                                                                 i !== index
                                                         ),

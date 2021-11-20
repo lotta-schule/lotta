@@ -94,7 +94,10 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                     onSelectIcon={(icon) =>
                         setWidget({
                             ...widget,
-                            configuration: { ...widget.configuration, icon },
+                            configuration: {
+                                ...(widget.configuration as any),
+                                icon,
+                            },
                         })
                     }
                 />
@@ -113,7 +116,13 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                     <CalendarWidgetConfiguration
                         configuration={widget.configuration || {}}
                         setConfiguration={(configuration) =>
-                            setWidget({ ...widget, configuration })
+                            setWidget({
+                                ...widget,
+                                configuration: {
+                                    ...widget.configuration,
+                                    ...configuration,
+                                },
+                            })
                         }
                     />
                 )}
@@ -121,7 +130,13 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                     <ScheduleWidgetConfiguration
                         configuration={widget.configuration || {}}
                         setConfiguration={(configuration) =>
-                            setWidget({ ...widget, configuration })
+                            setWidget({
+                                ...widget,
+                                configuration: {
+                                    ...widget.configuration,
+                                    ...configuration,
+                                },
+                            })
                         }
                     />
                 )}
@@ -129,7 +144,13 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                     <IFrameWidgetConfiguration
                         configuration={widget.configuration || {}}
                         setConfiguration={(configuration) =>
-                            setWidget({ ...widget, configuration })
+                            setWidget({
+                                ...widget,
+                                configuration: {
+                                    ...widget.configuration,
+                                    ...configuration,
+                                },
+                            })
                         }
                     />
                 )}

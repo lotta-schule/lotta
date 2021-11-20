@@ -4,14 +4,7 @@ import {
     elternGroup,
     schuelerGroup,
 } from './Accounts';
-import {
-    CalendarWidgetConfig,
-    TenantModel,
-    ScheduleWidgetConfig,
-    WidgetModel,
-    WidgetModelType,
-    IFrameWidgetConfig,
-} from 'model';
+import { TenantModel, WidgetModel, WidgetModelType } from 'model';
 
 /**
  *
@@ -272,7 +265,7 @@ export const allCategories = [
     ArbeitsblätterCategory,
 ];
 
-export const VPSchuelerWidget: WidgetModel<ScheduleWidgetConfig> = {
+export const VPSchuelerWidget: WidgetModel<WidgetModelType.Schedule> = {
     id: '91800',
     title: 'VP Schüler',
     type: WidgetModelType.Schedule,
@@ -285,7 +278,7 @@ export const VPSchuelerWidget: WidgetModel<ScheduleWidgetConfig> = {
     },
 };
 
-export const VPLehrerWidget: WidgetModel<ScheduleWidgetConfig> = {
+export const VPLehrerWidget: WidgetModel<WidgetModelType.Schedule> = {
     id: '91801',
     title: 'VP Lehrer',
     type: WidgetModelType.Schedule,
@@ -298,7 +291,7 @@ export const VPLehrerWidget: WidgetModel<ScheduleWidgetConfig> = {
     },
 };
 
-export const CalendarKlassenarbeiten: WidgetModel<CalendarWidgetConfig> = {
+export const CalendarKlassenarbeiten: WidgetModel<WidgetModelType.Calendar> = {
     id: '91802',
     title: 'VP Lehrer',
     type: WidgetModelType.Calendar,
@@ -315,7 +308,7 @@ export const CalendarKlassenarbeiten: WidgetModel<CalendarWidgetConfig> = {
     },
 };
 
-export const GangamStyleWidget: WidgetModel<IFrameWidgetConfig> = {
+export const GangamStyleWidget: WidgetModel<WidgetModelType.IFrame> = {
     id: '91803',
     title: 'GangamStyle',
     type: WidgetModelType.IFrame,

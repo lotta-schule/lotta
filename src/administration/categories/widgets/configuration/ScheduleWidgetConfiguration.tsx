@@ -22,11 +22,13 @@ export const ScheduleWidgetConfiguration =
                             onChange={(e) =>
                                 setConfiguration({
                                     ...configuration,
-                                    type: e.currentTarget.value,
+                                    type: e.currentTarget
+                                        .value as ScheduleWidgetConfig['type'],
                                 })
                             }
                             id={'schedule-type'}
                         >
+                            <option value={undefined}>Typ auswählen</option>
                             <option value={'IndiwareStudent'}>
                                 Indiware - Schüler
                             </option>

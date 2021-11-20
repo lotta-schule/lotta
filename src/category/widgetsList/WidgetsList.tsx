@@ -134,7 +134,9 @@ export const WidgetsList = React.memo<WidgetsListProps>(
                                             />
                                         ) : (
                                             <WidgetIcon
-                                                icon={widget.configuration.icon}
+                                                icon={
+                                                    widget.configuration?.icon
+                                                }
                                                 size={36}
                                             />
                                         )

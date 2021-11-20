@@ -19,7 +19,7 @@ import {
 } from '@material-ui/core';
 import { Button } from 'shared/general/button/Button';
 import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
-import { WidgetModel, ScheduleWidgetConfig, ScheduleResult } from 'model';
+import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
@@ -36,7 +36,7 @@ export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 type DateString = string;
 
 export interface ScheduleProps {
-    widget: WidgetModel<ScheduleWidgetConfig>;
+    widget: WidgetModel<WidgetModelType.Schedule>;
 }
 
 const dateToDateString = (date: Date | string) =>
@@ -217,9 +217,10 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
             />
         );
     } else if (!currentUser.class) {
-        const errorMessage = /Teacher/.test(widget.configuration.type)
-            ? 'Sie haben kein Kürzel im Profil eingestellt.'
-            : 'Du hast keine Klasse im Profil eingestellt.';
+        const errorMessage =
+            widget.configuration?.type === 'IndiwareTeacher'
+                ? 'Sie haben kein Kürzel im Profil eingestellt.'
+                : 'Du hast keine Klasse im Profil eingestellt.';
         return (
             <>
                 <ErrorMessage error={new Error(errorMessage)} />
