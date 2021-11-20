@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Container } from '@material-ui/core';
+import { Grid, Container, NoSsr } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { File } from 'util/model';
 import { ScrollToTopButton } from 'shared/general/button/ScrollToTopButton';
@@ -64,7 +64,9 @@ export const BaseLayout = React.memo(({ children }) => {
                     wrap={'nowrap'}
                 >
                     {children}
-                    {typeof window !== 'undefined' && <ScrollToTopButton />}
+                    <NoSsr>
+                        <ScrollToTopButton />
+                    </NoSsr>
                 </Grid>
             </main>
         </Container>
