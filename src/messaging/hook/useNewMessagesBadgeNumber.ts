@@ -23,10 +23,16 @@ export const useNewMessagesBadgeNumber = (options?: {
                 )
                 .filter((msg) => {
                     if (options?.user) {
-                        return msg.senderUser?.id === options.user.id;
+                        return (
+                            msg.senderUser?.id === options.user.id &&
+                            !msg.recipientGroup
+                        );
                     }
                     if (options?.group) {
-                        return msg.recipientGroup?.id === options.group.id;
+                        return (
+                            msg.recipientGroup?.id === options.group.id &&
+                            !msg.recipientUser
+                        );
                     }
                     return true;
                 }).length || 0
