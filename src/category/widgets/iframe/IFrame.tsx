@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { IFrameWidgetConfig, WidgetModel } from 'model';
+import { WidgetModel, WidgetModelType } from 'model';
 
 import styles from './IFrame.module.scss';
 
 export interface IFrameProps {
-    widget: WidgetModel<IFrameWidgetConfig>;
+    widget: WidgetModel<WidgetModelType.IFrame>;
 }
 
 export const IFrame = React.memo<IFrameProps>(({ widget }) => {
@@ -12,7 +12,7 @@ export const IFrame = React.memo<IFrameProps>(({ widget }) => {
         <div className={styles.root}>
             <iframe
                 title={widget.title}
-                src={widget.configuration.url}
+                src={widget.configuration?.url}
                 seamless
             />
         </div>

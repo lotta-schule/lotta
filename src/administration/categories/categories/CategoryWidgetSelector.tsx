@@ -84,7 +84,7 @@ export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
                             >
                                 <div className={styles.typography}>
                                     <WidgetIcon
-                                        icon={widget.configuration.icon}
+                                        icon={widget.configuration?.icon}
                                         size={36}
                                     />
                                     {widget.title}

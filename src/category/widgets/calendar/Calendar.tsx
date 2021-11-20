@@ -13,8 +13,8 @@ import { de } from 'date-fns/locale';
 import { CalendarEventModel } from 'model/CalendarEventModel';
 import {
     WidgetModel,
-    CalendarWidgetConfig,
     CalendarWidgetCalendarConfig,
+    WidgetModelType,
 } from 'model';
 import { Divider } from 'shared/general/divider/Divider';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
@@ -25,7 +25,7 @@ import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 import styles from './Calendar.module.scss';
 
 export interface CalendarProps {
-    widget: WidgetModel<CalendarWidgetConfig>;
+    widget: WidgetModel<WidgetModelType.Calendar>;
 }
 
 export const Calendar = React.memo<CalendarProps>(({ widget }) => {
@@ -35,7 +35,9 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
     >([]);
     const [error, setError] = React.useState<Error | null>(null);
 
-    const { calendars } = widget.configuration;
+    const calendars = React.useMemo(() => {
+        return widget.configuration?.calendars ?? [];
+    }, [widget.configuration]);
     const apolloClient = useApolloClient();
 
     React.useEffect(() => {

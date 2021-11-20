@@ -15,21 +15,38 @@ export interface WidgetIconModel {
     overlayTextColor?: string;
 }
 
-export interface WidgetModel<C = any> {
+export type WidgetModel<T extends WidgetModelType = WidgetModelType> = {
     id: ID;
     title: string;
-    type: WidgetModelType;
+    type: T;
     iconImageFile?: FileModel | null;
     groups: UserGroupModel[];
-    configuration: { icon?: WidgetIconModel } & C;
-}
+} & TypedWidgetConfiguration;
+
+export type TypedWidgetConfiguration<
+    T extends WidgetModelType = WidgetModelType
+> = {
+    type: T;
+} & { configuration?: { icon?: WidgetIconModel } } & (
+        | { type: WidgetModelType.IFrame; configuration?: IFrameWidgetConfig }
+        | {
+              type: WidgetModelType.Schedule;
+              configuration?: ScheduleWidgetConfig;
+          }
+        | {
+              type: WidgetModelType.Calendar;
+              configuration?: CalendarWidgetConfig;
+          }
+        | { type: WidgetModelType.UserNavigationMobile }
+        | never
+    );
 
 export interface CalendarWidgetConfig {
-    calendars: CalendarWidgetCalendarConfig[];
+    calendars?: CalendarWidgetCalendarConfig[];
 }
 
 export interface CalendarWidgetCalendarConfig {
-    url: string;
+    url?: string;
     color?: string;
     name?: string;
     days?: number;
@@ -37,12 +54,12 @@ export interface CalendarWidgetCalendarConfig {
 }
 
 export interface ScheduleWidgetConfig {
-    type: string;
-    schoolId: string;
-    username: string;
-    password: string;
+    type?: 'IndiwareStudent' | 'IndiwareTeacher';
+    schoolId?: string;
+    username?: string;
+    password?: string;
 }
 
 export interface IFrameWidgetConfig {
-    url: string;
+    url?: string;
 }

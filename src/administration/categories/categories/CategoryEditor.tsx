@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormControl, FormControlLabel } from '@material-ui/core';
+import { FormControl } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { useMutation, useQuery } from '@apollo/client';
 import { animated, useSpring } from 'react-spring';
@@ -196,26 +196,25 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     </Checkbox>
                 )}
 
-                <FormControl className={styles.input}>
-                    <Label label={'Layout für die Kategorie wählen'}>
-                        <Select
-                            value={category.layoutName ?? 'standard'}
-                            onChange={({ currentTarget }) =>
-                                setCategory({
-                                    ...category,
-                                    layoutName: currentTarget.value as any,
-                                })
-                            }
-                            id={'category-layout'}
-                        >
-                            <option value={'standard'}>Standardlayout</option>
-                            <option value={'densed'}>Kompaktlayout</option>
-                            <option value={'2-columns'}>
-                                Zweispaltenlayout
-                            </option>
-                        </Select>
-                    </Label>
-                </FormControl>
+                <Label
+                    className={styles.input}
+                    label={'Layout für die Kategorie wählen'}
+                >
+                    <Select
+                        value={category.layoutName ?? 'standard'}
+                        onChange={({ currentTarget }) =>
+                            setCategory({
+                                ...category,
+                                layoutName: currentTarget.value as any,
+                            })
+                        }
+                        id={'category-layout'}
+                    >
+                        <option value={'standard'}>Standardlayout</option>
+                        <option value={'densed'}>Kompaktlayout</option>
+                        <option value={'2-columns'}>Zweispaltenlayout</option>
+                    </Select>
+                </Label>
 
                 {!category.isHomepage && (
                     <>
