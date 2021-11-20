@@ -18,7 +18,7 @@ config :lotta, :base_uri,
 
 config :lotta, Lotta.Repo, start_apps_before_migration: [:httpoison]
 
-config :lotta, Lotta.TenantCacheServer, enabled: true
+config :lotta, Lotta.TenantCacheServer, enabled: false
 
 config :lotta, :live_view,
   username: "admin",
