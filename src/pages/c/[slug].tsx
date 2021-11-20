@@ -164,7 +164,9 @@ const CategoryRoute = ({
         return <ErrorMessage error={new Error('Seite nicht gefunden!')} />;
     }
 
-    const loadedArticles = data?.articles ?? articles ?? [];
+    const loadedArticles = didReadFromSSRCache.current
+        ? data?.articles ?? []
+        : articles;
     const articlesToShow = !categoryId
         ? // Homepage
           loadedArticles.filter((a) =>
