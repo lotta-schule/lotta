@@ -113,7 +113,7 @@ export const UserNavigationMobile = React.memo(() => {
                             <span className={styles.label}>Meine Beiträge</span>
                         </BaseButton>
                     </Link>
-                    <Link href={'/profile/messaging'} passHref>
+                    <Link href={'/messaging'} passHref>
                         <BaseButton
                             variant={'borderless'}
                             className={styles.button}
