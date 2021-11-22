@@ -10,11 +10,9 @@ defmodule Lotta.Accounts do
   alias Ecto.Changeset
   alias Lotta.Repo
   alias Lotta.Mailer
+  alias Lotta.Accounts.{User, UserGroup, GroupEnrollmentToken}
   alias Lotta.Storage
-  alias Lotta.Storage.File
-  alias Lotta.Tenants
-  alias Lotta.TenantCacheServer
-  alias Lotta.Accounts.{User, UserGroup}
+  alias Lotta.Storage.{File}
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -169,9 +167,27 @@ defmodule Lotta.Accounts do
     iex> list_user_groups()
     [%UserGroup{}, ...]
   """
-  @spec list_user_groups(Tenant.t() | nil) :: [UserGroup.t()]
-  def list_user_groups(tenant \\ nil) do
-    TenantCacheServer.list_groups(tenant || Lotta.Tenants.current())
+  @spec list_user_groups() :: [UserGroup.t()]
+  def list_user_groups() do
+    Repo.all(UserGroup)
+  end
+
+  @doc """
+  Get groups which have a given enrollment token
+
+  ## Examples
+    iex> list_groups_for_enrollment_token("token")
+    [%UserGroup{}, ...]
+  """
+  @spec list_groups_for_enrollment_token(String.t()) :: [%GroupEnrollmentToken{}]
+  def list_groups_for_enrollment_token(token) when is_binary(token) do
+    from(g in UserGroup,
+      join: t in GroupEnrollmentToken,
+      on: g.id == t.group_id,
+      where: t.token == ^token,
+      distinct: true
+    )
+    |> Repo.all(prefix: Ecto.get_meta(token, :prefix))
   end
 
   @doc """
@@ -184,13 +200,18 @@ defmodule Lotta.Accounts do
     [%UserGroup{}, ...]
   """
   @spec list_groups_for_enrollment_tokens([String.t()], Tenant.t() | nil) :: [
-          UserGroup.t()
+          %GroupEnrollmentToken{}
         ]
   def list_groups_for_enrollment_tokens(tokens, tenant \\ nil) when is_list(tokens) do
-    TenantCacheServer.list_groups_for_tokens(
-      tenant || Lotta.Tenants.current(),
-      tokens
+    prefix = if tenant, do: tenant.prefix, else: Repo.get_prefix()
+
+    from(g in UserGroup,
+      join: t in GroupEnrollmentToken,
+      on: g.id == t.group_id,
+      where: t.token in ^tokens,
+      distinct: true
     )
+    |> Repo.all(prefix: prefix)
   end
 
   @doc """
@@ -411,8 +432,6 @@ defmodule Lotta.Accounts do
   """
   @spec create_user_group(map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def create_user_group(attrs) do
-    tenant = Tenants.current()
-
     attrs =
       case attrs do
         %{sort_key: _} ->
@@ -423,16 +442,8 @@ defmodule Lotta.Accounts do
           |> Map.put(:sort_key, UserGroup.get_max_sort_key() + 10)
       end
 
-    result =
-      UserGroup.changeset(%UserGroup{}, attrs)
-      |> Repo.insert(prefix: Repo.get_prefix())
-
-    if match?({:ok, _}, result) do
-      {:ok, group} = result
-      TenantCacheServer.update_group(tenant, group)
-    end
-
-    result
+    UserGroup.changeset(%UserGroup{}, attrs)
+    |> Repo.insert(prefix: Repo.get_prefix())
   end
 
   @doc """
@@ -449,19 +460,9 @@ defmodule Lotta.Accounts do
   """
   @spec update_user_group(UserGroup.t(), map()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def update_user_group(%UserGroup{} = group, attrs) do
-    tenant = Tenants.current()
-
-    result =
-      group
-      |> UserGroup.changeset(attrs)
-      |> Repo.update(prefix: tenant.prefix)
-
-    if match?({:ok, _}, result) do
-      {:ok, group} = result
-      TenantCacheServer.update_group(tenant, group)
-    end
-
-    result
+    group
+    |> UserGroup.changeset(attrs)
+    |> Repo.update()
   end
 
   @doc """
@@ -478,14 +479,7 @@ defmodule Lotta.Accounts do
   """
   @spec delete_user_group(UserGroup.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def delete_user_group(%UserGroup{} = group) do
-    result = Repo.delete(group)
-
-    if match?({:ok, _}, result) do
-      {:ok, group} = result
-      TenantCacheServer.delete_group(Tenants.current(), group)
-    end
-
-    result
+    Repo.delete(group)
   end
 
   @doc """

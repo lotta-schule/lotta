@@ -70,8 +70,7 @@ defmodule LottaWeb.UserGroupResolver do
     if is_nil(group) do
       {:error, "Gruppe existiert nicht."}
     else
-      group
-      |> Accounts.delete_user_group()
+      Accounts.delete_user_group(group)
       |> format_errors("Fehler beim Löschen  der Gruppe")
     end
   end
