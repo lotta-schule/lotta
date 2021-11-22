@@ -101,6 +101,22 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
             headers: context.ctx.req?.headers,
         },
     });
+    const { data: userTenant, error: userTenantError } =
+        await getApolloClient().query({
+            query: GetTenantQuery,
+            fetchPolicy: 'network-only',
+            context: {
+                headers: {
+                    ...context.ctx.req?.headers,
+                    // As the groups are part of the tenant query,
+                    // and they are secured by user, we must
+                    // fetch it again in order to have the groups
+                    // for the user.
+                    // TODO: This will have to be implemented on
+                    // a better way next time
+                },
+            },
+        });
     const { data: categoriesData } = await getApolloClient().query({
         query: GetCategoriesQuery,
         context: {
@@ -108,9 +124,13 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         },
     });
 
+    if (userTenantError) {
+        console.error(userTenantError);
+    }
+
     return {
         pageProps: {
-            tenant,
+            tenant: userTenant?.tenant || tenant,
             currentUser: userData?.currentUser ?? null,
             categories: categoriesData?.categories ?? null,
             error: error ?? null,
