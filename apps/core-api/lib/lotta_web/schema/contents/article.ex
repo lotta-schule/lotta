@@ -88,5 +88,6 @@ defmodule LottaWeb.Schema.Contents.Article do
     value(:download, as: "download")
     value(:form, as: "form")
     value(:table, as: "table")
+    value(:divider, as: "divider")
   end
 end
