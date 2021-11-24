@@ -1,0 +1,52 @@
+@import 'breakpoints';
+
+.root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    @media screen and (min-width: $min-md) {
+        position: sticky;
+        top: 72px;
+        &.hasSecondNavigation {
+            // TODO: Are these hardcoded values fallen from heaven really clever?
+            top: 112px;
+        }
+    }
+    .tabsRoot {
+        background-color: rgba(var(--lotta-box-background-color), 1);
+    }
+
+    .tabsScrollButtons {
+        width: 25px;
+        color: rgba(var(--lotta-text-color), 1);
+    }
+
+    .tabsFlexContainer {
+        justify-content: center;
+    }
+
+    .tabsIndicator {
+        display: none;
+    }
+
+    .tabRoot {
+        line-height: 1px !important;
+        text-transform: initial !important;
+        // TODO: Why 60px? This is unclear, a named css-variable would be clearer
+        min-width: 60px !important;
+        filter: grayscale(0.95) opacity(0.8);
+    }
+
+    .tabSelected {
+        filter: none;
+    }
+
+    .swipeableViewsContainer {
+        flex-grow: 1;
+        flex-shrink: 1;
+        & > div {
+            height: calc(100% - calc(var(--lotta-spacing) / 2));
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ServerStyleSheets } from '@material-ui/core';
+import { resetServerContext } from 'react-beautiful-dnd';
 import Document, {
     Html,
     Head,
@@ -18,6 +19,7 @@ class LottaWebDocument extends Document {
         return (
             <Html>
                 <Head>
+                    <meta charSet="utf-8" />
                     <link
                         rel="apple-touch-icon"
                         sizes="180x180"
@@ -40,6 +42,7 @@ class LottaWebDocument extends Document {
                 </Head>
                 <body>
                     <Main />
+                    <div id={'dialogContainer'} />
                     <NextScript />
                 </body>
             </Html>
@@ -50,6 +53,7 @@ class LottaWebDocument extends Document {
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with server-side generation (SSG).
 LottaWebDocument.getInitialProps = async (ctx) => {
+    resetServerContext();
     // Render app and page and get the context of the page with collected side effects.
     const sheets = new ServerStyleSheets();
     const originalRenderPage = ctx.renderPage;

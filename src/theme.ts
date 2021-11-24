@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core';
+import { createTheme } from '@material-ui/core';
 import { deepOrange } from '@material-ui/core/colors';
 
 const primaryColor = '#333';
@@ -6,7 +6,7 @@ const secondaryColor = deepOrange[500];
 const errorColor = '#ff0000';
 const disabledColor = 'rgba(0, 0, 0, 0.38)';
 
-export const theme = createMuiTheme({
+export const theme = createTheme({
     palette: {
         primary: {
             main: primaryColor,

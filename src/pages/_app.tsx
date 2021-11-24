@@ -1,52 +1,33 @@
-import type { AppContext, AppProps } from 'next/app';
 import * as React from 'react';
-import { ApolloProvider } from '@apollo/client';
-import { CloudimageProvider } from 'react-cloudimage-responsive';
-import { I18nextProvider } from 'react-i18next';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { ThemeProvider } from '@material-ui/styles';
-import { de } from 'date-fns/locale';
-import { App } from 'component/App';
-import { Authentication } from 'component/Authentication';
-import { ServerDownError } from 'component/ServerDownError';
-import { TenantNotFoundError } from 'component/TenantNotFoundError';
-import { UploadQueueProvider } from 'component/fileExplorer/context/UploadQueueContext';
+import type { AppContext, AppProps } from 'next/app';
+import { ServerDownError } from 'error/ServerDownError';
+import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
-import { i18n } from '../i18n';
-import { theme } from 'theme';
 import { add } from 'date-fns';
-import { ServerDataContextProvider } from 'component/ServerDataContext';
+import { AppContextProviders } from 'layout/AppContextProviders';
+
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 import axios from 'axios';
-import DateFnsUtils from '@date-io/date-fns';
-import Head from 'next/head';
-import getConfig from 'next/config';
 
 import 'index.scss';
-import 'component/general/button/base-button.scss';
-import 'component/general/button/button.scss';
-import 'component/general/button/button-group.scss';
-import 'component/general/button/navigation-button.scss';
-import { OverlayProvider } from '@react-aria/overlays';
+import 'shared/general/button/base-button.scss';
+import 'shared/general/button/button.scss';
+import 'shared/general/button/button-group.scss';
+import 'shared/general/button/navigation-button.scss';
 
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
-
-const LottaWebApp = ({ Component, pageProps }: AppProps) => {
-    const firstBrowserInit = React.useRef(false);
-
-    const {
-        error,
-        tenant,
+const LottaWebApp = ({
+    Component,
+    pageProps: {
         categories,
         currentUser,
+        error,
         requestBaseUrl,
+        tenant,
         ...componentProps
-    } = pageProps;
-
+    },
+}: AppProps) => {
     if (error) {
         return <ServerDownError error={error} />;
     }
@@ -55,75 +36,15 @@ const LottaWebApp = ({ Component, pageProps }: AppProps) => {
         return <TenantNotFoundError />;
     }
 
-    const client = getApolloClient();
-    if (!firstBrowserInit.current) {
-        client.writeQuery({
-            query: GetTenantQuery,
-            data: { tenant },
-        });
-        if (categories) {
-            client.writeQuery({
-                query: GetCategoriesQuery,
-                data: { categories },
-            });
-        }
-        if (currentUser) {
-            client.writeQuery({
-                query: GetCurrentUserQuery,
-                data: { currentUser },
-            });
-        }
-        if (typeof window !== 'undefined') {
-            const authToken = document.cookie.match(/AuthToken=(.+);?/i)?.[1];
-            if (authToken) {
-                localStorage.setItem('id', authToken);
-            }
-        }
-        firstBrowserInit.current = true;
-    }
-
-    const baseUrl =
-        typeof window === undefined
-            ? requestBaseUrl
-            : requestBaseUrl ?? window.location.origin;
     return (
-        <ServerDataContextProvider value={{ baseUrl }}>
-            <ApolloProvider client={client}>
-                <ThemeProvider theme={theme}>
-                    <I18nextProvider i18n={i18n}>
-                        <MuiPickersUtilsProvider
-                            utils={DateFnsUtils}
-                            locale={de}
-                        >
-                            <CloudimageProvider
-                                config={{
-                                    token: cloudimageToken,
-                                }}
-                            >
-                                <OverlayProvider>
-                                    <Authentication>
-                                        <UploadQueueProvider>
-                                            <Head>
-                                                <meta charSet="utf-8" />
-                                                <meta
-                                                    name="viewport"
-                                                    content="width=device-width, initial-scale=1"
-                                                />
-                                            </Head>
-                                            <App tenant={tenant}>
-                                                <Component
-                                                    {...componentProps}
-                                                />
-                                            </App>
-                                        </UploadQueueProvider>
-                                    </Authentication>
-                                </OverlayProvider>
-                            </CloudimageProvider>
-                        </MuiPickersUtilsProvider>
-                    </I18nextProvider>
-                </ThemeProvider>
-            </ApolloProvider>
-        </ServerDataContextProvider>
+        <AppContextProviders
+            tenant={tenant}
+            categories={categories}
+            currentUser={currentUser}
+            requestBaseUrl={requestBaseUrl}
+        >
+            <Component {...componentProps} />
+        </AppContextProviders>
     );
 };
 
@@ -148,7 +69,18 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,
         context: {
-            headers: context.ctx.req?.headers,
+            headers: {
+                ...context.ctx.req?.headers,
+                // that's an ugly workaround because before SSR authentication
+                // headers were not passed to the GetTenantQuery and I would like
+                // to keep it like this for now for simplicity.
+                // That's because if  not, the user will always get a "last_seen"
+                // value that's from the GetTenantQuery, so just when opening the
+                // page, instead of the date of his last visit.
+                // This leeds to him not getting the correct count of how much unread
+                // messages he got since them, messing it all up.
+                authorization: null,
+            },
         },
     });
     const tenant = data?.tenant ?? null;
@@ -169,6 +101,22 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
             headers: context.ctx.req?.headers,
         },
     });
+    const { data: userTenant, error: userTenantError } =
+        await getApolloClient().query({
+            query: GetTenantQuery,
+            fetchPolicy: 'network-only',
+            context: {
+                headers: {
+                    ...context.ctx.req?.headers,
+                    // As the groups are part of the tenant query,
+                    // and they are secured by user, we must
+                    // fetch it again in order to have the groups
+                    // for the user.
+                    // TODO: This will have to be implemented on
+                    // a better way next time
+                },
+            },
+        });
     const { data: categoriesData } = await getApolloClient().query({
         query: GetCategoriesQuery,
         context: {
@@ -176,9 +124,13 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         },
     });
 
+    if (userTenantError) {
+        console.error(userTenantError);
+    }
+
     return {
         pageProps: {
-            tenant,
+            tenant: userTenant?.tenant || tenant,
             currentUser: userData?.currentUser ?? null,
             categories: categoriesData?.categories ?? null,
             error: error ?? null,
@@ -219,7 +171,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
     if (expires.getTime() < new Date().getTime() + 10_000) {
         // token has/will expire in next 10 seconds, so don't
         // bother refreshing it, could be too late, let the
-        // user just sign in again
+        // userAvatar just sign in again
         Cookies.set('SignInRefreshToken', null, { httpOnly: true });
         return;
     }

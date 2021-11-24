@@ -28,7 +28,7 @@ const sendRefreshRequest = async () => {
     try {
         const { data } = await axios.request<any>({
             method: 'post',
-            baseURL: '/api/auth',
+            baseURL: '/auth',
             url: 'token/refresh',
             withCredentials: true,
         });

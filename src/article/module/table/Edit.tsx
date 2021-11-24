@@ -1,0 +1,411 @@
+import * as React from 'react';
+import { range } from 'lodash';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    Tooltip,
+} from '@material-ui/core';
+import {
+    SkipPrevious,
+    SkipNext,
+    ExpandLess,
+    ExpandMore,
+} from '@material-ui/icons';
+import { Button } from 'shared/general/button/Button';
+import { Input, InputProps } from 'shared/general/form/input/Input';
+import { ContentModuleModel } from 'model';
+import {
+    TableCell as TableCellInterface,
+    TableContent,
+    TableConfiguration,
+} from './Table';
+
+import styles from './Table.module.scss';
+
+interface EditProps {
+    contentModule: ContentModuleModel<TableContent, TableConfiguration>;
+    onUpdateModule(
+        contentModule: ContentModuleModel<TableContent, TableConfiguration>
+    ): void;
+}
+
+export interface EditTableCellProps
+    extends Omit<InputProps, 'value' | 'style' | 'onChange'> {
+    cell: TableCellInterface;
+    onChange(cell: TableCellInterface): void;
+    position: { row: number; column: number };
+}
+
+const EditTableCell = React.memo<EditTableCellProps>(
+    ({ cell, position: { row, column }, onChange, ...props }) => {
+        const [text, setText] = React.useState(cell.text);
+        React.useEffect(() => {
+            setText(cell.text);
+        }, [cell.text]);
+        return (
+            <TableCell>
+                <Input
+                    multiline={true}
+                    value={text}
+                    onChange={(e) => setText(e.currentTarget.value)}
+                    onBlur={(e) =>
+                        onChange({ ...cell, text: e.currentTarget.value })
+                    }
+                    data-row={row}
+                    data-column={column}
+                    {...(props as any)}
+                />
+            </TableCell>
+        );
+    }
+);
+EditTableCell.displayName = 'TableEditTableCell';
+
+export const Edit = React.memo<EditProps>(
+    ({ contentModule, onUpdateModule }) => {
+        const tableRef = React.useRef<HTMLTableElement>(null);
+        const requestFocusOnNextUpdate = React.useRef(false);
+
+        const rowCount = React.useMemo(
+            () => contentModule.content?.rows?.length ?? 1,
+            [contentModule.content]
+        );
+        const columnCount = React.useMemo(
+            () =>
+                Math.max(
+                    ...(contentModule.content?.rows?.map(
+                        (row) => row?.length
+                    ) ?? [1])
+                ),
+            [contentModule.content]
+        );
+
+        const contentRows = React.useMemo(
+            () =>
+                range(rowCount).map((rowIndex) =>
+                    range(columnCount).map(
+                        (columnIndex) =>
+                            contentModule.content?.rows?.[rowIndex]?.[
+                                columnIndex
+                            ] ?? { text: '' }
+                    )
+                ),
+            [rowCount, columnCount, contentModule.content]
+        );
+
+        const onCellKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+            const input = e.target as HTMLInputElement;
+            if (e.key === 'Enter' && !e.shiftKey) {
+                const { row, column } = input.dataset;
+                if (row !== undefined && column !== undefined) {
+                    if (
+                        row === String(rowCount - 1) &&
+                        column === String(columnCount - 1)
+                    ) {
+                        e.preventDefault();
+                        requestFocusOnNextUpdate.current = true;
+                        onUpdateModule({
+                            ...contentModule,
+                            content: {
+                                ...contentModule.content,
+                                rows: [
+                                    ...contentRows,
+                                    range(columnCount).map(() => ({
+                                        text: '',
+                                    })),
+                                ],
+                            },
+                        });
+                    } else if (column === String(columnCount - 1)) {
+                        e.preventDefault();
+                        tableRef
+                            .current!.querySelector<HTMLInputElement>(
+                                `[data-row="${
+                                    parseInt(row, 10) + 1
+                                }"][data-column="0"]`
+                            )
+                            ?.focus();
+                    } else {
+                        e.preventDefault();
+                        tableRef
+                            .current!.querySelector<HTMLInputElement>(
+                                `[data-row="${row}"][data-column="${
+                                    parseInt(column, 10) + 1
+                                }"]`
+                            )
+                            ?.focus();
+                    }
+                }
+            }
+        };
+
+        const onCellPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+            if (e.clipboardData.types.indexOf('text/html') > -1) {
+                // if userAvatar is pasting an html table
+                // table calculation programs like Excel or Numbers do provide copied data as html (next to other formats),
+                // so this allows pasting from Excel or Numbers
+                const htmlContent = e.clipboardData.getData('text/html');
+                const container = document.createElement('html');
+                container.innerHTML = htmlContent;
+                const table = container.querySelector('table');
+                if (table) {
+                    const convertedRows = Array.from(
+                        table.querySelectorAll('tr')
+                    ).map((trEl) =>
+                        Array.from(trEl.cells).map((tdEl) => ({
+                            text: tdEl.textContent?.trim() ?? '',
+                        }))
+                    );
+                    const convertedRowCount = convertedRows.length;
+                    const convertedColumnCount = Math.max(
+                        ...convertedRows.map((row) => row.length)
+                    );
+
+                    const relativePastePosition = {
+                        row: parseInt(e.currentTarget.dataset.row!, 10),
+                        column: parseInt(e.currentTarget.dataset.column!, 10),
+                    };
+                    const newTableDimensions = {
+                        rowsCount: Math.max(
+                            rowCount,
+                            relativePastePosition.row + convertedRowCount
+                        ),
+                        columnCount: Math.max(
+                            columnCount,
+                            relativePastePosition.column + convertedColumnCount
+                        ),
+                    };
+                    if (convertedRowCount > 0 && convertedColumnCount > 0) {
+                        e.preventDefault();
+                        onUpdateModule({
+                            ...contentModule,
+                            content: {
+                                rows: range(newTableDimensions.rowsCount).map(
+                                    (rowI) =>
+                                        range(
+                                            newTableDimensions.columnCount
+                                        ).map((colI) => {
+                                            const convertedCellAtPosition =
+                                                convertedRows[
+                                                    rowI -
+                                                        relativePastePosition.row
+                                                ]?.[
+                                                    colI -
+                                                        relativePastePosition.column
+                                                ];
+                                            const contentCellAtPosition =
+                                                contentRows[rowI]?.[colI];
+                                            if (convertedCellAtPosition) {
+                                                return convertedCellAtPosition;
+                                            } else {
+                                                return {
+                                                    // @ts-ignore
+                                                    text: '',
+                                                    ...contentCellAtPosition,
+                                                };
+                                            }
+                                        })
+                                ),
+                            },
+                        });
+                    }
+                }
+            }
+        };
+
+        React.useLayoutEffect(() => {
+            const input = tableRef.current!.querySelector<HTMLInputElement>(
+                `[data-column="${columnCount - 1}"]`
+            );
+            const currentlyHasFocus = Boolean(
+                tableRef.current!.querySelector('input:focus')
+            );
+            if (
+                input &&
+                (currentlyHasFocus || requestFocusOnNextUpdate.current)
+            ) {
+                input.focus();
+            }
+            requestFocusOnNextUpdate.current = false;
+        }, [columnCount]);
+
+        React.useLayoutEffect(() => {
+            const input = tableRef.current!.querySelector<HTMLInputElement>(
+                `[data-row="${rowCount - 1}"]`
+            );
+            const currentlyHasFocus = Boolean(
+                tableRef.current!.querySelector('input:focus')
+            );
+            if (
+                input &&
+                (currentlyHasFocus || requestFocusOnNextUpdate.current)
+            ) {
+                input.focus();
+            }
+            requestFocusOnNextUpdate.current = false;
+        }, [rowCount]);
+
+        return (
+            <div className={styles.edit}>
+                <div className={styles.upperToolbar}>
+                    <Tooltip
+                        title={'letzte Spalte entfernen'}
+                        id={`cm-${contentModule.id}-delete-column-tooltip`}
+                    >
+                        <span>
+                            <Button
+                                small
+                                icon={<SkipPrevious />}
+                                aria-labelledby={`cm-${contentModule.id}-delete-column-tooltip`}
+                                aria-label={'letzte Spalte entfernen'}
+                                disabled={columnCount <= 1}
+                                onClick={() => {
+                                    onUpdateModule({
+                                        ...contentModule,
+                                        content: {
+                                            ...contentModule.content,
+                                            rows: contentRows.map((row) =>
+                                                row.filter(
+                                                    (_col, i) =>
+                                                        i < columnCount - 1
+                                                )
+                                            ),
+                                        },
+                                    });
+                                }}
+                            />
+                        </span>
+                    </Tooltip>
+                    <Tooltip
+                        title={'Spalte hinzufügen'}
+                        id={`cm-${contentModule.id}-insert-column-tooltip`}
+                    >
+                        <Button
+                            small
+                            icon={<SkipNext />}
+                            aria-labelledby={`cm-${contentModule.id}-insert-column-tooltip`}
+                            onClick={() => {
+                                requestFocusOnNextUpdate.current = true;
+                                onUpdateModule({
+                                    ...contentModule,
+                                    content: {
+                                        ...contentModule.content,
+                                        rows: contentRows.map((row) => [
+                                            ...row,
+                                            { text: '' },
+                                        ]),
+                                    },
+                                });
+                            }}
+                        />
+                    </Tooltip>
+                </div>
+                <div className={styles.asideToolbar}>
+                    <Tooltip
+                        title={'Zeile entfernen'}
+                        id={`cm-${contentModule.id}-delete-row-tooltip`}
+                    >
+                        <span>
+                            <Button
+                                small
+                                icon={<ExpandLess />}
+                                disabled={rowCount <= 1}
+                                aria-labelledby={`cm-${contentModule.id}-delete-row-tooltip`}
+                                aria-label={'Zeile entfernen'}
+                                onClick={() => {
+                                    onUpdateModule({
+                                        ...contentModule,
+                                        content: {
+                                            ...contentModule.content,
+                                            rows: contentRows.filter(
+                                                (_row, i) => i < rowCount - 1
+                                            ),
+                                        },
+                                    });
+                                }}
+                            />
+                        </span>
+                    </Tooltip>
+                    <Tooltip
+                        title={'Zeile hinzufügen'}
+                        id={`cm-${contentModule.id}-insert-row-tooltip`}
+                    >
+                        <Button
+                            small
+                            icon={<ExpandMore />}
+                            aria-labelledby={`cm-${contentModule.id}-insert-row-tooltip`}
+                            onClick={() => {
+                                requestFocusOnNextUpdate.current = true;
+                                onUpdateModule({
+                                    ...contentModule,
+                                    content: {
+                                        ...contentModule.content,
+                                        rows: [
+                                            ...contentRows,
+                                            range(columnCount).map(() => ({
+                                                text: '',
+                                            })),
+                                        ],
+                                    },
+                                });
+                            }}
+                        />
+                    </Tooltip>
+                </div>
+                <Table ref={tableRef} className={styles.table}>
+                    <TableBody>
+                        {range(rowCount).map((rowIndex) => {
+                            return (
+                                <TableRow key={`row-${rowIndex}`}>
+                                    {range(columnCount).map((columnIndex) => {
+                                        return (
+                                            <EditTableCell
+                                                key={`row-${rowIndex}-col-${columnIndex}`}
+                                                position={{
+                                                    row: rowIndex,
+                                                    column: columnIndex,
+                                                }}
+                                                cell={
+                                                    contentRows[rowIndex][
+                                                        columnIndex
+                                                    ]
+                                                }
+                                                onKeyDown={onCellKeyDown}
+                                                onPaste={onCellPaste}
+                                                onChange={(updatedCell) => {
+                                                    onUpdateModule({
+                                                        ...contentModule,
+                                                        content: {
+                                                            rows: contentRows.map(
+                                                                (row, rowI) =>
+                                                                    row.map(
+                                                                        (
+                                                                            cell,
+                                                                            columnI
+                                                                        ) =>
+                                                                            rowI ===
+                                                                                rowIndex &&
+                                                                            columnI ===
+                                                                                columnIndex
+                                                                                ? updatedCell
+                                                                                : cell
+                                                                    )
+                                                            ),
+                                                        },
+                                                    });
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+        );
+    }
+);
+Edit.displayName = 'TableEdit';

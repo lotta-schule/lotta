@@ -1,28 +1,34 @@
 import * as React from 'react';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useQuery } from '@apollo/client';
-import { ArticleModel, ArticleFilter } from 'model';
-import { CategoryLayout } from 'component/layouts/CategoryLayout';
+import { ArticleModel, ArticleFilter, ID } from 'model';
 import { useCategory } from 'util/categories/useCategory';
-import { ID } from 'model/ID';
 import { useScrollEvent } from 'util/useScrollEvent';
-import { ErrorMessage } from 'component/general/ErrorMessage';
+import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { getApolloClient } from 'api/client';
-import { ArticleLayout } from 'component/layouts/ArticleLayout';
+import { CategoryPage } from 'category/CategoryPage';
+import { ArticlePage } from 'article/ArticlePage';
+
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 
-export const CategoryRoute = ({
+const PREFETCH_COUNT = 10;
+
+const CategoryRoute = ({
     articles,
     categoryId,
     soloArticle,
 }: Required<InferGetServerSidePropsType<typeof getServerSideProps>>) => {
-    if (typeof window !== 'undefined') {
+    const didReadFromSSRCache = React.useRef(false);
+    if (
+        typeof window !== 'undefined' &&
+        didReadFromSSRCache.current === false
+    ) {
         getApolloClient().writeQuery({
             query: GetArticlesQuery,
             variables: {
                 categoryId,
-                filter: { first: 10 },
+                filter: { first: PREFETCH_COUNT },
             },
             data: { articles },
         });
@@ -35,28 +41,31 @@ export const CategoryRoute = ({
     const FETCH_MORE_OFFSET =
         typeof window !== 'undefined' ? window.innerHeight / 2 || 512 : 0;
 
-    const nextFetchCount = React.useMemo(() => {
-        if (typeof window === 'undefined') {
-            return 0;
+    const nextFetchCount = (() => {
+        if (
+            typeof window === 'undefined' ||
+            didReadFromSSRCache.current === false
+        ) {
+            return PREFETCH_COUNT;
         }
         // calculate how much articles must be fetched by guessing how much article previews would fit by current screen size
         const defaultElmHeight = ((layoutName?: string | null) => {
             switch (layoutName) {
                 case 'densed':
-                    return 75;
+                    return 110;
                 case '2-columns':
-                    return 125;
+                    return 175;
                 default:
-                    return 250;
+                    return 300;
             }
         })(category?.layoutName);
         return (
-            Math.round((1.5 * window.innerHeight) / defaultElmHeight) +
+            Math.round((1.25 * window.innerHeight) / defaultElmHeight) +
             (category?.layoutName === '2-columns' && defaultElmHeight % 2 !== 0
                 ? 1
                 : 0)
         );
-    }, [category]);
+    })();
 
     const {
         data,
@@ -69,6 +78,7 @@ export const CategoryRoute = ({
     >(GetArticlesQuery, {
         variables: { categoryId, filter: { first: nextFetchCount } },
         onCompleted: ({ articles }) => {
+            didReadFromSSRCache.current = true;
             if (articles.length < nextFetchCount) {
                 const lastDate = [...articles].sort(
                     (a1, a2) =>
@@ -92,8 +102,7 @@ export const CategoryRoute = ({
             document.documentElement.offsetHeight - FETCH_MORE_OFFSET
         ) {
             if (
-                data &&
-                data.articles &&
+                data?.articles &&
                 data.articles.length > nextFetchCount - 1 &&
                 !isLoading
             ) {
@@ -144,7 +153,7 @@ export const CategoryRoute = ({
     useScrollEvent(maybeFetchMoreArticles, 250);
 
     if (soloArticle) {
-        return <ArticleLayout article={soloArticle} />;
+        return <ArticlePage article={soloArticle} />;
     }
 
     if (error) {
@@ -155,7 +164,9 @@ export const CategoryRoute = ({
         return <ErrorMessage error={new Error('Seite nicht gefunden!')} />;
     }
 
-    const loadedArticles = data?.articles ?? articles ?? [];
+    const loadedArticles = didReadFromSSRCache.current
+        ? data?.articles ?? []
+        : articles;
     const articlesToShow = !categoryId
         ? // Homepage
           loadedArticles.filter((a) =>
@@ -163,7 +174,7 @@ export const CategoryRoute = ({
           )
         : loadedArticles;
 
-    return <CategoryLayout category={category} articles={articlesToShow} />;
+    return <CategoryPage category={category} articles={articlesToShow} />;
 };
 
 export const getServerSideProps = async ({
@@ -185,7 +196,7 @@ export const getServerSideProps = async ({
         query: GetArticlesQuery,
         variables: {
             categoryId: categoryId ?? null,
-            filter: { first: 10 },
+            filter: { first: PREFETCH_COUNT },
         },
         context: {
             headers: req?.headers,

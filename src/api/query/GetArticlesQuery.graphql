@@ -16,9 +16,6 @@ query GetArticles($categoryId: ID, $filter: ArticleFilter) {
             id
             hideArticlesFromHomepage
         }
-        groups {
-            id
-        }
         users {
             id
             nickname

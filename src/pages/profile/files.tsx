@@ -1,17 +1,9 @@
 import * as React from 'react';
-import { Card, CardContent } from '@material-ui/core';
-import { FileExplorer } from 'component/fileExplorer/FileExplorer';
+import { MediaPage } from 'profile/MediaPage';
 import { GetServerSidePropsContext } from 'next';
 
-export const Files = () => {
-    return (
-        <Card style={{ width: '100%' }}>
-            <CardContent>
-                <h4>Dateien und Medien</h4>
-                <FileExplorer />
-            </CardContent>
-        </Card>
-    );
+const FilesRoute = () => {
+    return <MediaPage />;
 };
 
 export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
@@ -20,4 +12,4 @@ export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
     };
 };
 
-export default Files;
+export default FilesRoute;

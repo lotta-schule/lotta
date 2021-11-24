@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { Dialog } from '../component/general/dialog/Dialog';
-import { Button } from 'component/general/button/Button';
+import { Dialog } from '../shared/general/dialog/Dialog';
+import { Button } from 'shared/general/button/Button';
 
 export default {
     title: 'Dialog/Default',

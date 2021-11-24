@@ -1,0 +1,55 @@
+@import 'colors';
+
+.root {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: calc(100% - calc(2 * var(--lotta-spacing)));
+
+    .list {
+        overflow: auto;
+    }
+
+    .listItemTextDate {
+        width: 7.5em;
+        flex-shrink: 0;
+        &.has-dot {
+            padding-left: 1em;
+            & > svg {
+                margin-left: -1em;
+            }
+        }
+    }
+
+    .listItemTextEventDescription {
+        padding-left: 0.5em;
+        text-align: right;
+        hyphens: auto;
+        word-break: break-word;
+    }
+
+    .calendarColorDot {
+        vertical-align: sub;
+        padding-right: 0.5em;
+    }
+
+    .tableline {
+        &:hover {
+            background-color: l_color(highlight, 0.3);
+        }
+    }
+
+    .figcaption {
+        display: flex;
+        flex-wrap: wrap;
+        padding: var(--lotta-spacing);
+        width: 100%;
+        background-color: rgba(var(--lotta-box-background-color), 1);
+        & > figure {
+            display: inline-flex;
+            align-items: center;
+            width: 50%;
+            padding: calc(0.5 * var(--lotta-spacing));
+        }
+    }
+}

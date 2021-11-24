@@ -5,8 +5,8 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import {
     BaseButton,
     BaseButtonProps,
-} from '../component/general/button/BaseButton';
-import { Avatar } from '../component/general/avatar/Avatar';
+} from '../shared/general/button/BaseButton';
+import { Avatar } from '../shared/general/avatar/Avatar';
 
 export default {
     title: 'Buttons/BaseButton',

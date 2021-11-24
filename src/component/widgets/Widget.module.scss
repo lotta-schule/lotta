@@ -1,9 +1,0 @@
-.root {
-    height: calc(100% - calc(2 * var(--lotta-spacing)));
-    display: flex;
-    flex-direction: column;
-
-    .heading {
-        text-align: center;
-    }
-}

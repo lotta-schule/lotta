@@ -1,0 +1,64 @@
+@import 'breakpoints';
+
+div.root {
+    border-radius: 0;
+    overflow: visible;
+    padding: var(--lotta-spacing);
+
+    .gridItem {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        & > :nth-child(2) {
+            flex-grow: 1;
+            padding: var(--lotta-spacing);
+        }
+        @media screen and (max-width: $max-md) {
+            width: 100%;
+        }
+    }
+
+    .buttonWrapper {
+        display: flex;
+    }
+
+    .cancelButton {
+        border-color: rgba(var(--lotta-secondary-color), 1);
+        color: rgba(var(--lotta-secondary-color), 1);
+        margin-right: var(--lotta-spacing);
+    }
+
+    .deleteButtonDivider {
+        margin-top: var(--lotta-spacing);
+    }
+
+    .deleteButton {
+        color: rgba(var(--lotta-contrast-text-color), 1);
+        border-color: rgba(var(--lotta-error-color), 1);
+        background-color: rgba(var(--lotta-error-color), 1);
+        margin-top: calc(2 * var(--lotta-spacing));
+    }
+
+    .leftIcon {
+        margin-right: var(--lotta-spacing);
+    }
+
+    .iconSmall {
+        font-size: 20px;
+    }
+
+    .searchUserField {
+        border: 1px solid rgba(var(--lotta-divider-color), 1);
+    }
+
+    .isPublishedInformation {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: var(--lotta-spacing);
+    }
+
+    .popper {
+        z-index: 1;
+    }
+}

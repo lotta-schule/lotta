@@ -7,7 +7,7 @@ import { useCurrentUser } from './useCurrentUser';
 import { SomeUser } from 'test/fixtures';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
-describe('util/user/useCurrentUser', () => {
+describe('util/userAvatar/useCurrentUser', () => {
     const createWrapperForUser = (
         currentUser: UserModel | null = null
     ): FunctionComponent => {
@@ -27,7 +27,7 @@ describe('util/user/useCurrentUser', () => {
         );
     };
 
-    it('should return null if the user is not logged in', async () => {
+    it('should return null if the userAvatar is not logged in', async () => {
         const screen = renderHook(() => useCurrentUser(), {
             wrapper: createWrapperForUser(null),
         });
@@ -35,7 +35,7 @@ describe('util/user/useCurrentUser', () => {
         expect(screen.result.current).toBeNull();
     });
 
-    it('should return the user if the user is logged in', async () => {
+    it('should return the userAvatar if the userAvatar is logged in', async () => {
         const screen = renderHook(() => useCurrentUser(), {
             wrapper: createWrapperForUser({ ...SomeUser }),
         });

@@ -4,7 +4,7 @@ import {
     Radio,
     RadioGroup,
     RadioGroupProps,
-} from 'component/general/form/radio';
+} from 'shared/general/form/radio';
 
 export default {
     title: 'Form/Radio',
