@@ -1,8 +1,9 @@
 .root {
     background-color: rgba(var(--lotta-box-background-color), 1);
-    .card {
+    .box {
         line-height: 1.5em;
         padding: calc(2 * var(--lotta-spacing));
+        display: block;
         h4,
         h5,
         h6 {

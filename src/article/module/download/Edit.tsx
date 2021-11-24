@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CardContent } from '@material-ui/core';
 import { DragHandle, Delete } from '@material-ui/icons';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { ContentModuleModel, FileModel } from 'model';
@@ -37,7 +36,7 @@ export const Edit = React.memo<EditProps>(
         };
 
         return (
-            <CardContent>
+            <div>
                 <DragDropContext
                     onDragEnd={({ destination, source }) => {
                         if (!destination) {
@@ -253,7 +252,7 @@ export const Edit = React.memo<EditProps>(
                         });
                     }}
                 />
-            </CardContent>
+            </div>
         );
     }
 );

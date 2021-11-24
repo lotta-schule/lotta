@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Card, CardContent, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { Main } from 'layout';
 import { Button } from 'shared/general/button/Button';
 import { useMutation } from '@apollo/client';
@@ -30,8 +31,8 @@ export const RequestResetPage = () => {
 
     return (
         <Main className={styles.root}>
-            <Card>
-                <CardContent>
+            <Box className={styles.container}>
+                <div>
                     <h4>Passwort vergessen</h4>
                     <Grid
                         container
@@ -88,8 +89,8 @@ export const RequestResetPage = () => {
                             </form>
                         </Grid>
                     </Grid>
-                </CardContent>
-            </Card>
+                </div>
+            </Box>
         </Main>
     );
 };

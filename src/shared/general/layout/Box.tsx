@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-import './Box.module.scss';
+
+import styles from './Box.module.scss';
 
 interface BoxProps {
     className?: string;
@@ -9,7 +10,7 @@ interface BoxProps {
 
 export const Box: React.FC<BoxProps> = ({ children, className, style }) => {
     return (
-        <div style={style} className={clsx('box', className)}>
+        <div style={style} className={clsx(styles.box, className)}>
             {children}
         </div>
     );

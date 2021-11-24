@@ -1,6 +1,10 @@
 @import 'breakpoints';
 
 .root {
+    display: block;
+    .container {
+        display: block;
+    }
     @media screen and (min-width: $min-md) {
         .helpText {
             padding-left: calc(var(--lotta-spacing) * 2);

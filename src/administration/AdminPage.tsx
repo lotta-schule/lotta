@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Apps, Error as ErrorIcon } from '@material-ui/icons';
-import { Card, CardContent } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { Header, Main, Sidebar } from 'layout';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
@@ -56,19 +56,17 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     </>
                 )}
                 {!isAllowed && (
-                    <Card>
-                        <CardContent>
-                            <div className={styles.noAccessMessageContainer}>
-                                <div>
-                                    <ErrorIcon />
-                                    <span>
-                                        Du hast nicht die notwendigen Rechte,
-                                        diese Seite zu sehen.
-                                    </span>
-                                </div>
+                    <Box>
+                        <div className={styles.noAccessMessageContainer}>
+                            <div>
+                                <ErrorIcon />
+                                <span>
+                                    Du hast nicht die notwendigen Rechte, diese
+                                    Seite zu sehen.
+                                </span>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </Box>
                 )}
             </Main>
             <Sidebar isEmpty />

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Card, CardContent, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -57,7 +58,7 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
             );
 
         return (
-            <Card
+            <Box
                 className={clsx(styles.root, {
                     [styles.isEmbedded]: isEmbedded,
                 })}
@@ -87,7 +88,7 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                         </Grid>
                     )}
                     <Grid item xs>
-                        <CardContent className={styles.cardContent}>
+                        <div className={styles.boxContent}>
                             <h3 className={styles.articleTitle}>
                                 {!isEmbedded &&
                                     currentUser &&
@@ -111,7 +112,7 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                             >
                                 {article.preview}
                             </span>
-                        </CardContent>
+                        </div>
                     </Grid>
                     <Grid item xs={2} className={styles.meta}>
                         <span className={clsx(styles.subtitle)}>
@@ -170,7 +171,8 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                             </Grid>
                         )}
                 </Grid>
-            </Card>
+            </Box>
         );
     }
 );
+ArticlePreviewDensedLayout.displayName = 'ArticlePreviewDensedLayout';

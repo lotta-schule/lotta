@@ -4,6 +4,11 @@ div.root {
     border-radius: 0;
     overflow: visible;
     padding: var(--lotta-spacing);
+    display: block;
+
+    .container {
+        margin-top: calc(4 * var(--lotta-spacing));
+    }
 
     .gridItem {
         display: flex;

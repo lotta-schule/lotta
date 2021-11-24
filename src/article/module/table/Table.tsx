@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
-import { CardContent } from '@material-ui/core';
 import { Edit } from './Edit';
 import { Show } from './Show';
 
@@ -25,10 +24,7 @@ export interface TableProps {
 export const Table = React.memo<TableProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
         return (
-            <CardContent
-                className={styles.root}
-                data-testid="TableContentModule"
-            >
+            <div className={styles.root} data-testid="TableContentModule">
                 {isEditModeEnabled && onUpdateModule && (
                     <Edit
                         contentModule={contentModule}
@@ -38,7 +34,7 @@ export const Table = React.memo<TableProps>(
                 {(!isEditModeEnabled || !onUpdateModule) && (
                     <Show contentModule={contentModule} />
                 )}
-            </CardContent>
+            </div>
         );
     }
 );

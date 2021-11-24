@@ -490,3 +490,4 @@ export const DeletePage = React.memo(() => {
         </>
     );
 });
+DeletePage.displayName = 'ProfileDeletePage';

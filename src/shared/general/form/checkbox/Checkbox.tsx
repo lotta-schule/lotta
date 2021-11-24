@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ToggleProps } from '@react-types/checkbox';
+import type { ToggleProps } from '@react-types/checkbox';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
 import { useFocusRing } from '@react-aria/focus';
 import { useToggleState } from '@react-stately/toggle';
@@ -15,7 +15,8 @@ export type CheckboxProps = {
     style?: React.CSSProperties;
 
     children?: React.ReactNode;
-} & ToggleProps & React.AriaAttributes;
+} & ToggleProps &
+    React.AriaAttributes;
 
 export const Checkbox = React.memo<CheckboxProps>(
     ({ children, style, className, featureColor, ...props }) => {
@@ -31,7 +32,10 @@ export const Checkbox = React.memo<CheckboxProps>(
         const { isFocusVisible, focusProps } = useFocusRing();
 
         return (
-            <label style={{...style, ...customStyle}} className={clsx(className, styles.root)}>
+            <label
+                style={{ ...style, ...customStyle }}
+                className={clsx(className, styles.root)}
+            >
                 <VisuallyHidden>
                     <input
                         {...inputProps}
@@ -40,11 +44,13 @@ export const Checkbox = React.memo<CheckboxProps>(
                         className={clsx(className, styles.input)}
                     />
                 </VisuallyHidden>
-                <div className={clsx(styles.controlIndicator, {
-                    [styles.isSelected]: state.isSelected,
-                    [styles.isFocusVisible]: isFocusVisible,
-                    [styles.isDisabled]: props.isDisabled
-                })} />
+                <div
+                    className={clsx(styles.controlIndicator, {
+                        [styles.isSelected]: state.isSelected,
+                        [styles.isFocusVisible]: isFocusVisible,
+                        [styles.isDisabled]: props.isDisabled,
+                    })}
+                />
                 {children}
             </label>
         );

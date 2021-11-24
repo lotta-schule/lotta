@@ -1,13 +1,6 @@
 import * as React from 'react';
-import {
-    Card,
-    CardContent,
-    Grid,
-    Table,
-    TableBody,
-    TableRow,
-    TableCell,
-} from '@material-ui/core';
+import { Grid, Table, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { File } from 'util/model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
@@ -49,31 +42,26 @@ export const GeneralSettings = () => {
             <h3>Logo der Seite</h3>
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={6}>
-                    <Card>
-                        <CardContent>
-                            <SelectFileOverlay
-                                label={'Logo ändern'}
-                                onSelectFile={(logo) => setLogo(logo)}
-                                allowDeletion
-                            >
-                                {logo ? (
-                                    <Img
-                                        operation={'height'}
-                                        size={'80'}
-                                        src={File.getFileRemoteLocation(
-                                            baseUrl,
-                                            logo
-                                        )}
-                                    />
-                                ) : (
-                                    <PlaceholderImage
-                                        width={'100%'}
-                                        height={80}
-                                    />
-                                )}
-                            </SelectFileOverlay>
-                        </CardContent>
-                    </Card>
+                    <Box>
+                        <SelectFileOverlay
+                            label={'Logo ändern'}
+                            onSelectFile={(logo) => setLogo(logo)}
+                            allowDeletion
+                        >
+                            {logo ? (
+                                <Img
+                                    operation={'height'}
+                                    size={'80'}
+                                    src={File.getFileRemoteLocation(
+                                        baseUrl,
+                                        logo
+                                    )}
+                                />
+                            ) : (
+                                <PlaceholderImage width={'100%'} height={80} />
+                            )}
+                        </SelectFileOverlay>
+                    </Box>
                 </Grid>
                 <Grid item sm={6}>
                     <p>

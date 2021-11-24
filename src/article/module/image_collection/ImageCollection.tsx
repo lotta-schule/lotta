@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { CardContent } from '@material-ui/core';
 import { Carousel } from './wrapper/Carousel';
 import { ContentModuleModel } from '../../../model';
 import { Gallery } from './wrapper/Gallery';
 import { ImageStyle } from './Config';
 import get from 'lodash/get';
+
+import styles from './ImageCollection.module.scss';
 
 export interface ImageProps {
     contentModule: ContentModuleModel<{ captions: string[] }>;
@@ -72,7 +73,10 @@ export const ImageCollection = React.memo<ImageProps>(
         // TODO Migration Part /END
 
         return (
-            <CardContent data-testid="ImageCollectionContentModule">
+            <div
+                className={styles.root}
+                data-testid="ImageCollectionContentModule"
+            >
                 {imageStyle === ImageStyle.GALLERY && (
                     <Gallery
                         isEditModeEnabled={!!isEditModeEnabled}
@@ -87,7 +91,7 @@ export const ImageCollection = React.memo<ImageProps>(
                         onUpdateModule={onUpdateModule}
                     />
                 )}
-            </CardContent>
+            </div>
         );
     }
 );

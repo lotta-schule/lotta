@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Card, CardContent, Grid } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { useTenant } from 'util/tenant/useTenant';
 import { FileSize } from 'util/FileSize';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { Grid } from '@material-ui/core';
 
 import styles from '../shared.module.scss';
 
@@ -32,13 +33,11 @@ export const Usage = React.memo<UserProps>(({ usage, error }) => {
     return (
         <div>
             <ErrorMessage error={error} />
-            <Card variant={'outlined'}>
-                <CardContent>
-                    <small>{tenant.host}</small>
-                    <h5>{tenant.title}</h5>
-                    <p>{tenant.insertedAt}</p>
-                </CardContent>
-            </Card>
+            <Box className={styles.headerBox}>
+                <small>{tenant.host}</small>
+                <h5>{tenant.title}</h5>
+                <p>{tenant.insertedAt}</p>
+            </Box>
             {/* Wär doch cool hier mal einen richtigen Grafen zu zeigen */}
             <Grid
                 container
@@ -62,20 +61,16 @@ export const Usage = React.memo<UserProps>(({ usage, error }) => {
                     key={usage.periodStart}
                 >
                     <Grid item xs={2}>
-                        <Card>
-                            <CardContent>
-                                {format(
-                                    new Date(usage.periodStart),
-                                    'MMMM yyyy',
-                                    { locale: de }
-                                )}
-                            </CardContent>
-                        </Card>
+                        <Box>
+                            {format(new Date(usage.periodStart), 'MMMM yyyy', {
+                                locale: de,
+                            })}
+                        </Box>
                     </Grid>
                     <Grid item xs={5}>
-                        <Card>
+                        <Box>
                             {index === 0 && (
-                                <CardContent>
+                                <>
                                     <div>
                                         {new FileSize(
                                             usage.storage.usedTotal
@@ -86,17 +81,14 @@ export const Usage = React.memo<UserProps>(({ usage, error }) => {
                                             ({usage.storage.filesTotal} Dateien)
                                         </small>
                                     </div>
-                                </CardContent>
+                                </>
                             )}
-                        </Card>
+                        </Box>
                     </Grid>
                     <Grid item xs={5}>
-                        <Card>
-                            <CardContent>
-                                {getMediaConversionTimeFormatted(usage)}{' '}
-                                Audio/Video
-                            </CardContent>
-                        </Card>
+                        <Box>
+                            {getMediaConversionTimeFormatted(usage)} Audio/Video
+                        </Box>
                     </Grid>
                 </Grid>
             ))}
