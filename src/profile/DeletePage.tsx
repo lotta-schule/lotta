@@ -1,14 +1,6 @@
 import * as React from 'react';
-import {
-    Card,
-    CardContent,
-    CardActions,
-    Collapse,
-    Grow,
-    LinearProgress,
-    Tabs,
-    Tab,
-} from '@material-ui/core';
+import { Collapse, Grow, LinearProgress, Tabs, Tab } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import {
     NavigateNext,
     NavigateBefore,
@@ -148,7 +140,7 @@ export const DeletePage = React.memo(() => {
                 </Button>
             );
         return (
-            <CardActions className={styles.cardActions}>
+            <Box className={styles.cardActions}>
                 <Grow in={!isLoading && currentStep > ProfileDeleteStep.Start}>
                     <Button
                         small
@@ -163,19 +155,17 @@ export const DeletePage = React.memo(() => {
                     </Button>
                 </Grow>
                 <Grow in={!isLoading}>{button}</Grow>
-            </CardActions>
+            </Box>
         );
     }, [currentStep, isLoading]);
 
     return (
         <>
-            <Main>
+            <Main className={styles.root}>
                 {isLoading && (
-                    <Card data-testid={'ProfileDeleteLoadingCard'}>
-                        <CardContent>
-                            <LinearProgress variant={'indeterminate'} />
-                        </CardContent>
-                    </Card>
+                    <Box data-testid={'ProfileDeleteLoadingCard'}>
+                        <LinearProgress variant={'indeterminate'} />
+                    </Box>
                 )}
 
                 <ErrorMessage error={ownArticlesError || relevantFilesError} />
@@ -183,50 +173,46 @@ export const DeletePage = React.memo(() => {
                 <Collapse
                     in={!isLoading && currentStep === ProfileDeleteStep.Start}
                 >
-                    <Card
+                    <Box
+                        className={styles.container}
                         aria-hidden={
                             isLoading || currentStep !== ProfileDeleteStep.Start
                         }
                         data-testid={'ProfileDeleteStep1Card'}
                     >
-                        <CardContent>
-                            <h3 className={styles.paragraph}>
-                                Benutzerkonto und Daten löschen
-                            </h3>
-                            <p className={styles.paragraph}>
-                                Deine Zeit bei <em>{tenant.title}</em> ist
-                                vorbei und du möchtest dein Benutzerkonto mit
-                                deinen persönlichen Dateien und Daten löschen?
-                                <br />
-                                Deine Zeit bei <em>{tenant.title}</em> ist
-                                vorbei und du möchtest dein Benutzerkonto mit
-                                deinen persönlichen Dateien und Daten löschen?
+                        <h3 className={styles.paragraph}>
+                            Benutzerkonto und Daten löschen
+                        </h3>
+                        <p className={styles.paragraph}>
+                            Deine Zeit bei <em>{tenant.title}</em> ist vorbei
+                            und du möchtest dein Benutzerkonto mit deinen
+                            persönlichen Dateien und Daten löschen?
+                            <br />
+                            Deine Zeit bei <em>{tenant.title}</em> ist vorbei
+                            und du möchtest dein Benutzerkonto mit deinen
+                            persönlichen Dateien und Daten löschen?
+                        </p>
+                        <div className={styles.paragraph}>
+                            <p>
+                                Es ist wichtig zu wissen, wo persönliche Daten
+                                von dir und über dich gespeichert sind.
                             </p>
-                            <div className={styles.paragraph}>
-                                <p>
-                                    Es ist wichtig zu wissen, wo persönliche
-                                    Daten von dir und über dich gespeichert
-                                    sind.
-                                </p>
-                                <p>Hier erhältst du eine Übersicht darüber,</p>
-                            </div>
-                            <ul className={clsx(styles.paragraph, styles.list)}>
-                                <li>
-                                    welche Daten Lotta über dich gespeichert
-                                    hat,
-                                </li>
-                                <li>welche gelöscht werden können und</li>
-                                <li>
-                                    welche Daten Du an <em>{tenant.title}</em>{' '}
-                                    übergeben kannst, sodass nachfolgende
-                                    Generationen auf der Homepage von{' '}
-                                    <em>{tenant.title}</em> von Dir lesen
-                                    können.
-                                </li>
-                            </ul>
-                        </CardContent>
+                            <p>Hier erhältst du eine Übersicht darüber,</p>
+                        </div>
+                        <ul className={clsx(styles.paragraph, styles.list)}>
+                            <li>
+                                welche Daten Lotta über dich gespeichert hat,
+                            </li>
+                            <li>welche gelöscht werden können und</li>
+                            <li>
+                                welche Daten Du an <em>{tenant.title}</em>{' '}
+                                übergeben kannst, sodass nachfolgende
+                                Generationen auf der Homepage von{' '}
+                                <em>{tenant.title}</em> von Dir lesen können.
+                            </li>
+                        </ul>
                         {cardActions}
-                    </Card>
+                    </Box>
                 </Collapse>
 
                 <Collapse
@@ -235,53 +221,51 @@ export const DeletePage = React.memo(() => {
                         currentStep === ProfileDeleteStep.ReviewArticles
                     }
                 >
-                    <Card
+                    <Box
+                        className={styles.container}
                         aria-hidden={
                             isLoading ||
                             currentStep !== ProfileDeleteStep.ReviewArticles
                         }
                         data-testid={'ProfileDeleteStep2Card'}
                     >
-                        <CardContent>
-                            {ownArticlesData &&
-                                ownArticlesData.articles.length > 0 && (
-                                    <>
-                                        <h4 className={styles.paragraph}>
-                                            Deine Beiträge
-                                        </h4>
-                                        <p className={styles.paragraph}>
-                                            Du bist bei{' '}
-                                            <strong>
-                                                {' '}
-                                                {
-                                                    ownArticlesData.articles.filter(
-                                                        (a) => a.published
-                                                    ).length
-                                                }{' '}
-                                            </strong>{' '}
-                                            sichtbaren Beiträgen auf{' '}
-                                            <em>{tenant.title}</em> als Autor
-                                            eingetragen.
-                                        </p>
-                                        <p className={styles.paragraph}>
-                                            Wenn dein Konto gelöscht ist,
-                                            bleiben die sichtbaren Artikel
-                                            erhalten, nur du wirst als Autor
-                                            entfernt. Überprüfe, ob das für dich
-                                            in Ordnung ist. Du hast hier nochmal
-                                            die Gelegenheit, Beiträge zu
-                                            überprüfen. Alle nicht-sichtbaren
-                                            Beiträge (z.Bsp. Beiträge die in
-                                            Bearbeitung sind) werden gelöscht.
-                                        </p>
-                                        <ArticlesList
-                                            articles={ownArticlesData.articles}
-                                        />
-                                    </>
-                                )}
-                        </CardContent>
+                        {ownArticlesData &&
+                            ownArticlesData.articles.length > 0 && (
+                                <>
+                                    <h4 className={styles.paragraph}>
+                                        Deine Beiträge
+                                    </h4>
+                                    <p className={styles.paragraph}>
+                                        Du bist bei{' '}
+                                        <strong>
+                                            {' '}
+                                            {
+                                                ownArticlesData.articles.filter(
+                                                    (a) => a.published
+                                                ).length
+                                            }{' '}
+                                        </strong>{' '}
+                                        sichtbaren Beiträgen auf{' '}
+                                        <em>{tenant.title}</em> als Autor
+                                        eingetragen.
+                                    </p>
+                                    <p className={styles.paragraph}>
+                                        Wenn dein Konto gelöscht ist, bleiben
+                                        die sichtbaren Artikel erhalten, nur du
+                                        wirst als Autor entfernt. Überprüfe, ob
+                                        das für dich in Ordnung ist. Du hast
+                                        hier nochmal die Gelegenheit, Beiträge
+                                        zu überprüfen. Alle nicht-sichtbaren
+                                        Beiträge (z.Bsp. Beiträge die in
+                                        Bearbeitung sind) werden gelöscht.
+                                    </p>
+                                    <ArticlesList
+                                        articles={ownArticlesData.articles}
+                                    />
+                                </>
+                            )}
                         {cardActions}
-                    </Card>
+                    </Box>
                 </Collapse>
 
                 <Collapse
@@ -290,96 +274,94 @@ export const DeletePage = React.memo(() => {
                         currentStep === ProfileDeleteStep.ReviewFiles
                     }
                 >
-                    <Card
+                    <Box
+                        className={styles.container}
                         aria-hidden={
                             isLoading ||
                             currentStep !== ProfileDeleteStep.ReviewFiles
                         }
                         data-testid={'ProfileDeleteStep3Card'}
                     >
-                        <CardContent>
-                            {relevantFilesData &&
-                                relevantFilesData.files.length > 1 && (
-                                    <Tabs
-                                        value={selectedFilesTab}
-                                        onChange={(_, val) =>
-                                            setSelectedFilesTab(val)
-                                        }
-                                        indicatorColor={'primary'}
-                                        textColor={'primary'}
-                                        variant={'fullWidth'}
-                                    >
-                                        <Tab
-                                            value={0}
-                                            label={`Dateien übergeben (${selectedFilesToTransfer.length}/${relevantFilesData.files.length})`}
-                                        />
-                                        <Tab
-                                            value={1}
-                                            label={'Alle Dateien überprüfen'}
-                                        />
-                                    </Tabs>
-                                )}
+                        {relevantFilesData &&
+                            relevantFilesData.files.length > 1 && (
+                                <Tabs
+                                    value={selectedFilesTab}
+                                    onChange={(_, val) =>
+                                        setSelectedFilesTab(val)
+                                    }
+                                    indicatorColor={'primary'}
+                                    textColor={'primary'}
+                                    variant={'fullWidth'}
+                                >
+                                    <Tab
+                                        value={0}
+                                        label={`Dateien übergeben (${selectedFilesToTransfer.length}/${relevantFilesData.files.length})`}
+                                    />
+                                    <Tab
+                                        value={1}
+                                        label={'Alle Dateien überprüfen'}
+                                    />
+                                </Tabs>
+                            )}
 
-                            <div
-                                role={'tabpanel'}
-                                hidden={selectedFilesTab !== 0}
-                                aria-labelledby={'tabpanel-handover-heading'}
+                        <div
+                            role={'tabpanel'}
+                            hidden={selectedFilesTab !== 0}
+                            aria-labelledby={'tabpanel-handover-heading'}
+                        >
+                            <h4
+                                className={styles.paragraph}
+                                id={'tabpanel-handover-heading'}
                             >
-                                <h4
-                                    className={styles.paragraph}
-                                    id={'tabpanel-handover-heading'}
-                                >
-                                    Dateien aus genutzten Beiträgen übergeben
-                                </h4>
-                                <p className={styles.paragraph}>
-                                    Es gibt Dateien, die du hochgeladen hast,
-                                    die bei <em>{tenant.title}</em> in Beiträgen
-                                    sichtbar sind.
-                                </p>
-                                <p className={styles.paragraph}>
-                                    Du hast jetzt die Möglichkeit, die
-                                    Nutzungsrechte an diesen Dateien{' '}
-                                    <em>{tenant.title}</em> zu übergeben.
-                                    Dadurch bleiben die Beiträge weiter
-                                    vollständig und die Dateien wären weiter für
-                                    Nutzer sichtbar.
-                                </p>
-                                <p className={styles.paragraph}>
-                                    Überlege dir gut, für welche Dateien du{' '}
-                                    <em>{tenant.title}</em> erlauben möchtest,
-                                    sie weiterhin auf ihrer Webseite zu zeigen.
-                                    Wenn dein Benutzerkonto erst gelöscht ist,
-                                    kann der Vorgang nicht mehr korrigiert
-                                    werden, und du wirst dich persönlich an
-                                    einen Administrator wenden müssen.
-                                </p>
-                                <ProfileDeleteFileSelection
-                                    files={relevantFilesData?.files ?? []}
-                                    selectedFiles={selectedFilesToTransfer}
-                                    onSelectFiles={setSelectedFilesToTransfer}
-                                />
-                            </div>
-                            <div
-                                role={'tabpanel'}
-                                hidden={selectedFilesTab !== 1}
-                                aria-labelledby={'tabpanel-files-heading'}
+                                Dateien aus genutzten Beiträgen übergeben
+                            </h4>
+                            <p className={styles.paragraph}>
+                                Es gibt Dateien, die du hochgeladen hast, die
+                                bei <em>{tenant.title}</em> in Beiträgen
+                                sichtbar sind.
+                            </p>
+                            <p className={styles.paragraph}>
+                                Du hast jetzt die Möglichkeit, die
+                                Nutzungsrechte an diesen Dateien{' '}
+                                <em>{tenant.title}</em> zu übergeben. Dadurch
+                                bleiben die Beiträge weiter vollständig und die
+                                Dateien wären weiter für Nutzer sichtbar.
+                            </p>
+                            <p className={styles.paragraph}>
+                                Überlege dir gut, für welche Dateien du{' '}
+                                <em>{tenant.title}</em> erlauben möchtest, sie
+                                weiterhin auf ihrer Webseite zu zeigen. Wenn
+                                dein Benutzerkonto erst gelöscht ist, kann der
+                                Vorgang nicht mehr korrigiert werden, und du
+                                wirst dich persönlich an einen Administrator
+                                wenden müssen.
+                            </p>
+                            <ProfileDeleteFileSelection
+                                files={relevantFilesData?.files ?? []}
+                                selectedFiles={selectedFilesToTransfer}
+                                onSelectFiles={setSelectedFilesToTransfer}
+                            />
+                        </div>
+                        <div
+                            role={'tabpanel'}
+                            hidden={selectedFilesTab !== 1}
+                            aria-labelledby={'tabpanel-files-heading'}
+                        >
+                            <h4
+                                className={styles.paragraph}
+                                id={'tabpanel-files-heading'}
                             >
-                                <h4
-                                    className={styles.paragraph}
-                                    id={'tabpanel-files-heading'}
-                                >
-                                    Alle Dateien überprüfen
-                                </h4>
-                                <p className={styles.paragraph}>
-                                    Du kannst Dateien, die du behalten möchtest,
-                                    zur Sicherheit herunterladen. Andere Dateien
-                                    werden endgültig gelöscht.
-                                </p>
-                                <FileExplorer />
-                            </div>
-                        </CardContent>
+                                Alle Dateien überprüfen
+                            </h4>
+                            <p className={styles.paragraph}>
+                                Du kannst Dateien, die du behalten möchtest, zur
+                                Sicherheit herunterladen. Andere Dateien werden
+                                endgültig gelöscht.
+                            </p>
+                            <FileExplorer />
+                        </div>
                         {cardActions}
-                    </Card>
+                    </Box>
                 </Collapse>
 
                 <Collapse
@@ -388,72 +370,68 @@ export const DeletePage = React.memo(() => {
                         currentStep === ProfileDeleteStep.ConfirmDeletion
                     }
                 >
-                    <Card
+                    <Box
+                        className={styles.container}
                         aria-hidden={
                             isLoading ||
                             currentStep !== ProfileDeleteStep.ConfirmDeletion
                         }
                         data-testid={'ProfileDeleteStep4Card'}
                     >
-                        <CardContent>
-                            <h4 className={styles.paragraph}>
-                                Löschanfrage bestätigen
-                            </h4>
-                            <p className={styles.paragraph}>
-                                Deine Daten können nun gelöscht werden.
-                            </p>
-                            <ul className={clsx(styles.paragraph, styles.list)}>
+                        <h4 className={styles.paragraph}>
+                            Löschanfrage bestätigen
+                        </h4>
+                        <p className={styles.paragraph}>
+                            Deine Daten können nun gelöscht werden.
+                        </p>
+                        <ul className={clsx(styles.paragraph, styles.list)}>
+                            <li>
+                                Von dir erstellte, nicht veröffentlichte
+                                Beiträge, bei denen es keine anderen AutorInnen
+                                gibt, werden gelöscht
+                            </li>
+                            <li>
+                                Du wirst als AutorIn aus Beiträgen entfernt, die
+                                veröffentlicht sind
+                            </li>
+                            <li>
+                                Du wirst als AutorIn aus Beiträgen entfernt, die
+                                veröffentlicht sind
+                            </li>
+                            {selectedFilesToTransfer.length > 0 && (
                                 <li>
-                                    Von dir erstellte, nicht veröffentlichte
-                                    Beiträge, bei denen es keine anderen
-                                    AutorInnen gibt, werden gelöscht
+                                    Deine Dateien und Ordner, ausgenommen die{' '}
+                                    <em>
+                                        {selectedFilesToTransfer.length} Dateien
+                                    </em>
+                                    , die du {tenant.title} überlässt, werden
+                                    gelöscht
                                 </li>
+                            )}
+                            {selectedFilesToTransfer.length === 0 && (
                                 <li>
-                                    Du wirst als AutorIn aus Beiträgen entfernt,
-                                    die veröffentlicht sind
+                                    Alle deine Dateien und Ordner werden
+                                    gelöscht
                                 </li>
-                                <li>
-                                    Du wirst als AutorIn aus Beiträgen entfernt,
-                                    die veröffentlicht sind
-                                </li>
-                                {selectedFilesToTransfer.length > 0 && (
-                                    <li>
-                                        Deine Dateien und Ordner, ausgenommen
-                                        die{' '}
-                                        <em>
-                                            {selectedFilesToTransfer.length}{' '}
-                                            Dateien
-                                        </em>
-                                        , die du {tenant.title} überlässt,
-                                        werden gelöscht
-                                    </li>
-                                )}
-                                {selectedFilesToTransfer.length === 0 && (
-                                    <li>
-                                        Alle deine Dateien und Ordner werden
-                                        gelöscht
-                                    </li>
-                                )}
-                                <li>
-                                    Dein Nutzeraccount und alle darin
-                                    gespeicherten Informationen werden gelöscht
-                                    [Hinweis: Es kann bis zu vier Wochen dauern,
-                                    bis die allerletzten Daten, wie IP-Adressen
-                                    aus Logs, oder Daten die sich in Backups
-                                    befinden, gelöscht werden.]
-                                </li>
-                            </ul>
-                            <p className={styles.paragraph}>
-                                Wenn du einverstanden bist, klicke auf 'Daten
-                                endgültig löschen'. Du wirst dann abgemeldet und
-                                auf die Startseite weitergeleitet.
-                            </p>
-                            <p className={styles.paragraph}>
-                                Dieser Vorgang ist endgültig.
-                            </p>
-                        </CardContent>
+                            )}
+                            <li>
+                                Dein Nutzeraccount und alle darin gespeicherten
+                                Informationen werden gelöscht [Hinweis: Es kann
+                                bis zu vier Wochen dauern, bis die allerletzten
+                                Daten, wie IP-Adressen aus Logs, oder Daten die
+                                sich in Backups befinden, gelöscht werden.]
+                            </li>
+                        </ul>
+                        <p className={styles.paragraph}>
+                            Wenn du einverstanden bist, klicke auf 'Daten
+                            endgültig löschen'. Du wirst dann abgemeldet und auf
+                            die Startseite weitergeleitet.
+                        </p>
+                        <p className={styles.paragraph}>
+                            Dieser Vorgang ist endgültig.
+                        </p>
                         {cardActions}
-                    </Card>
+                    </Box>
                 </Collapse>
                 <Dialog
                     open={isConfirmDialogOpen}

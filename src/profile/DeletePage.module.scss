@@ -1,22 +1,26 @@
-.paragraph {
-    max-width: 60em;
-    margin: calc(3 * var(--lotta-spacing)) 0;
-    text-align: justify;
-}
+.root {
+    .container {
+        display: block;
+    }
+    .cardActions {
+        justify-content: space-between;
+    }
+    .paragraph {
+        max-width: 60em;
+        margin: calc(3 * var(--lotta-spacing)) 0;
+        text-align: justify;
+    }
 
-.cardActions {
-    justify-content: space-between;
-}
+    .list {
+        list-style: initial;
+        padding-left: calc(2 * var(--lotta-spacing));
+    }
 
-.list {
-    list-style: initial;
-    padding-left: calc(2 * var(--lotta-spacing));
-}
-
-.deleteButton {
-    color: rgba(var(--lotta-error-color), 1);
-    border-color: rgba(var(--lotta-error-color), 1);
-    &:hover {
-        background-color: rgba(var(--lotta-error-color), 0.08);
+    .deleteButton {
+        color: rgba(var(--lotta-error-color), 1);
+        border-color: rgba(var(--lotta-error-color), 1);
+        &:hover {
+            background-color: rgba(var(--lotta-error-color), 0.08);
+        }
     }
 }
