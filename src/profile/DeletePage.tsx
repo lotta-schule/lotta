@@ -113,7 +113,7 @@ export const DeletePage = React.memo(() => {
         isLoadingRelevantFiles ||
         isLoadingDestroyAccount;
 
-    const cardActions = React.useMemo(() => {
+    const boxActions = React.useMemo(() => {
         const button =
             currentStep < ProfileDeleteStep.ConfirmDeletion ? (
                 <Button
@@ -140,7 +140,7 @@ export const DeletePage = React.memo(() => {
                 </Button>
             );
         return (
-            <Box className={styles.cardActions}>
+            <Box className={styles.boxActions}>
                 <Grow in={!isLoading && currentStep > ProfileDeleteStep.Start}>
                     <Button
                         small
@@ -163,7 +163,7 @@ export const DeletePage = React.memo(() => {
         <>
             <Main className={styles.root}>
                 {isLoading && (
-                    <Box data-testid={'ProfileDeleteLoadingCard'}>
+                    <Box data-testid={'ProfileDeleteLoadingBox'}>
                         <LinearProgress variant={'indeterminate'} />
                     </Box>
                 )}
@@ -178,7 +178,7 @@ export const DeletePage = React.memo(() => {
                         aria-hidden={
                             isLoading || currentStep !== ProfileDeleteStep.Start
                         }
-                        data-testid={'ProfileDeleteStep1Card'}
+                        data-testid={'ProfileDeleteStep1Box'}
                     >
                         <h3 className={styles.paragraph}>
                             Benutzerkonto und Daten löschen
@@ -211,7 +211,7 @@ export const DeletePage = React.memo(() => {
                                 <em>{tenant.title}</em> von Dir lesen können.
                             </li>
                         </ul>
-                        {cardActions}
+                        {boxActions}
                     </Box>
                 </Collapse>
 
@@ -227,7 +227,7 @@ export const DeletePage = React.memo(() => {
                             isLoading ||
                             currentStep !== ProfileDeleteStep.ReviewArticles
                         }
-                        data-testid={'ProfileDeleteStep2Card'}
+                        data-testid={'ProfileDeleteStep2Box'}
                     >
                         {ownArticlesData &&
                             ownArticlesData.articles.length > 0 && (
@@ -264,7 +264,7 @@ export const DeletePage = React.memo(() => {
                                     />
                                 </>
                             )}
-                        {cardActions}
+                        {boxActions}
                     </Box>
                 </Collapse>
 
@@ -280,7 +280,7 @@ export const DeletePage = React.memo(() => {
                             isLoading ||
                             currentStep !== ProfileDeleteStep.ReviewFiles
                         }
-                        data-testid={'ProfileDeleteStep3Card'}
+                        data-testid={'ProfileDeleteStep3Box'}
                     >
                         {relevantFilesData &&
                             relevantFilesData.files.length > 1 && (
@@ -360,7 +360,7 @@ export const DeletePage = React.memo(() => {
                             </p>
                             <FileExplorer />
                         </div>
-                        {cardActions}
+                        {boxActions}
                     </Box>
                 </Collapse>
 
@@ -376,7 +376,7 @@ export const DeletePage = React.memo(() => {
                             isLoading ||
                             currentStep !== ProfileDeleteStep.ConfirmDeletion
                         }
-                        data-testid={'ProfileDeleteStep4Card'}
+                        data-testid={'ProfileDeleteStep4Box'}
                     >
                         <h4 className={styles.paragraph}>
                             Löschanfrage bestätigen
@@ -430,7 +430,7 @@ export const DeletePage = React.memo(() => {
                         <p className={styles.paragraph}>
                             Dieser Vorgang ist endgültig.
                         </p>
-                        {cardActions}
+                        {boxActions}
                     </Box>
                 </Collapse>
                 <Dialog
