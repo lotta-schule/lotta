@@ -11,6 +11,7 @@ import { ArticlePage } from 'article/ArticlePage';
 
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
+import { Sidebar } from 'layout';
 
 const PREFETCH_COUNT = 10;
 
@@ -153,7 +154,12 @@ const CategoryRoute = ({
     useScrollEvent(maybeFetchMoreArticles, 250);
 
     if (soloArticle) {
-        return <ArticlePage article={soloArticle} />;
+        return (
+            <>
+                <ArticlePage article={soloArticle} />
+                <Sidebar isEmpty />
+            </>
+        );
     }
 
     if (error) {
