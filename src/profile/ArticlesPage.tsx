@@ -4,7 +4,6 @@ import { ArticleModel } from 'model';
 import { Header, Main, Sidebar } from 'layout';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { ArticlesList } from 'shared/articlesList/ArticlesList';
-import BoxStories from 'stories/Box.stories';
 
 export interface ArticlesPageProps {
     articles: ArticleModel[];

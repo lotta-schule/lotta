@@ -1,16 +1,13 @@
-import React from 'react';
+import * as React from 'react';
 import clsx from 'clsx';
 
 import styles from './Box.module.scss';
 
-interface BoxProps {
-    className?: string;
-    style?: React.CSSProperties;
-}
+export type BoxProps = React.HTMLProps<HTMLDivElement>;
 
-export const Box: React.FC<BoxProps> = ({ children, className, style }) => {
+export const Box: React.FC<BoxProps> = ({ children, className, ...props }) => {
     return (
-        <div style={style} className={clsx(styles.box, className)}>
+        <div className={clsx(styles.box, className)} {...props}>
             {children}
         </div>
     );
