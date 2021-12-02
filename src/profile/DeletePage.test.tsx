@@ -80,7 +80,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
 
         await waitFor(() => {
-            expect(screen.getByTestId('ProfileDeleteStep2Card')).toBeVisible();
+            expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
         });
     }, 10_000);
 
@@ -124,14 +124,14 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
 
         userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
         await waitFor(() => {
-            expect(screen.getByTestId('ProfileDeleteStep2Card')).toBeVisible();
+            expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
         });
         userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByRole('progressbar')).toBeVisible();
         });
         await waitFor(() => {
-            expect(screen.getByTestId('ProfileDeleteStep3Card')).toBeVisible();
+            expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
         });
     }, 10_000);
 
@@ -179,7 +179,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         });
         userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
         expect(
-            await screen.findByTestId('ProfileDeleteStep3Card')
+            await screen.findByTestId('ProfileDeleteStep3Box')
         ).toBeInTheDocument();
         expect(screen.queryByRole('tablist')).toBeNull();
         expect(
@@ -262,19 +262,19 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         userEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(
-                screen.getByTestId('ProfileDeleteStep2Card')
+                screen.getByTestId('ProfileDeleteStep2Box')
             ).toBeInTheDocument();
         });
         userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(
-                screen.getByTestId('ProfileDeleteStep3Card')
+                screen.getByTestId('ProfileDeleteStep3Box')
             ).toBeInTheDocument();
         });
         userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(
-                screen.getByTestId('ProfileDeleteStep4Card')
+                screen.getByTestId('ProfileDeleteStep4Box')
             ).toBeInTheDocument();
         });
         userEvent.click(

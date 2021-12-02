@@ -4,6 +4,7 @@
 .root {
     width: 100%;
     padding: var(--lotta-spacing);
+    margin-bottom: var(--lotta-spacing);
     border-radius: var(--lotta-border-radius);
     box-shadow: 1px 1px 2px l_color(text, 0.2);
     &.isEmbedded {
@@ -18,7 +19,7 @@
         }
     }
 
-    .cardContent {
+    .boxContent {
         padding: 0 var(--lotta-spacing) !important;
     }
 

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CardContent } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { Show } from './Show';
 import { Edit } from './Edit';
@@ -38,7 +37,7 @@ export interface FormConfiguration {
 export const Form = React.memo<FormProps>(
     ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
         return (
-            <CardContent data-testid="FormContentModule">
+            <div data-testid="FormContentModule">
                 {isEditModeEnabled && onUpdateModule && (
                     <Edit
                         contentModule={contentModule}
@@ -46,7 +45,7 @@ export const Form = React.memo<FormProps>(
                     />
                 )}
                 {!isEditModeEnabled && <Show contentModule={contentModule} />}
-            </CardContent>
+            </div>
         );
     }
 );

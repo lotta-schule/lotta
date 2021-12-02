@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CardContent } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { Edit } from './Edit';
 import { Show } from './Show';
@@ -12,7 +11,7 @@ export interface VideoProps {
 
 export const Video = React.memo<VideoProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-        <CardContent style={{ padding: 0 }} data-testid="VideoContentModule">
+        <div style={{ padding: 0 }} data-testid="VideoContentModule">
             {isEditModeEnabled && onUpdateModule ? (
                 <Edit
                     contentModule={contentModule}
@@ -21,7 +20,7 @@ export const Video = React.memo<VideoProps>(
             ) : (
                 <Show contentModule={contentModule} />
             )}
-        </CardContent>
+        </div>
     )
 );
 Video.displayName = 'Video';

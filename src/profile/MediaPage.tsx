@@ -1,20 +1,19 @@
 import * as React from 'react';
-import { Card, CardContent } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { FileExplorer } from 'shared/fileExplorer/FileExplorer';
 import { Header, Main } from 'layout';
+import styles from './MediaPage.module.scss';
 
 export const MediaPage = () => {
     return (
-        <Main>
+        <Main className={styles.root}>
             <Header bannerImageUrl={'/bannerProfil.png'}>
                 <h2>Dateien und Medien</h2>
             </Header>
 
-            <Card style={{ width: '100%' }}>
-                <CardContent>
-                    <FileExplorer />
-                </CardContent>
-            </Card>
+            <Box className={styles.container}>
+                <FileExplorer />
+            </Box>
         </Main>
     );
 };

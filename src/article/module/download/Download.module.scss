@@ -1,44 +1,45 @@
 @import 'breakpoints';
+.root {
+    padding: calc(2 * var(--lotta-spacing));
 
-.downloadItemWrapper {
-    margin-bottom: calc(2 * var(--lotta-spacing));
-    margin-left: '16.6%';
-    margin-right: '16,6%';
-    @media screen and (max-width: $max-sm) {
-        margin-right: 0;
-        margin-left: 0;
+    .downloadItemWrapper {
+        margin: calc(2 * var(--lotta-spacing)) 16.6%;
+        @media screen and (max-width: $max-sm) {
+            margin-right: 0;
+            margin-left: 0;
+        }
+        &:last-child .downloadItemDivider {
+            display: none;
+            width: 100%;
+        }
     }
-    &:last-child .downloadItemDivider {
-        display: none;
+
+    .downloadWrapperHeader {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .downloadDescription {
+        font-size: 15px; // TODO: convert to rem
+        flex-basis: 66%;
+    }
+
+    .secondaryHeading {
+        font-size: 13px; // TODO: convert to rem
+        color: rgba(var(--lotta-secondary-color), 1);
+    }
+
+    .textArea {
         width: 100%;
+        border: 1px solid rgba(var(--lotta-primary-color), 1);
+        padding: var(--lotta-spacing);
+        resize: inherit;
+        color: inherit;
+        font: inherit;
     }
-}
 
-.downloadWrapperHeader {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-
-.downloadDescription {
-    font-size: 15px; // TODO: convert to rem
-    flex-basis: 66%;
-}
-
-.secondaryHeading {
-    font-size: 13px; // TODO: convert to rem
-    color: rgba(var(--lotta-secondary-color), 1);
-}
-
-.textArea {
-    width: 100%;
-    border: 1px solid rgba(var(--lotta-primary-color), 1);
-    padding: var(--lotta-spacing);
-    resize: inherit;
-    color: inherit;
-    font: inherit;
-}
-
-.filename {
-    font-size: 15px; // TODO: convert to rem
+    .filename {
+        font-size: 15px; // TODO: convert to rem
+    }
 }

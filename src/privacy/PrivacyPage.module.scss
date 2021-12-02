@@ -1,20 +1,36 @@
 .root {
-  .card {
-    line-height: 1.5em;
-    h4, h5, h6 {
-      padding: .5em 0;
+    background-color: rgba(var(--lotta-box-background-color), 1);
+    .box {
+        line-height: 1.5em;
+        padding: calc(2 * var(--lotta-spacing));
+        display: block;
+        h4,
+        h5,
+        h6 {
+            padding: 0.5em 0;
+        }
+        p {
+            margin: 5px 0;
+        }
+        .subtitle {
+            font-size: 0.8em;
+        }
+        ul {
+            padding-left: 2.5em;
+            margin: 5px 0;
+            li {
+                list-style: disc;
+                margin: 5px 0;
+            }
+        }
     }
-    p {
-      margin: 5px 0;
+    h1 {
+        font-size: 2.5em;
     }
-    ul {
-      padding-left: 2.5em;
-      margin: 5px 0;
-      li {
-        list-style: disc;
-        margin: 5px 0;
-      }
+    h2 {
+        font-size: 1.5em;
+        font-weight: 100;
+        margin-top: calc(4 * var(--lotta-spacing));
+        margin-bottom: calc(2 * var(--lotta-spacing));
     }
-  }
 }
-

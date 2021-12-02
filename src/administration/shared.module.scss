@@ -1,3 +1,10 @@
+.headerBox {
+    display: block;
+    line-height: calc(3 * var(--lotta-spacing));
+    margin-bottom: calc(4 * var(--lotta-spacing));
+    background-color: rgba(var(--lotta-divider-color), 0.2);
+}
+
 .gridContainer {
     margin-bottom: calc(3 * var(--lotta-spacing));
 }

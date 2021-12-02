@@ -5,11 +5,7 @@ import { useQuery } from '@apollo/client';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 export const useTenant = (): TenantModel => {
-    const { data, error } = useQuery<{ tenant: TenantModel }>(GetTenantQuery, {
-        onCompleted: ({ tenant }) => {
-            window.tid = tenant.id;
-        },
-    });
+    const { data, error } = useQuery<{ tenant: TenantModel }>(GetTenantQuery);
     if (!data) {
         throw error ?? new Error('Tenant could not be retrieved');
     }

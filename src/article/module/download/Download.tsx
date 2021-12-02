@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
-import { CardContent } from '@material-ui/core';
 import { Show } from './Show';
 import { Edit } from './Edit';
 
@@ -12,7 +11,7 @@ export interface DownloadProps {
 
 export const Download = React.memo<DownloadProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-        <CardContent data-testid="DownloadContentModule">
+        <div data-testid="DownloadContentModule">
             {isEditModeEnabled && onUpdateModule && (
                 <Edit
                     contentModule={contentModule}
@@ -22,7 +21,7 @@ export const Download = React.memo<DownloadProps>(
             {(!isEditModeEnabled || !onUpdateModule) && (
                 <Show contentModule={contentModule} />
             )}
-        </CardContent>
+        </div>
     )
 );
 Download.displayName = 'Download';

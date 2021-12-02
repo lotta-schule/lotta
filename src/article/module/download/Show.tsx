@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { File } from 'util/model';
-import { CardContent, Grid } from '@material-ui/core';
 import { FileSize } from 'util/FileSize';
 import { BackgroundImg } from 'react-cloudimage-responsive';
 import { CloudDownload } from '@material-ui/icons';
@@ -10,6 +9,7 @@ import { Divider } from 'shared/general/divider/Divider';
 import { useServerData } from 'shared/ServerDataContext';
 
 import styles from './Download.module.scss';
+import { Grid } from '@material-ui/core';
 
 export interface ShowProps {
     contentModule: ContentModuleModel;
@@ -44,7 +44,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
     };
 
     return (
-        <CardContent>
+        <div className={styles.root}>
             {[...contentModule.files]
                 .sort(
                     (f1, f2) =>
@@ -145,7 +145,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                         </div>
                     </div>
                 ))}
-        </CardContent>
+        </div>
     );
 });
 Show.displayName = 'DownloadShow';

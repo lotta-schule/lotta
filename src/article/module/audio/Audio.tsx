@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
-import { CardContent } from '@material-ui/core';
 import { Show } from './Show';
 import { Edit } from './Edit';
 
@@ -12,7 +11,7 @@ export interface AudioProps {
 
 export const Audio = React.memo<AudioProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => (
-        <CardContent data-testid="AudioContentModule">
+        <div data-testid="AudioContentModule">
             {isEditModeEnabled && onUpdateModule ? (
                 <Edit
                     contentModule={contentModule}
@@ -21,7 +20,7 @@ export const Audio = React.memo<AudioProps>(
             ) : (
                 <Show contentModule={contentModule} />
             )}
-        </CardContent>
+        </div>
     )
 );
 Audio.displayName = 'Audio';

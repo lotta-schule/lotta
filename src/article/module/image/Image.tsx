@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CardContent } from '@material-ui/core';
 import { ContentModuleModel } from 'model';
 import { ImageImage } from './ImageImage';
 
@@ -15,7 +14,7 @@ export const Image = React.memo<ImageProps>(
     ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
         const imageCaption = contentModule.content?.caption;
         return (
-            <CardContent data-testid="ImageContentModule">
+            <div data-testid="ImageContentModule">
                 <ImageImage
                     isEditModeEnabled={!!isEditModeEnabled}
                     caption={imageCaption ?? ''}
@@ -30,7 +29,7 @@ export const Image = React.memo<ImageProps>(
                         })
                     }
                 />
-            </CardContent>
+            </div>
         );
     }
 );

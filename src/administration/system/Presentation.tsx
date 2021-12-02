@@ -1,12 +1,6 @@
 import * as React from 'react';
-import {
-    Card,
-    CardContent,
-    Grid,
-    Theme,
-    useTheme,
-    FormControl,
-} from '@material-ui/core';
+import { Grid, Theme, useTheme, FormControl } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { get, merge } from 'lodash';
 import { Label } from 'shared/general/label/Label';
 import { Select } from 'shared/general/form/select/Select';
@@ -171,33 +165,31 @@ export const Presentation = React.memo(() => {
 
                 <Grid container className={styles.gridContainer}>
                     <Grid item sm={6}>
-                        <Card>
-                            <CardContent>
-                                <SelectFileOverlay
-                                    label={'Hintergrundbild ändern'}
-                                    onSelectFile={(backgroundImage) =>
-                                        setBackgroundImage(backgroundImage)
-                                    }
-                                    allowDeletion
-                                >
-                                    {backgroundImage ? (
-                                        <Img
-                                            operation={'height'}
-                                            size={'400x200'}
-                                            src={File.getFileRemoteLocation(
-                                                baseUrl,
-                                                backgroundImage
-                                            )}
-                                        />
-                                    ) : (
-                                        <PlaceholderImage
-                                            width={'100%'}
-                                            height={200}
-                                        />
-                                    )}
-                                </SelectFileOverlay>
-                            </CardContent>
-                        </Card>
+                        <Box>
+                            <SelectFileOverlay
+                                label={'Hintergrundbild ändern'}
+                                onSelectFile={(backgroundImage) =>
+                                    setBackgroundImage(backgroundImage)
+                                }
+                                allowDeletion
+                            >
+                                {backgroundImage ? (
+                                    <Img
+                                        operation={'height'}
+                                        size={'400x200'}
+                                        src={File.getFileRemoteLocation(
+                                            baseUrl,
+                                            backgroundImage
+                                        )}
+                                    />
+                                ) : (
+                                    <PlaceholderImage
+                                        width={'100%'}
+                                        height={200}
+                                    />
+                                )}
+                            </SelectFileOverlay>
+                        </Box>
                     </Grid>
                     <Grid item sm={6}>
                         <p>

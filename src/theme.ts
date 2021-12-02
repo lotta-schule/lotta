@@ -86,11 +86,6 @@ export const theme = createTheme({
                 overflow: 'auto',
             },
         },
-        MuiCard: {
-            root: {
-                marginBottom: '.5em',
-            },
-        },
         MuiAvatar: {
             root: {
                 width: 90,

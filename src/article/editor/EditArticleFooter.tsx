@@ -1,7 +1,5 @@
 import * as React from 'react';
 import {
-    Card,
-    CardContent,
     Popper,
     Grow,
     Paper,
@@ -10,6 +8,7 @@ import {
     MenuItem,
     Grid,
 } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import {
     ArrowDropDown as ArrowDropDownIcon,
     Event,
@@ -88,15 +87,13 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
         };
 
         return (
-            <Card
+            <Box
                 style={style}
                 className={styles.root}
                 data-testid="EditArticleFooter"
             >
-                <CardContent>
-                    <h5>Beitrags-Einstellungen</h5>
-                </CardContent>
-                <Grid container>
+                <h5>Beitrags-Einstellungen</h5>
+                <Grid container className={styles.container}>
                     <Grid item md={4} className={styles.gridItem}>
                         <h6>Sichtbarkeit</h6>
                         <div>
@@ -332,7 +329,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                         </Button>
                     </DialogActions>
                 </Dialog>
-            </Card>
+            </Box>
         );
     }
 );

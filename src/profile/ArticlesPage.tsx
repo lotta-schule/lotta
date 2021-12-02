@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardContent } from '@material-ui/core';
+import { Box } from 'shared/general/layout/Box';
 import { ArticleModel } from 'model';
 import { Header, Main, Sidebar } from 'layout';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
@@ -19,12 +19,10 @@ export const ArticlesPage = React.memo<ArticlesPageProps>(
                         <h2>Meine Beiträge</h2>
                     </Header>
 
-                    <Card>
-                        <CardContent>
-                            <ErrorMessage error={error} />
-                            {articles && <ArticlesList articles={articles} />}
-                        </CardContent>
-                    </Card>
+                    <Box>
+                        <ErrorMessage error={error} />
+                        {articles && <ArticlesList articles={articles} />}
+                    </Box>
                 </Main>
                 <Sidebar isEmpty />
             </>
