@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { CircularProgress, Input } from '@material-ui/core';
 import { useAutocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import { Tag } from 'shared/general/tag/Tag';
+import { Input } from 'shared/general/form/input/Input';
+import uniq from 'lodash/uniq';
+
 import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
+
+import styles from './TagsSelect.module.scss';
 
 export interface TagsSelectProps {
     value: string[];
@@ -12,7 +16,7 @@ export interface TagsSelectProps {
 
 export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
     const [searchtext, setSearchtext] = React.useState('');
-    const [loadTags, { called, loading: isLoading, data }] = useLazyQuery<{
+    const [loadTags, { called, data }] = useLazyQuery<{
         tags: string[];
     }>(GetTagsQuery);
 
@@ -49,68 +53,49 @@ export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
         },
         onChange: (_event, value, _reason, _details) => {
             setSearchtext('');
-            onChange(value);
+            onChangeFn(value);
         },
         onClose: (_event, reason) => {
+            console.log(reason);
             if (reason === 'blur') {
                 setSearchtext('');
             }
         },
     });
 
-    return (
-        <div id={'tags-select'} {...getRootProps()}>
-            {value.map((tag, index) => (
-                <Tag
-                    key={tag}
-                    {...getOptionProps({ option: tag, index })}
-                    onDelete={() => onChange(value.filter((v) => v !== tag))}
-                >
-                    {tag}
-                </Tag>
-            ))}
+    const onChangeFn = (tags: string[]) => {
+        onChange(uniq(tags));
+    };
 
-            <div
-                ref={setAnchorEl}
-                style={{
-                    position: 'relative',
-                    display: 'inline-flex',
-                    flexWrap: 'wrap',
-                    width: '8em',
-                    flexShrink: 0,
-                }}
-            >
+    return (
+        <div id={'tags-select'} {...getRootProps()} className={styles.root}>
+            {value.map((tag, index) => {
+                const onDelete = () => onChange(value.filter((v) => v !== tag));
+                return (
+                    <Tag
+                        key={tag}
+                        {...getOptionProps({ option: tag, index })}
+                        onClick={onDelete}
+                        onDelete={(e) => {
+                            e.stopPropagation();
+                            onDelete();
+                        }}
+                    >
+                        {tag}
+                    </Tag>
+                );
+            })}
+
+            <div ref={setAnchorEl} className={styles.inputWrapper}>
                 <Input
                     {...getInputProps()}
-                    fullWidth
-                    disableUnderline
                     placeholder={'Tag hinzufügen'}
-                    onBlur={(e) => {
-                        if (e.target.value) {
-                            onChange([...value, e.target.value]);
-                        }
-                    }}
-                    inputProps={{
-                        'aria-label': 'Tag hinzufügen',
-                    }}
-                    endAdornment={
-                        <>
-                            {isLoading ? (
-                                <CircularProgress color={'inherit'} size={20} />
-                            ) : null}
-                            {(getInputProps() as any).endAdornment}
-                        </>
-                    }
+                    aria-label={'Tag hinzufügen'}
                 />
                 {groupedOptions.length > 0 ? (
                     <ul
                         data-testid={'TagsSelectCombobox'}
-                        style={{
-                            position: 'absolute',
-                            top: '2em',
-                            backgroundColor: '#fff',
-                            width: '100%',
-                        }}
+                        className={styles.suggestionsList}
                         {...getListboxProps()}
                     >
                         {groupedOptions.map((option, index) => (
