@@ -38,10 +38,6 @@ config :lotta, :redis_connection,
 
 config :lotta, :schedule_provider_url, System.fetch_env!("SCHEDULE_PROVIDER_URL")
 
-config :lotta, :live_view,
-  username: System.fetch_env!("LIVE_VIEW_USERNAME"),
-  password: System.fetch_env!("LIVE_VIEW_PASSWORD")
-
 config :lotta, LottaWeb.Auth.AccessToken, secret_key: System.fetch_env!("SECRET_KEY_JWT")
 
 config :lotta, Lotta.Elasticsearch.Cluster, url: System.get_env("ELASTICSEARCH_HOST")

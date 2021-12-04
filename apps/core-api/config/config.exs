@@ -18,10 +18,6 @@ config :lotta, :base_uri,
 
 config :lotta, Lotta.Repo, start_apps_before_migration: [:httpoison]
 
-config :lotta, :live_view,
-  username: "admin",
-  password: "password"
-
 # Configures the endpoints
 config :lotta, LottaWeb.Endpoint,
   url: [host: "localhost"],
