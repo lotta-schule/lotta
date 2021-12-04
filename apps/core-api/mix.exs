@@ -4,7 +4,7 @@ defmodule Lotta.MixProject do
   def project do
     [
       app: :lotta,
-      version: "3.1.4",
+      version: "3.1.5",
       name: "Lotta API Server",
       source_url: "https://gitlab.com/medienportal/api-server",
       homepage_url: "https://lotta.schule",
@@ -111,7 +111,7 @@ defmodule Lotta.MixProject do
       # live dashboard
       {:telemetry_poller, "~> 0.5"},
       {:telemetry_metrics, "~> 0.6"},
-      {:phoenix_live_dashboard, "~> 0.4"},
+      {:phoenix_live_dashboard, "~> 0.4"}
     ]
   end
 
