@@ -54,14 +54,17 @@ defmodule LottaWeb.Router do
 
     post("/create-test", LottaWeb.TenantController, :create_test)
   end
-
-  scope "/_debug" do
-    # health endpoint
-    forward("/health", LottaWeb.HealthPlug)
+  scope "/admin" do
+    pipe_through([:admin_auth])
 
     live_dashboard("/dashboard",
       metrics: LottaWeb.Telemetry
     )
+  end
+
+  scope "/_debug" do
+    # health endpoint
+    forward("/health", LottaWeb.HealthPlug)
 
     if Mix.env() == :dev do
       # If using Phoenix
