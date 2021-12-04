@@ -12,62 +12,47 @@ Its comprehensible interface makes it easy for pupils and teachers
 to create a sophisticated webpage for their school,
 providing articles, files and media in access-controlled spaces.
 
+See [https://lotta.schule](lotta.schule) for more information.
+
+## What does this repository contain
+
+This repository contains the source code for the lotta web client.
+
+The lotta web client is the web frontend which connects to a lotta
+api, mainly over graphql.
+
+The latest tagged commit on master is deployed, as is.
+
+We invite you to inspect the source code, but have not yet decided
+about the terms we want to apply, so please contact us if you have
+questions about licensing or contributing.
+
+We will probably change this situation soon.
+
 ## Develop
 
-### Using docker
+The project is a [nextjs](https://nextjs.org/) project.
 
-Make sure you have [docker](https://www.docker.com/products/docker-desktop) installed,
-than copy over the .env.sample to .env and start with:
+### Configuration
 
-You will need an [API server](https://gitlab.com/medienportal/api-server) up
-and running in order to start.
+The configuration is done via environment variables.
+You can find the local configuration in `.env.development`.
 
-You may have to run `docker-compose run web npm install` to update your dependencies.
+If you have an instance of the api running locally on port
+4000 (default), the project should work without modification.
 
-- Start the development server and storyboard together
+If you want to modify or add configuration, you can create an
+`.env` file containing your custom configuration.
 
-``` bash
-docker-compose up
-```
+### Start the project
 
-### Without docker
+Start with `npm start`.
 
-If you do not want to use docker, for example for performance reasons,
-you will have to have [nodejs](https://nodejs.org) installed.
+Test with `npm start`.
 
-You may have to run `npm install` to update your dependencies.
+There is a storybook project for the component library (which is still
+work in progress), start it with `npm run storybook`.
 
-- Start the development server
+### Problems
 
-``` bash
-npm start
-```
-
-- Start the development Storyboard
-
-``` bash
-npm run storybook
-```
-
-### Possible Errors
-
-#### Error: Cannot find module (...)
-
-You are missing some dependencies. You probably need to run
-
-``` bash
-docker-compose run web npm install
-```
-
-#### Failing tests on Gitlab CI
-
-If tests are failing on Gitlab CI:
-
-- find out the test which is failing and try to figure out what is happening.
-A test for a component is found in the same file, but with the ending `.test.tsx?`.
-
-You can execute the tests locally with the command:
-
-``` bash
-docker-compose run web npm test
-```
+Our issue tracker is not public yet. Please send a mail at dev[at]lotta.schule.
