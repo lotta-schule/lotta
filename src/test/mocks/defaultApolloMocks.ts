@@ -1,14 +1,16 @@
 import { tenant, allCategories } from 'test/fixtures';
-import { TenantModel, UserModel } from 'model';
+import { CategoryModel, TenantModel, UserModel } from 'model';
 import { InMemoryCache } from '@apollo/client';
 import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
+import { identity } from 'lodash';
 
 export interface ApolloMocksOptions {
     currentUser?: UserModel;
     tenant?: TenantModel;
+    categories?: (categories: CategoryModel[]) => CategoryModel[];
 }
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
     const mocks = [
@@ -24,7 +26,11 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
         },
         {
             request: { query: GetCategoriesQuery },
-            result: { data: { categories: allCategories } },
+            result: {
+                data: {
+                    categories: (options.categories ?? identity)(allCategories),
+                },
+            },
         },
         {
             request: { query: ReceiveMessageSubscription },

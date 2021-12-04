@@ -8,9 +8,11 @@ import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
-import { TenantModel, UserModel } from 'model';
 import { theme } from '../theme';
-import { getDefaultApolloMocks } from 'test/mocks/defaultApolloMocks';
+import {
+    ApolloMocksOptions,
+    getDefaultApolloMocks,
+} from 'test/mocks/defaultApolloMocks';
 import { i18n } from '../i18n';
 import {
     reducer as fileExplorerStateReducer,
@@ -25,10 +27,8 @@ import { createRouter, Router } from 'next/router';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 import { OverlayProvider } from '@react-aria/overlays';
 
-export interface TestSetupOptions {
-    currentUser?: UserModel;
+export type TestSetupOptions = {
     additionalMocks?: MockedResponse[];
-    tenant?: TenantModel;
     router?: {
         getInstance?: (router: Router) => void;
         pathname?: string;
@@ -38,13 +38,13 @@ export interface TestSetupOptions {
         onPush?: Router['push'];
         onReplace?: Router['replace'];
     };
-}
+} & ApolloMocksOptions;
 
 const ProviderFactory =
     (options: TestSetupOptions): React.FC =>
     ({ children }) => {
         const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
-            pick(options, ['currentUser', 'tenant'])
+            pick(options, ['currentUser', 'tenant', 'categories'])
         );
 
         const testRouter = createRouter(
