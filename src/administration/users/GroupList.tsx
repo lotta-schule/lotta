@@ -5,7 +5,8 @@ import {
     AccordionDetails,
     Grid,
 } from '@material-ui/core';
-import { AddCircle, ExpandMore, DragHandle } from '@material-ui/icons';
+import { AddCircle, ExpandMore } from '@material-ui/icons';
+import { DragHandle } from 'shared/general/icon';
 import { useMutation } from '@apollo/client';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';

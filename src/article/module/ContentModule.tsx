@@ -3,10 +3,10 @@ import { Popover, Box } from '@material-ui/core';
 import {
     MoreVert,
     Delete,
-    DragHandle,
     ArrowUpward,
     ArrowDownward,
 } from '@material-ui/icons';
+import { DragHandle } from 'shared/general/icon';
 import { ContentModuleModel, ContentModuleType } from 'model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';

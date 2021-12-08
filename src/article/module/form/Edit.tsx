@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Add, DragHandle, Delete } from '@material-ui/icons';
+import { Add, Delete } from '@material-ui/icons';
+import { DragHandle } from 'shared/general/icon';
 import { Grid } from '@material-ui/core';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Button } from 'shared/general/button/Button';
@@ -87,7 +88,11 @@ export const Edit = React.memo<EditProps>(
                                                         <span
                                                             {...draggableProvided.dragHandleProps}
                                                         >
-                                                            <DragHandle />
+                                                            <DragHandle
+                                                                className={
+                                                                    styles.dragHandle
+                                                                }
+                                                            />
                                                         </span>
                                                         <Button
                                                             onClick={() =>

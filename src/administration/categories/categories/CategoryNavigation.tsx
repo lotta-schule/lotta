@@ -7,8 +7,8 @@ import {
     List,
     ListItem,
 } from '@material-ui/core';
+import { DragHandle } from 'shared/general/icon';
 import { useCategories } from 'util/categories/useCategories';
-import { MoreVert } from '@material-ui/icons';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID } from 'model/ID';
 import { useMutation } from '@apollo/client';
@@ -192,7 +192,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                         <span
                                                             {...dragHandleProps}
                                                         >
-                                                            <MoreVert
+                                                            <DragHandle
                                                                 className={
                                                                     styles.moveCategoryHandlerIcon
                                                                 }
@@ -264,7 +264,7 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                         <span
                                                                                             {...dragHandleProps}
                                                                                         >
-                                                                                            <MoreVert
+                                                                                            <DragHandle
                                                                                                 className={
                                                                                                     styles.moveCategoryHandlerIcon
                                                                                                 }
@@ -313,3 +313,4 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
         );
     }
 );
+CategoryNavigation.displayName = 'AdminCategoryNavigation';

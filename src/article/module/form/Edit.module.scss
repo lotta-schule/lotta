@@ -22,3 +22,8 @@
     border-left-style: solid;
     border-radius: var(--lotta-spacing);
 }
+
+.dragHandle {
+    margin: var(--lotta-spacing);
+    fill: rgba(var(--lotta-text-color), 0.7);
+}
