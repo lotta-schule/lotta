@@ -1,16 +1,17 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
-import { SomeUser, SomeUserin, getSomeMessages } from 'test/fixtures';
+import { SomeUser, SomeUserin, createConversation } from 'test/fixtures';
 import { MessageBubble } from './MessageBubble';
-import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
 import userEvent from '@testing-library/user-event';
 
+import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
+
 const message = {
-    ...getSomeMessages(SomeUser, { to_user: SomeUserin })[0],
+    ...createConversation(SomeUser, { user: SomeUserin }).messages[0],
     content: 'Hallo!',
 };
 
-describe('shared/layouts/messagingLayout/MessageBubble', () => {
+describe('messaging/MessageBubble', () => {
     it('should render the shared', () => {
         render(<MessageBubble message={message} />);
     });

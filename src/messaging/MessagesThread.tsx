@@ -1,24 +1,28 @@
 import * as React from 'react';
-import { MessageModel } from 'model';
+import { useQuery } from '@apollo/client';
+import { ConversationModel } from 'model';
 import { MessageBubble } from './MessageBubble';
+import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
 import styles from './MessagesThread.module.scss';
 
+import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
+
 export interface MessagesThreadProps {
-    messages: MessageModel[];
+    conversation: ConversationModel;
 }
 
 export const MessagesThread = React.memo<MessagesThreadProps>(
-    ({ messages }) => {
+    ({ conversation }) => {
+        const { data, error } = useQuery<{ conversation: ConversationModel }>(
+            GetConversationQuery,
+            { variables: { id: conversation.id } }
+        );
+        const messages = Array.from(
+            data?.conversation?.messages ?? []
+        ).reverse();
         const currentUser = useCurrentUser();
-
-        const sortedMessages = messages.sort((message1, message2) => {
-            return (
-                new Date(message1.insertedAt).getTime() -
-                new Date(message2.insertedAt).getTime()
-            );
-        });
 
         const wrapperRef = React.useRef<HTMLDivElement>(null);
 
@@ -48,12 +52,17 @@ export const MessagesThread = React.memo<MessagesThreadProps>(
         }, [messages]);
 
         return (
-            <div ref={wrapperRef} className={styles.root}>
-                {sortedMessages.map((message) => (
+            <div
+                ref={wrapperRef}
+                className={styles.root}
+                data-testid={'MessagesThread'}
+            >
+                <ErrorMessage error={error} />
+                {messages.map((message) => (
                     <MessageBubble
                         key={message.id}
                         message={message}
-                        active={currentUser!.id === message.senderUser.id}
+                        active={currentUser!.id === message.user.id}
                     />
                 ))}
             </div>

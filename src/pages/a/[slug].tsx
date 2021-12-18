@@ -49,10 +49,10 @@ export const getServerSideProps = async ({
             notFound: true,
         };
     }
-    const {
-        data: { article },
-        error: loadArticleError,
-    } = await getApolloClient().query<{ article: ArticleModel }, { id: ID }>({
+    const { data, error: loadArticleError } = await getApolloClient().query<
+        { article: ArticleModel },
+        { id: ID }
+    >({
         query: GetArticleQuery,
         variables: { id: articleId },
         context: {
@@ -62,10 +62,10 @@ export const getServerSideProps = async ({
 
     return {
         props: {
-            article,
+            article: data?.article,
             loadArticleError: loadArticleError ?? null,
         },
-        notFound: !article,
+        notFound: !data?.article,
     };
 };
 

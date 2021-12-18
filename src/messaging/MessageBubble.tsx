@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'shared/general/button/Button';
-import { MessageModel } from 'model';
+import { ConversationModel, MessageModel } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { User } from 'util/model';
 import { format } from 'date-fns';
@@ -8,11 +8,13 @@ import { Delete } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
-import GetMessagesQuery from 'api/query/GetMessagesQuery.graphql';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
 
 import styles from './MessageBubble.module.scss';
+
+import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
+import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 
 export interface MessageBubbleProps {
     active?: boolean;
@@ -27,19 +29,62 @@ export const MessageBubble = React.memo<MessageBubbleProps>(
             variables: { id: message.id },
             update: (client, { data }) => {
                 if (data?.message) {
-                    const cache = client.readQuery<{
-                        messages: MessageModel[];
+                    let msgConversation: ConversationModel | null = null;
+                    const getConversationsCache = client.readQuery<{
+                        conversations: ConversationModel[];
                     }>({
-                        query: GetMessagesQuery,
+                        query: GetConversationsQuery,
                     });
                     client.writeQuery({
-                        query: GetMessagesQuery,
+                        query: GetConversationsQuery,
                         data: {
-                            messages: cache?.messages?.filter(
-                                (m) => m.id !== data.message.id
-                            ),
+                            conversations:
+                                getConversationsCache?.conversations?.map(
+                                    (conversation) => {
+                                        if (
+                                            conversation.messages.find(
+                                                (m) => m.id === data.message.id
+                                            )
+                                        ) {
+                                            msgConversation = conversation;
+                                        }
+                                        return {
+                                            ...conversation,
+                                            messages:
+                                                conversation.messages.filter(
+                                                    (m) =>
+                                                        m.id !== data.message.id
+                                                ),
+                                        };
+                                    }
+                                ) ?? [],
                         },
                     });
+
+                    if (msgConversation) {
+                        const getConversationCache = client.readQuery<{
+                            conversation: ConversationModel;
+                        }>({
+                            query: GetConversationQuery,
+                            variables: {
+                                id: (msgConversation as ConversationModel).id,
+                            },
+                        });
+                        if (getConversationCache?.conversation) {
+                            client.writeQuery({
+                                query: GetConversationQuery,
+                                data: {
+                                    conversation: {
+                                        ...getConversationCache.conversation,
+                                        messages:
+                                            getConversationCache.conversation.messages.filter(
+                                                (m) => m.id !== data.message.id
+                                            ),
+                                    },
+                                },
+                            });
+                        }
+                    }
                 }
             },
             optimisticResponse: ({ id }) => {
@@ -58,16 +103,16 @@ export const MessageBubble = React.memo<MessageBubbleProps>(
                 <div className={styles.messageInformation}>
                     <span className={styles.senderUser}>
                         <UserAvatar
-                            user={message.senderUser}
+                            user={message.user}
                             className={styles.senderUserAvatar}
                             size={20}
                         />
-                        {User.getName(message.senderUser)}
+                        {User.getName(message.user)}
                     </span>
                     {format(new Date(message.insertedAt), 'PPPpp', {
                         locale: de,
                     })}
-                    {message.senderUser?.id === currentUser?.id && (
+                    {message.user?.id === currentUser?.id && (
                         <Button
                             small
                             icon={<Delete />}

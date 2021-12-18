@@ -2,7 +2,6 @@ import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { schuelerGroup, SomeUser, SomeUserin } from 'test/fixtures';
 import { MessageToolbar } from './MessageToolbar';
-import { ChatType } from 'model';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
@@ -13,7 +12,7 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
         render(
             <MessageToolbar
                 onToggle={() => {}}
-                onCreateMessageThread={() => {}}
+                onRequestNewMessage={() => {}}
             />,
             {},
             { currentUser: SomeUserWithGroups }
@@ -24,7 +23,7 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
         const screen = render(
             <MessageToolbar
                 onToggle={() => {}}
-                onCreateMessageThread={() => {}}
+                onRequestNewMessage={() => {}}
             />,
             {},
             { currentUser: SomeUserWithGroups }
@@ -43,7 +42,7 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             const screen = render(
                 <MessageToolbar
                     onToggle={() => {}}
-                    onCreateMessageThread={() => {}}
+                    onRequestNewMessage={() => {}}
                 />,
                 {},
                 { currentUser: SomeUser }
@@ -71,17 +70,14 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
                     },
                 },
             ];
-            const onCreateMessageThread = jest.fn(
-                ({ messageType, counterpart, date }) => {
-                    expect(messageType).toEqual(ChatType.DirectMessage);
-                    expect(counterpart.name).toEqual('Luisa Drinalda');
-                    expect(date).toBeInstanceOf(Date);
-                }
-            );
+            const onRequestNewMessage = jest.fn((destination) => {
+                expect(destination.user.name).toEqual('Luisa Drinalda');
+                expect(destination.group).not.toBeDefined();
+            });
             const screen = render(
                 <MessageToolbar
                     onToggle={() => {}}
-                    onCreateMessageThread={onCreateMessageThread}
+                    onRequestNewMessage={onRequestNewMessage}
                 />,
                 {},
                 { currentUser: SomeUserin, additionalMocks }
@@ -108,21 +104,18 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
                 ).toBeVisible();
             });
             userEvent.click(screen.getByRole('option', { name: /drinalda/i }));
-            expect(onCreateMessageThread).toHaveBeenCalled();
+            expect(onRequestNewMessage).toHaveBeenCalled();
         });
 
         it('should select a group and create the corresponding thread object', () => {
-            const onCreateMessageThread = jest.fn(
-                ({ messageType, counterpart, date }) => {
-                    expect(messageType).toEqual(ChatType.GroupChat);
-                    expect(counterpart.name).toEqual('Schüler');
-                    expect(date).toBeInstanceOf(Date);
-                }
-            );
+            const onRequestNewMessage = jest.fn((destination) => {
+                expect(destination.user).not.toBeDefined();
+                expect(destination.group.name).toEqual('Schüler');
+            });
             const screen = render(
                 <MessageToolbar
                     onToggle={() => {}}
-                    onCreateMessageThread={onCreateMessageThread}
+                    onRequestNewMessage={onRequestNewMessage}
                 />,
                 {},
                 { currentUser: SomeUserWithGroups }
@@ -139,7 +132,7 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             userEvent.click(screen.getByPlaceholderText(/gruppe suchen/i));
             expect(screen.getAllByRole('option')).toHaveLength(1);
             userEvent.click(screen.getByRole('option', { name: 'Schüler' }));
-            expect(onCreateMessageThread).toHaveBeenCalled();
+            expect(onRequestNewMessage).toHaveBeenCalled();
         });
     });
 });

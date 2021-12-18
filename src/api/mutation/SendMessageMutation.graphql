@@ -1,9 +1,10 @@
-mutation SendMessages($message: MessageInput) {
+mutation SendMessage($message: MessageInput) {
     message: createMessage(message: $message) {
         id
+        content
         insertedAt
         updatedAt
-        senderUser {
+        user {
             id
             name
             nickname
@@ -11,17 +12,13 @@ mutation SendMessages($message: MessageInput) {
                 id
             }
         }
-        recipientUser {
-            id
-            name
-            nickname
-            avatarImageFile {
-                id
-            }
-        }
-        recipientGroup {
-            id
-            name
+        conversation {
+          id
+          insertedAt
+          updatedAt
+          users { id }
+          groups { id }
+          messages { id }
         }
     }
 }

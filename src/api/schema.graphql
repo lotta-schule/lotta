@@ -105,6 +105,7 @@ type ContentModuleResult {
 
 enum ContentModuleType {
   AUDIO
+  DIVIDER
   DOWNLOAD
   FORM
   IMAGE
@@ -113,6 +114,15 @@ enum ContentModuleType {
   TEXT
   TITLE
   VIDEO
+}
+
+type Conversation {
+  groups: [UserGroup!]
+  id: ID
+  insertedAt: DateTime
+  messages: [Message!]
+  updatedAt: DateTime
+  users: [User!]
 }
 
 input CreateCategoryInput {
@@ -232,12 +242,11 @@ type MediaUsage {
 
 type Message {
   content: String
+  conversation: Conversation
   id: ID
   insertedAt: DateTime
-  recipientGroup: UserGroup
-  recipientUser: User
-  senderUser: User
   updatedAt: DateTime
+  user: User
 }
 
 input MessageInput {
@@ -296,13 +305,14 @@ type RootQueryType {
   calendar(days: Int, url: String!): [CalendarEvent]
   categories: [Category]
   contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
+  conversation(id: ID!): Conversation
+  conversations: [Conversation]
   currentUser: User
   directories(parentDirectoryId: ID): [Directory]
   directory(id: ID): Directory
   file(id: ID): File
   files(parentDirectoryId: ID): [File]
   group(id: ID!): UserGroup
-  messages: [Message]
   ownArticles: [Article]
   relevantFilesInUsage: [File]
   schedule(date: Date, widgetId: ID!): Json
@@ -467,8 +477,8 @@ input WidgetInput {
 
 enum WidgetType {
   CALENDAR
+  IFRAME
   SCHEDULE
   TAGCLOUD
-  VPLAN
 }
 
