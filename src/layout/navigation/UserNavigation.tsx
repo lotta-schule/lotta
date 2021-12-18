@@ -23,7 +23,6 @@ import { Divider } from 'shared/general/divider/Divider';
 import { NavigationButton } from 'shared/general/button/NavigationButton';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
-// import { useNewMessagesBadgeNumber } from 'messaging/hook/useNewMessagesBadgeNumber';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import clsx from 'clsx';
@@ -33,14 +32,14 @@ import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphq
 import styles from './UserNavigation.module.scss';
 
 export const UserNavigation = React.memo(() => {
-    const currentUser = useCurrentUser();
+    const currentUser = useCurrentUser()!;
     const router = useRouter();
     const { data: unpublishedArticlesData } = useQuery<{
         articles: ArticleModel[];
     }>(GetUnpublishedArticlesQuery, {
         skip: !currentUser || !User.isAdmin(currentUser),
     });
-    const newMessagesBadgeNumber = 12; // useNewMessagesBadgeNumber();
+    const newMessagesBadgeNumber = currentUser.unreadMessages ?? 0;
     const onLogout = useOnLogout();
 
     const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);

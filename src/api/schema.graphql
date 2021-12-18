@@ -121,6 +121,7 @@ type Conversation {
   id: ID
   insertedAt: DateTime
   messages: [Message!]
+  unreadMessages: Int
   updatedAt: DateTime
   users: [User!]
 }
@@ -439,6 +440,7 @@ type User {
   lastSeen: DateTime
   name: String
   nickname: String
+  unreadMessages: Int
   updatedAt: DateTime
 }
 

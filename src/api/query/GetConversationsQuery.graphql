@@ -2,6 +2,7 @@ query GetConversationsQuery {
     conversations {
         id
         updatedAt
+        unreadMessages
         groups {
           id
           name

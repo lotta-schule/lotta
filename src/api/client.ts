@@ -17,6 +17,7 @@ import { isAfter, sub } from 'date-fns';
 import axios, { AxiosRequestConfig } from 'axios';
 import { createAbsintheSocketLink } from './createAbsintheSocketLink';
 import getConfig from 'next/config';
+import { TenantModel } from 'model';
 
 const {
     publicRuntimeConfig: { socketUrl },
@@ -63,7 +64,7 @@ if (isBrowser) {
 }
 
 let cachedApolloClient: ApolloClient<NormalizedCacheObject> | null = null;
-export const getApolloClient = () => {
+export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
     if (isBrowser) {
         if (cachedApolloClient !== null) {
             return cachedApolloClient;
@@ -198,9 +199,9 @@ export const getApolloClient = () => {
                   params: () => {
                       const token = localStorage.getItem('id');
                       if (token) {
-                          return { token, tid: window.tid };
+                          return { token, tid: tenant?.id };
                       } else {
-                          return { tid: window.tid };
+                          return { tid: tenant?.id };
                       }
                   },
               })

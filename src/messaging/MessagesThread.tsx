@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useQuery } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client';
 import { ConversationModel } from 'model';
 import { MessageBubble } from './MessageBubble';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
@@ -15,14 +15,39 @@ export interface MessagesThreadProps {
 
 export const MessagesThread = React.memo<MessagesThreadProps>(
     ({ conversation }) => {
+        const currentUser = useCurrentUser()!;
+        const apolloClient = useApolloClient();
         const { data, error } = useQuery<{ conversation: ConversationModel }>(
             GetConversationQuery,
-            { variables: { id: conversation.id } }
+            {
+                variables: { id: conversation.id },
+                fetchPolicy: 'cache-and-network',
+                onCompleted: ({ conversation }) => {
+                    const { cache } = apolloClient;
+                    let readCount: number;
+                    cache.modify({
+                        id: cache.identify(conversation as any),
+                        fields: {
+                            unreadMessages: (_ref, _helpers) => {
+                                readCount = _ref ?? 0;
+                                return 0;
+                            },
+                        },
+                    });
+                    cache.modify({
+                        id: cache.identify(currentUser as any),
+                        fields: {
+                            unreadMessages: (ref, _helpers) => {
+                                return ref - readCount;
+                            },
+                        },
+                    });
+                },
+            }
         );
         const messages = Array.from(
             data?.conversation?.messages ?? []
         ).reverse();
-        const currentUser = useCurrentUser();
 
         const wrapperRef = React.useRef<HTMLDivElement>(null);
 

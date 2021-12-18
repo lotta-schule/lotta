@@ -7,7 +7,6 @@ import { User } from 'util/model';
 import { Button } from 'shared/general/button/Button';
 import { format } from 'date-fns';
 import { Message } from 'util/model/Message';
-// import { useNewMessagesBadgeNumber } from './hook/useNewMessagesBadgeNumber';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
 
@@ -21,11 +20,6 @@ export interface ConversationPreviewProps {
 
 export const ConversationPreview = React.memo<ConversationPreviewProps>(
     ({ conversation, selected, onClick }) => {
-        const newMessagesBadgeNumber = 12; /* useNewMessagesBadgeNumber(
-            (counterpart as UserModel).avatarImageFile !== undefined
-                ? { user: counterpart as UserModel }
-                : { group: counterpart as UserGroupModel }
-        ); */
         const currentUser = useCurrentUser()!;
 
         const user =
@@ -49,7 +43,7 @@ export const ConversationPreview = React.memo<ConversationPreviewProps>(
                 )}
                 <div className={styles.buttonLabel}>
                     <Badge
-                        badgeContent={newMessagesBadgeNumber}
+                        badgeContent={conversation.unreadMessages}
                         color={'primary'}
                     >
                         <strong>
