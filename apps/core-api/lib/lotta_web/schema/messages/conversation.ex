@@ -15,6 +15,9 @@ defmodule LottaWeb.Schema.Messages.Conversation do
     field :groups, list_of(non_null(:user_group)),
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
 
+    field :unread_messages, :integer,
+      resolve: &LottaWeb.MessagesResolver.resolve_conversation_unread_messages/2
+
     field :inserted_at, :datetime
     field :updated_at, :datetime
   end

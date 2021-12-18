@@ -6,6 +6,14 @@ defmodule LottaWeb.MessagesResolver do
 
   alias LottaWeb.Context
   alias Lotta.{Accounts, Messages}
+  alias Lotta.Messages.Conversation
+
+  def resolve_conversation_unread_messages(_args, %{
+        context: %Context{current_user: user},
+        source: %Conversation{} = conversation
+      }) do
+    {:ok, Messages.count_unread_messages(user, conversation)}
+  end
 
   def list_conversations(_args, %{context: %Context{current_user: current_user}}) do
     {:ok, Messages.list_active_conversations(current_user)}
@@ -22,6 +30,7 @@ defmodule LottaWeb.MessagesResolver do
         {:error, "Du hast nicht die Rechte, diese Unterhaltung anzusehen."}
 
       true ->
+        Messages.set_user_has_last_seen_conversation(current_user, conversation)
         {:ok, conversation}
     end
   end

@@ -5,6 +5,8 @@ defmodule Lotta.Messages do
 
   import Ecto.Query
 
+  require Logger
+
   alias Lotta.Repo
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.{Conversation, Message}
@@ -79,11 +81,91 @@ defmodule Lotta.Messages do
   end
 
   @doc """
-
+  Get a conversation by id
   """
   @spec get_conversation(String.t()) :: Conversation.t() | nil
   def get_conversation(id) do
     Repo.get(Conversation, id)
+  end
+
+  @doc """
+  Returns the date when a given user fetched messages for a given conversation.
+  If the user never fetched the messages for a given conversation before, nil is returned.
+  """
+  @spec get_user_has_last_seen_conversation(User.t(), Conversation.t()) :: DateTime.t() | nil
+  def get_user_has_last_seen_conversation(
+        %User{id: user_id} = user,
+        %Conversation{id: conversation_id}
+      ) do
+    query =
+      from(culs in "conversation_user_last_seen",
+        where: culs.user_id == ^user_id,
+        where: culs.conversation_id == ^conversation_id,
+        select: culs.last_seen
+      )
+
+    case Repo.all(query, prefix: Ecto.get_meta(user, :prefix)) do
+      [datetime] ->
+        datetime
+
+      _ ->
+        nil
+    end
+  end
+
+  @doc """
+  Returns the number of unread messages for a given user.
+  Either pass a conversation, in which case the unread
+  messages for that given conversation is given, 
+  or skip for being given unread messages of all conversations.
+  """
+  @spec count_unread_messages(User.t(), Conversation.t() | nil) :: number()
+  def count_unread_messages(%User{id: user_id} = user, conversation \\ nil) do
+    conversations =
+      if is_nil(conversation), do: list_active_conversations(user), else: [conversation]
+
+    from(m in Message,
+      left_join: culs in "conversation_user_last_seen",
+      on: culs.conversation_id == m.conversation_id and culs.user_id == ^user_id,
+      where: m.conversation_id in ^Enum.map(conversations, & &1.id),
+      where: m.user_id != ^user_id,
+      where: is_nil(culs.last_seen) or m.updated_at > culs.last_seen
+    )
+    |> Repo.aggregate(:count, prefix: Ecto.get_meta(user, :prefix))
+  end
+
+  @doc """
+  Sets the datetime when a given user has last seen a given conversation.
+  """
+  @spec set_user_has_last_seen_conversation(User.t(), Conversation.t(), DateTime.t() | nil) ::
+          :ok | :error
+  def set_user_has_last_seen_conversation(
+        %User{id: user_id} = user,
+        %Conversation{id: conversation_id},
+        datetime \\ DateTime.utc_now()
+      ) do
+    try do
+      Repo.insert_all(
+        "conversation_user_last_seen",
+        [
+          [
+            user_id: user_id,
+            conversation_id: UUID.string_to_binary!(conversation_id),
+            last_seen: datetime
+          ]
+        ],
+        prefix: Ecto.get_meta(user, :prefix),
+        conflict_target: [:conversation_id, :user_id],
+        on_conflict: {:replace, [:last_seen]}
+      )
+
+      :ok
+    rescue
+      e ->
+        Logger.error(Exception.format(:error, e, __STACKTRACE__))
+        Sentry.capture_exception(e)
+        :error
+    end
   end
 
   @doc """
@@ -108,13 +190,22 @@ defmodule Lotta.Messages do
   @spec create_message(User.t(), User.t() | UserGroup.t(), String.t()) ::
           {:ok, Message.t()} | {:error, Ecto.Changeset.t()}
   def create_message(from, to, content) do
-    case get_or_create_conversation(from, to) do
-      {:ok, conversation} ->
-        conversation
-        |> Ecto.build_assoc(:messages)
-        |> Message.changeset(%{user_id: from.id, content: content})
-        |> Repo.insert(prefix: Repo.get_prefix())
+    add_message = fn conversation, user, content ->
+      conversation
+      |> Ecto.build_assoc(:messages)
+      |> Message.changeset(%{user_id: user.id, content: content})
+      |> Repo.insert(prefix: Repo.get_prefix())
+    end
 
+    with {:ok, conversation} <- get_or_create_conversation(from, to),
+         {:ok, message} <- add_message.(conversation, from, content) do
+      Repo.update(
+        Ecto.Changeset.change(conversation),
+        force: true
+      )
+
+      {:ok, message}
+    else
       error ->
         error
     end
