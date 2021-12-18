@@ -13,12 +13,18 @@ mutation SendMessage($message: MessageInput) {
             }
         }
         conversation {
-          id
-          insertedAt
-          updatedAt
-          users { id }
-          groups { id }
-          messages { id }
+            id
+            insertedAt
+            updatedAt
+            users {
+                id
+            }
+            groups {
+                id
+            }
+            messages {
+                id
+            }
         }
     }
 }

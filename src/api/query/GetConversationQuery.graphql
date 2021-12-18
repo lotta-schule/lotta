@@ -3,26 +3,27 @@ query GetConversationsQuery($id: ID!) {
         id
         updatedAt
         groups {
-          id
-          name
+            id
+            name
         }
         users {
             id
             name
             nickname
-            avatarImageFile { id }
+            avatarImageFile {
+                id
+            }
         }
         messages {
-          id
-          content
-          insertedAt
-          updatedAt
-          user {
             id
-            name
-            nickname
-          }
+            content
+            insertedAt
+            updatedAt
+            user {
+                id
+                name
+                nickname
+            }
         }
     }
 }
-
