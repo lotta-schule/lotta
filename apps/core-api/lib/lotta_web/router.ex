@@ -54,6 +54,7 @@ defmodule LottaWeb.Router do
 
     post("/create-test", LottaWeb.TenantController, :create_test)
   end
+
   scope "/admin" do
     pipe_through([:admin_auth])
 

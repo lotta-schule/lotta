@@ -8,7 +8,7 @@ defmodule Lotta.Fixtures do
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.File
   alias Lotta.Content.{Article}
-  alias Lotta.Messages.Message
+  alias Lotta.Messages.{Conversation, Message}
 
   def fixture(name, params \\ %{})
 
@@ -179,17 +179,30 @@ defmodule Lotta.Fixtures do
 
   # Messages
 
-  def fixture(:valid_message_attrs, params) do
-    %{
-      content: "Das ist die Nachricht",
-      sender_user_id: Keyword.fetch!(params, :from_id),
-      recipient_user_id: Keyword.fetch!(params, :to_id)
-    }
+  def fixture(:message_content, _params) do
+    "Das ist die Nachricht"
   end
 
   def fixture(:message, params) do
-    %Message{}
-    |> Map.merge(fixture(:valid_message_attrs, params))
+    %Message{content: fixture(:message_content)}
+    |> Map.merge(params)
     |> Repo.insert!(prefix: "tenant_test")
+  end
+
+  def fixture(:create_conversation_users, users) do
+    conversation =
+      %Conversation{}
+      |> Repo.insert!(prefix: "tenant_test")
+
+    Repo.insert_all(
+      "conversation_user",
+      Enum.map(
+        users,
+        &%{conversation_id: UUID.string_to_binary!(conversation.id), user_id: &1.id}
+      ),
+      prefix: "tenant_test"
+    )
+
+    Repo.reload!(conversation)
   end
 end

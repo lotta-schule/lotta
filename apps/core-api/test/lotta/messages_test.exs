@@ -16,18 +16,21 @@ defmodule Lotta.MessagesTest do
   end
 
   describe "messages" do
-    test "list_for_user/1 should return a users' messages" do
+    test "list_active_conversations/1 should return a users' conversations" do
       from = Fixtures.fixture(:registered_user, %{email: "hedwig@hogwarts.de"})
-      to = Fixtures.fixture(:registered_user, %{email: "erol@hogwarts.de"})
+      to1 = Fixtures.fixture(:registered_user, %{email: "erol@hogwarts.de"})
+      to2 = Fixtures.fixture(:registered_user, %{email: "santa@hogwarts.de"})
+      fromto3 = Fixtures.fixture(:registered_user, %{email: "djingis@hogwarts.de"})
 
-      messages = [
-        Fixtures.fixture(:message, from_id: from.id, to_id: to.id),
-        Fixtures.fixture(:message, from_id: from.id, to_id: to.id),
-        Fixtures.fixture(:message, from_id: from.id, to_id: to.id)
-      ]
+      conversation1 = Fixtures.fixture(:create_conversation_users, [from, to1])
+      conversation2 = Fixtures.fixture(:create_conversation_users, [from, to2])
+      conversation3 = Fixtures.fixture(:create_conversation_users, [fromto3, from])
 
-      assert Messages.list_for_user(from) == messages
-      assert Messages.list_for_user(to) == messages
+      assert Enum.all?(Messages.list_active_conversations(from), fn conv ->
+               conv == conversation1 || conv == conversation2 || conv == conversation3
+             end)
+
+      assert Messages.list_active_conversations(fromto3) == [conversation3]
     end
 
     test "create_message/1 should create a message" do
@@ -36,18 +39,19 @@ defmodule Lotta.MessagesTest do
 
       assert {:ok, message} =
                Messages.create_message(
-                 Fixtures.fixture(:valid_message_attrs, from_id: from.id, to_id: to.id)
+                 from,
+                 to,
+                 Fixtures.fixture(:message_content)
                )
 
       assert %Message{
                id: _id,
                content: "Das ist die Nachricht",
-               sender_user: %{id: from_id},
-               recipient_user: %{id: to_id}
-             } = Lotta.Repo.preload(message, [:sender_user, :recipient_user])
+               user: %{id: from_id}
+             } = Lotta.Repo.preload(message, [:user])
 
       assert from_id == from.id
-      assert to_id == to.id
+      # assert to_id == to.id
     end
   end
 
@@ -58,7 +62,9 @@ defmodule Lotta.MessagesTest do
 
       assert {:ok, message} =
                Messages.create_message(
-                 Fixtures.fixture(:valid_message_attrs, from_id: from.id, to_id: to.id)
+                 from,
+                 to,
+                 Fixtures.fixture(:message_content)
                )
 
       assert {:ok, _message} = Messages.delete_message(message)

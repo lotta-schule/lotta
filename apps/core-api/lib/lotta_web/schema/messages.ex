@@ -3,14 +3,22 @@ defmodule LottaWeb.Schema.Messages do
 
   use Absinthe.Schema.Notation
 
-  alias Lotta.Messages.Message
-  alias Lotta.Tenants
+  alias Lotta.{Tenants, Repo}
+  alias Lotta.Messages.Conversation
 
   object :messages_queries do
-    field :messages, list_of(:message) do
+    field :conversations, list_of(:conversation) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
-      resolve(&LottaWeb.MessagesResolver.all/2)
+      resolve(&LottaWeb.MessagesResolver.list_conversations/2)
+    end
+
+    field :conversation, :conversation do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
+
+      arg(:id, non_null(:id))
+
+      resolve(&LottaWeb.MessagesResolver.get_conversation/2)
     end
   end
 
@@ -56,16 +64,19 @@ defmodule LottaWeb.Schema.Messages do
           prefix = Ecto.get_meta(message, :prefix)
           tenant = Tenants.get_tenant_by_prefix(prefix)
 
+          message = Repo.preload(message, [:conversation, :user])
+          conversation = Repo.preload(message.conversation, [:users, :groups])
+
           if tenant do
             tid = tenant.id
 
-            case message do
-              %Message{sender_user_id: sender_id, recipient_user_id: user_id}
-              when not is_nil(user_id) ->
-                ["#{tid}:messages:user:#{sender_id}", "#{tid}:messages:user:#{user_id}"]
+            # TODO: react to new messages
+            case conversation do
+              %Conversation{groups: [], users: users} ->
+                Enum.map(users, &"#{tid}:messages:user:#{&1.id}")
 
-              %Message{recipient_group_id: group_id} when not is_nil(group_id) ->
-                "#{tid}:messages:group:#{group_id}"
+              %Conversation{groups: groups, users: []} ->
+                Enum.map(groups, &"#{tid}:messages:group:#{&1.id}")
             end
           end
         end

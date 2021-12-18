@@ -14,7 +14,7 @@ defmodule LottaWeb.Schema do
   import_types(__MODULE__.Contents)
   import_types(__MODULE__.Contents.Article)
   import_types(__MODULE__.Messages)
-  import_types(__MODULE__.Messages.Message)
+  import_types(__MODULE__.Messages.{Conversation, Message})
   import_types(__MODULE__.Schedule)
   import_types(__MODULE__.Calendar)
   import_types(__MODULE__.Search)
@@ -44,10 +44,11 @@ defmodule LottaWeb.Schema do
   def context(ctx) do
     loader =
       Dataloader.new()
-      |> Dataloader.add_source(Lotta.Content, Lotta.Content.data())
-      |> Dataloader.add_source(Lotta.Tenants, Lotta.Tenants.data())
       |> Dataloader.add_source(Lotta.Accounts, Lotta.Accounts.data())
+      |> Dataloader.add_source(Lotta.Content, Lotta.Content.data())
+      |> Dataloader.add_source(Lotta.Messages, Lotta.Messages.data())
       |> Dataloader.add_source(Lotta.Storage, Lotta.Storage.data())
+      |> Dataloader.add_source(Lotta.Tenants, Lotta.Tenants.data())
 
     Map.put(ctx, :loader, loader)
   end

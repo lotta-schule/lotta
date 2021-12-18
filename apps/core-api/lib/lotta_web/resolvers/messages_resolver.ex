@@ -5,10 +5,25 @@ defmodule LottaWeb.MessagesResolver do
   import Lotta.Accounts.Permissions
 
   alias LottaWeb.Context
-  alias Lotta.Messages
+  alias Lotta.{Accounts, Messages}
 
-  def all(_args, %{context: %Context{current_user: current_user}}) do
-    {:ok, Messages.list_for_user(current_user)}
+  def list_conversations(_args, %{context: %Context{current_user: current_user}}) do
+    {:ok, Messages.list_active_conversations(current_user)}
+  end
+
+  def get_conversation(%{id: id}, %{context: %Context{current_user: current_user}}) do
+    conversation = Messages.get_conversation(id)
+
+    cond do
+      is_nil(conversation) ->
+        {:error, "Unterhaltung nicht gefunden."}
+
+      not can_read?(current_user, conversation) ->
+        {:error, "Du hast nicht die Rechte, diese Unterhaltung anzusehen."}
+
+      true ->
+        {:ok, conversation}
+    end
   end
 
   def create(%{message: message}, %{context: %Context{current_user: current_user}}) do
@@ -22,24 +37,39 @@ defmodule LottaWeb.MessagesResolver do
       end
     end
 
-    error =
-      case message do
-        %{recipient_group: %{id: _id}} ->
-          unless user_is_in_groups_list?(current_user, [fetch_id.(:recipient_group)]),
-            do: {:error, "Du kannst dieser Gruppe keine Nachricht senden."}
+    recipient_user =
+      if user_id = fetch_id.(:recipient_user) do
+        Accounts.get_user(user_id)
+      end
 
-        _ ->
+    recipient_group =
+      if group_id = fetch_id.(:recipient_group) do
+        Accounts.get_user_group(group_id)
+      end
+
+    error =
+      cond do
+        is_nil(recipient_group) and is_nil(recipient_user) ->
+          {:error, "Du hast keinen Empfänger für die Nachricht ausgewählt."}
+
+        not is_nil(recipient_group) and
+            not user_is_in_groups_list?(current_user, [recipient_group]) ->
+          {:error, "Du darfst dieser Gruppe keine Nachricht senden."}
+
+        true ->
           nil
       end
 
-    error ||
-      Map.new()
-      |> Map.put(:sender_user_id, current_user.id)
-      |> Map.put(:content, message[:content])
-      |> Map.put(:recipient_user_id, fetch_id.(:recipient_user))
-      |> Map.put(:recipient_group_id, fetch_id.(:recipient_group))
-      |> Messages.create_message()
+    if error do
+      error
+    else
+      Messages.create_message(
+        current_user,
+        recipient_user || recipient_group,
+        message[:content]
+      )
       |> format_errors("Nachricht konnte nicht versandt werden.")
+    end
   end
 
   def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do
