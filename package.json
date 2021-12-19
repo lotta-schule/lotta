@@ -7,7 +7,7 @@
     "build": "next build",
     "start:prod": "next start",
     "test": "jest",
-    "test:ci": "jest --reporters=jest-junit --ci --testResultsProcessor='jest-junit' --collectCoverageFrom='src/**/*.{ts,tsx}' --collectCoverageFrom='!src/**/*.stories.{ts,tsx}'",
+    "test:ci": "jest --reporters=jest-junit --reporters=default --ci --testResultsProcessor='jest-junit' --collectCoverageFrom='src/**/*.{ts,tsx}' --collectCoverageFrom='!src/**/*.stories.{ts,tsx}'",
     "lint": "next lint",
     "schema:download": "npx get-graphql-schema http://localhost:4000/api > src/api/schema.graphql",
     "storybook": "start-storybook -p 6006",
