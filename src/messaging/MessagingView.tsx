@@ -152,7 +152,7 @@ export const MessagingView = React.memo(() => {
                         <ComposeMessage
                             destination={createMessageDestination}
                             onSent={(msg) => {
-                                setSelectedConversation(msg.conversation);
+                                setSelectedConversation(msg.conversation!);
                             }}
                         />
                     </React.Fragment>
