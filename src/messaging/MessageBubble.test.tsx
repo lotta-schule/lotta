@@ -19,13 +19,13 @@ describe('messaging/MessageBubble', () => {
     it('should render show the message and sender name', () => {
         const screen = render(<MessageBubble message={message} />);
         expect(screen.getByText('Hallo!')).toBeVisible();
-        expect(screen.getByText('Che (Ernesto Guevara)')).toBeVisible();
+        expect(screen.getByText(/Che \(Ernesto Guevara\)/)).toBeVisible();
     });
 
     describe('delete button', () => {
         it('should show delete button for own messages', async () => {
             const screen = render(
-                <MessageBubble message={message} />,
+                <MessageBubble message={message} active />,
                 {},
                 { currentUser: SomeUser }
             );
@@ -51,7 +51,7 @@ describe('messaging/MessageBubble', () => {
     it('should send a message delete request', async () => {
         const resultFn = jest.fn(() => ({ data: { message: message } }));
         const screen = render(
-            <MessageBubble message={message} />,
+            <MessageBubble message={message} active />,
             {},
             {
                 currentUser: SomeUser,

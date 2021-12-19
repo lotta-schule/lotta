@@ -28,8 +28,8 @@ import styles from './UserNavigationMobile.module.scss';
 
 export const UserNavigationMobile = React.memo(() => {
     const router = useRouter();
-    const currentUser = useCurrentUser()!;
-    const newMessagesBadgeNumber = currentUser.unreadMessages ?? 0;
+    const currentUser = useCurrentUser();
+    const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
     const onLogout = useOnLogout();
 
     const { data: unpublishedArticlesData } = useQuery<{

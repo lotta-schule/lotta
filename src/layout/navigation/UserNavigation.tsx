@@ -32,7 +32,7 @@ import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphq
 import styles from './UserNavigation.module.scss';
 
 export const UserNavigation = React.memo(() => {
-    const currentUser = useCurrentUser()!;
+    const currentUser = useCurrentUser();
 
     const router = useRouter();
     const { data: unpublishedArticlesData } = useQuery<{
