@@ -56,3 +56,4 @@ export const MessagingPage = React.memo<MessagingPageProps>(
         );
     }
 );
+MessagingPage.displayName = 'MessagingPage';
