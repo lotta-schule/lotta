@@ -16,7 +16,7 @@ export interface ConversationModel {
     messages: MessageModel[];
 }
 
-interface MessageModel {
+export interface MessageModel {
     id: ID;
     insertedAt: string;
     updatedAt: string;
