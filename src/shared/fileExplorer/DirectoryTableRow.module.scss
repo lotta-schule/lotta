@@ -1,6 +1,6 @@
 .root {
     &.isDragActive {
-        background-color: rgba(var(--lotta-secondary-color, 0.075));
+        background-color: rgba(var(--lotta-primary-color, 0.075));
     }
     .dragHelpText {
         display: block;
@@ -8,8 +8,8 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        color: #333;
+        color: rgba(var(--lotta-text-color), 1);
         font-size: 1.2rem;
-        text-shadow: 1px 1px 4px #f52;
+        text-shadow: 1px 1px 4px rgba(var(--lotta-primary-color), 1);
     }
 }

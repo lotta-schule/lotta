@@ -8,9 +8,9 @@
     flex-shrink: 1;
 
     .isDragActive {
-        background-color: rgba(var(--lotta-secondary-color), 0.1);
+        background-color: rgba(var(--lotta-primary-color), 0.1);
         border: 2px dashed;
-        border-color: rgba(var(--lotta-secondary-color), 1);
+        border-color: rgba(var(--lotta-primary-color), 1);
     }
     .dragHelpText {
         display: block;
@@ -20,7 +20,7 @@
         transform: translate(-50%, -50%);
         color: #333;
         font-size: 1.2rem;
-        text-shadow: 1px 1px 4px #f52;
+        text-shadow: 1px 1px 4px rgba(var(--lotta-primary-color));
     }
     &.isEditable {
         .table {
@@ -58,7 +58,7 @@
 
             &:global(.selected),
             &:global(.selected):hover {
-                background-color: rgba(var(--lotta-secondary-color), 0.2);
+                background-color: rgba(var(--lotta-primary-color), 0.2);
             }
             & > td,
             & > th {
