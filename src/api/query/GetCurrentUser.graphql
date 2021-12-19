@@ -10,6 +10,7 @@ query GetCurrentUser {
         class
         hideFullName
         enrollmentTokens
+        unreadMessages
         hasChangedDefaultPassword
         avatarImageFile {
             id

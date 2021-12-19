@@ -1,10 +1,10 @@
 subscription ReceiveMessage {
     message: receiveMessage {
         id
+        content
         insertedAt
         updatedAt
-        content
-        senderUser {
+        user {
             id
             name
             nickname
@@ -12,17 +12,21 @@ subscription ReceiveMessage {
                 id
             }
         }
-        recipientUser {
+        conversation {
             id
-            name
-            nickname
-            avatarImageFile {
+            updatedAt
+            groups {
                 id
+                name
             }
-        }
-        recipientGroup {
-            id
-            name
+            users {
+                id
+                name
+                nickname
+                avatarImageFile {
+                    id
+                }
+            }
         }
     }
 }

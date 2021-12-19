@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChatType, ThreadRepresentation } from 'model';
+import { NewMessageDestination } from 'model';
 import { Box, Popover, Tab, Tabs } from '@material-ui/core';
 import { Button } from 'shared/general/button/Button';
 import { Add, ArrowLeft } from '@material-ui/icons';
@@ -16,12 +16,12 @@ import { SearchUserField } from 'administration/users/SearchUserField';
 import styles from './MessageToolbar.module.scss';
 
 export interface MessageToolbarProps {
-    onCreateMessageThread(thread: ThreadRepresentation): void;
+    onRequestNewMessage(subject: NewMessageDestination): void;
     onToggle(): void;
 }
 
 export const MessageToolbar = React.memo<MessageToolbarProps>(
-    ({ onToggle, onCreateMessageThread }) => {
+    ({ onToggle, onRequestNewMessage }) => {
         const isMobile = useIsMobile();
 
         const currentUser = useCurrentUser();
@@ -30,9 +30,9 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
             popupId: 'create-message-thread',
         });
 
-        const [newMessageType, setNewMessageType] = React.useState<ChatType>(
-            ChatType.DirectMessage
-        );
+        const [newMessageType, setNewMessageType] = React.useState<
+            'user' | 'group'
+        >('user');
 
         return (
             <div className={styles.root}>
@@ -67,33 +67,22 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                             value={newMessageType}
                             onChange={(_e, value) => setNewMessageType(value)}
                         >
-                            <Tab
-                                value={ChatType.DirectMessage}
-                                label={'Nutzer'}
-                            />
+                            <Tab value={'user'} label={'Nutzer'} />
                             {currentUser!.groups.length > 0 && (
-                                <Tab
-                                    value={ChatType.GroupChat}
-                                    label={'Gruppe'}
-                                />
+                                <Tab value={'group'} label={'Gruppe'} />
                             )}
                         </Tabs>
                         <div className={styles.tabsPanel}>
-                            {newMessageType === ChatType.DirectMessage && (
+                            {newMessageType === 'user' && (
                                 <SearchUserField
                                     className={styles.input}
                                     onSelectUser={(user) => {
-                                        const newMessageThread = {
-                                            messageType: ChatType.DirectMessage,
-                                            counterpart: user,
-                                            date: new Date(),
-                                        };
                                         popupState.close();
-                                        onCreateMessageThread(newMessageThread);
+                                        onRequestNewMessage({ user });
                                     }}
                                 />
                             )}
-                            {newMessageType === ChatType.GroupChat && (
+                            {newMessageType === 'group' && (
                                 <GroupSelect
                                     className={styles.input}
                                     hidePublicGroupSelection
@@ -106,15 +95,8 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                                     }
                                     onSelectGroups={([group]) => {
                                         if (group) {
-                                            const newMessageThread = {
-                                                messageType: ChatType.GroupChat,
-                                                counterpart: group,
-                                                date: new Date(),
-                                            };
                                             popupState.close();
-                                            onCreateMessageThread(
-                                                newMessageThread
-                                            );
+                                            onRequestNewMessage({ group });
                                         }
                                     }}
                                 />

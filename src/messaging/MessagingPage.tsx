@@ -4,29 +4,56 @@ import { useIsMobile } from 'util/useIsMobile';
 import { useRouter } from 'next/router';
 import { Header, Main, Sidebar } from 'layout';
 import { MessagingView } from './MessagingView';
+import { ConversationModel } from 'model';
+import { useApolloClient } from '@apollo/client';
 
-export const MessagingPage = () => {
-    const currentUser = useCurrentUser();
-    const router = useRouter();
+import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 
-    const isMobile = useIsMobile();
+export interface MessagingPageProps {
+    conversations?: ConversationModel[];
+}
 
-    if (currentUser === null) {
-        router.replace('/');
-        return null;
+export const MessagingPage = React.memo<MessagingPageProps>(
+    ({ conversations }) => {
+        const didWriteCache = React.useRef(false);
+        const apolloClient = useApolloClient();
+        const currentUser = useCurrentUser();
+        const router = useRouter();
+
+        const isMobile = useIsMobile();
+
+        if (
+            typeof window !== 'undefined' &&
+            conversations &&
+            !didWriteCache.current
+        ) {
+            apolloClient.writeQuery({
+                query: GetConversationsQuery,
+                data: {
+                    conversations,
+                },
+            });
+            didWriteCache.current = true;
+        }
+
+        if (currentUser === null) {
+            router.replace('/');
+            return null;
+        }
+
+        return (
+            <>
+                <Main>
+                    {!isMobile && (
+                        <Header bannerImageUrl={'/bannerMessaging.png'}>
+                            <h2 data-testid={'title'}>Nachrichten</h2>
+                        </Header>
+                    )}
+                    <MessagingView />
+                </Main>
+                <Sidebar isEmpty />
+            </>
+        );
     }
-
-    return (
-        <>
-            <Main>
-                {!isMobile && (
-                    <Header bannerImageUrl={'/bannerMessaging.png'}>
-                        <h2 data-testid={'title'}>Nachrichten</h2>
-                    </Header>
-                )}
-                <MessagingView />
-            </Main>
-            <Sidebar isEmpty />
-        </>
-    );
-};
+);
+MessagingPage.displayName = 'MessagingPage';

@@ -20,7 +20,7 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md,graphql}": [
       "prettier --write"
     ]
   },
@@ -125,7 +125,7 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-lodash": "^3.3.4",
     "css-loader": "^6.5.1",
-    "eslint": "^8.2.0",
+    "eslint": "^7.32.0",
     "eslint-config-next": "^12.0.4",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

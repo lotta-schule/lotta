@@ -2,37 +2,25 @@ import { UserGroupModel } from './UserGroupModel';
 import { UserModel } from './UserModel';
 import { ID } from './ID';
 
-export enum ChatType {
-    DirectMessage = 'DM',
-    GroupChat = 'GC',
+export type NewMessageDestination =
+    | { group: UserGroupModel; user?: never }
+    | { user: UserModel; group?: never };
+
+export interface ConversationModel {
+    id: ID;
+    insertedAt: string;
+    updatedAt: string;
+    unreadMessages?: number;
+    groups: UserGroupModel[];
+    users: UserModel[];
+    messages: MessageModel[];
 }
 
-interface MessageToUser {
-    recipientUser: UserModel;
-    recipientGroup?: undefined;
-    messageType: ChatType.DirectMessage;
-}
-
-interface MessageToGroup {
-    recipientUser?: undefined;
-    recipientGroup: UserGroupModel;
-    messageType: ChatType.GroupChat;
-}
-
-export type MessageToEitherUserOrGroup = MessageToUser | MessageToGroup;
-
-interface MessageWithoutDestination {
+interface MessageModel {
     id: ID;
     insertedAt: string;
     updatedAt: string;
     content: string;
-    senderUser: UserModel;
-}
-
-export type MessageModel = MessageWithoutDestination &
-    MessageToEitherUserOrGroup;
-
-export interface ThreadRepresentation {
-    messageType: ChatType;
-    counterpart: UserModel | UserGroupModel;
+    user: UserModel;
+    conversation?: ConversationModel;
 }

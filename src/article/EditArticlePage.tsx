@@ -62,9 +62,9 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
         // before redirecting the user back to the article page, in order not to see the
         // "Do you really want to leave" screen
         if (updatedArticleData?.article && isArticleDirty === false) {
-            console.log(router.push(ArticleUtil.getPath(article)));
+            router.push(ArticleUtil.getPath(article));
         }
-    }, [updatedArticleData, isArticleDirty]);
+    }, [updatedArticleData, isArticleDirty, article, router]);
 
     useSubscription<{ article: ArticleModel }, { id: ID }>(
         ArticleIsUpdatedSubscription,

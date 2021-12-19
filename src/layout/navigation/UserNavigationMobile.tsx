@@ -20,7 +20,6 @@ import { User, Article } from 'util/model';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
-import { useNewMessagesBadgeNumber } from 'messaging/hook/useNewMessagesBadgeNumber';
 import { useRouter } from 'next/router';
 import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
 import Link from 'next/link';
@@ -30,7 +29,7 @@ import styles from './UserNavigationMobile.module.scss';
 export const UserNavigationMobile = React.memo(() => {
     const router = useRouter();
     const currentUser = useCurrentUser();
-    const newMessagesBadgeNumber = useNewMessagesBadgeNumber();
+    const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
     const onLogout = useOnLogout();
 
     const { data: unpublishedArticlesData } = useQuery<{
