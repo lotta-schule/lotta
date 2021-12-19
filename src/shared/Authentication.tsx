@@ -31,15 +31,15 @@ export const Authentication = React.memo(() => {
                     { id: ID }
                 >({
                     query: GetConversationQuery,
-                    variables: { id: message.conversation.id },
+                    variables: { id: message.conversation!.id },
                 });
                 const conversation = {
                     ...readConversationResult?.conversation,
                     ...message.conversation,
                     messages: [
+                        message,
                         ...(readConversationResult?.conversation.messages ??
                             []),
-                        message,
                     ],
                 };
                 client.writeQuery({
@@ -58,11 +58,10 @@ export const Authentication = React.memo(() => {
                                 ...conversation,
                                 unreadMessages:
                                     (readConversationsResult?.conversations?.find(
-                                        (c) => c.id === message.conversation.id
+                                        (c) => c.id === message.conversation!.id
                                     )?.unreadMessages ?? 0) + 1,
-                                messages: conversation.messages.map(
-                                    (c: ConversationModel) =>
-                                        pick(c, ['id', '__typename'])
+                                messages: conversation.messages.map((c) =>
+                                    pick(c, ['id', '__typename'])
                                 ),
                             },
                             ...(readConversationsResult?.conversations?.filter(

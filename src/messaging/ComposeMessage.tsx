@@ -10,6 +10,7 @@ import {
     ConversationModel,
     ID,
 } from 'model';
+import { Message } from 'util/model/Message';
 import { useMutation } from '@apollo/client';
 import pick from 'lodash/pick';
 
@@ -18,7 +19,6 @@ import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 
 import styles from './ComposeMessage.module.scss';
-import { Message } from 'util/model/Message';
 
 export interface ComposeMessageProps {
     destination: NewMessageDestination;
@@ -61,15 +61,15 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                         { id: ID }
                     >({
                         query: GetConversationQuery,
-                        variables: { id: data.message.conversation.id },
+                        variables: { id: data.message.conversation!.id },
                     });
                     const conversation = {
                         ...data.message.conversation,
                         ...readConversationResult?.conversation,
                         messages: [
+                            data.message,
                             ...(readConversationResult?.conversation.messages ??
                                 []),
-                            data.message,
                         ],
                     };
                     cache.writeQuery({
@@ -86,9 +86,8 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                             conversations: [
                                 {
                                     ...conversation,
-                                    messages: conversation.messages.map(
-                                        (c: ConversationModel) =>
-                                            pick(c, ['id', '__typename'])
+                                    messages: conversation.messages.map((c) =>
+                                        pick(c, ['id', '__typename'])
                                     ),
                                 },
                                 ...(readConversationsResult?.conversations?.filter(
@@ -103,7 +102,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
             onCompleted: ({ message }) => {
                 setContent('');
                 inputRef.current?.focus();
-                onSent?.(message);
+                onSent?.(message as MessageModel);
             },
         });
 
