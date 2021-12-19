@@ -4,6 +4,8 @@
 
     .downloadItemWrapper {
         margin: calc(2 * var(--lotta-spacing)) 16.6%;
+        background-color: rgba(var(--lotta-primary-color), 0.1);
+        padding: 0.5em;
         @media screen and (max-width: $max-sm) {
             margin-right: 0;
             margin-left: 0;
@@ -41,5 +43,9 @@
 
     .filename {
         font-size: 15px; // TODO: convert to rem
+    }
+
+    .dragHandle {
+        fill: rgba(var(--lotta-text-color), 0.7);
     }
 }

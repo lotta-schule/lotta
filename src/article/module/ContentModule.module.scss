@@ -10,16 +10,21 @@
         border-width: 1px;
     }
     &.dragging {
-        border-color: l_color(secondary);
+        border-color: l_color(primary);
         .dragbar {
-            background-color: l_color(secondary);
+            background-color: l_color(primary, 0.6);
             opacity: 1;
         }
     }
     &:hover,
-    &:focus-within,
-    &.active {
+    &:focus-within {
         border-color: l_color(highlight);
+        .dragbar {
+            opacity: 0.8;
+        }
+    }
+    &.active {
+        border-color: l_color(primary);
         .dragbar {
             opacity: 0.8;
         }
@@ -41,8 +46,10 @@
 
 .leftButtonSection {
     display: flex;
+    color: rgba(var(--lotta-text-color), 0.7);
     & > * {
         margin-right: var(--lotta-spacing);
+        margin-left: var(--lotta-spacing);
     }
 }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DragHandle, Delete } from '@material-ui/icons';
+import { Delete } from '@material-ui/icons';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { ContentModuleModel, FileModel } from 'model';
 import { Button } from 'shared/general/button/Button';
@@ -8,6 +8,7 @@ import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { FileSize } from 'util/FileSize';
 
 import styles from './Download.module.scss';
+import { DragHandle } from 'shared/general/icon';
 
 export interface EditProps {
     contentModule: ContentModuleModel;
@@ -36,7 +37,7 @@ export const Edit = React.memo<EditProps>(
         };
 
         return (
-            <div>
+            <div className={styles.root}>
                 <DragDropContext
                     onDragEnd={({ destination, source }) => {
                         if (!destination) {
@@ -122,7 +123,11 @@ export const Edit = React.memo<EditProps>(
                                                         <span
                                                             {...draggableProvided.dragHandleProps}
                                                         >
-                                                            <DragHandle />
+                                                            <DragHandle
+                                                                className={
+                                                                    styles.dragHandle
+                                                                }
+                                                            />
                                                         </span>
                                                         <div>
                                                             <div
