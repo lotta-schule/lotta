@@ -4,8 +4,6 @@ defmodule Lotta.Release do
   """
   require Logger
 
-  import Ecto.Query
-
   alias Lotta.Repo
   alias Ecto.Migrator
 
@@ -66,40 +64,6 @@ defmodule Lotta.Release do
         @elasticsearch_indexes,
         &Elasticsearch.Index.hot_swap(cluster, &1)
       )
-    end)
-  end
-
-  def migrate_files_to_default_remote_storage() do
-    migrate_filelikes_in_chunks(Api.Storage.File)
-    migrate_filelikes_in_chunks(Api.Storage.FileConversion)
-  end
-
-  defp migrate_filelikes_in_chunks(module) do
-    store = Lotta.Storage.RemoteStorage.default_store()
-
-    from(f in module,
-      join: rs in Api.Storage.RemoteStorageEntity,
-      on: f.remote_storage_entity_id == rs.id,
-      where: rs.store_name != ^store,
-      preload: [:remote_storage_entity]
-    )
-    |> Repo.all()
-    |> Enum.chunk_every(10)
-    |> Enum.each(fn files_chunk ->
-      files_chunk
-      |> Enum.each(fn file ->
-        file
-        |> Lotta.Storage.set_remote_storage(store)
-        |> case do
-          {:error, error} ->
-            Logger.error("#{error}: Error migrating file #{file.id} to #{store}")
-
-          _ ->
-            {:ok, file}
-        end
-      end)
-
-      :timer.sleep(250)
     end)
   end
 

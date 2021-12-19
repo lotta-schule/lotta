@@ -6,7 +6,7 @@ defmodule LottaWeb.MessagesResolver do
 
   alias LottaWeb.Context
   alias Lotta.{Accounts, Messages}
-  alias Lotta.Messages.Conversation
+  alias Lotta.Messages.{Conversation, Message}
 
   def resolve_conversation_unread_messages(_args, %{
         context: %Context{current_user: user},
@@ -36,25 +36,7 @@ defmodule LottaWeb.MessagesResolver do
   end
 
   def create(%{message: message}, %{context: %Context{current_user: current_user}}) do
-    fetch_id = fn key ->
-      case message[key] do
-        %{id: id} ->
-          String.to_integer(id)
-
-        _ ->
-          nil
-      end
-    end
-
-    recipient_user =
-      if user_id = fetch_id.(:recipient_user) do
-        Accounts.get_user(user_id)
-      end
-
-    recipient_group =
-      if group_id = fetch_id.(:recipient_group) do
-        Accounts.get_user_group(group_id)
-      end
+    {recipient_user, recipient_group} = get_message_recipient(message)
 
     error =
       cond do
@@ -76,6 +58,30 @@ defmodule LottaWeb.MessagesResolver do
         message[:content]
       )
       |> format_errors("Nachricht konnte nicht versandt werden.")
+  end
+
+  defp get_message_recipient(%Message{} = message) do
+    fetch_id = fn key ->
+      case message[key] do
+        %{id: id} ->
+          String.to_integer(id)
+
+        _ ->
+          nil
+      end
+    end
+
+    user =
+      if user_id = fetch_id.(:recipient_user) do
+        Accounts.get_user(user_id)
+      end
+
+    group =
+      if group_id = fetch_id.(:recipient_group) do
+        Accounts.get_user_group(group_id)
+      end
+
+    {user, group}
   end
 
   def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do

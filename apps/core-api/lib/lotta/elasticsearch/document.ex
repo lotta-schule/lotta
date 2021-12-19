@@ -56,30 +56,25 @@ defimpl Elasticsearch.Document, for: Lotta.Content.Article do
     end
   end
 
-  defp content_module_content(%ContentModule{type: type, content: content}) do
-    case type do
-      "title" ->
-        content["title"]
+  defp content_module_content(%ContentModule{type: "title", content: content}),
+    do: content["title"]
 
-      "audio" ->
-        Enum.join(content["captions"] || [], " || ")
+  defp content_module_content(%ContentModule{type: "audio", content: content}),
+    do: Enum.join(content["captions"] || [], " || ")
 
-      "video" ->
-        Enum.join(content["captions"] || [], " || ")
+  defp content_module_content(%ContentModule{type: "video", content: content}),
+    do: Enum.join(content["captions"] || [], " || ")
 
-      "image_collection" ->
-        Enum.join(content["captions"] || [], " || ")
+  defp content_module_content(%ContentModule{type: "image_collection", content: content}),
+    do: Enum.join(content["captions"] || [], " || ")
 
-      "text" ->
-        find_text_from_slate_node(content)
+  defp content_module_content(%ContentModule{type: "text", content: content}),
+    do: find_text_from_slate_node(content)
 
-      "image" ->
-        content["caption"]
+  defp content_module_content(%ContentModule{type: "image", content: content}),
+    do: content["caption"]
 
-      _ ->
-        nil
-    end
-  end
+  defp content_module_content(_), do: nil
 
   def find_text_from_slate_node(%{"nodes" => nodes}) when is_list(nodes) do
     nodes

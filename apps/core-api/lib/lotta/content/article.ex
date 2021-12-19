@@ -155,7 +155,6 @@ defmodule Lotta.Content.Article do
     if changeset.valid? && get_change(changeset, :ready_to_publish) do
       case apply_action(changeset, :update) do
         {:ok, article} ->
-          # TODO: This should b moved to Accounts I think
           for admin <- Accounts.list_admin_users() do
             Email.article_ready_mail(admin, article)
             |> Mailer.deliver_later()
