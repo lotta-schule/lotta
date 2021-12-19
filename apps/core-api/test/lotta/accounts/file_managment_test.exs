@@ -21,7 +21,7 @@ defmodule Lotta.Accounts.FileManagmentTest do
 
   describe "total_user_files_size/1" do
     test "should return the correct size of total files for a user", %{user: user} do
-      assert FileManagment.total_user_files_size(user) == 86016
+      assert FileManagment.total_user_files_size(user) == 86_016
     end
   end
 end

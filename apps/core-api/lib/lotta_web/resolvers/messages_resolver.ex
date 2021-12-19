@@ -69,16 +69,13 @@ defmodule LottaWeb.MessagesResolver do
           nil
       end
 
-    if error do
-      error
-    else
+    error ||
       Messages.create_message(
         current_user,
         recipient_user || recipient_group,
         message[:content]
       )
       |> format_errors("Nachricht konnte nicht versandt werden.")
-    end
   end
 
   def delete(%{id: id}, %{context: %Context{current_user: current_user}}) do

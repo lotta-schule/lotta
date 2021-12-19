@@ -1,4 +1,8 @@
 defmodule Lotta.Storage.RemoteStorage do
+  @moduledoc """
+  Handle remote storage for user-generated content.
+  Manges writing and reading to different stores.
+  """
   alias Lotta.Storage.RemoteStorageEntity
 
   @type config :: %{

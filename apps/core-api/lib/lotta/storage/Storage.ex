@@ -1,4 +1,7 @@
 defmodule Lotta.Storage do
+  @moduledoc """
+  Handles storage for files uploaded by the user.
+  """
   require Logger
 
   import Ecto.Query
@@ -451,33 +454,10 @@ defmodule Lotta.Storage do
     end)
   end
 
-  defp filetype_from(content_type) do
-    case content_type do
-      "image/png" -> "image"
-      "image/jpg" -> "image"
-      "image/jpeg" -> "image"
-      "image/bmp" -> "image"
-      "image/gif" -> "image"
-      "image/svg" -> "image"
-      "image/svg+xml" -> "image"
-      "audio/mp3" -> "audio"
-      "audio/mpeg" -> "audio"
-      "audio/mpg" -> "audio"
-      "audio/wav" -> "audio"
-      "audio/x-wav" -> "audio"
-      "audio/m4p" -> "audio"
-      "audio/x-m4p" -> "audio"
-      "audio/m4a" -> "audio"
-      "audio/x-m4a" -> "audio"
-      "video/mp4" -> "video"
-      "video/webm" -> "video"
-      "video/mov" -> "video"
-      "video/m4v" -> "video"
-      "video/x-m4v" -> "video"
-      "video/quicktime" -> "video"
-      "application/pdf" -> "pdf"
-      "x-application/pdf" -> "pdf"
-      _ -> "misc"
-    end
-  end
+  defp filetype_from("image/" <> _format), do: "image"
+  defp filetype_from("audio/" <> _format), do: "audio"
+  defp filetype_from("video/" <> _format), do: "video"
+  defp filetype_from("application/pdf"), do: "pdf"
+  defp filetype_from("x-application/pdf"), do: "pdf"
+  defp filetype_from(_), do: "misc"
 end

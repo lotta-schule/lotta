@@ -37,12 +37,12 @@ defmodule LottaWeb.CategoryResolver do
   def update(%{id: id, category: category_params}, _info) do
     category = Tenants.get_category(id)
 
-    if not is_nil(category) do
+    if is_nil(category) do
+      {:error, "Kategorie mit der id #{id} nicht gefunden."}
+    else
       category
       |> Tenants.update_category(category_params)
       |> format_errors("Bearbeiten der Kategorie fehlgeschlagen.")
-    else
-      {:error, "Kategorie mit der id #{id} nicht gefunden."}
     end
   end
 

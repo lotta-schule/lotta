@@ -74,13 +74,13 @@ defmodule Lotta.MessagesTest do
       user2 = Fixtures.fixture(:registered_user, %{email: "new@mymail.com"})
       conversation = Fixtures.fixture(:create_conversation_users, [user1, user2])
 
-      {:ok, baseTime} = DateTime.new(~D[2020-01-01], ~T[00:00:00], "Etc/UTC")
+      {:ok, base_time} = DateTime.new(~D[2020-01-01], ~T[00:00:00], "Etc/UTC")
 
       user_messages =
         Enum.map(-7..6, fn delta ->
           date =
             DateTime.add(
-              baseTime,
+              base_time,
               :timer.hours(delta),
               :millisecond,
               Calendar.UTCOnlyTimeZoneDatabase
@@ -103,7 +103,7 @@ defmodule Lotta.MessagesTest do
           [
             user_id: user1.id,
             conversation_id: UUID.string_to_binary!(conversation.id),
-            last_seen: baseTime
+            last_seen: base_time
           ]
         ],
         prefix: @prefix

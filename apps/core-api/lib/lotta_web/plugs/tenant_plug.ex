@@ -1,4 +1,13 @@
 defmodule LottaWeb.TenantPlug do
+  @moduledoc """
+  This plug reads the current tenant and sets it on the context.
+  It can either be set via the host or explicitly by setting the
+  "tenant" header to "slug:<slug>".
+
+  When reading the tenant from the host, either the tenant is found
+  by domain (matching a custom domain setup for the tenant), or by
+  slug, matching <slug>.<base-domain> (eg <slug>.lotta.schule).
+  """
   import Plug.Conn
 
   alias Lotta.{Repo, Tenants}
@@ -26,9 +35,10 @@ defmodule LottaWeb.TenantPlug do
   end
 
   defp tenant_by_slug_header(conn) do
-    with ["slug:" <> slug] <- get_req_header(conn, "tenant") do
-      Tenants.get_tenant_by_slug(slug)
-    else
+    case get_req_header(conn, "tenant") do
+      ["slug:" <> slug] ->
+        Tenants.get_tenant_by_slug(slug)
+
       _ ->
         nil
     end

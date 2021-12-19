@@ -28,7 +28,7 @@ defmodule LottaWeb.ContentModuleResolver do
             |> Map.put(
               "attachments",
               Map.get(acc, "attachments", []) ++
-                if(!is_nil(attachment), do: [attachment], else: [])
+                if(is_nil(attachment), do: [], else: [attachment])
             )
           end)
 

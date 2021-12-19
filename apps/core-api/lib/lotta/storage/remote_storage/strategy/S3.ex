@@ -1,4 +1,8 @@
 defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
+  @moduledoc """
+  S3 adapter for `Lotta.Storage.RemoteStorage`.
+  Reading and writing to S3-compatible storage.
+  """
   alias Lotta.Storage.RemoteStorageEntity
   alias Plug.Upload
   alias ExAws.S3
@@ -42,13 +46,13 @@ defmodule Lotta.Storage.RemoteStorage.Strategy.S3 do
   end
 
   def get_http_url(%RemoteStorageEntity{path: path}, options, config) do
-    requestDownload = Keyword.get(options, :download) == true
-    baseUrl = "#{config[:config][:endpoint]}/#{config[:config][:bucket]}/#{path}"
+    request_download = Keyword.get(options, :download) == true
+    base_url = "#{config[:config][:endpoint]}/#{config[:config][:bucket]}/#{path}"
 
-    if requestDownload do
-      "#{baseUrl}?response-content-disposition=attachment"
+    if request_download do
+      "#{base_url}?response-content-disposition=attachment"
     else
-      baseUrl
+      base_url
     end
   end
 end

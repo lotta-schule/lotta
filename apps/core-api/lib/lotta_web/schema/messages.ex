@@ -70,7 +70,6 @@ defmodule LottaWeb.Schema.Messages do
           if tenant do
             tid = tenant.id
 
-            # TODO: react to new messages
             case conversation do
               %Conversation{groups: [], users: users} ->
                 Enum.map(users, &"#{tid}:messages:user:#{&1.id}")
