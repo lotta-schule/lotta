@@ -313,3 +313,4 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
         );
     }
 );
+CategoryNavigation.displayName = 'AdministrationCategoryNavigation';

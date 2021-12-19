@@ -249,3 +249,4 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
         </>
     );
 });
+CategoryPage.displayName = 'CategoryPage';

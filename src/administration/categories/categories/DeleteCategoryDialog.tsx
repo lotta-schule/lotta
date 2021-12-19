@@ -116,7 +116,7 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={(e: React.MouseEvent) => onRequestClose()}
+                        onClick={(_e: React.MouseEvent) => onRequestClose()}
                         disabled={isLoading}
                     >
                         Abbrechen
@@ -136,3 +136,4 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
         );
     }
 );
+DeleteCategoryDialog.displayName = 'DeleteCategoryDialog';

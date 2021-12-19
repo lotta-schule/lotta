@@ -142,3 +142,4 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
         );
     }
 );
+DirectoryTableRow.displayName = 'DirectoryTableRow';

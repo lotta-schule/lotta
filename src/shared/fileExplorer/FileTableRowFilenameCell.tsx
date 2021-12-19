@@ -162,3 +162,4 @@ export const FileTableRowFilenameCell =
             }
         }
     );
+FileTableRowFilenameCell.displayName = 'FileTableRowFilenameCell';

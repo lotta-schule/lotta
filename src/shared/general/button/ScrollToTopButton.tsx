@@ -39,3 +39,4 @@ export const ScrollToTopButton = React.memo(() => {
         />
     );
 });
+ScrollToTopButton.displayName = 'ScrollToTopButton';

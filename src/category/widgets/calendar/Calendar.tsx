@@ -172,3 +172,4 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
     }
     return null;
 });
+Calendar.displayName = 'CalendarWidget';

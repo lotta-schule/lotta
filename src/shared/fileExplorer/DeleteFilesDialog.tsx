@@ -108,3 +108,4 @@ export const DeleteFilesDialog = React.memo(() => {
         </Dialog>
     );
 });
+DeleteFilesDialog.displayName = 'DeleteFilesDialog';

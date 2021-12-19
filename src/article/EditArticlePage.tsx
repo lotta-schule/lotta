@@ -250,3 +250,4 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
         </>
     );
 });
+EditArticlePage.displayName = 'EditArticlePage';

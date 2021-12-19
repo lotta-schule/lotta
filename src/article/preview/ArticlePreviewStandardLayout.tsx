@@ -374,3 +374,4 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
         );
     }
 );
+ArticlePreviewStandardLayout.displayName = 'ArticlePreviewStandardLayout';

@@ -40,9 +40,8 @@ export type TestSetupOptions = {
     };
 } & ApolloMocksOptions;
 
-const ProviderFactory =
-    (options: TestSetupOptions): React.FC =>
-    ({ children }) => {
+const ProviderFactory = (options: TestSetupOptions): React.FC => {
+    const ComponentClass: React.FC = ({ children }) => {
         const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
             pick(options, ['currentUser', 'tenant', 'categories'])
         );
@@ -108,6 +107,9 @@ const ProviderFactory =
         );
     };
 
+    return ComponentClass;
+};
+
 const customRender = (
     ui: React.ReactElement,
     renderOptions: Omit<RenderOptions, 'wrapper'> = {},
@@ -140,27 +142,25 @@ export interface TestFileExplorerContextProviderProps {
     defaultValue?: Partial<typeof defaultFileExplorerState>;
     onUpdateState?(currentState: typeof defaultFileExplorerState): void;
 }
-export const TestFileExplorerContextProvider: React.FC<TestFileExplorerContextProviderProps> =
-    ({ children, defaultValue, onUpdateState }) => {
-        const [state, dispatch] = React.useReducer<
-            React.Reducer<
-                typeof defaultFileExplorerState,
-                FileExploreerStateAction
-            >
-        >(fileExplorerStateReducer, {
-            ...defaultFileExplorerState,
-            ...defaultValue,
-        });
-        React.useEffect(() => {
-            onUpdateState?.(state);
-            // eslint-disable-next-line
-        }, [state]);
-        return (
-            <fileExplorerContext.Provider value={[state, dispatch]}>
-                {children}
-            </fileExplorerContext.Provider>
-        );
-    };
+export const TestFileExplorerContextProvider: React.FC<
+    TestFileExplorerContextProviderProps
+> = ({ children, defaultValue, onUpdateState }) => {
+    const [state, dispatch] = React.useReducer<
+        React.Reducer<typeof defaultFileExplorerState, FileExploreerStateAction>
+    >(fileExplorerStateReducer, {
+        ...defaultFileExplorerState,
+        ...defaultValue,
+    });
+    React.useEffect(() => {
+        onUpdateState?.(state);
+        // eslint-disable-next-line
+    }, [state]);
+    return (
+        <fileExplorerContext.Provider value={[state, dispatch]}>
+            {children}
+        </fileExplorerContext.Provider>
+    );
+};
 
 // override render method
 export { customRender as render };

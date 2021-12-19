@@ -126,3 +126,4 @@ export const MessageBubble = React.memo<MessageBubbleProps>(
         );
     }
 );
+MessageBubble.displayName = 'MessageBubble';

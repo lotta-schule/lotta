@@ -102,3 +102,4 @@ export const UpdateEmailDialog = React.memo<UpdateEmailDialogProps>(
         );
     }
 );
+UpdateEmailDialog.displayName = 'UpdateEmailDialog';

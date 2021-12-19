@@ -159,3 +159,4 @@ export const WidgetList = React.memo(() => {
         </div>
     );
 });
+WidgetList.displayName = 'AdministrationWidgetList';

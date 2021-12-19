@@ -146,3 +146,4 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
         );
     }
 );
+ComposeMessage.displayName = 'MessageCompose';

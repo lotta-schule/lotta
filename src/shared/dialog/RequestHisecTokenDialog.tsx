@@ -93,3 +93,4 @@ export const RequestHisecTokenDialog = React.memo<RequestHisecTokenDialogProps>(
         );
     }
 );
+RequestHisecTokenDialog.displayName = 'RequestHisecTokenDialog';

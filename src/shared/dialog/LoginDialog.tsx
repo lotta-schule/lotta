@@ -131,3 +131,4 @@ export const LoginDialog = React.memo<LoginDialogProps>(
         );
     }
 );
+LoginDialog.displayName = 'LoginDialog';

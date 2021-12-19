@@ -104,3 +104,4 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
         );
     }
 );
+CreateUserGroupDialog.displayName = 'CreateUserGroupDialog';

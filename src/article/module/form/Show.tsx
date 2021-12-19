@@ -133,3 +133,4 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
         </form>
     );
 });
+Show.displayName = 'FormContentModuleShow';

@@ -203,3 +203,4 @@ export const GroupSelect = React.memo<GroupSelectProps>(
         );
     }
 );
+GroupSelect.displayName = 'GroupSelect';

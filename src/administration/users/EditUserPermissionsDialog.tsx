@@ -161,3 +161,4 @@ export const EditUserPermissionsDialog =
             </Dialog>
         );
     });
+EditUserPermissionsDialog.displayName = 'EditUserPermissionsDialog';

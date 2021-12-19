@@ -224,3 +224,4 @@ export const UserNavigationMobile = React.memo(() => {
         </>
     );
 });
+UserNavigationMobile.displayName = 'UserNavigationMobile';

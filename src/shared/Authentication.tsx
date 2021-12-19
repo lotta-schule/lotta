@@ -82,3 +82,4 @@ export const Authentication = React.memo(() => {
 
     return null;
 });
+Authentication.displayName = 'Authentication';

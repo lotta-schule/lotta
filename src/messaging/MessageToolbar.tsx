@@ -108,3 +108,4 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
         );
     }
 );
+MessageToolbar.displayName = 'MessageToolbar';

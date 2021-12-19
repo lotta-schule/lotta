@@ -143,3 +143,4 @@ export const UpdatePasswordDialog = React.memo<UpdatePasswordDialogProps>(
         );
     }
 );
+UpdatePasswordDialog.displayName = 'UpdatePasswordDialog';

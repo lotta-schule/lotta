@@ -114,3 +114,4 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
         );
     }
 );
+CreateNewDirectoryDialog.displayName = 'CreateNewDirectoryDialog';
