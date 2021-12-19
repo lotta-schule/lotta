@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-rows: 1fr 1fr 1fr;
-    height: 50vh;
+    height: 100%;
 
     .button {
         display: flex;
