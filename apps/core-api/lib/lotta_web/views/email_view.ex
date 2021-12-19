@@ -96,7 +96,7 @@ defmodule LottaWeb.EmailView do
   end
 
   defp default_logo_data_url() do
-    Application.app_dir(:lotta, "priv/static/images/lotta.png")
+    Application.app_dir(:lotta, "priv/static/lotta.png")
     |> File.read()
     |> case do
       {:ok, binary} ->

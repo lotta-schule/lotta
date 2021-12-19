@@ -18,7 +18,7 @@ cache:
     - _build/
 
 .elixir: &elixir
-  image: elixir:1.12
+  image: elixir:1.13
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
@@ -187,14 +187,10 @@ deploy:production:
     - tags
 
 pages:
+  extends: .elixir
   stage: build
   environment:
     name: production
-  image: elixir:1.12
-  before_script:
-    - mix local.hex --force
-    - mix local.rebar --force
-    - mix deps.get
   script:
     - mix docs
     - mv doc public
