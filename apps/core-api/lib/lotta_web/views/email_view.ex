@@ -86,14 +86,14 @@ defmodule LottaWeb.EmailView do
     |> Repo.preload(:users)
     |> Map.get(:users, [])
     |> Enum.map_join(
+      ", ",
       fn user ->
         if not is_nil(user.nickname) && String.length(user.nickname) > 0 do
           user.nickname
         else
           user.name
         end
-      end,
-      ", "
+      end
     )
   end
 

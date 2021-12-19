@@ -83,10 +83,10 @@ defmodule LottaWeb.TokenControllerTest do
         |> String.split(".")
         |> Enum.with_index()
         |> Enum.map_join(
+          ".",
           fn {token_part, i} ->
             if i < 2, do: token_part, else: String.reverse(token_part)
-          end,
-          "."
+          end
         )
 
       conn =
