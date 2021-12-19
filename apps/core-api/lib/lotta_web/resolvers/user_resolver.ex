@@ -7,6 +7,7 @@ defmodule LottaWeb.UserResolver do
   import LottaWeb.ErrorHelpers
 
   alias LottaWeb.Context
+  alias LottaWeb.Auth.AccessToken
   alias Lotta.Accounts.User
   alias Lotta.{Accounts, Repo, Mailer, Messages, Storage}
 
@@ -153,7 +154,7 @@ defmodule LottaWeb.UserResolver do
   def request_hisec_token(%{password: password}, %{context: %Context{current_user: current_user}}) do
     with true <- verify_user_pass(current_user, password),
          {:ok, hisec_token, _claims} <-
-           LottaWeb.Auth.AccessToken.encode_and_sign(current_user, %{}, token_type: "hisec") do
+           AccessToken.encode_and_sign(current_user, %{}, token_type: "hisec") do
       {:ok, hisec_token}
     else
       false ->

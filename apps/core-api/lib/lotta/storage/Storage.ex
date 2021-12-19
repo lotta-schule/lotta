@@ -11,6 +11,7 @@ defmodule Lotta.Storage do
   alias Ecto.Changeset
   alias Lotta.Repo
   alias Lotta.Accounts.User
+  alias Lotta.Queue.MediaConversionRequestPublisher
   alias Lotta.Storage.{Directory, RemoteStorage}
 
   def data() do
@@ -70,7 +71,7 @@ defmodule Lotta.Storage do
     |> Repo.transaction()
     |> case do
       {:ok, %{complete_file: file}} ->
-        Lotta.Queue.MediaConversionRequestPublisher.send_conversion_request(file)
+        MediaConversionRequestPublisher.send_conversion_request(file)
         {:ok, file}
 
       {:error, reason} ->
