@@ -6,9 +6,8 @@ defmodule LottaWeb.ArticleResolver do
   import Lotta.Accounts.Permissions
   import LottaWeb.ErrorHelpers
 
-  alias Lotta.Repo
-  alias Lotta.Content
   alias LottaWeb.Context
+  alias Lotta.{Content, Repo}
 
   def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
     article = Content.get_article(String.to_integer(id))
@@ -113,7 +112,7 @@ defmodule LottaWeb.ArticleResolver do
 
     with {id, _} <- Integer.parse(id, 10),
          article when not is_nil(article) <- Lotta.Content.get_article(id),
-         true <- Lotta.Accounts.Permissions.can_read?(current_user, article) do
+         true <- can_read?(current_user, article) do
       {:ok, topic: ["#{tid}:article:#{id}"]}
     else
       nil ->

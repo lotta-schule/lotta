@@ -12,7 +12,7 @@ defmodule Lotta.Accounts do
   alias Lotta.Mailer
   alias Lotta.Accounts.{User, UserGroup, GroupEnrollmentToken}
   alias Lotta.Storage
-  alias Lotta.Storage.{File}
+  alias Lotta.Storage.File
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -179,7 +179,7 @@ defmodule Lotta.Accounts do
     iex> list_groups_for_enrollment_token("token")
     [%UserGroup{}, ...]
   """
-  @spec list_groups_for_enrollment_token(String.t()) :: [%GroupEnrollmentToken{}]
+  @spec list_groups_for_enrollment_token(String.t()) :: [GroupEnrollmentToken.t()]
   def list_groups_for_enrollment_token(token) when is_binary(token) do
     from(g in UserGroup,
       join: t in GroupEnrollmentToken,
@@ -187,7 +187,7 @@ defmodule Lotta.Accounts do
       where: t.token == ^token,
       distinct: true
     )
-    |> Repo.all(prefix: Ecto.get_meta(token, :prefix))
+    |> Repo.all(prefix: Repo.get_prefix())
   end
 
   @doc """
@@ -200,7 +200,7 @@ defmodule Lotta.Accounts do
     [%UserGroup{}, ...]
   """
   @spec list_groups_for_enrollment_tokens([String.t()], Tenant.t() | nil) :: [
-          %GroupEnrollmentToken{}
+          GroupEnrollmentToken.t()
         ]
   def list_groups_for_enrollment_tokens(tokens, tenant \\ nil) when is_list(tokens) do
     prefix = if tenant, do: tenant.prefix, else: Repo.get_prefix()
@@ -493,10 +493,10 @@ defmodule Lotta.Accounts do
   """
   @spec see_user(User.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def see_user(%User{} = user) do
-    user
-    |> Ecto.Changeset.change(%{
-      last_seen: DateTime.truncate(DateTime.utc_now(), :second)
-    })
-    |> Repo.update()
+    Repo.update(
+      Changeset.change(user, %{
+        last_seen: DateTime.truncate(DateTime.utc_now(), :second)
+      })
+    )
   end
 end

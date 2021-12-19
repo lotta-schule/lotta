@@ -11,11 +11,10 @@ defmodule LottaWeb.Schema.Messages.Message do
 
   object :message do
     field :id, :id
-    field :sender_user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
-    field :recipient_user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
+    field :user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
 
-    field :recipient_group, :user_group,
-      resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Accounts)
+    field :conversation, :conversation,
+      resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Messages)
 
     field :content, :string
     field :inserted_at, :datetime

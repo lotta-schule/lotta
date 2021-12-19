@@ -4,14 +4,15 @@ defmodule Lotta.Release do
   """
   require Logger
 
-  import Ecto.Query
-
   alias Lotta.Repo
+  alias Lotta.Tenants.{Tenant, TenantSelector}
+  alias Lotta.Elasticsearch.Cluster
+  alias Elasticsearch.Index
   alias Ecto.Migrator
 
   @app :lotta
 
-  @elasticsearch_clusters [Lotta.Elasticsearch.Cluster]
+  @elasticsearch_clusters [Cluster]
   @elasticsearch_indexes [:articles]
 
   def migrate do
@@ -32,10 +33,10 @@ defmodule Lotta.Release do
     {:ok, pid} = Repo.start_link(config)
     Repo.put_dynamic_repo(pid)
 
-    Enum.map(
-      Repo.all(Lotta.Tenants.Tenant, prefix: "public"),
+    Enum.each(
+      Repo.all(Tenant, prefix: "public"),
       fn tenant ->
-        Lotta.Tenants.TenantSelector.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
+        TenantSelector.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
       end
     )
 
@@ -64,42 +65,8 @@ defmodule Lotta.Release do
     Enum.each(@elasticsearch_clusters, fn cluster ->
       Enum.each(
         @elasticsearch_indexes,
-        &Elasticsearch.Index.hot_swap(cluster, &1)
+        &Index.hot_swap(cluster, &1)
       )
-    end)
-  end
-
-  def migrate_files_to_default_remote_storage() do
-    migrate_filelikes_in_chunks(Api.Storage.File)
-    migrate_filelikes_in_chunks(Api.Storage.FileConversion)
-  end
-
-  defp migrate_filelikes_in_chunks(module) do
-    store = Lotta.Storage.RemoteStorage.default_store()
-
-    from(f in module,
-      join: rs in Api.Storage.RemoteStorageEntity,
-      on: f.remote_storage_entity_id == rs.id,
-      where: rs.store_name != ^store,
-      preload: [:remote_storage_entity]
-    )
-    |> Repo.all()
-    |> Enum.chunk_every(10)
-    |> Enum.each(fn files_chunk ->
-      files_chunk
-      |> Enum.each(fn file ->
-        file
-        |> Lotta.Storage.set_remote_storage(store)
-        |> case do
-          {:error, error} ->
-            Logger.error("#{error}: Error migrating file #{file.id} to #{store}")
-
-          _ ->
-            {:ok, file}
-        end
-      end)
-
-      :timer.sleep(250)
     end)
   end
 

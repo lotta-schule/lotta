@@ -8,7 +8,7 @@ defmodule LottaWeb.MessagesResolverTest do
   alias LottaWeb.Auth.AccessToken
   alias Lotta.{Repo, Tenants}
   alias Lotta.Accounts.{User, UserGroup}
-  alias Lotta.Messages.Message
+  alias Lotta.Messages.{Conversation, Message}
 
   @prefix "tenant_test"
 
@@ -48,10 +48,15 @@ defmodule LottaWeb.MessagesResolverTest do
         prefix: tenant.prefix
       )
 
+    all_conversations =
+      Conversation
+      |> Repo.all(prefix: tenant.prefix)
+      |> Enum.map(&Repo.preload(&1, [:users, :groups]))
+
     message =
       Repo.one!(
-        from(m in Message,
-          where: m.content == "OK, alles bereit?"
+        from(c in Message,
+          where: c.content == "OK, alles bereit?"
         ),
         prefix: tenant.prefix
       )
@@ -64,30 +69,26 @@ defmodule LottaWeb.MessagesResolverTest do
        user2_jwt: user2_jwt,
        lehrer_group: lehrer_group,
        schueler_group: schueler_group,
+       all_conversations: all_conversations,
        message: message,
        tenant: tenant
      }}
   end
 
-  describe "messages query" do
+  describe "conversations query" do
     @query """
     {
-      messages {
-        content
-        senderUser {
+      conversations {
+        users {
           name
         }
-        recipientUser {
-          name
-        }
-        recipientGroup {
+        groups {
           name
         }
       }
     }
     """
-
-    test "returns all messages for a user", %{user_jwt: user_jwt} do
+    test "returns all conversations for a user", %{user_jwt: user_jwt} do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -97,43 +98,21 @@ defmodule LottaWeb.MessagesResolverTest do
 
       assert res == %{
                "data" => %{
-                 "messages" => [
+                 "conversations" => [
                    %{
-                     "senderUser" => %{"name" => "Christopher Bill"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Alexis Rinaldoni"},
-                     "content" => "Bist du da?"
+                     "users" => [%{"name" => "Christopher Bill"}, %{"name" => "Alexis Rinaldoni"}],
+                     "groups" => []
                    },
                    %{
-                     "senderUser" => %{"name" => "Eike Wiewiorra"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Alexis Rinaldoni"},
-                     "content" => "Ich frag mal in die Gruppe"
-                   },
-                   %{
-                     "senderUser" => %{"name" => "Alexis Rinaldoni"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Eike Wiewiorra"},
-                     "content" => "Bereit für das Deployment"
-                   },
-                   %{
-                     "senderUser" => %{"name" => "Eike Wiewiorra"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Alexis Rinaldoni"},
-                     "content" => "Was meinst du damit?"
-                   },
-                   %{
-                     "senderUser" => %{"name" => "Alexis Rinaldoni"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Eike Wiewiorra"},
-                     "content" => "OK, alles bereit?"
+                     "users" => [%{"name" => "Eike Wiewiorra"}, %{"name" => "Alexis Rinaldoni"}],
+                     "groups" => []
                    }
                  ]
                }
              }
     end
 
-    test "returns all messages for a user's group", %{user2_jwt: user2_jwt} do
+    test "returns all conversations for another user", %{user2_jwt: user2_jwt} do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -143,36 +122,14 @@ defmodule LottaWeb.MessagesResolverTest do
 
       assert res == %{
                "data" => %{
-                 "messages" => [
+                 "conversations" => [
                    %{
-                     "senderUser" => %{"name" => "Eike Wiewiorra"},
-                     "recipientGroup" => %{"name" => "Lehrer"},
-                     "recipientUser" => nil,
-                     "content" => "Alles bereit hier? Wir würden deployen."
+                     "users" => [],
+                     "groups" => [%{"name" => "Lehrer"}]
                    },
                    %{
-                     "senderUser" => %{"name" => "Eike Wiewiorra"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Alexis Rinaldoni"},
-                     "content" => "Ich frag mal in die Gruppe"
-                   },
-                   %{
-                     "senderUser" => %{"name" => "Alexis Rinaldoni"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Eike Wiewiorra"},
-                     "content" => "Bereit für das Deployment"
-                   },
-                   %{
-                     "senderUser" => %{"name" => "Eike Wiewiorra"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Alexis Rinaldoni"},
-                     "content" => "Was meinst du damit?"
-                   },
-                   %{
-                     "senderUser" => %{"name" => "Alexis Rinaldoni"},
-                     "recipientGroup" => nil,
-                     "recipientUser" => %{"name" => "Eike Wiewiorra"},
-                     "content" => "OK, alles bereit?"
+                     "users" => [%{"name" => "Eike Wiewiorra"}, %{"name" => "Alexis Rinaldoni"}],
+                     "groups" => []
                    }
                  ]
                }
@@ -188,13 +145,236 @@ defmodule LottaWeb.MessagesResolverTest do
 
       assert res == %{
                "data" => %{
-                 "messages" => nil
+                 "conversations" => nil
                },
                "errors" => [
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
                    "message" => "Du musst angemeldet sein um das zu tun.",
-                   "path" => ["messages"]
+                   "path" => ["conversations"]
+                 }
+               ]
+             }
+    end
+  end
+
+  describe "conversation query" do
+    @query """
+    query GetConversation($id: ID!) {
+      conversation(id: $id) {
+        users {
+          name
+        }
+        groups {
+          name
+        }
+        messages {
+          content
+          user {
+            name
+          }
+        }
+      }
+    }
+    """
+    test "returns all messages for a conversation with a user", %{
+      user_jwt: user_jwt,
+      user: user,
+      user2: user2,
+      all_conversations: all_conversations
+    } do
+      conversation =
+        all_conversations
+        |> Enum.find(fn c ->
+          Enum.count(c.users) > 0 && Enum.all?(c.users, &(&1.id == user.id || &1.id == user2.id))
+        end)
+
+      assert conversation
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "conversation" => %{
+                   "users" => [%{"name" => "Eike Wiewiorra"}, %{"name" => "Alexis Rinaldoni"}],
+                   "groups" => [],
+                   "messages" => [
+                     %{
+                       "content" => "Ich frag mal in die Gruppe",
+                       "user" => %{"name" => "Eike Wiewiorra"}
+                     },
+                     %{
+                       "content" => "Bereit für das Deployment",
+                       "user" => %{"name" => "Alexis Rinaldoni"}
+                     },
+                     %{
+                       "user" => %{"name" => "Eike Wiewiorra"},
+                       "content" => "Was meinst du damit?"
+                     },
+                     %{
+                       "user" => %{"name" => "Alexis Rinaldoni"},
+                       "content" => "OK, alles bereit?"
+                     }
+                   ]
+                 }
+               }
+             }
+    end
+
+    test "returns all messages for a conversation with a group", %{
+      user2_jwt: user2_jwt,
+      lehrer_group: lehrer_group,
+      all_conversations: all_conversations
+    } do
+      conversation =
+        all_conversations
+        |> Enum.find(fn c ->
+          Enum.count(c.groups) == 1 && List.first(c.groups).id == lehrer_group.id
+        end)
+
+      assert conversation
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user2_jwt}")
+        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "conversation" => %{
+                   "users" => [],
+                   "groups" => [
+                     %{
+                       "name" => "Lehrer"
+                     }
+                   ],
+                   "messages" => [
+                     %{
+                       "user" => %{"name" => "Eike Wiewiorra"},
+                       "content" => "Alles bereit hier? Wir würden deployen."
+                     }
+                   ]
+                 }
+               }
+             }
+    end
+
+    test "returns an error when requesting a conversation between 2 other users", %{
+      user_jwt: user_jwt,
+      user2: user2,
+      all_conversations: all_conversations
+    } do
+      [user | _] = Repo.all(from(User, where: [email: "billy@lotta.schule"]), prefix: @prefix)
+
+      conversation =
+        all_conversations
+        |> Enum.find(fn c ->
+          Enum.count(c.users) && Enum.all?(c.users, &(&1.id == user2.id || &1.id == user.id))
+        end)
+
+      assert conversation
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "conversation" => nil
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Du hast nicht die Rechte, diese Unterhaltung anzusehen.",
+                   "path" => ["conversation"]
+                 }
+               ]
+             }
+    end
+
+    test "returns an error when requesting a conversation for a group the user is not member of",
+         %{
+           user_jwt: user_jwt,
+           lehrer_group: lehrer_group,
+           all_conversations: all_conversations
+         } do
+      conversation =
+        all_conversations
+        |> Enum.find(fn c ->
+          Enum.count(c.groups) == 1 && List.first(c.groups).id == lehrer_group.id
+        end)
+
+      assert conversation
+
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "conversation" => nil
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Du hast nicht die Rechte, diese Unterhaltung anzusehen.",
+                   "path" => ["conversation"]
+                 }
+               ]
+             }
+    end
+
+    test "return an error if user is not logged in", %{all_conversations: [conversation | _]} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> get("/api", query: @query, variables: %{id: conversation.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "conversation" => nil
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Du musst angemeldet sein um das zu tun.",
+                   "path" => ["conversation"]
+                 }
+               ]
+             }
+    end
+
+    test "return an error if a conversation with this id does not exist", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: "00000000-0000-0000-0000-000000000000"})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "conversation" => nil
+               },
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Unterhaltung nicht gefunden.",
+                   "path" => ["conversation"]
                  }
                ]
              }
@@ -206,15 +386,17 @@ defmodule LottaWeb.MessagesResolverTest do
     mutation CreateMessage($message: MessageInput) {
       createMessage(message: $message) {
         content
-        senderUser {
+        user {
           email
         }
-        recipientUser {
-          email
-        }
-        recipientGroup {
-          name
-        }
+        conversation {
+          users {
+            email
+          }
+          groups {
+            name
+          }
+      }
       }
     }
     """
@@ -236,9 +418,18 @@ defmodule LottaWeb.MessagesResolverTest do
                "data" => %{
                  "createMessage" => %{
                    "content" => "Hallo.",
-                   "senderUser" => %{"email" => "alexis.rinaldoni@lotta.schule"},
-                   "recipientUser" => %{"email" => "eike.wiewiorra@lotta.schule"},
-                   "recipientGroup" => nil
+                   "user" => %{"email" => "alexis.rinaldoni@lotta.schule"},
+                   "conversation" => %{
+                     "users" => [
+                       %{
+                         "email" => "eike.wiewiorra@lotta.schule"
+                       },
+                       %{
+                         "email" => "alexis.rinaldoni@lotta.schule"
+                       }
+                     ],
+                     "groups" => []
+                   }
                  }
                }
              }
@@ -259,9 +450,11 @@ defmodule LottaWeb.MessagesResolverTest do
                "data" => %{
                  "createMessage" => %{
                    "content" => "Hallo.",
-                   "senderUser" => %{"email" => "eike.wiewiorra@lotta.schule"},
-                   "recipientUser" => nil,
-                   "recipientGroup" => %{"name" => "Lehrer"}
+                   "user" => %{"email" => "eike.wiewiorra@lotta.schule"},
+                   "conversation" => %{
+                     "users" => [],
+                     "groups" => [%{"name" => "Lehrer"}]
+                   }
                  }
                }
              }
@@ -306,9 +499,8 @@ defmodule LottaWeb.MessagesResolverTest do
                "errors" => [
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
-                   "message" => "Nachricht konnte nicht versandt werden.",
-                   "path" => ["createMessage"],
-                   "details" => %{"recipient_user_id" => ["darf nicht leer sein"]}
+                   "message" => "Du hast keinen Empfänger für die Nachricht ausgewählt.",
+                   "path" => ["createMessage"]
                  }
                ]
              }
@@ -366,7 +558,7 @@ defmodule LottaWeb.MessagesResolverTest do
                "errors" => [
                  %{
                    "locations" => [%{"column" => 3, "line" => 2}],
-                   "message" => "Du kannst dieser Gruppe keine Nachricht senden.",
+                   "message" => "Du darfst dieser Gruppe keine Nachricht senden.",
                    "path" => ["createMessage"]
                  }
                ]
@@ -399,7 +591,7 @@ defmodule LottaWeb.MessagesResolverTest do
       assert res == %{
                "data" => %{
                  "deleteMessage" => %{
-                   "id" => Integer.to_string(message.id)
+                   "id" => "#{message.id}"
                  }
                }
              }

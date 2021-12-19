@@ -69,6 +69,4 @@ defmodule LottaWeb.Endpoint do
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [check_origin: false],
     longpoll: [check_origin: false]
-
-
 end

@@ -1,4 +1,7 @@
 defmodule Lotta.Email do
+  @moduledoc """
+  Handles the emails being sent by lotta.
+  """
   import Bamboo.Email
 
   use Bamboo.Phoenix,

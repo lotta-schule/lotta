@@ -5,7 +5,7 @@ defprotocol Lotta.Storage.RemoteStorage.Strategy do
   @doc """
   Create a file on the remote storage given an elixir file object
   """
-  @spec create(%Plug.Upload{}, String.t(), RemoteStorage.config()) ::
+  @spec create(Plug.Upload.t(), String.t(), RemoteStorage.config()) ::
           {:ok, RemoteStorageEntity} | {:error, term()}
   def create(file, path, config)
 
@@ -19,6 +19,6 @@ defprotocol Lotta.Storage.RemoteStorage.Strategy do
   Get the http URL for a given entity
   """
   @spec get_http_url(RemoteStorageEntity, RemoteStorage.config()) ::
-          {:ok, %URI{}} | {:error, term()}
+          {:ok, URI.t()} | {:error, term()}
   def get_http_url(remote_storage_entity, config)
 end

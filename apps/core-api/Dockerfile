@@ -1,7 +1,7 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.13
+ARG ALPINE_VERSION=3.15
 
-FROM elixir:1.12-alpine AS builder
+FROM elixir:1.13-alpine AS builder
 
 ENV MIX_ENV=prod
 
@@ -13,8 +13,6 @@ RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache \
     git \
-    npm \
-    nodejs \
     build-base
 
 # install hex + rebar
@@ -33,14 +31,10 @@ RUN mix deps.compile
 # build project
 COPY priv priv
 COPY lib lib
-COPY assets assets
 
 # build release
 COPY rel rel
 RUN mix compile
-RUN npm install --prefix assets
-RUN npm run deploy --prefix assets
-RUN mix phx.digest
 RUN mix release
 
 # From this line onwards, we're in a new image, which will be the image used in production

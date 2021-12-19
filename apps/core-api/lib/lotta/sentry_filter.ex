@@ -1,4 +1,5 @@
 defmodule Lotta.SentryFilter do
+  @moduledoc false
   @behaviour Sentry.EventFilter
 
   def exclude_exception?(%Elixir.Phoenix.Router.NoRouteError{}, :plug), do: true

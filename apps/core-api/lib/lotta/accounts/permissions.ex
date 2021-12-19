@@ -6,7 +6,7 @@ defmodule Lotta.Accounts.Permissions do
   alias Lotta.Repo
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.{Directory, File}
-  alias Lotta.Messages.Message
+  alias Lotta.Messages.{Conversation, Message}
   alias Lotta.Content.Article
 
   @doc """
@@ -34,7 +34,7 @@ defmodule Lotta.Accounts.Permissions do
   end
 
   def is_author?(%User{id: user_id}, %Message{} = message) do
-    user_id == message.sender_user_id
+    user_id == message.user_id
   end
 
   def is_author?(nil, _), do: false
@@ -43,7 +43,7 @@ defmodule Lotta.Accounts.Permissions do
   Wether a given user has read-access to a given object.
   """
   @doc since: "2.2.0"
-  @spec can_read?(User.t() | nil, Article.t() | Directory.t()) :: boolean()
+  @spec can_read?(User.t() | nil, Article.t() | Directory.t() | Conversation.t()) :: boolean()
   def can_read?(user, object)
 
   def can_read?(user, %Article{} = article) do
@@ -68,6 +68,13 @@ defmodule Lotta.Accounts.Permissions do
       |> Repo.preload(:parent_directory)
 
     is_author?(user, file) || can_read?(user, file.parent_directory)
+  end
+
+  def can_read?(user, %Conversation{} = conversation) do
+    conversation = Repo.preload(conversation, [:users, :groups])
+
+    Enum.any?(conversation.users, &(&1.id == user.id)) ||
+      user_is_in_groups_list?(user, conversation.groups)
   end
 
   @doc """

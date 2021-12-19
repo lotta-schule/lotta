@@ -4,9 +4,10 @@ defmodule LottaWeb.UserSocket do
   use Phoenix.Socket
   use Absinthe.Phoenix.Socket, schema: LottaWeb.Schema
 
-  alias Lotta.Repo
-  alias Lotta.Tenants
+  alias Lotta.{Repo, Tenants}
   alias LottaWeb.Context
+  alias LottaWeb.Auth.AccessToken
+  alias Absinthe.Phoenix.Socket
 
   ## Channels
   # channel "messages:user:*", LottaWeb.MessagesChannel
@@ -31,10 +32,10 @@ defmodule LottaWeb.UserSocket do
     else
       Repo.put_prefix(tenant.prefix)
 
-      case LottaWeb.Auth.AccessToken.resource_from_token(token) do
+      case AccessToken.resource_from_token(token) do
         {:ok, user, _claims} ->
           socket =
-            Absinthe.Phoenix.Socket.put_options(socket,
+            Socket.put_options(socket,
               context: %Context{
                 current_user: Context.set_virtual_user_fields(user),
                 tenant: tenant
@@ -59,7 +60,7 @@ defmodule LottaWeb.UserSocket do
       Repo.put_prefix(tenant.prefix)
 
       socket =
-        Absinthe.Phoenix.Socket.put_options(socket,
+        Socket.put_options(socket,
           context: %Context{
             tenant: tenant
           }

@@ -38,8 +38,7 @@ defmodule Lotta.Accounts.User do
     has_many :files, File
     has_many :directories, Directory
     has_many :enrollment_tokens, UserEnrollmentToken, on_replace: :delete
-    has_many :sent_messages, Lotta.Messages.Message, foreign_key: :sender_user_id
-    has_many :received_messages, Lotta.Messages.Message, foreign_key: :recipient_user_id
+    has_many :sent_messages, Lotta.Messages.Message
 
     many_to_many :groups,
                  UserGroup,

@@ -7,11 +7,9 @@ defmodule LottaWeb.UserResolver do
   import LottaWeb.ErrorHelpers
 
   alias LottaWeb.Context
-  alias Lotta.Repo
-  alias Lotta.Accounts
-  alias Lotta.Storage
-  alias Lotta.Mailer
+  alias LottaWeb.Auth.AccessToken
   alias Lotta.Accounts.User
+  alias Lotta.{Accounts, Repo, Mailer, Messages, Storage}
 
   def resolve_name(%User{} = user, _args, %{context: %Context{current_user: current_user}})
       when not is_nil(current_user) do
@@ -62,6 +60,14 @@ defmodule LottaWeb.UserResolver do
 
   def resolve_last_seen(_user, _args, _info),
     do: {:error, "Der Online-Status des Nutzers ist geheim."}
+
+  def resolve_unread_messages(user, _args, %{context: %Context{current_user: current_user}})
+      when user.id == current_user.id do
+    {:ok, Messages.count_unread_messages(user)}
+  end
+
+  def resolve_unread_messages(_user, _args, _info),
+    do: {:error, "Die Nachrichten des Nutzers sind geheim."}
 
   def get_current(_args, %{context: %Context{current_user: current_user}}) do
     {:ok, current_user}
@@ -148,7 +154,7 @@ defmodule LottaWeb.UserResolver do
   def request_hisec_token(%{password: password}, %{context: %Context{current_user: current_user}}) do
     with true <- verify_user_pass(current_user, password),
          {:ok, hisec_token, _claims} <-
-           LottaWeb.Auth.AccessToken.encode_and_sign(current_user, %{}, token_type: "hisec") do
+           AccessToken.encode_and_sign(current_user, %{}, token_type: "hisec") do
       {:ok, hisec_token}
     else
       false ->

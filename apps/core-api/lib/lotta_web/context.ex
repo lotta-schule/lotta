@@ -91,11 +91,7 @@ defmodule LottaWeb.Context do
       |> LottaWeb.Auth.AccessToken.Plug.current_resource()
 
     user =
-      if not is_nil(user) do
-        if System.get_env("APP_ENVIRONMENT") != "test" do
-          Task.start(fn -> Accounts.see_user(user) end)
-        end
-
+      unless is_nil(user) do
         user
         |> set_virtual_user_fields()
         |> Map.put(:access_level, access_level)
