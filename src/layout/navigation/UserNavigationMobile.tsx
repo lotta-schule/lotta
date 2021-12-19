@@ -157,7 +157,7 @@ export const UserNavigationMobile = React.memo(() => {
                                         />
                                     </Badge>
                                     <span className={styles.label}>
-                                        freizugende Beiträge
+                                        Beiträge freigeben
                                     </span>
                                 </BaseButton>
                             </Link>

@@ -22,7 +22,7 @@ export interface WidgetsListProps {
 
 export const WidgetsList = React.memo<WidgetsListProps>(
     ({ widgets, children }) => {
-        const isMobile = useIsMobile();
+        const isMobile = window.matchMedia('(max-width: 959px)').matches;
         const wrapperRef = React.useRef<HTMLDivElement | null>(null);
 
         const currentUser = useCurrentUser();
@@ -53,7 +53,11 @@ export const WidgetsList = React.memo<WidgetsListProps>(
         }, [currentTabIndex]);
 
         React.useLayoutEffect(() => {
-            if (wrapperRef.current) {
+            console.log(window.matchMedia('(min-width: 960px)'));
+            if (
+                wrapperRef.current &&
+                window.matchMedia('(min-width: 960px)').matches
+            ) {
                 wrapperRef.current.style.height = `calc(100vh - ${
                     wrapperRef.current.getBoundingClientRect().top
                 }px - var(--lotta-spacing))`;
@@ -62,14 +66,14 @@ export const WidgetsList = React.memo<WidgetsListProps>(
 
         useScrollEvent(
             () => {
-                if (wrapperRef.current && !isMobile && widgets.length > 0) {
+                if (wrapperRef.current && isMobile && widgets.length > 0) {
                     wrapperRef.current.style.height = `calc(100vh - ${
                         wrapperRef.current.getBoundingClientRect().top
                     }px - var(--lotta-spacing))`;
                 }
             },
             200,
-            [wrapperRef.current, isMobile, widgets.length]
+            [wrapperRef.current, widgets.length]
         );
 
         if (currentTabIndex === null) {
@@ -98,11 +102,15 @@ export const WidgetsList = React.memo<WidgetsListProps>(
                 className={clsx(styles.root, {
                     [styles.hasSecondNavigation]: isSecondNavigationOpen,
                 })}
-                style={{
-                    height: `calc(100vh - ${
-                        isSecondNavigationOpen ? '112px' : '72px'
-                    } - var(--lotta-spacing))`,
-                }}
+                style={
+                    isMobile
+                        ? undefined
+                        : {
+                              height: `calc(100vh - ${
+                                  isSecondNavigationOpen ? '112px' : '72px'
+                              } - var(--lotta-spacing))`,
+                          }
+                }
                 data-testid={'WidgetsList'}
                 ref={wrapperRef}
             >

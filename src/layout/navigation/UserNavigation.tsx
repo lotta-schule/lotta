@@ -200,7 +200,7 @@ export const UserNavigation = React.memo(() => {
                                                       color={'secondary'}
                                                   />
                                               </Badge>
-                                              &nbsp; freizugebende Beiträge
+                                              &nbsp; Beiträge freigeben
                                           </MenuItem>,
                                       ]
                                     : []),
