@@ -23,7 +23,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             setTextareaHeight(
                 `calc(calc(0.5 * var(--lotta-spacing)) + ${height})`
             );
-        }, [text]);
+        }, [text, maxHeight]);
 
         const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setTextareaHeight('auto');
