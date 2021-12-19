@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
 import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
 
-describe('shared/layouts/editArticleLayout/EditArticleLayout', () => {
+describe('article/EditArticlePage', () => {
     it('should render the EditArticleLayout without error', () => {
         render(
             <EditArticlePage article={Weihnachtsmarkt} />,
@@ -253,6 +253,7 @@ describe('shared/layouts/editArticleLayout/EditArticleLayout', () => {
         }, 20000);
 
         it('should update the preview when receiving update via subscription after adding a content module', async () => {
+            let didReceiveUpdate = false;
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
@@ -270,11 +271,10 @@ describe('shared/layouts/editArticleLayout/EditArticleLayout', () => {
                                     ...Weihnachtsmarkt,
                                     preview: 'New Preview-Text',
                                 };
-                                setTimeout(() => {
-                                    screen.rerender(
-                                        <EditArticlePage article={article} />
-                                    );
-                                });
+                                screen.rerender(
+                                    <EditArticlePage article={article} />
+                                );
+                                didReceiveUpdate = true;
                                 return { data: { article } };
                             },
                         },
@@ -287,14 +287,17 @@ describe('shared/layouts/editArticleLayout/EditArticleLayout', () => {
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
             userEvent.click(screen.getByRole('button', { name: /titel/i }));
-            await waitFor(() => {
-                expect(
-                    screen.getByRole('textbox', {
-                        name: /preview/i,
-                        hidden: true,
-                    })
-                ).toHaveValue('New Preview-Text');
-            });
+            await waitFor(
+                () => {
+                    expect(didReceiveUpdate).toEqual(true);
+                },
+                { timeout: 20_000 }
+            );
+            expect(
+                screen.getByRole('textbox', {
+                    name: /preview/i,
+                })
+            ).toHaveValue('New Preview-Text');
         }, 30_000);
 
         it('should show a dialog when receiving update including content-module change via subscription after adding a content module', async () => {

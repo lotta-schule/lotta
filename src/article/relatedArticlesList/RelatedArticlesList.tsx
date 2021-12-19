@@ -59,3 +59,4 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
         );
     }
 );
+RelatedArticlesList.displayName = 'RelatedArticlesList';

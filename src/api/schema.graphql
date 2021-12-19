@@ -1,132 +1,149 @@
 schema {
-  query: RootQueryType
-  mutation: RootMutationType
-  subscription: RootSubscriptionType
+    query: RootQueryType
+    mutation: RootMutationType
+    subscription: RootSubscriptionType
 }
 
 type Article {
-  category: Category
-  contentModules: [ContentModule]
-  groups: [UserGroup]
-  id: ID
-  insertedAt: DateTime
-  isPinnedToTop: Boolean
-  preview: String
-  previewImageFile: File
-  published: Boolean
-  readyToPublish: Boolean
-  tags: [String!]
-  title: String
-  updatedAt: DateTime
-  users: [User]
+    category: Category
+    contentModules: [ContentModule]
+    groups: [UserGroup]
+    id: ID
+    insertedAt: DateTime
+    isPinnedToTop: Boolean
+    preview: String
+    previewImageFile: File
+    published: Boolean
+    readyToPublish: Boolean
+    tags: [String!]
+    title: String
+    updatedAt: DateTime
+    users: [User]
 }
 
-"""Filtering options for the article list"""
+"""
+Filtering options for the article list
+"""
 input ArticleFilter {
-  """Limit the number of results to return"""
-  first: Int
+    """
+    Limit the number of results to return
+    """
+    first: Int
 
-  """Return only results updated before than a given date"""
-  updatedBefore: DateTime
+    """
+    Return only results updated before than a given date
+    """
+    updatedBefore: DateTime
 }
 
 input ArticleInput {
-  category: SelectCategoryInput
-  contentModules: [ContentModuleInput]
-  groups: [SelectUserGroupInput]
-  insertedAt: DateTime
-  preview: String
-  previewImageFile: SelectFileInput
-  published: Boolean
-  readyToPublish: Boolean
-  tags: [String!]
-  title: String!
-  updatedAt: DateTime
-  users: [SelectUserInput]
+    category: SelectCategoryInput
+    contentModules: [ContentModuleInput]
+    groups: [SelectUserGroupInput]
+    insertedAt: DateTime
+    preview: String
+    previewImageFile: SelectFileInput
+    published: Boolean
+    readyToPublish: Boolean
+    tags: [String!]
+    title: String!
+    updatedAt: DateTime
+    users: [SelectUserInput]
 }
 
 type Authresult {
-  accessToken: String
-  refreshToken: String
+    accessToken: String
+    refreshToken: String
 }
 
 type CalendarEvent {
-  description: String
-  end: DateTime
-  start: DateTime
-  summary: String
-  uid: String
+    description: String
+    end: DateTime
+    start: DateTime
+    summary: String
+    uid: String
 }
 
 type Category {
-  bannerImageFile: File
-  category: Category
-  groups: [UserGroup]
-  hideArticlesFromHomepage: Boolean
-  id: ID
-  insertedAt: DateTime
-  isHomepage: Boolean
-  isSidenav: Boolean
-  layoutName: String
-  redirect: String
-  sortKey: Int
-  title: String
-  updatedAt: DateTime
-  widgets: [Widget]
+    bannerImageFile: File
+    category: Category
+    groups: [UserGroup]
+    hideArticlesFromHomepage: Boolean
+    id: ID
+    insertedAt: DateTime
+    isHomepage: Boolean
+    isSidenav: Boolean
+    layoutName: String
+    redirect: String
+    sortKey: Int
+    title: String
+    updatedAt: DateTime
+    widgets: [Widget]
 }
 
 type ContentModule {
-  configuration: Json
-  content: Json
-  files: [File]
-  id: ID
-  insertedAt: DateTime
-  sortKey: Int
-  type: ContentModuleType
-  updatedAt: DateTime
+    configuration: Json
+    content: Json
+    files: [File]
+    id: ID
+    insertedAt: DateTime
+    sortKey: Int
+    type: ContentModuleType
+    updatedAt: DateTime
 }
 
 input ContentModuleInput {
-  configuration: Json
-  content: Json
-  files: [SelectFileInput]
-  id: ID
-  sortKey: Int
-  type: ContentModuleType = TEXT
+    configuration: Json
+    content: Json
+    files: [SelectFileInput]
+    id: ID
+    sortKey: Int
+    type: ContentModuleType = TEXT
 }
 
 type ContentModuleResult {
-  id: ID
-  insertedAt: DateTime
-  result: Json
-  updatedAt: DateTime
-  user: User
+    id: ID
+    insertedAt: DateTime
+    result: Json
+    updatedAt: DateTime
+    user: User
 }
 
 enum ContentModuleType {
-  AUDIO
-  DOWNLOAD
-  FORM
-  IMAGE
-  IMAGE_COLLECTION
-  TABLE
-  TEXT
-  TITLE
-  VIDEO
+    AUDIO
+    DIVIDER
+    DOWNLOAD
+    FORM
+    IMAGE
+    IMAGE_COLLECTION
+    TABLE
+    TEXT
+    TITLE
+    VIDEO
+}
+
+type Conversation {
+    groups: [UserGroup!]
+    id: ID
+    insertedAt: DateTime
+    messages: [Message!]
+    unreadMessages: Int
+    updatedAt: DateTime
+    users: [User!]
 }
 
 input CreateCategoryInput {
-  category: SelectCategoryInput
-  isSidenav: Boolean = false
-  title: String!
+    category: SelectCategoryInput
+    isSidenav: Boolean = false
+    title: String!
 }
 
 type CustomDomain {
-  host: String
-  id: ID
-  insertedAt: DateTime
-  isMainDomain: Boolean
-  updatedAt: DateTime
+    host: String
+    id: ID
+    insertedAt: DateTime
+    isMainDomain: Boolean
+    updatedAt: DateTime
 }
 
 """
@@ -144,77 +161,82 @@ be converted to UTC if there is an offset.
 scalar DateTime
 
 type Directory {
-  id: ID
-  insertedAt: DateTime
-  name: String
-  parentDirectory: Directory
-  updatedAt: DateTime
-  user: User
+    id: ID
+    insertedAt: DateTime
+    name: String
+    parentDirectory: Directory
+    updatedAt: DateTime
+    user: User
 }
 
 type File {
-  fileConversions: [FileConversion]
-  fileType: FileType
-  filename: String
-  filesize: Int
-  id: ID
-  insertedAt: DateTime
-  mimeType: String
-  parentDirectory: Directory
-  remoteLocation: String
-  updatedAt: DateTime
-  usage: [FileUsageLocation]
-  user: User
-  userId: ID
+    fileConversions: [FileConversion]
+    fileType: FileType
+    filename: String
+    filesize: Int
+    id: ID
+    insertedAt: DateTime
+    mimeType: String
+    parentDirectory: Directory
+    remoteLocation: String
+    updatedAt: DateTime
+    usage: [FileUsageLocation]
+    user: User
+    userId: ID
 }
 
 type FileArticleUsageLocation {
-  article: Article
-  usage: String
+    article: Article
+    usage: String
 }
 
 type FileCategoryUsageLocation {
-  category: Category
-  usage: String
+    category: Category
+    usage: String
 }
 
 type FileContentModuleUsageLocation {
-  article: Article
-  contentModule: ContentModule
-  usage: String
+    article: Article
+    contentModule: ContentModule
+    usage: String
 }
 
 type FileConversion {
-  format: String
-  id: ID
-  insertedAt: DateTime
-  mimeType: String
-  remoteLocation: String
-  updatedAt: DateTime
+    format: String
+    id: ID
+    insertedAt: DateTime
+    mimeType: String
+    remoteLocation: String
+    updatedAt: DateTime
 }
 
 type FileSystemUsageLocation {
-  usage: String
+    usage: String
 }
 
 enum FileType {
-  AUDIO
-  IMAGE
-  MISC
-  PDF
-  VIDEO
+    AUDIO
+    IMAGE
+    MISC
+    PDF
+    VIDEO
 }
 
-union FileUsageLocation = FileArticleUsageLocation | FileCategoryUsageLocation | FileContentModuleUsageLocation | FileSystemUsageLocation | FileUserUsageLocation
+union FileUsageLocation =
+      FileArticleUsageLocation
+    | FileCategoryUsageLocation
+    | FileContentModuleUsageLocation
+    | FileSystemUsageLocation
+    | FileUserUsageLocation
 
 type FileUserUsageLocation {
-  usage: String
-  user: User
+    usage: String
+    user: User
 }
 
 type GroupEnrollmentToken {
-  id: ID
-  token: String
+    id: ID
+    token: String
 }
 
 """
@@ -225,250 +247,256 @@ human-readable json string.
 scalar Json
 
 type MediaUsage {
-  mediaConversionCurrentPeriod: Float
-  mediaFilesTotal: Int
-  mediaFilesTotalDuration: Float
+    mediaConversionCurrentPeriod: Float
+    mediaFilesTotal: Int
+    mediaFilesTotalDuration: Float
 }
 
 type Message {
-  content: String
-  id: ID
-  insertedAt: DateTime
-  recipientGroup: UserGroup
-  recipientUser: User
-  senderUser: User
-  updatedAt: DateTime
+    content: String
+    conversation: Conversation
+    id: ID
+    insertedAt: DateTime
+    updatedAt: DateTime
+    user: User
 }
 
 input MessageInput {
-  content: String
-  recipientGroup: SelectUserGroupInput
-  recipientUser: SelectUserInput
+    content: String
+    recipientGroup: SelectUserGroupInput
+    recipientUser: SelectUserInput
 }
 
 input RegisterUserParams {
-  email: String
-  hideFullName: Boolean
-  name: String
-  nickname: String
+    email: String
+    hideFullName: Boolean
+    name: String
+    nickname: String
 }
 
 type RootMutationType {
-  createArticle(article: ArticleInput!): Article
-  createCategory(category: CreateCategoryInput!): Category
-  createDirectory(isPublic: Boolean, name: String!, parentDirectoryId: ID): Directory
-  createMessage(message: MessageInput!): Message
-  createUserGroup(group: UserGroupInput!): UserGroup
-  createWidget(title: String!, type: WidgetType!): Widget
-  deleteArticle(id: ID!): Article
-  deleteCategory(id: ID!): Category
-  deleteDirectory(id: ID!): Directory
-  deleteFile(id: ID!): File
-  deleteMessage(id: ID!): Message
-  deleteUserGroup(id: ID!): UserGroup
-  deleteWidget(id: ID!): Widget
-  destroyAccount(transferFileIds: [ID!]): User
-  login(password: String, username: String): Authresult
-  logout: Authresult
-  register(groupKey: String, user: RegisterUserParams!): Boolean
-  requestHisecToken(password: String): String
-  requestPasswordReset(email: String!): Boolean
-  resetPassword(email: String!, password: String!, token: String!): Authresult
-  sendFormResponse(contentModuleId: ID!, response: Json!): Boolean
-  toggleArticlePin(id: ID!): Article
-  updateArticle(article: ArticleInput!, id: ID!): Article
-  updateCategory(category: UpdateCategoryInput!, id: ID!): Category
-  updateDirectory(id: ID!, name: String, parentDirectoryId: ID): Directory
-  updateEmail(newEmail: String!): User
-  updateFile(filename: String, id: ID!, parentDirectoryId: ID): File
-  updatePassword(newPassword: String!): User
-  updateProfile(user: UpdateUserParams!): User
-  updateTenant(tenant: TenantInput!): Tenant
-  updateUser(groups: [SelectUserGroupInput!], id: ID!): User
-  updateUserGroup(group: UserGroupInput!, id: ID!): UserGroup
-  updateWidget(id: ID!, widget: WidgetInput!): Widget
-  uploadFile(file: Upload!, parentDirectoryId: ID!): File
+    createArticle(article: ArticleInput!): Article
+    createCategory(category: CreateCategoryInput!): Category
+    createDirectory(
+        isPublic: Boolean
+        name: String!
+        parentDirectoryId: ID
+    ): Directory
+    createMessage(message: MessageInput!): Message
+    createUserGroup(group: UserGroupInput!): UserGroup
+    createWidget(title: String!, type: WidgetType!): Widget
+    deleteArticle(id: ID!): Article
+    deleteCategory(id: ID!): Category
+    deleteDirectory(id: ID!): Directory
+    deleteFile(id: ID!): File
+    deleteMessage(id: ID!): Message
+    deleteUserGroup(id: ID!): UserGroup
+    deleteWidget(id: ID!): Widget
+    destroyAccount(transferFileIds: [ID!]): User
+    login(password: String, username: String): Authresult
+    logout: Authresult
+    register(groupKey: String, user: RegisterUserParams!): Boolean
+    requestHisecToken(password: String): String
+    requestPasswordReset(email: String!): Boolean
+    resetPassword(email: String!, password: String!, token: String!): Authresult
+    sendFormResponse(contentModuleId: ID!, response: Json!): Boolean
+    toggleArticlePin(id: ID!): Article
+    updateArticle(article: ArticleInput!, id: ID!): Article
+    updateCategory(category: UpdateCategoryInput!, id: ID!): Category
+    updateDirectory(id: ID!, name: String, parentDirectoryId: ID): Directory
+    updateEmail(newEmail: String!): User
+    updateFile(filename: String, id: ID!, parentDirectoryId: ID): File
+    updatePassword(newPassword: String!): User
+    updateProfile(user: UpdateUserParams!): User
+    updateTenant(tenant: TenantInput!): Tenant
+    updateUser(groups: [SelectUserGroupInput!], id: ID!): User
+    updateUserGroup(group: UserGroupInput!, id: ID!): UserGroup
+    updateWidget(id: ID!, widget: WidgetInput!): Widget
+    uploadFile(file: Upload!, parentDirectoryId: ID!): File
 }
 
 type RootQueryType {
-  article(id: ID!): Article
-  articles(categoryId: ID, filter: ArticleFilter): [Article]
-  calendar(days: Int, url: String!): [CalendarEvent]
-  categories: [Category]
-  contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
-  currentUser: User
-  directories(parentDirectoryId: ID): [Directory]
-  directory(id: ID): Directory
-  file(id: ID): File
-  files(parentDirectoryId: ID): [File]
-  group(id: ID!): UserGroup
-  messages: [Message]
-  ownArticles: [Article]
-  relevantFilesInUsage: [File]
-  schedule(date: Date, widgetId: ID!): Json
-  search(options: SearchOptions, searchText: String!): [Article]
-  searchUsers(searchtext: String!): [User]
-  tag(tag: String!): [Article]
-  tags: [String!]
-  tenant(slug: String): Tenant
-  unpublishedArticles: [Article]
-  usage: [Usage]
-  user(id: ID!): User
-  users: [User]
-  widgets(categoryId: ID): [Widget]
+    article(id: ID!): Article
+    articles(categoryId: ID, filter: ArticleFilter): [Article]
+    calendar(days: Int, url: String!): [CalendarEvent]
+    categories: [Category]
+    contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
+    conversation(id: ID!): Conversation
+    conversations: [Conversation]
+    currentUser: User
+    directories(parentDirectoryId: ID): [Directory]
+    directory(id: ID): Directory
+    file(id: ID): File
+    files(parentDirectoryId: ID): [File]
+    group(id: ID!): UserGroup
+    ownArticles: [Article]
+    relevantFilesInUsage: [File]
+    schedule(date: Date, widgetId: ID!): Json
+    search(options: SearchOptions, searchText: String!): [Article]
+    searchUsers(searchtext: String!): [User]
+    tag(tag: String!): [Article]
+    tags: [String!]
+    tenant(slug: String): Tenant
+    unpublishedArticles: [Article]
+    usage: [Usage]
+    user(id: ID!): User
+    users: [User]
+    widgets(categoryId: ID): [Widget]
 }
 
 type RootSubscriptionType {
-  articleIsUpdated(id: ID!): Article
-  receiveMessage: Message
+    articleIsUpdated(id: ID!): Article
+    receiveMessage: Message
 }
 
 input SearchOptions {
-  categoryId: ID
+    categoryId: ID
 }
 
 input SelectCategoryInput {
-  id: ID
+    id: ID
 }
 
 input SelectFileInput {
-  id: ID
+    id: ID
 }
 
 input SelectUserGroupInput {
-  id: ID
+    id: ID
 }
 
 input SelectUserInput {
-  id: ID
+    id: ID
 }
 
 input SelectWidgetInput {
-  id: ID
+    id: ID
 }
 
 type StorageUsage {
-  filesTotal: Int
-  usedTotal: Int
+    filesTotal: Int
+    usedTotal: Int
 }
 
 type Tenant {
-  configuration: TenantConfiguration
-  customDomains: [CustomDomain]
-  groups: [UserGroup]
-  host: String
-  id: ID
-  insertedAt: DateTime
-  slug: String
-  title: String
+    configuration: TenantConfiguration
+    customDomains: [CustomDomain]
+    groups: [UserGroup]
+    host: String
+    id: ID
+    insertedAt: DateTime
+    slug: String
+    title: String
 }
 
 type TenantConfiguration {
-  backgroundImageFile: File
-  customTheme: Json
-  logoImageFile: File
-  userMaxStorageConfig: String
+    backgroundImageFile: File
+    customTheme: Json
+    logoImageFile: File
+    userMaxStorageConfig: String
 }
 
 input TenantConfigurationInput {
-  backgroundImageFile: SelectFileInput
-  customTheme: Json
-  logoImageFile: SelectFileInput
-  userMaxStorageConfig: String
+    backgroundImageFile: SelectFileInput
+    customTheme: Json
+    logoImageFile: SelectFileInput
+    userMaxStorageConfig: String
 }
 
 input TenantInput {
-  configuration: TenantConfigurationInput
-  title: String
+    configuration: TenantConfigurationInput
+    title: String
 }
 
 input UpdateCategoryInput {
-  bannerImageFile: SelectFileInput
-  category: SelectCategoryInput
-  groups: [SelectUserGroupInput]
-  hideArticlesFromHomepage: Boolean
-  isSidenav: Boolean
-  layoutName: String
-  redirect: String
-  sortKey: Int
-  title: String
-  widgets: [SelectWidgetInput] = []
+    bannerImageFile: SelectFileInput
+    category: SelectCategoryInput
+    groups: [SelectUserGroupInput]
+    hideArticlesFromHomepage: Boolean
+    isSidenav: Boolean
+    layoutName: String
+    redirect: String
+    sortKey: Int
+    title: String
+    widgets: [SelectWidgetInput] = []
 }
 
 input UpdateUserParams {
-  avatarImageFile: SelectFileInput
-  class: String
-  enrollmentTokens: [String]
-  hideFullName: Boolean
-  name: String
-  nickname: String
+    avatarImageFile: SelectFileInput
+    class: String
+    enrollmentTokens: [String]
+    hideFullName: Boolean
+    name: String
+    nickname: String
 }
 
-"""Represents an uploaded file."""
+"""
+Represents an uploaded file.
+"""
 scalar Upload
 
 type Usage {
-  media: MediaUsage
-  periodEnd: DateTime
-  periodStart: DateTime
-  storage: StorageUsage
+    media: MediaUsage
+    periodEnd: DateTime
+    periodStart: DateTime
+    storage: StorageUsage
 }
 
 type User {
-  articles: [Article]
-  assignedGroups: [UserGroup]
-  avatarImageFile: File
-  class: String
-  email: String
-  enrollmentTokens: [String]
-  groups: [UserGroup]
-  hasChangedDefaultPassword: Boolean
-  hideFullName: Boolean
-  id: ID
-  insertedAt: DateTime
-  lastSeen: DateTime
-  name: String
-  nickname: String
-  updatedAt: DateTime
+    articles: [Article]
+    assignedGroups: [UserGroup]
+    avatarImageFile: File
+    class: String
+    email: String
+    enrollmentTokens: [String]
+    groups: [UserGroup]
+    hasChangedDefaultPassword: Boolean
+    hideFullName: Boolean
+    id: ID
+    insertedAt: DateTime
+    lastSeen: DateTime
+    name: String
+    nickname: String
+    unreadMessages: Int
+    updatedAt: DateTime
 }
 
 type UserGroup {
-  enrollmentTokens: [GroupEnrollmentToken]
-  id: ID
-  insertedAt: DateTime
-  isAdminGroup: Boolean
-  name: String
-  sortKey: Int
-  updatedAt: DateTime
+    enrollmentTokens: [GroupEnrollmentToken]
+    id: ID
+    insertedAt: DateTime
+    isAdminGroup: Boolean
+    name: String
+    sortKey: Int
+    updatedAt: DateTime
 }
 
 input UserGroupInput {
-  enrollmentTokens: [String]
-  isAdminGroup: Boolean
-  name: String
-  sortKey: Int
+    enrollmentTokens: [String]
+    isAdminGroup: Boolean
+    name: String
+    sortKey: Int
 }
 
 type Widget {
-  configuration: Json
-  groups: [UserGroup]
-  iconImageFile: File
-  id: ID
-  title: String
-  type: WidgetType
+    configuration: Json
+    groups: [UserGroup]
+    iconImageFile: File
+    id: ID
+    title: String
+    type: WidgetType
 }
 
 input WidgetInput {
-  configuration: Json
-  groups: [SelectUserGroupInput]
-  iconImageFile: SelectFileInput
-  title: String!
+    configuration: Json
+    groups: [SelectUserGroupInput]
+    iconImageFile: SelectFileInput
+    title: String!
 }
 
 enum WidgetType {
-  CALENDAR
-  SCHEDULE
-  TAGCLOUD
-  VPLAN
+    CALENDAR
+    IFRAME
+    SCHEDULE
+    TAGCLOUD
 }
-

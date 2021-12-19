@@ -279,3 +279,4 @@ export const ContentModule = React.memo<ContentModuleProps>(
         );
     }
 );
+ContentModule.displayName = 'CM';

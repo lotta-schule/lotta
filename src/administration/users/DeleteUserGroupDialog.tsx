@@ -86,3 +86,4 @@ export const DeleteUserGroupDialog = React.memo<DeleteUserGroupDialogProps>(
         );
     }
 );
+DeleteUserGroupDialog.displayName = 'DeleteUserGroupDialog';

@@ -183,6 +183,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                 placeholder={
                                     'Füge dem Beitrag einen kurzen Vorschautext hinzu.'
                                 }
+                                maxLength={140}
                                 value={article.preview}
                                 onChange={(e) => {
                                     onUpdateArticle({
@@ -373,3 +374,4 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
         );
     }
 );
+ArticlePreviewStandardLayout.displayName = 'ArticlePreviewStandardLayout';

@@ -1,14 +1,32 @@
 import * as React from 'react';
 import { MessagingPage } from 'messaging/MessagingPage';
-import { GetServerSidePropsContext } from 'next';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 
-const MessagingRoute = () => {
-    return <MessagingPage />;
+import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+import { getApolloClient } from 'api/client';
+import { ConversationModel } from 'model';
+
+const MessagingRoute = ({
+    conversations,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+    return <MessagingPage conversations={conversations} />;
 };
 
-export const getServerSideProps = async ({}: GetServerSidePropsContext) => {
+export const getServerSideProps = async ({
+    req,
+}: GetServerSidePropsContext) => {
+    const { data } = await getApolloClient().query<{
+        conversations: ConversationModel[];
+    }>({
+        query: GetConversationsQuery,
+        context: {
+            headers: req?.headers,
+        },
+    });
     return {
-        props: {},
+        props: {
+            conversations: data?.conversations,
+        },
     };
 };
 

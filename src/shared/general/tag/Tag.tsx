@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Close } from '@material-ui/icons';
-import { Button } from '../button/Button';
+import { Button, ButtonProps } from '../button/Button';
 import clsx from 'clsx';
 
 import styles from './tag.module.scss';
 
-export interface TagProps {
-    onDelete?: Function;
+export type TagProps = {
+    onDelete?: ButtonProps['onClick'];
     children: React.ReactNode;
     className?: string;
     style?: React.CSSProperties;
     role?: string;
-}
+} & React.HTMLProps<HTMLDivElement>;
 
 export const Tag = React.memo<TagProps>(
     ({ onDelete, children, className, ...props }) => {
@@ -27,7 +27,7 @@ export const Tag = React.memo<TagProps>(
                         small
                         className={styles.deleteButton}
                         aria-label={`Tag ${children} löschen`}
-                        onClick={() => onDelete()}
+                        onClick={onDelete}
                         icon={<Close />}
                     />
                 )}

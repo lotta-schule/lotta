@@ -374,3 +374,4 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
         );
     }
 );
+CategoryEditor.displayName = 'AdministrationCategoryEditor';

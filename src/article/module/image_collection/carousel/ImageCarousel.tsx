@@ -127,3 +127,4 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
         );
     }
 );
+ImageCarousel.displayName = 'ImageCarousel';

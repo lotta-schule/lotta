@@ -5,38 +5,38 @@
     flex-direction: row;
     padding: var(--lotta-spacing) 0;
     width: 100%;
-}
 
-.sideView {
-    position: relative;
-    flex: 0 0 20em; // TODO: 20em seems arbitrary
-    overflow: auto;
-    @media screen and (max-width: $max-sm) {
-        display: none;
-        &.active {
-            display: block;
-            margin-right: var(--lotta-spacing);
+    .sideView {
+        position: relative;
+        flex: 0 0 20em; // TODO: 20em seems arbitrary
+        overflow: auto;
+        @media screen and (max-width: $max-sm) {
+            display: none;
+            &.active {
+                display: block;
+                margin-right: var(--lotta-spacing);
+            }
         }
     }
-}
 
-.messageView {
-    margin-left: calc(2 * var(--lotta-spacing));
-    padding: var(--lotta-spacing);
-    background-color: rgba(var(--lotta-box-background-color), 1);
-    flex: 1 2 100%;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    @media screen and (max-width: $max-sm) {
-        margin-left: 0;
+    .messageView {
+        margin-left: var(--lotta-spacing);
+        padding: var(--lotta-spacing);
+        background-color: rgba(var(--lotta-box-background-color), 1);
+        flex: 1 2 100%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        @media screen and (max-width: $max-sm) {
+            margin-left: 0;
+        }
     }
-}
 
-.noMessagesWrapper {
-    display: flex;
-    flex: 1 1;
-    align-items: center;
-    justify-content: center;
-    color: rgba(var(--lotta-disabled-color), 1);
+    .noMessagesWrapper {
+        display: flex;
+        flex: 1 1;
+        align-items: center;
+        justify-content: center;
+        color: rgba(var(--lotta-disabled-color), 1);
+    }
 }

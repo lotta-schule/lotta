@@ -105,3 +105,4 @@ export const CreateArticleDialog = React.memo<CreateArticleDialogProps>(
         );
     }
 );
+CreateArticleDialog.displayName = 'CreateArticleDialog';

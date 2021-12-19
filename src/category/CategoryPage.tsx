@@ -151,7 +151,8 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
         error: widgetsError,
         loading: isWidgetsLoading,
     } = useQuery(GetCategoryWidgetsQuery, {
-        variables: { categoryId },
+        variables: { categoryId: category?.id },
+        skip: !category,
     });
     const widgets = (widgetsData?.widgets ?? []).filter(
         (widget: WidgetModel) => {
@@ -248,3 +249,4 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
         </>
     );
 });
+CategoryPage.displayName = 'CategoryPage';

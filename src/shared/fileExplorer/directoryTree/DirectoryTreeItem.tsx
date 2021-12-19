@@ -72,3 +72,4 @@ export const DirectoryTreeItem = memo<DirectoryTreeItemProps>(
         );
     }
 );
+DirectoryTreeItem.displayName = 'DirectoryTreeItem';

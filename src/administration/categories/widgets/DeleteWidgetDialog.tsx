@@ -62,7 +62,7 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        onClick={(e: React.MouseEvent) => onRequestClose()}
+                        onClick={(_e: React.MouseEvent) => onRequestClose()}
                         disabled={isLoading}
                     >
                         Abbrechen
@@ -80,3 +80,4 @@ export const DeleteWidgetDialog = React.memo<DeleteWidgetDialogProps>(
         );
     }
 );
+DeleteWidgetDialog.displayName = 'DeleteWidgetDialog';

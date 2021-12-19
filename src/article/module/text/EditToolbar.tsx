@@ -87,3 +87,4 @@ export const EditToolbar = React.memo<EditToolbarProps>(({ onRequestSave }) => {
         </AnimatedToolbar>
     );
 });
+EditToolbar.displayName = 'textContentModuleEditToolbar';

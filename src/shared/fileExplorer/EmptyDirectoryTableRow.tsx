@@ -92,3 +92,4 @@ export const EmptyDirectoryTableRow = React.memo(() => {
         </TableRow>
     );
 });
+EmptyDirectoryTableRow.displayName = 'EmptyDirectoryTableRow';

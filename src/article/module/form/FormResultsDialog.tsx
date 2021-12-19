@@ -100,3 +100,4 @@ export const FormResultsDialog = React.memo<FormResultsDialogProps>(
         );
     }
 );
+FormResultsDialog.displayName = 'FormResultsDialog';

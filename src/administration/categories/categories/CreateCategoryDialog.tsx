@@ -194,3 +194,4 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
         );
     }
 );
+CreateCategoryDialog.displayName = 'CreateCategoryDialog';

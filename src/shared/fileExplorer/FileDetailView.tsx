@@ -142,3 +142,4 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
         </div>
     );
 });
+FileDetailView.displayName = 'FileDetailView';

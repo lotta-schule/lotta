@@ -45,7 +45,7 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
 }) => {
     const firstBrowserInit = React.useRef(false);
 
-    const client = getApolloClient();
+    const client = getApolloClient({ tenant });
     if (!firstBrowserInit.current) {
         client.writeQuery({
             query: GetTenantQuery,
@@ -92,33 +92,31 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
                                 }}
                             >
                                 <OverlayProvider>
-                                    <Authentication>
-                                        <UploadQueueProvider>
-                                            <ThemeProvider
-                                                theme={() => {
-                                                    if (
-                                                        tenant.configuration
-                                                            .customTheme
-                                                    ) {
-                                                        return createTheme(
-                                                            merge(
-                                                                {},
-                                                                theme,
-                                                                tenant
-                                                                    .configuration
-                                                                    .customTheme
-                                                            ),
-                                                            deDE
-                                                        );
-                                                    }
-                                                    return theme;
-                                                }}
-                                            >
-                                                <AppHead />
-                                                <AppBody>{children}</AppBody>
-                                            </ThemeProvider>
-                                        </UploadQueueProvider>
-                                    </Authentication>
+                                    <Authentication />
+                                    <UploadQueueProvider>
+                                        <ThemeProvider
+                                            theme={() => {
+                                                if (
+                                                    tenant.configuration
+                                                        .customTheme
+                                                ) {
+                                                    return createTheme(
+                                                        merge(
+                                                            {},
+                                                            theme,
+                                                            tenant.configuration
+                                                                .customTheme
+                                                        ),
+                                                        deDE
+                                                    );
+                                                }
+                                                return theme;
+                                            }}
+                                        >
+                                            <AppHead />
+                                            <AppBody>{children}</AppBody>
+                                        </ThemeProvider>
+                                    </UploadQueueProvider>
                                 </OverlayProvider>
                             </CloudimageProvider>
                         </MuiPickersUtilsProvider>

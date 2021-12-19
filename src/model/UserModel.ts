@@ -13,6 +13,7 @@ export interface UserModel {
     email: string;
     class?: string;
     phone?: string;
+    unreadMessages?: number;
     assignedGroups?: UserGroupModel[];
     groups: UserGroupModel[];
     avatarImageFile?: FileModel | null;

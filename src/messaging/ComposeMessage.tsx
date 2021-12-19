@@ -4,26 +4,36 @@ import { Send } from '@material-ui/icons';
 import { Button } from 'shared/general/button/Button';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { Input } from 'shared/general/form/input/Input';
-import { ChatType, MessageModel, ThreadRepresentation } from 'model';
+import {
+    NewMessageDestination,
+    MessageModel,
+    ConversationModel,
+    ID,
+} from 'model';
+import { Message } from 'util/model/Message';
 import { useMutation } from '@apollo/client';
+import pick from 'lodash/pick';
+
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
-import GetMessagesQuery from 'api/query/GetMessagesQuery.graphql';
+import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 
 import styles from './ComposeMessage.module.scss';
 
 export interface ComposeMessageProps {
-    threadRepresentation: ThreadRepresentation;
+    destination: NewMessageDestination;
+    onSent?: (message: MessageModel) => void;
 }
 
 export const ComposeMessage = React.memo<ComposeMessageProps>(
-    ({ threadRepresentation }) => {
+    ({ destination, onSent }) => {
         const inputRef = React.useRef<HTMLInputElement>(null);
         const [content, setContent] = React.useState('');
 
         React.useEffect(() => {
             setContent('');
             inputRef.current?.focus();
-        }, [threadRepresentation]);
+        }, [destination]);
 
         React.useEffect(() => {
             if (content === '') {
@@ -39,36 +49,60 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                 message: {
                     content,
                     recipientUser:
-                        threadRepresentation.messageType ===
-                        ChatType.DirectMessage
-                            ? { id: threadRepresentation.counterpart.id }
-                            : undefined,
+                        destination.user && pick(destination.user, 'id'),
                     recipientGroup:
-                        threadRepresentation.messageType === ChatType.GroupChat
-                            ? { id: threadRepresentation.counterpart.id }
-                            : undefined,
+                        destination.group && pick(destination.group, 'id'),
                 },
             },
             update: (cache, { data }) => {
                 if (data && data.message) {
-                    const readMessagesResult = cache.readQuery<{
-                        messages: MessageModel[];
-                    }>({ query: GetMessagesQuery });
+                    const readConversationResult = cache.readQuery<
+                        { conversation: ConversationModel },
+                        { id: ID }
+                    >({
+                        query: GetConversationQuery,
+                        variables: { id: data.message.conversation!.id },
+                    });
+                    const conversation = {
+                        ...data.message.conversation,
+                        ...readConversationResult?.conversation,
+                        messages: [
+                            data.message,
+                            ...(readConversationResult?.conversation.messages ??
+                                []),
+                        ],
+                    };
                     cache.writeQuery({
-                        query: GetMessagesQuery,
+                        query: GetConversationQuery,
+                        variables: { id: conversation.id },
+                        data: { conversation },
+                    });
+                    const readConversationsResult = cache.readQuery<{
+                        conversations: ConversationModel[];
+                    }>({ query: GetConversationsQuery });
+                    cache.writeQuery({
+                        query: GetConversationsQuery,
                         data: {
-                            messages: [
-                                ...(readMessagesResult?.messages.filter(
-                                    (msg) => msg.id !== data.message.id
+                            conversations: [
+                                {
+                                    ...conversation,
+                                    messages: conversation.messages.map((c) =>
+                                        pick(c, ['id', '__typename'])
+                                    ),
+                                },
+                                ...(readConversationsResult?.conversations?.filter(
+                                    (c) => c.id !== conversation.id
                                 ) ?? []),
-                                data.message,
-                            ],
+                            ].filter(Boolean),
                         },
+                        broadcast: true,
                     });
                 }
             },
-            onCompleted: () => {
+            onCompleted: ({ message }) => {
                 setContent('');
+                inputRef.current?.focus();
+                onSent?.(message as MessageModel);
             },
         });
 
@@ -94,6 +128,9 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                             disabled={isLoading}
                             value={content}
                             onChange={(e) => setContent(e.currentTarget.value)}
+                            placeholder={`Schreibe eine neue Nachricht an ${Message.getDestinationName(
+                                destination
+                            )}`}
                             onKeyPress={onKeypress}
                         />
                         {!!error && <ErrorMessage error={error} />}
@@ -109,3 +146,4 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
         );
     }
 );
+ComposeMessage.displayName = 'MessageCompose';

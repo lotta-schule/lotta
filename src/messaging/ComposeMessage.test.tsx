@@ -1,18 +1,18 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, SomeUserin } from 'test/fixtures';
 import { ComposeMessage } from './ComposeMessage';
-import { ChatType } from 'model';
-import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
+import { MessageModel } from 'model';
 import userEvent from '@testing-library/user-event';
+
+import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 
 describe('shared/layouts/messagingLayout/ComposeMessage', () => {
     it('should render the shared', () => {
         render(
             <ComposeMessage
-                threadRepresentation={{
-                    messageType: ChatType.DirectMessage,
-                    counterpart: SomeUserin,
+                destination={{
+                    user: SomeUserin,
                 }}
             />
         );
@@ -21,9 +21,8 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
     it('should auto focus input field', () => {
         const screen = render(
             <ComposeMessage
-                threadRepresentation={{
-                    messageType: ChatType.DirectMessage,
-                    counterpart: SomeUserin,
+                destination={{
+                    user: SomeUserin,
                 }}
             />
         );
@@ -32,7 +31,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
     });
 
     describe('send form', () => {
-        it('should send a userAvatar a comment', async () => {
+        it('should send a user a message', async () => {
             let didCallMutation = false;
             const additionalMocks = [
                 {
@@ -53,11 +52,17 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                                 message: {
                                     id: 1,
                                     content: 'Hallo!',
-                                    senderUser: SomeUser,
-                                    recipientUser: SomeUserin,
+                                    user: SomeUser,
                                     recipientGroup: null,
                                     insertedAt: new Date().toString(),
                                     updatedAt: new Date().toString(),
+                                    conversation: {
+                                        id: 99900,
+                                        insertedAt: new Date().toString(),
+                                        updatedAt: new Date().toString(),
+                                        users: [SomeUser, SomeUserin],
+                                        groups: [],
+                                    },
                                 },
                             },
                         };
@@ -66,9 +71,8 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
             ];
             const screen = render(
                 <ComposeMessage
-                    threadRepresentation={{
-                        messageType: ChatType.DirectMessage,
-                        counterpart: SomeUserin,
+                    destination={{
+                        user: SomeUserin,
                     }}
                 />,
                 {},
@@ -105,23 +109,31 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                                 message: {
                                     id: 1,
                                     content: 'Hallo!',
-                                    senderUser: SomeUser,
-                                    recipientUser: SomeUserin,
-                                    recipientGroup: null,
+                                    user: SomeUser,
                                     insertedAt: new Date().toString(),
                                     updatedAt: new Date().toString(),
+                                    conversation: {
+                                        id: 99901,
+                                        insertedAt: new Date().toString(),
+                                        updatedAt: new Date().toString(),
+                                        users: [SomeUser, SomeUserin],
+                                        groups: [],
+                                    },
                                 },
                             },
                         };
                     },
                 },
             ];
+            const onSent = jest.fn((message: MessageModel) => {
+                expect(message.id).toEqual(1);
+            });
             const screen = render(
                 <ComposeMessage
-                    threadRepresentation={{
-                        messageType: ChatType.DirectMessage,
-                        counterpart: SomeUserin,
+                    destination={{
+                        user: SomeUserin,
                     }}
+                    onSent={onSent}
                 />,
                 {},
                 { currentUser: SomeUser, additionalMocks }
@@ -130,14 +142,14 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
             await waitFor(() => {
                 expect(didCallMutation).toEqual(true);
             });
+            expect(onSent).toHaveBeenCalled();
         });
 
         it('should not send form on ENTER when SHIFT modifier is pressed', async () => {
             const screen = render(
                 <ComposeMessage
-                    threadRepresentation={{
-                        messageType: ChatType.DirectMessage,
-                        counterpart: SomeUserin,
+                    destination={{
+                        user: SomeUserin,
                     }}
                 />,
                 {},

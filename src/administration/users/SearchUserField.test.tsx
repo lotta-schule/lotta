@@ -80,6 +80,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
                     'groups',
                     'hideFullName',
                     'lastSeen',
+                    'unreadMessages',
                     'hasChangedDefaultPassword',
                 ])
             );

@@ -160,3 +160,4 @@ export const MoveFilesDialog = React.memo(() => {
         </Dialog>
     );
 });
+MoveFilesDialog.displayName = 'MoveFilesDialog';

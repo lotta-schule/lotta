@@ -6,6 +6,7 @@ import { ScrollToTopButton } from 'shared/general/button/ScrollToTopButton';
 import { useIsRetina } from 'util/useIsRetina';
 import { useTenant } from 'util/tenant/useTenant';
 import { useServerData } from 'shared/ServerDataContext';
+import Link from 'next/link';
 import getConfig from 'next/config';
 
 import styles from './BaseLayout.module.scss';
@@ -37,17 +38,20 @@ export const BaseLayout = React.memo(({ children }) => {
                 <Grid container style={{ height: '100%' }}>
                     <Grid item md={3} className={styles.logoGridItem}>
                         {tenant.configuration.logoImageFile && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                                src={`https://${cloudimageToken}.cloudimg.io/height/${
-                                    80 * retinaMultiplier
-                                }/foil1/${File.getFileRemoteLocation(
-                                    baseUrl,
-                                    tenant.configuration.logoImageFile
-                                )}`}
-                                alt={`Logo ${tenant.title}`}
-                                className={styles.logo}
-                            />
+                            <Link href={'/'} passHref>
+                                <a title={'Startseite'}>
+                                    <img
+                                        src={`https://${cloudimageToken}.cloudimg.io/height/${
+                                            80 * retinaMultiplier
+                                        }/foil1/${File.getFileRemoteLocation(
+                                            baseUrl,
+                                            tenant.configuration.logoImageFile
+                                        )}`}
+                                        alt={`Logo ${tenant.title}`}
+                                        className={styles.logo}
+                                    />
+                                </a>
+                            </Link>
                         )}
                     </Grid>
                     <Grid item md={9} className={styles.titleGridItem}>

@@ -1,128 +1,59 @@
 import * as React from 'react';
+import { useQuery } from '@apollo/client';
 import { Forum } from '@material-ui/icons';
 import { LinearProgress } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { ChatType, ThreadRepresentation } from 'model';
-import { MessagesThread } from './MessagesThread';
+import { ConversationModel, NewMessageDestination } from 'model';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
-import { ThreadPreview } from './ThreadPreview';
+import { ConversationPreview } from './ConversationPreview';
+import { MessagesThread } from './MessagesThread';
 import { MessageToolbar } from './MessageToolbar';
 import { useIsMobile } from 'util/useIsMobile';
+import { Message } from 'util/model/Message';
 import { Button } from 'shared/general/button/Button';
-import { useMessages } from './hook/useMessages';
 import clsx from 'clsx';
 
 import styles from './MessagingView.module.scss';
 
+import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+
 export const MessagingView = React.memo(() => {
     const isMobile = useIsMobile();
-    const currentUser = useCurrentUser();
+    const currentUser = useCurrentUser()!;
 
     const sectionElRef = React.useRef<HTMLElement>(null);
     useSetWindowHeight(sectionElRef);
 
-    const { data, loading: isLoading, error } = useMessages();
+    const {
+        data,
+        loading: isLoading,
+        error,
+    } = useQuery<{ conversations: ConversationModel[] }>(GetConversationsQuery);
 
-    const [selectedThread, setSelectedThread] =
-        React.useState<ThreadRepresentation | null>(null);
-    const [newMessageThread, setNewMessageThread] =
-        React.useState<ThreadRepresentation | null>(null);
+    const conversations = data?.conversations ?? [];
+
+    const [selectedConversation, setSelectedConversation] =
+        React.useState<ConversationModel | null>(null);
+    const [createMessageDestination, setCreateMessageDestination] =
+        React.useState<NewMessageDestination | null>(null);
 
     const [isSidebarActive, setIsSidebarActive] = React.useState(true);
 
-    const threadRepresentations = React.useMemo(() => {
-        return Array.from(data?.messages ?? [])
-            .sort((msg1, msg2) => msg2.updatedAt.localeCompare(msg1.updatedAt))
-            .reduce(
-                (reps, message) => {
-                    const representation: ThreadRepresentation & {
-                        date: Date;
-                    } = {
-                        messageType: message.recipientUser
-                            ? ChatType.DirectMessage
-                            : ChatType.GroupChat,
-                        counterpart: message.recipientGroup
-                            ? message.recipientGroup
-                            : message.senderUser.id !== currentUser!.id
-                            ? message.senderUser
-                            : message.recipientUser,
-                        date: new Date(message.updatedAt),
-                    };
-                    if (
-                        !representation.counterpart ||
-                        reps.find(
-                            ({ messageType, counterpart }) =>
-                                messageType === representation.messageType &&
-                                counterpart?.id ===
-                                    representation.counterpart?.id
-                        )
-                    ) {
-                        return reps;
-                    } else {
-                        return [...reps, representation];
-                    }
-                },
-                [
-                    ...(newMessageThread ? [newMessageThread] : []),
-                ] as (ThreadRepresentation & { date: Date })[]
-            );
-    }, [data, currentUser, newMessageThread]);
-
-    const getMessagesForThread = React.useCallback(
-        (thread: ThreadRepresentation) => {
-            return (
-                data?.messages.filter((msg) =>
-                    thread.messageType === ChatType.DirectMessage
-                        ? msg.recipientUser?.id === thread.counterpart.id ||
-                          (msg.senderUser.id === thread.counterpart.id &&
-                              !msg.recipientGroup)
-                        : msg.recipientGroup?.id === thread.counterpart.id
-                ) ?? []
-            );
-        },
-        [data]
-    );
-
     React.useEffect(() => {
-        if (!selectedThread && threadRepresentations.length) {
-            setSelectedThread(threadRepresentations[0]);
-        }
-    }, [selectedThread, threadRepresentations]);
-
-    React.useEffect(() => {
-        if (newMessageThread && newMessageThread !== selectedThread) {
-            setNewMessageThread(null);
-        }
-    }, [selectedThread, newMessageThread]);
-
-    React.useEffect(() => {
-        if (selectedThread) {
+        if (createMessageDestination) {
+            setSelectedConversation(null);
             setIsSidebarActive(false);
         }
-    }, [selectedThread]);
+    }, [createMessageDestination]);
 
-    const mainView = React.useMemo(() => {
-        if (!selectedThread) {
-            return null;
+    React.useEffect(() => {
+        if (selectedConversation) {
+            setCreateMessageDestination(null);
+            setIsSidebarActive(false);
         }
-        const messages = getMessagesForThread(selectedThread);
-        const messagesView = messages?.length ? (
-            <MessagesThread messages={messages} />
-        ) : (
-            <div className={styles.noMessagesWrapper}>
-                Du hast noch keine Nachrichten mit{' '}
-                {selectedThread.counterpart.name} ausgetauscht.
-            </div>
-        );
-        return (
-            <>
-                {messagesView}
-                <ComposeMessage threadRepresentation={selectedThread} />
-            </>
-        );
-    }, [getMessagesForThread, selectedThread]);
+    }, [selectedConversation]);
 
     if (isLoading) {
         return <LinearProgress />;
@@ -141,24 +72,39 @@ export const MessagingView = React.memo(() => {
             >
                 <MessageToolbar
                     onToggle={() => setIsSidebarActive(false)}
-                    onCreateMessageThread={(newMsgThread) => {
-                        setNewMessageThread(newMsgThread);
-                        setSelectedThread(newMsgThread);
+                    onRequestNewMessage={(destination) => {
+                        const conversation = conversations.find((c) => {
+                            if (
+                                destination.group &&
+                                c.groups[0]?.id == destination.group.id
+                            ) {
+                                return true;
+                            }
+                            if (
+                                destination.user &&
+                                c.users.find(
+                                    (u) => u.id === destination.user.id
+                                )
+                            ) {
+                                return true;
+                            }
+                            return false;
+                        });
+                        if (conversation) {
+                            setSelectedConversation(conversation);
+                        } else {
+                            setCreateMessageDestination(destination);
+                        }
                     }}
                 />
-                {threadRepresentations.map((thread) => (
-                    <ThreadPreview
-                        key={thread.messageType + thread.counterpart.id}
-                        selected={Boolean(
-                            selectedThread &&
-                                selectedThread.messageType ===
-                                    thread.messageType &&
-                                selectedThread.counterpart.id ===
-                                    thread.counterpart.id
-                        )}
-                        counterpart={thread.counterpart}
-                        date={thread.date}
-                        onClick={() => setSelectedThread(thread)}
+                {conversations.map((conversation) => (
+                    <ConversationPreview
+                        key={[...conversation.users, ...conversation.groups]
+                            .map(({ id }) => id)
+                            .join('-')}
+                        conversation={conversation}
+                        selected={selectedConversation?.id == conversation.id}
+                        onClick={() => setSelectedConversation(conversation)}
                     />
                 ))}
             </aside>
@@ -170,7 +116,47 @@ export const MessagingView = React.memo(() => {
                         onClick={() => setIsSidebarActive(true)}
                     />
                 )}
-                {mainView}
+                {selectedConversation && (
+                    <React.Fragment>
+                        {selectedConversation?.messages?.length ? (
+                            <MessagesThread
+                                conversation={selectedConversation}
+                            />
+                        ) : (
+                            <div className={styles.noMessagesWrapper}>
+                                In dieser Unterhaltung wurden noch keine
+                                Nachrichten geschrieben.
+                            </div>
+                        )}
+                        <ComposeMessage
+                            destination={Message.conversationAsDestination(
+                                selectedConversation,
+                                currentUser
+                            )}
+                        />
+                    </React.Fragment>
+                )}
+                {createMessageDestination && (
+                    <React.Fragment>
+                        {createMessageDestination.user && (
+                            <div className={styles.noMessagesWrapper}>
+                                Schreibe deine erste Nachricht an{' '}
+                                <strong>
+                                    {Message.getDestinationName(
+                                        createMessageDestination
+                                    )}
+                                </strong>
+                                .
+                            </div>
+                        )}
+                        <ComposeMessage
+                            destination={createMessageDestination}
+                            onSent={(msg) => {
+                                setSelectedConversation(msg.conversation!);
+                            }}
+                        />
+                    </React.Fragment>
+                )}
             </div>
         </section>
     );

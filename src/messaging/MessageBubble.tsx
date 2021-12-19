@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { Button } from 'shared/general/button/Button';
-import { MessageModel } from 'model';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { ConversationModel, MessageModel } from 'model';
 import { User } from 'util/model';
+import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
 import { Delete } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
-import GetMessagesQuery from 'api/query/GetMessagesQuery.graphql';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
+
+import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
+import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
 
 import styles from './MessageBubble.module.scss';
 
@@ -21,25 +22,66 @@ export interface MessageBubbleProps {
 
 export const MessageBubble = React.memo<MessageBubbleProps>(
     ({ active, message }) => {
-        const currentUser = useCurrentUser();
-
         const [deleteMessage] = useMutation(DeleteMessageMutation, {
             variables: { id: message.id },
             update: (client, { data }) => {
                 if (data?.message) {
-                    const cache = client.readQuery<{
-                        messages: MessageModel[];
+                    let msgConversation: ConversationModel | null = null;
+                    const getConversationsCache = client.readQuery<{
+                        conversations: ConversationModel[];
                     }>({
-                        query: GetMessagesQuery,
+                        query: GetConversationsQuery,
                     });
                     client.writeQuery({
-                        query: GetMessagesQuery,
+                        query: GetConversationsQuery,
                         data: {
-                            messages: cache?.messages?.filter(
-                                (m) => m.id !== data.message.id
-                            ),
+                            conversations:
+                                getConversationsCache?.conversations?.map(
+                                    (conversation) => {
+                                        if (
+                                            conversation.messages.find(
+                                                (m) => m.id === data.message.id
+                                            )
+                                        ) {
+                                            msgConversation = conversation;
+                                        }
+                                        return {
+                                            ...conversation,
+                                            messages:
+                                                conversation.messages.filter(
+                                                    (m) =>
+                                                        m.id !== data.message.id
+                                                ),
+                                        };
+                                    }
+                                ) ?? [],
                         },
                     });
+
+                    if (msgConversation) {
+                        const getConversationCache = client.readQuery<{
+                            conversation: ConversationModel;
+                        }>({
+                            query: GetConversationQuery,
+                            variables: {
+                                id: (msgConversation as ConversationModel).id,
+                            },
+                        });
+                        if (getConversationCache?.conversation) {
+                            client.writeQuery({
+                                query: GetConversationQuery,
+                                data: {
+                                    conversation: {
+                                        ...getConversationCache.conversation,
+                                        messages:
+                                            getConversationCache.conversation.messages.filter(
+                                                (m) => m.id !== data.message.id
+                                            ),
+                                    },
+                                },
+                            });
+                        }
+                    }
                 }
             },
             optimisticResponse: ({ id }) => {
@@ -54,29 +96,34 @@ export const MessageBubble = React.memo<MessageBubbleProps>(
 
         return (
             <div className={clsx(styles.root, { [styles.isActive]: !!active })}>
-                <div className={styles.message}>{message.content}</div>
-                <div className={styles.messageInformation}>
-                    <span className={styles.senderUser}>
-                        <UserAvatar
-                            user={message.senderUser}
-                            className={styles.senderUserAvatar}
-                            size={20}
-                        />
-                        {User.getName(message.senderUser)}
-                    </span>
-                    {format(new Date(message.insertedAt), 'PPPpp', {
-                        locale: de,
-                    })}
-                    {message.senderUser?.id === currentUser?.id && (
-                        <Button
-                            small
-                            icon={<Delete />}
-                            aria-label="Nachricht löschen"
-                            onClick={() => deleteMessage()}
-                        />
-                    )}
+                <div className={styles.user}>
+                    <UserAvatar
+                        user={message.user}
+                        className={styles.senderUserAvatar}
+                        size={40}
+                    />
+                </div>
+                <div className={styles.messageWrapper}>
+                    <div className={styles.message}>{message.content}</div>
+                    <div className={styles.messageInformation}>
+                        {active && (
+                            <Button
+                                small
+                                icon={<Delete />}
+                                title={'Nachricht löschen'}
+                                onClick={() => deleteMessage()}
+                            />
+                        )}
+                        <span>
+                            {!active && <i>{User.getName(message.user)}, </i>}
+                            {format(new Date(message.insertedAt), 'Pp', {
+                                locale: de,
+                            })}
+                        </span>
+                    </div>
                 </div>
             </div>
         );
     }
 );
+MessageBubble.displayName = 'MessageBubble';

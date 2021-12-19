@@ -171,3 +171,4 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
         </form>
     );
 });
+EditGroupForm.displayName = 'AdministrationEditGroupForm';
