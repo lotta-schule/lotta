@@ -1,9 +1,11 @@
 import * as React from 'react';
 
-export type TextareaProps = React.HTMLProps<HTMLTextAreaElement>;
+export type TextareaProps = React.HTMLProps<HTMLTextAreaElement> & {
+    maxHeight?: React.CSSProperties['maxHeight'];
+};
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-    (props, ref) => {
+    ({ maxHeight, ...props }, ref) => {
         const textareaRef = React.useRef<HTMLTextAreaElement>(
             null
         ) as React.MutableRefObject<HTMLTextAreaElement>;
@@ -12,11 +14,14 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         const [parentHeight, setParentHeight] = React.useState('auto');
 
         React.useEffect(() => {
-            setParentHeight(`${textareaRef.current!.scrollHeight}px`);
+            const height = `min(${textareaRef.current!.scrollHeight}px, ${
+                typeof maxHeight === 'number'
+                    ? `${maxHeight}px`
+                    : maxHeight ?? '100vh'
+            })`;
+            setParentHeight(height);
             setTextareaHeight(
-                `calc(calc(0.5 * var(--lotta-spacing)) + ${
-                    textareaRef.current!.scrollHeight
-                }px)`
+                `calc(calc(0.5 * var(--lotta-spacing)) + ${height})`
             );
         }, [text]);
 

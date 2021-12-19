@@ -17,7 +17,7 @@ import styles from './MessageToolbar.module.scss';
 
 export interface MessageToolbarProps {
     onRequestNewMessage(subject: NewMessageDestination): void;
-    onToggle(): void;
+    onToggle: null | (() => void);
 }
 
 export const MessageToolbar = React.memo<MessageToolbarProps>(

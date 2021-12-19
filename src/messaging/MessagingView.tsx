@@ -55,6 +55,16 @@ export const MessagingView = React.memo(() => {
         }
     }, [selectedConversation]);
 
+    React.useEffect(() => {
+        if (
+            isSidebarActive &&
+            isMobile &&
+            document.activeElement?.nodeName === 'TEXTAREA'
+        ) {
+            (document.activeElement as HTMLTextAreaElement).blur();
+        }
+    }, [isSidebarActive, isMobile]);
+
     if (isLoading) {
         return <LinearProgress />;
     }
@@ -62,6 +72,10 @@ export const MessagingView = React.memo(() => {
     if (error) {
         return <ErrorMessage error={error} />;
     }
+
+    const isHideSidebarButtonVisible = Boolean(
+        selectedConversation || createMessageDestination
+    );
 
     return (
         <section ref={sectionElRef} className={styles.root}>
@@ -71,7 +85,11 @@ export const MessagingView = React.memo(() => {
                 })}
             >
                 <MessageToolbar
-                    onToggle={() => setIsSidebarActive(false)}
+                    onToggle={
+                        isHideSidebarButtonVisible
+                            ? () => setIsSidebarActive(false)
+                            : null
+                    }
                     onRequestNewMessage={(destination) => {
                         const conversation = conversations.find((c) => {
                             if (
@@ -109,7 +127,7 @@ export const MessagingView = React.memo(() => {
                 ))}
             </aside>
             <div className={styles.messageView}>
-                {isMobile && (
+                {isMobile && !isSidebarActive && (
                     <Button
                         icon={<Forum />}
                         style={{ width: 40 }}

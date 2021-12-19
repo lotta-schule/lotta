@@ -10,7 +10,6 @@ import {
     ConversationModel,
     ID,
 } from 'model';
-import { Message } from 'util/model/Message';
 import { useMutation } from '@apollo/client';
 import pick from 'lodash/pick';
 
@@ -124,13 +123,27 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                             multiline
                             ref={inputRef}
                             className={styles.textField}
+                            maxHeight={'30vh'}
                             label={'Nachricht schreiben'}
                             disabled={isLoading}
                             value={content}
                             onChange={(e) => setContent(e.currentTarget.value)}
-                            placeholder={`Schreibe eine neue Nachricht an ${Message.getDestinationName(
+                            {
+                                /* The input has no placeholder because giving it
+                                 * a placeholder would make it be squeezed down on mobile,
+                                 * which would make the input tall, which would mess up
+                                 * because of autogrowing input (try it out).
+                                 * TODO: The solution here is to make the sidebar a
+                                 * popover / modal instead of pushing the other things
+                                 * aside (or adding kind of a overflowing wrapper
+                                 * which would allow the main section
+                                 * keeping its width. */ ...{}
+                            }
+                            placeholder={
+                                /*`Schreibe eine neue Nachricht an ${Message.getDestinationName(
                                 destination
-                            )}`}
+                            )}`*/ undefined
+                            }
                             onKeyPress={onKeypress}
                         />
                         {!!error && <ErrorMessage error={error} />}
