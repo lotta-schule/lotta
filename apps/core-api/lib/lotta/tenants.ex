@@ -202,7 +202,8 @@ defmodule Lotta.Tenants do
   """
   @doc since: "2.0.0"
   @spec update_configuration(Tenant.t(), Tenant.configuration()) ::
-          {:ok, %Tenant{configuration: Tenant.configuration()}} | {:error, Ecto.Changeset.t()}
+          {:ok, %{__struct__: Tenant, configuration: Tenant.configuration()}}
+          | {:error, Ecto.Changeset.t()}
   def update_configuration(tenant, configuration) do
     Enum.reduce(configuration, Multi.new(), fn {key, value}, multi ->
       key = to_string(key)

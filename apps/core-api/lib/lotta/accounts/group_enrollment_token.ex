@@ -17,4 +17,8 @@ defmodule Lotta.Accounts.GroupEnrollmentToken do
 
     timestamps()
   end
+
+  @type id :: number()
+
+  @type t :: %__MODULE__{id: id, token: String.t(), group_id: UserGroup.t()}
 end

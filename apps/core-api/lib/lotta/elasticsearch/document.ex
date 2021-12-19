@@ -77,15 +77,11 @@ defimpl Elasticsearch.Document, for: Lotta.Content.Article do
   defp content_module_content(_), do: nil
 
   def find_text_from_slate_node(%{"nodes" => nodes}) when is_list(nodes) do
-    nodes
-    |> Enum.map(&find_text_from_slate_node/1)
-    |> Enum.join()
+    Enum.map_join(nodes, &find_text_from_slate_node/1)
   end
 
   def find_text_from_slate_node(%{"children" => children}) when is_list(children) do
-    children
-    |> Enum.map(&find_text_from_slate_node/1)
-    |> Enum.join()
+    Enum.map_join(children, &find_text_from_slate_node/1)
   end
 
   def find_text_from_slate_node(%{"document" => document}) do

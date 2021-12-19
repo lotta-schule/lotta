@@ -85,14 +85,16 @@ defmodule LottaWeb.EmailView do
     article
     |> Repo.preload(:users)
     |> Map.get(:users, [])
-    |> Enum.map(fn user ->
-      if not is_nil(user.nickname) && String.length(user.nickname) > 0 do
-        user.nickname
-      else
-        user.name
-      end
-    end)
-    |> Enum.join(", ")
+    |> Enum.map_join(
+      fn user ->
+        if not is_nil(user.nickname) && String.length(user.nickname) > 0 do
+          user.nickname
+        else
+          user.name
+        end
+      end,
+      ", "
+    )
   end
 
   defp default_logo_data_url() do

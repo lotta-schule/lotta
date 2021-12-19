@@ -82,10 +82,12 @@ defmodule LottaWeb.TokenControllerTest do
         token
         |> String.split(".")
         |> Enum.with_index()
-        |> Enum.map(fn {token_part, i} ->
-          if i < 2, do: token_part, else: String.reverse(token_part)
-        end)
-        |> Enum.join(".")
+        |> Enum.map_join(
+          fn {token_part, i} ->
+            if i < 2, do: token_part, else: String.reverse(token_part)
+          end,
+          "."
+        )
 
       conn =
         build_conn()

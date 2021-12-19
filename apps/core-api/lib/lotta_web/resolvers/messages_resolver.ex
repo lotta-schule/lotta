@@ -6,7 +6,7 @@ defmodule LottaWeb.MessagesResolver do
 
   alias LottaWeb.Context
   alias Lotta.{Accounts, Messages}
-  alias Lotta.Messages.{Conversation, Message}
+  alias Lotta.Messages.Conversation
 
   def resolve_conversation_unread_messages(_args, %{
         context: %Context{current_user: user},

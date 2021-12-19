@@ -75,7 +75,7 @@ defmodule Lotta.Storage.RemoteStorage do
   Create a file on the remote storage given an elixir Upload struct.
   Returns an (unsaved[!]) RemoteStorageEntity in a result tuple.
   """
-  @spec create(%Plug.Upload{}, String.t()) ::
+  @spec create(Upload.t(), String.t()) ::
           {:ok, RemoteStorageEntity.t()} | {:error, term()}
   def create(%Plug.Upload{} = file, path) do
     with {:ok, strategy} <- get_strategy(),

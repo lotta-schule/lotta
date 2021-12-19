@@ -5,10 +5,7 @@ defmodule LottaWeb.SitemapPlug do
 
   import Plug.Conn
   import Ecto.Query
-  alias Lotta.Repo
-  alias Lotta.Tenants
-  alias Lotta.Storage
-  alias Lotta.Slugifier
+  alias Lotta.{Repo, Slugifier, Storage, Tenants}
   alias Lotta.Content.Article
 
   def init(opts), do: opts
@@ -43,14 +40,12 @@ defmodule LottaWeb.SitemapPlug do
 
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <>
       "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n" <>
-      (categories
-       |> Enum.map(fn category ->
-         "\t<url>\n" <>
-           "\t\t<loc>https://#{conn.host}/c/#{category.id}-#{Slugifier.slugify_string(category.title)}</loc>\n" <>
-           "\t\t<lastmod>#{category.updated_at}</lastmod>\n" <>
-           "\t</url>\n"
-       end)
-       |> Enum.join("")) <>
+      Enum.map_join(categories, fn category ->
+        "\t<url>\n" <>
+          "\t\t<loc>https://#{conn.host}/c/#{category.id}-#{Slugifier.slugify_string(category.title)}</loc>\n" <>
+          "\t\t<lastmod>#{category.updated_at}</lastmod>\n" <>
+          "\t</url>\n"
+      end) <>
       "</urlset>"
   end
 
@@ -66,25 +61,23 @@ defmodule LottaWeb.SitemapPlug do
 
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" <>
       "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:n=\"http://www.google.com/schemas/sitemap-news/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">\n" <>
-      (articles
-       |> Enum.map(fn article ->
-         article = Repo.preload(article, :preview_image_file)
+      Enum.map_join(articles, fn article ->
+        article = Repo.preload(article, :preview_image_file)
 
-         "\t<url>\n" <>
-           "\t\t<loc>https://#{conn.host}/c/#{article.id}-#{Slugifier.slugify_string(article.title)}</loc>\n" <>
-           "\t\t<lastmod>#{article.updated_at}</lastmod>\n" <>
-           case article do
-             %{preview_image_file: file} ->
-               "\t\t<image:image>\n" <>
-                 "\t\t\t<image:loc>#{Storage.get_http_url(file)}</image:loc>\n" <>
-                 "\t\t</image:image>\n"
+        "\t<url>\n" <>
+          "\t\t<loc>https://#{conn.host}/c/#{article.id}-#{Slugifier.slugify_string(article.title)}</loc>\n" <>
+          "\t\t<lastmod>#{article.updated_at}</lastmod>\n" <>
+          case article do
+            %{preview_image_file: file} ->
+              "\t\t<image:image>\n" <>
+                "\t\t\t<image:loc>#{Storage.get_http_url(file)}</image:loc>\n" <>
+                "\t\t</image:image>\n"
 
-             _ ->
-               ""
-           end <>
-           "\t</url>\n"
-       end)
-       |> Enum.join("")) <>
+            _ ->
+              ""
+          end <>
+          "\t</url>\n"
+      end) <>
       "</urlset>"
   end
 
@@ -97,11 +90,9 @@ defmodule LottaWeb.SitemapPlug do
       conn.host <>
       "/sitemap.xml?categories\n" <>
       "\t\t</loc>\n" <>
-      (Date.range(~D[2019-08-01], Date.utc_today())
-       |> Enum.map(fn date ->
-         "\t\t<loc>https://#{conn.host}/sitemap.xml?articles&amp;date=#{Date.to_iso8601(date)}</loc>\n"
-       end)
-       |> Enum.join("")) <>
+      Enum.map_join(Date.range(~D[2019-08-01], Date.utc_today()), fn date ->
+        "\t\t<loc>https://#{conn.host}/sitemap.xml?articles&amp;date=#{Date.to_iso8601(date)}</loc>\n"
+      end) <>
       "\t</sitemap>\n" <>
       "</sitemapindex>"
   end
