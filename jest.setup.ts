@@ -9,6 +9,21 @@ const dialogContainer = document.createElement('div');
 dialogContainer.setAttribute('id', 'dialogContainer');
 document.body.appendChild(dialogContainer);
 
+// window.matchMedia mock
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation((query) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(), // Deprecated
+        removeListener: jest.fn(), // Deprecated
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+    })),
+});
+
 Element.prototype.scroll = jest.fn();
 jest.mock('next/head', () => {
     const ReactDOMServer = require('react-dom/server');

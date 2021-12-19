@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
-import { useIsMobile } from 'util/useIsMobile';
 import { Tabs, Tab } from '@material-ui/core';
 import { Widget } from 'category/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
@@ -22,7 +21,9 @@ export interface WidgetsListProps {
 
 export const WidgetsList = React.memo<WidgetsListProps>(
     ({ widgets, children }) => {
-        const isMobile = window.matchMedia('(max-width: 959px)').matches;
+        const isMobile =
+            typeof window !== 'undefined' &&
+            window.matchMedia('(max-width: 959px)').matches;
         const wrapperRef = React.useRef<HTMLDivElement | null>(null);
 
         const currentUser = useCurrentUser();
@@ -53,7 +54,6 @@ export const WidgetsList = React.memo<WidgetsListProps>(
         }, [currentTabIndex]);
 
         React.useLayoutEffect(() => {
-            console.log(window.matchMedia('(min-width: 960px)'));
             if (
                 wrapperRef.current &&
                 window.matchMedia('(min-width: 960px)').matches
