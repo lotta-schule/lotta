@@ -9,6 +9,7 @@ import { gql } from '@apollo/client';
 import { NavigationButton } from 'shared/general/button/NavigationButton';
 import { Category } from 'util/model';
 import { Button } from 'shared/general/button/Button';
+import { useRouter } from 'next/router';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -18,6 +19,11 @@ export const Navbar = React.memo(() => {
     const wrapperRef = React.useRef<HTMLElement>(null);
 
     const apolloClient = useApolloClient();
+    const router = useRouter();
+    const path = router.asPath;
+
+    const isHomepage = path === '/';
+
     const [categories] = useCategories();
     const currentCategoryId = useCurrentCategoryId();
     const categoriesAncestors = useCategoriesAncestorsForItem(
@@ -78,8 +84,7 @@ export const Navbar = React.memo(() => {
                                     <NavigationButton
                                         key={'home'}
                                         className={clsx(styles.navButton, {
-                                            selected:
-                                                currentCategoryId === null,
+                                            selected: isHomepage,
                                         })}
                                     >
                                         {homepageCategory.title}
