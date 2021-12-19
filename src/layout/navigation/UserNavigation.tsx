@@ -33,13 +33,14 @@ import styles from './UserNavigation.module.scss';
 
 export const UserNavigation = React.memo(() => {
     const currentUser = useCurrentUser()!;
+
     const router = useRouter();
     const { data: unpublishedArticlesData } = useQuery<{
         articles: ArticleModel[];
     }>(GetUnpublishedArticlesQuery, {
         skip: !currentUser || !User.isAdmin(currentUser),
     });
-    const newMessagesBadgeNumber = currentUser.unreadMessages ?? 0;
+    const newMessagesBadgeNumber = currentUser?.unreadMessages ?? 0;
     const onLogout = useOnLogout();
 
     const [loginModalIsOpen, setLoginModalIsOpen] = React.useState(false);
