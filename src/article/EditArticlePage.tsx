@@ -64,7 +64,7 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
         if (updatedArticleData?.article && isArticleDirty === false) {
             console.log(router.push(ArticleUtil.getPath(article)));
         }
-    }, [updatedArticleData, isArticleDirty]);
+    }, [updatedArticleData, isArticleDirty, article]);
 
     useSubscription<{ article: ArticleModel }, { id: ID }>(
         ArticleIsUpdatedSubscription,
