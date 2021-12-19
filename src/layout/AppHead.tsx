@@ -2,7 +2,6 @@ import * as React from 'react';
 import Head from 'next/head';
 import { useTheme } from '@material-ui/core';
 import { useTenant } from 'util/tenant/useTenant';
-import { CssVariables } from './CssVariables';
 import {
     textFonts,
     headerFonts,
@@ -22,7 +21,7 @@ export const AppHead = React.memo(() => {
             {/* see https://nextjs.org/docs/messages/no-document-viewport-meta */}
             <meta
                 name="viewport"
-                content="width=device-width, initial-scale=1"
+                content="width=device-width, initial-scale=1, maximum-scale=1"
             />
             <link
                 rel="mask-icon"
