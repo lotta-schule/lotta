@@ -19,7 +19,7 @@ export const SelectTemplateButton = React.memo<SelectTemplateButtonProps>(
                 'palette.primary.main',
                 get(partialTheme, 'palette.primary.main')
             );
-            const secondaryColor: string = get(
+            const navigationBackgroundColor: string = get(
                 partialTheme,
                 'palette.secondary.main',
                 get(partialTheme, 'palette.secondary.main')
@@ -31,8 +31,8 @@ export const SelectTemplateButton = React.memo<SelectTemplateButtonProps>(
             );
             return `linear-gradient(${[
                 `${primaryColor} 33%`,
-                `${secondaryColor} 33%`,
-                `${secondaryColor} 66%`,
+                `${navigationBackgroundColor} 33%`,
+                `${navigationBackgroundColor} 66%`,
                 `${backgroundColor} 66%`,
             ].join(', ')})`;
         };

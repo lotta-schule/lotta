@@ -7,13 +7,13 @@
         margin: 0;
     }
     a {
-        text-decoration: 'none';
-        color: var(--lotta-color-secondary);
+        text-decoration: none;
+        color: rgba(var(--lotta-primary-color), 1);
     }
     p,
     ul,
     ol {
-        margin: var(--lotta-spacing) var(--lotta-spacing);
+        margin: var(--lotta-spacing);
     }
     ul,
     ol {
