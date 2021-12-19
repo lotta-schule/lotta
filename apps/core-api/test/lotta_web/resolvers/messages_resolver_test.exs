@@ -128,7 +128,7 @@ defmodule LottaWeb.MessagesResolverTest do
                      "groups" => [%{"name" => "Lehrer"}]
                    },
                    %{
-                     "users" => [%{"name" => "Alexis Rinaldoni"}, %{"name" => "Eike Wiewiorra"}],
+                     "users" => [%{"name" => "Eike Wiewiorra"}, %{"name" => "Alexis Rinaldoni"}],
                      "groups" => []
                    }
                  ]

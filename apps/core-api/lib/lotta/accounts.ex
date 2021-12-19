@@ -12,7 +12,7 @@ defmodule Lotta.Accounts do
   alias Lotta.Mailer
   alias Lotta.Accounts.{User, UserGroup, GroupEnrollmentToken}
   alias Lotta.Storage
-  alias Lotta.Storage.{File}
+  alias Lotta.Storage.File
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -493,10 +493,10 @@ defmodule Lotta.Accounts do
   """
   @spec see_user(User.t()) :: {:ok, UserGroup.t()} | {:error, Changeset.t()}
   def see_user(%User{} = user) do
-    user
-    |> Ecto.Changeset.change(%{
-      last_seen: DateTime.truncate(DateTime.utc_now(), :second)
-    })
-    |> Repo.update()
+    Repo.update(
+      Changeset.change(user, %{
+        last_seen: DateTime.truncate(DateTime.utc_now(), :second)
+      })
+    )
   end
 end

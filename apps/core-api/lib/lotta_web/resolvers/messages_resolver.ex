@@ -60,7 +60,7 @@ defmodule LottaWeb.MessagesResolver do
       |> format_errors("Nachricht konnte nicht versandt werden.")
   end
 
-  defp get_message_recipient(%Message{} = message) do
+  defp get_message_recipient(message) do
     fetch_id = fn key ->
       case message[key] do
         %{id: id} ->
