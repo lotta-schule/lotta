@@ -1,69 +1,64 @@
 .root {
+    display: flex;
     padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
-    margin-bottom: calc(4 * var(--lotta-spacing));
-    cursor: default;
+    margin-bottom: var(--lotta-spacing);
     position: relative;
-    margin-left: initial;
-    margin-right: 3em;
-    border-width: 2px;
-    border-style: solid;
-    border-color: rgba(var(--lotta-primary-color), 1);
-    background-color: rgba(var(--lotta-primary-color), 0.3);
-    border-radius: var(--lotta-border-radius);
-    overflow: hidden;
-
-    &::after {
-        content: initial;
-        border-left-width: 20;
-        border-left-style: solid;
-        border-left-color: rgba(var(--lotta-box-background-color));
-        border-top-width: 20px;
-        border-top-style: solid;
-        border-top-color: rgba(var(--lotta-primary-color), 0.3);
-        background-color: rgba(var(--lotta-primary-color), 1);
-        bottom: -20px;
-        position: absolute;
-        left: 20px;
-        right: initial;
-    }
 
     &.isActive {
-        margin-left: 3em;
-        margin-right: initial;
-        border-color: rgba(var(--lotta-secondary-color), 1);
-        background-color: rgba(var(--lotta-secondary-color), 0.3);
-        &::after {
-            content: '';
-            border-top-color: rgba(var(--lotta-secondary-color), 0.3);
-            background-color: rgba(var(--lotta-secondary-color), 1);
-            left: initial;
-            right: 20px;
+        flex-direction: row-reverse;
+        .message {
+            border-color: rgba(var(--lotta-primary-color), 1);
+            background-color: rgba(var(--lotta-primary-color), 0.3);
+            border-bottom-right-radius: 0;
+        }
+
+        .messageWrapper {
+            align-items: flex-end;
         }
     }
 
+    &:not(.isActive) .message {
+        border-bottom-left-radius: 0;
+    }
+
+    .messageWrapper {
+        display: flex;
+        max-width: 80%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .message {
-        padding-bottom: var(--lotta-spacing);
+        padding: var(--lotta-spacing);
+        border: 1px solid rgba(var(--lotta-disabled-color), 0.5);
+        background: rgba(var(--lotta-disabled-color), 0.08);
+        border-radius: calc(3 * var(--lotta-border-radius));
+        white-space: pre-wrap;
     }
 
     .senderUser {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
     }
 
     .senderUserAvatar {
-        height: 1em;
-        width: 1em;
         display: inline-block;
-        margin-right: 0.25em;
+        margin: 0 var(--lotta-spacing);
     }
 
     .messageInformation {
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        padding-top: var(--lotta-spacing);
-        border-top-width: 1px;
-        border-top-style: solid;
-        border-top-color: rgba(var(--lotta-secondary-color), 0.7);
+        font-size: 0.75em;
+        padding-top: 0.25em;
+
+        button {
+            padding: 0;
+            svg {
+                font-size: 1.5em;
+            }
+        }
     }
 }

@@ -1,20 +1,19 @@
 import * as React from 'react';
 import { Button } from 'shared/general/button/Button';
 import { ConversationModel, MessageModel } from 'model';
-import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { User } from 'util/model';
+import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
 import { Delete } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
 
-import styles from './MessageBubble.module.scss';
-
 import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+import DeleteMessageMutation from 'api/mutation/DeleteMessageMutation.graphql';
+
+import styles from './MessageBubble.module.scss';
 
 export interface MessageBubbleProps {
     active?: boolean;
@@ -23,8 +22,6 @@ export interface MessageBubbleProps {
 
 export const MessageBubble = React.memo<MessageBubbleProps>(
     ({ active, message }) => {
-        const currentUser = useCurrentUser();
-
         const [deleteMessage] = useMutation(DeleteMessageMutation, {
             variables: { id: message.id },
             update: (client, { data }) => {
@@ -99,27 +96,31 @@ export const MessageBubble = React.memo<MessageBubbleProps>(
 
         return (
             <div className={clsx(styles.root, { [styles.isActive]: !!active })}>
-                <div className={styles.message}>{message.content}</div>
-                <div className={styles.messageInformation}>
-                    <span className={styles.senderUser}>
-                        <UserAvatar
-                            user={message.user}
-                            className={styles.senderUserAvatar}
-                            size={20}
-                        />
-                        {User.getName(message.user)}
-                    </span>
-                    {format(new Date(message.insertedAt), 'PPPpp', {
-                        locale: de,
-                    })}
-                    {message.user?.id === currentUser?.id && (
-                        <Button
-                            small
-                            icon={<Delete />}
-                            aria-label="Nachricht löschen"
-                            onClick={() => deleteMessage()}
-                        />
-                    )}
+                <div className={styles.user}>
+                    <UserAvatar
+                        user={message.user}
+                        className={styles.senderUserAvatar}
+                        size={40}
+                    />
+                </div>
+                <div className={styles.messageWrapper}>
+                    <div className={styles.message}>{message.content}</div>
+                    <div className={styles.messageInformation}>
+                        {active && (
+                            <Button
+                                small
+                                icon={<Delete />}
+                                title={'Nachricht löschen'}
+                                onClick={() => deleteMessage()}
+                            />
+                        )}
+                        <span>
+                            {!active && <i>{User.getName(message.user)}, </i>}
+                            {format(new Date(message.insertedAt), 'Pp', {
+                                locale: de,
+                            })}
+                        </span>
+                    </div>
                 </div>
             </div>
         );
