@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-    List,
-    ListItem,
-    ListItemText,
-    Tooltip,
-    LinearProgress,
-} from '@material-ui/core';
+import { List, ListItem, ListItemText, Tooltip } from '@material-ui/core';
 import { FiberManualRecord } from '@material-ui/icons';
 import { useApolloClient } from '@apollo/client';
 import { format, intervalToDuration } from 'date-fns';
@@ -17,6 +11,7 @@ import {
     WidgetModelType,
 } from 'model';
 import { Divider } from 'shared/general/divider/Divider';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import clsx from 'clsx';
 
@@ -65,7 +60,12 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
     }, [apolloClient, calendars]);
 
     if (isLoading) {
-        return <LinearProgress />;
+        return (
+            <LinearProgress
+                isIndeterminate
+                aria-label={'Kalenderdaten werden geladen'}
+            />
+        );
     }
 
     if (error) {

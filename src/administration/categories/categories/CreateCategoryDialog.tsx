@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { FormControl, LinearProgress } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { animated, useSpring } from 'react-spring';
 import { CategoryModel } from 'model';
@@ -14,6 +13,7 @@ import { Input } from 'shared/general/form/input/Input';
 import { Label } from 'shared/general/label/Label';
 import { Radio, RadioGroup } from 'shared/general/form/radio';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 
 import CreateCategoryMutation from 'api/mutation/CreateCategoryMutation.graphql';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
@@ -86,7 +86,12 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                 onRequestClose={() => onAbort()}
                 title={'Kategorie erstellen'}
             >
-                {isLoading && <LinearProgress />}
+                {isLoading && (
+                    <LinearProgress
+                        isIndeterminate
+                        label={'Kategorie wird erstellt'}
+                    />
+                )}
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
@@ -123,50 +128,46 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                 required
                             />
                         </Label>
-                        <FormControl
+                        <Label
+                            label={'Art der Kategorie'}
                             className={styles.categoryPositionSet}
-                            component={'fieldset'}
                         >
-                            <Label label={'Art der Kategorie'}>
-                                <RadioGroup
-                                    name={'category-type'}
-                                    aria-label={'Art der Kategorie'}
-                                    value={categoryPosition}
-                                    onChange={(_e, value) =>
-                                        setCategoryPosition(parseInt(value, 10))
-                                    }
-                                >
-                                    <Radio
-                                        value={CategoryPosition.Main}
-                                        label={'Hauptnavigation'}
+                            <RadioGroup
+                                name={'category-type'}
+                                aria-label={'Art der Kategorie'}
+                                value={categoryPosition}
+                                onChange={(_e, value) =>
+                                    setCategoryPosition(parseInt(value, 10))
+                                }
+                            >
+                                <Radio
+                                    value={CategoryPosition.Main}
+                                    label={'Hauptnavigation'}
+                                />
+                                <Radio
+                                    value={CategoryPosition.Sub}
+                                    label={'Subnavigation'}
+                                />
+                                <animated.div style={parentCategorySpringProps}>
+                                    <CategorySelect
+                                        hideSubCategories
+                                        className={styles.categorySelect}
+                                        label={'Übergeordnete Kategorie'}
+                                        disabled={
+                                            categoryPosition !==
+                                                CategoryPosition.Sub &&
+                                            !isLoading
+                                        }
+                                        selectedCategory={parentCategory}
+                                        onSelectCategory={setParentCategory}
                                     />
-                                    <Radio
-                                        value={CategoryPosition.Sub}
-                                        label={'Subnavigation'}
-                                    />
-                                    <animated.div
-                                        style={parentCategorySpringProps}
-                                    >
-                                        <CategorySelect
-                                            hideSubCategories
-                                            className={styles.categorySelect}
-                                            label={'Übergeordnete Kategorie'}
-                                            disabled={
-                                                categoryPosition !==
-                                                    CategoryPosition.Sub &&
-                                                !isLoading
-                                            }
-                                            selectedCategory={parentCategory}
-                                            onSelectCategory={setParentCategory}
-                                        />
-                                    </animated.div>
-                                    <Radio
-                                        value={CategoryPosition.Side}
-                                        label={'Randnavigation'}
-                                    />
-                                </RadioGroup>
-                            </Label>
-                        </FormControl>
+                                </animated.div>
+                                <Radio
+                                    value={CategoryPosition.Side}
+                                    label={'Randnavigation'}
+                                />
+                            </RadioGroup>
+                        </Label>
                     </DialogContent>
                     <DialogActions>
                         <Button
