@@ -1,6 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 
-import styles from './banner.module.scss';
+import styles from './Banner.module.scss';
 
 export const Banner: React.FC = ({ children }) => {
     return <div className={styles.banner}>{children}</div>;
