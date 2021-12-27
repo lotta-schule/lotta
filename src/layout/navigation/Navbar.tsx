@@ -77,45 +77,43 @@ export const Navbar = React.memo(() => {
         <nav className={clsx(styles.root, 'navbar')} ref={wrapperRef}>
             <Grid container style={{ position: 'relative' }}>
                 <Grid item xs className={styles.padding}>
-                    <AppBar position={'sticky'}>
-                        <Toolbar>
-                            {homepageCategory && (
-                                <Link href={'/'} passHref>
-                                    <NavigationButton
-                                        key={'home'}
-                                        className={clsx(styles.navButton, {
-                                            selected: isHomepage,
-                                        })}
-                                    >
-                                        {homepageCategory.title}
-                                    </NavigationButton>
-                                </Link>
-                            )}
-                            {mainCategories.map((category) => (
-                                <Link
-                                    key={category.id}
-                                    href={
-                                        category.redirect
-                                            ? category.redirect
-                                            : Category.getPath(category)
-                                    }
-                                    passHref
+                    <nav className={styles.navbar}>
+                        {homepageCategory && (
+                            <Link href={'/'} passHref>
+                                <NavigationButton
+                                    key={'home'}
+                                    className={clsx(styles.navButton, {
+                                        selected: isHomepage,
+                                    })}
                                 >
-                                    <NavigationButton
-                                        className={clsx(styles.navButton, {
-                                            selected:
-                                                categoriesHierarchy.indexOf(
-                                                    category.id
-                                                ) > -1,
-                                        })}
-                                    >
-                                        {category.title}
-                                    </NavigationButton>
-                                </Link>
-                            ))}
-                            <Button className={styles.placeholder}>{''}</Button>
-                        </Toolbar>
-                    </AppBar>
+                                    {homepageCategory.title}
+                                </NavigationButton>
+                            </Link>
+                        )}
+                        {mainCategories.map((category) => (
+                            <Link
+                                key={category.id}
+                                href={
+                                    category.redirect
+                                        ? category.redirect
+                                        : Category.getPath(category)
+                                }
+                                passHref
+                            >
+                                <NavigationButton
+                                    className={clsx(styles.navButton, {
+                                        selected:
+                                            categoriesHierarchy.indexOf(
+                                                category.id
+                                            ) > -1,
+                                    })}
+                                >
+                                    {category.title}
+                                </NavigationButton>
+                            </Link>
+                        ))}
+                        <Button className={styles.placeholder}>{''}</Button>
+                    </nav>
                 </Grid>
                 <Grid
                     item
@@ -133,42 +131,39 @@ export const Navbar = React.memo(() => {
                 </Grid>
             </Grid>
             {subcategories.length > 0 && (
-                <AppBar
+                <nav
                     data-testid={'nav-level2'}
-                    position={'sticky'}
                     className={styles.secondaryAppBar}
                 >
-                    <Toolbar style={{ minHeight: '0', height: '40px' }}>
-                        {subcategories.map((category) => (
-                            <Link
+                    {subcategories.map((category) => (
+                        <Link
+                            key={category.id}
+                            href={
+                                category.redirect
+                                    ? category.redirect
+                                    : Category.getPath(category)
+                            }
+                            passHref
+                        >
+                            <NavigationButton
                                 key={category.id}
-                                href={
-                                    category.redirect
-                                        ? category.redirect
-                                        : Category.getPath(category)
-                                }
-                                passHref
+                                className={clsx(
+                                    styles.navButtonSecond,
+                                    'secondary',
+                                    'small',
+                                    {
+                                        selected:
+                                            categoriesHierarchy.indexOf(
+                                                category.id
+                                            ) > -1,
+                                    }
+                                )}
                             >
-                                <NavigationButton
-                                    key={category.id}
-                                    className={clsx(
-                                        styles.navButtonSecond,
-                                        'secondary',
-                                        'small',
-                                        {
-                                            selected:
-                                                categoriesHierarchy.indexOf(
-                                                    category.id
-                                                ) > -1,
-                                        }
-                                    )}
-                                >
-                                    {category.title}
-                                </NavigationButton>
-                            </Link>
-                        ))}
-                    </Toolbar>
-                </AppBar>
+                                {category.title}
+                            </NavigationButton>
+                        </Link>
+                    ))}
+                </nav>
             )}
         </nav>
     );
