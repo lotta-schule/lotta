@@ -13,17 +13,38 @@ import { Socket as PhoenixSocket } from 'phoenix';
 // @ts-ignore
 import { hasSubscription } from '@jumpn/utils-graphql';
 import { JWT } from 'util/auth/jwt';
-import { isAfter, sub } from 'date-fns';
-import axios, { AxiosRequestConfig } from 'axios';
-import { createAbsintheSocketLink } from './createAbsintheSocketLink';
-import getConfig from 'next/config';
 import { TenantModel } from 'model';
+import { isAfter, sub } from 'date-fns';
+import { createAbsintheSocketLink } from './createAbsintheSocketLink';
+import { omit } from 'lodash';
+import axios, { AxiosRequestConfig } from 'axios';
+import getConfig from 'next/config';
 
 const {
-    publicRuntimeConfig: { socketUrl },
+    publicRuntimeConfig: { socketUrl, tenantSlugOverwrite },
 } = getConfig();
 
 const isBrowser = typeof window !== 'undefined';
+
+const createHeaders = (headers?: any) => {
+    if (!headers) {
+        return headers;
+    }
+    const h = Object.assign(
+        {},
+        {
+            ...(process.env.SKIP_HOST_HEADER_FORWARDING
+                ? (omit(headers ?? {}, ['host']) as Record<string, string>)
+                : (headers as Record<string, string>)),
+        },
+        {
+            ...(tenantSlugOverwrite && {
+                tenant: `slug:${tenantSlugOverwrite}`,
+            }),
+        }
+    );
+    return h;
+};
 
 const sendRefreshRequest = async () => {
     try {
@@ -75,13 +96,12 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
 
         const config: AxiosRequestConfig = {
             ...miscOptions,
-            headers,
+            headers: createHeaders(headers),
             url,
             method,
             data: body,
             withCredentials: true,
         };
-
         const axiosResponse = await axios(config);
         return new Response(JSON.stringify(axiosResponse.data), {
             headers: new Headers(axiosResponse.headers),
@@ -158,17 +178,19 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
                 '__typename'
             );
         }
-        if (isBrowser) {
-            const token =
-                operation.getContext().authToken ?? localStorage.getItem('id');
-            if (token) {
-                operation.setContext({
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-            }
+        const headers: Record<string, string> = {};
+        const token =
+            operation.getContext().authToken ??
+            (isBrowser && localStorage.getItem('id'));
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
         }
+        operation.setContext(({ headers: currentHeaders = {} }) => ({
+            headers: {
+                ...currentHeaders,
+                ...headers,
+            },
+        }));
         return forward?.(operation);
     });
 

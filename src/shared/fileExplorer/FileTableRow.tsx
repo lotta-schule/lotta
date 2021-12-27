@@ -107,7 +107,6 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                                 ) !== undefined
                             }
                             onChange={(isSelected) => {
-                                console.log(isSelected);
                                 dispatch({
                                     type: 'setSelectedFiles',
                                     files: isSelected

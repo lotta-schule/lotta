@@ -5,6 +5,7 @@ declare namespace NodeJS {
         APP_ENVIRONMENT: string;
         CLOUDIMG_TOKEN?: string;
         FORCE_BASE_URL?: string;
+        FORCE_TENANT_SLUG?: string;
         NODE_ENV?: string;
         SENTRY_DSN?: string;
     }

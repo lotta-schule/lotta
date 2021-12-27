@@ -1,15 +1,15 @@
 import * as React from 'react';
-import type { AppContext, AppProps } from 'next/app';
+import { AppContext, AppProps } from 'next/app';
 import { ServerDownError } from 'error/ServerDownError';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
 import { add } from 'date-fns';
 import { AppContextProviders } from 'layout/AppContextProviders';
+import axios from 'axios';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
-import axios from 'axios';
 
 import 'index.scss';
 import 'shared/general/button/base-button.scss';
@@ -65,12 +65,14 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         (context.ctx.req &&
             `${getProtocol()}://${context.ctx.req.headers.host}`);
 
+    const headers = context.ctx.req?.headers;
+
     await maybeChangeRefreshToken(context);
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,
         context: {
             headers: {
-                ...context.ctx.req?.headers,
+                ...headers,
                 // that's an ugly workaround because before SSR authentication
                 // headers were not passed to the GetTenantQuery and I would like
                 // to keep it like this for now for simplicity.
@@ -98,7 +100,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     const { data: userData } = await getApolloClient().query({
         query: GetCurrentUserQuery,
         context: {
-            headers: context.ctx.req?.headers,
+            headers,
         },
     });
     const { data: userTenant, error: userTenantError } =
@@ -107,7 +109,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
             fetchPolicy: 'network-only',
             context: {
                 headers: {
-                    ...context.ctx.req?.headers,
+                    ...headers,
                     // As the groups are part of the tenant query,
                     // and they are secured by user, we must
                     // fetch it again in order to have the groups
@@ -120,12 +122,12 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     const { data: categoriesData } = await getApolloClient().query({
         query: GetCategoriesQuery,
         context: {
-            headers: context.ctx.req?.headers,
+            headers,
         },
     });
 
     if (userTenantError) {
-        console.error(userTenantError);
+        console.error('Error fetching tenant as user: ', userTenantError);
     }
 
     return {
@@ -146,7 +148,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
         return;
     }
     const JwtDecode = (await import('jwt-decode')).default;
-    const headers = request.headers;
+    const headers = request.headers as Record<string, string>;
     const jwt = headers.authorization?.replace(/^Bearer /, '');
     if (jwt) {
         const decoded = JwtDecode(jwt, { header: false });
@@ -179,13 +181,16 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
     // We'll make an auth token from it and swap the refreshToken
     // in order to authenticate the request
     try {
-        const { data, headers: refreshResponseHeaders } =
-            await axios.request<any>({
-                method: 'POST',
-                baseURL: process.env.API_URL,
-                url: '/auth/token/refresh',
-                headers: request.headers as Record<string, string>,
-            });
+        const { data, headers: refreshResponseHeaders } = await axios.request<
+            any,
+            any,
+            any
+        >({
+            method: 'POST',
+            baseURL: process.env.API_URL,
+            url: '/auth/token/refresh',
+            headers,
+        });
         if (data?.accessToken) {
             request.headers.authorization = `Bearer ${data.accessToken}`;
             Cookies.set('AuthToken', data.accessToken, {
@@ -212,7 +217,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
             }
         }
     } catch (e) {
-        console.error(e);
+        console.error('User Token handling eror: ', e);
     }
 };
 
