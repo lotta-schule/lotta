@@ -2,11 +2,9 @@ import * as React from 'react';
 import {
     Popper,
     Grow,
-    Paper,
     ClickAwayListener,
     MenuList,
     MenuItem,
-    Grid,
 } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import {
@@ -93,8 +91,8 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                 data-testid="EditArticleFooter"
             >
                 <h5>Beitrags-Einstellungen</h5>
-                <Grid container className={styles.container}>
-                    <Grid item md={4} className={styles.gridItem}>
+                <div className={styles.container}>
+                    <div className={styles.gridItem}>
                         <h6>Sichtbarkeit</h6>
                         <div>
                             <GroupSelect
@@ -123,8 +121,8 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                 Beitrag löschen
                             </Button>
                         </div>
-                    </Grid>
-                    <Grid item md={4} className={styles.gridItem}>
+                    </div>
+                    <div className={styles.gridItem}>
                         <h6>Kategorie zuordnen</h6>
                         <div>
                             <CategorySelect
@@ -135,8 +133,8 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                             />
                         </div>
                         <div />
-                    </Grid>
-                    <Grid item md={4} className={styles.gridItem}>
+                    </div>
+                    <div className={styles.gridItem}>
                         <h6>Veröffentlichung</h6>
                         <ArticleStateEditor
                             article={article}
@@ -224,7 +222,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                                     : 'bottom right',
                                         }}
                                     >
-                                        <Paper id="menu-list-grow">
+                                        <Box id="menu-list-grow">
                                             <ClickAwayListener
                                                 onClickAway={
                                                     handleCloseSaveOptionsMenu
@@ -257,13 +255,13 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                                     </MenuItem>
                                                 </MenuList>
                                             </ClickAwayListener>
-                                        </Paper>
+                                        </Box>
                                     </Grow>
                                 )}
                             </Popper>
                         </div>
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
                 <Dialog
                     open={isDeleteModalOpen}
                     title={'Beitrag löschen'}

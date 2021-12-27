@@ -1,30 +1,15 @@
 const path = require('path');
 
 module.exports = {
-    core: {
-        builder: 'webpack5',
-    },
     stories: [
         '../src/**/*.stories.mdx',
         '../src/**/*.stories.@(js|jsx|ts|tsx)',
     ],
-    addons: [
-        {
-            name: '@storybook/preset-scss',
-            options: {
-                cssLoaderOptions: { modules: true },
-                sassLoaderOptions: {
-                    includePaths: [path.resolve(process.cwd(), 'styles')],
-                    sassOptions: {
-                        modules: true,
-                    },
-                },
-            },
-        },
-        '@storybook/react',
-        '@storybook/addon-links',
-        '@storybook/addon-essentials',
-    ],
+    addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
+    framework: '@storybook/react',
+    core: {
+        builder: 'webpack5',
+    },
     webpackFinal: async (config) => {
         config.resolve.modules.push(path.resolve(__dirname, '../src'));
 
@@ -46,6 +31,11 @@ module.exports = {
             ],
             include: path.resolve(__dirname, '../'),
         });
+
+        config.resolve.fallback = {
+            ...config.resolve.fallback,
+            path: false,
+        };
 
         config.resolve.alias = {
             ...config.resolve.alias,

@@ -10,7 +10,6 @@ import {
 } from '@material-ui/icons';
 import {
     Tooltip,
-    Toolbar,
     Badge,
     CircularProgress,
     Zoom,
@@ -24,6 +23,7 @@ import { File } from 'util/model';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
+import { Toolbar } from 'shared/general/layout/Toolbar';
 import { Button } from 'shared/general/button/Button';
 
 import styles from './FileToolbar.module.scss';
@@ -93,7 +93,7 @@ export const FileToolbar = React.memo(() => {
                                 return (
                                     <a
                                         key={currentPathString}
-                                        onClick={(e) => {
+                                        onClick={(_e) => {
                                             dispatch({
                                                 type: 'setPath',
                                                 path: [
