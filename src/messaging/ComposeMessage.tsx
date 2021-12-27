@@ -116,7 +116,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
             }
         };
         return (
-            <Toolbar className={styles.root}>
+            <div className={styles.root}>
                 <form className={styles.form} onSubmit={onSubmit}>
                     <div>
                         <Input
@@ -155,7 +155,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                         icon={<Send />}
                     />
                 </form>
-            </Toolbar>
+            </div>
         );
     }
 );
