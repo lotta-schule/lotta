@@ -68,6 +68,7 @@ const nextConfig = {
         sentryDsn: process.env.SENTRY_DSN,
         socketUrl: process.env.API_SOCKET_URL,
         cloudimageToken: process.env.CLOUDIMG_TOKEN,
+        tenantSlugOverwrite: process.env.FORCE_TENANT_SLUG,
     },
 };
 
