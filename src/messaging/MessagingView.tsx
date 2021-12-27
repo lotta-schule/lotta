@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { Forum } from '@material-ui/icons';
-import { LinearProgress } from '@material-ui/core';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { ConversationModel, NewMessageDestination } from 'model';
@@ -18,6 +17,7 @@ import clsx from 'clsx';
 import styles from './MessagingView.module.scss';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 
 export const MessagingView = React.memo(() => {
     const isMobile = useIsMobile();
@@ -66,7 +66,12 @@ export const MessagingView = React.memo(() => {
     }, [isSidebarActive, isMobile]);
 
     if (isLoading) {
-        return <LinearProgress />;
+        return (
+            <LinearProgress
+                isIndeterminate
+                aria-label={'Unterhaltungen werden geladen'}
+            />
+        );
     }
 
     if (error) {

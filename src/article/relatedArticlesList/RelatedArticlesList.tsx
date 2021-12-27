@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ArticleModel } from 'model';
 import { useQuery } from '@apollo/client';
-import { LinearProgress } from '@material-ui/core';
 import { useTransition, animated } from 'react-spring';
 import { ArticlePreviewDensedLayout } from 'article/preview';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 
 import styles from './RelatedArticlesList.module.scss';
 
@@ -33,7 +33,12 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
         });
 
         if (isLoading) {
-            return <LinearProgress />;
+            return (
+                <LinearProgress
+                    isIndeterminate
+                    aria-label={'verwandte Beiträge werden geladen'}
+                />
+            );
         }
 
         if (!relatedArticles.length) {

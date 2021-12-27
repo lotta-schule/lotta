@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Collapse, Grow, LinearProgress, Tabs, Tab } from '@material-ui/core';
+import { Collapse, Grow, Tabs, Tab } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import {
     NavigateNext,
@@ -17,6 +17,7 @@ import {
 } from 'shared/general/dialog/Dialog';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { useTenant } from 'util/tenant/useTenant';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { ArticlesList } from 'shared/articlesList/ArticlesList';
 import { Main, Sidebar } from 'layout';
 import { ProfileDeleteFileSelection } from './component/ProfileDeleteFileSelection';
@@ -164,7 +165,10 @@ export const DeletePage = React.memo(() => {
             <Main className={styles.root}>
                 {isLoading && (
                     <Box data-testid={'ProfileDeleteLoadingBox'}>
-                        <LinearProgress variant={'indeterminate'} />
+                        <LinearProgress
+                            isIndeterminate
+                            aria-label={'Seite wird gelöscht'}
+                        />
                     </Box>
                 )}
 

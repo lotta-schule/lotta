@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { LinearProgress, Grid } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { UserModel, UserGroupModel } from 'model';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +10,7 @@ import { GroupSelect } from 'shared/edit/GroupSelect';
 import { VirtualizedTable } from 'shared/general/VirtualizedTable';
 import { Divider } from 'shared/general/divider/Divider';
 import { Input } from 'shared/general/form/input/Input';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { SearchUserField } from './SearchUserField';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import clsx from 'clsx';
@@ -82,13 +82,19 @@ export const UserList = React.memo(() => {
     }, [data, filterText, selectedGroupsFilter]);
 
     return (
-        <div>
+        <div className={styles.root}>
             <SearchUserField
                 className={clsx(styles.headline)}
                 onSelectUser={setSelectedUser}
             />
 
-            {isLoading && <LinearProgress data-testid="loading" />}
+            {isLoading && (
+                <LinearProgress
+                    isIndeterminate
+                    label={'Nutzersuche läuft'}
+                    data-testid="loading"
+                />
+            )}
 
             {!isLoading && (
                 <>
@@ -103,8 +109,9 @@ export const UserList = React.memo(() => {
                         selectedGroups={selectedGroupsFilter}
                         onSelectGroups={setSelectedGroupsFilter}
                     />
-                    <Grid container>
-                        <Grid item xs={12} sm={6}>
+
+                    <div className={styles.gridContainer}>
+                        <div className={styles.gridItem}>
                             <Input
                                 value={filterText}
                                 onChange={(e) =>
@@ -113,18 +120,19 @@ export const UserList = React.memo(() => {
                                 placeholder={'Tabelle nach Name filtern'}
                                 aria-label={'Nach Name filtern'}
                             />
-                        </Grid>
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            className={styles.resultsGridItem}
+                        </div>
+                        <div
+                            className={clsx(
+                                styles.gridItem,
+                                styles.resultsGridItem
+                            )}
                         >
                             {t('administration.results', {
                                 count: rows.length,
                             })}
-                        </Grid>
-                    </Grid>
+                        </div>
+                    </div>
+
                     <VirtualizedTable
                         className={styles.virtualizedTable}
                         rowCount={rows.length}

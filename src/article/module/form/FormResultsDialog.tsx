@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Typography, LinearProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -8,6 +7,7 @@ import { ContentModuleModel, ID, ContentModuleResultModel } from 'model';
 import { Button } from 'shared/general/button/Button';
 import { Dialog, DialogContent } from 'shared/general/dialog/Dialog';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { FormConfiguration } from './Form';
 
 import GetContentModuleResults from 'api/query/GetContentModuleResults.graphql';
@@ -70,17 +70,22 @@ export const FormResultsDialog = React.memo<FormResultsDialogProps>(
         }, [data]);
         const content = React.useMemo(() => {
             if (isLoading) {
-                return <LinearProgress />;
+                return (
+                    <LinearProgress
+                        isIndeterminate
+                        aria-label={'Ergebnisse werden geladen'}
+                    />
+                );
             }
             if (error) {
                 return <ErrorMessage error={error} />;
             }
             return (
                 <div>
-                    <Typography variant={'body1'} component={'section'}>
+                    <section>
                         {data?.contentModuleResults.length ?? 0} gespeicherte
                         Einsendungen
-                    </Typography>
+                    </section>
                     <section>
                         <Button fullWidth onClick={() => downloadCsv()}>
                             Einsendungen als CSV herunterladen

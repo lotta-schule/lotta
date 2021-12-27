@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { LinearProgress } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
 import { ArticleModel, CategoryModel, ID } from 'model';
 import { Button } from 'shared/general/button/Button';
@@ -9,6 +8,7 @@ import {
     DialogContent,
 } from 'shared/general/dialog/Dialog';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { useCategories } from 'util/categories/useCategories';
 
 import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';
@@ -74,7 +74,12 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                 onRequestClose={onRequestClose}
                 title={'Kategorie löschen'}
             >
-                {isLoading && <LinearProgress />}
+                {isLoading && (
+                    <LinearProgress
+                        isIndeterminate
+                        label={'Kategorie wird gelöscht'}
+                    />
+                )}
                 <DialogContent>
                     <ErrorMessage error={error} />
                     <p>
@@ -89,7 +94,10 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                         <em>
                             Beiträge:&nbsp;
                             {isLoadingArticles ? (
-                                <LinearProgress />
+                                <LinearProgress
+                                    isIndeterminate
+                                    label={'Beiträge werden geladen'}
+                                />
                             ) : (
                                 articlesData && articlesData.articles.length
                             )}

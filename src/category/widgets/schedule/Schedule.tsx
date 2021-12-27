@@ -10,7 +10,6 @@ import {
 } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {
-    LinearProgress,
     Table,
     TableBody,
     TableRow,
@@ -22,6 +21,7 @@ import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
 import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
 import Link from 'next/link';
@@ -230,7 +230,12 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
     }
 
     if (isLoading) {
-        return <LinearProgress />;
+        return (
+            <LinearProgress
+                isIndeterminate
+                aria-label={'Stundenplan wird geladen'}
+            />
+        );
     } else if (currentScheduleError) {
         return <ErrorMessage error={currentScheduleError} />;
     } else if (currentScheduleData && currentScheduleData.schedule) {
