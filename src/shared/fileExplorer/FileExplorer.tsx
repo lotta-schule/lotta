@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Paper, Toolbar } from '@material-ui/core';
 import { FileModel } from 'model';
 import { useTranslation } from 'react-i18next';
 import { ActiveUploadsModal } from './ActiveUploadsModal';
@@ -17,6 +16,8 @@ import {
 import { Action, reducer } from './context/reducer';
 import { MoveDirectoryDialog } from './MoveDirectoryDialog';
 import { Button } from 'shared/general/button/Button';
+import { Box } from 'shared/general/layout/Box';
+import { Toolbar } from 'shared/general/layout/Toolbar';
 import clsx from 'clsx';
 
 import styles from './FileExplorer.module.scss';
@@ -46,7 +47,7 @@ export const FileExplorer = React.memo<FileExplorerProps>(
 
         return (
             <Provider value={[state, dispatch]}>
-                <Paper style={style} className={clsx(styles.root, className)}>
+                <Box style={style} className={clsx(styles.root, className)}>
                     <ActiveUploadsModal />
                     <FileUsageModal />
                     <CreateNewDirectoryDialog
@@ -82,7 +83,7 @@ export const FileExplorer = React.memo<FileExplorerProps>(
                             </Button>
                         </Toolbar>
                     )}
-                </Paper>
+                </Box>
             </Provider>
         );
     }
