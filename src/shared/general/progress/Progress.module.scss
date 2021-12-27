@@ -1,6 +1,8 @@
 .root {
     background: rgba(var(--lotta-box-background-color), 1);
     &.linear {
+        width: 100%;
+        position: relative;
         .progressBar {
             width: 100%;
             position: relative;
