@@ -2,8 +2,8 @@
 
 Web Client for Lotta Project
 
-[![pipeline status](https://gitlab.com/lotta-schule/api-server/badges/master/pipeline.svg)](https://gitlab.com/medienportal/api-server/commits/master)
-[![coverage report](https://gitlab.com/lotta-schule/api-server/badges/master/coverage.svg)](https://gitlab.com/medienportal/api-server/commits/master)
+[![pipeline status](https://gitlab.com/lotta-schule/api-server/badges/develop/pipeline.svg)](https://gitlab.com/medienportal/api-server/commits/develop)
+[![coverage report](https://gitlab.com/lotta-schule/api-server/badges/develop/coverage.svg)](https://gitlab.com/medienportal/api-server/commits/develop)
 
 ## What is Lotta
 
@@ -21,7 +21,7 @@ This repository contains the source code for the lotta web client.
 The lotta web client is the web frontend which connects to a lotta
 api, mainly over graphql.
 
-The latest tagged commit on master is deployed, as is.
+The latest tagged commit is deployed, as is.
 
 We invite you to inspect the source code, but have not yet decided
 about the terms we want to apply, so please contact us if you have
@@ -44,7 +44,6 @@ If you have an instance of the api running locally on port
 If you want to modify or add configuration, you can create an
 `.env` file containing your custom configuration.
 
-<<<<<<< HEAD
 These are the available options:
 
 <table>
@@ -79,6 +78,16 @@ These are the available options:
 <tr>
 <td>FORCE_TENANT_SLUG</td>
 <td>Force a tenant slug. By default the slug is recognized via the URL. This can be useful when using http://localhost, for example.</td>
+</tr>
+<tr>
+<td>SKIP_HOST_HEADER_FORWARDING</td>
+<td>
+Skips reusing the "host" header when making (server-side) requests from the webapp to the api server.
+When reaching an API from an external network, it can be possible the request will be blocked by the
+webserver when the host header does not match the receiving webserver.
+As the host header is used to recognize the tenant, you may want to also set `FORCE_TENANT_SLUG` when
+using this option.
+</td>
 </tr>
 </tbody>
 </table>
