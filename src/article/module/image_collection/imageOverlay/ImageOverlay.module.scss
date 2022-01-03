@@ -17,23 +17,23 @@
 }
 
 .closeButton {
-    position: 'absolute';
+    position: absolute;
     top: var(--lotta-spacing);
     right: var(--lotta-spacing);
 }
 
 .leftButton {
-    position: 'absolute';
+    position: absolute;
     left: var(--lotta-spacing);
 }
 
 .rightButton {
-    position: 'absolute';
+    position: absolute;
     right: var(--lotta-spacing);
 }
 
 .subtitles {
-    position: 'absolute';
-    bottom: '5%';
-    text-align: 'center';
+    position: absolute;
+    bottom: 5%;
+    text-align: center;
 }
