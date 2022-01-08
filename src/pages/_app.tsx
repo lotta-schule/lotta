@@ -12,10 +12,16 @@ import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 import 'index.scss';
+import 'nprogress/nprogress.css';
 import 'shared/general/button/base-button.scss';
 import 'shared/general/button/button.scss';
 import 'shared/general/button/button-group.scss';
 import 'shared/general/button/navigation-button.scss';
+import dynamic from 'next/dynamic';
+
+const TopProgressBar = dynamic(() => import('shared/TopProgressBar'), {
+    ssr: false,
+});
 
 const LottaWebApp = ({
     Component,
@@ -43,6 +49,7 @@ const LottaWebApp = ({
             currentUser={currentUser}
             requestBaseUrl={requestBaseUrl}
         >
+            <TopProgressBar />
             <Component {...componentProps} />
         </AppContextProviders>
     );
