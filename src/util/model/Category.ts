@@ -3,7 +3,8 @@ import slugify from 'slugify';
 
 export enum RedirectType {
     None = 'None',
-    Intern = 'Intern',
+    InternalCategory = 'InternalCategory',
+    InternalArticle = 'InternalArticle',
     Extern = 'Extern',
 }
 
@@ -19,8 +20,12 @@ export const Category = {
         ) {
             return RedirectType.None;
         }
-        return /^\//.test(category.redirect)
-            ? RedirectType.Intern
-            : RedirectType.Extern;
+        if (/^\/c/.test(category.redirect)) {
+            return RedirectType.InternalCategory;
+        }
+        if (/^\/a/.test(category.redirect)) {
+            return RedirectType.InternalArticle;
+        }
+        return RedirectType.Extern;
     },
 };
