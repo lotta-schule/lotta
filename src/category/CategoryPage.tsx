@@ -11,6 +11,7 @@ import { WidgetsList } from './widgetsList/WidgetsList';
 import { ArticlePreview } from 'article/preview';
 import { useCategory } from 'util/categories/useCategory';
 import { useScrollEvent } from 'util/useScrollEvent';
+import { CategoryHead } from './CategoryHead';
 import { PREFETCH_COUNT } from 'pages/c/[slug]';
 import clsx from 'clsx';
 import getConfig from 'next/config';
@@ -195,6 +196,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
 
     return (
         <>
+            <CategoryHead category={category} />
             <Main>
                 <Header bannerImageUrl={bannerImageUrl}>
                     <h2 data-testid="title">{category.title}</h2>
