@@ -17,10 +17,12 @@ import {
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
 import { Image } from '../SlateCustomTypes';
+import { File } from 'util/model';
+import { useServerData } from 'shared/ServerDataContext';
 import getConfig from 'next/config';
+import clsx from 'clsx';
 
 import styles from './SlateImage.module.scss';
-import clsx from 'clsx';
 
 const {
     publicRuntimeConfig: { cloudimageToken },
@@ -36,9 +38,14 @@ export const SlateImage = React.memo<SlateImageProps>(
         const isEditing = !useReadOnly();
         const editor = useSlateStatic();
         const isSelected = useSelected();
+        const { baseUrl } = useServerData();
         const [showOverlay, setShowOverlay] = React.useState(false);
 
-        const src = imageElement.src;
+        const src =
+            imageElement.src ??
+            File.getFileRemoteLocation(baseUrl, {
+                id: imageElement.fileId,
+            } as any);
         const imageUrl = `https://${cloudimageToken}.cloudimg.io/width/400/foil1/${src}`;
 
         const setElementOptions = React.useCallback(

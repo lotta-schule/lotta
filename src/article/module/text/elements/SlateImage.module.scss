@@ -9,12 +9,11 @@
     img {
         width: 100%;
     }
-}
 
-.isEditing.root {
-    cursor: pointer;
-}
-
-.isSelected.root {
-    border: 1px solid rgba(var(--lotta-text-color), 1);
+    &.isEditing {
+        cursor: pointer;
+    }
+    &.isSelected {
+        border: 1px solid rgba(var(--lotta-primary-color), 1);
+    }
 }

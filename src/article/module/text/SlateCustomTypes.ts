@@ -30,7 +30,9 @@ export type ListItem = {
 
 export type Image = {
     type: 'image';
-    src: string;
+    fileId?: string;
+    /* deprecated, as the use of the file id is encouraged in future */
+    src?: string;
     alignment?: string;
     size?: string;
     children: FormattedText[];

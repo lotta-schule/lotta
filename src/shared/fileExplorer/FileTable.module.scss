@@ -4,6 +4,7 @@
     transition: ease-out 250ms all;
     border: 2px dashed transparent;
     outline: none;
+    width: calc(100% - 1px);
     flex-grow: 1;
     flex-shrink: 1;
 
