@@ -45,7 +45,7 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
             return null;
         }
         return (
-            <section>
+            <section data-testid={'RelatedArticlesList'}>
                 <h6 className={styles.root}>
                     Weitere Beiträge zum Thema <strong>{tag}</strong>
                 </h6>
