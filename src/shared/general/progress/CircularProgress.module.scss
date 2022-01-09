@@ -1,0 +1,65 @@
+.root {
+    --value: 0.5;
+
+    height: 100%;
+    width: 100%;
+    font-size: 100%;
+    position: relative;
+
+    svg {
+        width: 100%;
+    }
+
+    text {
+        font-family: inherit;
+        font-weight: bolder;
+        fill: rgb(var(--lotta-primary-color));
+        text-anchor: middle;
+    }
+
+    path,
+    circle {
+        stroke: rgb(var(--lotta-primary-color));
+        stroke-width: 8;
+        stroke-dasharray: 288.5;
+        stroke-dashoffset: calc(288.5 * calc(1 - var(--value)));
+        stroke-linecap: round;
+        fill: none;
+        transform-origin: 50px 50px;
+        transform: rotate(-90deg);
+        transition: stroke-dashoffset 250ms ease-in;
+    }
+
+    &.indeterminate {
+        path,
+        circle {
+            animation: pathStroke 3.75s infinite ease-in-out,
+                pathRotate 7.5s infinite cubic-bezier(1, 0.5, 0, 0.5);
+        }
+    }
+
+    @keyframes pathStroke {
+        0% {
+            stroke-dashoffset: 288.5;
+        }
+        40%,
+        70% {
+            stroke-dashoffset: 0;
+        }
+        100% {
+            stroke-dashoffset: -288.5;
+        }
+    }
+
+    @keyframes pathRotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        50% {
+            transform: rotate(540deg);
+        }
+        100% {
+            transform: rotate(1080deg);
+        }
+    }
+}

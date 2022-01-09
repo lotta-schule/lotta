@@ -1,15 +1,13 @@
 .root {
     background: rgba(var(--lotta-box-background-color), 1);
-    &.linear {
+    width: 100%;
+    position: relative;
+    .progressBar {
         width: 100%;
         position: relative;
-        .progressBar {
-            width: 100%;
-            position: relative;
-            height: var(--lotta-spacing);
-            border-radius: var(--lotta-border-radius);
-            overflow: hidden;
-        }
+        height: var(--lotta-spacing);
+        border-radius: var(--lotta-border-radius);
+        overflow: hidden;
     }
     .indicator {
         height: 100%;
