@@ -62,11 +62,9 @@ defmodule LottaWeb.UserGroupResolverTest do
 
   describe "get all groups query" do
     @query """
-    query tenant {
-      tenant {
-        groups {
-          name
-        }
+    query GetGroups {
+      user_groups {
+        name
       }
     }
     """
@@ -80,7 +78,7 @@ defmodule LottaWeb.UserGroupResolverTest do
 
       assert res == %{
                "data" => %{
-                 "tenant" => %{"groups" => []}
+                 "user_groups" => []
                }
              }
     end
@@ -95,14 +93,12 @@ defmodule LottaWeb.UserGroupResolverTest do
 
       assert res == %{
                "data" => %{
-                 "tenant" => %{
-                   "groups" => [
-                     %{"name" => "Administration"},
-                     %{"name" => "Verwaltung"},
-                     %{"name" => "Lehrer"},
-                     %{"name" => "Schüler"}
-                   ]
-                 }
+                 "user_groups" => [
+                   %{"name" => "Administration"},
+                   %{"name" => "Verwaltung"},
+                   %{"name" => "Lehrer"},
+                   %{"name" => "Schüler"}
+                 ]
                }
              }
     end
@@ -117,11 +113,9 @@ defmodule LottaWeb.UserGroupResolverTest do
 
       assert res == %{
                "data" => %{
-                 "tenant" => %{
-                   "groups" => [
-                     %{"name" => "Lehrer"}
-                   ]
-                 }
+                 "user_groups" => [
+                   %{"name" => "Lehrer"}
+                 ]
                }
              }
     end

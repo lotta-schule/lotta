@@ -30,6 +30,10 @@ defmodule LottaWeb.Schema.Accounts do
       resolve(&LottaWeb.UserResolver.get/2)
     end
 
+    field :user_groups, type: list_of(:user_group) do
+      resolve(&LottaWeb.UserGroupResolver.all/2)
+    end
+
     field :group, type: :user_group do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
 
