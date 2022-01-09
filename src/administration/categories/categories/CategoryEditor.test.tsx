@@ -294,7 +294,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
                 await waitFor(() => {
                     expect(
-                        screen.getByTestId('InternalRedirectWrapper')
+                        screen.getByTestId('InternalCategoryRedirectWrapper')
                     ).toHaveStyle({ height: 0 });
                 });
                 expect(
