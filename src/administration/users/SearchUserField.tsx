@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { CircularProgress, Grid, NoSsr } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import { useAutocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import { useDebounce } from 'util/useDebounce';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { UserModel } from 'model';
 import { Input } from 'shared/general/form/input/Input';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import clsx from 'clsx';
 
@@ -101,6 +102,8 @@ export const SearchUserField = React.memo<SearchUserFieldProps>(
                             />
                             {isLoading && (
                                 <CircularProgress
+                                    isIndeterminate
+                                    aria-label={'Ergebnisse werden geladen'}
                                     className={styles.inputLoading}
                                     size={20}
                                 />
@@ -118,32 +121,26 @@ export const SearchUserField = React.memo<SearchUserFieldProps>(
                                     key={index}
                                     {...getOptionProps({ option, index })}
                                 >
-                                    <Grid container alignItems="center">
-                                        <Grid item>
-                                            <UserAvatar
-                                                className={styles.avatar}
-                                                user={option}
-                                                size={100}
-                                            />
-                                        </Grid>
-                                        <Grid item xs>
-                                            {option.name && (
-                                                <>
-                                                    {option.name}&nbsp;(
-                                                    <strong>
-                                                        {option.nickname}
-                                                    </strong>
-                                                    )
-                                                </>
-                                            )}
-                                            {!option.name &&
-                                                option.nickname && (
-                                                    <strong>
-                                                        {option.nickname}
-                                                    </strong>
-                                                )}
-                                        </Grid>
-                                    </Grid>
+                                    <UserAvatar
+                                        className={styles.avatar}
+                                        style={{ width: '2em', height: '2em' }}
+                                        user={option}
+                                        size={40}
+                                    />
+                                    <div>
+                                        {option.name && (
+                                            <>
+                                                {option.name}&nbsp;(
+                                                <strong>
+                                                    {option.nickname}
+                                                </strong>
+                                                )
+                                            </>
+                                        )}
+                                        {!option.name && option.nickname && (
+                                            <strong>{option.nickname}</strong>
+                                        )}
+                                    </div>
                                 </li>
                             ))}
                         </ul>

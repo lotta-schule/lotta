@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { CircularProgress } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, DirectoryModel } from 'model';
 import { Input } from 'shared/general/form/input/Input';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import fileExplorerContext from './context/FileExplorerContext';
-import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 import clsx from 'clsx';
+
+import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 import styles from './FileTableFooter.module.scss';
 
@@ -39,8 +40,13 @@ export const FileTableFooter = React.memo(() => {
         if (isLoading) {
             return (
                 <span>
-                    <CircularProgress size={'1rem'} /> &nbsp; Dateien werden
-                    geladen ...
+                    <CircularProgress
+                        isIndeterminate
+                        size={'1rem'}
+                        style={{ display: 'inline-block' }}
+                        aria-label={'Dateien werden geladen'}
+                    />{' '}
+                    &nbsp; Dateien werden geladen ...
                 </span>
             );
         }

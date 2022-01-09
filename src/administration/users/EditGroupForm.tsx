@@ -1,19 +1,16 @@
 import * as React from 'react';
-import {
-    CircularProgress,
-    FormControl,
-    FormHelperText,
-} from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
 import { UserGroupModel, ID, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { Input } from 'shared/general/form/input/Input';
 import { Label } from 'shared/general/label/Label';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
+
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
 import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 
@@ -47,13 +44,19 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
         >(UpdateUserGroupMutation);
 
     React.useEffect(() => {
-        if (data && data.group) {
+        if (data?.group) {
             setName(data.group.name);
         }
     }, [data]);
 
     if (isLoading) {
-        return <CircularProgress />;
+        return (
+            <CircularProgress
+                style={{ margin: '0 auto' }}
+                isIndeterminate
+                aria-label={'Gruppe wird geladen'}
+            />
+        );
     }
 
     const isSoleAdminGroup =
@@ -70,7 +73,7 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
             }}
         >
             <ErrorMessage error={loadDetailsError || updateError} />
-            <FormControl>
+            <div>
                 <Label label={'Gruppenname'}>
                     <Input
                         id="group-name"
@@ -106,10 +109,10 @@ export const EditGroupForm = React.memo<EditGroupFormProps>(({ group }) => {
                         }}
                     />
                 </Label>
-                <FormHelperText id="group-name-help-text">
+                <small id="group-name-help-text">
                     Gib der Gruppe einen verständlichen Namen
-                </FormHelperText>
-            </FormControl>
+                </small>
+            </div>
             <Checkbox
                 isDisabled={isLoadingUpdateGroup || isSoleAdminGroup}
                 isSelected={!!group.isAdminGroup}

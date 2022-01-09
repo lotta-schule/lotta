@@ -2,7 +2,7 @@ import * as React from 'react';
 import { LinearProgress } from './LinearProgress';
 import { render } from 'test/util';
 
-import styles from './Progress.module.scss';
+import styles from './LinearProgress.module.scss';
 
 describe('LinearProgress', () => {
     it('should render a progress bar', () => {

@@ -1,8 +1,8 @@
+@import 'breakpoints';
+
 .root {
-    padding-top: calc(3 * var(--lotta-spacing));
-    padding-bottom: calc(3 * var(--lotta-spacing));
-    padding-left: calc(2 * var(--lotta-spacing));
-    padding-right: calc(2 * var(--lotta-spacing));
+    padding-top: calc(3 * var(--lotta-spacing)) calc(2 * var(--lotta-spacing));
+
     .headline {
         margin-bottom: calc(4 * var(--lotta-spacing));
     }
@@ -20,7 +20,22 @@
         font-size: 20px;
     }
 
-    .navigationWrapper {
+    .wrapper {
+        display: flex;
+    }
+
+    aside {
         padding-right: calc(4 * var(--lotta-spacing));
+        width: calc(calc(100% / 12) * 5);
+    }
+
+    @media screen and (max-width: $max-sm) {
+        .wrapper {
+            display: block;
+        }
+
+        aside {
+            width: 100%;
+        }
     }
 }

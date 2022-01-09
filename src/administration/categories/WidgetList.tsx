@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Grid, CircularProgress, Menu, MenuItem } from '@material-ui/core';
+import { Menu, MenuItem } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { useQuery, useMutation } from '@apollo/client';
 import { Button } from 'shared/general/button/Button';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { WidgetModel, WidgetModelType } from 'model';
 import { Widget } from 'util/model';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
@@ -58,7 +59,7 @@ export const WidgetList = React.memo(() => {
     };
 
     if (isLoading) {
-        return <CircularProgress />;
+        return <LinearProgress />;
     }
 
     if (error) {
@@ -139,23 +140,23 @@ export const WidgetList = React.memo(() => {
                 </PopupState>
             </h3>
             <ErrorMessage error={errorCreateWidget} />
-            <Grid container>
-                <Grid item xs={12} sm={5} className={styles.navigationWrapper}>
+            <div className={styles.wrapper}>
+                <aside>
                     <WidgetNavigation
                         widgets={data!.widgets}
                         selectedWidget={selectedWidget}
                         onSelectWidget={setSelectedWidget}
                     />
-                </Grid>
-                <Grid item xs={12} sm={7}>
+                </aside>
+                <div>
                     {selectedWidget && (
                         <WidgetEditor
                             selectedWidget={selectedWidget}
                             onSelectWidget={setSelectedWidget}
                         />
                     )}
-                </Grid>
-            </Grid>
+                </div>
+            </div>
         </div>
     );
 });

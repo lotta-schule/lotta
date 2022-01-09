@@ -3,7 +3,7 @@ import { AriaProgressBarProps } from '@react-types/progress';
 import { useProgressBar } from '@react-aria/progress';
 import clsx from 'clsx';
 
-import styles from './Progress.module.scss';
+import styles from './LinearProgress.module.scss';
 
 export interface LinearProgressProps extends AriaProgressBarProps {
     value?: number;
@@ -20,7 +20,7 @@ export const LinearProgress = React.memo<LinearProgressProps>(
         };
         return (
             <div
-                className={clsx(className, styles.root, styles.linear, {
+                className={clsx(className, styles.root, {
                     [styles.indeterminate]: isIndeterminate,
                 })}
             >
