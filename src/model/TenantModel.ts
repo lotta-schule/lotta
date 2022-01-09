@@ -1,5 +1,4 @@
 import { FileModel } from './FileModel';
-import { UserGroupModel } from './UserGroupModel';
 
 export interface TenantModel {
     id: string;
@@ -8,7 +7,6 @@ export interface TenantModel {
     slug: string;
     title: string;
     host: string;
-    groups: UserGroupModel[];
     configuration: {
         userMaxStorageConfig: string;
         customTheme?: any;

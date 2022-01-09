@@ -66,6 +66,8 @@ export const schuelerGroup = {
     ],
 };
 
+export const userGroups = [adminGroup, lehrerGroup, schuelerGroup, elternGroup];
+
 /*
  *
  * Directories

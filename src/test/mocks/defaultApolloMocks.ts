@@ -1,15 +1,18 @@
-import { tenant, allCategories } from 'test/fixtures';
-import { CategoryModel, TenantModel, UserModel } from 'model';
+import { tenant, allCategories, userGroups } from 'test/fixtures';
+import { CategoryModel, TenantModel, UserGroupModel, UserModel } from 'model';
 import { InMemoryCache } from '@apollo/client';
-import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
+import { identity } from 'lodash';
+
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
-import { identity } from 'lodash';
+import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
+import ReceiveMessageSubscription from 'api/subscription/ReceiveMessageSubscription.graphql';
 
 export interface ApolloMocksOptions {
     currentUser?: UserModel;
     tenant?: TenantModel;
+    userGroups?: UserGroupModel[];
     categories?: (categories: CategoryModel[]) => CategoryModel[];
 }
 export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
@@ -18,6 +21,14 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
             request: { query: GetTenantQuery },
             result: {
                 data: { tenant: { ...(options.tenant ?? tenant), id: 1 } },
+            },
+        },
+        {
+            request: { query: GetUserGroupsQuery },
+            result: {
+                data: {
+                    userGroups: [...(options.userGroups || userGroups || [])],
+                },
             },
         },
         {
@@ -43,6 +54,10 @@ export const getDefaultApolloMocks = (options: ApolloMocksOptions = {}) => {
     cache.writeQuery({
         query: GetTenantQuery,
         data: { tenant: options.tenant ?? tenant },
+    });
+    cache.writeQuery({
+        query: GetUserGroupsQuery,
+        data: { userGroups: options.userGroups ?? userGroups },
     });
     if (options.currentUser) {
         cache.writeQuery({

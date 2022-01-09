@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { TenantModel, UserGroupModel } from 'model';
+import { UserGroupModel } from 'model';
 import { Button } from 'shared/general/button/Button';
 import {
     Dialog,
@@ -11,8 +11,8 @@ import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { Input } from 'shared/general/form/input/Input';
 import { Label } from 'shared/general/label/Label';
 
+import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import CreateUserGroupMutation from 'api/mutation/CreateUserGroupMutation.graphql';
-import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 export interface CreateUserGroupDialogProps {
     isOpen: boolean;
@@ -28,20 +28,17 @@ export const CreateUserGroupDialog = React.memo<CreateUserGroupDialogProps>(
             { group: Partial<UserGroupModel> }
         >(CreateUserGroupMutation, {
             update: (cache, { data }) => {
-                if (data && data.group) {
-                    const readTenantResult = cache.readQuery<{
-                        tenant: TenantModel;
-                    }>({ query: GetTenantQuery });
-                    cache.writeQuery<{ tenant: TenantModel }>({
-                        query: GetTenantQuery,
+                if (data?.group) {
+                    const readUserGroupsResult = cache.readQuery<{
+                        userGroups: UserGroupModel[];
+                    }>({ query: GetUserGroupsQuery });
+                    cache.writeQuery<{ userGroups: UserGroupModel[] }>({
+                        query: GetUserGroupsQuery,
                         data: {
-                            tenant: {
-                                ...readTenantResult!.tenant,
-                                groups: [
-                                    ...readTenantResult!.tenant.groups,
-                                    data.group,
-                                ],
-                            },
+                            userGroups: [
+                                ...(readUserGroupsResult?.userGroups ?? []),
+                                data.group,
+                            ],
                         },
                     });
                 }

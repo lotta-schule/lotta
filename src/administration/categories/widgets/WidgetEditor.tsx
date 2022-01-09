@@ -107,9 +107,9 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
                 <GroupSelect
                     selectedGroups={widget.groups || []}
                     disableAdminGroupsExclusivity
-                    onSelectGroups={(groups) =>
-                        setWidget({ ...widget, groups })
-                    }
+                    onSelectGroups={(groups) => {
+                        setWidget({ ...widget, groups });
+                    }}
                 />
 
                 {widget.type === WidgetModelType.Calendar && (
