@@ -1,9 +1,3 @@
-import {
-    adminGroup,
-    lehrerGroup,
-    elternGroup,
-    schuelerGroup,
-} from './Accounts';
 import { TenantModel, WidgetModel, WidgetModelType } from 'model';
 
 /**
@@ -19,7 +13,6 @@ export const tenant = {
     insertedAt: '2014-03-08 12:00',
     updatedAt: '2014-03-08 12:00',
     host: 'info.lotta.schule',
-    groups: [adminGroup, lehrerGroup, elternGroup, schuelerGroup],
     configuration: {
         userMaxStorageConfig: '20971520',
         logoImageFile: null,

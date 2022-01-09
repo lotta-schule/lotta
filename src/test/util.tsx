@@ -43,7 +43,7 @@ export type TestSetupOptions = {
 const ProviderFactory = (options: TestSetupOptions): React.FC => {
     const ComponentClass: React.FC = ({ children }) => {
         const { cache, mocks: defaultMocks } = getDefaultApolloMocks(
-            pick(options, ['currentUser', 'tenant', 'categories'])
+            pick(options, ['currentUser', 'tenant', 'categories', 'userGroups'])
         );
 
         const testRouter = createRouter(

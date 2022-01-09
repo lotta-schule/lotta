@@ -6,6 +6,7 @@ import { getApolloClient } from 'api/client';
 import { add } from 'date-fns';
 import { AppContextProviders } from 'layout/AppContextProviders';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
@@ -17,7 +18,6 @@ import 'shared/general/button/base-button.scss';
 import 'shared/general/button/button.scss';
 import 'shared/general/button/button-group.scss';
 import 'shared/general/button/navigation-button.scss';
-import dynamic from 'next/dynamic';
 
 const TopProgressBar = dynamic(() => import('shared/TopProgressBar'), {
     ssr: false,
@@ -78,18 +78,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,
         context: {
-            headers: {
-                ...headers,
-                // that's an ugly workaround because before SSR authentication
-                // headers were not passed to the GetTenantQuery and I would like
-                // to keep it like this for now for simplicity.
-                // That's because if  not, the user will always get a "last_seen"
-                // value that's from the GetTenantQuery, so just when opening the
-                // page, instead of the date of his last visit.
-                // This leeds to him not getting the correct count of how much unread
-                // messages he got since them, messing it all up.
-                authorization: null,
-            },
+            headers,
         },
     });
     const tenant = data?.tenant ?? null;
@@ -110,22 +99,6 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
             headers,
         },
     });
-    const { data: userTenant, error: userTenantError } =
-        await getApolloClient().query({
-            query: GetTenantQuery,
-            fetchPolicy: 'network-only',
-            context: {
-                headers: {
-                    ...headers,
-                    // As the groups are part of the tenant query,
-                    // and they are secured by user, we must
-                    // fetch it again in order to have the groups
-                    // for the user.
-                    // TODO: This will have to be implemented on
-                    // a better way next time
-                },
-            },
-        });
     const { data: categoriesData } = await getApolloClient().query({
         query: GetCategoriesQuery,
         context: {
@@ -133,13 +106,9 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         },
     });
 
-    if (userTenantError) {
-        console.error('Error fetching tenant as user: ', userTenantError);
-    }
-
     return {
         pageProps: {
-            tenant: userTenant?.tenant || tenant,
+            tenant,
             currentUser: userData?.currentUser ?? null,
             categories: categoriesData?.categories ?? null,
             error: error ?? null,

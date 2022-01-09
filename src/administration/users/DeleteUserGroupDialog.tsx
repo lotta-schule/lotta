@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { TenantModel, UserGroupModel, ID } from 'model';
+import { UserGroupModel, ID } from 'model';
 import { Button } from 'shared/general/button/Button';
 import {
     Dialog,
@@ -9,8 +9,8 @@ import {
 } from 'shared/general/dialog/Dialog';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 
+import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
-import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 export interface DeleteUserGroupDialogProps {
     isOpen: boolean;
@@ -27,18 +27,15 @@ export const DeleteUserGroupDialog = React.memo<DeleteUserGroupDialogProps>(
         >(DeleteUserGroupMutation, {
             update: (cache, { data }) => {
                 if (data && data.group) {
-                    const readTenantResult = cache.readQuery<{
-                        tenant: TenantModel;
-                    }>({ query: GetTenantQuery });
-                    cache.writeQuery<{ tenant: TenantModel }>({
-                        query: GetTenantQuery,
+                    const readUserGroupsResult = cache.readQuery<{
+                        userGroups: UserGroupModel[];
+                    }>({ query: GetUserGroupsQuery });
+                    cache.writeQuery<{ userGroups: UserGroupModel[] }>({
+                        query: GetUserGroupsQuery,
                         data: {
-                            tenant: {
-                                ...readTenantResult!.tenant,
-                                groups: readTenantResult!.tenant.groups.filter(
-                                    (g) => g.id !== data.group.id
-                                ),
-                            },
+                            userGroups: (
+                                readUserGroupsResult?.userGroups ?? []
+                            ).filter((g) => g.id !== data.group.id),
                         },
                     });
                 }

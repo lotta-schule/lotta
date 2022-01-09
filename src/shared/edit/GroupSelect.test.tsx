@@ -5,8 +5,8 @@ import {
     adminGroup,
     lehrerGroup,
     schuelerGroup,
-    tenant,
     elternGroup,
+    userGroups,
 } from 'test/fixtures';
 import { GroupSelect } from './GroupSelect';
 import userEvent from '@testing-library/user-event';
@@ -354,20 +354,14 @@ describe('shared/editor/GroupSelect', () => {
         });
 
         describe('selecting a group', () => {
-            const tenantWith2AdminGroups = {
-                ...tenant,
-                groups: [
-                    ...tenant.groups,
-                    {
-                        id: '87',
-                        insertedAt: '2020-09-11 00:00',
-                        updatedAt: '2020-09-11 00:00',
-                        name: 'Administrator2',
-                        sortKey: 1500,
-                        isAdminGroup: true,
-                        enrollmentTokens: [],
-                    },
-                ],
+            const secondAdminGroup: UserGroupModel = {
+                id: '87',
+                insertedAt: '2020-09-11 00:00',
+                updatedAt: '2020-09-11 00:00',
+                name: 'Administrator2',
+                sortKey: 1500,
+                isAdminGroup: true,
+                enrollmentTokens: [],
             };
 
             it('should select a group after having clicked on it', async () => {
@@ -385,7 +379,7 @@ describe('shared/editor/GroupSelect', () => {
                         onSelectGroups={callback}
                     />,
                     {},
-                    { tenant: tenantWith2AdminGroups }
+                    { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
                 userEvent.click(await screen.findByRole('textbox'));
@@ -419,9 +413,7 @@ describe('shared/editor/GroupSelect', () => {
                         onSelectGroups={callback}
                     />,
                     {},
-                    {
-                        tenant: tenantWith2AdminGroups,
-                    }
+                    { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
                 userEvent.click(await screen.findByRole('textbox'));
@@ -454,7 +446,7 @@ describe('shared/editor/GroupSelect', () => {
                         onSelectGroups={callback}
                     />,
                     {},
-                    { tenant: tenantWith2AdminGroups }
+                    { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
                 userEvent.click(await screen.findByRole('textbox'));
@@ -488,7 +480,7 @@ describe('shared/editor/GroupSelect', () => {
                         onSelectGroups={callback}
                     />,
                     {},
-                    { tenant: tenantWith2AdminGroups }
+                    { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
                 userEvent.click(await screen.findByRole('textbox'));
