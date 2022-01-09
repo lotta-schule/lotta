@@ -2,12 +2,10 @@ import * as React from 'react';
 import { Image as ImageIcon } from '@material-ui/icons';
 import { Range } from 'slate';
 import { useSlate } from 'slate-react';
-import { File } from 'util/model';
 import { FileModel } from 'model';
 import { Button } from 'shared/general/button/Button';
 import { insertImage } from './SlateUtils';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
-import { useServerData } from 'shared/ServerDataContext';
 
 export interface EditToolbarImageButtonProps {
     onImageAdded?(): void;
@@ -16,7 +14,6 @@ export interface EditToolbarImageButtonProps {
 export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
     onImageAdded,
 }) => {
-    const { baseUrl } = useServerData();
     const editor = useSlate();
     const [lastEditorSelection, setLastEditorSelection] =
         React.useState<Range | null>(null);
@@ -30,12 +27,12 @@ export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
                     newProperties: lastEditorSelection,
                 });
             }
-            insertImage(editor, File.getFileRemoteLocation(baseUrl, file));
+            insertImage(editor, file);
             setTimeout(() => {
                 onImageAdded?.();
             }, 100);
         },
-        [baseUrl, editor, lastEditorSelection, onImageAdded]
+        [editor, lastEditorSelection, onImageAdded]
     );
 
     return (

@@ -7,6 +7,7 @@ import {
 } from './interface/SlatePre050Document';
 import { SlateImage } from './elements/SlateImage';
 import { BlockElement, CustomText, Image, Link } from './SlateCustomTypes';
+import { FileModel } from 'model';
 import isUrl from 'is-url';
 
 export const renderElement = ({
@@ -47,7 +48,11 @@ export const renderElement = ({
             );
         }
         case 'paragraph':
-            return <p {...attributes}>{children}</p>;
+            return (
+                <p style={{ overflow: 'auto' }} {...attributes}>
+                    {children}
+                </p>
+            );
         case 'link':
             const href = element.href;
             let isSameHost = false;
@@ -239,8 +244,12 @@ export const withLinks = (editor: ReactEditor) => {
 //  IMAGES
 //
 
-export const insertImage = (editor: Editor, url: string) => {
-    const image: Image = { type: 'image', src: url, children: [{ text: '' }] };
+export const insertImage = (editor: Editor, file: FileModel) => {
+    const image: Image = {
+        type: 'image',
+        fileId: file.id,
+        children: [{ text: '' }],
+    };
     Transforms.insertNodes(editor, image);
 };
 
