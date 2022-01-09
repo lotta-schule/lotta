@@ -3,7 +3,7 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
 
   use Absinthe.Schema.Notation
 
-  alias LottaWeb.{UserGroupResolver, TenantResolver}
+  alias LottaWeb.TenantResolver
 
   object :tenant do
     field :id, :id
@@ -12,8 +12,6 @@ defmodule LottaWeb.Schema.Tenants.Tenant do
     field :configuration, :tenant_configuration, resolve: &TenantResolver.resolve_configuration/2
     field :inserted_at, :datetime
     field :host, :string, resolve: &TenantResolver.host/2
-
-    field :groups, list_of(:user_group), resolve: &UserGroupResolver.all/2
 
     field :custom_domains, list_of(:custom_domain), resolve: &TenantResolver.custom_domains/2
   end

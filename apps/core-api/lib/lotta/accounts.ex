@@ -169,7 +169,7 @@ defmodule Lotta.Accounts do
   """
   @spec list_user_groups() :: [UserGroup.t()]
   def list_user_groups() do
-    Repo.all(UserGroup)
+    Repo.all(from UserGroup, order_by: [{:desc, :sort_key}, {:desc, :is_admin_group}])
   end
 
   @doc """
