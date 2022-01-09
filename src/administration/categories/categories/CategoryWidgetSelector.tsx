@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, CircularProgress } from '@material-ui/core';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { WidgetModel } from 'model';
 import { useQuery } from '@apollo/client';
@@ -45,55 +45,47 @@ export const CategoryWidgetSelector = React.memo<CategoryWidgetSelectorProps>(
 
         if (isLoadingPossibleWidgets) {
             return (
-                <Grid container>
-                    <Grid container item xs={12}>
-                        <CircularProgress />
-                    </Grid>
-                </Grid>
+                <div>
+                    <CircularProgress
+                        isIndeterminate
+                        aria-label={'Marginalen werden geladen'}
+                    />
+                </div>
             );
         }
 
         return (
-            <>
+            <div className={styles.root}>
                 <ErrorMessage error={error} />
 
-                <Grid
-                    container
-                    justifyContent="center"
-                    alignItems="center"
+                <div
+                    className={styles.grid}
                     data-testid="WidgetsSelectionList"
-                >
-                    {allWidgets.length > 1 && (
-                        <Grid item xs={12}>
-                            <Checkbox
-                                isSelected={isAllWidgetsSelected}
-                                onChange={() => handleToggleAll()}
-                            >
-                                <div className={styles.typography}>
-                                    Alle Marginalen aktivieren
-                                </div>
-                            </Checkbox>
-                        </Grid>
-                    )}
+                ></div>
 
-                    {allWidgets.map((widget) => (
-                        <Grid key={widget.id} item xs={12}>
-                            <Checkbox
-                                isSelected={isWidgetSelected(widget)}
-                                onChange={() => handleToggle(widget)}
-                            >
-                                <div className={styles.typography}>
-                                    <WidgetIcon
-                                        icon={widget.configuration?.icon}
-                                        size={36}
-                                    />
-                                    {widget.title}
-                                </div>
-                            </Checkbox>
-                        </Grid>
-                    ))}
-                </Grid>
-            </>
+                {allWidgets.length > 1 && (
+                    <Checkbox
+                        isSelected={isAllWidgetsSelected}
+                        onChange={() => handleToggleAll()}
+                    >
+                        Alle Marginalen aktivieren
+                    </Checkbox>
+                )}
+
+                {allWidgets.map((widget) => (
+                    <Checkbox
+                        key={widget.id}
+                        isSelected={isWidgetSelected(widget)}
+                        onChange={() => handleToggle(widget)}
+                    >
+                        <WidgetIcon
+                            icon={widget.configuration?.icon}
+                            size={36}
+                        />
+                        {widget.title}
+                    </Checkbox>
+                ))}
+            </div>
         );
     }
 );

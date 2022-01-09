@@ -8,13 +8,8 @@ import {
     Info,
     InfoOutlined,
 } from '@material-ui/icons';
-import {
-    Tooltip,
-    Badge,
-    CircularProgress,
-    Zoom,
-    Breadcrumbs,
-} from '@material-ui/core';
+import { Tooltip, Badge, Zoom, Breadcrumbs } from '@material-ui/core';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -138,7 +133,6 @@ export const FileToolbar = React.memo(() => {
                                 >
                                     <CircularProgress
                                         size={20}
-                                        variant={'determinate'}
                                         value={uploadTotalProgress}
                                     />
                                 </Button>

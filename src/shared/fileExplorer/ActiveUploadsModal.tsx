@@ -3,13 +3,13 @@ import {
     List,
     ListItem,
     ListItemAvatar,
-    CircularProgress,
     ListItemText,
 } from '@material-ui/core';
 import { ErrorOutline } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useUploads } from './context/UploadQueueContext';
 import { Dialog, DialogContent } from 'shared/general/dialog/Dialog';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import fileExplorerContext from './context/FileExplorerContext';
 
 export const ActiveUploadsModal = React.memo(() => {
@@ -36,8 +36,9 @@ export const ActiveUploadsModal = React.memo(() => {
                                     )}
                                     {!upload.error && (
                                         <CircularProgress
-                                            variant={'determinate'}
+                                            aria-label={`${upload.filename} wird hochgeladen`}
                                             value={upload.uploadProgress}
+                                            showValue
                                         />
                                     )}
                                 </>

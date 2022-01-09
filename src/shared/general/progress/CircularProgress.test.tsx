@@ -29,7 +29,6 @@ describe('CircularProgress', () => {
                 aria-label={'test-progress'}
             />
         );
-        screen.debug();
         expect(screen.getByRole('progressbar')).toHaveTextContent('45%');
     });
 });

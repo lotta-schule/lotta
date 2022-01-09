@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CircularProgress } from '@material-ui/core';
 import { Button } from 'shared/general/button/Button';
 import { useQuery } from '@apollo/client';
 import { ArticleModel, CategoryModel } from 'model';
@@ -8,6 +7,7 @@ import { animated, useSpring } from 'react-spring';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { Label } from 'shared/general/label/Label';
 import { Input } from 'shared/general/form/input/Input';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
 import { ArticlePreviewDensedLayout } from 'article/preview';
@@ -88,7 +88,10 @@ export const SearchPage = () => {
                         {isLoading && (
                             <span>
                                 <CircularProgress
-                                    style={{ height: '1em', width: '1em' }}
+                                    size={'1em'}
+                                    style={{ display: 'inline-block' }}
+                                    isIndeterminate
+                                    aria-label={'Suche läuft'}
                                 />{' '}
                                 Beiträge werden gesucht ...
                             </span>

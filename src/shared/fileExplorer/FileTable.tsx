@@ -5,7 +5,6 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    CircularProgress,
 } from '@material-ui/core';
 import { ArrowBackRounded } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
@@ -15,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { FileModel, FileModelType, DirectoryModel } from 'model';
 import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox/Checkbox';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { DirectoryTableRow } from './DirectoryTableRow';
 import { FileTableRow } from './FileTableRow';
@@ -337,7 +337,19 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                 )}
                         </TableCell>
                         <TableCell>
-                            {isLoading && <CircularProgress size={'1rem'} />}
+                            {isLoading && (
+                                <CircularProgress
+                                    size={'1rem'}
+                                    style={{
+                                        display: 'inline-block',
+                                        marginBottom: 2,
+                                    }}
+                                    isIndeterminate
+                                    aria-label={
+                                        'Dateien für diesen Ordner werden geladen'
+                                    }
+                                />
+                            )}
                             {!isLoading && state.currentPath.length > 1 && (
                                 <Button
                                     small

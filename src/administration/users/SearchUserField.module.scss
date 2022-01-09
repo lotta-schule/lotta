@@ -1,39 +1,41 @@
 .root {
     position: relative;
-}
 
-.inputWrapper {
-    color: inherit;
-    position: relative;
-}
-
-.inputLoading {
-    position: absolute;
-    top: 0;
-    right: var(--lotta-spacing);
-}
-
-.listBox {
-    margin: var(--lotta-spacing) 0 0;
-    width: auto;
-    padding: 0;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    list-style: none;
-    background-color: rgba(var(--lotta-box-background-color), 1);
-    overflow: auto;
-    max-height: 250px;
-    z-index: 10000;
-
-    li {
-        padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
-        display: flex;
+    .inputWrapper {
+        color: inherit;
+        position: relative;
     }
-}
 
-.avatar {
-    padding: 0.25em;
-    height: 50px; // TODO: Why 50px? This seems unclear? Why no var?
-    width: 50px;
+    .inputLoading {
+        position: absolute;
+        top: 0;
+        right: var(--lotta-spacing);
+    }
+
+    .listBox {
+        margin: var(--lotta-spacing) 0 0;
+        width: auto;
+        padding: 0;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        list-style: none;
+        background-color: rgba(var(--lotta-box-background-color), 1);
+        overflow: auto;
+        max-height: 250px;
+        z-index: 10000;
+
+        li {
+            padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
+            display: flex;
+        }
+    }
+
+    .avatar {
+        padding: var(--lotta-spacing);
+        & + div {
+            display: flex;
+            align-items: center;
+        }
+    }
 }

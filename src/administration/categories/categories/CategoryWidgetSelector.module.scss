@@ -1,34 +1,5 @@
 @import 'colors';
 
 .root {
-    margin: 'auto';
-}
-
-.cardHeader {
-    padding: var(--lotta-spacing) calc(2 * var(--lotta-spacing));
-}
-
-.button {
-    margin: calc(0.5 * var(--lotta-spacing)) 0;
-}
-
-.labelWrapper {
-    margin: 0;
-    display: flex;
-    .typography {
-        display: flex;
-        align-items: center;
-        & > * {
-            display: inline-block;
-        }
-    }
-}
-
-.label {
-    flex-grow: 1;
-}
-
-.typography {
-    display: flex;
-    align-items: center;
+    margin: auto;
 }

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Grid, CircularProgress } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/client';
 import { ID, UserModel } from 'model';
 import { Button } from 'shared/general/button/Button';
@@ -12,6 +11,7 @@ import { Divider } from 'shared/general/divider/Divider';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
+import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 
 import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
@@ -86,15 +86,13 @@ export const EditUserPermissionsDialog =
             >
                 <DialogContent>
                     <ErrorMessage error={error || updateUserError} />
-                    <Grid
-                        container
-                        justifyContent={'space-evenly'}
-                        className={styles.header}
-                    >
-                        <Grid item xs={3}>
-                            <UserAvatar user={user} size={100} />
-                        </Grid>
-                        <Grid item xs={9}>
+                    <div className={styles.header}>
+                        <UserAvatar
+                            user={user}
+                            size={100}
+                            className={styles.avatar}
+                        />
+                        <div>
                             <h6 data-testid="UserName">{user.name}</h6>
                             {user.nickname && (
                                 <p data-testid="UserNickname">
@@ -107,9 +105,14 @@ export const EditUserPermissionsDialog =
                                     Klasse: {user.class}
                                 </p>
                             )}
-                        </Grid>
-                    </Grid>
-                    {loading && <CircularProgress />}
+                        </div>
+                    </div>
+                    {loading && (
+                        <CircularProgress
+                            isIndeterminate
+                            aria-label={'Nutzer wird geladen'}
+                        />
+                    )}
                     {data && (
                         <>
                             <Divider />
@@ -118,7 +121,7 @@ export const EditUserPermissionsDialog =
                                     row
                                     hidePublicGroupSelection
                                     disableAdminGroupsExclusivity
-                                    className={styles.margin}
+                                    className={styles.groupSelect}
                                     selectedGroups={
                                         data.user?.assignedGroups ?? []
                                     }
