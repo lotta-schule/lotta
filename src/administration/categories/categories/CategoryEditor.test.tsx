@@ -3,6 +3,7 @@ import {
     FaecherCategory,
     StartseiteCategory,
     KunstCategory,
+    ComputerExperten,
 } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { CategoryEditor } from './CategoryEditor';
@@ -145,12 +146,12 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
             });
         });
 
-        describe('"Internal" Value', () => {
+        describe('"Internal Category" Value', () => {
             const internalFaecherCategoy = {
                 ...FaecherCategory,
                 redirect: `/c/${KunstCategory.id}`,
             };
-            it('should have "Internal" selected if a local path is set', async () => {
+            it('should have "Internal Category" selected if a local path is set', async () => {
                 const screen = render(
                     <CategoryEditor
                         selectedCategory={internalFaecherCategoy}
@@ -166,12 +167,12 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
                 await waitFor(() => {
                     expect(
-                        screen.getByTestId('InternalRedirectWrapper')
+                        screen.getByTestId('InternalCategoryRedirectWrapper')
                     ).toHaveStyle({ height: 0 });
                 });
             });
 
-            it('should show the categorry select when internal link is selected', async () => {
+            it('should show the categorry select when internal category link is selected', async () => {
                 const screen = render(
                     <CategoryEditor
                         selectedCategory={internalFaecherCategoy}
@@ -192,7 +193,60 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
                 await waitFor(() => {
                     expect(
-                        screen.getByTestId('InternalRedirectWrapper')
+                        screen.getByTestId('InternalCategoryRedirectWrapper')
+                    ).toHaveStyle({ height: 0 });
+                });
+            });
+        });
+
+        describe('"Internal Article" Value', () => {
+            const internalFaecherCategoy = {
+                ...FaecherCategory,
+                redirect: `/a/${ComputerExperten.id}`,
+            };
+            it('should have "Internal Article" selected if a local path is set', async () => {
+                const screen = render(
+                    <CategoryEditor
+                        selectedCategory={internalFaecherCategoy}
+                        onSelectCategory={() => {}}
+                    />
+                );
+
+                expect(
+                    screen.getByRole('radio', {
+                        name: /beitrag weiterleiten/i,
+                    })
+                ).toBeChecked();
+
+                await waitFor(() => {
+                    expect(
+                        screen.getByTestId('InternalArticleRedirectWrapper')
+                    ).toHaveStyle({ height: 0 });
+                });
+            });
+
+            it('should show the article search when internal article link is selected', async () => {
+                const screen = render(
+                    <CategoryEditor
+                        selectedCategory={internalFaecherCategoy}
+                        onSelectCategory={() => {}}
+                    />
+                );
+
+                userEvent.click(
+                    screen.getByRole('radio', {
+                        name: /beitrag weiterleiten/i,
+                    })
+                );
+                expect(
+                    screen.getByRole('radio', {
+                        name: /beitrag weiterleiten/i,
+                    })
+                ).toBeChecked();
+
+                await waitFor(() => {
+                    expect(
+                        screen.getByTestId('InternalArticleRedirectWrapper')
                     ).toHaveStyle({ height: 0 });
                 });
             });
@@ -240,7 +294,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
                 await waitFor(() => {
                     expect(
-                        screen.getByTestId('InternalRedirectWrapper')
+                        screen.getByTestId('InternalCategoryRedirectWrapper')
                     ).toHaveStyle({ height: 0 });
                 });
                 expect(

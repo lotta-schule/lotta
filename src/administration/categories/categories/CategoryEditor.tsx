@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { FormControl } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import { useMutation, useQuery } from '@apollo/client';
 import { animated, useSpring } from 'react-spring';
@@ -18,8 +17,9 @@ import { Select } from 'shared/general/form/select/Select';
 import { useServerData } from 'shared/ServerDataContext';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { Category, File, RedirectType } from 'util/model';
-import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { Checkbox } from 'shared/general/form/checkbox';
+import { CategoryWidgetSelector } from './CategoryWidgetSelector';
+import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
 import Img from 'react-cloudimage-responsive';
 import clsx from 'clsx';
 
@@ -94,11 +94,20 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
             });
         }, [category, mutateCategory, selectedCategory, selectedWidgets]);
 
-        const redirectInternallySpringProps = useSpring({
+        const redirectCategoryInternallySpringProps = useSpring({
             overflow: 'hidden',
             height:
-                Category.getRedirectType(category) === RedirectType.Intern
+                Category.getRedirectType(category) ===
+                RedirectType.InternalCategory
                     ? 70
+                    : 0,
+        });
+        const redirectArticleInternallySpringProps = useSpring({
+            overflow: 'hidden',
+            height:
+                Category.getRedirectType(category) ===
+                RedirectType.InternalArticle
+                    ? 200
                     : 0,
         });
         const redirectExternallySpringProps = useSpring({
@@ -191,8 +200,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                         }
                         value={'hideArticlesFromHomepage'}
                     >
-                        'Beiträge dieser Kategorie auf der Startseite
-                        verstecken'
+                        Beiträge dieser Kategorie auf der Startseite verstecken
                     </Checkbox>
                 )}
 
@@ -233,12 +241,18 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                         redirect: null,
                                     });
                                 }
-                                if (value === RedirectType.Intern) {
+                                if (value === RedirectType.InternalCategory) {
                                     setCategory({
                                         ...category,
                                         redirect: Category.getPath(
                                             categories[0]
                                         ),
+                                    });
+                                }
+                                if (value === RedirectType.InternalArticle) {
+                                    setCategory({
+                                        ...category,
+                                        redirect: '/a/',
                                     });
                                 }
                                 if (value === RedirectType.Extern) {
@@ -256,47 +270,68 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 }
                             />
                             <Radio
-                                value={RedirectType.Intern}
+                                value={RedirectType.InternalCategory}
                                 label={
                                     'Kategorie zu einer anderen Kategorie weiterleiten:'
                                 }
                             />
 
                             <animated.div
-                                data-testid={'InternalRedirectWrapper'}
-                                style={redirectInternallySpringProps}
+                                data-testid={'InternalCategoryRedirectWrapper'}
+                                className={styles.input}
+                                style={redirectCategoryInternallySpringProps}
                             >
-                                <FormControl className={styles.input}>
-                                    <Label
-                                        label={
-                                            'Zu einer anderen Kategorie weiterleiten ...'
+                                <Label
+                                    label={
+                                        'Zu einer anderen Kategorie weiterleiten ...'
+                                    }
+                                >
+                                    <Select
+                                        value={category.redirect || 'null'}
+                                        onChange={({ currentTarget }) =>
+                                            setCategory({
+                                                ...category,
+                                                redirect: currentTarget.value,
+                                            })
                                         }
+                                        id={'category-redirect'}
                                     >
-                                        <Select
-                                            value={category.redirect || 'null'}
-                                            onChange={({ currentTarget }) =>
-                                                setCategory({
-                                                    ...category,
-                                                    redirect:
-                                                        currentTarget.value,
-                                                })
-                                            }
-                                            id={'category-redirect'}
-                                        >
-                                            <option key={0} />
-                                            {categories.map((category) => (
-                                                <option
-                                                    key={category.id}
-                                                    value={Category.getPath(
-                                                        category
-                                                    )}
-                                                >
-                                                    {category.title}
-                                                </option>
-                                            ))}
-                                        </Select>
-                                    </Label>
-                                </FormControl>
+                                        <option key={0} />
+                                        {categories.map((category) => (
+                                            <option
+                                                key={category.id}
+                                                value={Category.getPath(
+                                                    category
+                                                )}
+                                            >
+                                                {category.title}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Label>
+                            </animated.div>
+
+                            <Radio
+                                value={RedirectType.InternalArticle}
+                                label={
+                                    'Kategorie zu einem Beitrag weiterleiten:'
+                                }
+                            />
+
+                            <animated.div
+                                data-testid={'InternalArticleRedirectWrapper'}
+                                className={styles.input}
+                                style={redirectArticleInternallySpringProps}
+                            >
+                                <CategoryArticleRedirectSelection
+                                    redirectPath={category.redirect ?? '/a/'}
+                                    onSelectRedirectPath={(redirect) =>
+                                        setCategory({
+                                            ...category,
+                                            redirect,
+                                        })
+                                    }
+                                />
                             </animated.div>
 
                             <Radio
