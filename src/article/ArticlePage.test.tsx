@@ -1,48 +1,43 @@
 import * as React from 'react';
-import { render, waitFor, getMetaTagValue } from 'test/util';
-import { Schulfest, MusikCategory } from 'test/fixtures';
+import { render } from 'test/util';
+import { Schulfest, Weihnachtsmarkt } from 'test/fixtures';
 import { ArticlePage } from './ArticlePage';
 
-import GetArticleQuery from 'api/query/GetArticleQuery.graphql';
 import GetArticlesForTag from 'api/query/GetArticlesForTagQuery.graphql';
 
-describe('shared/article/ArticleLayout', () => {
-    const testSetupOptions = {
-        additionalMocks: [
-            {
-                request: {
-                    query: GetArticleQuery,
-                    variables: { id: Schulfest.id },
-                },
-                result: {
-                    data: {
-                        article: { ...Schulfest, category: MusikCategory },
-                    },
-                },
-            },
-            {
-                request: {
-                    query: GetArticlesForTag,
-                    variables: { tag: 'La Revolucion' },
-                },
-                result: { data: { articles: [] } },
-            },
-        ],
-    };
+const additionalMocks = [
+    {
+        request: {
+            query: GetArticlesForTag,
+            variables: { tag: 'La Revolucion' },
+        },
+        result: { data: { articles: [Weihnachtsmarkt] } },
+    },
+];
 
-    it('should show the correct title in the Browser header', async () => {
+describe('shared/article/ArticleLayout', () => {
+    it('should show the correct title', async () => {
         const screen = render(
-            <ArticlePage article={Schulfest} />,
-            {},
-            testSetupOptions
+            <ArticlePage article={Schulfest} title={Schulfest.title} />
         );
-        await screen.findByTestId('Article'); // wait until Article is loaded
-        await waitFor(() => {
-            expect(document.title).toContain('Schulfest');
-            expect(getMetaTagValue('description')).toEqual(
-                'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
-            );
-            expect(getMetaTagValue('og:type')).toEqual('article');
-        });
+        expect(
+            screen.getByRole('heading', { name: 'Schulfest' })
+        ).toBeVisible();
+    });
+
+    it('should show the article component', async () => {
+        const screen = render(
+            <ArticlePage article={Schulfest} title={Schulfest.title} />
+        );
+        expect(screen.getByTestId('Article')).toBeVisible();
+    });
+
+    it('should show related articles', async () => {
+        const screen = render(
+            <ArticlePage article={Schulfest} title={Schulfest.title} />,
+            {},
+            { additionalMocks }
+        );
+        expect(await screen.findByTestId('RelatedArticlesList')).toBeVisible();
     });
 });
