@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppBar, Toolbar, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { Menu } from '@material-ui/icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from '../../util/path/useCurrentCategoryId';

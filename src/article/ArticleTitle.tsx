@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Container } from '@material-ui/core';
 import { ArticleModel } from 'model';
 import { Header } from 'layout';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Box } from 'shared/general/layout/Box';
 import { ArticlePreviewStandardLayout } from 'article/preview/ArticlePreviewStandardLayout';
 
 export interface ArticleTitleProps {
@@ -20,7 +20,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
             (User.canEditArticle(currentUser, article) ||
                 User.isAdmin(currentUser));
         return (
-            <Container style={{ paddingLeft: 0, paddingRight: 0 }}>
+            <Box>
                 <Header>
                     <ArticlePreviewStandardLayout
                         article={article}
@@ -31,7 +31,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
                         disablePin={!User.isAdmin(currentUser)}
                     />
                 </Header>
-            </Container>
+            </Box>
         );
     }
 );

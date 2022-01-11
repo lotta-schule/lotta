@@ -35,29 +35,27 @@ export const BaseLayout = React.memo(({ children }) => {
                 `}</style>
             )}
             <header className={styles.header}>
-                <Grid container style={{ height: '100%' }}>
-                    <Grid item md={3} className={styles.logoGridItem}>
-                        {tenant.configuration.logoImageFile && (
-                            <Link href={'/'} passHref>
-                                <a title={'Startseite'}>
-                                    <img
-                                        src={`https://${cloudimageToken}.cloudimg.io/height/${
-                                            80 * retinaMultiplier
-                                        }/foil1/${File.getFileRemoteLocation(
-                                            baseUrl,
-                                            tenant.configuration.logoImageFile
-                                        )}`}
-                                        alt={`Logo ${tenant.title}`}
-                                        className={styles.logo}
-                                    />
-                                </a>
-                            </Link>
-                        )}
-                    </Grid>
-                    <Grid item md={9} className={styles.titleGridItem}>
-                        <h1>{tenant.title}</h1>
-                    </Grid>
-                </Grid>
+                <div className={styles.logoGridItem}>
+                    {tenant.configuration.logoImageFile && (
+                        <Link href={'/'} passHref>
+                            <a title={'Startseite'}>
+                                <img
+                                    src={`https://${cloudimageToken}.cloudimg.io/height/${
+                                        80 * retinaMultiplier
+                                    }/foil1/${File.getFileRemoteLocation(
+                                        baseUrl,
+                                        tenant.configuration.logoImageFile
+                                    )}`}
+                                    alt={`Logo ${tenant.title}`}
+                                    className={styles.logo}
+                                />
+                            </a>
+                        </Link>
+                    )}
+                </div>
+                <div className={styles.titleGridItem}>
+                    <h1>{tenant.title}</h1>
+                </div>
             </header>
             <Navbar />
             <main className={styles.main}>
