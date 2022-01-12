@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge } from '@material-ui/core';
+import { Badge } from 'shared/general/badge/Badge';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import {
     ExitToAppOutlined,
@@ -118,14 +118,14 @@ export const UserNavigationMobile = React.memo(() => {
                             className={styles.button}
                             data-testid="MessagingButton"
                         >
-                            <Badge
-                                badgeContent={newMessagesBadgeNumber}
-                                className={styles.badge}
-                                color={'secondary'}
-                            >
-                                <QuestionAnswerOutlined color={'secondary'} />
-                            </Badge>
-                            <span className={styles.label}>Nachrichten</span>
+                            <QuestionAnswerOutlined color={'secondary'} />
+                            <span className={styles.label}>
+                                Nachrichten{' '}
+                                <Badge
+                                    value={newMessagesBadgeNumber}
+                                    className={styles.badge}
+                                />
+                            </span>
                         </BaseButton>
                     </Link>
                     {User.isAdmin(currentUser) && (
@@ -145,18 +145,14 @@ export const UserNavigationMobile = React.memo(() => {
                                     variant={'borderless'}
                                     className={styles.button}
                                 >
-                                    <Badge
-                                        badgeContent={unpublishedBadgeNumber}
-                                        className={styles.badge}
-                                        color={'secondary'}
-                                        data-testid="UnpublishedArticlesButton"
-                                    >
-                                        <AssignmentOutlined
-                                            color={'secondary'}
-                                        />
-                                    </Badge>
+                                    <AssignmentOutlined color={'secondary'} />
                                     <span className={styles.label}>
                                         Beiträge freigeben
+                                        <Badge
+                                            value={unpublishedBadgeNumber}
+                                            className={styles.badge}
+                                            data-testid="UnpublishedArticlesButton"
+                                        />
                                     </span>
                                 </BaseButton>
                             </Link>

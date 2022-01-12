@@ -1,0 +1,15 @@
+.root {
+    height: 1.6em;
+    width: auto;
+    min-width: 1.6em;
+    border-radius: 0.8em;
+    padding: 0 0.45em;
+    font-weight: bold;
+    line-height: 1.6em;
+    font-size: 0.8em;
+    color: rgba(var(--lotta-text-color), 1);
+    background-color: rgba(var(--lotta-primary-color), 1);
+    margin: auto 0.2em;
+    display: inline-flex;
+    filter: invert(100%);
+}

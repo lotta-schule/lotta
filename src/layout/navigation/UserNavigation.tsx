@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Menu, MenuItem, Badge } from '@material-ui/core';
+import { Grid, Menu, MenuItem } from '@material-ui/core';
 import {
     AddCircle,
     PersonOutlineOutlined,
@@ -12,6 +12,7 @@ import {
     Forum,
     ExpandMore,
 } from '@material-ui/icons';
+import { Badge } from 'shared/general/badge/Badge';
 import { useQuery } from '@apollo/client';
 import { ArticleModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -59,7 +60,7 @@ export const UserNavigation = React.memo(() => {
     if (currentUser) {
         nav = (
             <Grid container className={styles.root}>
-                <Grid item xs={5} className={styles.avatarContainer}>
+                <Grid item xs={4} className={styles.avatarContainer}>
                     <CurrentUserAvatar
                         size={100}
                         style={{ width: 100, height: 100 }}
@@ -67,7 +68,7 @@ export const UserNavigation = React.memo(() => {
                 </Grid>
                 <Grid
                     item
-                    xs={7}
+                    xs={8}
                     style={{ marginTop: 'auto', marginBottom: 'auto' }}
                 >
                     <div className={clsx(styles.root, 'usernavigation')}>
@@ -94,21 +95,20 @@ export const UserNavigation = React.memo(() => {
                         </Link>
                         <Link href={'/messaging'} passHref>
                             <NavigationButton
-                                icon={
-                                    <Badge
-                                        badgeContent={newMessagesBadgeNumber}
-                                        color={'primary'}
-                                    >
-                                        <Forum color={'secondary'} />
-                                    </Badge>
-                                }
-                                label={'Nachrichten'}
                                 className={clsx(
                                     'secondary',
                                     'small',
                                     'usernavigation-button'
                                 )}
-                            ></NavigationButton>
+                                icon={
+                                    <span>
+                                        <Forum color={'secondary'} />
+                                    </span>
+                                }
+                            >
+                                Nachrichten
+                                <Badge value={newMessagesBadgeNumber} />{' '}
+                            </NavigationButton>
                         </Link>
                         <NavigationButton
                             icon={<AccountCircle />}
@@ -190,17 +190,13 @@ export const UserNavigation = React.memo(() => {
                                                   );
                                               }}
                                           >
-                                              <Badge
-                                                  badgeContent={
-                                                      unpublishedBadgeNumber
-                                                  }
+                                              <AssignmentOutlined
                                                   color={'secondary'}
-                                              >
-                                                  <AssignmentOutlined
-                                                      color={'secondary'}
-                                                  />
-                                              </Badge>
+                                              />
                                               &nbsp; Beiträge freigeben
+                                              <Badge
+                                                  value={unpublishedBadgeNumber}
+                                              />
                                           </MenuItem>,
                                       ]
                                     : []),

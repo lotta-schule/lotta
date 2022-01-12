@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge } from '@material-ui/core';
+import { Badge } from 'shared/general/badge/Badge';
 import { ConversationModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
@@ -42,15 +42,11 @@ export const ConversationPreview = React.memo<ConversationPreviewProps>(
                     />
                 )}
                 <div className={styles.buttonLabel}>
-                    <Badge
-                        badgeContent={conversation.unreadMessages}
-                        color={'primary'}
-                    >
-                        <strong>
-                            {user && User.getName(user)}
-                            {group?.name}
-                        </strong>
-                    </Badge>
+                    <strong>
+                        {user && User.getName(user)}
+                        {group?.name}
+                    </strong>
+                    <Badge value={conversation.unreadMessages} />
                 </div>
                 <div className={styles.dateLabel}>
                     {format(new Date(conversation.updatedAt), 'P', {
