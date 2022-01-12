@@ -63,7 +63,6 @@
     "@sentry/nextjs": "^6.16.1",
     "apollo-v3-absinthe-upload-link": "^1.5.0",
     "axios": "^0.24.0",
-    "chrome-aws-lambda": "^10.1.0",
     "clsx": "^1.1.1",
     "cookies": "^0.8.0",
     "date-fns": "^2.27.0",

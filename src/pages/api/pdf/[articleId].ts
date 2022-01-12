@@ -1,17 +1,18 @@
 import { NextApiHandler } from 'next';
-import chromium from 'chrome-aws-lambda';
 import Puppeteer from 'puppeteer-core';
 
 const handler: NextApiHandler = async (req, res) => {
+    if (!process.env.BROWSERLESS_CHROME_ENDPONT) {
+        console.error('You did not configure BROWSERLESS_CHROME_ENDPONT');
+        res.send(400);
+    }
     if (req.headers.host) {
         const protocol = (req.connection as any)?.secure ? 'https' : 'http';
         const url = `${protocol}://${req.headers.host}/a/${req.query.articleId}`;
 
-        const browser = await Puppeteer.launch({
-            headless: true,
-            args: chromium.args,
-            executablePath: await chromium.executablePath,
-            dumpio: true,
+        console.log('get URL', url);
+        const browser = await Puppeteer.connect({
+            browserWSEndpoint: `ws://${process.env.BROWSERLESS_CHROME_ENDPONT}`,
         });
         const page = await browser.newPage();
         const extraHeaders: Record<string, string> = {};
@@ -20,7 +21,7 @@ const handler: NextApiHandler = async (req, res) => {
         }
         page.setExtraHTTPHeaders(extraHeaders);
         page.setJavaScriptEnabled(false);
-        await page.goto(url);
+        await page.goto(url, { waitUntil: 'networkidle2' });
         const pdfStream = await page.createPDFStream({
             format: 'a4',
         });

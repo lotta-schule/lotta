@@ -8,5 +8,6 @@ declare namespace NodeJS {
         FORCE_TENANT_SLUG?: string;
         NODE_ENV?: string;
         SENTRY_DSN?: string;
+        BROWSERLESS_CHROME_ENDPONT?: string;
     }
 }
