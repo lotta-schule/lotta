@@ -28,11 +28,11 @@ const handler: NextMiddleware = async (req) => {
                 html: htmlContent,
                 options: {
                     displayHeaderFooter: false,
-                    printBackground: true,
+                    printBackground: false,
                     format: 'A4',
                 },
                 gotoOptions: {
-                    waitUntil: 'networkidle2',
+                    waitUntil: 'networkidle0',
                 },
             }),
         });
