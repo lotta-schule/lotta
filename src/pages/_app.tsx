@@ -70,7 +70,13 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         (context.ctx.req &&
             `${getProtocol()}://${context.ctx.req.headers.host}`);
 
-    const headers = context.ctx.req?.headers;
+    const headers = context.ctx.req?.headers ?? {};
+    const additionalAuthHeader = context.ctx.res?.getHeader('authorization') as
+        | string
+        | undefined;
+    if (additionalAuthHeader) {
+        headers.authorization = additionalAuthHeader;
+    }
 
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,

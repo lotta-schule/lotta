@@ -2,7 +2,7 @@ import JwtDecode from 'jwt-decode';
 import { add } from 'date-fns';
 import { NextMiddleware, NextResponse } from 'next/server';
 
-export const middleware: NextMiddleware = async (request) => {
+export const middleware: NextMiddleware = async (request, event) => {
     const response = NextResponse.next();
     const jwt = request.headers.get('authorization')?.replace(/^Bearer /, '');
     if (jwt) {
@@ -47,7 +47,7 @@ export const middleware: NextMiddleware = async (request) => {
         });
         const refreshResponseData = await refreshResponse?.json();
         if (refreshResponseData?.accessToken) {
-            request.headers.set(
+            response.headers.set(
                 'authorization',
                 `Bearer ${refreshResponseData.accessToken}`
             );
