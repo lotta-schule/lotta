@@ -89,6 +89,16 @@ As the host header is used to recognize the tenant, you may want to also set `FO
 using this option.
 </td>
 </tr>
+<tr>
+<td>BROWSERLESS_CHROME_ENDPONT</td>
+<td>
+For PDF generation, you will need a [browserless](https://browserless.io/) instance.
+You can either use the public instance by using the value `https://chrome.browserless.io` or you
+can provide an own instance at a given URL.
+If not provided, PDF generation will not be available.
+using this option.
+</td>
+</tr>
 </tbody>
 </table>
 
