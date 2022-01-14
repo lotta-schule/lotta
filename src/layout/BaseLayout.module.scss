@@ -1,6 +1,7 @@
 @import 'breakpoints';
 
 .root {
+    background-color: initial;
     h1 {
         font-family: var(--lotta-typography-font-family);
         font-size: 1.4rem;
@@ -18,9 +19,14 @@
     }
 
     .main {
+        display: flex;
+        justify-content: flex-start;
         margin-top: var(--lotta-spacing);
         max-width: 100%;
         padding-bottom: calc(2 * var(--lotta-spacing));
+        @media screen and (max-width: $max-sm) {
+            flex-direction: column-reverse;
+        }
     }
 
     .logoGridItem {
@@ -53,12 +59,6 @@
 
     .logo {
         max-height: 80px;
-    }
-
-    .mainGrid {
-        @media screen and (max-width: $max-sm) {
-            flex-direction: column-reverse;
-        }
     }
 
     @media print {

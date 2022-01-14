@@ -1,19 +1,20 @@
-import { MutableRefObject, useEffect } from 'react';
+import * as React from 'react';
 
 export const useSetWindowHeight = (
-    elementRef: MutableRefObject<HTMLElement | null>
+    elementRef: React.MutableRefObject<HTMLElement | null>
 ) => {
-    useEffect(() => {
-        if (elementRef.current) {
-            const mainEl = document.querySelector('main');
-            const paddingBottom = mainEl
-                ? parseInt(getComputedStyle(mainEl).paddingBottom)
-                : 0;
-            elementRef.current.style.height = `${
-                window.innerHeight -
-                elementRef.current.offsetTop -
-                paddingBottom
-            }px`;
-        }
+    React.useEffect(() => {
+        const setHeight = () => {
+            if (elementRef.current) {
+                elementRef.current.style.height = `${
+                    window.innerHeight - elementRef.current.offsetTop
+                }px`;
+            }
+        };
+        window.addEventListener('resize', setHeight);
+        setHeight();
+        return () => {
+            window.removeEventListener('resize', setHeight);
+        };
     });
 };
