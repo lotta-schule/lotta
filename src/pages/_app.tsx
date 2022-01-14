@@ -3,9 +3,7 @@ import { AppContext, AppProps } from 'next/app';
 import { ServerDownError } from 'error/ServerDownError';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
-import { add } from 'date-fns';
 import { AppContextProviders } from 'layout/AppContextProviders';
-import axios from 'axios';
 import dynamic from 'next/dynamic';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
@@ -72,9 +70,14 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
         (context.ctx.req &&
             `${getProtocol()}://${context.ctx.req.headers.host}`);
 
-    const headers = context.ctx.req?.headers;
+    const headers = context.ctx.req?.headers ?? {};
+    const additionalAuthHeader = context.ctx.res?.getHeader('authorization') as
+        | string
+        | undefined;
+    if (additionalAuthHeader) {
+        headers.authorization = additionalAuthHeader;
+    }
 
-    await maybeChangeRefreshToken(context);
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,
         context: {
@@ -115,86 +118,6 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
             requestBaseUrl: url,
         },
     };
-};
-
-const maybeChangeRefreshToken = async (context: AppContext) => {
-    const request = context.ctx.req;
-    const response = context.ctx.res;
-    if (!request) {
-        return;
-    }
-    const JwtDecode = (await import('jwt-decode')).default;
-    const headers = request.headers as Record<string, string>;
-    const jwt = headers.authorization?.replace(/^Bearer /, '');
-    if (jwt) {
-        const decoded = JwtDecode(jwt, { header: false });
-        const expires = new Date((decoded as any).exp * 1000);
-        if (expires.getTime() > new Date().getTime() + 30_000) {
-            // If token seems legit and does not expire in next 30 seconds,
-            // keep it and go on.
-            // A more thorough validation will be made on API side
-            return;
-        }
-    }
-    if (!response) {
-        return;
-    }
-    const Cookies = (await import('cookies')).default(request, response);
-    const refreshToken = Cookies.get('SignInRefreshToken');
-    if (!refreshToken) {
-        return;
-    }
-    const decoded = JwtDecode(refreshToken);
-    const expires = new Date((decoded as any).exp * 1000);
-    if (expires.getTime() < new Date().getTime() + 10_000) {
-        // token has/will expire in next 10 seconds, so don't
-        // bother refreshing it, could be too late, let the
-        // userAvatar just sign in again
-        Cookies.set('SignInRefreshToken', null, { httpOnly: true });
-        return;
-    }
-    // We made it here so it seems we have a valid refresh token.
-    // We'll make an auth token from it and swap the refreshToken
-    // in order to authenticate the request
-    try {
-        const { data, headers: refreshResponseHeaders } = await axios.request<
-            any,
-            any,
-            any
-        >({
-            method: 'POST',
-            baseURL: process.env.API_URL,
-            url: '/auth/token/refresh',
-            headers,
-        });
-        if (data?.accessToken) {
-            request.headers.authorization = `Bearer ${data.accessToken}`;
-            Cookies.set('AuthToken', data.accessToken, {
-                expires: add(new Date(), { minutes: 2 }),
-                httpOnly: false,
-            });
-        }
-        const refreshCookie = (
-            refreshResponseHeaders['set-cookie'] as unknown as
-                | string[]
-                | undefined
-        )?.find((cookieHeader: string) =>
-            /signinrefreshtoken=/i.test(cookieHeader)
-        ) as string;
-        if (refreshCookie) {
-            // set new refresh token on response
-            const matches = refreshCookie.match(/signinrefreshtoken=(.+);/gi);
-            const value = matches?.[1];
-            if (value) {
-                Cookies.set('SignInRefreshToken', value, {
-                    httpOnly: true,
-                    expires,
-                });
-            }
-        }
-    } catch (e) {
-        console.error('User Token handling eror: ', e);
-    }
 };
 
 export default LottaWebApp;

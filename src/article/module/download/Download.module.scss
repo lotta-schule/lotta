@@ -1,34 +1,61 @@
 @import 'breakpoints';
+
 .root {
     padding: calc(2 * var(--lotta-spacing));
 
     .downloadItemWrapper {
-        margin: calc(2 * var(--lotta-spacing)) 16.6%;
+        margin: calc(2 * var(--lotta-spacing)) 0;
+        @media screen and (min-width: $min-md) {
+            margin-left: 16.6%;
+            margin-right: 16.6%;
+        }
         background-color: rgba(var(--lotta-primary-color), 0.1);
-        padding: 0.5em;
-        @media screen and (max-width: $max-sm) {
-            margin-right: 0;
-            margin-left: 0;
-        }
-        &:last-child .downloadItemDivider {
-            display: none;
-            width: 100%;
-        }
-    }
+        padding: var(--lotta-spacing);
 
-    .downloadWrapperHeader {
         display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
+        align-items: stretch;
+
+        @media print {
+            &::before {
+                content: '\2022 '; /* equivalent of &bull; */
+            }
+        }
+
+        & > div {
+            flex-grow: 1;
+        }
+        .buttonWrapper {
+            text-align: center;
+            flex: 0 0 25%;
+            @media screen and (max-width: $max-xs) {
+                flex: 0 0 45%;
+            }
+            a {
+                min-width: 10em;
+                max-width: 12.5em;
+            }
+            @media print {
+                display: none;
+            }
+        }
+        .previewImageWrapper {
+            flex: 0 0 8.3%;
+            @media screen and (max-width: $max-sm) {
+                flex: 0 0 16.6%;
+            }
+            @media screen and (max-width: $max-xs) {
+                flex: 0 0 33.2%;
+            }
+        }
     }
 
     .downloadDescription {
-        font-size: 15px; // TODO: convert to rem
+        font-size: 1em;
         flex-basis: 66%;
     }
 
     .secondaryHeading {
-        font-size: 13px; // TODO: convert to rem
+        font-size: 0.8em;
         color: rgba(var(--lotta-text-color), 1);
     }
 
@@ -42,7 +69,7 @@
     }
 
     .filename {
-        font-size: 15px; // TODO: convert to rem
+        font-size: 1em;
     }
 
     .dragHandle {

@@ -23,7 +23,10 @@
     }
     .containerGrid {
         flex-wrap: wrap;
-        @media screen and (min-width: $min-sm) {
+        @media (min-width: $min-sm) {
+            flex-wrap: nowrap;
+        }
+        @media print {
             flex-wrap: nowrap;
         }
     }
@@ -69,12 +72,18 @@
             bottom: 0;
             right: 0;
         }
+        @media print {
+            display: none;
+        }
     }
 
     .imageSection {
         width: 100%;
         flex-shrink: 0;
-        @media screen and (min-width: $min-sm) {
+        @media (min-width: $min-sm) {
+            width: 30%;
+        }
+        @media print {
             width: 30%;
         }
     }

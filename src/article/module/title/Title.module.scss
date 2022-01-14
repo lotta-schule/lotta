@@ -3,9 +3,8 @@
 .root {
     padding: var(--lotta-spacing);
     padding-top: 30px;
-    margin: 0 16.6%;
-    @media screen and (max-width: $max-sm) {
-        margin: 0;
+    @media screen and (min-width: $min-md) {
+        margin: 0 16.6%;
     }
 }
 

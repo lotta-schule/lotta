@@ -8,6 +8,10 @@ html,
 body {
     margin: 0;
     font-family: var(--lotta-typography-font-family);
+
+    @media print {
+        font-size: 8pt;
+    }
 }
 
 body {
