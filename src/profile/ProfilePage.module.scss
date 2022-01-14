@@ -2,10 +2,20 @@
 
 .root {
     .gridContainer {
+        display: flex;
         @media screen and (max-width: $max-sm) {
             flex-direction: column-reverse;
         }
-        & > div {
+        aside {
+            padding: var(--lotta-spacing);
+            position: relative;
+            width: 20%;
+            flex-shrink: 0;
+            @media screen and (max-width: $max-sm) {
+                width: 100%;
+            }
+        }
+        & > section {
             padding: var(--lotta-spacing);
             position: relative;
         }
@@ -41,6 +51,20 @@
             bottom: initial;
             left: initial;
             margin-bottom: calc(2 * var(--lotta-spacing));
+        }
+    }
+
+    .changePersonalData {
+        display: flex;
+        justify-content: space-between;
+        button {
+            border: 0;
+        }
+        @media screen and (max-width: $max-xs) {
+            flex-wrap: wrap;
+            button {
+                width: 100%;
+            }
         }
     }
 }

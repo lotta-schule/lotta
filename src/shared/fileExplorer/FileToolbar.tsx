@@ -8,7 +8,8 @@ import {
     Info,
     InfoOutlined,
 } from '@material-ui/icons';
-import { Tooltip, Badge, Zoom, Breadcrumbs } from '@material-ui/core';
+import { Tooltip, Zoom, Breadcrumbs } from '@material-ui/core';
+import { Badge } from 'shared/general/badge/Badge';
 import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
@@ -110,33 +111,26 @@ export const FileToolbar = React.memo(() => {
                         <Tooltip
                             title={`${uploadLength} Dateien werden hochgeladen`}
                         >
-                            <Badge
-                                color={
-                                    uploads.filter((u) => u.error).length
-                                        ? 'error'
-                                        : 'primary'
+                            <Button
+                                aria-label={`${uploadLength} Dateien werden hochgeladen`}
+                                onClick={() =>
+                                    dispatch({ type: 'showActiveUploads' })
                                 }
-                                badgeContent={
-                                    uploads.filter((u) => u.error).length ? (
-                                        <span>!</span>
-                                    ) : (
-                                        uploadLength
-                                    )
-                                }
+                                data-testid="FileExplorerToolbarCurrentUploadsButton"
                             >
-                                <Button
-                                    aria-label={`${uploadLength} Dateien werden hochgeladen`}
-                                    onClick={() =>
-                                        dispatch({ type: 'showActiveUploads' })
+                                <CircularProgress
+                                    size={20}
+                                    value={uploadTotalProgress}
+                                />
+                                {}
+                                <Badge
+                                    value={
+                                        uploads.filter((u) => u.error).length
+                                            ? '!'
+                                            : uploadLength
                                     }
-                                    data-testid="FileExplorerToolbarCurrentUploadsButton"
-                                >
-                                    <CircularProgress
-                                        size={20}
-                                        value={uploadTotalProgress}
-                                    />
-                                </Button>
-                            </Badge>
+                                />
+                            </Button>
                         </Tooltip>
                     </Zoom>
                     {File.canEditDirectory(
