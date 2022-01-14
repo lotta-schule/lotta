@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import { Forum } from '@material-ui/icons';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { ConversationModel, NewMessageDestination } from 'model';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
@@ -17,7 +18,6 @@ import clsx from 'clsx';
 import styles from './MessagingView.module.scss';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
 
 export const MessagingView = React.memo(() => {
     const isMobile = useIsMobile();

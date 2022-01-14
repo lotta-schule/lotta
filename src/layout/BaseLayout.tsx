@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Grid, Container, NoSsr } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import { Navbar } from './navigation/Navbar';
 import { File } from 'util/model';
 import { ScrollToTopButton } from 'shared/general/button/ScrollToTopButton';
+import { Box } from 'shared/general/layout/Box';
 import { useIsRetina } from 'util/useIsRetina';
 import { useTenant } from 'util/tenant/useTenant';
 import { useServerData } from 'shared/ServerDataContext';
@@ -15,13 +16,12 @@ const {
     publicRuntimeConfig: { cloudimageToken },
 } = getConfig();
 
-// TODO: Why not Container?
 export const BaseLayout = React.memo(({ children }) => {
     const tenant = useTenant();
     const { baseUrl } = useServerData();
     const retinaMultiplier = useIsRetina() ? 2 : 1;
     return (
-        <Container className={styles.root}>
+        <Box className={styles.root}>
             {tenant.configuration.backgroundImageFile && (
                 <style>{`
                     @media screen and (min-width: 600px) {
@@ -59,19 +59,12 @@ export const BaseLayout = React.memo(({ children }) => {
             </header>
             <Navbar />
             <main className={styles.main}>
-                <Grid
-                    container
-                    justifyContent={'flex-start'}
-                    className={styles.mainGrid}
-                    wrap={'nowrap'}
-                >
-                    {children}
-                    <NoSsr>
-                        <ScrollToTopButton />
-                    </NoSsr>
-                </Grid>
+                {children}
+                <NoSsr>
+                    <ScrollToTopButton />
+                </NoSsr>
             </main>
-        </Container>
+        </Box>
     );
 });
 BaseLayout.displayName = 'BaseLayout';
