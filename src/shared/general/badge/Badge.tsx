@@ -6,15 +6,20 @@ import styles from './Badge.module.scss';
 export type BadgeProps = {
     className?: string;
 
-    style?: React.CSSProperties;
-
     value?: number | string | null;
 };
 
 export const Badge = React.forwardRef<any, BadgeProps>(
-    ({ className, value, ...props }, ref) => {
+    ({ className, value, ...props }) => {
+        if (!value) {
+            return null;
+        }
         return (
-            <div className={clsx(className, styles.root)} {...props}>
+            <div
+                role={'status'}
+                className={clsx(className, styles.root)}
+                {...props}
+            >
                 {value}
             </div>
         );
