@@ -1,4 +1,4 @@
-query GetConversationsQuery($id: ID!) {
+query GetConversationQuery($id: ID!) {
     conversation(id: $id) {
         id
         updatedAt
@@ -23,6 +23,9 @@ query GetConversationsQuery($id: ID!) {
                 id
                 name
                 nickname
+                avatarImageFile {
+                    id
+                }
             }
         }
     }
