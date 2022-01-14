@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
     Avatar,
-    Grid,
     List,
     ListItemText,
     ListItem,
@@ -71,8 +70,8 @@ export const ProfilePage = () => {
             <Box className={styles.container}>
                 <h4>Meine Daten</h4>
                 <ErrorMessage error={error} />
-                <Grid container className={styles.gridContainer}>
-                    <Grid item xs md={4}>
+                <div className={styles.gridContainer}>
+                    <aside>
                         <Deletable
                             title={'Profilbild löschen'}
                             onDelete={() => setAvatarImageFile(null)}
@@ -131,8 +130,8 @@ export const ProfilePage = () => {
                                 </Button>
                             </Link>
                         </section>
-                    </Grid>
-                    <Grid item md={8}>
+                    </aside>
+                    <section>
                         <Label label="Deine Email-Adresse:">
                             <Input
                                 autoFocus
@@ -144,28 +143,20 @@ export const ProfilePage = () => {
                                 maxLength={100}
                             />
                         </Label>
-                        <Grid container>
-                            <Grid item sm={6}>
-                                <Button
-                                    style={{ border: 0 }}
-                                    onClick={() =>
-                                        setIsShowUpdateEmailDialog(true)
-                                    }
-                                >
-                                    Email ändern
-                                </Button>
-                            </Grid>
-                            <Grid item sm={6}>
-                                <Button
-                                    onClick={() =>
-                                        setIsShowUpdatePasswordDialog(true)
-                                    }
-                                    style={{ float: 'right', border: 0 }}
-                                >
-                                    Passwort ändern
-                                </Button>
-                            </Grid>
-                        </Grid>
+                        <section className={styles.changePersonalData}>
+                            <Button
+                                onClick={() => setIsShowUpdateEmailDialog(true)}
+                            >
+                                Email ändern
+                            </Button>
+                            <Button
+                                onClick={() =>
+                                    setIsShowUpdatePasswordDialog(true)
+                                }
+                            >
+                                Passwort ändern
+                            </Button>
+                        </section>
                         <Label label="Dein Vor- und Nachname">
                             <Input
                                 autoFocus
@@ -284,8 +275,8 @@ export const ProfilePage = () => {
                                 setIsShowUpdateEmailDialog(false)
                             }
                         />
-                    </Grid>
-                </Grid>
+                    </section>
+                </div>
             </Box>
         </Main>
     );
