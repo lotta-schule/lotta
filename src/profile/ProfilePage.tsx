@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
     Avatar,
     Grid,
-    Badge,
     List,
     ListItemText,
     ListItem,
@@ -10,7 +9,6 @@ import {
 } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import { useMutation } from '@apollo/client';
-import { Clear } from '@material-ui/icons';
 import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox';
 import { Divider } from 'shared/general/divider/Divider';
@@ -18,7 +16,6 @@ import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { Input } from 'shared/general/form/input/Input';
 import { Label } from 'shared/general/label/Label';
-import { NavigationButton } from 'shared/general/button/NavigationButton';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { UpdateEmailDialog } from 'shared/dialog/UpdateEmailDialog';
 import { UpdatePasswordDialog } from 'shared/dialog/UpdatePasswordDialog';
@@ -28,6 +25,7 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { useServerData } from 'shared/ServerDataContext';
 import { Header, Main } from 'layout';
+import { Deletable } from 'shared/general/util/Deletable';
 import Link from 'next/link';
 
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';
@@ -75,18 +73,9 @@ export const ProfilePage = () => {
                 <ErrorMessage error={error} />
                 <Grid container className={styles.gridContainer}>
                     <Grid item xs md={4}>
-                        <Badge
-                            overlap={'circle'}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            badgeContent={
-                                <NavigationButton
-                                    onClick={() => setAvatarImageFile(null)}
-                                    icon={<Clear />}
-                                />
-                            }
+                        <Deletable
+                            title={'Profilbild löschen'}
+                            onDelete={() => setAvatarImageFile(null)}
                         >
                             <Avatar
                                 src={
@@ -99,7 +88,7 @@ export const ProfilePage = () => {
                                 }
                                 alt={User.getNickname(currentUser)}
                             />
-                        </Badge>
+                        </Deletable>
                         <br />
                         <SelectFileButton
                             buttonComponentProps={{

@@ -7,6 +7,7 @@ import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { Button } from 'shared/general/button/Button';
 import { Close } from '@material-ui/icons';
 import { SearchUserField } from 'administration/users/SearchUserField';
+import { Deletable } from 'shared/general/util/Deletable';
 import clsx from 'clsx';
 
 import styles from './AuthorAvatarsList.module.scss';
@@ -22,55 +23,35 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
     ({ users, className, max, onUpdate }) => {
         const getAvatar = React.useCallback(
             (user: UserModel) => {
-                const userAvatar = (
-                    <Tooltip
-                        title={User.getNickname(user)}
-                        key={user.id}
-                        enterTouchDelay={100}
+                return (
+                    <Deletable
+                        title={`Autor ${User.getNickname(user)} entfernen`}
+                        onDelete={
+                            onUpdate
+                                ? () =>
+                                      onUpdate(
+                                          users.filter((u) => u.id !== user.id)
+                                      )
+                                : null
+                        }
                     >
-                        <UserAvatar
-                            user={user}
-                            style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: '50%',
-                            }}
-                            size={25}
-                        />
-                    </Tooltip>
-                );
-                const isDeletable = !!onUpdate;
-                if (isDeletable) {
-                    return (
-                        <Badge
+                        <Tooltip
+                            title={User.getNickname(user)}
                             key={user.id}
-                            badgeContent={
-                                <Button
-                                    small
-                                    style={{ width: 15, height: 15 }}
-                                    icon={
-                                        <Close
-                                            style={{ width: 8, height: 8 }}
-                                        />
-                                    }
-                                    title={`Autor ${User.getNickname(
-                                        user
-                                    )} entfernen`}
-                                    onClick={() =>
-                                        onUpdate!(
-                                            users.filter(
-                                                (u) => u.id !== user.id
-                                            )
-                                        )
-                                    }
-                                />
-                            }
+                            enterTouchDelay={100}
                         >
-                            {userAvatar}
-                        </Badge>
-                    );
-                }
-                return userAvatar;
+                            <UserAvatar
+                                user={user}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: '50%',
+                                }}
+                                size={25}
+                            />
+                        </Tooltip>
+                    </Deletable>
+                );
             },
             [onUpdate, users]
         );
