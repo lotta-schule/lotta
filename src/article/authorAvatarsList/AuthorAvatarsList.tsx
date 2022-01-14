@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { UserModel } from 'model';
-import { Badge, Tooltip } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import { AvatarGroup } from '@material-ui/lab';
 import { User } from 'util/model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { Button } from 'shared/general/button/Button';
-import { Close } from '@material-ui/icons';
 import { SearchUserField } from 'administration/users/SearchUserField';
 import { Deletable } from 'shared/general/util/Deletable';
 import clsx from 'clsx';
