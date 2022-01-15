@@ -100,7 +100,7 @@ export const DeletePage = React.memo(() => {
     ] = useMutation(DestroyAccountMutation, {
         fetchPolicy: 'no-cache',
         variables: {
-            userId: currentUser.id,
+            userId: currentUser?.id,
             transferFileIds: selectedFilesToTransfer.map((f) => f.id),
         },
         onCompleted: async () => {
