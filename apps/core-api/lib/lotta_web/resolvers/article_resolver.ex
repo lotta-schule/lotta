@@ -7,7 +7,7 @@ defmodule LottaWeb.ArticleResolver do
   import LottaWeb.ErrorHelpers
 
   alias LottaWeb.Context
-  alias Lotta.{Content, Repo}
+  alias Lotta.{Accounts, Content, Repo}
 
   def get(%{id: id}, %{context: %Context{current_user: current_user}}) do
     article = Content.get_article(String.to_integer(id))
@@ -43,6 +43,22 @@ defmodule LottaWeb.ArticleResolver do
 
   def all_unpublished(_args, _info) do
     {:ok, Content.list_unpublished_articles()}
+  end
+
+  def with_user_files(%{user_id: user_id}, _info) do
+    user = Accounts.get_user(String.to_integer(user_id))
+
+    if is_nil(user) do
+      {:error, "Nutzer mit der ID #{user_id} nicht gefunden."}
+    else
+      articles =
+        user
+        |> Content.list_articles_with_files_from_user()
+        |> Enum.map(&elem(&1, 1))
+        |> Enum.sort_by(& &1.id)
+
+      {:ok, articles}
+    end
   end
 
   def own(_args, %{context: %Context{current_user: current_user}}) do

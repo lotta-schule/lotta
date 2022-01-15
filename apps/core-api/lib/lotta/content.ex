@@ -7,6 +7,7 @@ defmodule Lotta.Content do
 
   alias Lotta.Repo
   alias Lotta.Accounts.User
+  alias Lotta.Storage.File
   alias Lotta.Content.{Article, Category, ContentModule, ContentModuleResult}
 
   @type filter() :: %{
@@ -105,7 +106,7 @@ defmodule Lotta.Content do
   @doc since: "1.0.0"
   @spec list_unpublished_articles() :: [Article.t()]
   def list_unpublished_articles() do
-    Ecto.Query.from(a in Article,
+    from(a in Article,
       where: a.ready_to_publish == true and a.published == false
     )
     |> Repo.all()
@@ -123,13 +124,49 @@ defmodule Lotta.Content do
   @doc since: "1.0.0"
   @spec list_user_articles(User.t()) :: [Article.t()]
   def list_user_articles(user) do
-    Ecto.Query.from(a in Article,
+    from(a in Article,
       join: au in "article_users",
       on: au.article_id == a.id,
       where: au.user_id == ^user.id,
       order_by: :id
     )
     |> Repo.all()
+  end
+
+  @doc """
+  """
+  @doc since: "3.2.0"
+  @spec list_articles_with_files_from_user(User.t()) :: [
+          {String.t(), Article.t()}
+        ]
+  def list_articles_with_files_from_user(%User{} = user) do
+    articles_with_preview =
+      from(a in Article,
+        join: f in File,
+        on: f.id == a.preview_image_file_id,
+        where: f.user_id == ^user.id and a.published == true,
+        distinct: true,
+        order_by: [desc: :updated_at, asc: :title]
+      )
+      |> Repo.all()
+      |> Enum.map(&{"preview", &1})
+
+    articles_with_contentmodule =
+      from(a in Article,
+        join: cm in ContentModule,
+        on: cm.article_id == a.id,
+        join: cmf in "content_module_file",
+        on: cmf.content_module_id == cm.id,
+        join: f in File,
+        on: f.id == cmf.file_id,
+        where: f.user_id == ^user.id and a.published == true,
+        distinct: true,
+        order_by: [desc: :updated_at, asc: :title]
+      )
+      |> Repo.all()
+      |> Enum.map(&{"content_module", &1})
+
+    articles_with_preview ++ articles_with_contentmodule
   end
 
   @doc """

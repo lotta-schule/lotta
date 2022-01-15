@@ -2576,6 +2576,90 @@ defmodule LottaWeb.ArticleResolverTest do
     end
   end
 
+  describe "articles with user files" do
+    @query """
+    query articlesWithUserFiles($userId: ID!) {
+      articlesWithUserFiles(userId: $userId) {
+        title
+      }
+    }
+    """
+
+    test "it should return an error when user is not logged in" do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> post("/api", query: @query, variables: %{userId: 1})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"articlesWithUserFiles" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "path" => ["articlesWithUserFiles"]
+                 }
+               ]
+             } = res
+    end
+
+    test "it should return an error when user is not admin", %{user_jwt: user_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api", query: @query, variables: %{userId: 1})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"articlesWithUserFiles" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "path" => ["articlesWithUserFiles"]
+                 }
+               ]
+             } = res
+    end
+
+    test "it should return an error if user is not available", %{admin_jwt: admin_jwt} do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{userId: 0})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{"articlesWithUserFiles" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Nutzer mit der ID 0 nicht gefunden.",
+                   "path" => ["articlesWithUserFiles"]
+                 }
+               ]
+             } = res
+    end
+
+    test "it should return the user's relevant files in usage", %{
+      lehrer: lehrer,
+      admin_jwt: admin_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{userId: lehrer.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "articlesWithUserFiles" => [%{"title" => "And the oskar goes to ..."}]
+               }
+             } = res
+    end
+  end
+
   describe "ownArticles query" do
     @query """
     query ownArticles {

@@ -1759,8 +1759,8 @@ defmodule LottaWeb.UserResolverTest do
 
   describe "destroy account mutation" do
     @query """
-    mutation DestroyAccountMutation($transferFileIds: [ID!]) {
-      destroyAccount(transferFileIds: $transferFileIds) {
+    mutation DestroyAccountMutation($userId: ID!, $transferFileIds: [ID!]) {
+      destroyAccount(userId: $userId, transferFileIds: $transferFileIds) {
         email
       }
     }
@@ -1771,7 +1771,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("tenant", "slug:test")
         |> post("/api",
           query: @query,
-          variables: %{transferFileIds: [file.id]}
+          variables: %{userId: 1, transferFileIds: [file.id]}
         )
         |> json_response(200)
 
@@ -1787,7 +1787,33 @@ defmodule LottaWeb.UserResolverTest do
              }
     end
 
-    test "should successfully destroy the account without transferring files", %{
+    test "should return an error when trying to destroy another account, but not being admin", %{
+      admin: admin,
+      user_jwt: user_jwt
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> post("/api",
+          query: @query,
+          variables: %{userId: admin.id}
+        )
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{"destroyAccount" => nil},
+               "errors" => [
+                 %{
+                   "message" => "Du darfst das nicht tun.",
+                   "path" => ["destroyAccount"],
+                   "locations" => [%{"column" => 3, "line" => 2}]
+                 }
+               ]
+             }
+    end
+
+    test "should successfully destroy the own account without transferring files", %{
       user_jwt: user_jwt,
       user: user
     } do
@@ -1795,7 +1821,7 @@ defmodule LottaWeb.UserResolverTest do
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user_jwt}")
-        |> post("/api", query: @query)
+        |> post("/api", query: @query, variables: %{userId: user.id})
         |> json_response(200)
 
       assert %{
@@ -1811,7 +1837,31 @@ defmodule LottaWeb.UserResolverTest do
       end
     end
 
-    test "should successfully destroy the account, transferring files", %{
+    test "should successfully destroy another account without transferring files", %{
+      admin_jwt: admin_jwt,
+      user: user
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{admin_jwt}")
+        |> post("/api", query: @query, variables: %{userId: user.id})
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "destroyAccount" => %{
+                   "email" => "eike.wiewiorra@lotta.schule"
+                 }
+               }
+             } = res
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Repo.get!(User, user.id)
+      end
+    end
+
+    test "should successfully destroy the own account, transferring files", %{
       user_jwt: user_jwt,
       user: user,
       user_relevant_file: file,
@@ -1823,7 +1873,7 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{transferFileIds: [file.id]}
+          variables: %{userId: user.id, transferFileIds: [file.id]}
         )
         |> json_response(200)
 
@@ -1843,7 +1893,7 @@ defmodule LottaWeb.UserResolverTest do
       refute refetched_file.user_id
     end
 
-    test "should successfully destroy the account, ignoring invalid file ids", %{
+    test "should successfully destroy the own account, ignoring invalid file ids", %{
       user_jwt: user_jwt,
       user: user,
       user_relevant_file: file,
@@ -1855,7 +1905,10 @@ defmodule LottaWeb.UserResolverTest do
         |> put_req_header("authorization", "Bearer #{user_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{transferFileIds: ["00000000-0000-0000-0000-000000000001", file.id]}
+          variables: %{
+            userId: user.id,
+            transferFileIds: ["00000000-0000-0000-0000-000000000001", file.id]
+          }
         )
         |> json_response(200)
 

@@ -327,6 +327,13 @@ defmodule LottaWeb.FileResolverTest do
                      %{
                        "article" => %{
                          "previewImageFile" => %{"remoteLocation" => _},
+                         "title" => "And the oskar goes to ..."
+                       },
+                       "usage" => "preview"
+                     },
+                     %{
+                       "article" => %{
+                         "previewImageFile" => %{"remoteLocation" => _},
                          "title" => "Fertiger Artikel zum Konzert"
                        },
                        "usage" => "preview"

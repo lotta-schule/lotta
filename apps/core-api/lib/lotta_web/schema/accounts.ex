@@ -138,6 +138,7 @@ defmodule LottaWeb.Schema.Accounts do
     field :destroy_account, type: :user do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
+      arg(:user_id, non_null(:id))
       arg(:transfer_file_ids, list_of(non_null(:id)))
 
       resolve(&LottaWeb.UserResolver.destroy_account/2)

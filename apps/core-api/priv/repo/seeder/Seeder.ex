@@ -666,7 +666,8 @@ defmodule Lotta.Repo.Seeder do
           title: "And the oskar goes to ...",
           preview: "Hallo hallo hallo",
           inserted_at: ~U[2019-09-01 10:08:00Z],
-          updated_at: ~U[2019-09-01 10:08:00Z]
+          updated_at: ~U[2019-09-01 10:08:00Z],
+          preview_image_file_id: List.first(eike_files).id
         },
         prefix: tenant.prefix
       )

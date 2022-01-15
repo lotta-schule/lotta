@@ -196,11 +196,17 @@ defmodule LottaWeb.UserResolver do
     end
   end
 
-  def destroy_account(args, %{context: %Context{current_user: current_user}}) do
-    (args[:transfer_file_ids] || [])
-    |> Storage.archive_user_files_by_ids(current_user)
+  def destroy_account(%{user_id: user_id} = args, %{context: %Context{current_user: current_user}}) do
+    if user_id != to_string(current_user.id) && !current_user.is_admin? do
+      {:error, "Du darfst das nicht tun."}
+    else
+      user_to_delete = Accounts.get_user(String.to_integer(user_id))
 
-    Accounts.delete_user(current_user)
+      (args[:transfer_file_ids] || [])
+      |> Storage.archive_user_files_by_ids(user_to_delete)
+
+      Accounts.delete_user(user_to_delete)
+    end
   end
 
   def update(%{id: id} = args, _info) do

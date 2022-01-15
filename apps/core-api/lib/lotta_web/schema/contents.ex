@@ -25,6 +25,14 @@ defmodule LottaWeb.Schema.Contents do
       resolve(&LottaWeb.ArticleResolver.all_unpublished/2)
     end
 
+    field :articles_with_user_files, list_of(:article) do
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+
+      arg(:user_id, non_null(:id))
+
+      resolve(&LottaWeb.ArticleResolver.with_user_files/2)
+    end
+
     field :own_articles, list_of(:article) do
       middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
