@@ -22,6 +22,7 @@ import { ArticlesList } from 'shared/articlesList/ArticlesList';
 import { Main, Sidebar } from 'layout';
 import { ProfileDeleteFileSelection } from './component/ProfileDeleteFileSelection';
 import { useRouter } from 'next/router';
+import { useCurrentUser } from 'util/user/useCurrentUser';
 import FileExplorer from 'shared/fileExplorer/FileExplorer';
 import clsx from 'clsx';
 
@@ -43,6 +44,7 @@ export const DeletePage = React.memo(() => {
     const apolloClient = useApolloClient();
 
     const tenant = useTenant();
+    const currentUser = useCurrentUser();
     const [selectedFilesToTransfer, setSelectedFilesToTransfer] =
         React.useState<FileModel[]>([]);
 
@@ -98,6 +100,7 @@ export const DeletePage = React.memo(() => {
     ] = useMutation(DestroyAccountMutation, {
         fetchPolicy: 'no-cache',
         variables: {
+            userId: currentUser?.id,
             transferFileIds: selectedFilesToTransfer.map((f) => f.id),
         },
         onCompleted: async () => {

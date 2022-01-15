@@ -208,7 +208,10 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
                     {
                         request: {
                             query: DestroyAccountMutation,
-                            variables: { transferFileIds: [] },
+                            variables: {
+                                userId: SomeUser.id,
+                                transferFileIds: [],
+                            },
                         },
                         result: () => {
                             didCallDeleteMutation = true;

@@ -1,0 +1,6 @@
+query GetArticlesWithUserFiles($userId: ID!) {
+    articles: articlesWithUserFiles(userId: $userId) {
+        id
+        title
+    }
+}
