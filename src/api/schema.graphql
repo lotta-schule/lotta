@@ -277,7 +277,7 @@ type RootMutationType {
   deleteMessage(id: ID!): Message
   deleteUserGroup(id: ID!): UserGroup
   deleteWidget(id: ID!): Widget
-  destroyAccount(transferFileIds: [ID!]): User
+  destroyAccount(transferFileIds: [ID!], userId: ID!): User
   login(password: String, username: String): Authresult
   logout: Authresult
   register(groupKey: String, user: RegisterUserParams!): Boolean
@@ -303,6 +303,7 @@ type RootMutationType {
 type RootQueryType {
   article(id: ID!): Article
   articles(categoryId: ID, filter: ArticleFilter): [Article]
+  articlesWithUserFiles(userId: ID!): [Article]
   calendar(days: Int, url: String!): [CalendarEvent]
   categories: [Category]
   contentModuleResults(contentModuleId: ID!): [ContentModuleResult]
