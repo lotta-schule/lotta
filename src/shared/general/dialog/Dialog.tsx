@@ -99,22 +99,20 @@ export const DialogShell: React.FC<DialogProps> = ({
                 style={style}
             >
                 <FocusScope contain autoFocus>
-                    <div>
-                        <section>
-                            {onRequestClose && (
-                                <Button
-                                    small
-                                    title={'schließen'}
-                                    className={styles.close}
-                                    onClick={() => onRequestClose()}
-                                    icon={<Close />}
-                                />
-                            )}
-                            <h3 {...titleProps}>{title}</h3>
-                            <Divider />
-                        </section>
-                        {children}
-                    </div>
+                    <section>
+                        {onRequestClose && (
+                            <Button
+                                small
+                                title={'schließen'}
+                                className={styles.close}
+                                onClick={() => onRequestClose()}
+                                icon={<Close />}
+                            />
+                        )}
+                        <h3 {...titleProps}>{title}</h3>
+                        <Divider />
+                    </section>
+                    {children}
                 </FocusScope>
             </animated.div>
         </animated.div>

@@ -13,6 +13,7 @@ import { GroupSelect } from 'shared/edit/GroupSelect';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { useUserGroups } from 'util/tenant/useUserGroups';
+import { DeleteUserDialog } from './DeleteUserDialog';
 
 import UpdateUserMutation from 'api/mutation/UpdateUserMutation.graphql';
 import GetUserQuery from 'api/query/GetUserQuery.graphql';
@@ -27,6 +28,8 @@ export interface EditUserPermissionsDialogProps {
 export const EditUserPermissionsDialog =
     React.memo<EditUserPermissionsDialogProps>(({ user, onRequestClose }) => {
         const allUserGroups = useUserGroups();
+        const [isDeleteDialogOpen, setIsDeleteDialogOpen] =
+            React.useState(false);
 
         const { data, loading, error } = useQuery<
             { user: UserModel },
@@ -78,90 +81,107 @@ export const EditUserPermissionsDialog =
             );
 
         return (
-            <Dialog
-                open={true}
-                onRequestClose={onRequestClose}
-                className={styles.root}
-                title={`${user.name}s Details`}
-            >
-                <DialogContent>
-                    <ErrorMessage error={error || updateUserError} />
-                    <div className={styles.header}>
-                        <UserAvatar
-                            user={user}
-                            size={100}
-                            className={styles.avatar}
-                        />
-                        <div>
-                            <h6 data-testid="UserName">{user.name}</h6>
-                            {user.nickname && (
-                                <p data-testid="UserNickname">
-                                    <strong>{user.nickname}</strong>
-                                </p>
-                            )}
-                            <p data-testid="UserEmail">{user.email}</p>
-                            {user.class && (
-                                <p data-testid="UserClass">
-                                    Klasse: {user.class}
-                                </p>
-                            )}
+            <>
+                <Dialog
+                    open={true}
+                    onRequestClose={onRequestClose}
+                    className={styles.root}
+                    title={`${user.name}s Details`}
+                >
+                    <DialogContent>
+                        <ErrorMessage error={error || updateUserError} />
+                        <div className={styles.header}>
+                            <UserAvatar
+                                user={user}
+                                size={100}
+                                className={styles.avatar}
+                            />
+                            <div>
+                                <h6 data-testid="UserName">{user.name}</h6>
+                                {user.nickname && (
+                                    <p data-testid="UserNickname">
+                                        <strong>{user.nickname}</strong>
+                                    </p>
+                                )}
+                                <p data-testid="UserEmail">{user.email}</p>
+                                {user.class && (
+                                    <p data-testid="UserClass">
+                                        Klasse: {user.class}
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                    {loading && (
-                        <CircularProgress
-                            isIndeterminate
-                            aria-label={'Nutzer wird geladen'}
-                        />
-                    )}
-                    {data && (
-                        <>
-                            <Divider />
-                            <section data-testid="GroupSelectSection">
-                                <GroupSelect
-                                    row
-                                    hidePublicGroupSelection
-                                    disableAdminGroupsExclusivity
-                                    className={styles.groupSelect}
-                                    selectedGroups={
-                                        data.user?.assignedGroups ?? []
-                                    }
-                                    onSelectGroups={(groups) =>
-                                        updateUser({
-                                            variables: {
-                                                id: user.id,
-                                                groups: groups.map((g) => ({
-                                                    id: g.id,
-                                                })),
-                                            },
-                                        })
-                                    }
-                                    label={'Gruppe zuweisen'}
-                                />
-                            </section>
-                            {dynamicGroups && (
-                                <span data-testid="DynamicGroups">
-                                    Über Einschreibeschlüssel zugewiesene
-                                    Gruppen:
-                                    {dynamicGroups.map((group, i, arr) => (
-                                        <React.Fragment key={group.id}>
-                                            <em>{group.name}</em>
-                                            {i !== arr.length - 1 && <>, </>}
-                                        </React.Fragment>
-                                    ))}
-                                </span>
-                            )}
-                        </>
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        data-testid="AbortButton"
-                        onClick={() => onRequestClose()}
-                    >
-                        Abbrechen
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        {loading && (
+                            <CircularProgress
+                                isIndeterminate
+                                aria-label={'Nutzer wird geladen'}
+                            />
+                        )}
+                        {data && (
+                            <>
+                                <Divider />
+                                <section data-testid="GroupSelectSection">
+                                    <GroupSelect
+                                        row
+                                        hidePublicGroupSelection
+                                        disableAdminGroupsExclusivity
+                                        className={styles.groupSelect}
+                                        selectedGroups={
+                                            data.user?.assignedGroups ?? []
+                                        }
+                                        onSelectGroups={(groups) =>
+                                            updateUser({
+                                                variables: {
+                                                    id: user.id,
+                                                    groups: groups.map((g) => ({
+                                                        id: g.id,
+                                                    })),
+                                                },
+                                            })
+                                        }
+                                        label={'Gruppe zuweisen'}
+                                    />
+                                </section>
+                                {dynamicGroups && (
+                                    <span data-testid="DynamicGroups">
+                                        Über Einschreibeschlüssel zugewiesene
+                                        Gruppen:
+                                        {dynamicGroups.map((group, i, arr) => (
+                                            <React.Fragment key={group.id}>
+                                                <em>{group.name}</em>
+                                                {i !== arr.length - 1 && (
+                                                    <>, </>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                    </span>
+                                )}
+                            </>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => onRequestClose()}>
+                            Abbrechen
+                        </Button>
+                        <Button
+                            variant={'error'}
+                            onClick={() => setIsDeleteDialogOpen(true)}
+                        >
+                            Benutzer löschen
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                {isDeleteDialogOpen && (
+                    <DeleteUserDialog
+                        onRequestClose={() => setIsDeleteDialogOpen(false)}
+                        onConfirm={() => {
+                            setIsDeleteDialogOpen(false);
+                            onRequestClose();
+                        }}
+                        user={user}
+                    />
+                )}
+            </>
         );
     });
 EditUserPermissionsDialog.displayName = 'EditUserPermissionsDialog';

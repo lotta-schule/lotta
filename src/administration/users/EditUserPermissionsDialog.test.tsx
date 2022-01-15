@@ -203,4 +203,21 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
             });
         });
     });
+
+    it('should open delete user dialog when delete button is clicked', async () => {
+        const user = { ...SomeUser, groups: [], assignedGroups: [] };
+        const screen = render(
+            <EditUserPermissionsDialog user={user} onRequestClose={() => {}} />,
+            {},
+            { additionalMocks: mocks(user) }
+        );
+        userEvent.click(
+            screen.getByRole('button', { name: /benutzer löschen/i })
+        );
+        await waitFor(() => {
+            expect(
+                screen.getByRole('dialog', { name: /ernesto guevara löschen/i })
+            ).toBeVisible();
+        });
+    });
 });
