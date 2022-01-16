@@ -4,7 +4,7 @@ defmodule Lotta.AccountsTest do
   use Lotta.DataCase
   use Bamboo.Test
 
-  alias Lotta.{Accounts, Fixtures, Tenants, Repo}
+  alias Lotta.{Accounts, Email, Fixtures, Tenants, Repo}
   alias Lotta.Accounts.User
 
   @all_users [
@@ -67,7 +67,7 @@ defmodule Lotta.AccountsTest do
       assert user.email == "some@email.de"
       assert user.name == "Alberta Smith"
       refute is_nil(password)
-      assert Lotta.Accounts.Authentication.verify_user_pass(user, password)
+      assert Accounts.Authentication.verify_user_pass(user, password)
     end
 
     test "register_user/1 with invalid data returns error changeset", %{tenant: t} do
@@ -95,6 +95,8 @@ defmodule Lotta.AccountsTest do
       user = Fixtures.fixture(:registered_user)
       assert {:ok, %User{}} = Accounts.delete_user(user)
       assert is_nil(Accounts.get_user(user.id))
+
+      assert_delivered_email(Email.account_closed_mail(user))
     end
 
     test "update_password/2 changes password and sends out notification" do
@@ -104,7 +106,7 @@ defmodule Lotta.AccountsTest do
 
       assert Argon2.verify_pass("newpass", user.password_hash)
 
-      assert_delivered_email(Lotta.Email.password_changed_mail(user))
+      assert_delivered_email(Email.password_changed_mail(user))
     end
   end
 end
