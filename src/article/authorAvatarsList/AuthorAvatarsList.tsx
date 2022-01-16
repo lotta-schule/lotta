@@ -24,6 +24,7 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
                 return (
                     <Deletable
                         title={`Autor ${User.getNickname(user)} entfernen`}
+                        key={user.id}
                         onDelete={
                             onUpdate
                                 ? () =>
@@ -35,7 +36,6 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
                     >
                         <Tooltip
                             title={User.getNickname(user)}
-                            key={user.id}
                             enterTouchDelay={100}
                         >
                             <UserAvatar

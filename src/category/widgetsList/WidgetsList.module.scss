@@ -17,6 +17,7 @@
         margin-bottom: calc(
             1em + var(--lotta-spacing)
         ); // make space for footer
+        height: calc(100% - calc(1em + var(--lotta-spacing)));
     }
     .tabsRoot {
         background-color: rgba(var(--lotta-box-background-color), 1);
