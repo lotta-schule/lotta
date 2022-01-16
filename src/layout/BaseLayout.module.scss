@@ -23,7 +23,7 @@
         justify-content: flex-start;
         margin-top: var(--lotta-spacing);
         max-width: 100%;
-        padding-bottom: calc(2 * var(--lotta-spacing));
+        padding-bottom: var(--lotta-spacing);
         @media screen and (max-width: $max-sm) {
             flex-direction: column-reverse;
         }

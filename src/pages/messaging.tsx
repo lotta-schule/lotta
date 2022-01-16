@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { ConversationModel } from 'model';
+import { getApolloClient } from 'api/client';
 import { MessagingPage } from 'messaging/MessagingPage';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
-import { getApolloClient } from 'api/client';
-import { ConversationModel } from 'model';
 
 const MessagingRoute = ({
     conversations,
