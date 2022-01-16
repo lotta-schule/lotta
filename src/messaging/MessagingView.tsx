@@ -4,7 +4,7 @@ import { Forum } from '@material-ui/icons';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { LinearProgress } from 'shared/general/progress/LinearProgress';
-import { ConversationModel, NewMessageDestination } from 'model';
+import { ConversationModel, MessageModel, NewMessageDestination } from 'model';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
 import { ConversationPreview } from './ConversationPreview';
@@ -40,6 +40,12 @@ export const MessagingView = React.memo(() => {
         React.useState<NewMessageDestination | null>(null);
 
     const [isSidebarActive, setIsSidebarActive] = React.useState(true);
+
+    const onMessageSent = React.useCallback((msg: MessageModel) => {
+        if (msg.conversation) {
+            setSelectedConversation(msg.conversation);
+        }
+    }, []);
 
     React.useEffect(() => {
         if (createMessageDestination) {
@@ -140,7 +146,7 @@ export const MessagingView = React.memo(() => {
                     />
                 )}
                 {selectedConversation && (
-                    <React.Fragment>
+                    <>
                         {selectedConversation?.messages?.length ? (
                             <MessagesThread
                                 conversation={selectedConversation}
@@ -151,34 +157,31 @@ export const MessagingView = React.memo(() => {
                                 Nachrichten geschrieben.
                             </div>
                         )}
-                        <ComposeMessage
-                            destination={Message.conversationAsDestination(
-                                selectedConversation,
-                                currentUser
-                            )}
-                        />
-                    </React.Fragment>
+                    </>
                 )}
-                {createMessageDestination && (
-                    <React.Fragment>
-                        {createMessageDestination.user && (
-                            <div className={styles.noMessagesWrapper}>
-                                Schreibe deine erste Nachricht an{' '}
-                                <strong>
-                                    {Message.getDestinationName(
-                                        createMessageDestination
-                                    )}
-                                </strong>
-                                .
-                            </div>
-                        )}
-                        <ComposeMessage
-                            destination={createMessageDestination}
-                            onSent={(msg) => {
-                                setSelectedConversation(msg.conversation!);
-                            }}
-                        />
-                    </React.Fragment>
+                {createMessageDestination?.user && (
+                    <div className={styles.noMessagesWrapper}>
+                        Schreibe deine erste Nachricht an{' '}
+                        <strong>
+                            {Message.getDestinationName(
+                                createMessageDestination
+                            )}
+                        </strong>
+                        .
+                    </div>
+                )}
+                {(selectedConversation || createMessageDestination) && (
+                    <ComposeMessage
+                        destination={
+                            createMessageDestination
+                                ? createMessageDestination
+                                : Message.conversationAsDestination(
+                                      selectedConversation!,
+                                      currentUser
+                                  )
+                        }
+                        onSent={onMessageSent}
+                    />
                 )}
             </div>
         </section>

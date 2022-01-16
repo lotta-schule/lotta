@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Toolbar } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 import { Button } from 'shared/general/button/Button';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
@@ -129,7 +128,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                             value={content}
                             onChange={(e) => setContent(e.currentTarget.value)}
                             {
-                                /* The input has no placeholder because giving it
+                                /* The input has no placeholder because giving
                                  * a placeholder would make it be squeezed down on mobile,
                                  * which would make the input tall, which would mess up
                                  * because of autogrowing input (try it out).
@@ -157,6 +156,15 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                 </form>
             </div>
         );
+    },
+    (prevProps, nextProps) => {
+        const isSameUser =
+            prevProps.destination.user?.id === nextProps.destination.user?.id;
+        const isSameGroup =
+            prevProps.destination.group?.id === nextProps.destination.group?.id;
+        const isSameFn = prevProps.onSent === nextProps.onSent;
+
+        return isSameUser && isSameGroup && isSameFn;
     }
 );
 ComposeMessage.displayName = 'MessageCompose';
