@@ -3,12 +3,11 @@
 .root {
     display: flex;
     flex-direction: row;
-    padding: var(--lotta-spacing) 0;
     width: 100%;
 
     .sideView {
         position: relative;
-        flex: 0 0 20em; // TODO: 20em seems arbitrary
+        flex: 0 0 20em;
         overflow: auto;
         @media screen and (max-width: $max-sm) {
             display: none;
