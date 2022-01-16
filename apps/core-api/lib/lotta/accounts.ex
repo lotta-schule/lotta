@@ -8,10 +8,8 @@ defmodule Lotta.Accounts do
   import Ecto.Query
 
   alias Ecto.Changeset
-  alias Lotta.Repo
-  alias Lotta.Mailer
+  alias Lotta.{Email, Mailer, Repo, Storage}
   alias Lotta.Accounts.{User, UserGroup, GroupEnrollmentToken}
-  alias Lotta.Storage
   alias Lotta.Storage.File
 
   def data() do
@@ -274,7 +272,13 @@ defmodule Lotta.Accounts do
     |> Repo.all()
     |> Enum.each(&Storage.delete_file/1)
 
-    Repo.delete(user)
+    result = Repo.delete(user)
+
+    if Kernel.match?({:ok, _}, result) do
+      Mailer.deliver_later(Email.account_closed_mail(user))
+    end
+
+    result
   end
 
   @doc """

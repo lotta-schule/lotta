@@ -7,6 +7,7 @@ defmodule Lotta.Email do
   use Bamboo.Phoenix,
     view: LottaWeb.EmailView
 
+  alias Ecto
   alias Lotta.{Repo, Tenants}
   alias Lotta.Content.{Article, ContentModule}
   alias Lotta.Accounts.User
@@ -117,6 +118,26 @@ defmodule Lotta.Email do
         responses
         |> Map.delete("attachments")
     )
+  end
+
+  @doc """
+  Send user a notification when his account has been deleted,
+  either by himself, an administrator or automatically after
+  a period of inactivity.
+  """
+  @doc since: "3.2.0"
+
+  @spec account_closed_mail(User.t()) ::
+          Bamboo.Email.t()
+  def account_closed_mail(%User{} = user) do
+    tenant = Tenants.get_tenant_by_prefix(Ecto.get_meta(user, :prefix))
+
+    mail =
+      base_mail(tenant: tenant)
+      |> to(user.email)
+      |> subject("Dein Benutzerkonto bei #{tenant.title} wurde gelöscht.")
+
+    render(mail, :account_closed, user: user)
   end
 
   @doc """
