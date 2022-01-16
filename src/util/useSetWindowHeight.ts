@@ -3,17 +3,22 @@ import * as React from 'react';
 export const useSetWindowHeight = (
     elementRef: React.MutableRefObject<HTMLElement | null>
 ) => {
-    const mainElement = (typeof window !== 'undefined' &&
-        document.querySelector('main')) as HTMLElement;
+    const mainElement =
+        typeof window !== 'undefined' && document.querySelector('main');
     React.useEffect(() => {
         const setHeight = () => {
-            const mainElComputedStyle = getComputedStyle(mainElement);
+            const mainElComputedStyle =
+                mainElement && getComputedStyle(mainElement);
             if (elementRef.current) {
                 elementRef.current.style.height = `${
                     window.innerHeight -
                     elementRef.current.offsetTop -
-                    parseInt(mainElComputedStyle.marginTop) -
-                    parseInt(mainElComputedStyle.paddingBottom)
+                    (mainElComputedStyle
+                        ? parseInt(mainElComputedStyle.marginTop)
+                        : 0) -
+                    (mainElComputedStyle
+                        ? parseInt(mainElComputedStyle.paddingBottom)
+                        : 0)
                 }px`;
             }
         };
