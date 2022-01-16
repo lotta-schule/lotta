@@ -2,6 +2,9 @@
 
 .root {
     background-color: initial;
+    @media screen and (max-width: $max-sm) {
+        padding: 0;
+    }
     h1 {
         font-family: var(--lotta-typography-font-family);
         font-size: 1.4rem;
