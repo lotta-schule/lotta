@@ -76,8 +76,8 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                         data,
                         broadcast: false,
                     });
+                    setCurrentDate(newDateString);
                 }
-                setCurrentDate(newDateString);
             }
         },
     });
