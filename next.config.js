@@ -2,6 +2,7 @@
 
 const { resolve } = require('path');
 const { withSentryConfig } = require('@sentry/nextjs');
+const { withPlausibleProxy } = require('next-plausible');
 
 const SentryWebpackPluginOptions = {
     // Additional config options for the Sentry Webpack plugin. Keep in mind that
@@ -72,4 +73,12 @@ const nextConfig = {
     },
 };
 
-module.exports = withSentryConfig(nextConfig, SentryWebpackPluginOptions);
+module.exports = withSentryConfig(
+    // @ts-ignore
+    withPlausibleProxy({
+        scriptName: 'pl',
+        subdirectory: '_z',
+        customDomain: process.env.PLAUSIBLE_ENDPOINT,
+    })(nextConfig),
+    SentryWebpackPluginOptions
+);
