@@ -17,60 +17,11 @@ export interface ImageProps {
 
 export const ImageCollection = React.memo<ImageProps>(
     ({ isEditModeEnabled, contentModule, onUpdateModule }) => {
-        const imageStyle: ImageStyle = get(
-            contentModule.configuration,
-            'imageStyle',
-            ImageStyle.GALLERY
+        // We should not need parseInt, but making sure it is really
+        // a number is safer for not mismatching 1 and "1", for example
+        const imageStyle: ImageStyle = parseInt(
+            get(contentModule.configuration, 'imageStyle', ImageStyle.GALLERY)
         );
-        let shownContentModule = { ...contentModule };
-
-        let oldImageCaptions: (string | null)[] = [];
-        if (contentModule.content) {
-            // TODO: this is migration data and could probably be removed someday
-            try {
-                oldImageCaptions = contentModule.content?.captions;
-                if (oldImageCaptions instanceof Array) {
-                    shownContentModule = {
-                        ...contentModule,
-                        content: null,
-                        configuration: {
-                            ...contentModule.configuration,
-                            files: (contentModule.files || []).reduce(
-                                (prev, file, i) => ({
-                                    ...prev,
-                                    [file.id]: {
-                                        caption: oldImageCaptions[i] || '',
-                                        sortKey: i * 10,
-                                    },
-                                }),
-                                {}
-                            ),
-                        },
-                    };
-                }
-            } catch {}
-        } else if (
-            !contentModule.configuration ||
-            !contentModule.configuration.files
-        ) {
-            shownContentModule = {
-                ...contentModule,
-                configuration: {
-                    ...contentModule.configuration,
-                    files: (contentModule.files || []).reduce(
-                        (prev, file, i) => ({
-                            ...prev,
-                            [file.id]: {
-                                caption: oldImageCaptions[i] || '',
-                                sortKey: i * 10,
-                            },
-                        }),
-                        {}
-                    ),
-                },
-            };
-        }
-        // TODO Migration Part /END
 
         return (
             <div
@@ -80,14 +31,14 @@ export const ImageCollection = React.memo<ImageProps>(
                 {imageStyle === ImageStyle.GALLERY && (
                     <Gallery
                         isEditModeEnabled={!!isEditModeEnabled}
-                        contentModule={shownContentModule}
+                        contentModule={contentModule}
                         onUpdateModule={onUpdateModule}
                     />
                 )}
                 {imageStyle === ImageStyle.CAROUSEL && (
                     <Carousel
                         isEditModeEnabled={!!isEditModeEnabled}
-                        contentModule={shownContentModule}
+                        contentModule={contentModule}
                         onUpdateModule={onUpdateModule}
                     />
                 )}
