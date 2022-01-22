@@ -21,13 +21,9 @@ import { useCategories } from 'util/categories/useCategories';
 
 import styles from './EditToolbar.module.scss';
 
-export interface EditToolbarProps {
-    onRequestSave?(): void;
-}
-
 const AnimatedToolbar = animated(Toolbar);
 
-export const EditToolbar = React.memo<EditToolbarProps>(({ onRequestSave }) => {
+export const EditToolbar = React.memo(() => {
     const currentCategoryId = useCurrentCategoryId();
     const [allCategories] = useCategories();
     const currentCategory = useCategory(currentCategoryId ?? undefined);
@@ -75,7 +71,7 @@ export const EditToolbar = React.memo<EditToolbarProps>(({ onRequestSave }) => {
             </ButtonGroup>
             &nbsp;
             <ButtonGroup className={styles.toolbarButtonGroup}>
-                <EditToolbarImageButton onImageAdded={onRequestSave} />
+                <EditToolbarImageButton />
             </ButtonGroup>
             &nbsp;
             <ButtonGroup className={styles.toolbarButtonGroup}>
