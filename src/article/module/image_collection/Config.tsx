@@ -82,7 +82,9 @@ export const Config = React.memo<ConfigProps>(
                                 ...contentModule,
                                 configuration: {
                                     ...contentModule.configuration,
-                                    imageStyle: event.currentTarget.value,
+                                    imageStyle: parseInt(
+                                        event.currentTarget.value
+                                    ),
                                 },
                             });
                             onRequestClose();
@@ -103,7 +105,9 @@ export const Config = React.memo<ConfigProps>(
                                 ...contentModule,
                                 configuration: {
                                     ...contentModule.configuration,
-                                    sorting: event.currentTarget.value,
+                                    sorting: parseInt(
+                                        event.currentTarget.value
+                                    ),
                                 },
                             });
                             onRequestClose();
