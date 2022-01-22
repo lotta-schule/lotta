@@ -23,14 +23,6 @@ export const Edit = React.memo<EditProps>(
             getNormalizedSlateState(contentModule.content?.nodes ?? [])
         );
 
-        React.useEffect(() => {
-            onUpdateModule({
-                ...contentModule,
-                content: { nodes: editorState },
-            });
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [editorState]);
-
         const editor = React.useMemo(
             () => withImages(withLinks(withReact(createEditor()))),
             []
@@ -40,7 +32,13 @@ export const Edit = React.memo<EditProps>(
             <Slate
                 editor={editor}
                 value={editorState as Descendant[]}
-                onChange={(value) => setEditorState(value)}
+                onChange={(value) => {
+                    setEditorState(value);
+                    onUpdateModule({
+                        ...contentModule,
+                        content: { nodes: value },
+                    });
+                }}
             >
                 <EditToolbar />
                 <Editable
