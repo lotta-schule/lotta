@@ -149,6 +149,7 @@ deploy:staging:
     --set api.socketUrl="wss://core.staging.lotta.schule/api/user-socket"
     --set cloudimage.token=$CLOUDIMG_TOKEN
     --set sentry.dsn=$SENTRY_DSN
+    --set plausible.endpoint="https://plausible.ops.lotta.schule"
     --set imagePullSecrets[0].name=regcred
     --set ingress.hosts[0].name="*.staging.lotta.schule"
     --set ingress.hosts[0].tls=true
@@ -183,6 +184,7 @@ deploy:production:
     --set api.socketUrl="wss://core.lotta.schule/api/user-socket"
     --set cloudimage.token=$CLOUDIMG_TOKEN
     --set sentry.dsn=$SENTRY_DSN
+    --set plausible.endpoint="https://plausible.ops.lotta.schule"
     --set ingress.hosts[0].name="*.lotta.schule"
     --set ingress.hosts[0].tls=true
     --set ingress.hosts[0].tlsSecret="wildcard-lotta-schule-tls"
