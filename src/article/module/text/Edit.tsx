@@ -22,39 +22,28 @@ export const Edit = React.memo<EditProps>(
         const [editorState, setEditorState] = React.useState(
             getNormalizedSlateState(contentModule.content?.nodes ?? [])
         );
-        const [isSaveRequested, setIsSaveRequested] = React.useState(false);
 
         const editor = React.useMemo(
             () => withImages(withLinks(withReact(createEditor()))),
             []
         );
 
-        React.useEffect(() => {
-            if (isSaveRequested) {
-                saveStateToContentModule();
-                setIsSaveRequested(false);
-            }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [isSaveRequested, editorState]);
-
-        const saveStateToContentModule = () => {
-            onUpdateModule({
-                ...contentModule,
-                content: { nodes: editorState },
-            });
-        };
-
         return (
             <Slate
                 editor={editor}
                 value={editorState as Descendant[]}
-                onChange={(value) => setEditorState(value)}
+                onChange={(value) => {
+                    setEditorState(value);
+                    onUpdateModule({
+                        ...contentModule,
+                        content: { nodes: value },
+                    });
+                }}
             >
-                <EditToolbar onRequestSave={() => setIsSaveRequested(true)} />
+                <EditToolbar />
                 <Editable
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}
-                    onBlur={() => saveStateToContentModule()}
                 />
             </Slate>
         );

@@ -15,6 +15,7 @@ import { useBeforeUnloadConfirmation } from 'util/useBeforeUnloadConfirmation';
 import { EditArticleFooter } from './editor/EditArticleFooter';
 import { Main } from 'layout';
 import { useRouter } from 'next/router';
+import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';
@@ -114,8 +115,8 @@ export const EditArticlePage = React.memo<ArticlePageProps>(({ article }) => {
     }, [article, currentUser, router]);
 
     const changeArticle = (article: ArticleModel) => {
-        setIsArticleDirty(true);
         setEditedArticle(article);
+        setIsArticleDirty(true);
     };
 
     return (
