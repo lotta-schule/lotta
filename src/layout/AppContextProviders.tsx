@@ -27,7 +27,7 @@ import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 const {
-    publicRuntimeConfig: { cloudimageToken },
+    publicRuntimeConfig: { cloudimageToken, plausibleEndpoint },
 } = getConfig();
 
 export interface AppContextProvidersProps {
@@ -79,7 +79,12 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
             : requestBaseUrl ?? window.location.origin;
 
     return (
-        <PlausibleProvider domain={tenant.host}>
+        <PlausibleProvider
+            selfHosted
+            enabled={!!plausibleEndpoint}
+            domain={tenant.host}
+            customDomain={plausibleEndpoint}
+        >
             <ServerDataContextProvider value={{ baseUrl }}>
                 <ApolloProvider client={client}>
                     <ThemeProvider theme={theme}>

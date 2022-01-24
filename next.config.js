@@ -2,7 +2,6 @@
 
 const { resolve } = require('path');
 const { withSentryConfig } = require('@sentry/nextjs');
-const { withPlausibleProxy } = require('next-plausible');
 
 const SentryWebpackPluginOptions = {
     // Additional config options for the Sentry Webpack plugin. Keep in mind that
@@ -70,15 +69,8 @@ const nextConfig = {
         socketUrl: process.env.API_SOCKET_URL,
         cloudimageToken: process.env.CLOUDIMG_TOKEN,
         tenantSlugOverwrite: process.env.FORCE_TENANT_SLUG,
+        plausibleEndpoint: process.env.PLAUSIBLE_ENDPOINT,
     },
 };
 
-module.exports = withSentryConfig(
-    // @ts-ignore
-    withPlausibleProxy({
-        scriptName: 'pl',
-        subdirectory: '_z',
-        customDomain: process.env.PLAUSIBLE_ENDPOINT,
-    })(nextConfig),
-    SentryWebpackPluginOptions
-);
+module.exports = withSentryConfig(nextConfig, SentryWebpackPluginOptions);
