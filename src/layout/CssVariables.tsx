@@ -56,6 +56,7 @@ export const CssVariables = React.memo(() => {
             highlightColor: [200, 200, 200],
             bannerBackgroundColor1: [54, 123, 240],
             bannerBackgroundColor2: [54, 123, 240],
+            accentGrey: [227, 227, 227],
             typographyTitleFontFamily: (theme.overrides as any)
                 ?.LottaArticlePreview.title.fontFamily as string,
             typographyFontFamily: theme.typography.fontFamily as string,
