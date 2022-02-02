@@ -1,0 +1,17 @@
+.root {
+    display: inline-flex;
+    .avatar {
+        margin-right: -8px;
+    }
+    .overshoot {
+        border-radius: 50%;
+        background-color: rgb(var(--lotta-accent-grey));
+        height: 2em; /* TODO: Property */
+        width: 2em; /* TODO: Property */
+        font-family: var(--lotta-typography-font-family);
+        color: rgb(var(--lotta-text-color));
+        box-shadow: 1px 1px 7px #0000002e;
+        line-height: 2em;
+        text-align: center;
+    }
+}
