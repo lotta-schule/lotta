@@ -146,7 +146,7 @@ export const UserList = React.memo(() => {
                         }}
                         columns={[
                             {
-                                width: 45,
+                                width: 50,
                                 label: '',
                                 dataKey: 'avatarImage',
                             },

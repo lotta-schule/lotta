@@ -11,6 +11,8 @@ export interface AvatarGroupProps {
      * The maximum number of avatars to show
      */
     max?: number;
+
+    className?: string;
 }
 
 /**
@@ -19,8 +21,8 @@ export interface AvatarGroupProps {
 
 export const AvatarGroup: React.FC<AvatarGroupProps> = ({
     max = 3,
+    className,
     children,
-    ...props
 }) => {
     const avatars = React.Children.toArray(
         children
@@ -28,7 +30,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
     const overshoot = avatars.length - max;
     console.log(avatars);
     return (
-        <div className={styles.root}>
+        <div className={clsx(styles.root, className)}>
             <div role={'group'}>
                 {avatars.splice(0, max).map((child, index) => {
                     return React.cloneElement(child, {

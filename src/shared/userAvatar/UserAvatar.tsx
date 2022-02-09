@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Avatar } from '@material-ui/core';
-import { AvatarProps } from '@material-ui/core/Avatar';
+import { Avatar } from 'shared/general/avatar/Avatar';
+import { AvatarProps } from 'shared/general/avatar/Avatar';
 import { UserModel } from 'model';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -13,8 +13,8 @@ export interface UserAvatarProps extends Omit<AvatarProps, 'src' | 'alt'> {
     size?: number;
 }
 
-export const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
-    ({ user, size, ...otherProps }, ref) => {
+export const UserAvatar = React.memo<UserAvatarProps>(
+    ({ user, size, ...otherProps }) => {
         const { baseUrl } = useServerData();
         const retinaMultiplier = useIsRetina() ? 2 : 1;
         const src = User.getAvatarUrl(
@@ -25,14 +25,10 @@ export const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
 
         return (
             <Avatar
-                ref={ref}
                 data-testid={'Avatar'}
                 src={src}
                 style={size ? { width: size, height: size } : {}}
-                alt={`Profilbild von ${User.getNickname(user)}`}
-                imgProps={{
-                    'aria-label': `Profilbild von ${User.getNickname(user)}`,
-                }}
+                title={`Profilbild von ${User.getNickname(user)}`}
                 {...otherProps}
             />
         );
@@ -40,13 +36,12 @@ export const UserAvatar = React.forwardRef<HTMLDivElement, UserAvatarProps>(
 );
 UserAvatar.displayName = 'UserAvatar';
 
-export const CurrentUserAvatar = React.forwardRef<
-    HTMLDivElement,
-    Omit<UserAvatarProps, 'user'>
->((props, ref) => {
-    const currentUser = useCurrentUser();
-    return currentUser ? (
-        <UserAvatar ref={ref} user={currentUser} {...props} />
-    ) : null;
-});
+export const CurrentUserAvatar = React.memo<Omit<UserAvatarProps, 'user'>>(
+    (props) => {
+        const currentUser = useCurrentUser();
+        return currentUser ? (
+            <UserAvatar user={currentUser} {...props} />
+        ) : null;
+    }
+);
 CurrentUserAvatar.displayName = 'CurrentUserAvatar';

@@ -76,7 +76,7 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
                 {data?.file?.user && (
                     <li data-testid="AuthorsListItem">
                         <strong>Autor:</strong>
-                        <span>
+                        <span className={styles.avatarLabel}>
                             <UserAvatar
                                 user={data.file.user}
                                 size={40}

@@ -15,6 +15,8 @@ export interface AvatarProps {
     title?: string;
 
     className?: string;
+
+    style?: React.CSSProperties;
 }
 
 /**
@@ -22,13 +24,13 @@ export interface AvatarProps {
  */
 
 export const Avatar = React.memo<AvatarProps>(
-    ({ src, title, className, ...props }) => {
+    ({ src, title, className, style }) => {
         return (
             <div
                 role={'img'}
                 title={title}
                 className={clsx(styles.root, className)}
-                style={{ backgroundImage: `url(${src})` }}
+                style={{ ...style, backgroundImage: `url(${src})` }}
             />
         );
     }

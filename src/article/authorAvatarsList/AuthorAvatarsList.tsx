@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { UserModel } from 'model';
 import { Tooltip } from '@material-ui/core';
-import { AvatarGroup } from '@material-ui/lab';
+import { AvatarGroup } from 'shared/general/avatar/AvatarGroup';
 import { User } from 'util/model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { SearchUserField } from 'administration/users/SearchUserField';
@@ -60,13 +60,7 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
                 className={clsx(styles.root, className)}
             >
                 {users && (
-                    <AvatarGroup
-                        max={max ?? 3}
-                        classes={{
-                            root: 'avatar-group',
-                            avatar: styles.avatar,
-                        }}
-                    >
+                    <AvatarGroup max={max ?? 3} className={styles.avatarGroup}>
                         {users.map((user) => getAvatar(user))}
                     </AvatarGroup>
                 )}

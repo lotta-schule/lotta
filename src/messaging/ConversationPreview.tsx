@@ -38,7 +38,7 @@ export const ConversationPreview = React.memo<ConversationPreviewProps>(
                     <UserAvatar
                         user={user}
                         size={50}
-                        classes={{ root: styles.userAvatar }}
+                        className={styles.userAvatar}
                     />
                 )}
                 <div className={styles.buttonLabel}>
