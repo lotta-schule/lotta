@@ -42,6 +42,21 @@ defmodule Lotta.Tenants.TenantSelector do
     {:ok, migrations}
   end
 
+  @spec delete_tenant_schema(Tenant.t()) :: :ok | {:error, term()}
+  def delete_tenant_schema(%Tenant{prefix: prefix}) do
+    query = """
+    DROP SCHEMA "#{prefix}" CASCADE
+    """
+
+    case Repo.query(query) do
+      {:ok, _} ->
+        :ok
+
+      other ->
+        other
+    end
+  end
+
   @doc """
   Run migrations for a given tenant
   """

@@ -24,6 +24,18 @@ defmodule LottaWeb.TenantController do
     end
   end
 
+  def delete_tenant(conn, %{"tenant" => %{"id" => tenant_id}}) do
+    tenant = Tenants.get_tenant(tenant_id)
+
+    case Tenants.delete_tenant(tenant) do
+      {:ok, _tenant} ->
+        send_resp(conn, :ok, Jason.encode!(%{success: true}))
+
+      other ->
+        send_resp(conn, :internal_server_error, Jason.encode!(other))
+    end
+  end
+
   defp atomize_keys(map) do
     Enum.reduce(map, %{}, fn
       {key, val}, acc when is_atom(key) ->
