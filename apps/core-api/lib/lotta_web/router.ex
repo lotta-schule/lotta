@@ -53,6 +53,7 @@ defmodule LottaWeb.Router do
     pipe_through([:admin_auth, :json_api])
 
     post("/create-test", LottaWeb.TenantController, :create_test)
+    post("/delete-tenant", LottaWeb.TenantController, :delete_tenant)
   end
 
   scope "/admin" do

@@ -8,6 +8,8 @@ defmodule Lotta.Tenants do
 
   alias Ecto.Multi
   alias Lotta.Repo
+  alias Lotta.Storage
+  alias Lotta.TenantSelector
   alias Lotta.Accounts.User
   alias Lotta.Storage.File
 
@@ -90,6 +92,27 @@ defmodule Lotta.Tenants do
 
         {:error, failed_operation, failed_value}
     end
+  end
+
+  @doc """
+  Deletes a tenant.
+  """
+  @doc since: "3.3.0"
+  @spec delete_tenant(Tenant.t()) ::
+          {:ok, Tenant.t()} | {:error, term()}
+  def delete_tenant(tenant) do
+    Enum.each(
+      Repo.all(File, prefix: tenant.prefix),
+      fn file ->
+        Storage.delete_file(file)
+      end
+    )
+
+    result = Repo.delete(tenant, prefix: "public")
+
+    TenantSelector.delete_tenant_schema(tenant)
+
+    result
   end
 
   @doc """

@@ -29,3 +29,25 @@ You will then be able to start phoenix using:
 ``` bash
 mix phx.server
 ```
+
+### Create an instance
+
+To setup a site (a "tenant"), the easiest way is to startup the server
+with an open console:
+
+``` bash
+iex -S mix phx.server
+```
+
+The [IEX Console](https://hexdocs.pm/iex/1.13/IEx.html) opens. Type:
+
+``` elixir
+Tenants.create_tenant(
+  user_params: %{email: "<your-email>", name: "<your-name>"},
+  tenant: %{slug: "<chose-a-slug>", title: "<tenant-title>"}
+)
+```
+
+When you then start the [Web Frontend](https://github.com/lotta-schule/web)
+correctly configured to your started api endpoint, your app will be accible
+on `http://<your-chosen-slug>.lotta.lvh.me:3000`.
