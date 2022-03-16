@@ -1,13 +1,6 @@
 import * as React from 'react';
-import {
-    Tooltip,
-    TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableBody,
-    TableCell,
-} from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { FileModel } from 'model';
 import { Article, Category, File } from 'util/model';
 import { Checkbox } from 'shared/general/form/checkbox';
@@ -38,156 +31,144 @@ export const ProfileDeleteFileSelection =
                     : 'mixed';
 
             return (
-                <TableContainer className={styles.root}>
-                    <Table size={'small'} stickyHeader>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Checkbox
-                                        value={allFilesValue}
-                                        isSelected={allFilesValue === 'on'}
-                                        onChange={(isSelected) => {
-                                            onSelectFiles(
-                                                isSelected ? [...files] : []
-                                            );
-                                        }}
-                                        aria-label={'Alle Dateien übergeben'}
-                                    />
-                                </TableCell>
-                                <TableCell>Ordner</TableCell>
-                                <TableCell>Dateiname</TableCell>
-                                <TableCell>Nutzung</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {files.map((file) => {
-                                const previewImageUrl =
-                                    File.getPreviewImageLocation(baseUrl, file);
-
-                                const nameTableCell = (() => {
-                                    if (previewImageUrl) {
-                                        return (
-                                            <Tooltip
-                                                style={{
-                                                    backgroundColor:
-                                                        'transparent',
-                                                }}
-                                                title={
-                                                    <img
-                                                        src={previewImageUrl}
-                                                        alt={file.filename}
-                                                    />
-                                                }
-                                            >
-                                                <TableCell
-                                                    scope="row"
-                                                    id={`file-${file.id}-filename`}
-                                                >
-                                                    {file.filename}
-                                                </TableCell>
-                                            </Tooltip>
+                <Table>
+                    <thead>
+                        <tr>
+                            <td>
+                                <Checkbox
+                                    value={allFilesValue}
+                                    isSelected={allFilesValue === 'on'}
+                                    onChange={(isSelected) => {
+                                        onSelectFiles(
+                                            isSelected ? [...files] : []
                                         );
-                                    } else {
-                                        return (
-                                            <TableCell
+                                    }}
+                                    aria-label={'Alle Dateien übergeben'}
+                                />
+                            </td>
+                            <td>Ordner</td>
+                            <td>Dateiname</td>
+                            <td>Nutzung</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {files.map((file) => {
+                            const previewImageUrl =
+                                File.getPreviewImageLocation(baseUrl, file);
+
+                            const nameTableCell = (() => {
+                                if (previewImageUrl) {
+                                    return (
+                                        <Tooltip
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                            }}
+                                            title={
+                                                <img
+                                                    src={previewImageUrl}
+                                                    alt={file.filename}
+                                                />
+                                            }
+                                        >
+                                            <td
                                                 scope="row"
                                                 id={`file-${file.id}-filename`}
                                             >
                                                 {file.filename}
-                                            </TableCell>
-                                        );
-                                    }
-                                })();
+                                            </td>
+                                        </Tooltip>
+                                    );
+                                } else {
+                                    return (
+                                        <td
+                                            scope="row"
+                                            id={`file-${file.id}-filename`}
+                                        >
+                                            {file.filename}
+                                        </td>
+                                    );
+                                }
+                            })();
 
-                                const fileUsageCell = (() => (
-                                    <TableCell>
-                                        {file.usage
-                                            ?.filter(
-                                                (u) => u.category || u.article
-                                            )
-                                            .map((usage, i) => {
-                                                const linkTarget = (() => {
-                                                    if (usage.category) {
-                                                        return Category.getPath(
-                                                            usage.category
-                                                        );
-                                                    } else if (usage.article) {
-                                                        return Article.getPath(
-                                                            usage.article
-                                                        );
-                                                    } else {
-                                                        return '/';
-                                                    }
-                                                })();
-                                                const linkText =
-                                                    (
-                                                        usage.category ??
+                            const fileUsageCell = (() => (
+                                <td>
+                                    {file.usage
+                                        ?.filter((u) => u.category || u.article)
+                                        .map((usage, i) => {
+                                            const linkTarget = (() => {
+                                                if (usage.category) {
+                                                    return Category.getPath(
+                                                        usage.category
+                                                    );
+                                                } else if (usage.article) {
+                                                    return Article.getPath(
                                                         usage.article
-                                                    )?.title ??
-                                                    '[ Logo der Seite ]';
-                                                return (
-                                                    <li key={i}>
-                                                        <Link
-                                                            href={linkTarget}
-                                                            passHref
-                                                        >
-                                                            <a
-                                                                target={
-                                                                    '_blank'
-                                                                }
-                                                            >
-                                                                {linkText}
-                                                            </a>
-                                                        </Link>
-                                                    </li>
-                                                );
-                                            })}
-                                    </TableCell>
-                                ))();
+                                                    );
+                                                } else {
+                                                    return '/';
+                                                }
+                                            })();
+                                            const linkText =
+                                                (
+                                                    usage.category ??
+                                                    usage.article
+                                                )?.title ??
+                                                '[ Logo der Seite ]';
+                                            return (
+                                                <li key={i}>
+                                                    <Link
+                                                        href={linkTarget}
+                                                        passHref
+                                                    >
+                                                        <a target={'_blank'}>
+                                                            {linkText}
+                                                        </a>
+                                                    </Link>
+                                                </li>
+                                            );
+                                        })}
+                                </td>
+                            ))();
 
-                                const isSelected =
-                                    selectedFiles.findIndex(
-                                        (f) => f.id === file.id
-                                    ) > -1;
+                            const isSelected =
+                                selectedFiles.findIndex(
+                                    (f) => f.id === file.id
+                                ) > -1;
 
-                                return (
-                                    <TableRow
-                                        aria-labelledby={`file-${file.id}-filename`}
-                                        key={file.id}
-                                    >
-                                        <TableCell>
-                                            <Checkbox
-                                                isSelected={isSelected}
-                                                aria-labelledby={`file-${file.id}-filename`}
-                                                onChange={(isSelected) => {
-                                                    if (isSelected) {
-                                                        onSelectFiles([
-                                                            ...selectedFiles,
-                                                            file,
-                                                        ]);
-                                                    } else {
-                                                        onSelectFiles(
-                                                            selectedFiles.filter(
-                                                                (f) =>
-                                                                    f.id !==
-                                                                    file.id
-                                                            )
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            {file.parentDirectory.name}
-                                        </TableCell>
-                                        {nameTableCell}
-                                        {fileUsageCell}
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            return (
+                                <tr
+                                    aria-labelledby={`file-${file.id}-filename`}
+                                    key={file.id}
+                                >
+                                    <td>
+                                        <Checkbox
+                                            isSelected={isSelected}
+                                            aria-labelledby={`file-${file.id}-filename`}
+                                            onChange={(isSelected) => {
+                                                if (isSelected) {
+                                                    onSelectFiles([
+                                                        ...selectedFiles,
+                                                        file,
+                                                    ]);
+                                                } else {
+                                                    onSelectFiles(
+                                                        selectedFiles.filter(
+                                                            (f) =>
+                                                                f.id !== file.id
+                                                        )
+                                                    );
+                                                }
+                                            }}
+                                        />
+                                    </td>
+                                    <td>{file.parentDirectory.name}</td>
+                                    {nameTableCell}
+                                    {fileUsageCell}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>
             );
         }
     );

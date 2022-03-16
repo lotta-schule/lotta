@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableCell, Menu, MenuItem } from '@material-ui/core';
+import { Menu, MenuItem } from '@material-ui/core';
 import {
     MoreVert,
     CreateOutlined,
@@ -89,12 +89,11 @@ export const FileTableRow = React.memo<FileTableRowProps>(
             );
 
         return (
-            <TableRow
-                hover
+            <tr
                 className={clsx({ selected: isMarked || isSelected })}
                 onClick={onMark}
             >
-                <TableCell>
+                <td>
                     {state.mode === FileExplorerMode.SelectMultiple && (
                         <Checkbox
                             isReadOnly
@@ -121,8 +120,8 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                             }}
                         />
                     )}
-                </TableCell>
-                <TableCell>{File.getIconForFile(file)}</TableCell>
+                </td>
+                <td>{File.getIconForFile(file)}</td>
                 <FileTableRowFilenameCell
                     file={file}
                     isRenaming={isRenamingFile}
@@ -130,7 +129,7 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                     onSelect={() => {}}
                 />
                 {filesAreEditable && (
-                    <TableCell>
+                    <td>
                         <Button
                             small
                             icon={<MoreVert fontSize="inherit" />}
@@ -191,9 +190,9 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                                 </MenuItem>,
                             ]}
                         </Menu>
-                    </TableCell>
+                    </td>
                 )}
-            </TableRow>
+            </tr>
         );
     }
 );

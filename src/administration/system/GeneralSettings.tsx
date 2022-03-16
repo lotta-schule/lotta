@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Grid, Table, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { Box } from 'shared/general/layout/Box';
 import { File } from 'util/model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
@@ -75,15 +76,15 @@ export const GeneralSettings = () => {
             <Grid container className={styles.gridContainer}>
                 <Grid item sm={12}>
                     <Table size={'small'}>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>
+                        <tbody>
+                            <tr>
+                                <td>
                                     <Link href={`https://${tenant.host}`}>
                                         {tenant.host}
                                     </Link>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
+                                </td>
+                            </tr>
+                        </tbody>
                     </Table>
                 </Grid>
             </Grid>

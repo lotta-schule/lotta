@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { TableRow, TableCell } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
@@ -56,8 +55,8 @@ export const EmptyDirectoryTableRow = React.memo(() => {
     );
 
     return (
-        <TableRow style={{ cursor: 'inherit' }}>
-            <TableCell
+        <tr style={{ cursor: 'inherit' }}>
+            <td
                 colSpan={state.mode === FileExplorerMode.ViewAndEdit ? 5 : 4}
                 style={{
                     textAlign: 'center',
@@ -88,8 +87,8 @@ export const EmptyDirectoryTableRow = React.memo(() => {
                         Ordner löschen
                     </a>
                 </p>
-            </TableCell>
-        </TableRow>
+            </td>
+        </tr>
     );
 });
 EmptyDirectoryTableRow.displayName = 'EmptyDirectoryTableRow';

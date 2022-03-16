@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, TableBody, TableCell, TableRow } from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { range } from 'lodash';
 import { ContentModuleModel } from 'model';
 import { TableContent, TableConfiguration } from './Table';
@@ -38,19 +38,17 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
 
     return (
         <Table>
-            <TableBody>
+            <tbody>
                 {range(rowCount).map((rowIndex) => (
-                    <TableRow key={`row-${rowIndex}`}>
+                    <tr key={`row-${rowIndex}`}>
                         {range(columnCount).map((columnIndex) => (
-                            <TableCell
-                                key={`row-${rowIndex}-col-${columnIndex}`}
-                            >
+                            <td key={`row-${rowIndex}-col-${columnIndex}`}>
                                 {contentRows[rowIndex][columnIndex].text}
-                            </TableCell>
+                            </td>
                         ))}
-                    </TableRow>
+                    </tr>
                 ))}
-            </TableBody>
+            </tbody>
         </Table>
     );
 });

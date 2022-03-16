@@ -3,6 +3,7 @@
     border-color: 2px solid transparent;
     transition: ease-out 250ms all;
     border: 2px dashed transparent;
+    max-height: 50vh;
     outline: none;
     width: calc(100% - 1px);
     flex-grow: 1;
@@ -37,16 +38,15 @@
         display: flex;
         flex-direction: column;
         thead {
-            display: flex;
+            display: block;
             width: 100%;
         }
         tbody {
-            display: flex;
+            display: block;
             flex-direction: column;
             width: 100%;
             overflow-y: scroll;
-            height: 600px;
-            max-height: 50vh;
+            max-height: 30vh;
             tr {
                 cursor: pointer;
             }

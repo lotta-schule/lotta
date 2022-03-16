@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableCell, Menu, MenuItem } from '@material-ui/core';
+import { Menu, MenuItem } from '@material-ui/core';
 import { MoreVert, CreateOutlined, FileCopyOutlined } from '@material-ui/icons';
 import { Button } from 'shared/general/button/Button';
 import { DirectoryModel } from 'model';
@@ -76,16 +76,15 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
             undefined;
 
         return (
-            <TableRow
-                hover={!isDragActive}
+            <tr
                 className={clsx(styles.root, {
                     selected: !isDragActive && isMarked,
                     [styles.isDragActive]: isDragActive,
                 })}
                 {...getRootProps()}
             >
-                <TableCell>{/* checkbox column */}</TableCell>
-                <TableCell>{File.getIconForDirectory(directory)}</TableCell>
+                <td>{/* checkbox column */}</td>
+                <td>{File.getIconForDirectory(directory)}</td>
                 <FileTableRowFilenameCell
                     directory={directory}
                     isRenaming={isRenamingFile}
@@ -97,9 +96,9 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                         })
                     }
                 />
-                <TableCell align="right">&nbsp;</TableCell>
+                <td align="right">&nbsp;</td>
                 {state.mode === FileExplorerMode.ViewAndEdit && (
-                    <TableCell>
+                    <td>
                         {File.canEditDirectory(directory, currentUser) && (
                             <>
                                 <Button
@@ -136,9 +135,9 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                                 </Menu>
                             </>
                         )}
-                    </TableCell>
+                    </td>
                 )}
-            </TableRow>
+            </tr>
         );
     }
 );
