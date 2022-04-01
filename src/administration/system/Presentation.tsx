@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Theme, useTheme, FormControl } from '@material-ui/core';
+import { Theme, useTheme, FormControl } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import { get, merge } from 'lodash';
 import { Label } from 'shared/general/label/Label';
@@ -19,6 +19,7 @@ import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 import Img from 'react-cloudimage-responsive';
 import createTypography from '@material-ui/core/styles/createTypography';
 import Head from 'next/head';
+import clsx from 'clsx';
 
 import styles from '../shared.module.scss';
 
@@ -64,26 +65,26 @@ export const Presentation = React.memo(() => {
             <ErrorMessage error={error} />
             <section className={styles.section}>
                 <h3>Vorlagen</h3>
-                <Grid container>
+                <div className={styles.gridContainer}>
                     {allThemes.map(({ title, theme: partialTheme }, index) => {
                         return (
-                            <Grid item sm={3} key={index}>
+                            <div className={styles.gridItem} key={index}>
                                 <SelectTemplateButton
                                     title={title}
                                     theme={partialTheme}
                                     onClick={() => setCustomTheme(partialTheme)}
                                 />
-                            </Grid>
+                            </div>
                         );
                     })}
-                </Grid>
+                </div>
             </section>
 
             <section className={styles.section}>
                 <h3>Farben</h3>
                 <ErrorMessage error={error} />
-                <Grid container className={styles.gridContainer}>
-                    <Grid item sm={6}>
+                <div className={styles.gridContainer}>
+                    <div className={styles.gridItem}>
                         <ColorSettingRow
                             label={'Primärfarbe'}
                             hint={
@@ -130,8 +131,8 @@ export const Presentation = React.memo(() => {
                                 )
                             }
                         />
-                    </Grid>
-                    <Grid item sm={6}>
+                    </div>
+                    <div className={styles.gridItem}>
                         <ColorSettingRow
                             label={'primäre Textfarbe'}
                             hint={'Standard-Text und Überschriften'}
@@ -160,11 +161,11 @@ export const Presentation = React.memo(() => {
                                 )
                             }
                         />
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
 
-                <Grid container className={styles.gridContainer}>
-                    <Grid item sm={6}>
+                <div className={styles.gridContainer}>
+                    <div className={styles.gridItem}>
                         <Box>
                             <SelectFileOverlay
                                 label={'Hintergrundbild ändern'}
@@ -190,21 +191,21 @@ export const Presentation = React.memo(() => {
                                 )}
                             </SelectFileOverlay>
                         </Box>
-                    </Grid>
-                    <Grid item sm={6}>
+                    </div>
+                    <div className={styles.gridItem}>
                         <p>
                             Für eine optimale Darstellung sollte das
                             Hintergrundbild <i>mindestens</i> eine Auflösung von
                             1280x800 Pixeln haben.
                         </p>
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
             </section>
 
             <section className={styles.section}>
                 <h3>Schriften</h3>
-                <Grid container>
-                    <Grid item sm={6}>
+                <div className={styles.gridContainer}>
+                    <div className={styles.gridItem}>
                         <FormControl fullWidth>
                             <Label label={'Schriftart Überschriften'}>
                                 <Select
@@ -267,8 +268,8 @@ export const Presentation = React.memo(() => {
                                 </Select>
                             </Label>
                         </FormControl>
-                    </Grid>
-                    <Grid item sm={6}>
+                    </div>
+                    <div className={styles.gridItem}>
                         <FormControl fullWidth>
                             <Label label={'Schriftart Fließtext'}>
                                 <Select
@@ -307,38 +308,41 @@ export const Presentation = React.memo(() => {
                                 </Select>
                             </Label>
                         </FormControl>
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
             </section>
 
             <section>
-                <Grid container justifyContent={'flex-end'}>
-                    <Grid item sm={6} md={4} lg={3}>
-                        <Button
-                            fullWidth
-                            disabled={isLoading}
-                            onClick={() =>
-                                updateSystem({
-                                    variables: {
-                                        tenant: {
-                                            configuration: {
-                                                ...tenant.configuration,
-                                                customTheme:
-                                                    JSON.stringify(customTheme),
-                                                backgroundImageFile:
-                                                    backgroundImage && {
-                                                        id: backgroundImage.id,
-                                                    },
-                                            },
+                <div
+                    className={clsx(
+                        styles.gridContainer,
+                        styles.saveButtonContainer
+                    )}
+                >
+                    <Button
+                        fullWidth
+                        disabled={isLoading}
+                        onClick={() =>
+                            updateSystem({
+                                variables: {
+                                    tenant: {
+                                        configuration: {
+                                            ...tenant.configuration,
+                                            customTheme:
+                                                JSON.stringify(customTheme),
+                                            backgroundImageFile:
+                                                backgroundImage && {
+                                                    id: backgroundImage.id,
+                                                },
                                         },
                                     },
-                                })
-                            }
-                        >
-                            speichern
-                        </Button>
-                    </Grid>
-                </Grid>
+                                },
+                            })
+                        }
+                    >
+                        speichern
+                    </Button>
+                </div>
             </section>
         </div>
     );

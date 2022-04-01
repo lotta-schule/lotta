@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-} from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { ArrowBackRounded } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
 import { every, range, uniqBy } from 'lodash';
@@ -294,10 +288,10 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                 </div>
             )}
             <ErrorMessage error={error} />
-            <Table size={'small'} className={styles.table}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>
+            <Table className={styles.table}>
+                <thead>
+                    <tr>
+                        <td>
                             {!isLoading &&
                                 state.mode ===
                                     FileExplorerMode.SelectMultiple &&
@@ -335,8 +329,8 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                         }}
                                     />
                                 )}
-                        </TableCell>
-                        <TableCell>
+                        </td>
+                        <td>
                             {isLoading && (
                                 <CircularProgress
                                     size={'1rem'}
@@ -365,21 +359,21 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                                     }
                                 />
                             )}
-                        </TableCell>
-                        <TableCell>
+                        </td>
+                        <td>
                             {!isLoading && state.currentPath.length < 2 && (
                                 <strong>
                                     Wähle einen Ordner um Dateien hochzuladen.
                                 </strong>
                             )}
                             {state.currentPath.length > 1 && 'Dateiname'}
-                        </TableCell>
+                        </td>
                         {state.mode === FileExplorerMode.ViewAndEdit && (
-                            <TableCell>&nbsp;</TableCell>
+                            <td>&nbsp;</td>
                         )}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
+                    </tr>
+                </thead>
+                <tbody>
                     {filteredSortedDirectories.map((directory) => (
                         <DirectoryTableRow
                             key={`dir-${directory.id}`}
@@ -432,7 +426,7 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                         data?.directories.length === 0 && (
                             <EmptyDirectoryTableRow />
                         )}
-                </TableBody>
+                </tbody>
             </Table>
             <FileTableFooter />
         </div>

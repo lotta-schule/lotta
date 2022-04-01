@@ -1,18 +1,13 @@
 import * as React from 'react';
 import { range } from 'lodash';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableRow,
-    Tooltip,
-} from '@material-ui/core';
-import {
     SkipPrevious,
     SkipNext,
     ExpandLess,
     ExpandMore,
 } from '@material-ui/icons';
+import { Tooltip } from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { Button } from 'shared/general/button/Button';
 import { Input, InputProps } from 'shared/general/form/input/Input';
 import { ContentModuleModel } from 'model';
@@ -45,7 +40,7 @@ const EditTableCell = React.memo<EditTableCellProps>(
             setText(cell.text);
         }, [cell.text]);
         return (
-            <TableCell>
+            <td>
                 <Input
                     multiline={true}
                     value={text}
@@ -57,7 +52,7 @@ const EditTableCell = React.memo<EditTableCellProps>(
                     data-column={column}
                     {...(props as any)}
                 />
-            </TableCell>
+            </td>
         );
     }
 );
@@ -355,10 +350,10 @@ export const Edit = React.memo<EditProps>(
                     </Tooltip>
                 </div>
                 <Table ref={tableRef} className={styles.table}>
-                    <TableBody>
+                    <tbody>
                         {range(rowCount).map((rowIndex) => {
                             return (
-                                <TableRow key={`row-${rowIndex}`}>
+                                <tr key={`row-${rowIndex}`}>
                                     {range(columnCount).map((columnIndex) => {
                                         return (
                                             <EditTableCell
@@ -399,10 +394,10 @@ export const Edit = React.memo<EditProps>(
                                             />
                                         );
                                     })}
-                                </TableRow>
+                                </tr>
                             );
                         })}
-                    </TableBody>
+                    </tbody>
                 </Table>
             </div>
         );

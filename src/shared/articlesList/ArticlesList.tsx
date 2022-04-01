@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-} from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { ArticleModel } from 'model';
 import { User, Article, Category, File } from 'util/model';
 import { format } from 'date-fns';
@@ -38,29 +32,25 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
     );
 
     return (
-        <Table
-            size={'small'}
-            data-testid="ArticlesList"
-            className={styles.root}
-        >
-            <TableHead>
-                <TableRow>
-                    <TableCell>Erstelldatum</TableCell>
-                    <TableCell>Autoren</TableCell>
-                    <TableCell>Titel</TableCell>
-                    <TableCell>Kategorie</TableCell>
-                    <TableCell>Status</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
+        <Table data-testid="ArticlesList" className={styles.root}>
+            <thead>
+                <tr>
+                    <td>Erstelldatum</td>
+                    <td>Autoren</td>
+                    <td>Titel</td>
+                    <td>Kategorie</td>
+                    <td>Status</td>
+                </tr>
+            </thead>
+            <tbody>
                 {[...articles].sort(articleSorter).map((article) => (
-                    <TableRow key={article.id}>
-                        <TableCell>
+                    <tr key={article.id}>
+                        <td>
                             {format(new Date(article.insertedAt), 'P', {
                                 locale: de,
                             }) + ' '}
-                        </TableCell>
-                        <TableCell>
+                        </td>
+                        <td>
                             <ul className={styles.usersList}>
                                 {article.users.map((user) => (
                                     <li key={user.id}>
@@ -73,8 +63,8 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                                     </li>
                                 ))}
                             </ul>
-                        </TableCell>
-                        <TableCell>
+                        </td>
+                        <td>
                             <Link
                                 href={Article.getPath(article, { edit: true })}
                                 passHref
@@ -100,8 +90,8 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                                     {article.title}
                                 </a>
                             </Link>
-                        </TableCell>
-                        <TableCell>
+                        </td>
+                        <td>
                             {article.category && (
                                 <Link
                                     href={Category.getPath(article.category)}
@@ -117,8 +107,8 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                                     </a>
                                 </Link>
                             )}
-                        </TableCell>
-                        <TableCell>
+                        </td>
+                        <td>
                             {article.published && <span>Veröffentlicht</span>}
                             {article.readyToPublish && !article.published && (
                                 <span>Bereit zur Freigabe</span>
@@ -126,10 +116,10 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                             {!article.readyToPublish && !article.published && (
                                 <span>In Bearbeitung</span>
                             )}
-                        </TableCell>
-                    </TableRow>
+                        </td>
+                    </tr>
                 ))}
-            </TableBody>
+            </tbody>
         </Table>
     );
 });

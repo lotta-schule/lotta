@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Table, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { Box } from 'shared/general/layout/Box';
 import { File } from 'util/model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
@@ -30,19 +30,18 @@ export const GeneralSettings = () => {
         <div>
             <ErrorMessage error={error} />
             <h3>Name der Seite</h3>
-            <Grid container className={styles.gridContainer}>
-                <Grid item sm={6}>
-                    <Input
-                        value={title}
-                        onChange={(e) => setTitle(e.currentTarget.value)}
-                    />
-                </Grid>
-            </Grid>
+
+            <section className={styles.section}>
+                <Input
+                    value={title}
+                    onChange={(e) => setTitle(e.currentTarget.value)}
+                />
+            </section>
 
             <h3>Logo der Seite</h3>
-            <Grid container className={styles.gridContainer}>
-                <Grid item sm={6}>
-                    <Box>
+            <section className={styles.section}>
+                <div className={styles.gridContainer}>
+                    <Box className={styles.gridItem} style={{ width: '25%' }}>
                         <SelectFileOverlay
                             label={'Logo ändern'}
                             onSelectFile={(logo) => setLogo(logo)}
@@ -51,68 +50,62 @@ export const GeneralSettings = () => {
                             {logo ? (
                                 <Img
                                     operation={'height'}
-                                    size={'80'}
+                                    size={'300'}
                                     src={File.getFileRemoteLocation(
                                         baseUrl,
                                         logo
                                     )}
                                 />
                             ) : (
-                                <PlaceholderImage width={'100%'} height={80} />
+                                <PlaceholderImage width={300} height={80} />
                             )}
                         </SelectFileOverlay>
                     </Box>
-                </Grid>
-                <Grid item sm={6}>
-                    <p>
+                    <p className={styles.gridItem}>
                         Für eine optimale Darstellung sollte das Logo eine Höhe
                         von mindestens 160 Pixeln haben.
                     </p>
-                </Grid>
-            </Grid>
+                </div>
+            </section>
 
             <h3>Domains</h3>
-            <Grid container className={styles.gridContainer}>
-                <Grid item sm={12}>
-                    <Table size={'small'}>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>
-                                    <Link href={`https://${tenant.host}`}>
-                                        {tenant.host}
-                                    </Link>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </Grid>
-            </Grid>
+            <section className={styles.section}>
+                <Table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <Link href={`https://${tenant.host}`}>
+                                    {tenant.host}
+                                </Link>
+                            </td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </section>
 
-            <Grid container justifyContent={'flex-end'}>
-                <Grid item sm={6} md={4} lg={3}>
-                    <Button
-                        fullWidth
-                        disabled={isLoading}
-                        onClick={() =>
-                            updateTenant({
-                                variables: {
-                                    tenant: {
-                                        title,
-                                        configuration: {
-                                            ...tenant.configuration,
-                                            logoImageFile: logo && {
-                                                id: logo.id,
-                                            },
+            <section>
+                <Button
+                    fullWidth
+                    disabled={isLoading}
+                    onClick={() =>
+                        updateTenant({
+                            variables: {
+                                tenant: {
+                                    title,
+                                    configuration: {
+                                        ...tenant.configuration,
+                                        logoImageFile: logo && {
+                                            id: logo.id,
                                         },
                                     },
                                 },
-                            })
-                        }
-                    >
-                        speichern
-                    </Button>
-                </Grid>
-            </Grid>
+                            },
+                        })
+                    }
+                >
+                    speichern
+                </Button>
+            </section>
         </div>
     );
 };

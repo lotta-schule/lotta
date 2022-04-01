@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableCell, Tooltip } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
@@ -108,7 +108,7 @@ export const FileTableRowFilenameCell =
 
             if (isRenaming) {
                 return (
-                    <TableCell scope="row" className={styles.root}>
+                    <td scope="row" className={styles.root}>
                         <form
                             style={{ width: '100%' }}
                             onSubmit={(e) => {
@@ -127,14 +127,14 @@ export const FileTableRowFilenameCell =
                                 }
                             />
                         </form>
-                    </TableCell>
+                    </td>
                 );
             }
 
             const previewImageUrl = File.getPreviewImageLocation(baseUrl, file);
 
             const tableCell = (
-                <TableCell
+                <td
                     scope="row"
                     className={styles.root}
                     onClick={(e) => {
@@ -143,7 +143,7 @@ export const FileTableRowFilenameCell =
                     }}
                 >
                     {file?.filename ?? directory!.name}
-                </TableCell>
+                </td>
             );
 
             if (previewImageUrl) {

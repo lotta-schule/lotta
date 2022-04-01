@@ -9,13 +9,8 @@ import {
     format,
 } from 'date-fns';
 import { de } from 'date-fns/locale';
-import {
-    Table,
-    TableBody,
-    TableRow,
-    TableCell,
-    Tooltip,
-} from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
+import { Table } from 'shared/general/table/Table';
 import { Button } from 'shared/general/button/Button';
 import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
@@ -155,16 +150,16 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                 })
                 .map((line, index) =>
                     [
-                        <TableRow key={index * 2}>
-                            <TableCell>{line.lessonIndex}</TableCell>
-                            <TableCell
+                        <tr key={index * 2}>
+                            <td>{line.lessonIndex}</td>
+                            <td
                                 className={clsx({
                                     [styles.updated]: line.lessonNameHasChanged,
                                 })}
                             >
                                 {line.lessonName}
-                            </TableCell>
-                            <TableCell
+                            </td>
+                            <td
                                 className={clsx({
                                     [styles.updated]: line.teacherHasChanged,
                                 })}
@@ -172,23 +167,23 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                                 {line.teacher === '&nbsp;'
                                     ? '---'
                                     : line.teacher}
-                            </TableCell>
-                            <TableCell
+                            </td>
+                            <td
                                 className={clsx({
                                     [styles.updated]: line.roomHasChanged,
                                 })}
                             >
                                 {line.room === '&nbsp;' ? '---' : line.room}
-                            </TableCell>
-                        </TableRow>,
+                            </td>
+                        </tr>,
                     ].concat(
                         line.comment
                             ? [
-                                  <TableRow key={index * 2 + 1}>
-                                      <TableCell colSpan={4} align={'right'}>
+                                  <tr key={index * 2 + 1}>
+                                      <td colSpan={4} align={'right'}>
                                           {line.comment}
-                                      </TableCell>
-                                  </TableRow>,
+                                      </td>
+                                  </tr>,
                               ]
                             : []
                     )
@@ -196,11 +191,11 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
         );
         if (rows.length < 1) {
             return [
-                <TableRow key={-1}>
-                    <TableCell colSpan={4} align={'center'}>
+                <tr key={-1}>
+                    <td colSpan={4} align={'center'}>
                         Kein Vertretungsplan
-                    </TableCell>
-                </TableRow>,
+                    </td>
+                </tr>,
             ];
         }
         return rows;
@@ -300,8 +295,8 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                 </div>
                 {currentScheduleData.schedule.body && (
                     <>
-                        <Table size={'small'}>
-                            <TableBody>{tableRows}</TableBody>
+                        <Table>
+                            <tbody>{tableRows}</tbody>
                         </Table>
                         <SelectCoursesDialog
                             isOpen={isSelectCoursesDialogOpen}

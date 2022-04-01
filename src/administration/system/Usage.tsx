@@ -6,6 +6,7 @@ import { FileSize } from 'util/FileSize';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Grid } from '@material-ui/core';
+import clsx from 'clsx';
 
 import styles from '../shared.module.scss';
 
@@ -38,37 +39,36 @@ export const Usage = React.memo<UserProps>(({ usage, error }) => {
                 <h5>{tenant.title}</h5>
                 <p>{tenant.insertedAt}</p>
             </Box>
-            {/* Wär doch cool hier mal einen richtigen Grafen zu zeigen */}
-            <Grid
-                container
-                className={styles.gridContainer}
-                justifyContent={'center'}
-            >
-                <Grid item xs={2}>
-                    &nbsp;
-                </Grid>
-                <Grid item xs={5}>
-                    <h3>Speicherplatz</h3>
-                </Grid>
-                <Grid item xs={5}>
-                    <h3>Multimedia</h3>
-                </Grid>
-            </Grid>
-            {usage?.map((usage: any, index: number) => (
-                <Grid
-                    container
-                    className={styles.gridContainer}
-                    key={usage.periodStart}
+
+            <div role={'table'}>
+                {/* Wär doch cool hier mal einen richtigen Grafen zu zeigen */}
+                <div
+                    role={'row'}
+                    className={clsx(styles.gridContainer, styles.usageTable)}
                 >
-                    <Grid item xs={2}>
-                        <Box>
+                    <div role={'rowheader'}>&nbsp;</div>
+                    <div role={'rowheader'}>
+                        <h3>Speicherplatz</h3>
+                    </div>
+                    <div role={'roleheader'}>
+                        <h3>Multimedia</h3>
+                    </div>
+                </div>
+                {usage?.map((usage: any, index: number) => (
+                    <div
+                        role={'row'}
+                        className={clsx(
+                            styles.gridContainer,
+                            styles.usageTable
+                        )}
+                        key={usage.periodStart}
+                    >
+                        <Box role={'cell'}>
                             {format(new Date(usage.periodStart), 'MMMM yyyy', {
                                 locale: de,
                             })}
                         </Box>
-                    </Grid>
-                    <Grid item xs={5}>
-                        <Box>
+                        <Box role={'cell'}>
                             {index === 0 && (
                                 <>
                                     <div>
@@ -84,14 +84,12 @@ export const Usage = React.memo<UserProps>(({ usage, error }) => {
                                 </>
                             )}
                         </Box>
-                    </Grid>
-                    <Grid item xs={5}>
-                        <Box>
+                        <Box role={'cell'}>
                             {getMediaConversionTimeFormatted(usage)} Audio/Video
                         </Box>
-                    </Grid>
-                </Grid>
-            ))}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 });
