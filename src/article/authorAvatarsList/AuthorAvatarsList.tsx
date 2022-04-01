@@ -45,6 +45,9 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
                                     height: 30,
                                     borderRadius: '50%',
                                 }}
+                                title={`Profilbild von ${User.getNickname(
+                                    user
+                                )}`}
                                 size={25}
                             />
                         </Tooltip>

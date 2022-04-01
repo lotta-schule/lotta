@@ -28,7 +28,6 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
         children
     ) as React.ReactElement<AvatarProps>[];
     const overshoot = avatars.length - max;
-    console.log(avatars);
     return (
         <div className={clsx(styles.root, className)}>
             <div role={'group'}>
