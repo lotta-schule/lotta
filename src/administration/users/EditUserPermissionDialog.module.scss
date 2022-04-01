@@ -4,12 +4,7 @@
         justify-content: space-evenly;
         margin-bottom: calc(3 * var(--lotta-spacing));
     }
-    .avatar {
-        flex: 0 1 25%;
-        & + div {
-            flex-grow: 1;
-        }
-    }
+
     .groupSelect {
         margin-top: calc(2 * var(--lotta-spacing)) 0;
     }

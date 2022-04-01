@@ -7,6 +7,7 @@ const localStorageState = localStorage.getItem('lotta-theme');
 export const initialState = {
     'primary-color': [50, 100, 0],
     'secondary-color': [100, 50, 0],
+    'accent-grey': [227, 227, 227],
     'error-color': [230, 0, 0],
     'navigation-color': [99, 3, 12],
     'disabled-color': [158, 158, 158],

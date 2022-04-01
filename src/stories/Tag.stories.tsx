@@ -4,7 +4,7 @@ import { Tag } from 'shared/general/tag/Tag';
 import { actions } from '@storybook/addon-actions';
 
 export default {
-    title: 'Utils/Tag',
+    title: 'util/Tag',
     component: Tag,
     argTypes: {
         children: {

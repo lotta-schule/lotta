@@ -33,6 +33,7 @@
 
     .avatar {
         padding: var(--lotta-spacing);
+        margin-right: var(--lotta-spacing);
         & + div {
             display: flex;
             align-items: center;

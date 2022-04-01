@@ -9,7 +9,7 @@ export type BadgeProps = {
     value?: number | string | null;
 };
 
-export const Badge = React.forwardRef<any, BadgeProps>(
+export const Badge = React.memo<BadgeProps>(
     ({ className, value, ...props }) => {
         if (!value) {
             return null;

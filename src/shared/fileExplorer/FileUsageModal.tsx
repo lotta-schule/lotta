@@ -110,7 +110,7 @@ export const FileUsageModal = React.memo(() => {
                             )}
                             {usage.user && (
                                 <ListItemAvatar>
-                                    <UserAvatar user={usage.user} />
+                                    <UserAvatar user={usage.user} size={50} />
                                 </ListItemAvatar>
                             )}
                             <ListItemText

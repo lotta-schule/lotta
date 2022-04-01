@@ -91,11 +91,7 @@ export const EditUserPermissionsDialog =
                     <DialogContent>
                         <ErrorMessage error={error || updateUserError} />
                         <div className={styles.header}>
-                            <UserAvatar
-                                user={user}
-                                size={100}
-                                className={styles.avatar}
-                            />
+                            <UserAvatar user={user} size={100} />
                             <div>
                                 <h6 data-testid="UserName">{user.name}</h6>
                                 {user.nickname && (
