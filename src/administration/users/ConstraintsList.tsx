@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Slider } from '@material-ui/core';
+import { Slider } from '@material-ui/core';
 import { SdStorage } from '@material-ui/icons';
 import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox';
@@ -11,6 +11,8 @@ import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+
+import styles from './ConstraintsList.module.scss';
 
 const MEGABYTE = 1024 * 1024;
 
@@ -51,7 +53,7 @@ export const ConstraintList = () => {
     );
 
     return (
-        <div>
+        <div className={styles.root}>
             <h3>Speicherplatz-Beschränkungen</h3>
             <div>
                 <p id={`user-storage-limit`}>
@@ -92,11 +94,11 @@ export const ConstraintList = () => {
                 </Checkbox>
 
                 <animated.div style={springProps}>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item>
+                    <div className={styles.storageSetting}>
+                        <div>
                             <SdStorage />
-                        </Grid>
-                        <Grid item xs>
+                        </div>
+                        <div className={styles.slider}>
                             <Slider
                                 value={value}
                                 onChange={(_e, value) =>
@@ -108,8 +110,8 @@ export const ConstraintList = () => {
                                 max={8192}
                                 marks={true}
                             />
-                        </Grid>
-                        <Grid item>
+                        </div>
+                        <div>
                             <Label label={'Begrenzung in MB'}>
                                 <Input
                                     value={
@@ -130,8 +132,8 @@ export const ConstraintList = () => {
                                     aria-labelledby={'userAvatar-storage-limit'}
                                 />
                             </Label>
-                        </Grid>
-                    </Grid>
+                        </div>
+                    </div>
                 </animated.div>
                 <Button onClick={() => updateTenant()} disabled={isLoading}>
                     Speichern

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Grid } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { CategoryModel } from 'model';
 import { Button } from 'shared/general/button/Button';
@@ -28,22 +27,22 @@ export const CategoryList = React.memo(() => {
                 </Button>
             </h3>
 
-            <Grid container>
-                <Grid item sm={5} className={styles.padding}>
+            <section>
+                <div>
                     <CategoryNavigation
                         selectedCategory={selectedCategory}
                         onSelectCategory={setSelectedCategory}
                     />
-                </Grid>
-                <Grid item sm={7}>
+                </div>
+                <div>
                     {selectedCategory && (
                         <CategoryEditor
                             selectedCategory={selectedCategory}
                             onSelectCategory={setSelectedCategory}
                         />
                     )}
-                </Grid>
-            </Grid>
+                </div>
+            </section>
 
             <CreateCategoryDialog
                 isOpen={isCreateCategoryDialogOpen}
