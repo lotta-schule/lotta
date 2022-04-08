@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Grid } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import { Main } from 'layout';
 import { Button } from 'shared/general/button/Button';
@@ -34,12 +33,8 @@ export const RequestResetPage = () => {
             <Box className={styles.container}>
                 <div>
                     <h4>Passwort vergessen</h4>
-                    <Grid
-                        container
-                        direction={'row-reverse'}
-                        className={styles.gridContainer}
-                    >
-                        <Grid item sm={12} md={4} className={styles.helpText}>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.helpText}>
                             <p>
                                 Du hast dein Passwort vergessen? Dann gib hier
                                 deine Email-Adresse ein.
@@ -48,8 +43,8 @@ export const RequestResetPage = () => {
                                 Wir senden dir dann einen Link per Email, damit
                                 du dein Passwort zurücksetzen kannst.
                             </p>
-                        </Grid>
-                        <Grid item sm={12} md={8}>
+                        </div>
+                        <div>
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
@@ -87,8 +82,8 @@ export const RequestResetPage = () => {
                                     Anfrage senden
                                 </Button>
                             </form>
-                        </Grid>
-                    </Grid>
+                        </div>
+                    </div>
                 </div>
             </Box>
         </Main>

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Main } from 'layout';
 import { useRouter } from 'next/router';
-import { Grid } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { useApolloClient, useMutation } from '@apollo/client';
@@ -76,12 +75,8 @@ export const ResetPage = () => {
         <Main>
             <Box>
                 <h4>Passwort wiederherstellen</h4>
-                <Grid
-                    container
-                    direction={'row-reverse'}
-                    className={styles.gridContainer}
-                >
-                    <Grid item sm={12} md={4} className={styles.helpText}>
+                <div className={styles.gridContainer}>
+                    <div className={styles.helpText}>
                         <p>
                             Wähle ein neues Passwort. Achte darauf, dass dein
                             Passwort aus mindestens 6 Zeichen besteht und nicht
@@ -92,8 +87,8 @@ export const ResetPage = () => {
                             Ein Passwort-Manager ist die beim Verwalten deiner
                             Passwörter behilflich.
                         </p>
-                    </Grid>
-                    <Grid item sm={12} md={8}>
+                    </div>
+                    <div>
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
@@ -153,8 +148,8 @@ export const ResetPage = () => {
                                 Passwort setzen
                             </Button>
                         </form>
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
             </Box>
         </Main>
     );

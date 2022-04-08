@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, TestFileExplorerContextProvider, waitFor } from 'test/util';
 import {
     SomeUser,

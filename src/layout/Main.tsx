@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Grid } from '@material-ui/core';
+import clsx from 'clsx';
+
+import styles from './Main.module.scss';
 
 export interface MainProps {
     className?: string;
@@ -8,11 +10,11 @@ export interface MainProps {
 
 export const Main: React.FC<MainProps> = ({ className, children, style }) => {
     return (
-        <Grid item xs className={className}>
+        <div className={clsx(styles.root, className)}>
             <div style={{ ...style, width: '100%', height: '100%' }}>
                 {children}
             </div>
-        </Grid>
+        </div>
     );
 };
 Main.displayName = 'BaseLayoutMainContent';

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Grid } from '@material-ui/core';
 import { Menu } from '@material-ui/icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from '../../util/path/useCurrentCategoryId';
@@ -75,8 +74,8 @@ export const Navbar = React.memo(() => {
 
     return (
         <nav className={clsx(styles.root, 'navbar')} ref={wrapperRef}>
-            <Grid container style={{ position: 'relative' }}>
-                <Grid item xs className={styles.padding}>
+            <div className={styles.gridContainer}>
+                <div>
                     <nav className={styles.navbar}>
                         {homepageCategory && (
                             <Link href={'/'} passHref>
@@ -114,13 +113,8 @@ export const Navbar = React.memo(() => {
                         ))}
                         <Button className={styles.placeholder}>{''}</Button>
                     </nav>
-                </Grid>
-                <Grid
-                    item
-                    xs={2}
-                    sm={1}
-                    className={styles.mobileBurgerMenuButton}
-                >
+                </div>
+                <div className={styles.mobileBurgerMenuButton}>
                     <Button
                         data-testid={'MobileMenuButton'}
                         className={styles.iconButton}
@@ -128,8 +122,8 @@ export const Navbar = React.memo(() => {
                         style={{ margin: '0 auto' }}
                         icon={<Menu className={clsx(styles.menu)} />}
                     />
-                </Grid>
-            </Grid>
+                </div>
+            </div>
             {subcategories.length > 0 && (
                 <nav
                     data-testid={'nav-level2'}

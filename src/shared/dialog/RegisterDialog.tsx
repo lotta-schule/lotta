@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Grid } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox';
@@ -57,6 +56,7 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
             </>
         ) : (
             <form
+                className={styles.form}
                 onSubmit={(e) => {
                     e.preventDefault();
                     setFormError(null);
@@ -95,8 +95,8 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             error={getFieldError('email') as string}
                         />
                     )}
-                    <Grid container style={{ display: 'flex' }}>
-                        <Grid item xs={12} sm={6}>
+                    <div className={styles.gridContainer}>
+                        <div>
                             <Label label={'Vorname'}>
                                 <Input
                                     required
@@ -115,8 +115,8 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                                     error={getFieldError('name') as string}
                                 />
                             )}
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
+                        </div>
+                        <div>
                             <Label label={'Nachname'}>
                                 <Input
                                     required
@@ -136,14 +136,14 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                                     />
                                 )}
                             </Label>
-                        </Grid>
-                    </Grid>
-                    <div>
+                        </div>
+                    </div>
+                    <p>
                         Bitte gib hier deinen richtigen, vollständigen Namen an,
                         damit wir sehen ob du wirklich Schüler/Lehrer an deiner
                         Schule bist. Deinen Spitznamen kannst du jederzeit in
                         deinem Profil ändern.
-                    </div>
+                    </p>
                     <Label label={'Spitzname'}>
                         <Input
                             id="nickname"
@@ -173,16 +173,14 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                     >
                         Deinen vollständen Namen öffentlich verstecken
                     </Checkbox>
-                    <div className={styles.margin}>
+                    <p>
                         Verstecke deinen vollständigen Namen, damit er nur vom
                         Administrator deiner Schule gesehen werden kann. Dein
                         Name taucht nicht in den von dir erstellten Artikeln
                         oder in deinem Profil auf. Stattdessen wird dein
                         Spitzname angezeigt.
-                    </div>
-                    <div className={styles.margin}>
-                        Hast du einen Anmeldeschlüssel?
-                    </div>
+                    </p>
+                    <p>Hast du einen Anmeldeschlüssel?</p>
                     <Label label="Anmeldeschlüssel:">
                         <Input
                             id="code"
@@ -192,12 +190,12 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             onChange={(e) => setGroupKey(e.currentTarget.value)}
                         />
                     </Label>
-                    <div>
+                    <p>
                         Gib hier einen Anmeldeschlüssel ein, um deine
                         Nutzerrechte zu erhalten (Schüler, Lehrer, etc.). Du
                         kannst Anmeldeschlüssel auch später in deinem Profil
                         bearbeiten.
-                    </div>
+                    </p>
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -216,6 +214,7 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
 
         return (
             <Dialog
+                className={styles.root}
                 onRequestClose={onRequestClose}
                 title={'Benutzerkonto erstellen'}
                 open={isOpen}

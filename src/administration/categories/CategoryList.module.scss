@@ -18,7 +18,14 @@
         margin-top: var(--lotta-spacing);
     }
 
-    .padding {
-        padding-right: calc(4 * var(--lotta-spacing));
+    section {
+        margin-bottom: calc(2 * var(--lotta-spacing));
+        display: flex;
+        & > div:first-child {
+            padding-right: calc(4 * var(--lotta-spacing));
+        }
+        & > div:not(:first-child) {
+            flex: 1;
+        }
     }
 }

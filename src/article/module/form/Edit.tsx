@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Add, Delete } from '@material-ui/icons';
 import { DragHandle } from 'shared/general/icon';
-import { Grid } from '@material-ui/core';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox';
@@ -36,7 +35,7 @@ export const Edit = React.memo<EditProps>(
             });
 
         return (
-            <>
+            <div className={styles.root}>
                 <DragDropContext
                     onDragEnd={({ destination, source }) => {
                         if (!destination) {
@@ -113,13 +112,12 @@ export const Edit = React.memo<EditProps>(
                                                             icon={<Delete />}
                                                         />
                                                     </div>
-                                                    <Grid
-                                                        container
+                                                    <div
                                                         className={
                                                             styles.inputWrapper
                                                         }
                                                     >
-                                                        <Grid item xs={5}>
+                                                        <div>
                                                             <FormElement
                                                                 element={
                                                                     element
@@ -128,14 +126,8 @@ export const Edit = React.memo<EditProps>(
                                                                 value={''}
                                                                 onSetValue={() => {}}
                                                             />
-                                                        </Grid>
-                                                        <Grid
-                                                            item
-                                                            xs={7}
-                                                            className={
-                                                                styles.inputSettings
-                                                            }
-                                                        >
+                                                        </div>
+                                                        <div>
                                                             <FormElementConfiguration
                                                                 element={
                                                                     element
@@ -167,8 +159,8 @@ export const Edit = React.memo<EditProps>(
                                                                     )
                                                                 }
                                                             />
-                                                        </Grid>
-                                                    </Grid>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             )}
                                         </Draggable>
@@ -179,13 +171,13 @@ export const Edit = React.memo<EditProps>(
                         )}
                     </Droppable>
                 </DragDropContext>
-                <Grid container className={styles.inputWrapper}>
-                    <Grid item xs={5}>
+                <div className={styles.inputWrapper}>
+                    <div>
                         <Button type={'submit'} disabled>
                             Senden
                         </Button>
-                    </Grid>
-                    <Grid item xs={7}>
+                    </div>
+                    <div>
                         <Checkbox
                             isSelected={configuration.destination !== undefined}
                             onChange={(isSelected) =>
@@ -234,8 +226,8 @@ export const Edit = React.memo<EditProps>(
                                 )}
                             </div>
                         </Checkbox>
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
                 <Button
                     style={{ float: 'right' }}
                     icon={<Add />}
@@ -256,8 +248,8 @@ export const Edit = React.memo<EditProps>(
                 >
                     Feld hinzufügen
                 </Button>
-                <p style={{ clear: 'right' }}></p>
-            </>
+                <p className={styles.clear}></p>
+            </div>
         );
     }
 );

@@ -5,7 +5,6 @@ import { useTenant } from 'util/tenant/useTenant';
 import { FileSize } from 'util/FileSize';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { Grid } from '@material-ui/core';
 import clsx from 'clsx';
 
 import styles from '../shared.module.scss';
