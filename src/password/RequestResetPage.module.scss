@@ -5,13 +5,22 @@
     .container {
         display: block;
     }
+    .gridContainer {
+        display: flex;
+        flex-direction: column;
+    }
     @media screen and (min-width: $min-md) {
-        .helpText {
-            padding-left: calc(var(--lotta-spacing) * 2);
-        }
-
         .gridContainer {
             flex-direction: row-reverse;
+        }
+
+        .helpText {
+            padding-left: calc(var(--lotta-spacing) * 2);
+            flex: 0 0 33%;
+        }
+
+        .helpText + div {
+            flex: 1;
         }
     }
 }

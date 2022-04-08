@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Grid } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
 import { format, isBefore } from 'date-fns';
@@ -13,11 +12,12 @@ import { BackgroundImg } from 'react-cloudimage-responsive';
 import { Button } from 'shared/general/button/Button';
 import { useServerData } from 'shared/ServerDataContext';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
-import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
 import clsx from 'clsx';
 import Link from 'next/link';
 
 import styles from './ArticlePreviewDensedLayout.module.scss';
+
+import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
 
 interface ArticlePreviewProps {
     article: ArticleModel;
@@ -64,16 +64,9 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                 })}
                 data-testid="ArticlePreviewDensedLayout"
             >
-                <Grid
-                    container
-                    style={{
-                        position: 'relative',
-                        display: 'flex',
-                        minHeight: 60,
-                    }}
-                >
+                <>
                     {article.previewImageFile && (
-                        <Grid item xs={2} style={{ position: 'relative' }}>
+                        <div className={styles.previewImageWrapper}>
                             {maybeLinked(
                                 <BackgroundImg
                                     height={'100%'}
@@ -85,36 +78,34 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                     params="func=crop&gravity=auto"
                                 />
                             )}
-                        </Grid>
-                    )}
-                    <Grid item xs>
-                        <div className={styles.boxContent}>
-                            <h3 className={styles.articleTitle}>
-                                {!isEmbedded &&
-                                    currentUser &&
-                                    currentUser.lastSeen &&
-                                    isBefore(
-                                        new Date(currentUser.lastSeen),
-                                        new Date(article.updatedAt)
-                                    ) && (
-                                        <FiberManualRecord
-                                            color={'secondary'}
-                                            fontSize={'small'}
-                                        />
-                                    )}
-                                {maybeLinked(article.title)}
-                            </h3>
-                            <span
-                                className={clsx(styles.previewText, {
-                                    [styles.previewTextLimitedHeight]:
-                                        limitedHeight,
-                                })}
-                            >
-                                {article.preview}
-                            </span>
                         </div>
-                    </Grid>
-                    <Grid item xs={2} className={styles.meta}>
+                    )}
+                    <div className={styles.boxContent}>
+                        <h3 className={styles.articleTitle}>
+                            {!isEmbedded &&
+                                currentUser &&
+                                currentUser.lastSeen &&
+                                isBefore(
+                                    new Date(currentUser.lastSeen),
+                                    new Date(article.updatedAt)
+                                ) && (
+                                    <FiberManualRecord
+                                        color={'secondary'}
+                                        fontSize={'small'}
+                                    />
+                                )}
+                            {maybeLinked(article.title)}
+                        </h3>
+                        <span
+                            className={clsx(styles.previewText, {
+                                [styles.previewTextLimitedHeight]:
+                                    limitedHeight,
+                            })}
+                        >
+                            {article.preview}
+                        </span>
+                    </div>
+                    <div className={styles.meta}>
                         <span className={clsx(styles.subtitle)}>
                             {format(new Date(article.updatedAt), 'P', {
                                 locale: de,
@@ -129,12 +120,12 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                 </>
                             )}
                         </span>
-                    </Grid>
+                    </div>
                     {!isMobile &&
                         ((!disableEdit &&
                             User.canEditArticle(currentUser, article)) ||
                             (!disablePin && User.isAdmin(currentUser))) && (
-                            <Grid item xs={1} className={styles.editSection}>
+                            <div className={styles.editSection}>
                                 {!disableEdit &&
                                     User.canEditArticle(
                                         currentUser,
@@ -168,9 +159,9 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                         icon={<Place />}
                                     />
                                 )}
-                            </Grid>
+                            </div>
                         )}
-                </Grid>
+                </>
             </Box>
         );
     }

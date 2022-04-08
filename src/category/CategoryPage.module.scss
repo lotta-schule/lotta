@@ -1,20 +1,23 @@
-@import "breakpoints.scss";
-
-.gridItem {
-  display: flex;
-  &.two-columns {
-    &:nth-child(2n) {
-      padding-left: calc(var(--lotta-spacing) / 2);
-    }
-    &:nth-child(2n+1) {
-      padding-right: calc(var(--lotta-spacing) / 2);
-    }
-  }
-  & > * {
-    width: 100%;
-  }
-}
+@import 'breakpoints.scss';
 
 .articles {
-  margin-top: var(--lotta-spacing);
+    display: flex;
+    margin-top: var(--lotta-spacing);
+    flex-wrap: wrap;
+    .gridItem {
+        display: flex;
+        flex: 1 1 100%;
+        &.two-columns {
+            flex: 1 1 50%;
+            &:nth-child(2n) {
+                padding-left: calc(var(--lotta-spacing) / 2);
+            }
+            &:nth-child(2n + 1) {
+                padding-right: calc(var(--lotta-spacing) / 2);
+            }
+        }
+        & > * {
+            width: 100%;
+        }
+    }
 }

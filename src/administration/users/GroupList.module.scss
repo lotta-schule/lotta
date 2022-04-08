@@ -1,9 +1,27 @@
-.createButton {
-    float: right;
-    margin-bottom: calc(3 * var(--lotta-spacing));
-}
+.root {
+    .toolBar {
+        overflow: auto;
+        margin-bottom: calc(3 * var(--lotta-spacing));
+        button {
+            float: right;
+        }
+    }
 
-.draghandleIcon {
-    fill: rgba(var(--lotta-text-color), 0.7);
-    margin-right: calc(2 * var(--lotta-spacing));
+    .listsWrapper {
+        display: flex;
+        padding-bottom: var(--lotta-spacing);
+        ul {
+            flex: 1;
+            li {
+                display: flex;
+                align-items: center;
+                span {
+                    .draghandleIcon {
+                        fill: rgba(var(--lotta-text-color), 0.7);
+                        margin-right: calc(2 * var(--lotta-spacing));
+                    }
+                }
+            }
+        }
+    }
 }

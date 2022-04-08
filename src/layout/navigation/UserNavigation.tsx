@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Menu, MenuItem } from '@material-ui/core';
+import { Menu, MenuItem } from '@material-ui/core';
 import {
     AddCircle,
     PersonOutlineOutlined,
@@ -59,181 +59,166 @@ export const UserNavigation = React.memo(() => {
     let nav;
     if (currentUser) {
         nav = (
-            <Grid container className={styles.root}>
-                <Grid item xs={4} className={styles.avatarContainer}>
+            <div className={styles.loggedInContainer}>
+                <div className={styles.avatarContainer}>
                     <CurrentUserAvatar
                         size={100}
                         style={{ width: 100, height: 100 }}
                     />
-                </Grid>
-                <Grid
-                    item
-                    xs={8}
-                    style={{ marginTop: 'auto', marginBottom: 'auto' }}
-                >
-                    <div className={clsx(styles.root, 'usernavigation')}>
+                </div>
+                <nav>
+                    <NavigationButton
+                        onClick={() => setCreateArticleModalIsOpen(true)}
+                        icon={<AddCircle />}
+                        label={'neuer Beitrag'}
+                        className={clsx(
+                            'secondary',
+                            'small',
+                            'usernavigation-button'
+                        )}
+                    ></NavigationButton>
+                    <Link href={'/search'} passHref>
                         <NavigationButton
-                            onClick={() => setCreateArticleModalIsOpen(true)}
-                            icon={<AddCircle />}
-                            label={'neuer Beitrag'}
+                            icon={<SearchRounded />}
+                            label={'Suche'}
                             className={clsx(
                                 'secondary',
                                 'small',
                                 'usernavigation-button'
                             )}
                         ></NavigationButton>
-                        <Link href={'/search'} passHref>
-                            <NavigationButton
-                                icon={<SearchRounded />}
-                                label={'Suche'}
-                                className={clsx(
-                                    'secondary',
-                                    'small',
-                                    'usernavigation-button'
-                                )}
-                            ></NavigationButton>
-                        </Link>
-                        <Link href={'/messaging'} passHref>
-                            <NavigationButton
-                                className={clsx(
-                                    'secondary',
-                                    'small',
-                                    'usernavigation-button'
-                                )}
-                                icon={
-                                    <span>
-                                        <Forum color={'secondary'} />
-                                    </span>
-                                }
-                            >
-                                Nachrichten
-                                <Badge value={newMessagesBadgeNumber} />{' '}
-                            </NavigationButton>
-                        </Link>
+                    </Link>
+                    <Link href={'/messaging'} passHref>
                         <NavigationButton
-                            icon={<AccountCircle />}
                             className={clsx(
                                 'secondary',
                                 'small',
                                 'usernavigation-button'
                             )}
-                            onClick={(e: any) => {
-                                e.preventDefault();
-                                setProfileMenuAnchorEl(e.currentTarget);
-                            }}
+                            icon={
+                                <span>
+                                    <Forum color={'secondary'} />
+                                </span>
+                            }
                         >
-                            Mein Profil <ExpandMore color={'secondary'} />
+                            Nachrichten
+                            <Badge value={newMessagesBadgeNumber} />{' '}
                         </NavigationButton>
-                        <Menu
-                            id={'profile-menu'}
-                            anchorEl={profileMenuAnchorEl}
-                            open={Boolean(profileMenuAnchorEl)}
-                            onClose={() => {
-                                setProfileMenuAnchorEl(null);
-                            }}
-                            classes={{ paper: styles.menu }}
-                        >
-                            {[
-                                <MenuItem
-                                    key={'profile'}
-                                    onClick={() => {
-                                        setProfileMenuAnchorEl(null);
-                                        router.push('/profile');
-                                    }}
-                                >
-                                    <PersonOutlineOutlined
-                                        color={'secondary'}
-                                    />
-                                    &nbsp; Meine Daten
-                                </MenuItem>,
-                                <MenuItem
-                                    key={'files'}
-                                    onClick={() => {
-                                        setProfileMenuAnchorEl(null);
-                                        router.push('/profile/files');
-                                    }}
-                                >
-                                    <FolderOutlined color={'secondary'} />
-                                    &nbsp; Meine Dateien und Medien
-                                </MenuItem>,
-                                <MenuItem
-                                    key={'ownArticles'}
-                                    onClick={() => {
-                                        setProfileMenuAnchorEl(null);
-                                        router.push('/profile/articles');
-                                    }}
-                                >
-                                    <AssignmentOutlined color={'secondary'} />
-                                    &nbsp; Meine Beiträge
-                                </MenuItem>,
-                                ...(User.isAdmin(currentUser)
-                                    ? [
-                                          <Divider key={'admin-divider'} />,
-                                          <MenuItem
-                                              key={'administration'}
-                                              onClick={() => {
-                                                  setProfileMenuAnchorEl(null);
-                                                  router.push('/admin');
-                                              }}
-                                          >
-                                              <SecurityOutlined
-                                                  color={'secondary'}
-                                              />
-                                              &nbsp; Seite administrieren
-                                          </MenuItem>,
-                                          <MenuItem
-                                              key={'open-articles'}
-                                              onClick={() => {
-                                                  setProfileMenuAnchorEl(null);
-                                                  router.push(
-                                                      '/admin/unpublished'
-                                                  );
-                                              }}
-                                          >
-                                              <AssignmentOutlined
-                                                  color={'secondary'}
-                                              />
-                                              &nbsp; Beiträge freigeben
-                                              <Badge
-                                                  value={unpublishedBadgeNumber}
-                                              />
-                                          </MenuItem>,
-                                      ]
-                                    : []),
-                                <Divider key={'logout-divider'} />,
-                                <MenuItem
-                                    key={'logout'}
-                                    onClick={() => {
-                                        setProfileMenuAnchorEl(null);
-                                        onLogout();
-                                    }}
-                                >
-                                    <ExitToAppOutlined color={'secondary'} />
-                                    &nbsp; Abmelden
-                                </MenuItem>,
-                            ]}
-                        </Menu>
-                        <CreateArticleDialog
-                            isOpen={createArticleModalIsOpen}
-                            onAbort={() => setCreateArticleModalIsOpen(false)}
-                            onConfirm={(article) => {
-                                router.push(
-                                    Article.getPath(article, { edit: true })
-                                );
-                            }}
-                        />
-                    </div>
-                </Grid>
-            </Grid>
+                    </Link>
+                    <NavigationButton
+                        icon={<AccountCircle />}
+                        className={clsx(
+                            'secondary',
+                            'small',
+                            'usernavigation-button'
+                        )}
+                        onClick={(e: any) => {
+                            e.preventDefault();
+                            setProfileMenuAnchorEl(e.currentTarget);
+                        }}
+                    >
+                        Mein Profil <ExpandMore color={'secondary'} />
+                    </NavigationButton>
+                    <Menu
+                        id={'profile-menu'}
+                        anchorEl={profileMenuAnchorEl}
+                        open={Boolean(profileMenuAnchorEl)}
+                        onClose={() => {
+                            setProfileMenuAnchorEl(null);
+                        }}
+                        classes={{ paper: styles.menu }}
+                    >
+                        {[
+                            <MenuItem
+                                key={'profile'}
+                                onClick={() => {
+                                    setProfileMenuAnchorEl(null);
+                                    router.push('/profile');
+                                }}
+                            >
+                                <PersonOutlineOutlined color={'secondary'} />
+                                &nbsp; Meine Daten
+                            </MenuItem>,
+                            <MenuItem
+                                key={'files'}
+                                onClick={() => {
+                                    setProfileMenuAnchorEl(null);
+                                    router.push('/profile/files');
+                                }}
+                            >
+                                <FolderOutlined color={'secondary'} />
+                                &nbsp; Meine Dateien und Medien
+                            </MenuItem>,
+                            <MenuItem
+                                key={'ownArticles'}
+                                onClick={() => {
+                                    setProfileMenuAnchorEl(null);
+                                    router.push('/profile/articles');
+                                }}
+                            >
+                                <AssignmentOutlined color={'secondary'} />
+                                &nbsp; Meine Beiträge
+                            </MenuItem>,
+                            ...(User.isAdmin(currentUser)
+                                ? [
+                                      <Divider key={'admin-divider'} />,
+                                      <MenuItem
+                                          key={'administration'}
+                                          onClick={() => {
+                                              setProfileMenuAnchorEl(null);
+                                              router.push('/admin');
+                                          }}
+                                      >
+                                          <SecurityOutlined
+                                              color={'secondary'}
+                                          />
+                                          &nbsp; Seite administrieren
+                                      </MenuItem>,
+                                      <MenuItem
+                                          key={'open-articles'}
+                                          onClick={() => {
+                                              setProfileMenuAnchorEl(null);
+                                              router.push('/admin/unpublished');
+                                          }}
+                                      >
+                                          <AssignmentOutlined
+                                              color={'secondary'}
+                                          />
+                                          &nbsp; Beiträge freigeben
+                                          <Badge
+                                              value={unpublishedBadgeNumber}
+                                          />
+                                      </MenuItem>,
+                                  ]
+                                : []),
+                            <Divider key={'logout-divider'} />,
+                            <MenuItem
+                                key={'logout'}
+                                onClick={() => {
+                                    setProfileMenuAnchorEl(null);
+                                    onLogout();
+                                }}
+                            >
+                                <ExitToAppOutlined color={'secondary'} />
+                                &nbsp; Abmelden
+                            </MenuItem>,
+                        ]}
+                    </Menu>
+                    <CreateArticleDialog
+                        isOpen={createArticleModalIsOpen}
+                        onAbort={() => setCreateArticleModalIsOpen(false)}
+                        onConfirm={(article) => {
+                            router.push(
+                                Article.getPath(article, { edit: true })
+                            );
+                        }}
+                    />
+                </nav>
+            </div>
         );
     } else {
         nav = (
-            <Grid
-                container
-                direction={'column'}
-                alignItems={'flex-end'}
-                className={styles.root}
-            >
+            <nav>
                 <NavigationButton
                     onClick={() => setLoginModalIsOpen(true)}
                     label={'Anmelden'}
@@ -257,11 +242,11 @@ export const UserNavigation = React.memo(() => {
                         setRegisterModalIsOpen(false);
                     }}
                 />
-            </Grid>
+            </nav>
         );
     }
     return (
-        <>
+        <div className={styles.root}>
             {nav}
             <LoginDialog
                 isOpen={loginModalIsOpen}
@@ -269,7 +254,7 @@ export const UserNavigation = React.memo(() => {
                     setLoginModalIsOpen(false);
                 }}
             />
-        </>
+        </div>
     );
 });
 UserNavigation.displayName = 'UserNavigation';

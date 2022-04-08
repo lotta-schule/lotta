@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Drawer, NoSsr } from '@material-ui/core';
+import { Drawer, NoSsr } from '@material-ui/core';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';
@@ -79,18 +79,10 @@ export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
         );
     } else {
         return (
-            <Grid
-                data-testid="BaseLayoutSidebar"
-                className={styles.root}
-                item
-                component={'aside'}
-                xs={12}
-                md={3}
-                xl={3}
-            >
+            <aside data-testid="BaseLayoutSidebar" className={styles.root}>
                 {children}
                 <Footer />
-            </Grid>
+            </aside>
         );
     }
 });

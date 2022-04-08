@@ -1,0 +1,12 @@
+.root {
+    .storageSetting {
+        & > div:not(:last-child) {
+            margin-right: var(--lotta-spacing);
+        }
+        display: flex;
+        align-items: center;
+        .slider {
+            flex: 1;
+        }
+    }
+}
