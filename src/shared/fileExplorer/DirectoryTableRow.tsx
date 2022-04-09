@@ -82,6 +82,7 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                     [styles.isDragActive]: isDragActive,
                 })}
                 {...getRootProps()}
+                role={'row'}
             >
                 <td>{/* checkbox column */}</td>
                 <td>{File.getIconForDirectory(directory)}</td>
