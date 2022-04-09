@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Toolbar } from '@material-ui/core';
 import {
     FormatBold,
     FormatItalic,
@@ -8,6 +7,7 @@ import {
     FormatListNumbered,
     ArrowDropDown,
 } from '@material-ui/icons';
+import { Toolbar } from 'shared/general/layout/Toolbar';
 import { ButtonGroup } from 'shared/general/button/ButtonGroup';
 import { useFocused } from 'slate-react';
 import { EditToolbarMarkButton } from './EditToolbarMarkButton';
