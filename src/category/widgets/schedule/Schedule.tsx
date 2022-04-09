@@ -9,7 +9,7 @@ import {
     format,
 } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from 'shared/general/util/Tooltip';
 import { Table } from 'shared/general/table/Table';
 import { Button } from 'shared/general/button/Button';
 import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
@@ -248,8 +248,9 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                 )}
                 <div className={styles.date}>
                     {lastScheduleData?.schedule ? (
-                        <Tooltip title={lastScheduleData.schedule.head.date}>
+                        <Tooltip label={lastScheduleData.schedule.head.date}>
                             <Button
+                                aria-label={lastScheduleData.schedule.head.date}
                                 icon={<ArrowBackIos />}
                                 onClick={() =>
                                     setCurrentDate(
@@ -271,8 +272,9 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                     )}
                     <span>{currentScheduleData.schedule.head.date}</span>
                     {nextScheduleData?.schedule ? (
-                        <Tooltip title={nextScheduleData.schedule.head.date}>
+                        <Tooltip label={nextScheduleData.schedule.head.date}>
                             <Button
+                                aria-label={nextScheduleData.schedule.head.date}
                                 icon={<ArrowForwardIos />}
                                 onClick={() =>
                                     setCurrentDate(

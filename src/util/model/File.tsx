@@ -17,7 +17,7 @@ import {
     faFolder,
 } from '@fortawesome/free-regular-svg-icons';
 import { faUser, faGlobe } from '@fortawesome/free-solid-svg-icons';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from 'shared/general/util/Tooltip';
 import getConfig from 'next/config';
 
 const {
@@ -30,7 +30,7 @@ export const File = {
         const innerIconStyle = { fontSize: '.6em' };
         if (!directory.parentDirectory && directory.user) {
             return (
-                <Tooltip title={'privater Ordner'}>
+                <Tooltip label={'privater Ordner'}>
                     <span className="fa-layers">
                         <FontAwesomeIcon icon={faFolder} style={folderStyle} />
                         <FontAwesomeIcon icon={faUser} style={innerIconStyle} />
@@ -40,7 +40,7 @@ export const File = {
         }
         if (!directory.parentDirectory && !directory.user) {
             return (
-                <Tooltip title={'privater Ordner'}>
+                <Tooltip label={'privater Ordner'}>
                     <span className="fa-layers">
                         <FontAwesomeIcon icon={faFolder} style={folderStyle} />
                         <FontAwesomeIcon
@@ -52,7 +52,7 @@ export const File = {
             );
         }
         return (
-            <Tooltip title={'Ordner'}>
+            <Tooltip label={'Ordner'}>
                 <span>
                     <FontAwesomeIcon icon={faFolder} style={folderStyle} />
                 </span>
@@ -64,7 +64,7 @@ export const File = {
         switch (file.fileType) {
             case FileModelType.Pdf:
                 return (
-                    <Tooltip title={'PDF-Dokument'}>
+                    <Tooltip label={'PDF-Dokument'}>
                         <div style={{ width: '100%' }}>
                             <FontAwesomeIcon icon={faFilePdf} />
                         </div>
@@ -72,7 +72,7 @@ export const File = {
                 );
             case FileModelType.Audio:
                 return (
-                    <Tooltip title={'Audio'}>
+                    <Tooltip label={'Audio'}>
                         <div style={{ width: '100%' }}>
                             <FontAwesomeIcon icon={faFileAudio} />
                         </div>
@@ -80,7 +80,7 @@ export const File = {
                 );
             case FileModelType.Image:
                 return (
-                    <Tooltip title={'Bild'}>
+                    <Tooltip label={'Bild'}>
                         <div style={{ width: '100%' }}>
                             <FontAwesomeIcon icon={faFileImage} />
                         </div>
@@ -88,7 +88,7 @@ export const File = {
                 );
             case FileModelType.Video:
                 return (
-                    <Tooltip title={'Video'}>
+                    <Tooltip label={'Video'}>
                         <div style={{ width: '100%' }}>
                             <FontAwesomeIcon icon={faFileVideo} />
                         </div>
@@ -96,7 +96,7 @@ export const File = {
                 );
             default:
                 return (
-                    <Tooltip title={'Datei'}>
+                    <Tooltip label={'Datei'}>
                         <div style={{ width: '100%' }}>
                             <FontAwesomeIcon icon={faFile} />
                         </div>

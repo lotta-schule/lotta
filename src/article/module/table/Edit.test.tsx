@@ -280,7 +280,7 @@ describe('shared/article/module/table/Edit', () => {
                 const button = screen.getByRole('button', {
                     name: /zeile hinzufügen/i,
                 });
-                await userEvent.click(button);
+                userEvent.click(button);
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });

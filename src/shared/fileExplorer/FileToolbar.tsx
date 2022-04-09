@@ -8,7 +8,7 @@ import {
     Info,
     InfoOutlined,
 } from '@material-ui/icons';
-import { Tooltip, Zoom, Breadcrumbs } from '@material-ui/core';
+import { Zoom, Breadcrumbs } from '@material-ui/core';
 import { Badge } from 'shared/general/badge/Badge';
 import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
@@ -19,6 +19,7 @@ import { File } from 'util/model';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
+import { Tooltip } from 'shared/general/util/Tooltip';
 import { Toolbar } from 'shared/general/layout/Toolbar';
 import { Button } from 'shared/general/button/Button';
 
@@ -107,10 +108,10 @@ export const FileToolbar = React.memo(() => {
                 </div>
                 <div className={styles.spacer} />
                 <div className={styles.actions}>
-                    <Zoom in={uploadLength > 0}>
-                        <Tooltip
-                            title={`${uploadLength} Dateien werden hochgeladen`}
-                        >
+                    <Tooltip
+                        label={`${uploadLength} Dateien werden hochgeladen`}
+                    >
+                        <Zoom in={uploadLength > 0}>
                             <Button
                                 aria-label={`${uploadLength} Dateien werden hochgeladen`}
                                 onClick={() =>
@@ -131,15 +132,15 @@ export const FileToolbar = React.memo(() => {
                                     }
                                 />
                             </Button>
-                        </Tooltip>
-                    </Zoom>
+                        </Zoom>
+                    </Tooltip>
                     {File.canEditDirectory(
                         state.currentPath.slice(-1)[0] as DirectoryModel,
                         currentUser!
                     ) && (
                         <>
-                            <Zoom in={showFileEditingButtons}>
-                                <Tooltip title="Dateien verschieben">
+                            <Tooltip label="Dateien verschieben">
+                                <Zoom in={showFileEditingButtons}>
                                     <Button
                                         aria-label="Dateien verschieben"
                                         onClick={() =>
@@ -152,10 +153,10 @@ export const FileToolbar = React.memo(() => {
                                             />
                                         }
                                     />
-                                </Tooltip>
-                            </Zoom>
-                            <Zoom in={showFileEditingButtons}>
-                                <Tooltip title="Dateien löschen">
+                                </Zoom>
+                            </Tooltip>
+                            <Tooltip label="Dateien löschen">
+                                <Zoom in={showFileEditingButtons}>
                                     <Button
                                         aria-label="Dateien löschen"
                                         onClick={() =>
@@ -170,15 +171,15 @@ export const FileToolbar = React.memo(() => {
                                             />
                                         }
                                     />
-                                </Tooltip>
-                            </Zoom>
+                                </Zoom>
+                            </Tooltip>
                         </>
                     )}
                     {File.canCreateDirectory(
                         state.currentPath.slice(-1)[0] as DirectoryModel,
                         currentUser!
                     ) && (
-                        <Tooltip title="Ordner erstellen">
+                        <Tooltip label="Ordner erstellen">
                             <Button
                                 aria-label="Ordner erstellen"
                                 onClick={() =>
@@ -197,8 +198,8 @@ export const FileToolbar = React.memo(() => {
                         state.currentPath.slice(-1)[0] as DirectoryModel,
                         currentUser!
                     ) && (
-                        <Zoom in={state.currentPath.length > 1}>
-                            <Tooltip title="Dateien hochladen">
+                        <Tooltip label="Dateien hochladen">
+                            <Zoom in={state.currentPath.length > 1}>
                                 <Button
                                     aria-label="Dateien hochladen"
                                     data-testid="FileExplorerToolbarNewUploadButton"
@@ -229,18 +230,18 @@ export const FileToolbar = React.memo(() => {
                                         }}
                                     />
                                 </Button>
-                            </Tooltip>
-                        </Zoom>
+                            </Zoom>
+                        </Tooltip>
                     )}
                     {!isMobile && state.mode === FileExplorerMode.ViewAndEdit && (
-                        <Zoom in={state.currentPath.length > 1}>
-                            <Tooltip
-                                title={`Info-Leiste für Dateien und Ordner ${
-                                    state.detailSidebarEnabled
-                                        ? 'ausblenden'
-                                        : 'einblenden'
-                                }`}
-                            >
+                        <Tooltip
+                            label={`Info-Leiste für Dateien und Ordner ${
+                                state.detailSidebarEnabled
+                                    ? 'ausblenden'
+                                    : 'einblenden'
+                            }`}
+                        >
+                            <Zoom in={state.currentPath.length > 1}>
                                 <Button
                                     data-testid="FileExplorerDetailViewButton"
                                     aria-label={`Info-Leiste für Dateien und Ordner ${
@@ -267,8 +268,8 @@ export const FileToolbar = React.memo(() => {
                                         )
                                     }
                                 />
-                            </Tooltip>
-                        </Zoom>
+                            </Zoom>
+                        </Tooltip>
                     )}
                 </div>
             </Toolbar>
