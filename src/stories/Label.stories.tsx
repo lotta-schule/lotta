@@ -5,7 +5,7 @@ import { Input } from 'shared/general/form/input/Input';
 import { Select } from 'shared/general/form/select/Select';
 
 export default {
-    title: 'Label/Default',
+    title: 'layout/Label',
     component: Label,
     argTypes: {},
 } as Meta;
