@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Container } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import { Edit, Place } from '@material-ui/icons';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -100,8 +100,8 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                 })}
                 data-testid="ArticlePreviewStandardLayout"
             >
-                <Grid container className={styles.containerGrid}>
-                    <Grid className={styles.imageSection} container>
+                <div className={styles.containerGrid}>
+                    <div className={styles.imageSection}>
                         {!!onUpdateArticle && (
                             <SelectFileOverlay
                                 allowDeletion
@@ -149,8 +149,8 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                     />
                                 )
                             )}
-                    </Grid>
-                    <Grid className={styles.mainSection}>
+                    </div>
+                    <div className={styles.mainSection}>
                         {!!onUpdateArticle && (
                             <Input
                                 inline
@@ -216,8 +216,8 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                             article.tags?.map((tag) => (
                                 <Tag key={tag}>{tag}</Tag>
                             ))}
-                        <Grid container>
-                            <Grid item className={styles.dateGridItem}>
+                        <div className={styles.metaSection}>
+                            <div className={styles.dateGridItem}>
                                 <time
                                     className={clsx(styles.date, 'dt-updated')}
                                     dateTime={article.updatedAt}
@@ -226,8 +226,8 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                         locale: de,
                                     }) + ' '}
                                 </time>
-                            </Grid>
-                            <Grid item style={{ flexGrow: 1 }}>
+                            </div>
+                            <div className={styles.authorAvatarsList}>
                                 <AuthorAvatarsList
                                     max={
                                         !!onUpdateArticle ? Infinity : undefined
@@ -313,11 +313,11 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                         </Button>
                                     </DialogActions>
                                 </Dialog>
-                            </Grid>
-                        </Grid>
-                    </Grid>
+                            </div>
+                        </div>
+                    </div>
                     {(!isMobile || isEmbedded) && (
-                        <Grid item xs={1} className={styles.editSection}>
+                        <div className={styles.editSection}>
                             {showEditSection && (
                                 <section>
                                     {showEditSection && (
@@ -367,9 +367,9 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                     )}
                                 </section>
                             )}
-                        </Grid>
+                        </div>
                     )}
-                </Grid>
+                </div>
             </Container>
         );
     }

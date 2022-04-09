@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
-import { Grid, NoSsr } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
 import { ArticleModel, WidgetModel, ID, ArticleFilter } from 'model';
 import { Header, Main, Sidebar } from 'layout';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
@@ -201,7 +201,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
                 <Header bannerImageUrl={bannerImageUrl}>
                     <h2 data-testid="title">{category.title}</h2>
                 </Header>
-                <Grid container wrap={'wrap'} className={styles.articles}>
+                <div className={styles.articles}>
                     {[...articlesToShow]
                         .sort((a1, a2) => {
                             if (
@@ -221,9 +221,7 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
                             );
                         })
                         .map((article) => (
-                            <Grid
-                                item
-                                xs={twoColumnsLayout ? 6 : 12}
+                            <div
                                 className={clsx(styles.gridItem, {
                                     [styles['two-columns']]: twoColumnsLayout,
                                 })}
@@ -234,9 +232,9 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
                                     limitedHeight
                                     layout={category.layoutName ?? 'standard'}
                                 />
-                            </Grid>
+                            </div>
                         ))}
-                </Grid>
+                </div>
             </Main>
             <Sidebar
                 isEmpty={

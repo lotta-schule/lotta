@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AvatarProps } from '@material-ui/core';
+import { AvatarProps } from './Avatar';
 import clsx from 'clsx';
 
 import styles from './AvatarGroup.module.scss';
@@ -33,7 +33,7 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
             <div role={'group'}>
                 {avatars.splice(0, max).map((child, index) => {
                     return React.cloneElement(child, {
-                        key: child.props.key ?? index,
+                        key: (child.props as any).key ?? index,
                         className: clsx(child.props.className, styles.avatar),
                     });
                 })}

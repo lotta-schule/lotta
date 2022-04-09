@@ -1,25 +1,25 @@
-import React from "react";
+import React from 'react';
 // also exported from '@storybook/react' if you can deal with breaking changes in 6.1
-import { Story, Meta } from "@storybook/react/types-6-0";
+import { Story, Meta } from '@storybook/react/types-6-0';
 
-import { Banner } from "../shared/general/layout/Banner";
-import { Box } from "../shared/general/layout/Box";
-import { UserMenu } from "../shared/general/navigation/UserMenu";
+import { Banner } from '../shared/general/layout/Banner';
+import { Box } from '../shared/general/layout/Box';
+import { UserMenu } from '../shared/general/navigation/UserMenu';
 
 export default {
-  title: "Layout/Banner",
-  component: Banner,
-  argTypes: {},
+    title: 'Layout/Banner',
+    component: Banner,
+    argTypes: {},
 } as Meta;
 
 const Template: Story = (args) => <Banner {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  children: (
-    <Box>
-      <h1>Ich bin ein Banner.</h1>
-      <UserMenu />
-    </Box>
-  ),
+    children: (
+        <Box>
+            <h1>Ich bin ein Banner.</h1>
+            <UserMenu />
+        </Box>
+    ),
 };

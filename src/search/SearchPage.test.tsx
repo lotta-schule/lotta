@@ -5,6 +5,7 @@ import { SearchPage } from './SearchPage';
 import userEvent from '@testing-library/user-event';
 
 import SearchQuery from 'api/query/SearchQuery.graphql';
+import { act } from 'react-dom/test-utils';
 
 describe('pages/search', () => {
     describe('Search', () => {
@@ -97,11 +98,14 @@ describe('pages/search', () => {
                 userEvent.click(
                     screen.getByRole('button', { name: /erweitert/i })
                 );
+                const combobox = screen.getByRole('combobox', {
+                    name: /kategorie/i,
+                });
+                const faecherOption = await screen.findByRole('option', {
+                    name: /fächer/i,
+                });
+                userEvent.selectOptions(combobox, faecherOption);
                 userEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
-                userEvent.selectOptions(
-                    screen.getByRole('combobox', { name: /kategorie/i }),
-                    await screen.findByRole('option', { name: /fächer/i })
-                );
                 await waitFor(() => {
                     expect(resultFn).toHaveBeenCalled();
                 });

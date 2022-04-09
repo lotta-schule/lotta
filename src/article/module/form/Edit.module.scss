@@ -1,29 +1,40 @@
 @import 'colors';
 
-.downloadItemWrapper {
-    margin-bottom: calc(2 * var(--lotta-spacing));
-}
-
-.downloadWrapperHeader {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-
-.inputWrapper {
-    & > div {
-        padding: var(--lotta-spacing);
+.root {
+    .downloadItemWrapper {
+        margin-bottom: calc(2 * var(--lotta-spacing));
     }
-}
 
-.inputSettings {
-    border-left-color: l_color(divider);
-    border-left-width: var(--lotta-spacing);
-    border-left-style: solid;
-    border-radius: var(--lotta-spacing);
-}
+    .downloadWrapperHeader {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
 
-.dragHandle {
-    margin: var(--lotta-spacing);
-    fill: rgba(var(--lotta-text-color), 0.7);
+    .inputWrapper {
+        display: flex;
+        & > div {
+            padding: var(--lotta-spacing);
+            flex: 0 0 60%;
+            &:first-child {
+                flex-basis: 40%;
+            }
+        }
+    }
+
+    .inputSettings {
+        border-left-color: l_color(divider);
+        border-left-width: var(--lotta-spacing);
+        border-left-style: solid;
+        border-radius: var(--lotta-spacing);
+    }
+
+    .dragHandle {
+        margin: var(--lotta-spacing);
+        fill: rgba(var(--lotta-text-color), 0.7);
+    }
+
+    .clear {
+        clear: right;
+    }
 }

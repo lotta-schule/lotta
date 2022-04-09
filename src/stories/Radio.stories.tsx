@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { Story, Meta } from '@storybook/react';
-import {
-    Radio,
-    RadioGroup,
-    RadioGroupProps,
-} from 'shared/general/form/radio';
+import { Radio, RadioGroup, RadioGroupProps } from 'shared/general/form/radio';
 
 export default {
     title: 'Form/Radio',
@@ -15,7 +11,12 @@ export default {
 const Template: Story<Omit<RadioGroupProps, 'ref'>> = (args) => {
     const [val, setVal] = React.useState('0');
     return (
-        <RadioGroup {...args} name={'radio-group'} value={val} onChange={(_e, val) => setVal(val.toString())}>
+        <RadioGroup
+            {...args}
+            name={'radio-group'}
+            value={val}
+            onChange={(_e, val) => setVal(val.toString())}
+        >
             <Radio value={'0'}>Option 0</Radio>
             <Radio value={'1'}>Option 1</Radio>
             <Radio value={'2'}>Option 2</Radio>

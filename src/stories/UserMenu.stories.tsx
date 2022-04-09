@@ -8,17 +8,15 @@ import { SomeUser } from 'test/fixtures';
 export default {
     title: 'UserMenu/Main',
     component: UserMenu,
-    argTypes: {
-    },
-  } as Meta;
-  
-  const Template: Story<UserMenuProps> = (args) => <UserMenu {...args} />;
-  
-  export const LoggedIn = Template.bind({});
-  LoggedIn.args = {
-    user: SomeUser
-  };
+    argTypes: {},
+} as Meta;
 
-  export const NotLoggedIn = Template.bind({});
-  NotLoggedIn.args = {
-  };
+const Template: Story<UserMenuProps> = (args) => <UserMenu {...args} />;
+
+export const LoggedIn = Template.bind({});
+LoggedIn.args = {
+    user: SomeUser,
+};
+
+export const NotLoggedIn = Template.bind({});
+NotLoggedIn.args = {};
