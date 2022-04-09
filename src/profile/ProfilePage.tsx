@@ -1,11 +1,6 @@
 import * as React from 'react';
-import {
-    Avatar,
-    List,
-    ListItemText,
-    ListItem,
-    ListSubheader,
-} from '@material-ui/core';
+import { List, ListItemText, ListItem, ListSubheader } from '@material-ui/core';
+import { Avatar } from 'shared/general/avatar/Avatar';
 import { Box } from 'shared/general/layout/Box';
 import { useMutation } from '@apollo/client';
 import { Button } from 'shared/general/button/Button';
@@ -85,7 +80,8 @@ export const ProfilePage = () => {
                                           )
                                         : User.getDefaultAvatarUrl(currentUser)
                                 }
-                                alt={User.getNickname(currentUser)}
+                                style={{ width: 150, height: 150 }}
+                                title={User.getNickname(currentUser)}
                             />
                         </Deletable>
                         <br />

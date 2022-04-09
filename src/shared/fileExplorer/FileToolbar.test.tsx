@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, TestFileExplorerContextProvider } from 'test/util';
 import { FileToolbar } from './FileToolbar';
 import { getPrivateAndPublicFiles, SomeUser, adminGroup } from 'test/fixtures';

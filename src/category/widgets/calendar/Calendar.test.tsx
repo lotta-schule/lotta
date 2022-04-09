@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render } from 'test/util';
 import { CalendarKlassenarbeiten, CalendarResponse } from 'test/fixtures';
 import { Calendar } from './Calendar';
@@ -73,7 +73,7 @@ describe('shared/widgets/Calendar', () => {
             configuration: {
                 ...CalendarKlassenarbeiten.configuration,
                 calendars: [
-                    ...CalendarKlassenarbeiten.configuration.calendars,
+                    ...CalendarKlassenarbeiten.configuration!.calendars!,
                     {
                         url: 'http://calendar',
                         color: 'green',

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Tooltip } from '@material-ui/core';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { Button } from 'shared/general/button/Button';
@@ -12,6 +11,7 @@ import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { DirectoryModel, FileModel } from 'model';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
+import { Tooltip } from 'shared/general/util/Tooltip';
 import fileExplorerContext from './context/FileExplorerContext';
 
 import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';
@@ -94,7 +94,7 @@ export const MoveFilesDialog = React.memo(() => {
             <DialogContent>
                 <p>Wähle ein Zielort</p>
                 <ErrorMessage error={error} />
-                <Tooltip title={'Ordner erstellen'}>
+                <Tooltip label={'Ordner erstellen'}>
                     <Button
                         aria-label="Ordner erstellen"
                         onClick={() => setIsCreateNewFolderDialogOpen(true)}

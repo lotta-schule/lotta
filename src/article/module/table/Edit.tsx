@@ -6,7 +6,6 @@ import {
     ExpandLess,
     ExpandMore,
 } from '@material-ui/icons';
-import { Tooltip } from '@material-ui/core';
 import { Table } from 'shared/general/table/Table';
 import { Button } from 'shared/general/button/Button';
 import { Input, InputProps } from 'shared/general/form/input/Input';
@@ -16,6 +15,7 @@ import {
     TableContent,
     TableConfiguration,
 } from './Table';
+import { Tooltip } from 'shared/general/util/Tooltip';
 
 import styles from './Table.module.scss';
 
@@ -246,14 +246,12 @@ export const Edit = React.memo<EditProps>(
             <div className={styles.edit}>
                 <div className={styles.upperToolbar}>
                     <Tooltip
-                        title={'letzte Spalte entfernen'}
-                        id={`cm-${contentModule.id}-delete-column-tooltip`}
+                        label={'letzte Spalte entfernen'}
                     >
                         <span>
                             <Button
                                 small
                                 icon={<SkipPrevious />}
-                                aria-labelledby={`cm-${contentModule.id}-delete-column-tooltip`}
                                 aria-label={'letzte Spalte entfernen'}
                                 disabled={columnCount <= 1}
                                 onClick={() => {
@@ -274,13 +272,12 @@ export const Edit = React.memo<EditProps>(
                         </span>
                     </Tooltip>
                     <Tooltip
-                        title={'Spalte hinzufügen'}
-                        id={`cm-${contentModule.id}-insert-column-tooltip`}
+                        label={'Spalte hinzufügen'}
                     >
                         <Button
                             small
                             icon={<SkipNext />}
-                            aria-labelledby={`cm-${contentModule.id}-insert-column-tooltip`}
+                            aria-label={'Spalte hinzufügen'}
                             onClick={() => {
                                 requestFocusOnNextUpdate.current = true;
                                 onUpdateModule({
@@ -299,15 +296,13 @@ export const Edit = React.memo<EditProps>(
                 </div>
                 <div className={styles.asideToolbar}>
                     <Tooltip
-                        title={'Zeile entfernen'}
-                        id={`cm-${contentModule.id}-delete-row-tooltip`}
+                        label={'Zeile entfernen'}
                     >
                         <span>
                             <Button
                                 small
                                 icon={<ExpandLess />}
                                 disabled={rowCount <= 1}
-                                aria-labelledby={`cm-${contentModule.id}-delete-row-tooltip`}
                                 aria-label={'Zeile entfernen'}
                                 onClick={() => {
                                     onUpdateModule({
@@ -324,13 +319,12 @@ export const Edit = React.memo<EditProps>(
                         </span>
                     </Tooltip>
                     <Tooltip
-                        title={'Zeile hinzufügen'}
-                        id={`cm-${contentModule.id}-insert-row-tooltip`}
+                        label={'Zeile hinzufügen'}
                     >
                         <Button
                             small
                             icon={<ExpandMore />}
-                            aria-labelledby={`cm-${contentModule.id}-insert-row-tooltip`}
+                            aria-label={'Zeile hinzufügen'}
                             onClick={() => {
                                 requestFocusOnNextUpdate.current = true;
                                 onUpdateModule({

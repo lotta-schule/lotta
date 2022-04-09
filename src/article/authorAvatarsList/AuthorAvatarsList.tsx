@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { UserModel } from 'model';
-import { Tooltip } from '@material-ui/core';
 import { AvatarGroup } from 'shared/general/avatar/AvatarGroup';
 import { User } from 'util/model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { SearchUserField } from 'administration/users/SearchUserField';
 import { Deletable } from 'shared/general/util/Deletable';
+import { Tooltip } from 'shared/general/util/Tooltip';
 import clsx from 'clsx';
 
 import styles from './AuthorAvatarsList.module.scss';
@@ -34,10 +34,7 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
                                 : null
                         }
                     >
-                        <Tooltip
-                            title={User.getNickname(user)}
-                            enterTouchDelay={100}
-                        >
+                        <Tooltip label={User.getNickname(user)}>
                             <UserAvatar
                                 user={user}
                                 style={{

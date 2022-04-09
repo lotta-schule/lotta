@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { List, ListItem, ListItemText, Tooltip } from '@material-ui/core';
+import { List, ListItem, ListItemText } from '@material-ui/core';
+import { Tooltip } from 'shared/general/util/Tooltip';
 import { FiberManualRecord } from '@material-ui/icons';
 import { useApolloClient } from '@apollo/client';
 import { format, intervalToDuration } from 'date-fns';
@@ -157,8 +158,8 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                                 styles.listItemTextEventDescription
                                             }
                                         >
-                                            <Tooltip title={event.description}>
-                                                <span>{event.summary}</span>
+                                            <Tooltip label={event.description}>
+                                                <span title={event.description}>{event.summary}</span>
                                             </Tooltip>
                                         </ListItemText>
                                     </ListItem>
