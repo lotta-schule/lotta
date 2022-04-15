@@ -133,36 +133,7 @@ export const UserList = React.memo(() => {
                         </div>
                     </div>
 
-                    <Table
-                        className={styles.virtualizedTable}
-                        rowGetter={({ index }) => rows[index]}
-                        onRowClick={({ rowData: { user } }) => {
-                            if (user.id !== currentUser?.id) {
-                                setSelectedUser(user);
-                            }
-                        }}
-                        columns={[
-                            {
-                                width: 50,
-                                label: '',
-                                dataKey: 'avatarImage',
-                            },
-                            {
-                                width: 300,
-                                label: 'Name',
-                                dataKey: 'name',
-                            },
-                            {
-                                label: 'Gruppen',
-                                dataKey: 'groups',
-                            },
-                            {
-                                width: 200,
-                                label: 'Zuletzt Online',
-                                dataKey: 'lastSeen',
-                            },
-                        ]}
-                    >
+                    <Table>
                         <thead>
                             <tr>
                                 <th></th>
@@ -180,7 +151,14 @@ export const UserList = React.memo(() => {
                                     groups,
                                     lastSeen,
                                 }) => (
-                                    <tr key={user.id}>
+                                    <tr
+                                        key={user.id}
+                                        onClick={() => {
+                                            if (user.id !== currentUser?.id) {
+                                                setSelectedUser(user);
+                                            }
+                                        }}
+                                    >
                                         <td>{avatarImage}</td>
                                         <td>{name}</td>
                                         <td>{groups}</td>
