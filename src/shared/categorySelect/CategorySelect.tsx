@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useCategories } from 'util/categories/useCategories';
 import { CategoryModel } from 'model';
-import { FormControl } from '@material-ui/core';
 import { Label } from 'shared/general/label/Label';
 import { Select } from 'shared/general/form/select/Select';
 
@@ -63,33 +62,30 @@ export const CategorySelect = React.memo<CategorySelectProps>(
             .map(getMenuItemForCategory);
 
         return (
-            <FormControl
-                disabled={disabled}
-                variant={'outlined'}
-                fullWidth
+            <Label
+                label={label ?? 'Kategorie wählen:'}
                 data-testid="CategorySelect"
                 className={className}
             >
-                <Label label={label ?? 'Kategorie wählen:'}>
-                    <Select
-                        value={selectedCategory?.id ?? 'null'}
-                        onChange={(e) =>
-                            onSelectCategory(
-                                categories.find(
-                                    (cat) =>
-                                        e.currentTarget.value !== 'null' &&
-                                        cat.id === e.currentTarget.value
-                                ) || null
-                            )
-                        }
-                    >
-                        <option key={'null'} value={'null'}>
-                            Kategorie wählen
-                        </option>
-                        {menuItems}
-                    </Select>
-                </Label>
-            </FormControl>
+                <Select
+                    disabled={disabled}
+                    value={selectedCategory?.id ?? 'null'}
+                    onChange={(e) =>
+                        onSelectCategory(
+                            categories.find(
+                                (cat) =>
+                                    e.currentTarget.value !== 'null' &&
+                                    cat.id === e.currentTarget.value
+                            ) || null
+                        )
+                    }
+                >
+                    <option key={'null'} value={'null'}>
+                        Kategorie wählen
+                    </option>
+                    {menuItems}
+                </Select>
+            </Label>
         );
     }
 );

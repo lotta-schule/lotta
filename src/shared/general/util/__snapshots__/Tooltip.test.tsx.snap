@@ -9,39 +9,33 @@ Object {
     />
     <div>
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text"
+        class="lotta-base-button variant__default lotta-button"
         data-reach-tooltip-trigger=""
         data-state="tooltip-hidden"
-        tabindex="0"
+        role="button"
         type="button"
       >
         <span
-          class="MuiButton-label"
+          class="lotta-button_text"
         >
           Test
         </span>
-        <span
-          class="MuiTouchRipple-root"
-        />
       </button>
     </div>
   </body>,
   "container": <div>
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-text"
+      class="lotta-base-button variant__default lotta-button"
       data-reach-tooltip-trigger=""
       data-state="tooltip-hidden"
-      tabindex="0"
+      role="button"
       type="button"
     >
       <span
-        class="MuiButton-label"
+        class="lotta-button_text"
       >
         Test
       </span>
-      <span
-        class="MuiTouchRipple-root"
-      />
     </button>
   </div>,
   "debug": [Function],
