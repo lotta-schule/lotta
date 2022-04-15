@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
-import { NoSsr } from '@material-ui/core';
 import { ArticleModel, WidgetModel, ID, ArticleFilter } from 'model';
 import { Header, Main, Sidebar } from 'layout';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { NoSsr } from 'shared/general/util/NoSsr';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { File, User } from 'util/model';
 import { useServerData } from 'shared/ServerDataContext';

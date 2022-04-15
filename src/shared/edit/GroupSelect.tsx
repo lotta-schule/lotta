@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from 'shared/general/util/NoSsr';
 import { useAutocomplete } from '@material-ui/lab';
 import { Check, Close } from '@material-ui/icons';
 import { UserGroupModel } from 'model';

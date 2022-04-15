@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Drawer, NoSsr } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
+import { NoSsr } from 'shared/general/util/NoSsr';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';

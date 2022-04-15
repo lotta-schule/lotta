@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from 'shared/general/util/NoSsr';
 import { Transition, animated } from 'react-spring';
 import { flatten, uniq } from 'lodash';
 import { Input } from 'shared/general/form/input/Input';
