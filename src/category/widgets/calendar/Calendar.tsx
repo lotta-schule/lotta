@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { List, ListItem, ListItemText } from '@material-ui/core';
 import { Tooltip } from 'shared/general/util/Tooltip';
+import { List, ListItem } from 'shared/general/list/List';
 import { FiberManualRecord } from '@material-ui/icons';
 import { useApolloClient } from '@apollo/client';
 import { format, intervalToDuration } from 'date-fns';
@@ -93,7 +93,7 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                         ))}
                     </figcaption>
                 )}
-                <List dense className={styles.list}>
+                <List className={styles.list}>
                     {[...events]
                         .sort(
                             (ev1, ev2) =>
@@ -115,54 +115,66 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                     <ListItem
                                         className={styles.tableline}
                                         aria-label={`Ereignis: ${event.summary}`}
-                                    >
-                                        <ListItemText
-                                            className={clsx([
-                                                styles.listItemTextDate,
-                                                {
-                                                    'has-dot':
-                                                        calendars.length > 1,
-                                                },
-                                            ])}
-                                        >
-                                            {calendars.length > 1 && (
-                                                <FiberManualRecord
-                                                    fontSize={'inherit'}
-                                                    htmlColor={
-                                                        event.calendar.color ||
-                                                        'red'
-                                                    }
-                                                    className={
-                                                        styles.calendarColorDot
-                                                    }
-                                                />
-                                            )}
-                                            {format(
-                                                new Date(event.start),
-                                                'P',
-                                                { locale: de }
-                                            )}
-                                            {isMultipleDays && (
-                                                <>
-                                                    -
-                                                    {format(
-                                                        new Date(event.end),
-                                                        'P',
-                                                        { locale: de }
-                                                    )}
-                                                </>
-                                            )}
-                                        </ListItemText>
-                                        <ListItemText
-                                            className={
-                                                styles.listItemTextEventDescription
-                                            }
-                                        >
-                                            <Tooltip label={event.description}>
-                                                <span title={event.description}>{event.summary}</span>
-                                            </Tooltip>
-                                        </ListItemText>
-                                    </ListItem>
+                                        leftSection={
+                                            <div
+                                                className={clsx([
+                                                    styles.listItemTextDate,
+                                                    {
+                                                        'has-dot':
+                                                            calendars.length >
+                                                            1,
+                                                    },
+                                                ])}
+                                            >
+                                                {calendars.length > 1 && (
+                                                    <FiberManualRecord
+                                                        fontSize={'inherit'}
+                                                        htmlColor={
+                                                            event.calendar
+                                                                .color || 'red'
+                                                        }
+                                                        className={
+                                                            styles.calendarColorDot
+                                                        }
+                                                    />
+                                                )}
+                                                {format(
+                                                    new Date(event.start),
+                                                    'P',
+                                                    { locale: de }
+                                                )}
+                                                {isMultipleDays && (
+                                                    <>
+                                                        -
+                                                        {format(
+                                                            new Date(event.end),
+                                                            'P',
+                                                            { locale: de }
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        }
+                                        rightSection={
+                                            <div
+                                                className={
+                                                    styles.listItemTextEventDescription
+                                                }
+                                            >
+                                                <Tooltip
+                                                    label={event.description}
+                                                >
+                                                    <span
+                                                        title={
+                                                            event.description
+                                                        }
+                                                    >
+                                                        {event.summary}
+                                                    </span>
+                                                </Tooltip>
+                                            </div>
+                                        }
+                                    ></ListItem>
                                     <Divider />
                                 </React.Fragment>
                             );

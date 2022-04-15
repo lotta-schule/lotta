@@ -18,18 +18,22 @@
             border-color: l_color(primary);
         }
     }
-    .subcategories {
+    li.subcategories {
         border-radius: var(--lotta-border-radius);
         border: 1px solid;
         border-color: rgba(var(--lotta-divider-color), 1);
         margin-bottom: var(--lotta-spacing);
         background-color: rgba(var(--lotta-box-background-color), 1);
         color: l_color(text);
+        padding: var(--lotta-spacing);
         &:hover {
             border-color: l_color(primary);
         }
     }
     .before::before {
         display: none;
+    }
+    li {
+        list-style: none;
     }
 }

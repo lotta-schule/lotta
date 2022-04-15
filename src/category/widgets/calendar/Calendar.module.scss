@@ -34,6 +34,9 @@
     }
 
     .tableline {
+        justify-content: flex-start;
+        font-size: 0.875rem;
+        line-height: 1.43;
         &:hover {
             background-color: l_color(highlight, 0.3);
         }

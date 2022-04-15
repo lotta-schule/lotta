@@ -2,10 +2,8 @@ import * as React from 'react';
 import {
     List,
     ListItem,
-    ListItemAvatar,
-    ListItemText,
-    ListItemSecondaryAction,
-} from '@material-ui/core';
+    ListItemSecondaryText,
+} from 'shared/general/list/List';
 import { OpenInNew } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
@@ -80,58 +78,61 @@ export const FileUsageModal = React.memo(() => {
             <DialogContent>
                 <List>
                     {data?.file?.usage?.map((usage, i) => (
-                        <ListItem key={i}>
-                            {usage.article?.previewImageFile && (
-                                <ListItemAvatar>
-                                    <Img
-                                        operation={'cover'}
-                                        size={'150x100'}
-                                        src={File.getFileRemoteLocation(
-                                            baseUrl,
-                                            usage.article.previewImageFile
-                                        )}
-                                        alt={`Vorschaubild zu ${usage.article.title}`}
-                                    />
-                                </ListItemAvatar>
-                            )}
-                            {usage.tenant?.configuration.logoImageFile && (
-                                <ListItemAvatar>
-                                    <Img
-                                        operation={'cover'}
-                                        size={'150x100'}
-                                        src={File.getFileRemoteLocation(
-                                            baseUrl,
-                                            usage.tenant.configuration
-                                                .logoImageFile
-                                        )}
-                                        alt={`Logo von ${usage.tenant.title}`}
-                                    />
-                                </ListItemAvatar>
-                            )}
-                            {usage.user && (
-                                <ListItemAvatar>
-                                    <UserAvatar user={usage.user} size={50} />
-                                </ListItemAvatar>
-                            )}
-                            <ListItemText
-                                classes={{
-                                    root: styles.listItemText,
-                                    primary: styles.listItemTextLine,
-                                    secondary: styles.listItemTextLine,
-                                }}
-                                primary={getPrimaryTextForUsage(usage)}
-                                secondary={t(`files.usage.${usage.usage}`)}
-                            />
-                            {hasSecondaryAction(usage) && (
-                                <ListItemSecondaryAction>
+                        <ListItem
+                            key={i}
+                            leftSection={
+                                <>
+                                    {usage.article?.previewImageFile && (
+                                        <Img
+                                            operation={'cover'}
+                                            size={'150x100'}
+                                            src={File.getFileRemoteLocation(
+                                                baseUrl,
+                                                usage.article.previewImageFile
+                                            )}
+                                            alt={`Vorschaubild zu ${usage.article.title}`}
+                                        />
+                                    )}
+                                    {usage.tenant?.configuration
+                                        .logoImageFile && (
+                                        <Img
+                                            operation={'cover'}
+                                            size={'150x100'}
+                                            src={File.getFileRemoteLocation(
+                                                baseUrl,
+                                                usage.tenant.configuration
+                                                    .logoImageFile
+                                            )}
+                                            alt={`Logo von ${usage.tenant.title}`}
+                                        />
+                                    )}
+                                    {usage.user && (
+                                        <UserAvatar
+                                            user={usage.user}
+                                            size={50}
+                                        />
+                                    )}
+                                </>
+                            }
+                            rightSection={
+                                hasSecondaryAction(usage) && (
                                     <Button
                                         onClick={getSecondaryActionCallback(
                                             usage
                                         )}
                                         icon={<OpenInNew />}
                                     />
-                                </ListItemSecondaryAction>
-                            )}
+                                )
+                            }
+                        >
+                            <div className={styles.listItemTextLine}>
+                                {getPrimaryTextForUsage(usage)}
+                            </div>
+                            <ListItemSecondaryText
+                                className={styles.listItemTextLine}
+                            >
+                                {t(`files.usage.${usage.usage}`)}
+                            </ListItemSecondaryText>
                         </ListItem>
                     ))}
                 </List>

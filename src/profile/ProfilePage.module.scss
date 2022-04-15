@@ -34,7 +34,7 @@
     }
 
     .groupList {
-        margin-bottom: 60;
+        margin-bottom: calc(2 * var(--lotta-spacing));
     }
 
     .groupListItem {
