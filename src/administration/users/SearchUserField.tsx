@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from 'shared/general/util/NoSsr';
 import { useAutocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import { useDebounce } from 'util/useDebounce';
