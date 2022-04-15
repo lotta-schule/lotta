@@ -3,7 +3,7 @@ import { Table } from './Table';
 
 describe('Table', () => {
     it('should render', () => {
-        const wrapper = render(
+        const screen = render(
             <Table>
                 <thead>
                     <tr>
@@ -31,6 +31,6 @@ describe('Table', () => {
                 </tbody>
             </Table>
         );
-        expect(wrapper).toMatchSnapshot();
+        expect(screen).toMatchSnapshot();
     });
 });

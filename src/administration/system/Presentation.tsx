@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Theme, useTheme, FormControl } from '@material-ui/core';
+import { Theme, useTheme } from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import { get, merge } from 'lodash';
 import { Label } from 'shared/general/label/Label';
@@ -206,108 +206,101 @@ export const Presentation = React.memo(() => {
                 <h3>Schriften</h3>
                 <div className={styles.gridContainer}>
                     <div className={styles.gridItem}>
-                        <FormControl fullWidth>
-                            <Label label={'Schriftart Überschriften'}>
-                                <Select
-                                    value={getFromTheme(
+                        <Label label={'Schriftart Überschriften'}>
+                            <Select
+                                value={getFromTheme(
+                                    'overrides.LottaArticlePreview.title.fontFamily'
+                                )}
+                                style={{
+                                    fontFamily: getFromTheme(
                                         'overrides.LottaArticlePreview.title.fontFamily'
-                                    )}
-                                    style={{
-                                        fontFamily: getFromTheme(
-                                            'overrides.LottaArticlePreview.title.fontFamily'
-                                        ),
-                                    }}
-                                    onChange={(e) =>
-                                        setCustomTheme(
-                                            merge({}, customTheme, {
-                                                overrides: {
-                                                    LottaArticlePreview: {
-                                                        title: {
-                                                            fontFamily:
-                                                                e.currentTarget
-                                                                    .value,
-                                                        },
+                                    ),
+                                }}
+                                onChange={(e) =>
+                                    setCustomTheme(
+                                        merge({}, customTheme, {
+                                            overrides: {
+                                                LottaArticlePreview: {
+                                                    title: {
+                                                        fontFamily:
+                                                            e.currentTarget
+                                                                .value,
                                                     },
                                                 },
-                                            })
-                                        )
-                                    }
-                                >
-                                    {headerFonts
-                                        .concat(textFonts)
-                                        .map(({ url }) => (
-                                            <Head key={url}>
-                                                <link
-                                                    rel={'stylesheet'}
-                                                    href={url}
-                                                />
-                                            </Head>
-                                        ))}
-                                    <optgroup>
-                                        {headerFonts.map(({ name }) => (
-                                            <option
-                                                value={name}
-                                                style={{ fontFamily: name }}
-                                                key={name}
-                                            >
-                                                {name}
-                                            </option>
-                                        ))}
-                                    </optgroup>
-                                    <optgroup>
-                                        {textFonts.map(({ name }) => (
-                                            <option
-                                                value={name}
-                                                style={{ fontFamily: name }}
-                                                key={name}
-                                            >
-                                                {name}
-                                            </option>
-                                        ))}
-                                    </optgroup>
-                                </Select>
-                            </Label>
-                        </FormControl>
-                    </div>
-                    <div className={styles.gridItem}>
-                        <FormControl fullWidth>
-                            <Label label={'Schriftart Fließtext'}>
-                                <Select
-                                    value={getFromTheme(
-                                        'typography.fontFamily'
-                                    )}
-                                    style={{
-                                        fontFamily: getFromTheme(
-                                            'typography.fontFamily'
-                                        ),
-                                    }}
-                                    onChange={(e) =>
-                                        setCustomTheme(
-                                            merge({}, customTheme, {
-                                                typography: createTypography(
-                                                    getFromTheme('palette'),
-                                                    {
-                                                        fontFamily: e
-                                                            .currentTarget
-                                                            .value as string,
-                                                    }
-                                                ),
-                                            })
-                                        )
-                                    }
-                                >
-                                    {textFonts.map(({ name }) => (
+                                            },
+                                        })
+                                    )
+                                }
+                            >
+                                {headerFonts
+                                    .concat(textFonts)
+                                    .map(({ url }) => (
+                                        <Head key={url}>
+                                            <link
+                                                rel={'stylesheet'}
+                                                href={url}
+                                            />
+                                        </Head>
+                                    ))}
+                                <optgroup>
+                                    {headerFonts.map(({ name }) => (
                                         <option
-                                            style={{ fontFamily: name }}
                                             value={name}
+                                            style={{ fontFamily: name }}
                                             key={name}
                                         >
                                             {name}
                                         </option>
                                     ))}
-                                </Select>
-                            </Label>
-                        </FormControl>
+                                </optgroup>
+                                <optgroup>
+                                    {textFonts.map(({ name }) => (
+                                        <option
+                                            value={name}
+                                            style={{ fontFamily: name }}
+                                            key={name}
+                                        >
+                                            {name}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                            </Select>
+                        </Label>
+                    </div>
+                    <div className={styles.gridItem}>
+                        <Label label={'Schriftart Fließtext'}>
+                            <Select
+                                value={getFromTheme('typography.fontFamily')}
+                                style={{
+                                    fontFamily: getFromTheme(
+                                        'typography.fontFamily'
+                                    ),
+                                }}
+                                onChange={(e) =>
+                                    setCustomTheme(
+                                        merge({}, customTheme, {
+                                            typography: createTypography(
+                                                getFromTheme('palette'),
+                                                {
+                                                    fontFamily: e.currentTarget
+                                                        .value as string,
+                                                }
+                                            ),
+                                        })
+                                    )
+                                }
+                            >
+                                {textFonts.map(({ name }) => (
+                                    <option
+                                        style={{ fontFamily: name }}
+                                        value={name}
+                                        key={name}
+                                    >
+                                        {name}
+                                    </option>
+                                ))}
+                            </Select>
+                        </Label>
                     </div>
                 </div>
             </section>

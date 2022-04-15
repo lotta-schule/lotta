@@ -2,9 +2,8 @@ import * as React from 'react';
 import {
     List,
     ListItem,
-    ListItemAvatar,
-    ListItemText,
-} from '@material-ui/core';
+    ListItemSecondaryText,
+} from 'shared/general/list/List';
 import { ErrorOutline } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useUploads } from './context/UploadQueueContext';
@@ -28,8 +27,8 @@ export const ActiveUploadsModal = React.memo(() => {
             <DialogContent>
                 <List>
                     {uploads.map((upload) => (
-                        <ListItem key={upload.id} button>
-                            <ListItemAvatar>
+                        <ListItem
+                            leftSection={
                                 <>
                                     {upload.error && (
                                         <ErrorOutline color={'error'} />
@@ -42,19 +41,22 @@ export const ActiveUploadsModal = React.memo(() => {
                                         />
                                     )}
                                 </>
-                            </ListItemAvatar>
-                            <ListItemText
+                            }
+                            key={upload.id}
+                        >
+                            <span
                                 style={{
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                 }}
-                                primary={upload.filename}
-                                secondary={
-                                    upload.error?.message ??
-                                    upload.parentDirectory.name
-                                }
-                            />
+                            >
+                                {upload.filename}
+                            </span>
+                            <ListItemSecondaryText>
+                                {upload.error?.message ??
+                                    upload.parentDirectory.name}
+                            </ListItemSecondaryText>
                         </ListItem>
                     ))}
                 </List>

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { List, ListItemText, ListItem, ListSubheader } from '@material-ui/core';
 import { Avatar } from 'shared/general/avatar/Avatar';
 import { Box } from 'shared/general/layout/Box';
 import { useMutation } from '@apollo/client';
 import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox';
 import { Divider } from 'shared/general/divider/Divider';
+import { List, ListItem } from 'shared/general/list/List';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { Input } from 'shared/general/form/input/Input';
@@ -100,24 +100,23 @@ export const ProfilePage = () => {
                             }
                         />
                         <Divider className={styles.divider} />
-                        <List
-                            className={styles.groupList}
-                            dense
-                            subheader={
-                                <ListSubheader>Meine Gruppen</ListSubheader>
-                            }
-                            data-testid="ProfileData-GroupsList"
+                        <Label
+                            className={styles.subheader}
+                            label={'Meine Gruppen'}
                         >
-                            {[...currentUser.groups]
-                                .sort((g1, g2) => g2.sortKey - g1.sortKey)
-                                .map((group) => (
-                                    <ListItem key={group.id}>
-                                        <ListItemText>
+                            <List
+                                className={styles.groupList}
+                                data-testid="ProfileData-GroupsList"
+                            >
+                                {[...currentUser.groups]
+                                    .sort((g1, g2) => g2.sortKey - g1.sortKey)
+                                    .map((group) => (
+                                        <ListItem key={group.id}>
                                             {group.name}
-                                        </ListItemText>
-                                    </ListItem>
-                                ))}
-                        </List>
+                                        </ListItem>
+                                    ))}
+                            </List>
+                        </Label>
                         <section className={styles.dangerSection}>
                             <Divider className={styles.divider} />
                             <Link href={'/profile/delete'} passHref>

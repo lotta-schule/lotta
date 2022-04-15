@@ -4,8 +4,6 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    List,
-    ListItem,
 } from '@material-ui/core';
 import { DragHandle } from 'shared/general/icon';
 import { useCategories } from 'util/categories/useCategories';
@@ -213,11 +211,8 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                             innerRef,
                                                             placeholder,
                                                         }) => (
-                                                            <List
-                                                                component="nav"
-                                                                innerRef={
-                                                                    innerRef
-                                                                }
+                                                            <nav
+                                                                ref={innerRef}
                                                                 {...droppableProps}
                                                             >
                                                                 {getSubcategoriesForCategory(
@@ -243,7 +238,10 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                 dragHandleProps,
                                                                                 draggableProps,
                                                                             }) => (
-                                                                                <ListItem
+                                                                                <li
+                                                                                    ref={
+                                                                                        innerRef
+                                                                                    }
                                                                                     className={
                                                                                         styles.subcategories
                                                                                     }
@@ -254,9 +252,6 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                         onSelectCategory(
                                                                                             subcategory
                                                                                         )
-                                                                                    }
-                                                                                    innerRef={
-                                                                                        innerRef
                                                                                     }
                                                                                     {...draggableProps}
                                                                                 >
@@ -274,13 +269,13 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                             subcategory.title
                                                                                         }
                                                                                     </div>
-                                                                                </ListItem>
+                                                                                </li>
                                                                             )}
                                                                         </Draggable>
                                                                     )
                                                                 )}
                                                                 {placeholder}
-                                                            </List>
+                                                            </nav>
                                                         )}
                                                     </Droppable>
                                                 </AccordionDetails>

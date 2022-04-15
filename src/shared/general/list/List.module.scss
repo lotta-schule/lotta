@@ -1,0 +1,26 @@
+.root {
+    border-collapse: collapse;
+    width: 100%;
+    list-style: none;
+    background-color: rgb(var(--lotta-box-background-color));
+    padding: var(--lotta-spacing);
+
+    .li {
+        display: flex;
+        margin-bottom: 0.5em;
+        align-items: center;
+        .mainSection {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-sizing: border-box;
+            padding: var(--lotta-spacing);
+            margin: auto;
+        }
+        .listItemSecondaryText {
+            color: rgba(var(--lotta-label-text-color), 0.9);
+            font-size: smaller;
+        }
+    }
+}

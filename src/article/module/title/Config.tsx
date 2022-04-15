@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { ContentModuleModel } from '../../../model';
-import { FormControl, Select, InputLabel, MenuItem } from '@material-ui/core';
+import { ContentModuleModel } from 'model';
+import { Label } from 'shared/general/label/Label';
+import { Select } from 'shared/general/form/select/Select';
 import get from 'lodash/get';
+
+const DEFAULT_LEVEL = 4;
 
 interface ConfigProps {
     contentModule: ContentModuleModel;
@@ -14,38 +17,33 @@ export const Config = React.memo<ConfigProps>(
         const headingLevel = get<number>(
             contentModule.configuration,
             'level',
-            4
+            DEFAULT_LEVEL
         );
 
         return (
             <form data-testid="TitleContentModuleConfiguration">
-                <FormControl fullWidth>
-                    <InputLabel htmlFor="heading-level">
-                        Überschrifgrößen (1-3)
-                    </InputLabel>
+                <Label label={'Überschrifgrößen (1-3)'}>
                     <Select
-                        fullWidth
                         value={headingLevel}
                         onChange={(event) => {
+                            const newLevel = Number(event.currentTarget.value);
                             onUpdateModule({
                                 ...contentModule,
                                 configuration: {
                                     ...contentModule.configuration,
-                                    level: event.target.value,
+                                    level: isNaN(newLevel)
+                                        ? DEFAULT_LEVEL
+                                        : newLevel,
                                 },
                             });
                             onRequestClose();
                         }}
-                        inputProps={{
-                            name: 'heading-level',
-                            id: 'heading-level',
-                        }}
                     >
-                        <MenuItem value={4}>Überschrift groß</MenuItem>
-                        <MenuItem value={5}>Überschrift mittel</MenuItem>
-                        <MenuItem value={6}>Überschrift klein</MenuItem>
+                        <option value={4}>Überschrift groß</option>
+                        <option value={5}>Überschrift mittel</option>
+                        <option value={6}>Überschrift klein</option>
                     </Select>
-                </FormControl>
+                </Label>
             </form>
         );
     }

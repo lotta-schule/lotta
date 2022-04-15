@@ -17,7 +17,7 @@ describe('shared/article/module/title/Config', () => {
         );
     });
 
-    it('should render a select field with 3 size options', async () => {
+    it('should render a select field with 3 size options', () => {
         const screen = render(
             <Config
                 contentModule={titleContentModule}
@@ -26,12 +26,11 @@ describe('shared/article/module/title/Config', () => {
             />
         );
 
-        const selectButton = screen.getByRole('button', { name: /groß/i });
-        await userEvent.click(selectButton);
+        expect(screen.getByRole('combobox')).toHaveValue('4');
         expect(screen.queryAllByRole('option')).toHaveLength(3);
     });
 
-    it('should show the selected option', async () => {
+    it('should show the selected option', () => {
         const contentModule = {
             ...titleContentModule,
             configuration: {
@@ -47,7 +46,7 @@ describe('shared/article/module/title/Config', () => {
         );
 
         expect(
-            screen.getByRole('button', { name: /klein/i })
+            screen.getByRole('option', { name: /klein/i, selected: true })
         ).toBeInTheDocument();
     });
 
@@ -63,9 +62,10 @@ describe('shared/article/module/title/Config', () => {
             />
         );
 
-        const selectButton = screen.getByRole('button', { name: /groß/i });
-        await userEvent.click(selectButton);
-        await userEvent.click(screen.getByRole('option', { name: /klein/i }));
+        userEvent.selectOptions(
+            screen.getByRole('combobox'),
+            'Überschrift klein'
+        );
         await waitFor(() => {
             expect(callback).toHaveBeenCalled();
         });
