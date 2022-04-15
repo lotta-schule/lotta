@@ -10,9 +10,8 @@
     color: rgb(var(--lotta-contrast-text-color));
     border: rgb(var(--lotta-text-color));
     border-radius: var(--lotta-border-radius);
+    white-space: pre-line;
     &:empty {
         display: none;
     }
 }
-
-

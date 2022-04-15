@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Tooltip } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { FileModel, ID } from 'model';
 import { File, User } from 'util/model';
 import { FileSize } from 'util/FileSize';
+import { Tooltip } from 'shared/general/util/Tooltip';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { useTranslation } from 'react-i18next';
@@ -30,13 +30,13 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
         }
     );
 
-    const get = <T extends any = string>(prop: string): T =>
+    const get = <T extends keyof FileModel>(prop: T): FileModel[T] =>
         // @ts-ignore
         data?.file?.[prop] ?? file[prop];
 
     return (
         <div className={styles.root}>
-            <Tooltip title={get('filename')}>
+            <Tooltip label={get('filename')}>
                 <h3 className={styles.filename}>{get('filename')}</h3>
             </Tooltip>
             {File.getPreviewImageLocation(baseUrl, file) && (
@@ -53,14 +53,12 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
             <ul className={styles.infoList}>
                 <li>
                     <strong>Größe:</strong>
-                    <span>
-                        {new FileSize(get<number>('filesize')).humanize()}
-                    </span>
+                    <span>{new FileSize(get('filesize')).humanize()}</span>
                 </li>
                 <li data-testid="DateListItem">
                     <strong>Datum:</strong>
                     <span>
-                        {format(new Date(get<Date>('insertedAt')), 'PPP', {
+                        {format(new Date(get('insertedAt')), 'PPP', {
                             locale: de,
                         })}
                     </span>
@@ -68,7 +66,7 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
                 <li data-testid="TypeListItem">
                     <strong>Typ:</strong>
                     <span>
-                        <Tooltip title={file.mimeType}>
+                        <Tooltip label={file.mimeType}>
                             <span>{t(`files.filetypes.${file.fileType}`)}</span>
                         </Tooltip>
                     </span>
@@ -114,18 +112,12 @@ export const FileDetailView = React.memo<FileDetailViewProps>(({ file }) => {
                             <strong>Umwandlungen: </strong>
                             <span>
                                 <Tooltip
-                                    title={
-                                        <ul>
-                                            {data.file.fileConversions.map(
-                                                (conversion) => (
-                                                    <li key={conversion.id}>
-                                                        {conversion.format} -{' '}
-                                                        {conversion.mimeType}
-                                                    </li>
-                                                )
-                                            )}
-                                        </ul>
-                                    }
+                                    label={data.file.fileConversions
+                                        .map(
+                                            (conversion) =>
+                                                `${conversion.format} - ${conversion.mimeType}`
+                                        )
+                                        .join(String.fromCharCode(0x000a))}
                                 >
                                     <span>
                                         {t('files.formats', {
