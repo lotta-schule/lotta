@@ -8,6 +8,7 @@ import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { SSRProvider } from '@react-aria/ssr';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { OverlayProvider } from '@react-aria/overlays';
 import { Authentication } from 'shared/Authentication';
@@ -86,51 +87,55 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
             customDomain={plausibleEndpoint}
         >
             <ServerDataContextProvider value={{ baseUrl }}>
-                <ApolloProvider client={client}>
-                    <ThemeProvider theme={theme}>
-                        <I18nextProvider i18n={i18n}>
-                            <MuiPickersUtilsProvider
-                                utils={DateFnsUtils}
-                                locale={de}
-                            >
-                                <CloudimageProvider
-                                    config={{
-                                        token: cloudimageToken,
-                                    }}
+                <SSRProvider>
+                    <ApolloProvider client={client}>
+                        <ThemeProvider theme={theme}>
+                            <I18nextProvider i18n={i18n}>
+                                <MuiPickersUtilsProvider
+                                    utils={DateFnsUtils}
+                                    locale={de}
                                 >
-                                    <OverlayProvider>
-                                        <Authentication />
-                                        <UploadQueueProvider>
-                                            <ThemeProvider
-                                                theme={() => {
-                                                    if (
-                                                        tenant.configuration
-                                                            .customTheme
-                                                    ) {
-                                                        return createTheme(
-                                                            merge(
-                                                                {},
-                                                                theme,
-                                                                tenant
-                                                                    .configuration
-                                                                    .customTheme
-                                                            ),
-                                                            deDE
-                                                        );
-                                                    }
-                                                    return theme;
-                                                }}
-                                            >
-                                                <AppHead />
-                                                <AppBody>{children}</AppBody>
-                                            </ThemeProvider>
-                                        </UploadQueueProvider>
-                                    </OverlayProvider>
-                                </CloudimageProvider>
-                            </MuiPickersUtilsProvider>
-                        </I18nextProvider>
-                    </ThemeProvider>
-                </ApolloProvider>
+                                    <CloudimageProvider
+                                        config={{
+                                            token: cloudimageToken,
+                                        }}
+                                    >
+                                        <OverlayProvider>
+                                            <Authentication />
+                                            <UploadQueueProvider>
+                                                <ThemeProvider
+                                                    theme={() => {
+                                                        if (
+                                                            tenant.configuration
+                                                                .customTheme
+                                                        ) {
+                                                            return createTheme(
+                                                                merge(
+                                                                    {},
+                                                                    theme,
+                                                                    tenant
+                                                                        .configuration
+                                                                        .customTheme
+                                                                ),
+                                                                deDE
+                                                            );
+                                                        }
+                                                        return theme;
+                                                    }}
+                                                >
+                                                    <AppHead />
+                                                    <AppBody>
+                                                        {children}
+                                                    </AppBody>
+                                                </ThemeProvider>
+                                            </UploadQueueProvider>
+                                        </OverlayProvider>
+                                    </CloudimageProvider>
+                                </MuiPickersUtilsProvider>
+                            </I18nextProvider>
+                        </ThemeProvider>
+                    </ApolloProvider>
+                </SSRProvider>
             </ServerDataContextProvider>
         </PlausibleProvider>
     );
