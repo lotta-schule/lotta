@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Tooltip } from 'shared/general/util/Tooltip';
 import { List, ListItem } from 'shared/general/list/List';
 import { FiberManualRecord } from '@material-ui/icons';
 import { useApolloClient } from '@apollo/client';
-import { format, intervalToDuration } from 'date-fns';
+import { format, intervalToDuration, isSameMinute } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { CalendarEventModel } from 'model/CalendarEventModel';
 import {
@@ -60,6 +59,12 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
             });
     }, [apolloClient, calendars]);
 
+    const stripHtml = (html: string) => {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        return div.textContent || div.innerText || '';
+    };
+
     if (isLoading) {
         return (
             <LinearProgress
@@ -101,20 +106,26 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                 new Date(ev2.start).getTime()
                         )
                         .map((event, i) => {
+                            const summary = stripHtml(event.summary);
+                            const description = stripHtml(event.description);
+                            const start = new Date(event.start);
+                            const end = new Date(event.end);
+
                             const duration = intervalToDuration({
-                                start: new Date(event.start),
-                                end: new Date(event.end),
+                                start,
+                                end,
                             });
                             const isMultipleDays =
-                                (duration.days && duration.days > 1) ||
+                                (duration.days && duration.days >= 1) ||
                                 (duration.months && duration.months > 0) ||
                                 (duration.years && duration.years > 0) ||
                                 false;
+
                             return (
                                 <React.Fragment key={i}>
                                     <ListItem
                                         className={styles.tableline}
-                                        aria-label={`Ereignis: ${event.summary}`}
+                                        aria-label={`Ereignis: ${summary}`}
                                         leftSection={
                                             <div
                                                 className={clsx([
@@ -126,32 +137,63 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                                     },
                                                 ])}
                                             >
-                                                {calendars.length > 1 && (
-                                                    <FiberManualRecord
-                                                        fontSize={'inherit'}
-                                                        htmlColor={
-                                                            event.calendar
-                                                                .color || 'red'
-                                                        }
-                                                        className={
-                                                            styles.calendarColorDot
-                                                        }
-                                                    />
-                                                )}
-                                                {format(
-                                                    new Date(event.start),
-                                                    'P',
-                                                    { locale: de }
-                                                )}
-                                                {isMultipleDays && (
-                                                    <>
-                                                        -
+                                                <div>
+                                                    {calendars.length > 1 && (
+                                                        <FiberManualRecord
+                                                            fontSize={'inherit'}
+                                                            htmlColor={
+                                                                event.calendar
+                                                                    .color ||
+                                                                'red'
+                                                            }
+                                                            className={
+                                                                styles.calendarColorDot
+                                                            }
+                                                        />
+                                                    )}
+                                                    {format(
+                                                        start,
+                                                        'P',
+                                                        { locale: de }
+                                                    )}
+                                                    {isMultipleDays && (
+                                                        <>
+                                                            {' '}
+                                                            -{' '}
+                                                            {format(
+                                                                end,
+                                                                'P',
+                                                                { locale: de }
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                                {!isMultipleDays && (
+                                                    <div
+                                                        className={styles.time}
+                                                    >
                                                         {format(
-                                                            new Date(event.end),
-                                                            'P',
+                                                            start,
+                                                            'p',
                                                             { locale: de }
                                                         )}
-                                                    </>
+                                                        {!isSameMinute(
+                                                            start,
+                                                            end
+                                                        ) && (
+                                                            <>
+                                                                {' '}
+                                                                -{' '}
+                                                                {format(
+                                                                    end,
+                                                                    'p',
+                                                                    {
+                                                                        locale: de,
+                                                                    }
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
                                         }
@@ -161,20 +203,17 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                                     styles.listItemTextEventDescription
                                                 }
                                             >
-                                                <Tooltip
-                                                    label={event.description}
-                                                >
-                                                    <span
-                                                        title={
-                                                            event.description
-                                                        }
-                                                    >
-                                                        {event.summary}
-                                                    </span>
-                                                </Tooltip>
+                                                {summary}
                                             </div>
                                         }
                                     ></ListItem>
+                                    {description && (
+                                        <ListItem
+                                            className={styles.description}
+                                        >
+                                            {description}
+                                        </ListItem>
+                                    )}
                                     <Divider />
                                 </React.Fragment>
                             );
