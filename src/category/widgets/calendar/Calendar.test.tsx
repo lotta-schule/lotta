@@ -26,10 +26,10 @@ describe('shared/widgets/Calendar', () => {
                 {},
                 { additionalMocks: mocks }
             );
-            expect(await screen.findAllByRole('listitem')).toHaveLength(17);
+            expect(await screen.findAllByRole('listitem')).toHaveLength(18);
         });
 
-        it('should show the correct date for single-day event', async () => {
+        it('should show the correct date and time for single-day event', async () => {
             const screen = render(
                 <Calendar widget={CalendarKlassenarbeiten} />,
                 {},
@@ -40,7 +40,8 @@ describe('shared/widgets/Calendar', () => {
                 name: /berufsorientierung/i,
             });
             expect(row).toBeVisible();
-            expect(row).toHaveTextContent(/17.03.2021/);
+            expect(row).toHaveTextContent(/18.03.2021/);
+            expect(row).toHaveTextContent(/9:30 - 11:00/);
         });
 
         it('should show the correct date for multi-day event', async () => {
@@ -54,16 +55,16 @@ describe('shared/widgets/Calendar', () => {
                 name: /b-woche/i,
             })[0];
             expect(row).toBeVisible();
-            expect(row).toHaveTextContent(/18.01.2021-23.01.2021/);
+            expect(row).toHaveTextContent(/18.01.2021 - 23.01.2021/);
         });
 
-        it('should show the correct date', async () => {
+        it('should show the correct description', async () => {
             const screen = render(
                 <Calendar widget={CalendarKlassenarbeiten} />,
                 {},
                 { additionalMocks: mocks }
             );
-            expect(await screen.findByTitle(/raum e 10/i)).toBeVisible();
+            expect(await screen.findByText(/Raum E 10/)).toBeVisible();
         });
     });
 
@@ -90,7 +91,7 @@ describe('shared/widgets/Calendar', () => {
                 {},
                 { additionalMocks: mocks }
             );
-            expect(await screen.findAllByRole('listitem')).toHaveLength(34);
+            expect(await screen.findAllByRole('listitem')).toHaveLength(36);
         });
 
         it('should show a legend with calendar names and colors', async () => {

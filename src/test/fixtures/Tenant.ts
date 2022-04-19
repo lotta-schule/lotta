@@ -491,8 +491,8 @@ export const CalendarResponse = {
         {
             description:
                 '\n\nKl. 9/1 in der 3./4. Std.Kl. 9/2 in der 5./6. Std.Raum E 10\r\n5',
-            end: '2021-03-18T00:00:00',
-            start: '2021-03-17T00:00:00',
+            end: '2021-03-18T11:00:00',
+            start: '2021-03-18T09:30:00',
             summary: 'Kl. 9 Berufsorientierung (3.-6. Std.)',
             uid: '3c7sbjf46kb3rd3j6jp6c9mmsv@google.com',
         },
