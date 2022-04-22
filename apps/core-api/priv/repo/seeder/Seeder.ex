@@ -45,18 +45,17 @@ defmodule Lotta.Repo.Seeder do
     verwaltung_group =
       Repo.insert!(%UserGroup{name: "Verwaltung", sort_key: 800}, prefix: tenant.prefix)
 
-    lehrer_group = Repo.insert!(%UserGroup{name: "Lehrer", sort_key: 600}, prefix: tenant.prefix)
+    lehrer_group =
+      Repo.insert!(
+        %UserGroup{name: "Lehrer", sort_key: 600, enrollment_tokens: ["LEb0815Hp!1969"]},
+        prefix: tenant.prefix
+      )
 
     schueler_group =
-      Repo.insert!(%UserGroup{name: "Schüler", sort_key: 400}, prefix: tenant.prefix)
-
-    Ecto.build_assoc(lehrer_group, :enrollment_tokens)
-    |> Map.put(:token, "LEb0815Hp!1969")
-    |> Repo.insert!(prefix: tenant.prefix)
-
-    Ecto.build_assoc(schueler_group, :enrollment_tokens)
-    |> Map.put(:token, "Seb034hP2?019")
-    |> Repo.insert!(prefix: tenant.prefix)
+      Repo.insert!(
+        %UserGroup{name: "Schüler", sort_key: 400, enrollment_tokens: ["Seb034hP2?019"]},
+        prefix: tenant.prefix
+      )
 
     {:ok, lotta_admin, _pw} =
       Accounts.register_user(tenant, %{

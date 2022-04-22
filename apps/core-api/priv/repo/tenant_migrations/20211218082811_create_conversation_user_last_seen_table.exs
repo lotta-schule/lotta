@@ -1,4 +1,4 @@
-defmodule Lotta.Repo.Migrations.CreateConversationUserLastSeenTable do
+defmodule Lotta.Repo.TenantMigrations.CreateConversationUserLastSeenTable do
   use Ecto.Migration
 
   def change do

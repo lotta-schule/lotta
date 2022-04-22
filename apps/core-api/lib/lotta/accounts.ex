@@ -9,7 +9,7 @@ defmodule Lotta.Accounts do
 
   alias Ecto.Changeset
   alias Lotta.{Email, Mailer, Repo, Storage}
-  alias Lotta.Accounts.{User, UserGroup, GroupEnrollmentToken}
+  alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Storage.File
 
   def data() do
@@ -177,13 +177,10 @@ defmodule Lotta.Accounts do
     iex> list_groups_for_enrollment_token("token")
     [%UserGroup{}, ...]
   """
-  @spec list_groups_for_enrollment_token(String.t()) :: [GroupEnrollmentToken.t()]
+  @spec list_groups_for_enrollment_token(String.t()) :: [UserGroup.t()]
   def list_groups_for_enrollment_token(token) when is_binary(token) do
     from(g in UserGroup,
-      join: t in GroupEnrollmentToken,
-      on: g.id == t.group_id,
-      where: t.token == ^token,
-      distinct: true
+      where: not is_nil(fragment("array_position(?, ?)", g.enrollment_tokens, ^token))
     )
     |> Repo.all(prefix: Repo.get_prefix())
   end
@@ -198,16 +195,13 @@ defmodule Lotta.Accounts do
     [%UserGroup{}, ...]
   """
   @spec list_groups_for_enrollment_tokens([String.t()], Tenant.t() | nil) :: [
-          GroupEnrollmentToken.t()
+          UserGroup.t()
         ]
   def list_groups_for_enrollment_tokens(tokens, tenant \\ nil) when is_list(tokens) do
     prefix = if tenant, do: tenant.prefix, else: Repo.get_prefix()
 
     from(g in UserGroup,
-      join: t in GroupEnrollmentToken,
-      on: g.id == t.group_id,
-      where: t.token in ^tokens,
-      distinct: true
+      where: fragment("? && ?", g.enrollment_tokens, ^tokens)
     )
     |> Repo.all(prefix: prefix)
   end

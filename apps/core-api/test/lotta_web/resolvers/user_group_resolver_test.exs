@@ -126,9 +126,7 @@ defmodule LottaWeb.UserGroupResolverTest do
     query group($id: ID!) {
       group(id: $id) {
         name
-        enrollmentTokens {
-          token
-        }
+        enrollmentTokens
       }
     }
     """
@@ -145,7 +143,7 @@ defmodule LottaWeb.UserGroupResolverTest do
                "data" => %{
                  "group" => %{
                    "name" => "Lehrer",
-                   "enrollmentTokens" => [%{"token" => "LEb0815Hp!1969"}]
+                   "enrollmentTokens" => ["LEb0815Hp!1969"]
                  }
                }
              }
@@ -218,9 +216,7 @@ defmodule LottaWeb.UserGroupResolverTest do
     mutation UpdateUserGroup($id: ID!, $group: UserGroupInput!) {
       UpdateUserGroup(id: $id, group: $group) {
         name
-        enrollmentTokens {
-          token
-        }
+        enrollmentTokens
       }
     }
     """
@@ -243,7 +239,7 @@ defmodule LottaWeb.UserGroupResolverTest do
                "data" => %{
                  "UpdateUserGroup" => %{
                    "name" => "Die Lehrer",
-                   "enrollmentTokens" => [%{"token" => "L1"}, %{"token" => "L2"}]
+                   "enrollmentTokens" => ["L1", "L2"]
                  }
                }
              }
@@ -435,9 +431,7 @@ defmodule LottaWeb.UserGroupResolverTest do
     mutation createUserGroup($group: UserGroupInput!) {
       createUserGroup(group: $group) {
         name
-        enrollmentTokens {
-          token
-        }
+        enrollmentTokens
       }
     }
     """
@@ -460,7 +454,7 @@ defmodule LottaWeb.UserGroupResolverTest do
                "data" => %{
                  "createUserGroup" => %{
                    "name" => "Die Lehrer",
-                   "enrollmentTokens" => [%{"token" => "L1"}, %{"token" => "L2"}]
+                   "enrollmentTokens" => ["L1", "L2"]
                  }
                }
              }

@@ -26,8 +26,8 @@ defmodule LottaWeb.CalendarResolver do
           body
           |> ExIcal.parse()
           |> ExIcal.by_range(
-            DateTime.utc_now() |> DateTime.add(-60 * 60 * 24, :second),
-            DateTime.utc_now() |> Timex.shift(days: args[:days] || 90)
+            DateTime.now!("Europe/Berlin") |> DateTime.add(-60 * 60 * 24, :second),
+            DateTime.now!("Europe/Berlin") |> Timex.shift(days: args[:days] || 90)
           )
 
         {:ok, ical}

@@ -27,10 +27,7 @@ defmodule LottaWeb.UserGroupResolver do
   def resolve_enrollment_tokens(user_group, _args, %{
         context: %Context{current_user: %User{is_admin?: true}}
       }) do
-    {:ok,
-     user_group
-     |> Repo.preload(:enrollment_tokens)
-     |> Map.fetch!(:enrollment_tokens)}
+    {:ok, user_group.enrollment_tokens}
   end
 
   def all(_args, %{
