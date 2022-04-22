@@ -5,7 +5,6 @@ export * from './TenantModel';
 export * from './ContentModuleModel';
 export * from './EditModePayload';
 export * from './FileModel';
-export * from './GroupEnrollmentTokenModel';
 export * from './MessageModel';
 export * from './PageModel';
 export * from './ScheduleResult';

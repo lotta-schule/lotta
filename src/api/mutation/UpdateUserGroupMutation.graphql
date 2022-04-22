@@ -4,8 +4,6 @@ mutation UpdateUserGroup($id: ID!, $group: UserGroupInput) {
         name
         isAdminGroup
         sortKey
-        enrollmentTokens {
-            token
-        }
+        enrollmentTokens
     }
 }

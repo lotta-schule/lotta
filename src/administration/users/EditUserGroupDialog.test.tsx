@@ -83,9 +83,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                                 name: 'Neuer Name',
                                 isAdminGroup: lehrerGroup.isAdminGroup,
                                 enrollmentTokens:
-                                    lehrerGroup.enrollmentTokens.map(
-                                        (t) => t.token
-                                    ),
+                                    lehrerGroup.enrollmentTokens
                             },
                         },
                     },
@@ -124,9 +122,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                                 name: 'Neuer Name',
                                 isAdminGroup: lehrerGroup.isAdminGroup,
                                 enrollmentTokens:
-                                    lehrerGroup.enrollmentTokens.map(
-                                        (t) => t.token
-                                    ),
+                                    lehrerGroup.enrollmentTokens
                             },
                         },
                     },
@@ -251,7 +247,6 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                                 name: 'Lehrer',
                                 isAdminGroup: lehrerGroup.isAdminGroup,
                                 enrollmentTokens: lehrerGroup.enrollmentTokens
-                                    .map((t) => t.token)
                                     .concat('NeuerToken'),
                             },
                         },

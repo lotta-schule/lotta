@@ -23,14 +23,7 @@ export const lehrerGroup = {
     name: 'Lehrer',
     sortKey: 2000,
     isAdminGroup: false,
-    enrollmentTokens: [
-        {
-            id: '764',
-            insertedAt: '2015-02-01 14:15',
-            updatedAt: '2015-02-01 14:15',
-            token: 'uhfhurehwuehf',
-        },
-    ],
+    enrollmentTokens: ['uhfhurehwuehf']
 };
 
 export const elternGroup = {
@@ -50,20 +43,7 @@ export const schuelerGroup = {
     name: 'Schüler',
     sortKey: 2000,
     isAdminGroup: false,
-    enrollmentTokens: [
-        {
-            id: '884',
-            insertedAt: '2015-0b-01 14:15',
-            updatedAt: '2015-02-01 14:15',
-            token: 'ajf82j84h2h',
-        },
-        {
-            id: '892',
-            insertedAt: '2015-02-01 14:15',
-            updatedAt: '2015-02-01 14:15',
-            token: 'uishfiji2j38f',
-        },
-    ],
+    enrollmentTokens: ['ajf82j84h2h', 'uishfiji2j38f']
 };
 
 export const userGroups = [adminGroup, lehrerGroup, schuelerGroup, elternGroup];
