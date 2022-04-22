@@ -223,11 +223,6 @@ type FileUserUsageLocation {
   user: User
 }
 
-type GroupEnrollmentToken {
-  id: ID
-  token: String
-}
-
 """
 The `Json` scalar type represents arbitrary json string data, represented as UTF-8
 character sequences. The Json type is most often used to represent a free-form
@@ -446,7 +441,7 @@ type User {
 }
 
 type UserGroup {
-  enrollmentTokens: [GroupEnrollmentToken]
+  enrollmentTokens: [String]
   id: ID
   insertedAt: DateTime
   isAdminGroup: Boolean

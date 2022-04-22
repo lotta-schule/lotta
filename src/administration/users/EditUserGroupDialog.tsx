@@ -59,7 +59,7 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
             data?.group.isAdminGroup &&
             groups.filter((g) => g.isAdminGroup).length < 2;
         const enrollmentTokens =
-            data?.group.enrollmentTokens?.map((t) => t.token) ?? [];
+            data?.group.enrollmentTokens ?? [];
 
         return (
             <Dialog

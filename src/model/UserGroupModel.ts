@@ -1,4 +1,3 @@
-import { GroupEnrollmentTokenModel } from './GroupEnrollmentTokenModel';
 import { ID } from './ID';
 
 export interface UserGroupModel {
@@ -8,7 +7,7 @@ export interface UserGroupModel {
     name: string;
     isAdminGroup: boolean;
     sortKey: number;
-    enrollmentTokens: GroupEnrollmentTokenModel[];
+    enrollmentTokens: string[];
 }
 
 export interface UserGroupInputModel {

@@ -4,9 +4,6 @@ query GetGroup($id: ID!) {
         name
         isAdminGroup
         sortKey
-        enrollmentTokens {
-            id
-            token
-        }
+        enrollmentTokens
     }
 }

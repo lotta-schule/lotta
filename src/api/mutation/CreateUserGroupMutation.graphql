@@ -4,8 +4,6 @@ mutation CreateUserGroup($group: UserGroupInput) {
         name
         isAdminGroup
         sortKey
-        enrollmentTokens {
-            token
-        }
+        enrollmentTokens
     }
 }
