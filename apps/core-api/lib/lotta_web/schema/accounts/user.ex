@@ -76,12 +76,7 @@ defmodule LottaWeb.Schema.Accounts.User do
     field :sort_key, :integer
     field :is_admin_group, :boolean
 
-    field :enrollment_tokens, list_of(:group_enrollment_token),
+    field :enrollment_tokens, list_of(:string),
       resolve: &LottaWeb.UserGroupResolver.resolve_enrollment_tokens/3
-  end
-
-  object :group_enrollment_token do
-    field :id, :id
-    field :token, :string
   end
 end

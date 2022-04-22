@@ -78,13 +78,11 @@ defmodule LottaWeb.UserResolver do
   end
 
   def resolve_groups(user, _args, %{context: %{tenant: _t}}) do
-    user = Repo.preload(user, [:groups, :enrollment_tokens])
+    user = Repo.preload(user, [:groups])
 
     {:ok,
      user.groups ++
-       (user.enrollment_tokens
-        |> Enum.map(& &1.enrollment_token)
-        |> Accounts.list_groups_for_enrollment_tokens())}
+       Accounts.list_groups_for_enrollment_tokens(user.enrollment_tokens)}
   end
 
   def resolve_assigned_groups(user, _args, _info) do
@@ -96,10 +94,7 @@ defmodule LottaWeb.UserResolver do
   def resolve_enrollment_tokens(user, _args, %{context: %Context{current_user: current_user}}) do
     tokens =
       if user.id == current_user.id do
-        user = Repo.preload(user, :enrollment_tokens)
-
         user.enrollment_tokens
-        |> Enum.map(& &1.enrollment_token)
       else
         []
       end

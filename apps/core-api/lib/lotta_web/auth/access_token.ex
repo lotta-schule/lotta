@@ -54,7 +54,7 @@ defmodule LottaWeb.Auth.AccessToken do
           {:ok, map()} | {:error, atom()}
 
   def build_claims(claims, user, _options) do
-    user = Repo.preload(user, [:groups, :enrollment_tokens])
+    user = Repo.preload(user, [:groups])
 
     tenant =
       user
@@ -64,7 +64,6 @@ defmodule LottaWeb.Auth.AccessToken do
     all_groups =
       user.groups ++
         (user.enrollment_tokens
-         |> Enum.map(& &1.enrollment_token)
          |> Accounts.list_groups_for_enrollment_tokens(tenant))
 
     is_admin =

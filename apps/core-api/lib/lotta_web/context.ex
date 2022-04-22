@@ -50,7 +50,7 @@ defmodule LottaWeb.Context do
   def set_virtual_user_fields(%User{} = user) do
     user =
       user
-      |> Repo.preload([:groups, :enrollment_tokens])
+      |> Repo.preload([:groups])
 
     groups =
       user
@@ -111,7 +111,6 @@ defmodule LottaWeb.Context do
 
   defp get_dynamic_groups(%User{enrollment_tokens: enrollment_tokens}) do
     enrollment_tokens
-    |> Enum.map(& &1.enrollment_token)
     |> Accounts.list_groups_for_enrollment_tokens()
   end
 

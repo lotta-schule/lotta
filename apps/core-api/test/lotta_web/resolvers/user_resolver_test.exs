@@ -405,9 +405,8 @@ defmodule LottaWeb.UserResolverTest do
     """
     test "returns the user groups for self", %{user: user, user_jwt: user_jwt, tenant: t} do
       user
-      |> Ecto.build_assoc(:enrollment_tokens)
-      |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
-      |> Repo.insert!(prefix: t.prefix)
+      |> Ecto.Changeset.change(%{enrollment_tokens: ["Seb034hP2?019" | user.enrollment_tokens]})
+      |> Repo.update!(prefix: t.prefix)
 
       res =
         build_conn()
@@ -430,9 +429,8 @@ defmodule LottaWeb.UserResolverTest do
 
     test "returns the user groups for admin", %{user: user, admin_jwt: admin_jwt, tenant: t} do
       user
-      |> Ecto.build_assoc(:enrollment_tokens)
-      |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
-      |> Repo.insert!(prefix: t.prefix)
+      |> Ecto.Changeset.change(%{enrollment_tokens: ["Seb034hP2?019" | user.enrollment_tokens]})
+      |> Repo.update!(prefix: t.prefix)
 
       res =
         build_conn()
@@ -455,9 +453,8 @@ defmodule LottaWeb.UserResolverTest do
 
     test "does return the user groups for others", %{user2: user2, user_jwt: user_jwt, tenant: t} do
       user2
-      |> Ecto.build_assoc(:enrollment_tokens)
-      |> Ecto.Changeset.change(%{enrollment_token: "Seb034hP2?019"})
-      |> Repo.insert!(prefix: t.prefix)
+      |> Ecto.Changeset.change(%{enrollment_tokens: ["Seb034hP2?019" | user2.enrollment_tokens]})
+      |> Repo.update!(prefix: t.prefix)
 
       res =
         build_conn()
@@ -895,11 +892,9 @@ defmodule LottaWeb.UserResolverTest do
           ),
           prefix: t.prefix
         )
-        |> Repo.preload(:enrollment_tokens)
 
       user_groups =
         user.enrollment_tokens
-        |> Enum.map(& &1.enrollment_token)
         |> Accounts.list_groups_for_enrollment_tokens(t)
 
       [%{name: group_name}] = user_groups

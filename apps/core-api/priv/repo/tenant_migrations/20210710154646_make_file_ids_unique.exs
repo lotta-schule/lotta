@@ -1,4 +1,4 @@
-defmodule Lotta.Repo.Migrations.MakeFileIdsUnique do
+defmodule Lotta.Repo.TenantMigrations.MakeFileIdsUnique do
   use Ecto.Migration
 
   def change do

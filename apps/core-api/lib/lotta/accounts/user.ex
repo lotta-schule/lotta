@@ -9,7 +9,7 @@ defmodule Lotta.Accounts.User do
 
   alias Lotta.Repo
   alias Ecto.Changeset
-  alias Lotta.Accounts.{UserEnrollmentToken, UserGroup}
+  alias Lotta.Accounts.UserGroup
   alias Lotta.Storage.{Directory, File}
   alias Lotta.Content.Article
 
@@ -31,13 +31,14 @@ defmodule Lotta.Accounts.User do
     field :is_admin?, :boolean, virtual: true, default: false
     field :access_level, :string, virtual: true
 
+    field :enrollment_tokens, {:array, :string}, default: []
+
     belongs_to :avatar_image_file, File,
       on_replace: :nilify,
       type: :binary_id
 
     has_many :files, File
     has_many :directories, Directory
-    has_many :enrollment_tokens, UserEnrollmentToken, on_replace: :delete
     has_many :sent_messages, Lotta.Messages.Message
 
     many_to_many :groups,
@@ -82,15 +83,14 @@ defmodule Lotta.Accounts.User do
   @spec update_profile_changeset(t(), map()) :: Changeset.t()
   def update_profile_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
-    |> Repo.preload([:avatar_image_file, :enrollment_tokens])
-    |> cast(params, [:name, :class, :nickname, :hide_full_name])
+    |> Repo.preload([:avatar_image_file])
+    |> cast(params, [:name, :class, :nickname, :hide_full_name, :enrollment_tokens])
     |> normalize_email()
     |> validate_required([:name, :email])
     |> unique_constraint(:email, name: :users__lower_email_index)
     |> validate_length(:email, min: 4, max: 100)
     |> validate_has_nickname_if_hide_full_name_is_set()
     |> put_assoc_avatar_image_file(params)
-    |> put_assoc_enrollment_tokens(params)
   end
 
   @doc """
@@ -102,8 +102,15 @@ defmodule Lotta.Accounts.User do
 
   def registration_changeset(%__MODULE__{} = user, params \\ %{}) do
     user
-    |> Repo.preload(:enrollment_tokens)
-    |> cast(params, [:name, :class, :nickname, :email, :password, :hide_full_name])
+    |> cast(params, [
+      :name,
+      :class,
+      :nickname,
+      :email,
+      :password,
+      :hide_full_name,
+      :enrollment_tokens
+    ])
     |> normalize_email()
     |> validate_required([:name, :email, :password])
     |> validate_length(:email, min: 4, max: 100)
@@ -111,7 +118,6 @@ defmodule Lotta.Accounts.User do
     |> validate_required(:password)
     |> validate_length(:password, min: 6, max: 150)
     |> validate_has_nickname_if_hide_full_name_is_set()
-    |> put_assoc_enrollment_tokens(params)
     |> put_pass_hash()
   end
 
@@ -181,12 +187,6 @@ defmodule Lotta.Accounts.User do
   end
 
   defp put_assoc_avatar_image_file(user, _args), do: user
-
-  defp put_assoc_enrollment_tokens(user, %{enrollment_tokens: enrollment_tokens}) do
-    put_assoc(user, :enrollment_tokens, Enum.map(enrollment_tokens, &%{enrollment_token: &1}))
-  end
-
-  defp put_assoc_enrollment_tokens(user, _args), do: user
 
   defp put_assoc_groups(%Ecto.Changeset{data: user} = changeset, %{groups: groups}) do
     groups =

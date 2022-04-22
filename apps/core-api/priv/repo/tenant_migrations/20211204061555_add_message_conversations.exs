@@ -1,4 +1,4 @@
-defmodule Lotta.Repo.Migrations.AddMessageConversations do
+defmodule Lotta.Repo.TenantMigrations.AddMessageConversations do
   use Ecto.Migration
 
   import Ecto.Query
