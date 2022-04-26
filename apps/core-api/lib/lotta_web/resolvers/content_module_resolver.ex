@@ -119,18 +119,21 @@ defmodule LottaWeb.ContentModuleResolver do
     end
   end
 
-  def get_responses(%{content_module_id: content_module_id}, _info) do
+  def get_responses(%{content_module_id: content_module_id}, %{
+        context: %Context{current_user: current_user}
+      }) do
     case Content.get_content_module(content_module_id) do
       nil ->
         {:error, "Modul nicht gefunden."}
 
       cm ->
-        results =
-          cm
-          |> Repo.preload([:results, :article])
-          |> Map.fetch!(:results)
+        cm = Repo.preload(cm, [:results, :article])
 
-        {:ok, results}
+        if can_write?(current_user, cm.article) do
+          {:ok, cm.results}
+        else
+          {:error, "Du darfst die Antworten für dieses Modul nicht lesen."}
+        end
     end
   end
 end

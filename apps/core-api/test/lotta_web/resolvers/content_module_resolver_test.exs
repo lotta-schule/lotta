@@ -445,7 +445,48 @@ defmodule LottaWeb.ContentModuleResolverTest do
              }
     end
 
-    test "return an error user is not user", %{user_jwt: user_jwt, test_formular: test_formular} do
+    test "return a list of all results if user is author", %{
+      user_jwt: user_jwt,
+      test_formular: test_formular
+    } do
+      res =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> put_req_header("authorization", "Bearer #{user_jwt}")
+        |> get("/api", query: @query, variables: %{id: test_formular.id})
+        |> json_response(200)
+
+      assert res == %{
+               "data" => %{
+                 "contentModuleResults" => [
+                   %{
+                     "result" => %{
+                       "responses" => %{
+                         "beschreibung" => "",
+                         "feld3" => ["käse", "pilze"],
+                         "größe" => "klein",
+                         "name" => "Test",
+                         "transport" => "lieferung"
+                       }
+                     },
+                     "user" => nil
+                   }
+                 ]
+               }
+             }
+    end
+
+    test "return an error user is not author", %{test_formular: test_formular} do
+      user =
+        Repo.one!(
+          from(u in User,
+            where: u.email == ^"billy@lotta.schule"
+          ),
+          prefix: @prefix
+        )
+
+      {:ok, user_jwt, _} = AccessToken.encode_and_sign(user)
+
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -459,7 +500,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "message" => "Du darfst die Antworten für dieses Modul nicht lesen.",
                    "path" => ["contentModuleResults"]
                  }
                ]
@@ -479,7 +520,7 @@ defmodule LottaWeb.ContentModuleResolverTest do
                },
                "errors" => [
                  %{
-                   "message" => "Du musst Administrator sein um das zu tun.",
+                   "message" => "Du musst angemeldet sein um das zu tun.",
                    "path" => ["contentModuleResults"]
                  }
                ]

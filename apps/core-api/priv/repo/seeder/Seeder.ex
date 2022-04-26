@@ -671,6 +671,12 @@ defmodule Lotta.Repo.Seeder do
         prefix: tenant.prefix
       )
 
+    oskar_goes_to
+    |> Repo.preload(:users)
+    |> Changeset.change()
+    |> Changeset.put_assoc(:users, [eike])
+    |> Repo.update!(prefix: tenant.prefix)
+
     Repo.insert!(
       %ContentModule{
         article_id: oskar_goes_to.id,
