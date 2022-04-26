@@ -56,7 +56,6 @@ export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
             onChangeFn(value);
         },
         onClose: (_event, reason) => {
-            console.log(reason);
             if (reason === 'blur') {
                 setSearchtext('');
             }

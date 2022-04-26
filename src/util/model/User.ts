@@ -39,7 +39,7 @@ export const User = {
 
     isAuthor(user: UserModel | null | undefined, article: ArticleModel) {
         return Boolean(
-            user && article.users && article.users.find((u) => u.id === user.id)
+            user && article.users?.find((u) => u.id === user.id)
         );
     },
 

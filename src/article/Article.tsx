@@ -21,6 +21,7 @@ export const Article = React.memo<ArticleProps>(({ article }) => {
                         <ContentModule
                             key={contentModule.id}
                             index={index}
+                            article={article}
                             contentModule={contentModule}
                         />
                     ))}

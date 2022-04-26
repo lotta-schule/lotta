@@ -17,7 +17,6 @@ const handler: NextMiddleware = async (req) => {
             '<head>',
             `<head><base href="${nextUrl.origin}" />`
         );
-        console.log(htmlContent);
         return fetch(`${process.env.BROWSERLESS_CHROME_ENDPONT}/pdf`, {
             method: 'post',
             headers: new Headers({
