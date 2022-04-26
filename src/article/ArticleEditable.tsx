@@ -94,6 +94,7 @@ export const ArticleEditable = React.memo<ArticleEditableProps>(
                                                 ) => (
                                                     <ContentModule
                                                         index={index}
+                                                        article={article}
                                                         contentModule={
                                                             contentModule
                                                         }

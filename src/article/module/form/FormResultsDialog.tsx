@@ -68,7 +68,7 @@ export const FormResultsDialog = React.memo<FormResultsDialogProps>(
             });
             saveAs(csv, 'formulardaten.csv');
         }, [data]);
-        const content = React.useMemo(() => {
+        const content = (() => {
             if (isLoading) {
                 return (
                     <LinearProgress
@@ -93,7 +93,7 @@ export const FormResultsDialog = React.memo<FormResultsDialogProps>(
                     </section>
                 </div>
             );
-        }, [data, downloadCsv, error, isLoading]);
+        })();
         return (
             <Dialog
                 open={isOpen}

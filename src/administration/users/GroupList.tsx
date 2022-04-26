@@ -90,7 +90,6 @@ export const GroupList = () => {
                         fromColumn * entriesPerList + source.index;
                     const toIndex =
                         toColumn * entriesPerList + destination.index;
-                    console.log({ fromIndex, toIndex });
                     const newGroupsArray = Array.from(groups);
                     newGroupsArray.splice(fromIndex, 1);
                     newGroupsArray.splice(toIndex, 0, groups[fromIndex]);

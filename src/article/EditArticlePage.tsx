@@ -15,7 +15,6 @@ import { useBeforeUnloadConfirmation } from 'util/useBeforeUnloadConfirmation';
 import { EditArticleFooter } from './editor/EditArticleFooter';
 import { Main } from 'layout';
 import { useRouter } from 'next/router';
-import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 
 import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscription.graphql';

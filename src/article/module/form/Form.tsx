@@ -1,11 +1,15 @@
 import * as React from 'react';
 import { ContentModuleModel } from 'model';
+import { FormResultsDialog } from './FormResultsDialog';
 import { Show } from './Show';
 import { Edit } from './Edit';
+import { Button } from 'shared/general/button/Button';
+import { MoveToInbox } from '@material-ui/icons';
 
 export interface FormProps {
     contentModule: ContentModuleModel;
     isEditModeEnabled?: boolean;
+    showResults?: boolean;
     onUpdateModule?: (contentModule: ContentModuleModel) => void;
 }
 
@@ -35,7 +39,9 @@ export interface FormConfiguration {
 }
 
 export const Form = React.memo<FormProps>(
-    ({ contentModule, isEditModeEnabled, onUpdateModule }) => {
+    ({ contentModule, isEditModeEnabled, showResults, onUpdateModule }) => {
+        const [isFormResultsDialogOpen, setIsFormResultsDialogOpen] =
+            React.useState(false);
         return (
             <div data-testid="FormContentModule">
                 {isEditModeEnabled && onUpdateModule && (
@@ -45,6 +51,28 @@ export const Form = React.memo<FormProps>(
                     />
                 )}
                 {!isEditModeEnabled && <Show contentModule={contentModule} />}
+                {showResults && (
+                    <>
+                        <Button
+                            onClick={() => setIsFormResultsDialogOpen(true)}
+                            icon={<MoveToInbox />}
+                            style={{
+                                marginLeft: 'auto',
+                                marginRight:
+                                    'calc(var(--lotta-spacing) + 16.6%)',
+                            }}
+                        >
+                            Formulareinsendungen sehen
+                        </Button>
+                        <FormResultsDialog
+                            contentModule={contentModule}
+                            isOpen={isFormResultsDialogOpen}
+                            onRequestClose={() =>
+                                setIsFormResultsDialogOpen(false)
+                            }
+                        />
+                    </>
+                )}
             </div>
         );
     }
