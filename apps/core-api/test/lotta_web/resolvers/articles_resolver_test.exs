@@ -2704,6 +2704,13 @@ defmodule LottaWeb.ArticleResolverTest do
                      "readyToPublish" => true,
                      "title" => "Fertiger Artikel zum Konzert",
                      "tags" => nil
+                   },
+                   %{
+                     "isPinnedToTop" => false,
+                     "preview" => "Hallo hallo hallo",
+                     "readyToPublish" => false,
+                     "tags" => nil,
+                     "title" => "And the oskar goes to ..."
                    }
                  ]
                }

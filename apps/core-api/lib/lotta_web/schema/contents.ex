@@ -52,7 +52,7 @@ defmodule LottaWeb.Schema.Contents do
     end
 
     field :content_module_results, list_of(:content_module_result) do
-      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAdministrator)
+      middleware(LottaWeb.Schema.Middleware.EnsureUserIsAuthenticated)
 
       arg(:content_module_id, non_null(:id))
 
