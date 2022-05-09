@@ -14,7 +14,7 @@ COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 RUN SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} npm run build && npm install --production --ignore-scripts --prefer-offline
 
-FROM node:alpine AS runner
+FROM node:16-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
