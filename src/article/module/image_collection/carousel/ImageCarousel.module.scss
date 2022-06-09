@@ -1,15 +1,13 @@
 .root {
     width: 100%;
-    border: 1px solid #bdbdbd;
+    border: 1px solid rgba(var(--lotta-divider-color), 1);
     border-radius: var(--lotta-border-radius);
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    margin-bottom: var(--lotta-spacing);
-    background: none;
-    border-bottom: 1px solid #bdbdbd;
+    border-bottom: 1px solid rgba(var(--lotta-divider-color), 1);
+    border-top-left-radius: var(--lotta-border-radius);
+    border-top-right-radius: var(--lotta-border-radius);
 }
 
 .imgContainer {

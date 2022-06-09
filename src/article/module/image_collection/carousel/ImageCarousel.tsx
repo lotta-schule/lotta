@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { File } from 'util/model';
-import { Button, MobileStepper, Typography } from '@material-ui/core';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { Stepper } from 'shared/general/layout/Stepper';
 import { FileSorter } from '../Config';
 import { ContentModuleModel, FileModel } from 'model';
 import { useServerData } from 'shared/ServerDataContext';
@@ -61,32 +60,11 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
 
         return (
             <div className={styles.root}>
-                <MobileStepper
+                <Stepper
+                    currentStep={activeStep}
+                    onStep={handleStepChange}
+                    maxSteps={maxSteps}
                     className={styles.header}
-                    steps={maxSteps}
-                    position="static"
-                    variant="text"
-                    activeStep={activeStep}
-                    nextButton={
-                        <Button
-                            size="small"
-                            onClick={handleNext}
-                            disabled={activeStep === maxSteps - 1}
-                        >
-                            Nächstes Bild
-                            <KeyboardArrowRight />
-                        </Button>
-                    }
-                    backButton={
-                        <Button
-                            size="small"
-                            onClick={handleBack}
-                            disabled={activeStep === 0}
-                        >
-                            <KeyboardArrowLeft />
-                            Letztes Bild
-                        </Button>
-                    }
                 />
                 <SwipeableViews
                     index={activeStep}
@@ -98,12 +76,9 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                     {sortedFiles.map((file, index) => (
                         <div key={file.id} className={styles.imgContainer}>
                             {getConfiguration(file).caption && (
-                                <Typography
-                                    variant={'subtitle1'}
-                                    className={styles.subtitle}
-                                >
+                                <span className={styles.subtitle}>
                                     {getConfiguration(file).caption}
-                                </Typography>
+                                </span>
                             )}
                             {Math.abs(activeStep - index) <= 2 ? (
                                 <img
