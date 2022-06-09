@@ -14,9 +14,9 @@ cache:
 
 test:
   stage: test
-  image: node:16
+  image: node:16.14
   script:
-    - npm install
+    - npm ci
     - npm run test:ci -- --coverage
   artifacts:
     when: always
@@ -36,9 +36,9 @@ semgrep-sast:
 
 lint:
   stage: test
-  image: node:16
+  image: node:16.14
   script:
-    - npm install
+    - npm ci
     - npm run lint -- --max-warnings=0
 
 build docker image:staging:
