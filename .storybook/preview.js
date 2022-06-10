@@ -20,6 +20,12 @@ const box_background = [255, 255, 255];
 
 const toRgb = ([r, g, b]) => `rgb(${r}, ${g}, ${b})`;
 
+if (!document.querySelector('#dialogContainer')) {
+    const el = document.createElement('div');
+    el.id = 'dialogContainer';
+    document.body.appendChild(el);
+}
+
 const muiTheme = createMuiTheme(
     {
         palette: {
@@ -44,6 +50,7 @@ export const decorators = [
                 </style>
                 <Story />
             </OverlayProvider>
+            <div id={'dialogContainer'} />
         </ThemeProvider>
     ),
 ];

@@ -1,11 +1,4 @@
 import * as React from 'react';
-import {
-    Popper,
-    Grow,
-    ClickAwayListener,
-    MenuList,
-    MenuItem,
-} from '@material-ui/core';
 import { Box } from 'shared/general/layout/Box';
 import {
     ArrowDropDown as ArrowDropDownIcon,
@@ -33,6 +26,7 @@ import clsx from 'clsx';
 import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 
 import styles from './EditArticleFooter.module.scss';
+import { Menu, MenuItem, MenuList } from 'shared/general/menu';
 
 interface EditArticleFooterProps {
     article: ArticleModel;
@@ -50,10 +44,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
         const [isSelfRemovalDialogOpen, setIsSelfRemovalDialogOpen] =
             React.useState(false);
         const [isDatesEditorOpen, setIsDatesEditorOpen] = React.useState(false);
-        const [saveOptionMenuIsOpen, setSaveOptionMenuIsOpen] =
-            React.useState(false);
         const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
-        const saveOptionsMenuAnchorRef = React.useRef<HTMLButtonElement>(null);
 
         const [deleteArticle] = useMutation<
             { article: ArticleModel },
@@ -70,19 +61,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                 }
             },
         });
-
-        const handleCloseSaveOptionsMenu = (
-            event: React.MouseEvent<Document>
-        ): void => {
-            if (
-                saveOptionsMenuAnchorRef.current &&
-                saveOptionsMenuAnchorRef.current.contains(event.target as Node)
-            ) {
-                return;
-            }
-
-            setSaveOptionMenuIsOpen(false);
-        };
 
         return (
             <Box
@@ -178,6 +156,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                             <ButtonGroup fullWidth>
                                 <Button
                                     fullWidth
+                                    className={'is-first-button-group-button'}
                                     variant={'fill'}
                                     disabled={isLoading}
                                     onClick={() =>
@@ -188,77 +167,40 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                 >
                                     speichern
                                 </Button>
-                                <Button
-                                    ref={saveOptionsMenuAnchorRef}
-                                    aria-owns={
-                                        saveOptionMenuIsOpen
-                                            ? 'menu-list-grow'
-                                            : undefined
-                                    }
-                                    aria-haspopup="true"
-                                    style={{ width: 'auto' }}
-                                    variant={'fill'}
-                                    icon={<ArrowDropDownIcon />}
-                                    onClick={() =>
-                                        setSaveOptionMenuIsOpen(
-                                            !saveOptionMenuIsOpen
-                                        )
-                                    }
-                                ></Button>
+                                <Menu
+                                    buttonProps={{
+                                        icon: <ArrowDropDownIcon />,
+                                        className:
+                                            'is-last-button-group-button',
+                                        variant: 'fill',
+                                    }}
+                                >
+                                    <MenuList>
+                                        <MenuItem
+                                            onClick={() =>
+                                                onSave({
+                                                    updatedAt: new Date(
+                                                        article.updatedAt
+                                                    ).toISOString(),
+                                                })
+                                            }
+                                        >
+                                            Ohne Aktualisierszeit zu ändern
+                                        </MenuItem>
+                                        <MenuItem
+                                            onClick={() =>
+                                                onSave({
+                                                    updatedAt:
+                                                        article.insertedAt,
+                                                })
+                                            }
+                                        >
+                                            Aktualisierszeit auf Erstellszeit
+                                            setzen
+                                        </MenuItem>
+                                    </MenuList>
+                                </Menu>
                             </ButtonGroup>
-                            <Popper
-                                transition
-                                open={saveOptionMenuIsOpen}
-                                anchorEl={saveOptionsMenuAnchorRef.current}
-                                className={styles.popper}
-                            >
-                                {({ TransitionProps, placement }) => (
-                                    <Grow
-                                        {...TransitionProps}
-                                        style={{
-                                            transformOrigin:
-                                                placement === 'bottom'
-                                                    ? 'top right'
-                                                    : 'bottom right',
-                                        }}
-                                    >
-                                        <Box id="menu-list-grow">
-                                            <ClickAwayListener
-                                                onClickAway={
-                                                    handleCloseSaveOptionsMenu
-                                                }
-                                            >
-                                                <MenuList>
-                                                    <MenuItem
-                                                        onClick={() =>
-                                                            onSave({
-                                                                updatedAt:
-                                                                    new Date(
-                                                                        article.updatedAt
-                                                                    ).toISOString(),
-                                                            })
-                                                        }
-                                                    >
-                                                        Ohne Aktualisierszeit zu
-                                                        ändern
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        onClick={() =>
-                                                            onSave({
-                                                                updatedAt:
-                                                                    article.insertedAt,
-                                                            })
-                                                        }
-                                                    >
-                                                        Aktualisierszeit auf
-                                                        Erstellszeit setzen
-                                                    </MenuItem>
-                                                </MenuList>
-                                            </ClickAwayListener>
-                                        </Box>
-                                    </Grow>
-                                )}
-                            </Popper>
                         </div>
                     </div>
                 </div>

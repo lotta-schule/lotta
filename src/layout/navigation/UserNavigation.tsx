@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Menu, MenuItem } from '@material-ui/core';
 import {
     AddCircle,
     PersonOutlineOutlined,
@@ -20,11 +19,11 @@ import { Article, User } from 'util/model';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { useOnLogout } from 'util/user/useOnLogout';
-import { Divider } from 'shared/general/divider/Divider';
 import { NavigationButton } from 'shared/general/button/NavigationButton';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useRouter } from 'next/router';
+import { Menu, MenuItem, MenuList } from 'shared/general/menu';
 import Link from 'next/link';
 import clsx from 'clsx';
 
@@ -52,9 +51,6 @@ export const UserNavigation = React.memo(() => {
     const unpublishedBadgeNumber = unpublishedArticlesData?.articles.filter(
         (article) => !article.readyToPublish || !article.published
     ).length;
-
-    const [profileMenuAnchorEl, setProfileMenuAnchorEl] =
-        React.useState<HTMLElement | null>(null);
 
     let nav;
     if (currentUser) {
@@ -105,104 +101,136 @@ export const UserNavigation = React.memo(() => {
                             <Badge value={newMessagesBadgeNumber} />{' '}
                         </NavigationButton>
                     </Link>
-                    <NavigationButton
-                        icon={<AccountCircle />}
-                        className={clsx(
-                            'secondary',
-                            'small',
-                            'usernavigation-button'
-                        )}
-                        onClick={(e: any) => {
-                            e.preventDefault();
-                            setProfileMenuAnchorEl(e.currentTarget);
-                        }}
-                    >
-                        Mein Profil <ExpandMore color={'secondary'} />
-                    </NavigationButton>
                     <Menu
-                        id={'profile-menu'}
-                        anchorEl={profileMenuAnchorEl}
-                        open={Boolean(profileMenuAnchorEl)}
-                        onClose={() => {
-                            setProfileMenuAnchorEl(null);
+                        buttonProps={{
+                            icon: <AccountCircle />,
+                            children: (
+                                <>
+                                    Mein Profil{' '}
+                                    <ExpandMore color={'secondary'} />
+                                </>
+                            ),
+                            className: clsx(
+                                'lotta-navigation-button',
+                                'secondary',
+                                'small',
+                                'usernavigation-button'
+                            ),
                         }}
-                        classes={{ paper: styles.menu }}
                     >
-                        {[
-                            <MenuItem
-                                key={'profile'}
-                                onClick={() => {
-                                    setProfileMenuAnchorEl(null);
-                                    router.push('/profile');
-                                }}
-                            >
-                                <PersonOutlineOutlined color={'secondary'} />
-                                &nbsp; Meine Daten
-                            </MenuItem>,
-                            <MenuItem
-                                key={'files'}
-                                onClick={() => {
-                                    setProfileMenuAnchorEl(null);
-                                    router.push('/profile/files');
-                                }}
-                            >
-                                <FolderOutlined color={'secondary'} />
-                                &nbsp; Meine Dateien und Medien
-                            </MenuItem>,
-                            <MenuItem
-                                key={'ownArticles'}
-                                onClick={() => {
-                                    setProfileMenuAnchorEl(null);
-                                    router.push('/profile/articles');
-                                }}
-                            >
-                                <AssignmentOutlined color={'secondary'} />
-                                &nbsp; Meine Beiträge
-                            </MenuItem>,
-                            ...(User.isAdmin(currentUser)
-                                ? [
-                                      <Divider key={'admin-divider'} />,
-                                      <MenuItem
-                                          key={'administration'}
-                                          onClick={() => {
-                                              setProfileMenuAnchorEl(null);
-                                              router.push('/admin');
-                                          }}
-                                      >
-                                          <SecurityOutlined
-                                              color={'secondary'}
-                                          />
-                                          &nbsp; Seite administrieren
-                                      </MenuItem>,
-                                      <MenuItem
-                                          key={'open-articles'}
-                                          onClick={() => {
-                                              setProfileMenuAnchorEl(null);
-                                              router.push('/admin/unpublished');
-                                          }}
-                                      >
-                                          <AssignmentOutlined
-                                              color={'secondary'}
-                                          />
-                                          &nbsp; Beiträge freigeben
-                                          <Badge
-                                              value={unpublishedBadgeNumber}
-                                          />
-                                      </MenuItem>,
-                                  ]
-                                : []),
-                            <Divider key={'logout-divider'} />,
-                            <MenuItem
-                                key={'logout'}
-                                onClick={() => {
-                                    setProfileMenuAnchorEl(null);
-                                    onLogout();
-                                }}
-                            >
-                                <ExitToAppOutlined color={'secondary'} />
-                                &nbsp; Abmelden
-                            </MenuItem>,
-                        ]}
+                        <MenuList className={styles.menuList}>
+                            {[
+                                <Link
+                                    passHref
+                                    href={'/profile'}
+                                    key={'profile'}
+                                >
+                                    <MenuItem
+                                        leftSection={
+                                            <PersonOutlineOutlined
+                                                color={'secondary'}
+                                            />
+                                        }
+                                    >
+                                        Meine Daten
+                                    </MenuItem>
+                                </Link>,
+                                <Link
+                                    passHref
+                                    href={'/profile/files'}
+                                    key={'files'}
+                                >
+                                    <MenuItem
+                                        leftSection={
+                                            <FolderOutlined
+                                                color={'secondary'}
+                                            />
+                                        }
+                                    >
+                                        Meine Dateien und Medien
+                                    </MenuItem>
+                                </Link>,
+                                <Link
+                                    passHref
+                                    href={'/profile/articles'}
+                                    key={'ownArticles'}
+                                >
+                                    <MenuItem
+                                        leftSection={
+                                            <AssignmentOutlined
+                                                color={'secondary'}
+                                            />
+                                        }
+                                    >
+                                        Meine Beiträge
+                                    </MenuItem>
+                                </Link>,
+                                ...(User.isAdmin(currentUser)
+                                    ? [
+                                          <MenuItem
+                                              isDivider
+                                              key={'administration-divider1'}
+                                          />,
+                                          <Link
+                                              passHref
+                                              href={'/admin'}
+                                              key={'administration'}
+                                          >
+                                              <MenuItem
+                                                  leftSection={
+                                                      <SecurityOutlined
+                                                          color={'secondary'}
+                                                      />
+                                                  }
+                                              >
+                                                  Seite administrieren
+                                              </MenuItem>
+                                          </Link>,
+                                          <Link
+                                              passHref
+                                              href={'/admin/unpublished'}
+                                              key={'unpublished'}
+                                          >
+                                              <MenuItem
+                                                  leftSection={
+                                                      <AssignmentOutlined
+                                                          color={'secondary'}
+                                                      />
+                                                  }
+                                              >
+                                                  Beiträge freigeben
+                                                  <Badge
+                                                      value={
+                                                          unpublishedBadgeNumber
+                                                      }
+                                                  />
+                                              </MenuItem>
+                                          </Link>,
+                                      ]
+                                    : []),
+                                <MenuItem isDivider key={'logout-divider'} />,
+                                <MenuItem
+                                    key={'logout'}
+                                    href={'#'}
+                                    leftSection={
+                                        <ExitToAppOutlined
+                                            color={'secondary'}
+                                        />
+                                    }
+                                    onClick={(
+                                        e: React.MouseEvent<
+                                            HTMLLinkElement,
+                                            MouseEvent
+                                        >
+                                    ) => {
+                                        e.preventDefault();
+                                        onLogout();
+                                    }}
+                                >
+                                    Abmelden
+                                </MenuItem>,
+                            ]}
+                        </MenuList>
                     </Menu>
                     <CreateArticleDialog
                         isOpen={createArticleModalIsOpen}

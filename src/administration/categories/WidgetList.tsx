@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Menu, MenuItem } from '@material-ui/core';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { useQuery, useMutation } from '@apollo/client';
-import { Button } from 'shared/general/button/Button';
+import { Menu, MenuItem, MenuList } from 'shared/general/menu';
 import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { WidgetModel, WidgetModelType } from 'model';
 import { Widget } from 'util/model';
 import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { WidgetNavigation } from './widgets/WidgetNavigation';
 import { WidgetEditor } from './widgets/WidgetEditor';
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import clsx from 'clsx';
 
 import GetWidgetsQuery from 'api/query/GetWidgetsQuery.graphql';
@@ -70,74 +68,65 @@ export const WidgetList = React.memo(() => {
         <div className={styles.root}>
             <h3 className={styles.headline}>
                 Marginalen
-                <PopupState
-                    variant={'popover'}
-                    popupId={'addWidgetButtonPopup'}
-                >
-                    {(popupState) => (
-                        <>
-                            <Button
-                                className={styles.addButton}
-                                disabled={isLoadingCreateWidget}
-                                icon={
-                                    <AddCircleIcon
-                                        className={clsx(
-                                            styles.leftIcon,
-                                            styles.iconSmall
-                                        )}
-                                    />
-                                }
-                                {...bindTrigger(popupState)}
-                            >
-                                Marginale erstellen
-                            </Button>
-                            <Menu {...bindMenu(popupState)}>
-                                <MenuItem
-                                    onClick={() => {
-                                        onClickCreateWidget(
-                                            'Kalender',
-                                            WidgetModelType.Calendar
-                                        );
-                                        popupState.close();
-                                    }}
-                                >
-                                    {Widget.getIconForType(
+                <>
+                    <Menu
+                        buttonProps={{
+                            className: styles.addButton,
+                            disabled: isLoadingCreateWidget,
+                            icon: (
+                                <AddCircleIcon
+                                    className={clsx(
+                                        styles.leftIcon,
+                                        styles.iconSmall
+                                    )}
+                                />
+                            ),
+                            label: 'Marginale erstellen',
+                        }}
+                    >
+                        <MenuList>
+                            <MenuItem
+                                onClick={() => {
+                                    onClickCreateWidget(
+                                        'Kalender',
                                         WidgetModelType.Calendar
-                                    )}{' '}
-                                    &nbsp; Kalender-Marginale erstellen
-                                </MenuItem>
-                                <MenuItem
-                                    onClick={() => {
-                                        onClickCreateWidget(
-                                            'VPlan',
-                                            WidgetModelType.Schedule
-                                        );
-                                        popupState.close();
-                                    }}
-                                >
-                                    {Widget.getIconForType(
+                                    );
+                                }}
+                                leftSection={Widget.getIconForType(
+                                    WidgetModelType.Calendar
+                                )}
+                            >
+                                Kalender-Marginale erstellen
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    onClickCreateWidget(
+                                        'VPlan',
                                         WidgetModelType.Schedule
-                                    )}{' '}
-                                    &nbsp; VPlan-Marginale erstellen
-                                </MenuItem>
-                                <MenuItem
-                                    onClick={() => {
-                                        onClickCreateWidget(
-                                            'IFrame',
-                                            WidgetModelType.IFrame
-                                        );
-                                        popupState.close();
-                                    }}
-                                >
-                                    {Widget.getIconForType(
+                                    );
+                                }}
+                                leftSection={Widget.getIconForType(
+                                    WidgetModelType.Schedule
+                                )}
+                            >
+                                VPlan-Marginale erstellen
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    onClickCreateWidget(
+                                        'IFrame',
                                         WidgetModelType.IFrame
-                                    )}{' '}
-                                    &nbsp; IFrame-Marginale erstellen
-                                </MenuItem>
-                            </Menu>
-                        </>
-                    )}
-                </PopupState>
+                                    );
+                                }}
+                                leftSection={Widget.getIconForType(
+                                    WidgetModelType.IFrame
+                                )}
+                            >
+                                IFrame-Marginale erstellen
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+                </>
             </h3>
             <ErrorMessage error={errorCreateWidget} />
             <div className={styles.wrapper}>

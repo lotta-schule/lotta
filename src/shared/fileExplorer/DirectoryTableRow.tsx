@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Menu, MenuItem } from '@material-ui/core';
 import { MoreVert, CreateOutlined, FileCopyOutlined } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
+import { Menu, MenuItem, MenuList } from 'shared/general/menu';
 import { DirectoryModel } from 'model';
 import { File } from 'util/model/File';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
@@ -23,9 +22,7 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
     ({ directory }) => {
         const [state, dispatch] = React.useContext(fileExplorerContext);
         const currentUser = useCurrentUser();
-        const [editMenuAnchorEl, setEditMenuAnchorEl] =
-            React.useState<null | HTMLElement>(null);
-        const [isRenamingFile, setIsRenamingFile] = React.useState(false);
+        const [isRenaming, setIsRenaming] = React.useState(false);
 
         const uploadFile = useCreateUpload();
         const { getRootProps, isDragActive } = useDropzone({
@@ -37,39 +34,6 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
             noClick: true,
             noDragEventsBubbling: true,
         });
-
-        const handleEditMenuClose = () => {
-            setEditMenuAnchorEl(null);
-        };
-
-        const handleEditMenuClick = React.useCallback(
-            (event: React.MouseEvent<HTMLButtonElement>) => {
-                event.stopPropagation();
-                setEditMenuAnchorEl(event.currentTarget);
-            },
-            []
-        );
-
-        const handleEditMenuClickRename = React.useCallback(
-            (event: React.MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-                setEditMenuAnchorEl(null);
-                setIsRenamingFile(true);
-            },
-            []
-        );
-        const handleEditMenuClickMove = React.useCallback(
-            (event: React.MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-                setEditMenuAnchorEl(null);
-                dispatch({ type: 'showMoveDirectory' });
-                dispatch({
-                    type: 'setMarkedDirectories',
-                    directories: [directory],
-                });
-            },
-            [directory, dispatch]
-        );
 
         const isMarked =
             state.markedDirectories.find((d) => d.id === directory.id) !==
@@ -88,8 +52,8 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                 <td>{File.getIconForDirectory(directory)}</td>
                 <FileTableRowFilenameCell
                     directory={directory}
-                    isRenaming={isRenamingFile}
-                    onCompleteRenaming={() => setIsRenamingFile(false)}
+                    isRenaming={isRenaming}
+                    onCompleteRenaming={() => setIsRenaming(false)}
                     onSelect={() =>
                         dispatch({
                             type: 'setPath',
@@ -102,37 +66,51 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                     <td>
                         {File.canEditDirectory(directory, currentUser) && (
                             <>
-                                <Button
-                                    small
-                                    icon={<MoreVert fontSize="inherit" />}
-                                    aria-label={'delete'}
-                                    onClick={handleEditMenuClick}
-                                />
-
                                 <Menu
-                                    anchorEl={editMenuAnchorEl}
-                                    open={Boolean(editMenuAnchorEl)}
-                                    onClose={() => handleEditMenuClose()}
+                                    buttonProps={{
+                                        icon: <MoreVert fontSize="inherit" />,
+                                        className: clsx(
+                                            'lotta-navigation-button',
+                                            'secondary',
+                                            'small',
+                                            'usernavigation-button'
+                                        ),
+                                    }}
                                 >
-                                    <MenuItem
-                                        key={'rename'}
-                                        onClick={(e) =>
-                                            handleEditMenuClickRename(e)
-                                        }
-                                    >
-                                        <CreateOutlined color={'secondary'} />
-                                        &nbsp;Umbenennen
-                                    </MenuItem>
-                                    ,
-                                    <MenuItem
-                                        key={'move'}
-                                        onClick={(e) =>
-                                            handleEditMenuClickMove(e)
-                                        }
-                                    >
-                                        <FileCopyOutlined color={'secondary'} />
-                                        &nbsp;Verschieben
-                                    </MenuItem>
+                                    <MenuList>
+                                        <MenuItem
+                                            leftSection={
+                                                <CreateOutlined
+                                                    color={'secondary'}
+                                                />
+                                            }
+                                            onClick={(e: React.MouseEvent) => {
+                                                e.stopPropagation();
+                                                setIsRenaming(true);
+                                            }}
+                                        >
+                                            Umbenennen
+                                        </MenuItem>
+                                        <MenuItem
+                                            leftSection={
+                                                <FileCopyOutlined
+                                                    color={'secondary'}
+                                                />
+                                            }
+                                            onClick={(e: React.MouseEvent) => {
+                                                e.stopPropagation();
+                                                dispatch({
+                                                    type: 'showMoveDirectory',
+                                                });
+                                                dispatch({
+                                                    type: 'setMarkedDirectories',
+                                                    directories: [directory],
+                                                });
+                                            }}
+                                        >
+                                            Verschieben
+                                        </MenuItem>
+                                    </MenuList>
                                 </Menu>
                             </>
                         )}
