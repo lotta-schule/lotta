@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { WidgetModel, WidgetModelType } from 'model';
-import { Tabs, Tab } from '@material-ui/core';
 import { Widget } from 'category/widgets/Widget';
 import { Widget as WidgetUtil } from 'util/model';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
@@ -9,6 +8,7 @@ import { useScrollEvent } from 'util/useScrollEvent';
 import { WidgetIcon } from 'category/widgets/WidgetIcon';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Tabbar, Tab } from 'shared/general/tabs';
 import SwipeableViews from 'react-swipeable-views';
 import clsx from 'clsx';
 
@@ -116,23 +116,17 @@ export const WidgetsList = React.memo<WidgetsListProps>(
             >
                 {shownWidgets && shownWidgets.length > 1 && (
                     <>
-                        <Tabs
+                        <Tabbar
+                            className={styles.WidgetTabbar}
                             value={activeTabIndex}
-                            variant={isMobile ? 'fullWidth' : 'scrollable'}
-                            scrollButtons="auto"
                             aria-label={'Marginales Modul wählen'}
-                            onChange={(_event, newTabIndex) =>
-                                setCurrentTabIndex(newTabIndex)
+                            onChange={(newTabIndex) =>
+                                setCurrentTabIndex(newTabIndex as number)
                             }
-                            classes={{
-                                root: styles.tabsRoot,
-                                flexContainer: styles.tabsFlexContainer,
-                                scrollButtons: styles.tabsScrollButtons,
-                                indicator: styles.tabsIndicator,
-                            }}
                         >
                             {shownWidgets.map((widget, i) => (
                                 <Tab
+                                    className={styles.WidgetTab}
                                     key={widget.id}
                                     title={widget.title}
                                     value={i}
@@ -155,14 +149,9 @@ export const WidgetsList = React.memo<WidgetsListProps>(
                                             />
                                         )
                                     }
-                                    classes={{
-                                        root: styles.tabRoot,
-                                        wrapper: styles.tabWrapper,
-                                        selected: styles.tabSelected,
-                                    }}
                                 />
                             ))}
-                        </Tabs>
+                        </Tabbar>
                         {swipeableViews}
                     </>
                 )}

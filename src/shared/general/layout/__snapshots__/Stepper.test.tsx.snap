@@ -10,6 +10,7 @@ exports[`Stepper should render a stepper 1`] = `
     >
       <button
         aria-label="Vorheriger Schritt"
+        aria-selected="false"
         class="lotta-base-button variant__default lotta-button lotta-navigation-button small"
         disabled=""
         role="button"
@@ -42,6 +43,7 @@ exports[`Stepper should render a stepper 1`] = `
       </div>
       <button
         aria-label="Nächster Schritt"
+        aria-selected="false"
         class="lotta-base-button variant__default lotta-button lotta-navigation-button small"
         role="button"
         type="button"

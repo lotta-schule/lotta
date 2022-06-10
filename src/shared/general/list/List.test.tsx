@@ -13,7 +13,7 @@ describe('List', () => {
                 <ListItem>Test</ListItem>
             </List>
         );
-        expect(screen).toMatchSnapshot();
+        expect(screen.container).toMatchSnapshot();
     });
 
     it('should render with subsection left', () => {
@@ -25,7 +25,7 @@ describe('List', () => {
                 <ListItem leftSection={<Avatar src={''} />}>Test</ListItem>
             </List>
         );
-        expect(screen).toMatchSnapshot();
+        expect(screen.container).toMatchSnapshot();
     });
 
     it('should render with subsection right', () => {
@@ -42,6 +42,6 @@ describe('List', () => {
                 <ListItem rightSection={<Button>Test</Button>}>Test</ListItem>
             </List>
         );
-        expect(screen).toMatchSnapshot();
+        expect(screen.container).toMatchSnapshot();
     });
 });

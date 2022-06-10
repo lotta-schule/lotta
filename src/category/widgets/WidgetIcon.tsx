@@ -69,7 +69,7 @@ export const WidgetIcon = React.memo<WidgetIconProps>(
                         {
                             color: 'secondary',
                             className: styles.iconSvg,
-                            style: { height: size },
+                            style: { height: size, width: size },
                         }
                     )}
                 </div>

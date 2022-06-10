@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { NewMessageDestination } from 'model';
-import { Box, Popover, Tab, Tabs } from '@material-ui/core';
+import { Box, Popover } from '@material-ui/core';
+import { Tab } from 'shared/general/tabs/Tab';
+import { Tabbar } from 'shared/general/tabs/Tabbar';
 import { Button } from 'shared/general/button/Button';
 import { Add, ArrowLeft } from '@material-ui/icons';
 import {
@@ -63,15 +65,21 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                     }}
                 >
                     <Box p={3} className={styles.box}>
-                        <Tabs
+                        <Tabbar
                             value={newMessageType}
-                            onChange={(_e, value) => setNewMessageType(value)}
+                            onChange={(value) => {
+                                setNewMessageType(value as 'group' | 'user');
+                            }}
                         >
                             <Tab value={'user'} label={'Nutzer'} />
                             {currentUser!.groups.length > 0 && (
-                                <Tab value={'group'} label={'Gruppe'} />
+                                <Tab
+                                    key={'group'}
+                                    value={'group'}
+                                    label={'Gruppe'}
+                                />
                             )}
-                        </Tabs>
+                        </Tabbar>
                         <div className={styles.tabsPanel}>
                             {newMessageType === 'user' && (
                                 <SearchUserField

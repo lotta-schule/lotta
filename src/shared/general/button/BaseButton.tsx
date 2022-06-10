@@ -57,6 +57,7 @@ export const BaseButton = React.forwardRef<any, BaseButtonProps>(
                 type: props.type ?? 'button',
                 role: 'button',
                 style,
+                ['aria-selected']: selected,
                 className: clsx(
                     'lotta-base-button',
                     `variant__${variant}`,

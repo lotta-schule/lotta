@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Collapse, Grow, Tabs, Tab } from '@material-ui/core';
+import { Collapse, Grow } from '@material-ui/core';
+import { Tabbar, Tab } from 'shared/general/tabs';
 import { Box } from 'shared/general/layout/Box';
 import {
     NavigateNext,
@@ -291,14 +292,11 @@ export const DeletePage = React.memo(() => {
                     >
                         {relevantFilesData &&
                             relevantFilesData.files.length > 1 && (
-                                <Tabs
+                                <Tabbar
                                     value={selectedFilesTab}
-                                    onChange={(_, val) =>
-                                        setSelectedFilesTab(val)
+                                    onChange={(val) =>
+                                        setSelectedFilesTab(val as number)
                                     }
-                                    indicatorColor={'primary'}
-                                    textColor={'primary'}
-                                    variant={'fullWidth'}
                                 >
                                     <Tab
                                         value={0}
@@ -308,7 +306,7 @@ export const DeletePage = React.memo(() => {
                                         value={1}
                                         label={'Alle Dateien überprüfen'}
                                     />
-                                </Tabs>
+                                </Tabbar>
                             )}
 
                         <div
