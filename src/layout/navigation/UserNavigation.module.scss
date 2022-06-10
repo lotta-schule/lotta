@@ -41,17 +41,7 @@
         font-size: 20px;
     }
 
-    .menu {
-        box-shadow: 4px 4px 10px #ccc;
-        border: 1px solid;
-        border-color: #bdbdbd;
-        margin-top: 2.5em;
-        ul {
-            padding: 0;
-        }
-        li {
-            padding-top: calc(1.5 * var(--lotta-spacing));
-            padding-bottom: calc(1.5 * var(--lotta-spacing));
-        }
+    .menuList {
+        min-width: 15em;
     }
 }

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Menu, MenuItem } from '@material-ui/core';
 import {
     MoreVert,
     CreateOutlined,
@@ -7,10 +6,10 @@ import {
     FileCopyOutlined,
     DeleteOutlineOutlined,
 } from '@material-ui/icons';
+import { Menu, MenuItem, MenuList } from 'shared/general/menu';
+import { ListItemProps } from 'shared/general/list/List';
 import { FileModel, DirectoryModel } from 'model';
-import { Button } from 'shared/general/button/Button';
 import { Checkbox } from 'shared/general/form/checkbox';
-import { Divider } from 'shared/general/divider/Divider';
 import { File } from 'util/model/File';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
@@ -30,49 +29,8 @@ export const FileTableRow = React.memo<FileTableRowProps>(
     ({ file, onMark }) => {
         const { baseUrl } = useServerData();
         const currentUser = useCurrentUser();
-        const [editMenuAnchorEl, setEditMenuAnchorEl] =
-            React.useState<null | HTMLElement>(null);
-        const [isRenamingFile, setIsRenamingFile] = React.useState(false);
+        const [isRenaming, setIsRenaming] = React.useState(false);
         const [state, dispatch] = React.useContext(fileExplorerContext);
-
-        const handleEditMenuClose = () => {
-            setEditMenuAnchorEl(null);
-        };
-
-        const handleEditMenuClick = React.useCallback(
-            (event: React.MouseEvent<HTMLButtonElement>) => {
-                event.stopPropagation();
-                setEditMenuAnchorEl(event.currentTarget);
-            },
-            []
-        );
-
-        const handleEditMenuClickRename = React.useCallback(
-            (event: React.MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-                setEditMenuAnchorEl(null);
-                setIsRenamingFile(true);
-            },
-            []
-        );
-        const handleEditMenuClickMove = React.useCallback(
-            (event: React.MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-                setEditMenuAnchorEl(null);
-                dispatch({ type: 'showMoveFiles' });
-                dispatch({ type: 'setMarkedFiles', files: [file] });
-            },
-            [dispatch, file]
-        );
-        const handleEditMenuClickDelete = React.useCallback(
-            (event: React.MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-                setEditMenuAnchorEl(null);
-                dispatch({ type: 'showDeleteFiles' });
-                dispatch({ type: 'setMarkedFiles', files: [file] });
-            },
-            [dispatch, file]
-        );
 
         const isMarked =
             state.markedFiles.find((f) => f.id === file.id) !== undefined;
@@ -124,71 +82,79 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                 <td>{File.getIconForFile(file)}</td>
                 <FileTableRowFilenameCell
                     file={file}
-                    isRenaming={isRenamingFile}
-                    onCompleteRenaming={() => setIsRenamingFile(false)}
+                    isRenaming={isRenaming}
+                    onCompleteRenaming={() => setIsRenaming(false)}
                     onSelect={() => {}}
                 />
                 {filesAreEditable && (
                     <td>
-                        <Button
-                            small
-                            icon={<MoreVert fontSize="inherit" />}
-                            aria-label={'delete'}
-                            onClick={handleEditMenuClick}
-                        />
-
                         <Menu
-                            anchorEl={editMenuAnchorEl}
-                            open={Boolean(editMenuAnchorEl)}
-                            onClose={() => handleEditMenuClose()}
+                            buttonProps={{
+                                small: true,
+                                icon: <MoreVert fontSize="inherit" />,
+                                'aria-label': 'delete',
+                            }}
                         >
-                            {[
+                            <MenuList>
                                 <MenuItem
                                     key={'download'}
                                     onClick={(e: React.MouseEvent) =>
                                         e.stopPropagation()
                                     }
-                                    component={'a'}
                                     href={File.getFileRemoteLocation(
                                         baseUrl,
                                         file
                                     )}
                                     download={file.filename}
-                                >
-                                    <CloudDownloadOutlined
-                                        color={'secondary'}
-                                    />
-                                    &nbsp;Herunterladen
-                                </MenuItem>,
-                                <Divider key={'divider-download'} />,
-                                <MenuItem
-                                    key={'rename'}
-                                    onClick={(e) =>
-                                        handleEditMenuClickRename(e)
+                                    leftSection={
+                                        <CloudDownloadOutlined
+                                            color={'secondary'}
+                                        />
                                     }
                                 >
-                                    <CreateOutlined color={'secondary'} />
-                                    &nbsp;Umbenennen
-                                </MenuItem>,
+                                    Herunterladen
+                                </MenuItem>
+                                <MenuItem isDivider />
                                 <MenuItem
-                                    key={'move'}
-                                    onClick={(e) => handleEditMenuClickMove(e)}
+                                    leftSection={
+                                        <CreateOutlined color={'secondary'} />
+                                    }
+                                    onClick={() => setIsRenaming(true)}
                                 >
-                                    <FileCopyOutlined color={'secondary'} />
-                                    &nbsp;Verschieben
-                                </MenuItem>,
+                                    Umbenennen
+                                </MenuItem>
                                 <MenuItem
+                                    onClick={() => {
+                                        dispatch({ type: 'showMoveFiles' });
+                                        dispatch({
+                                            type: 'setMarkedFiles',
+                                            files: [file],
+                                        });
+                                    }}
+                                    leftSection={
+                                        <FileCopyOutlined color={'secondary'} />
+                                    }
+                                >
+                                    Verschieben
+                                </MenuItem>
+                                <MenuItem
+                                    leftSection={
+                                        <DeleteOutlineOutlined
+                                            color={'secondary'}
+                                        />
+                                    }
                                     key={'delete'}
-                                    onClick={(e) =>
-                                        handleEditMenuClickDelete(e)
-                                    }
+                                    onClick={() => {
+                                        dispatch({ type: 'showDeleteFiles' });
+                                        dispatch({
+                                            type: 'setMarkedFiles',
+                                            files: [file],
+                                        });
+                                    }}
                                 >
-                                    <DeleteOutlineOutlined
-                                        color={'secondary'}
-                                    />
-                                    &nbsp;Löschen
-                                </MenuItem>,
-                            ]}
+                                    Löschen
+                                </MenuItem>
+                            </MenuList>
                         </Menu>
                     </td>
                 )}

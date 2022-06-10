@@ -1,0 +1,9 @@
+.root {
+    background-color: rgb(var(--lotta-box-background-color));
+    border-radius: var(--lotta-border-radius);
+    border: 1px solid rgb(var(--lotta-divider-color));
+    width: auto;
+    max-width: 80vw;
+    max-height: 50vh;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 40px;
+}

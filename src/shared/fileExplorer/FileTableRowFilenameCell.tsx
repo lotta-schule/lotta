@@ -33,10 +33,12 @@ export const FileTableRowFilenameCell =
 
             React.useLayoutEffect(() => {
                 if (renamingInputRef.current) {
-                    renamingInputRef.current.focus();
-                    renamingInputRef.current.addEventListener('blur', () => {
-                        onCompleteRenaming();
-                    });
+                    setTimeout(() => {
+                        renamingInputRef.current?.focus();
+                        renamingInputRef.current?.addEventListener('blur', () =>
+                            onCompleteRenaming()
+                        );
+                    }, 250);
                 }
                 // eslint-disable-next-line react-hooks/exhaustive-deps
             }, [renamingInputRef.current]);
