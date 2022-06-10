@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tabs/Tabbar snapshot test 1`] = `
+<div>
+  <div
+    data-overlay-container="true"
+  >
+    <div
+      class="tabbar"
+      role="tablist"
+    >
+      <button
+        aria-selected="false"
+        class="lotta-base-button variant__default lotta-button lotta-navigation-button tab"
+        role="tab"
+        type="button"
+        value="0"
+      >
+        <span
+          class="lotta-button_text"
+        >
+          Tab1 bla bla bla
+        </span>
+      </button>
+      <button
+        aria-selected="false"
+        class="lotta-base-button variant__default lotta-button lotta-navigation-button tab"
+        role="tab"
+        type="button"
+        value="1"
+      >
+        <span
+          class="lotta-button_text"
+        >
+          Tab2
+        </span>
+      </button>
+      <button
+        aria-selected="false"
+        class="lotta-base-button variant__default lotta-button lotta-navigation-button tab"
+        role="tab"
+        type="button"
+        value="2"
+      >
+        <span
+          class="lotta-button_text"
+        >
+          Tab3
+        </span>
+      </button>
+      <button
+        aria-selected="true"
+        class="lotta-base-button variant__default selected lotta-button lotta-navigation-button tab"
+        role="tab"
+        type="button"
+        value="3"
+      >
+        <span
+          class="lotta-button_text"
+        >
+          Tab4 dingsi bumso
+        </span>
+      </button>
+      <button
+        aria-selected="false"
+        class="lotta-base-button variant__default lotta-button lotta-navigation-button tab"
+        role="tab"
+        type="button"
+        value="4"
+      >
+        <span
+          class="lotta-button_text"
+        >
+          Tab5
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

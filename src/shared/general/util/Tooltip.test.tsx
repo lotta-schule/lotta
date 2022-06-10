@@ -9,6 +9,6 @@ describe('util/Tooltip', () => {
                 <Button>Test</Button>
             </Tooltip>
         );
-        expect(screen).toMatchSnapshot();
+        expect(screen.container).toMatchSnapshot();
     });
 });

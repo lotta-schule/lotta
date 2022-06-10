@@ -1,7 +1,6 @@
 @import 'breakpoints';
 
 .root {
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: stretch;
@@ -19,33 +18,18 @@
         ); // make space for footer
         height: calc(100% - calc(1em + var(--lotta-spacing)));
     }
-    .tabsRoot {
+    .WidgetTabbar {
+        height: 120px;
         background-color: rgba(var(--lotta-box-background-color), 1);
-    }
 
-    .tabsScrollButtons {
-        width: 25px;
-        color: rgba(var(--lotta-text-color), 1);
-    }
-
-    .tabsFlexContainer {
-        justify-content: center;
-    }
-
-    .tabsIndicator {
-        display: none;
-    }
-
-    .tabRoot {
-        line-height: 1px !important;
-        text-transform: initial !important;
-        // TODO: Why 60px? This is unclear, a named css-variable would be clearer
-        min-width: 60px !important;
-        filter: grayscale(0.95) opacity(0.8);
-    }
-
-    .tabSelected {
-        filter: none;
+        .WidgetTab {
+            border-radius: 0 !important;
+            margin-bottom: 0;
+            &:not(:global(.selected)) {
+                filter: grayscale(0.9);
+                opacity: 0.5;
+            }
+        }
     }
 
     .swipeableViewsContainer {

@@ -31,6 +31,6 @@ describe('Table', () => {
                 </tbody>
             </Table>
         );
-        expect(screen).toMatchSnapshot();
+        expect(screen.container).toMatchSnapshot();
     });
 });

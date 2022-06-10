@@ -1,10 +1,31 @@
 @import 'colors';
+@import 'breakpoints';
 
 .tabbar {
     border: none;
-    border-bottom: 1px solid l_color(divider);
-    border-radius: 4px;
-}
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
+    overflow: auto;
 
-.tab {
+    .tab {
+        flex: 1 auto;
+        color: var(--lotta-text-color);
+        border-radius: 0;
+        border: none;
+        border-bottom: 2px solid transparent;
+        margin-bottom: calc(2 * var(--lotta-spacing));
+
+        &:global(.selected) {
+            border-bottom: 2px solid rgba(var(--lotta-primary-color), 1);
+            background-color: rgba(var(--lotta-box-background-color), 1);
+            filter: none;
+            @media (max-width: $max-xs) {
+                color: rgba(var(--lotta-primary-color), 1);
+                font-weight: 400;
+            }
+        }
+    }
 }
