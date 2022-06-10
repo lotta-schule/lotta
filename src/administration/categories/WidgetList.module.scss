@@ -26,7 +26,11 @@
 
     aside {
         padding-right: calc(4 * var(--lotta-spacing));
-        width: calc(calc(100% / 12) * 5);
+        flex: 0 0 30%;
+    }
+
+    aside ~ div {
+        flex: 1;
     }
 
     @media screen and (max-width: $max-sm) {

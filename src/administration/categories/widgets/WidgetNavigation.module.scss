@@ -5,10 +5,12 @@
 }
 
 div.expansionSummary {
-    // TODO: This should probably be other color
-    & > div > div {
+    & > div {
         display: flex;
         align-items: center;
+        height: 3em;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(var(--lotta-divider-color), 1);
     }
     &:hover {
         background-color: l_color(highlight, 0.3);
