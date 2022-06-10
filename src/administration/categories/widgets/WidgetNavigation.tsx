@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Accordion, AccordionSummary } from '@material-ui/core';
 import { WidgetModel } from 'model';
 import { WidgetIcon } from 'category/widgets/WidgetIcon';
 import clsx from 'clsx';
@@ -17,10 +16,10 @@ export const WidgetNavigation = React.memo<WidgetNavigationProps>(
         return (
             <>
                 <h5 className={styles.heading}>Alle Marginalen</h5>
-                <div style={{ paddingBottom: '5em' }}>
+                <ul style={{ paddingBottom: '5em' }}>
                     {widgets.map((widget) => (
-                        <Accordion key={widget.id} expanded={false}>
-                            <AccordionSummary
+                        <li key={widget.id}>
+                            <div
                                 aria-controls={`${widget.id}-content`}
                                 id={`${widget.id}-header`}
                                 className={styles.expansionSummary}
@@ -42,10 +41,10 @@ export const WidgetNavigation = React.memo<WidgetNavigationProps>(
                                         {widget.title}
                                     </span>
                                 </div>
-                            </AccordionSummary>
-                        </Accordion>
+                            </div>
+                        </li>
                     ))}
-                </div>
+                </ul>
             </>
         );
     }
