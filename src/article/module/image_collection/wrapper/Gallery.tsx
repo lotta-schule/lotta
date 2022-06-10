@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GridList, GridListTile } from '@material-ui/core';
+import { GridList, GridListItem } from 'shared/general/gridlist/GridList';
 import { Delete } from '@material-ui/icons';
 import { Button } from 'shared/general/button/Button';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
@@ -46,9 +46,9 @@ export const Gallery = React.memo<GalleryProps>(
         );
         return (
             <>
-                <GridList cols={3}>
+                <GridList className={styles.root}>
                     {sortedFiles.map((file, index) => (
-                        <GridListTile
+                        <GridListItem
                             cols={1}
                             key={file.id}
                             style={{ position: 'relative', height: '100%' }}
@@ -111,7 +111,7 @@ export const Gallery = React.memo<GalleryProps>(
                                 onSelect={() => setSelectedFileIndex(index)}
                                 className={styles.img}
                             />
-                        </GridListTile>
+                        </GridListItem>
                     ))}
                 </GridList>
 
