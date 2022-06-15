@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { File } from 'util/model';
 import { ContentModuleModel } from 'model';
-import { Player, ControlBar } from 'video-react';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useServerData } from 'shared/ServerDataContext';
 import find from 'lodash/find';
@@ -54,7 +53,12 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
         );
     }
     return (
-        <Player playsInline poster={posterFileLocation || undefined}>
+        <video
+            playsInline
+            controls
+            poster={posterFileLocation || undefined}
+            style={{ width: '100%' }}
+        >
             {videoFiles.map((vf) => (
                 <source
                     key={File.getFileConversionRemoteLocation(baseUrl, vf)}
@@ -62,8 +66,7 @@ export const VideoVideo = React.memo<VideoVideoProps>(({ contentModule }) => {
                     type={vf.mimeType}
                 />
             ))}
-            <ControlBar autoHide={true} />
-        </Player>
+        </video>
     );
 });
 VideoVideo.displayName = 'VideoVideo';
