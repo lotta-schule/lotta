@@ -7,15 +7,12 @@
     border-radius: 0.5em;
     font-size: 0.8rem;
     width: 100%;
-    background-color: rgba(var(--lotta-primary-color), 0.1);
     outline: transparent solid 1px;
+    -webkit-appearance: button;
+    @supports not (-moz-appearance: none) {
+        background-color: rgba(var(--lotta-primary-color), 0.2);
+    }
     &:focus-visible {
         outline: rgba(var(--lotta-primary-color), 1) solid 1px;
-    }
-    @media (prefers-color-scheme: dark) {
-        optgroup,
-        option {
-            color: rgba(var(--lotta-contrast-text-color), 1);
-        }
     }
 }
