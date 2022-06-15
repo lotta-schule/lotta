@@ -14,6 +14,7 @@
 
         display: flex;
         align-items: stretch;
+        overflow: auto;
 
         @media print {
             &::before {
@@ -27,6 +28,7 @@
         .buttonWrapper {
             text-align: center;
             flex: 0 0 25%;
+            margin-right: var(--lotta-spacing);
             @media screen and (max-width: $max-xs) {
                 flex: 0 0 45%;
             }
