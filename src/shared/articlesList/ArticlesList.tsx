@@ -11,6 +11,7 @@ import Link from 'next/link';
 import getConfig from 'next/config';
 
 import styles from './ArticlesList.module.scss';
+import clsx from 'clsx';
 
 const {
     publicRuntimeConfig: { cloudimageToken },
@@ -77,7 +78,7 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                                         <img
                                             className={styles.previewImage}
                                             src={`https://${cloudimageToken}.cloudimg.io/cover/${
-                                                40 * retinaMultiplier
+                                                60 * retinaMultiplier
                                             }x${
                                                 40 * retinaMultiplier
                                             }/foil1/${File.getFileRemoteLocation(
@@ -109,12 +110,38 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                             )}
                         </td>
                         <td>
-                            {article.published && <span>Veröffentlicht</span>}
+                            {article.published && (
+                                <div className={styles.progressSection}>
+                                    <div
+                                        className={clsx(
+                                            styles.colorTag,
+                                            styles.published
+                                        )}
+                                    ></div>
+                                    <span>Veröffentlicht</span>
+                                </div>
+                            )}
                             {article.readyToPublish && !article.published && (
-                                <span>Bereit zur Freigabe</span>
+                                <div className={styles.progressSection}>
+                                    <div
+                                        className={clsx(
+                                            styles.colorTag,
+                                            styles.readyToPublish
+                                        )}
+                                    ></div>
+                                    <span>Bereit zur Freigabe</span>
+                                </div>
                             )}
                             {!article.readyToPublish && !article.published && (
-                                <span>In Bearbeitung</span>
+                                <div className={styles.progressSection}>
+                                    <div
+                                        className={clsx(
+                                            styles.colorTag,
+                                            styles.inProcess
+                                        )}
+                                    ></div>
+                                    <span>In Bearbeitung</span>
+                                </div>
                             )}
                         </td>
                     </tr>
