@@ -1,0 +1,18 @@
+@import 'colors';
+
+.root {
+    font-size: 0.85em;
+    color: rgba(var(--lotta-text-color), 0.5);
+    margin: auto;
+    display: inline-flex;
+    a {
+        padding-right: var(--lotta-spacing);
+        &:not(:first-child) {
+            padding-left: var(--lotta-spacing);
+        }
+    }
+    svg {
+        width: 0.8em;
+        height: 0.8em;
+    }
+}
