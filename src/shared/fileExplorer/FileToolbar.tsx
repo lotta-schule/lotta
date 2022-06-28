@@ -4,11 +4,10 @@ import {
     CreateNewFolderOutlined,
     FileCopyOutlined,
     DeleteOutlineOutlined,
-    HomeOutlined,
     Info,
     InfoOutlined,
 } from '@material-ui/icons';
-import { Zoom, Breadcrumbs } from '@material-ui/core';
+import { Zoom } from '@material-ui/core';
 import { Badge } from 'shared/general/badge/Badge';
 import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
@@ -16,6 +15,7 @@ import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useIsMobile } from 'util/useIsMobile';
 import { File } from 'util/model';
+import { PathViewer } from './PathViewer';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
@@ -54,57 +54,10 @@ export const FileToolbar = React.memo(() => {
                     className={styles.title}
                     data-testid="FileExplorerToolbarPath"
                 >
-                    <Breadcrumbs
-                        component={'div'}
-                        maxItems={7}
-                        itemsBeforeCollapse={2}
-                        itemsAfterCollapse={4}
-                        aria-label="breadcrumb"
-                        style={{ fontSize: '.85rem' }}
-                    >
-                        {state.currentPath.length > 1 && (
-                            <a
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    dispatch({
-                                        type: 'setPath',
-                                        path: [{ id: null }],
-                                    });
-                                }}
-                            >
-                                <HomeOutlined />
-                            </a>
-                        )}
-                        {state.currentPath
-                            .slice(1)
-                            .map((pathDirectory, i, array) => {
-                                const currentPathComponents = array.slice(
-                                    0,
-                                    i + 1
-                                );
-                                const currentPathString = currentPathComponents
-                                    .map((dir) =>
-                                        dir.id === null ? '' : dir.name
-                                    )
-                                    .join('/');
-                                return (
-                                    <a
-                                        key={currentPathString}
-                                        onClick={(_e) => {
-                                            dispatch({
-                                                type: 'setPath',
-                                                path: [
-                                                    { id: null },
-                                                    ...currentPathComponents,
-                                                ],
-                                            });
-                                        }}
-                                    >
-                                        {pathDirectory.id && pathDirectory.name}
-                                    </a>
-                                );
-                            })}
-                    </Breadcrumbs>
+                    <PathViewer
+                        path={state.currentPath}
+                        onChange={(path) => dispatch({ type: 'setPath', path })}
+                    />
                 </div>
                 <div className={styles.spacer} />
                 <div className={styles.actions}>
