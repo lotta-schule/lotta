@@ -73,6 +73,7 @@ export const FileToolbar = React.memo(() => {
                                 data-testid="FileExplorerToolbarCurrentUploadsButton"
                             >
                                 <CircularProgress
+                                    aria-label={'Dateien werden hochgeladen.'}
                                     size={20}
                                     value={uploadTotalProgress}
                                 />

@@ -58,8 +58,7 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
         const isSoleAdminGroup =
             data?.group.isAdminGroup &&
             groups.filter((g) => g.isAdminGroup).length < 2;
-        const enrollmentTokens =
-            data?.group.enrollmentTokens ?? [];
+        const enrollmentTokens = data?.group.enrollmentTokens ?? [];
 
         return (
             <Dialog
@@ -67,7 +66,12 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
                 onRequestClose={onRequestClose}
                 title={`Gruppe "${group?.name}" bearbeiten`}
             >
-                {isLoading && <LinearProgress isIndeterminate />}
+                {isLoading && (
+                    <LinearProgress
+                        aria-label={'Gruppeninformationen werden geladen'}
+                        isIndeterminate
+                    />
+                )}
                 {group && (
                     <form
                         className={styles.root}

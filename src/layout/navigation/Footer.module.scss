@@ -2,6 +2,8 @@
 
 .root {
     display: none;
+    background-color: rgb(var(--lotta-box-background-color));
+    padding: 0 0.5em;
     font-size: 0.8rem;
     @media screen and (max-width: $max-sm) {
         display: block;
@@ -13,7 +15,7 @@
     }
     @media screen and (min-width: $min-md) {
         display: block;
-        top: 0;
+        top: -0.5em;
         right: -1em;
         position: absolute;
         transform: rotate(-90deg);

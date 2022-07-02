@@ -33,7 +33,6 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
             <div role={'group'}>
                 {avatars.splice(0, max).map((child, index) => {
                     return React.cloneElement(child, {
-                        key: (child.props as any).key ?? index,
                         className: clsx(child.props.className, styles.avatar),
                     });
                 })}

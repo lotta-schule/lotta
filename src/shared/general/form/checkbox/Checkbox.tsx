@@ -19,7 +19,7 @@ export type CheckboxProps = {
     React.AriaAttributes;
 
 export const Checkbox = React.memo<CheckboxProps>(
-    ({ children, style, className, featureColor, ...props }) => {
+    ({ style, className, featureColor, ...props }) => {
         const customStyle =
             featureColor &&
             ({
@@ -51,7 +51,7 @@ export const Checkbox = React.memo<CheckboxProps>(
                         [styles.isDisabled]: props.isDisabled,
                     })}
                 />
-                {children}
+                {props.children}
             </label>
         );
     }
