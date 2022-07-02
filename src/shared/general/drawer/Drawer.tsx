@@ -28,6 +28,21 @@ export const Drawer = ({ children, isOpen, onClose }: DrawerProps) => {
 
     const { modalProps } = useModal({});
 
+    React.useEffect(() => {
+        if (isOpen) {
+            const handler = ({ code }: KeyboardEvent) => {
+                if (code === 'Escape') {
+                    onClose?.();
+                }
+            };
+            document.addEventListener('keydown', handler);
+            return () => {
+                document.removeEventListener('keydown', handler);
+            };
+        }
+        return undefined;
+    }, [isOpen, onClose]);
+
     const props = mergeProps(overlayProps, modalProps) as any;
 
     return (
@@ -44,6 +59,7 @@ export const Drawer = ({ children, isOpen, onClose }: DrawerProps) => {
         >
             <div className={styles.sidebar}>
                 <Button
+                    aria-label={'Leiste schließen'}
                     icon={<ChevronRight />}
                     variant={'borderless'}
                     onClick={() => onClose?.()}
