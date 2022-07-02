@@ -144,7 +144,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     <Input
                         className={styles.input}
                         aria-label={'Name der Kategorie'}
-                        value={category.title}
+                        value={category.title ?? ''}
                         onChange={(e) =>
                             setCategory({
                                 ...category,
@@ -349,7 +349,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                     <Input
                                         className={styles.input}
                                         aria-label={'Ziel der Weiterleitung'}
-                                        value={category.redirect as string}
+                                        value={category.redirect ?? ''}
                                         onChange={(e) =>
                                             setCategory({
                                                 ...category,

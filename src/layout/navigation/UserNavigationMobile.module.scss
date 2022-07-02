@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-rows: 1fr 1fr 1fr;
-    height: 100%;
+    grid-gap: 2.5em 0.5em;
 
     .button {
         display: flex;
@@ -11,9 +11,11 @@
         margin: calc(0.5 * var(--lotta-spacing));
         text-align: center;
         & > :first-child {
-            margin: auto;
-            width: 35%;
-            height: 35%;
+            margin: auto auto 1em auto;
+        }
+        & > :last-child {
+            font-size: 0.75rem;
+            font-size: clamp(0.2rem, 2.5vw, 1.2rem);
         }
     }
 

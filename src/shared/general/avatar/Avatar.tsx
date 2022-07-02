@@ -22,17 +22,22 @@ export interface AvatarProps {
 /**
  * Primary UI shared for userAvatar interaction
  */
-
-export const Avatar = React.memo<AvatarProps>(
-    ({ src, title, className, style }) => {
-        return (
-            <div
-                role={'img'}
-                title={title}
-                className={clsx(styles.root, className)}
-                style={{ ...style, backgroundImage: `url(${src})` }}
-            />
-        );
-    }
+export const Avatar = React.memo(
+    React.forwardRef(
+        (
+            { src, title, className, style }: AvatarProps,
+            ref: React.ForwardedRef<HTMLDivElement>
+        ) => {
+            return (
+                <div
+                    role={'img'}
+                    title={title}
+                    ref={ref}
+                    className={clsx(styles.root, className)}
+                    style={{ ...style, backgroundImage: `url(${src})` }}
+                />
+            );
+        }
+    )
 );
 Avatar.displayName = 'Avatar';

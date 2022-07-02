@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Drawer } from '@material-ui/core';
 import { NoSsr } from 'shared/general/util/NoSsr';
+import { Drawer } from 'shared/general/drawer/Drawer';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';
@@ -46,16 +46,8 @@ export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
     if (isMobile) {
         return (
             <Drawer
-                /* disable all fancy pancy a11y features because it breaks when 
-                    we want to use our own fancy pancy a11y features for nested dialogs */
-                disableAutoFocus
-                disableEnforceFocus
-                disableRestoreFocus
-                disableEscapeKeyDown
                 data-testid={'BaseLayoutSidebar'}
-                classes={{ paper: styles.drawer }}
-                anchor={'right'}
-                open={isMobileDrawerOpen}
+                isOpen={isMobileDrawerOpen}
                 onClose={() => closeDrawer()}
             >
                 {isEmpty ? (
