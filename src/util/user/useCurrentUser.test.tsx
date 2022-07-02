@@ -5,6 +5,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { UserModel } from 'model';
 import { useCurrentUser } from './useCurrentUser';
 import { SomeUser } from 'test/fixtures';
+
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
 describe('util/userAvatar/useCurrentUser', () => {

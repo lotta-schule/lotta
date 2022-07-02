@@ -84,7 +84,10 @@ export const DialogShell: React.FC<DialogProps> = ({
 
     usePreventScroll();
     const { modalProps } = useModal();
-    const { overlayProps, underlayProps } = useOverlay(otherProps as any, ref);
+    const { overlayProps, underlayProps } = useOverlay(
+        { onClose: () => onRequestClose?.(), isKeyboardDismissDisabled: true },
+        ref
+    );
     const { dialogProps, titleProps } = useDialog(otherProps as any, ref);
 
     return (
