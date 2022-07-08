@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Slider } from '@material-ui/core';
 import { SdStorage } from '@material-ui/icons';
 import {
     Button,
@@ -103,16 +102,16 @@ export const ConstraintList = () => {
                             <SdStorage />
                         </div>
                         <div className={styles.slider}>
-                            <Slider
+                            <input
+                                type={'range'}
                                 value={value}
-                                onChange={(_e, value) =>
-                                    setValue(value as number)
+                                onChange={(e) =>
+                                    setValue(parseInt(e.target.value))
                                 }
                                 aria-labelledby={'userAvatar-storage-limit'}
                                 step={50}
                                 min={0}
                                 max={8192}
-                                marks={true}
                             />
                         </div>
                         <div>
