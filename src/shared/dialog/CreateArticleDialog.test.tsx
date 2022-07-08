@@ -16,7 +16,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
         );
     });
 
-    it('should show the shared if isOpen is true', async () => {
+    it('should show the dialog if isOpen is true', async () => {
         render(
             <CreateArticleDialog
                 isOpen
@@ -29,7 +29,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateArticleDialog', () => {
         });
     });
 
-    it('should not show the shared if isOpen is false', async () => {
+    it('should not show the dialog if isOpen is false', async () => {
         render(
             <CreateArticleDialog
                 isOpen={false}

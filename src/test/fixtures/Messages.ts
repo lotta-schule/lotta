@@ -2,15 +2,16 @@ import { ConversationModel, NewMessageDestination, UserModel } from 'model';
 
 export const createConversation = (
     from: UserModel,
-    { user, group }: NewMessageDestination
+    { user, group }: NewMessageDestination,
+    unreadMessages = 0
 ): ConversationModel => {
     return {
         id: String(Math.floor(Math.random() * 10_000)),
         insertedAt: '2020-11-28T07:37:02',
         updatedAt: '2020-11-28T07:37:02',
+        unreadMessages,
         users: user ? [from, user] : [],
         groups: group ? [group] : [],
-        unreadMessages: 0,
         messages: [
             {
                 id: String(Math.floor(Math.random() * 10_000)),

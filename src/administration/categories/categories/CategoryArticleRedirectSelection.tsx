@@ -47,7 +47,10 @@ export const CategoryArticleRedirectSelection =
             );
 
             return (
-                <section data-testid={'CategoryArticleRedirectSelection'}>
+                <section
+                    data-testid={'CategoryArticleRedirectSelection'}
+                    style={{ display: 'flex', flexDirection: 'column' }}
+                >
                     <Autocomplete
                         id={'CategoryArticleRedirectSelectionSearch'}
                         inputMode={'search'}

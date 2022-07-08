@@ -83,7 +83,7 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
             <FormResultsDialog
                 isOpen={false}
                 onRequestClose={() => {}}
-                contentModule={contentModule}
+                contentModule={contentModule as any}
             />,
             {},
             { additionalMocks: [...mocks] }
@@ -96,7 +96,7 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
             <FormResultsDialog
                 isOpen
                 onRequestClose={() => {}}
-                contentModule={contentModule}
+                contentModule={contentModule as any}
             />,
             {},
             { additionalMocks: [...mocks] }
@@ -116,7 +116,7 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
             <FormResultsDialog
                 isOpen
                 onRequestClose={() => {}}
-                contentModule={contentModule}
+                contentModule={contentModule as any}
             />,
             {},
             { additionalMocks: mocks }

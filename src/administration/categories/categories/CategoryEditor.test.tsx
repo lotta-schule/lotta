@@ -142,7 +142,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                 await waitFor(() => {
                     expect(
                         screen.getByTestId('ExternalRedirectWrapper')
-                    ).toHaveStyle({ height: 0 });
+                    ).not.toBeVisible();
                 });
             });
         });
@@ -169,11 +169,11 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                 await waitFor(() => {
                     expect(
                         screen.getByTestId('InternalCategoryRedirectWrapper')
-                    ).toHaveStyle({ height: 0 });
+                    ).toBeVisible();
                 });
             });
 
-            it('should show the categorry select when internal category link is selected', async () => {
+            it('should show the category select when internal category link is selected', async () => {
                 const screen = render(
                     <CategoryEditor
                         selectedCategory={internalFaecherCategoy}
@@ -195,7 +195,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                 await waitFor(() => {
                     expect(
                         screen.getByTestId('InternalCategoryRedirectWrapper')
-                    ).toHaveStyle({ height: 0 });
+                    ).toBeVisible();
                 });
             });
         });
@@ -222,7 +222,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                 await waitFor(() => {
                     expect(
                         screen.getByTestId('InternalArticleRedirectWrapper')
-                    ).toHaveStyle({ height: 0 });
+                    ).toBeVisible();
                 });
             });
 
@@ -248,7 +248,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
                 await waitFor(() => {
                     expect(
                         screen.getByTestId('InternalArticleRedirectWrapper')
-                    ).toHaveStyle({ height: 0 });
+                    ).toBeVisible();
                 });
             });
         });
@@ -295,8 +295,8 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
 
                 await waitFor(() => {
                     expect(
-                        screen.getByTestId('InternalCategoryRedirectWrapper')
-                    ).toHaveStyle({ height: 0 });
+                        screen.getByTestId('ExternalRedirectWrapper')
+                    ).toBeVisible();
                 });
                 expect(
                     screen.getByRole('textbox', {

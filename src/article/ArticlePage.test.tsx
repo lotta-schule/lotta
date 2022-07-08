@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render, waitFor } from 'test/util';
 import { Schulfest, Weihnachtsmarkt } from 'test/fixtures';
 import { ArticlePage } from './ArticlePage';
 
@@ -38,6 +38,8 @@ describe('shared/article/ArticleLayout', () => {
             {},
             { additionalMocks }
         );
-        expect(await screen.findByTestId('RelatedArticlesList')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByTestId('RelatedArticlesList')).toBeVisible();
+        });
     });
 });

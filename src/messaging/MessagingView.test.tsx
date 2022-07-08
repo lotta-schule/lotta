@@ -154,6 +154,7 @@ describe('src/messaging/MessagingView', () => {
                                         users: [SomeUser, KeinErSieEsUser],
                                         groups: [],
                                         messages: [{ id: 99901551 }],
+                                        unreadMessages: 0,
                                     },
                                 },
                             },

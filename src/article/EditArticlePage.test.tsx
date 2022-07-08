@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { SomeUser, Weihnachtsmarkt } from 'test/fixtures';
 import { EditArticlePage } from './EditArticlePage';
-import { ContentModuleType } from 'model';
+import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
 import { Router } from 'next/router';
 import MockDate from 'mockdate';
 import userEvent from '@testing-library/user-event';
@@ -11,6 +11,28 @@ import ArticleIsUpdatedSubscription from 'api/subscription/GetArticleSubscriptio
 import UpdateArticleMutation from 'api/mutation/UpdateArticleMutation.graphql';
 
 describe('article/EditArticlePage', () => {
+    const createOnSave = (
+        article: ArticleModel,
+        inputArticle: Omit<Partial<ArticleModel>, 'contentModules'> & {
+            contentModules: Partial<ContentModuleModel>[];
+        }
+    ) =>
+        jest.fn(() => ({
+            data: {
+                article: {
+                    ...article,
+                    ...inputArticle,
+                    contentModules: inputArticle.contentModules.map((cm) => ({
+                        ...cm,
+                        id:
+                            cm.id ||
+                            (
+                                Math.random() * Number.MAX_SAFE_INTEGER
+                            ).toString(),
+                    })),
+                },
+            },
+        }));
     it('should render the EditArticleLayout without error', () => {
         render(
             <EditArticlePage article={Weihnachtsmarkt} />,
@@ -70,16 +92,13 @@ describe('article/EditArticlePage', () => {
         });
 
         it('should call saveArticle endpoint with updated content modules', async () => {
-            const onSave = jest.fn(() => ({
-                data: { article: { ...Weihnachtsmarkt, ...variables.article } },
-            }));
             const variables = {
                 id: Weihnachtsmarkt.id,
                 article: {
                     contentModules: Weihnachtsmarkt.contentModules
                         .map((cm) => ({
                             id: cm.id,
-                            type: cm.type as string,
+                            type: cm.type,
                             sortKey: cm.sortKey,
                             files: cm.files,
                             configuration: cm.configuration
@@ -111,6 +130,7 @@ describe('article/EditArticlePage', () => {
                     category: null,
                 },
             };
+            const onSave = createOnSave(Weihnachtsmarkt, variables.article);
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
@@ -139,16 +159,13 @@ describe('article/EditArticlePage', () => {
                 expect(url).toMatch(/^\/a\//);
                 return true;
             });
-            const onSave = jest.fn(() => ({
-                data: { article: { ...Weihnachtsmarkt, ...variables.article } },
-            }));
             const variables = {
                 id: Weihnachtsmarkt.id,
                 article: {
                     contentModules: Weihnachtsmarkt.contentModules
                         .map((cm) => ({
                             id: cm.id,
-                            type: cm.type as string,
+                            type: cm.type,
                             sortKey: cm.sortKey,
                             files: cm.files,
                             configuration: cm.configuration
@@ -180,6 +197,7 @@ describe('article/EditArticlePage', () => {
                     category: null,
                 },
             };
+            const onSave = createOnSave(Weihnachtsmarkt, variables.article);
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
