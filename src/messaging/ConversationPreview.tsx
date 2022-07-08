@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Badge } from 'shared/general/badge/Badge';
+import { Badge, Button } from '@lotta-schule/hubert';
 import { ConversationModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { User } from 'util/model';
-import { Button } from 'shared/general/button/Button';
 import { format } from 'date-fns';
 import { Message } from 'util/model/Message';
 import de from 'date-fns/locale/de';

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { ScheduleWidgetConfig } from 'model';
-import { Label } from 'shared/general/label/Label';
-import { Input } from 'shared/general/form/input/Input';
-import { Select } from 'shared/general/form/select/Select';
+import { Input, Label, Select } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';
 

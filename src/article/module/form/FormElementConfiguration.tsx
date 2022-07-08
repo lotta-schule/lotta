@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { PlusOne } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
-import { Select } from 'shared/general/form/select/Select';
+import { Button, Checkbox, Input, Label, Select } from '@lotta-schule/hubert';
 import { FormElement, FormElementOption } from './Form';
 
 import styles from './FormElementConfiguration.module.scss';

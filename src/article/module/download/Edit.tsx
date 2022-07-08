@@ -2,13 +2,11 @@ import * as React from 'react';
 import { Delete } from '@material-ui/icons';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { ContentModuleModel, FileModel } from 'model';
-import { Button } from 'shared/general/button/Button';
-import { Input } from 'shared/general/form/input/Input';
+import { Button, DragHandle, Input } from '@lotta-schule/hubert';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { FileSize } from 'util/FileSize';
 
 import styles from './Download.module.scss';
-import { DragHandle } from 'shared/general/icon';
 
 export interface EditProps {
     contentModule: ContentModuleModel;

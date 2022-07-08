@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { UserGroupModel, ID, UserGroupInputModel } from 'model';
-import { Dialog } from 'shared/general/dialog/Dialog';
+import {
+    Button,
+    Checkbox,
+    Dialog,
+    ErrorMessage,
+    Input,
+    Label,
+    LinearProgress,
+} from '@lotta-schule/hubert';
 import { useUserGroups } from 'util/tenant/useUserGroups';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { DeleteUserGroupDialog } from './DeleteUserGroupDialog';
 
 import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';

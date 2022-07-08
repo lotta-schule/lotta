@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { UserModel } from 'model';
-import { AvatarGroup } from 'shared/general/avatar/AvatarGroup';
+import { AvatarGroup, Deletable, Tooltip } from '@lotta-schule/hubert';
 import { User } from 'util/model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { SearchUserField } from 'administration/users/SearchUserField';
-import { Deletable } from 'shared/general/util/Deletable';
-import { Tooltip } from 'shared/general/util/Tooltip';
 import clsx from 'clsx';
 
 import styles from './AuthorAvatarsList.module.scss';

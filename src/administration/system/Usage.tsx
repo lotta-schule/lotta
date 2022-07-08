@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Box } from 'shared/general/layout/Box';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { Box, ErrorMessage } from '@lotta-schule/hubert';
 import { useTenant } from 'util/tenant/useTenant';
 import { FileSize } from 'util/FileSize';
 import { format } from 'date-fns';

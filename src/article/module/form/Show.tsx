@@ -3,8 +3,7 @@ import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';
 import { useMutation } from '@apollo/client';
-import { SuccessMessage } from 'shared/general/SuccessMessage';
-import { Button } from 'shared/general/button/Button';
+import { Button, SuccessMessage } from '@lotta-schule/hubert';
 import SendFormResponseMutation from 'api/mutation/SendFormResponseMutation.graphql';
 
 import styles from './Show.module.scss';

@@ -1,5 +1,3 @@
-@import 'colors';
-
 .root {
     background: rgba(var(--lotta-box-background-color), 1);
     border-color: transparent;
@@ -12,7 +10,7 @@
     letter-spacing: 0;
     border-radius: 0;
     &:hover {
-        background-color: l_color(highlight, 0.3) !important;
+        background-color: rgba(var(--lotta-highlight-color), 0.3) !important;
         filter: none;
     }
 
@@ -20,11 +18,11 @@
         position: initial;
         top: calc(65px + calc(0.5 * var(--lotta-spacing)));
         z-index: 1;
-        border: 1px solid l_color(secondary);
+        border: 1px solid rgb(var(--lotta-secondary-color));
         border-left-width: calc(0.5 * var(--lotta-spacing));
         border-left-style: solid;
-        border-left-color: l_color(secondary);
-        background-color: l_color(box-background);
+        border-left-color: rgb(var(--lotta-secondary-color));
+        background-color: rgb(var(--lotta-box-background-color));
     }
 }
 

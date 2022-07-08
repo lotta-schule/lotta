@@ -8,8 +8,13 @@ import {
     InfoOutlined,
 } from '@material-ui/icons';
 import { Zoom } from '@material-ui/core';
-import { Badge } from 'shared/general/badge/Badge';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
+import {
+    Badge,
+    Button,
+    CircularProgress,
+    Tooltip,
+    Toolbar,
+} from '@lotta-schule/hubert';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -19,9 +24,6 @@ import { PathViewer } from './PathViewer';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';
-import { Tooltip } from 'shared/general/util/Tooltip';
-import { Toolbar } from 'shared/general/layout/Toolbar';
-import { Button } from 'shared/general/button/Button';
 
 import styles from './FileToolbar.module.scss';
 

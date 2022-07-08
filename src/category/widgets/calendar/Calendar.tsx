@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { List, ListItem } from 'shared/general/list/List';
+import {
+    Divider,
+    ErrorMessage,
+    List,
+    ListItem,
+    LinearProgress,
+} from '@lotta-schule/hubert';
 import { FiberManualRecord } from '@material-ui/icons';
 import { useApolloClient } from '@apollo/client';
 import { format, intervalToDuration, isSameMinute } from 'date-fns';
@@ -10,9 +16,6 @@ import {
     CalendarWidgetCalendarConfig,
     WidgetModelType,
 } from 'model';
-import { Divider } from 'shared/general/divider/Divider';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import clsx from 'clsx';
 
 import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
@@ -151,20 +154,16 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                                             }
                                                         />
                                                     )}
-                                                    {format(
-                                                        start,
-                                                        'P',
-                                                        { locale: de }
-                                                    )}
+                                                    {format(start, 'P', {
+                                                        locale: de,
+                                                    })}
                                                     {isMultipleDays && (
                                                         <>
                                                             {' '}
                                                             -{' '}
-                                                            {format(
-                                                                end,
-                                                                'P',
-                                                                { locale: de }
-                                                            )}
+                                                            {format(end, 'P', {
+                                                                locale: de,
+                                                            })}
                                                         </>
                                                     )}
                                                 </div>
@@ -172,11 +171,9 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                                     <div
                                                         className={styles.time}
                                                     >
-                                                        {format(
-                                                            start,
-                                                            'p',
-                                                            { locale: de }
-                                                        )}
+                                                        {format(start, 'p', {
+                                                            locale: de,
+                                                        })}
                                                         {!isSameMinute(
                                                             start,
                                                             end

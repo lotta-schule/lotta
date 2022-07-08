@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { UserGroupModel, ID } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+    ErrorMessage,
+} from '@lotta-schule/hubert';
 
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';

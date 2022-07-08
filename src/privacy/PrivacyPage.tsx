@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box } from 'shared/general/layout/Box';
+import { Box } from '@lotta-schule/hubert';
 import { Header, Main, Sidebar } from 'layout';
 
 import styles from './PrivacyPage.module.scss';

@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Tooltip } from '@material-ui/core';
-import { Table } from 'shared/general/table/Table';
+import { Checkbox, Table } from '@lotta-schule/hubert';
 import { FileModel } from 'model';
 import { Article, Category, File } from 'util/model';
-import { Checkbox } from 'shared/general/form/checkbox';
 import { useServerData } from 'shared/ServerDataContext';
 import Link from 'next/link';
 

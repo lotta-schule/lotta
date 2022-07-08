@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
 import {
+    Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
+    ErrorMessage,
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 import { useGetFieldError } from 'util/useGetFieldError';
 
 import RegisterMutation from 'api/mutation/RegisterMutation.graphql';

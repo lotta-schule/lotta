@@ -3,13 +3,13 @@ import { Tooltip } from '@material-ui/core';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+    ErrorMessage,
+} from '@lotta-schule/hubert';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import fileExplorerContext from './context/FileExplorerContext';

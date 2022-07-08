@@ -6,16 +6,13 @@ import {
     ExpandLess,
     ExpandMore,
 } from '@material-ui/icons';
-import { Table } from 'shared/general/table/Table';
-import { Button } from 'shared/general/button/Button';
-import { Input, InputProps } from 'shared/general/form/input/Input';
+import { Button, Input, InputProps, Table, Tooltip } from '@lotta-schule/hubert';
 import { ContentModuleModel } from 'model';
 import {
     TableCell as TableCellInterface,
     TableContent,
     TableConfiguration,
 } from './Table';
-import { Tooltip } from 'shared/general/util/Tooltip';
 
 import styles from './Table.module.scss';
 
@@ -245,9 +242,7 @@ export const Edit = React.memo<EditProps>(
         return (
             <div className={styles.edit}>
                 <div className={styles.upperToolbar}>
-                    <Tooltip
-                        label={'letzte Spalte entfernen'}
-                    >
+                    <Tooltip label={'letzte Spalte entfernen'}>
                         <span>
                             <Button
                                 small
@@ -271,9 +266,7 @@ export const Edit = React.memo<EditProps>(
                             />
                         </span>
                     </Tooltip>
-                    <Tooltip
-                        label={'Spalte hinzufügen'}
-                    >
+                    <Tooltip label={'Spalte hinzufügen'}>
                         <Button
                             small
                             icon={<SkipNext />}
@@ -295,9 +288,7 @@ export const Edit = React.memo<EditProps>(
                     </Tooltip>
                 </div>
                 <div className={styles.asideToolbar}>
-                    <Tooltip
-                        label={'Zeile entfernen'}
-                    >
+                    <Tooltip label={'Zeile entfernen'}>
                         <span>
                             <Button
                                 small
@@ -318,9 +309,7 @@ export const Edit = React.memo<EditProps>(
                             />
                         </span>
                     </Tooltip>
-                    <Tooltip
-                        label={'Zeile hinzufügen'}
-                    >
+                    <Tooltip label={'Zeile hinzufügen'}>
                         <Button
                             small
                             icon={<ExpandMore />}

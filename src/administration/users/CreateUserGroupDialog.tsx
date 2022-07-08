@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { UserGroupModel } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
+    ErrorMessage,
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 
 import GetUserGroupsQuery from 'api/query/GetUserGroupsQuery.graphql';
 import CreateUserGroupMutation from 'api/mutation/CreateUserGroupMutation.graphql';

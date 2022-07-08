@@ -11,7 +11,13 @@ import {
     Forum,
     ExpandMore,
 } from '@material-ui/icons';
-import { Badge } from 'shared/general/badge/Badge';
+import {
+    Badge,
+    NavigationButton,
+    Menu,
+    MenuItem,
+    MenuList,
+} from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
 import { ArticleModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -19,11 +25,9 @@ import { Article, User } from 'util/model';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { useOnLogout } from 'util/user/useOnLogout';
-import { NavigationButton } from 'shared/general/button/NavigationButton';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useRouter } from 'next/router';
-import { Menu, MenuItem, MenuList } from 'shared/general/menu';
 import Link from 'next/link';
 import clsx from 'clsx';
 

@@ -15,9 +15,7 @@ import {
 } from './context/FileExplorerContext';
 import { Action, reducer } from './context/reducer';
 import { MoveDirectoryDialog } from './MoveDirectoryDialog';
-import { Button } from 'shared/general/button/Button';
-import { Box } from 'shared/general/layout/Box';
-import { Toolbar } from 'shared/general/layout/Toolbar';
+import { Button, Box, Toolbar } from '@lotta-schule/hubert';
 import clsx from 'clsx';
 
 import styles from './FileExplorer.module.scss';

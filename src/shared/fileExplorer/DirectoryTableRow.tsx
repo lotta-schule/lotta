@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MoreVert, CreateOutlined, FileCopyOutlined } from '@material-ui/icons';
-import { Menu, MenuItem, MenuList } from 'shared/general/menu';
+import { Menu, MenuItem, MenuList } from '@lotta-schule/hubert';
 import { DirectoryModel } from 'model';
 import { File } from 'util/model/File';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';

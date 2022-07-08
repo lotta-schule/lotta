@@ -1,16 +1,19 @@
 import * as React from 'react';
-import { Button } from 'shared/general/button/Button';
-import { ButtonGroup } from 'shared/general/button/ButtonGroup';
-import { Checkbox } from 'shared/general/form/checkbox';
-import { Radio, RadioGroup } from 'shared/general/form/radio';
-import { Label } from 'shared/general/label/Label';
-import { Select } from 'shared/general/form/select/Select';
+import {
+    Button,
+    ButtonGroup,
+    Checkbox,
+    Input,
+    Label,
+    Radio,
+    RadioGroup,
+    Select,
+} from '@lotta-schule/hubert';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { FormElement as FormElementInterface } from './Form';
 import { FileModel } from 'model';
 import { Close } from '@material-ui/icons';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Input } from 'shared/general/form/input/Input';
 
 export interface FormElementProps {
     element: FormElementInterface;

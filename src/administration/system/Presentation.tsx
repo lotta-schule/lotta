@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { Theme, useTheme } from '@material-ui/core';
-import { Box } from 'shared/general/layout/Box';
+import { Button, Box, ErrorMessage, Label, Select } from '@lotta-schule/hubert';
 import { get, merge } from 'lodash';
-import { Label } from 'shared/general/label/Label';
-import { Select } from 'shared/general/form/select/Select';
 import { useMutation } from '@apollo/client';
 import { File } from 'util/model';
 import { useTenant } from 'util/tenant/useTenant';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { Button } from 'shared/general/button/Button';
 import { useServerData } from 'shared/ServerDataContext';
 import { SelectTemplateButton } from './presentation/SelectTemplateButton';
 import { ColorSettingRow } from './presentation/ColorSettingRow';

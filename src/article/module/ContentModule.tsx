@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Popover, Box } from '@material-ui/core';
 import {
     MoreVert,
     Delete,
     ArrowUpward,
     ArrowDownward,
 } from '@material-ui/icons';
-import { DragHandle } from 'shared/general/icon';
+import { Button, DragHandle, Divider, Popover } from '@lotta-schule/hubert';
 import { ArticleModel, ContentModuleModel, ContentModuleType } from 'model';
 import { Text } from './text/Text';
 import { Title } from './title/Title';
@@ -23,13 +22,6 @@ import { Table } from './table/Table';
 import { Divider as DividerCM } from './divider/Divider';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import {
-    bindTrigger,
-    bindPopover,
-    usePopupState,
-} from 'material-ui-popup-state/hooks';
-import { Button } from 'shared/general/button/Button';
-import { Divider } from 'shared/general/divider/Divider';
 import clsx from 'clsx';
 
 import styles from './ContentModule.module.scss';
@@ -61,10 +53,6 @@ export const ContentModule = React.memo<ContentModuleProps>(
         onMoveUp,
         onMoveDown,
     }) => {
-        const popupState = usePopupState({
-            variant: 'popover',
-            popupId: 'contentmodule-configuration',
-        });
         const user = useCurrentUser();
 
         const canEditArticle = User.canEditArticle(user, article);
@@ -79,7 +67,9 @@ export const ContentModule = React.memo<ContentModuleProps>(
                         <TitleConfig
                             contentModule={contentModule}
                             onUpdateModule={onUpdateModule}
-                            onRequestClose={popupState.close}
+                            onRequestClose={() => {
+                                /* TODO: ?!?! */
+                            }}
                         />
                     );
                 case ContentModuleType.IMAGE_COLLECTION:
@@ -87,7 +77,9 @@ export const ContentModule = React.memo<ContentModuleProps>(
                         <ImageCollectionConfig
                             contentModule={contentModule}
                             onUpdateModule={onUpdateModule}
-                            onRequestClose={popupState.close}
+                            onRequestClose={() => {
+                                /* TODO: ?!?! */
+                            }}
                         />
                     );
                 case ContentModuleType.DOWNLOAD:
@@ -95,16 +87,18 @@ export const ContentModule = React.memo<ContentModuleProps>(
                         <DownloadConfig
                             contentModule={contentModule}
                             onUpdateModule={onUpdateModule}
-                            onRequestClose={popupState.close}
+                            onRequestClose={() => {
+                                /* TODO: ?!?! */
+                            }}
                         />
                     );
             }
-        }, [contentModule, onUpdateModule, popupState]);
+        }, [contentModule, onUpdateModule]);
 
         return (
             <section
                 className={clsx(styles.root, {
-                    [styles.active]: popupState.isOpen,
+                    [styles.active]: false /* TODO: popupState.isOpen, */,
                     [styles.dragging]: isDragging,
                     [styles.isEditModeEnabled]: isEditModeEnabled,
                 })}
@@ -143,62 +137,42 @@ export const ContentModule = React.memo<ContentModuleProps>(
                             )}
                         </section>
                         <span>
-                            <Button
-                                small
-                                className={styles.dragbarButton}
-                                style={{
-                                    position: 'absolute',
-                                    top: 2,
-                                    right: 2,
-                                }}
-                                aria-label="Einstellungen"
-                                icon={
-                                    <MoreVert
-                                        className={clsx(styles.buttonIcon, {
-                                            [styles.activeButtonIcon]:
-                                                popupState.isOpen,
-                                        })}
-                                    />
-                                }
-                                {...bindTrigger(popupState)}
-                            />
                             <Popover
-                                {...bindPopover(popupState)}
                                 aria-label={'Einstellungen'}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
+                                buttonProps={{
+                                    small: true,
+                                    className: styles.dragbarButton,
+                                    style: {},
+                                    'aria-label': 'Einstellungen',
+                                    icon: (
+                                        <MoreVert
+                                            className={clsx(styles.buttonIcon, {
+                                                [styles.activeButtonIcon]:
+                                                    false /* TODO: popupState.isOpen, */,
+                                            })}
+                                        />
+                                    ),
                                 }}
                             >
-                                <Box py={1} px={2} style={{ overflow: 'auto' }}>
-                                    {config && (
-                                        <>
-                                            {config}
-                                            <Divider />
-                                        </>
-                                    )}
-                                    <Button
-                                        variant={'error'}
-                                        icon={
-                                            <Delete
-                                                className={clsx(
-                                                    styles.buttonIcon
-                                                )}
-                                            />
-                                        }
-                                        aria-label={'Modul löschen'}
-                                        style={{ float: 'right' }}
-                                        onClick={() =>
-                                            onRemoveContentModule?.()
-                                        }
-                                    >
-                                        Modul löschen
-                                    </Button>
-                                </Box>
+                                {config && (
+                                    <>
+                                        {config}
+                                        <Divider />
+                                    </>
+                                )}
+                                <Button
+                                    variant={'error'}
+                                    icon={
+                                        <Delete
+                                            className={clsx(styles.buttonIcon)}
+                                        />
+                                    }
+                                    aria-label={'Modul löschen'}
+                                    style={{ float: 'right' }}
+                                    onClick={() => onRemoveContentModule?.()}
+                                >
+                                    Modul löschen
+                                </Button>
                             </Popover>
                         </span>
                     </div>

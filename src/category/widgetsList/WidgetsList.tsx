@@ -8,7 +8,7 @@ import { useScrollEvent } from 'util/useScrollEvent';
 import { WidgetIcon } from 'category/widgets/WidgetIcon';
 import { CurrentUserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Tabbar, Tab } from 'shared/general/tabs';
+import { Tabbar, Tab } from '@lotta-schule/hubert';
 import SwipeableViews from 'react-swipeable-views';
 import clsx from 'clsx';
 

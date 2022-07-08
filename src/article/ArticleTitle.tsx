@@ -3,7 +3,7 @@ import { ArticleModel } from 'model';
 import { Header } from 'layout';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { Box } from 'shared/general/layout/Box';
+import { Box } from '@lotta-schule/hubert';
 import { ArticlePreviewStandardLayout } from 'article/preview/ArticlePreviewStandardLayout';
 
 export interface ArticleTitleProps {

@@ -3,7 +3,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getApolloClient } from 'api/client';
 import { Main, Sidebar } from 'layout';
 import { ArticleModel, ID } from 'model';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { ErrorMessage } from '@lotta-schule/hubert';
 import { ArticlePage } from 'article/ArticlePage';
 
 import GetArticleQuery from 'api/query/GetArticleQuery.graphql';

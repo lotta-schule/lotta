@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Box } from 'shared/general/layout/Box';
 import {
     ArrowDropDown as ArrowDropDownIcon,
     Event,
@@ -11,14 +10,18 @@ import { ArticleModel, ID } from 'model';
 import { Category, User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { ArticleStateEditor } from 'article/editor/ArticleStateEditor';
-import { Button } from 'shared/general/button/Button';
-import { ButtonGroup } from 'shared/general/button/ButtonGroup';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import {
+    Button,
+    ButtonGroup,
+    Box,
     Dialog,
     DialogContent,
     DialogActions,
-} from 'shared/general/dialog/Dialog';
+    Menu,
+    MenuItem,
+    MenuList,
+} from '@lotta-schule/hubert';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
 import { useRouter } from 'next/router';
 import clsx from 'clsx';
@@ -26,7 +29,6 @@ import clsx from 'clsx';
 import DeleteArticleMutation from 'api/mutation/DeleteArticleMutation.graphql';
 
 import styles from './EditArticleFooter.module.scss';
-import { Menu, MenuItem, MenuList } from 'shared/general/menu';
 
 interface EditArticleFooterProps {
     article: ArticleModel;

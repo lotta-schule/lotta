@@ -12,18 +12,15 @@
 }
 
 .popover {
-    .box {
-        overflow: visible;
-        min-height: 50vh;
-    }
+    overflow: visible;
+    min-height: 50vh;
+    width: 100%;
 
     .tabsPanel {
         margin-top: var(--lotta-spacing);
     }
 
     .input {
-        min-width: 30vw;
-        width: 15em;
-        max-width: 100%;
+        width: 100%;
     }
 }

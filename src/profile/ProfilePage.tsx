@@ -1,15 +1,19 @@
 import * as React from 'react';
-import { Avatar } from 'shared/general/avatar/Avatar';
-import { Box } from 'shared/general/layout/Box';
+import {
+    Avatar,
+    Box,
+    Button,
+    Checkbox,
+    Deletable,
+    Divider,
+    List,
+    ListItem,
+    ErrorMessage,
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 import { useMutation } from '@apollo/client';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
-import { Divider } from 'shared/general/divider/Divider';
-import { List, ListItem } from 'shared/general/list/List';
 import { EnrollmentTokensEditor } from 'profile/component/EnrollmentTokensEditor';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { UpdateEmailDialog } from 'shared/dialog/UpdateEmailDialog';
 import { UpdatePasswordDialog } from 'shared/dialog/UpdatePasswordDialog';
@@ -19,7 +23,6 @@ import { useCurrentUser } from 'util/user/useCurrentUser';
 import { useGetFieldError } from 'util/useGetFieldError';
 import { useServerData } from 'shared/ServerDataContext';
 import { Header, Main } from 'layout';
-import { Deletable } from 'shared/general/util/Deletable';
 import Link from 'next/link';
 
 import UpdateProfileMutation from 'api/mutation/UpdateProfileMutation.graphql';

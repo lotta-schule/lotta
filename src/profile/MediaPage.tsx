@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box } from 'shared/general/layout/Box';
+import { Box } from '@lotta-schule/hubert';
 import { FileExplorer } from 'shared/fileExplorer/FileExplorer';
 import { Header, Main } from 'layout';
 import styles from './MediaPage.module.scss';

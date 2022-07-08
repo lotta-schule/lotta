@@ -1,9 +1,0 @@
-.root {
-    position: fixed !important;
-    bottom: 0.5em;
-    right: 0.5em;
-
-    @media print {
-        display: none;
-    }
-}

@@ -1,12 +1,8 @@
 import * as React from 'react';
 import { Main } from 'layout';
 import { useRouter } from 'next/router';
-import { Box } from 'shared/general/layout/Box';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { Box, Button, ErrorMessage, Input, Label } from '@lotta-schule/hubert';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { Input } from 'shared/general/form/input/Input';
-import { Button } from 'shared/general/button/Button';
-import { Label } from 'shared/general/label/Label';
 import Link from 'next/link';
 
 import ResetPasswordMutation from 'api/mutation/ResetPasswordMutation.graphql';

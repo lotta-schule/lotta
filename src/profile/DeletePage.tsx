@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Collapse, Grow } from '@material-ui/core';
-import { Tabbar, Tab } from 'shared/general/tabs';
-import { Box } from 'shared/general/layout/Box';
 import {
     NavigateNext,
     NavigateBefore,
@@ -10,15 +8,18 @@ import {
 } from '@material-ui/icons';
 import { useQuery, useApolloClient, useMutation } from '@apollo/client';
 import { ArticleModel, FileModel } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
+    Box,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+    ErrorMessage,
+    LinearProgress,
+    Tabbar,
+    Tab,
+} from '@lotta-schule/hubert';
 import { useTenant } from 'util/tenant/useTenant';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { ArticlesList } from 'shared/articlesList/ArticlesList';
 import { Main, Sidebar } from 'layout';
 import { ProfileDeleteFileSelection } from './component/ProfileDeleteFileSelection';

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ContentModuleModel, FileModel } from 'model';
-import { Label } from 'shared/general/label/Label';
-import { Select } from 'shared/general/form/select/Select';
+import { Label, Select } from '@lotta-schule/hubert';
 import get from 'lodash/get';
 
 import styles from '../Config.module.scss';

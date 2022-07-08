@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { chunk } from 'lodash';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
 import {
+    Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
+} from '@lotta-schule/hubert';
 import { LOCALSTORAGE_KEY } from './Schedule';
 
 import styles from './SelectCoursesDialog.module.scss';

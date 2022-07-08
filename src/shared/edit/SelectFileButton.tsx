@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { FileModel } from 'model';
-import { Button, ButtonProps } from 'shared/general/button/Button';
-import { Dialog } from 'shared/general/dialog/Dialog';
+import { Button, ButtonProps, Dialog } from '@lotta-schule/hubert';
 import {
     FileExplorer,
     FileExplorerProps,

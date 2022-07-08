@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
 import { File } from 'util/model';
-import { Input } from 'shared/general/form/input/Input';
-import { Tooltip } from 'shared/general/util/Tooltip';
+import { Input, Tooltip } from '@lotta-schule/hubert';
 import { useServerData } from 'shared/ServerDataContext';
 import fileExplorerContext from './context/FileExplorerContext';
 

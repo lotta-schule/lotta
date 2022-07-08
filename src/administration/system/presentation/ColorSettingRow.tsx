@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input } from 'shared/general/form/input/Input';
+import { Input } from '@lotta-schule/hubert';
 
 import styles from './ColorSettingsRow.module.scss';
 

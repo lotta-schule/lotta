@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FileModel } from 'model';
 import { EditOverlay } from './EditOverlay';
-import { Dialog } from 'shared/general/dialog/Dialog';
+import { Dialog } from '@lotta-schule/hubert';
 import FileExplorer from 'shared/fileExplorer/FileExplorer';
 
 interface SelectFileOverlayProps {

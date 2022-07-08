@@ -1,5 +1,4 @@
 @import 'breakpoints';
-@import 'colors';
 
 .root {
     padding: calc(2 * var(--lotta-spacing)) var(--lotta-spacing);
@@ -33,7 +32,7 @@
         grid-column: 1;
         td {
             padding: var(--lotta-spacing);
-            border: 1px solid l_color(divider);
+            border: 1px solid rgb(var(--lotta-divider-color));
         }
     }
 }

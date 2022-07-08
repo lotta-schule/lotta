@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box } from 'shared/general/layout/Box';
+import { Button, Box } from '@lotta-schule/hubert';
 import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -9,7 +9,6 @@ import { Article, File, User } from 'util/model';
 import { useMutation } from '@apollo/client';
 import { useIsMobile } from 'util/useIsMobile';
 import { BackgroundImg } from 'react-cloudimage-responsive';
-import { Button } from 'shared/general/button/Button';
 import { useServerData } from 'shared/ServerDataContext';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
 import clsx from 'clsx';

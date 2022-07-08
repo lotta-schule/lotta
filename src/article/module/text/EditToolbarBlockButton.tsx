@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useSlate } from 'slate-react';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 import { isBlockActive, toggleBlock } from './SlateUtils';
 import { BlockElement } from './SlateCustomTypes';
 

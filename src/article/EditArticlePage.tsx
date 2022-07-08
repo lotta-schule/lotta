@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useMutation, useSubscription } from '@apollo/client';
 import { ArticleModel, ID } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
+} from '@lotta-schule/hubert';
 import { AddModuleBar } from 'article/editor/AddModuleBar';
 import { ArticleEditable as Article } from 'article/ArticleEditable';
 import { useCurrentUser } from 'util/user/useCurrentUser';

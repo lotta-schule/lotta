@@ -6,7 +6,7 @@ import { TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { useDebounce } from 'util/useDebounce';
 import { useServerData } from 'shared/ServerDataContext';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
+import { LinearProgress } from '@lotta-schule/hubert';
 import { ArticlePreviewDensedLayout } from 'article/preview';
 import getConfig from 'next/config';
 

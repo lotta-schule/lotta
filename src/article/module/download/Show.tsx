@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
-import { File } from 'util/model';
-import { FileSize } from 'util/FileSize';
 import { BackgroundImg } from 'react-cloudimage-responsive';
 import { CloudDownload } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 import { useServerData } from 'shared/ServerDataContext';
+import { File } from 'util/model';
+import { FileSize } from 'util/FileSize';
 
 import styles from './Download.module.scss';
 

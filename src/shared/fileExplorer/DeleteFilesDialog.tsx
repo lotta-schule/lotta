@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { FileModel, DirectoryModel } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+    ErrorMessage,
+} from '@lotta-schule/hubert';
 import fileExplorerContext from './context/FileExplorerContext';
 
 import DeleteFileMutation from 'api/mutation/DeleteFileMutation.graphql';

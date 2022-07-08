@@ -1,5 +1,3 @@
-@import 'colors';
-
 .root {
     .downloadItemWrapper {
         margin-bottom: calc(2 * var(--lotta-spacing));
@@ -23,7 +21,7 @@
     }
 
     .inputSettings {
-        border-left-color: l_color(divider);
+        border-left-color: rgb(var(--lotta-divider-color));
         border-left-width: var(--lotta-spacing);
         border-left-style: solid;
         border-radius: var(--lotta-spacing);

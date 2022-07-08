@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Avatar } from 'shared/general/avatar/Avatar';
-import { AvatarProps } from 'shared/general/avatar/Avatar';
+import { Avatar, AvatarProps } from '@lotta-schule/hubert';
 import { UserModel } from 'model';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';

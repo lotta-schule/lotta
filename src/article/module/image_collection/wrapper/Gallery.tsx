@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { GridList, GridListItem } from 'shared/general/gridlist/GridList';
+import { Button, GridList, GridListItem } from '@lotta-schule/hubert';
 import { Delete } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { FileSorter } from '../Config';

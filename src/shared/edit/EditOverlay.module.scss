@@ -1,5 +1,3 @@
-@import 'colors';
-
 .root {
     border: 2px solid var(--lotta-color-secondary);
     position: relative;
@@ -8,7 +6,7 @@
     }
 }
 .overlay {
-    background-color: l_color(highlight, 0.4);
+    background-color: rgba(var(--lotta-highlight-color), 0.4);
     backdrop-filter: blur(10px);
     position: absolute;
     width: 100%;

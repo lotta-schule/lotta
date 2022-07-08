@@ -5,8 +5,7 @@ import {
     useSelected,
     useSlateStatic,
 } from 'slate-react';
-import { ButtonGroup } from 'shared/general/button/ButtonGroup';
-import { Button } from 'shared/general/button/Button';
+import { Button, ButtonGroup } from '@lotta-schule/hubert';
 import {
     FormatAlignRight,
     FormatAlignLeft,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { File } from 'util/model';
-import { Stepper } from 'shared/general/layout/Stepper';
+import { Stepper } from '@lotta-schule/hubert';
 import { FileSorter } from '../Config';
 import { ContentModuleModel, FileModel } from 'model';
 import { useServerData } from 'shared/ServerDataContext';
@@ -25,14 +25,6 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
             [id: string]: { caption: string; sortKey: number };
         } = contentModule.configuration?.files ?? {};
         const maxSteps = contentModule.files.length;
-
-        const handleNext = React.useCallback(() => {
-            setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        }, []);
-
-        const handleBack = React.useCallback(() => {
-            setActiveStep((prevActiveStep) => prevActiveStep - 1);
-        }, []);
 
         const handleStepChange = React.useCallback((step) => {
             setActiveStep(step);

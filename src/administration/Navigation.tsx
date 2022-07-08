@@ -9,7 +9,7 @@ import {
     Category,
     Slideshow,
 } from '@material-ui/icons';
-import { BaseButton } from 'shared/general/button/BaseButton';
+import { BaseButton } from '@lotta-schule/hubert';
 import Link from 'next/link';
 
 import styles from './Navigation.module.scss';

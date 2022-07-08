@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Clear } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 
 import styles from './EditOverlay.module.scss';
 

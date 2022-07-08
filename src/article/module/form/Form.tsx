@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Button } from '@lotta-schule/hubert';
+import { MoveToInbox } from '@material-ui/icons';
 import { ContentModuleModel } from 'model';
 import { FormResultsDialog } from './FormResultsDialog';
 import { Show } from './Show';
 import { Edit } from './Edit';
-import { Button } from 'shared/general/button/Button';
-import { MoveToInbox } from '@material-ui/icons';
 
 export interface FormProps {
     contentModule: ContentModuleModel;

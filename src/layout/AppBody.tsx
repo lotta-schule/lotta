@@ -6,7 +6,6 @@ import { theme } from '../theme';
 import { BaseLayout } from './BaseLayout';
 import { useTenant } from 'util/tenant/useTenant';
 import merge from 'lodash/merge';
-import { CssVariables } from './CssVariables';
 
 export const AppBody: React.FC = ({ children }) => {
     // TODO: This custom theme will be thrown out entirely when
@@ -24,8 +23,6 @@ export const AppBody: React.FC = ({ children }) => {
                 return theme;
             }}
         >
-            {/* TODO: Maybe move CssVariables to AppHead as soon as ThemeProvider is not needed anymore */}
-            <CssVariables />
             <BaseLayout>{children}</BaseLayout>
         </ThemeProvider>
     );

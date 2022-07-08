@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 
 import styles from './AddModuleButton.module.scss';
 

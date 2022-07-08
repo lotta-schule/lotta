@@ -7,8 +7,7 @@ import {
     FormatListNumbered,
     ArrowDropDown,
 } from '@material-ui/icons';
-import { Toolbar } from 'shared/general/layout/Toolbar';
-import { ButtonGroup } from 'shared/general/button/ButtonGroup';
+import { ButtonGroup, Toolbar } from '@lotta-schule/hubert';
 import { useFocused } from 'slate-react';
 import { EditToolbarMarkButton } from './EditToolbarMarkButton';
 import { EditToolbarLinkButton } from './EditToolbarLinkButton';

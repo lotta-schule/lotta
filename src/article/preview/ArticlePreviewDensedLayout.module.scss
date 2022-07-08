@@ -1,12 +1,11 @@
 @import 'breakpoints';
-@import 'colors';
 
 .root {
     width: 100%;
     padding: var(--lotta-spacing);
     margin-bottom: var(--lotta-spacing);
     border-radius: var(--lotta-border-radius);
-    box-shadow: 1px 1px 2px l_color(text, 0.2);
+    box-shadow: 1px 1px 2px rgba(var(--lotta-text-color, 0.2));
     display: flex;
     position: relative;
     min-height: 60px; // TODO: Why 60? Make this variable
@@ -19,7 +18,7 @@
         .editButton {
             border: 0;
             display: flex;
-            color: l_color(primary);
+            color: rgb(var(--lotta-primary-color));
         }
     }
 

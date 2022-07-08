@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { get } from 'lodash';
 import { Theme } from '@material-ui/core/styles';
-import { BaseButton } from 'shared/general/button/BaseButton';
+import { BaseButton } from '@lotta-schule/hubert';
 
 import styles from './SelectTemplateButton.module.scss';
 

@@ -5,7 +5,7 @@ import {
     AccordionSummary,
     AccordionDetails,
 } from '@material-ui/core';
-import { DragHandle } from 'shared/general/icon';
+import { DragHandle } from '@lotta-schule/hubert';
 import { useCategories } from 'util/categories/useCategories';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID } from 'model/ID';

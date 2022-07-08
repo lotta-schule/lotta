@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel } from 'model';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+import { ErrorMessage } from '@lotta-schule/hubert';
 import fileExplorerContext, {
     FileExplorerMode,
 } from './context/FileExplorerContext';

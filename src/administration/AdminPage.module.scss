@@ -1,15 +1,13 @@
-@import 'colors';
-
 .root {
     .titleBar {
         display: flex;
-        background: l_color(box-background);
+        background: rgb(var(--lotta-box-background-color));
         padding-bottom: calc(0.5 * var(--lotta-spacing));
-        border-bottom: 1px solid l_color(divider);
+        border-bottom: 1px solid rgb(var(--lotta-divider-color));
         a {
             display: flex;
             align-items: center;
-            border-right: 1px solid l_color(divider);
+            border-right: 1px solid rgb(var(--lotta-divider-color));
             padding-right: var(--lotta-spacing);
         }
         h2 {
@@ -25,7 +23,7 @@
 
     .contentSection {
         padding: var(--lotta-spacing);
-        background-color: l_color(box-background);
+        background-color: rgb(var(--lotta-box-background-color));
     }
 
     .noAccessMessageContainer {
@@ -35,7 +33,7 @@
             flex-direction: row;
             align-items: center;
             margin: auto;
-            color: l_color(error);
+            color: rgb(var(--lotta-error-color));
             span {
                 padding-left: var(--lotta-spacing);
                 font-weight: bolder;

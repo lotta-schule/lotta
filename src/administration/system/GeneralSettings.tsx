@@ -1,14 +1,10 @@
 import * as React from 'react';
-import { Table } from 'shared/general/table/Table';
-import { Box } from 'shared/general/layout/Box';
+import { Button, Box, ErrorMessage, Input, Table } from '@lotta-schule/hubert';
 import { File } from 'util/model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
-import { Button } from 'shared/general/button/Button';
-import { Input } from 'shared/general/form/input/Input';
 import { useServerData } from 'shared/ServerDataContext';
 import Img from 'react-cloudimage-responsive';
 import Link from 'next/link';

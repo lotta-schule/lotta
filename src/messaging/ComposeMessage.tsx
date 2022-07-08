@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Send } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Input } from 'shared/general/form/input/Input';
+import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';
 import {
     NewMessageDestination,
     MessageModel,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge } from 'shared/general/badge/Badge';
+import { Badge, BaseButton, Button } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import {
     ExitToAppOutlined,
@@ -11,8 +11,6 @@ import {
     PersonOutlineOutlined,
     SearchOutlined,
 } from '@material-ui/icons';
-import { BaseButton } from 'shared/general/button/BaseButton';
-import { Button } from 'shared/general/button/Button';
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useQuery } from '@apollo/client';
 import { ArticleModel } from 'model';

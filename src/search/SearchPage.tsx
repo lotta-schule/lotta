@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { Button } from 'shared/general/button/Button';
+import { Button, Label, Input, CircularProgress } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
 import { ArticleModel, CategoryModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
 import { animated, useSpring } from 'react-spring';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import { Label } from 'shared/general/label/Label';
-import { Input } from 'shared/general/form/input/Input';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
 import { ArticlePreviewDensedLayout } from 'article/preview';

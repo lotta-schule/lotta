@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Apps, Error as ErrorIcon } from '@material-ui/icons';
-import { Box } from 'shared/general/layout/Box';
+import { Box } from '@lotta-schule/hubert';
 import { Header, Main, Sidebar } from 'layout';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';

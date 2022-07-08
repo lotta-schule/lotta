@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox } from 'shared/general/form/checkbox';
+import { Checkbox } from '@lotta-schule/hubert';
 import { ContentModuleModel } from 'model';
 import get from 'lodash/get';
 

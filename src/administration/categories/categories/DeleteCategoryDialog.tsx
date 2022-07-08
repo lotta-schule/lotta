@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { ArticleModel, CategoryModel, ID } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
+    ErrorMessage,
+    LinearProgress,
+} from '@lotta-schule/hubert';
 import { useCategories } from 'util/categories/useCategories';
 
 import DeleteCategoryMutation from 'api/mutation/DeleteCategoryMutation.graphql';

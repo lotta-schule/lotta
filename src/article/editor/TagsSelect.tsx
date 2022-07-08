@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useAutocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
-import { Tag } from 'shared/general/tag/Tag';
-import { Input } from 'shared/general/form/input/Input';
+import { Input, Tag } from '@lotta-schule/hubert';
 import uniq from 'lodash/uniq';
 
 import GetTagsQuery from 'api/query/GetTagsQuery.graphql';

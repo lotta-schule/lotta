@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Container } from '@material-ui/core';
 import { Edit, Place } from '@material-ui/icons';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -10,16 +9,17 @@ import { useMutation } from '@apollo/client';
 import { useIsMobile } from 'util/useIsMobile';
 import { Article as ArticleUtil } from 'util/model/Article';
 import { useIsRetina } from 'util/useIsRetina';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
+    Box,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
+    Input,
+    Tag,
+} from '@lotta-schule/hubert';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { Tag } from 'shared/general/tag/Tag';
-import { Input } from 'shared/general/form/input/Input';
 import { useServerData } from 'shared/ServerDataContext';
 import { TagsSelect } from '../editor/TagsSelect';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
@@ -93,7 +93,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
             );
 
         return (
-            <Container
+            <Box
                 className={clsx(styles.root, {
                     [styles.narrow]: narrow,
                     [styles.isEmbedded]: isEmbedded,
@@ -370,7 +370,7 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                         </div>
                     )}
                 </div>
-            </Container>
+            </Box>
         );
     }
 );

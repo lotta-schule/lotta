@@ -17,7 +17,7 @@ import {
     faFolder,
 } from '@fortawesome/free-regular-svg-icons';
 import { faUser, faGlobe } from '@fortawesome/free-solid-svg-icons';
-import { Tooltip } from 'shared/general/util/Tooltip';
+import { Tooltip } from '@lotta-schule/hubert';
 import getConfig from 'next/config';
 
 const {

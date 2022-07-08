@@ -1,13 +1,12 @@
 @import 'breakpoints';
-@import 'colors';
 
 .root {
     position: relative;
-    background-color: l_color(box-background);
+    background-color: rgb(var(--lotta-box-background-color));
     padding: var(--lotta-spacing);
     margin-bottom: var(--lotta-spacing);
     border-radius: var(--lotta-border-radius);
-    box-shadow: 1px 1px 2px l_color(text, 0.2);
+    box-shadow: 1px 1px 2px rgba(var(--lotta-text-color), 0.2);
 
     &.narrow {
         padding: 0 0 var(--lotta-spacing) 0;
@@ -18,7 +17,7 @@
     }
     &:hover {
         .editButton {
-            color: l_color(primary);
+            color: rgb(var(--lotta-primary-color));
         }
     }
     .containerGrid {
@@ -126,7 +125,7 @@
 
     .previewSection {
         margin-bottom: var(--lotta-spacing);
-        color: l_color(label-text);
+        color: rgb(var(--lotta-label-text-color));
         overflow: hidden;
         text-overflow: ellipsis;
         min-height: 3.2em;
@@ -167,13 +166,13 @@
     }
 
     .editButton {
-        color: l_color(highlight);
+        color: rgb(var(--lotta-highlight-color));
     }
 
     .pinButton {
         &.active {
             svg {
-                color: l_color(primary);
+                color: rgb(var(--lotta-primary-color));
             }
         }
     }

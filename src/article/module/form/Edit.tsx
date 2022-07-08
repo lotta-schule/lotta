@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Add, Delete } from '@material-ui/icons';
-import { DragHandle } from 'shared/general/icon';
+import {
+    Button,
+    Checkbox,
+    DragHandle,
+    Divider,
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
-import { Divider } from 'shared/general/divider/Divider';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
 import { ContentModuleModel } from 'model';
 import { FormConfiguration } from './Form';
 import { FormElement } from './FormElement';

@@ -1,11 +1,15 @@
 import * as React from 'react';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { useQuery, useMutation } from '@apollo/client';
-import { Menu, MenuItem, MenuList } from 'shared/general/menu';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
+import {
+    ErrorMessage,
+    LinearProgress,
+    Menu,
+    MenuItem,
+    MenuList,
+} from '@lotta-schule/hubert';
 import { WidgetModel, WidgetModelType } from 'model';
 import { Widget } from 'util/model';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { WidgetNavigation } from './widgets/WidgetNavigation';
 import { WidgetEditor } from './widgets/WidgetEditor';
 import clsx from 'clsx';

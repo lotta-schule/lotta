@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { Forum } from '@material-ui/icons';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
+import { Button, ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
 import { ConversationModel, MessageModel, NewMessageDestination } from 'model';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
@@ -12,7 +11,6 @@ import { MessagesThread } from './MessagesThread';
 import { MessageToolbar } from './MessageToolbar';
 import { useIsMobile } from 'util/useIsMobile';
 import { Message } from 'util/model/Message';
-import { Button } from 'shared/general/button/Button';
 import clsx from 'clsx';
 
 import styles from './MessagingView.module.scss';

@@ -7,10 +7,7 @@ import { de } from 'date-fns/locale';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { GroupSelect } from 'shared/edit/GroupSelect';
-import { Divider } from 'shared/general/divider/Divider';
-import { Input } from 'shared/general/form/input/Input';
-import { Table } from 'shared/general/table/Table';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
+import { Divider, Input, LinearProgress, Table } from '@lotta-schule/hubert';
 import { SearchUserField } from './SearchUserField';
 import { EditUserPermissionsDialog } from './EditUserPermissionsDialog';
 import clsx from 'clsx';
@@ -30,8 +27,9 @@ export const UserList = React.memo(() => {
         UserGroupModel[]
     >([]);
     const [filterText, setFilterText] = React.useState('');
-    const { data, loading: isLoading } =
-        useQuery<{ users: UserModel[] }>(GetUsersQuery);
+    const { data, loading: isLoading } = useQuery<{ users: UserModel[] }>(
+        GetUsersQuery
+    );
 
     const rows = React.useMemo(() => {
         return (

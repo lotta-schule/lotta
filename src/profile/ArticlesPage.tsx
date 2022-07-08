@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Box } from 'shared/general/layout/Box';
+import { Box, ErrorMessage } from '@lotta-schule/hubert';
 import { ArticleModel } from 'model';
 import { Header, Main, Sidebar } from 'layout';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { ArticlesList } from 'shared/articlesList/ArticlesList';
 
 export interface ArticlesPageProps {

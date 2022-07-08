@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { NoSsr } from 'shared/general/util/NoSsr';
+import { CircularProgress, Input, NoSsr } from '@lotta-schule/hubert';
 import { useAutocomplete } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import { useDebounce } from 'util/useDebounce';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { UserModel } from 'model';
-import { Input } from 'shared/general/form/input/Input';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import clsx from 'clsx';
 

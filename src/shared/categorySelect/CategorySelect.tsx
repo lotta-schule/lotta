@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useCategories } from 'util/categories/useCategories';
 import { CategoryModel } from 'model';
-import { Label } from 'shared/general/label/Label';
-import { Select } from 'shared/general/form/select/Select';
+import { Label, Select } from '@lotta-schule/hubert';
 
 export interface CategorySelectProps {
     disabled?: boolean;

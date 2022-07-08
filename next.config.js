@@ -2,6 +2,9 @@
 
 const { resolve } = require('path');
 const { withSentryConfig } = require('@sentry/nextjs');
+const withTranspileModules = require('next-transpile-modules')([
+    '@lotta-schule/hubert',
+]);
 
 const SentryWebpackPluginOptions = {
     // Additional config options for the Sentry Webpack plugin. Keep in mind that
@@ -73,4 +76,6 @@ const nextConfig = {
     },
 };
 
-module.exports = withSentryConfig(nextConfig, SentryWebpackPluginOptions);
+module.exports = withTranspileModules(
+    withSentryConfig(nextConfig, SentryWebpackPluginOptions)
+);

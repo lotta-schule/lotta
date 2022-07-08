@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel, FileModel, ID } from 'model';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
 import {
+    Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
+    ErrorMessage,
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 

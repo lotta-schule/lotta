@@ -9,14 +9,16 @@ import {
     format,
 } from 'date-fns';
 import { de } from 'date-fns/locale';
-import { Tooltip } from 'shared/general/util/Tooltip';
-import { Table } from 'shared/general/table/Table';
-import { Button } from 'shared/general/button/Button';
+import {
+    Button,
+    ErrorMessage,
+    LinearProgress,
+    Table,
+    Tooltip,
+} from '@lotta-schule/hubert';
 import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { LinearProgress } from 'shared/general/progress/LinearProgress';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
 import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
 import Link from 'next/link';

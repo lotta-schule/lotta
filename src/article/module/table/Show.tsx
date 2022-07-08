@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table } from 'shared/general/table/Table';
+import { Table } from '@lotta-schule/hubert';
 import { range } from 'lodash';
 import { ContentModuleModel } from 'model';
 import { TableContent, TableConfiguration } from './Table';

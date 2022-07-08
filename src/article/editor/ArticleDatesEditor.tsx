@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { format } from 'date-fns';
 import { ArticleModel } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 
 export interface ArticleDatesEditorProps {
     article: ArticleModel;

@@ -3,7 +3,7 @@ import { Image as ImageIcon } from '@material-ui/icons';
 import { Range } from 'slate';
 import { useSlate } from 'slate-react';
 import { FileModel } from 'model';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 import { insertImage } from './SlateUtils';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 

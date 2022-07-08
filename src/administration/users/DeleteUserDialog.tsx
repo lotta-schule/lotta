@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { ArticleModel, UserModel } from 'model';
 import {
+    Button,
+    CircularProgress,
     Dialog,
     DialogContent,
     DialogActions,
-} from 'shared/general/dialog/Dialog';
-import { Button } from 'shared/general/button/Button';
+    ErrorMessage,
+} from '@lotta-schule/hubert';
 import { useMutation, useQuery } from '@apollo/client';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { Article } from 'util/model';
 import Link from 'next/link';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { CategoryModel } from 'model';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 import { CategoryNavigation } from './categories/CategoryNavigation';
 import { CategoryEditor } from './categories/CategoryEditor';
 import { CreateCategoryDialog } from './categories/CreateCategoryDialog';

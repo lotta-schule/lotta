@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 import { ConversationModel, MessageModel } from 'model';
 import { User } from 'util/model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';

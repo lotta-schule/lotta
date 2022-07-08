@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { Slider } from '@material-ui/core';
 import { SdStorage } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
+import {
+    Button,
+    Checkbox,
+    ErrorMessage,
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 import { useTenant } from 'util/tenant/useTenant';
 import { useMutation } from '@apollo/client';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { animated, useSpring } from 'react-spring';
 
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';

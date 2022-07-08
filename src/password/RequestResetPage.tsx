@@ -1,11 +1,7 @@
 import * as React from 'react';
-import { Box } from 'shared/general/layout/Box';
+import { Box, Button, Label, Input, ErrorMessage } from '@lotta-schule/hubert';
 import { Main } from 'layout';
-import { Button } from 'shared/general/button/Button';
 import { useMutation } from '@apollo/client';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Label } from 'shared/general/label/Label';
-import { Input } from 'shared/general/form/input/Input';
 import { useRouter } from 'next/router';
 
 import RequestPasswordResetMutation from 'api/mutation/RequestPasswordResetMutation.graphql';

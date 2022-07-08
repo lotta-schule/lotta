@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useApolloClient, useQuery } from '@apollo/client';
+import { ErrorMessage } from '@lotta-schule/hubert';
 import { ConversationModel } from 'model';
 import { MessageBubble } from './MessageBubble';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 
 import styles from './MessagesThread.module.scss';

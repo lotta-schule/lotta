@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { ID, UserModel } from 'model';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { Divider } from 'shared/general/divider/Divider';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+    Divider,
+    ErrorMessage,
+} from '@lotta-schule/hubert';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import { DeleteUserDialog } from './DeleteUserDialog';
 

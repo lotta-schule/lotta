@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+    ErrorMessage,
+    Tooltip,
+} from '@lotta-schule/hubert';
 import { DirectoryModel, FileModel } from 'model';
-import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
-import { Tooltip } from 'shared/general/util/Tooltip';
+import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import fileExplorerContext from './context/FileExplorerContext';
 
 import UpdateFileMutation from 'api/mutation/UpdateFileMutation.graphql';

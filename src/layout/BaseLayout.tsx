@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Navbar } from './navigation/Navbar';
 import { File } from 'util/model';
-import { NoSsr } from 'shared/general/util/NoSsr';
-import { ScrollToTopButton } from 'shared/general/button/ScrollToTopButton';
-import { Box } from 'shared/general/layout/Box';
+import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
 import { useIsRetina } from 'util/useIsRetina';
 import { useTenant } from 'util/tenant/useTenant';
 import { useServerData } from 'shared/ServerDataContext';

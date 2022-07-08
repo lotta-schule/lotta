@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table } from 'shared/general/table/Table';
+import { Table } from '@lotta-schule/hubert';
 import { ArticleModel } from 'model';
 import { User, Article, Category, File } from 'util/model';
 import { format } from 'date-fns';

@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { CalendarWidgetConfig } from 'model';
-import { Button } from 'shared/general/button/Button';
-import { Divider } from 'shared/general/divider/Divider';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
-import { Select } from 'shared/general/form/select/Select';
+import { Button, Divider, Input, Label, Select } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';
 

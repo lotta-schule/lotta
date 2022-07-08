@@ -1,3 +1,0 @@
-@function l_color($name, $opacity: 1) {
-    @return rgba(var(--lotta-#{$name}-color), $opacity);
-}

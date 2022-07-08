@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useSlate } from 'slate-react';
 import { Range } from 'slate';
 import { Link } from '@material-ui/icons';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 import { isLinkActive, unwrapLink, insertLink } from './SlateUtils';
 
 export const EditToolbarLinkButton: React.FC = () => {

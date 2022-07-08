@@ -1,15 +1,16 @@
 import * as React from 'react';
 import {
+    Button,
+    Dialog,
+    DialogContent,
     List,
     ListItem,
     ListItemSecondaryText,
-} from 'shared/general/list/List';
+} from '@lotta-schule/hubert';
 import { OpenInNew } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, ID, FileModelUsageLocation } from 'model';
-import { Button } from 'shared/general/button/Button';
-import { Dialog, DialogContent } from 'shared/general/dialog/Dialog';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, Category, File, User } from 'util/model';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
+import { CircularProgress } from '@lotta-schule/hubert';
 import { TreeItem } from '@material-ui/lab';
 import { DirectoryModel } from 'model';
 import { useQuery } from '@apollo/client';

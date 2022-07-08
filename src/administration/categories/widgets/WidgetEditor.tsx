@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { ID, WidgetModel, WidgetModelType } from 'model';
-import { Button } from 'shared/general/button/Button';
-import { Divider } from 'shared/general/divider/Divider';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+import {
+    Button,
+    Divider,
+    ErrorMessage,
+    Input,
+    Label,
+} from '@lotta-schule/hubert';
 import { GroupSelect } from 'shared/edit/GroupSelect';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
 import { CalendarWidgetConfiguration } from './configuration/CalendarWidgetConfiguration';
 import { ScheduleWidgetConfiguration } from './configuration/ScheduleWidgetConfiguration';
 import { DeleteWidgetDialog } from './DeleteWidgetDialog';

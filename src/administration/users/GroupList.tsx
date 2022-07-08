@@ -2,12 +2,10 @@ import * as React from 'react';
 import chunk from 'lodash/chunk';
 import { AddCircle } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
-import { DragHandle } from 'shared/general/icon';
+import { Button, DragHandle, ErrorMessage } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ID, UserGroupModel, UserGroupInputModel } from 'model';
 import { useUserGroups } from 'util/tenant/useUserGroups';
-import { Button } from 'shared/general/button/Button';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { CreateUserGroupDialog } from './CreateUserGroupDialog';
 import { EditUserGroupDialog } from './EditUserGroupDialog';
 

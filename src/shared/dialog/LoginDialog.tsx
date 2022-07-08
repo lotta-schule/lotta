@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { UpdatePasswordDialog } from './UpdatePasswordDialog';
+    ErrorMessage,
+    Label,
+    Input,
+} from '@lotta-schule/hubert';
 import { UserModel } from 'model';
-import { Label } from 'shared/general/label/Label';
-import { Input } from 'shared/general/form/input/Input';
+import { UpdatePasswordDialog } from './UpdatePasswordDialog';
 import Link from 'next/link';
 
 import LoginMutation from 'api/mutation/LoginMutation.graphql';

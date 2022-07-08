@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { Button } from 'shared/general/button/Button';
 import {
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
-} from 'shared/general/dialog/Dialog';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
+    Input,
+    ErrorMessage,
+    Label,
+} from '@lotta-schule/hubert';
 import { ArticleModel, ArticleModelInput } from 'model';
 
 import CreateArticleMutation from 'api/mutation/CreateArticleMutation.graphql';

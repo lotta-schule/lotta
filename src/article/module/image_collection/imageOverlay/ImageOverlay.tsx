@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from 'shared/general/button/Button';
+import { Button } from '@lotta-schule/hubert';
 import { FileModel } from 'model';
 import { File } from 'util/model';
 import { useWindowSize } from 'util/useWindowSize';

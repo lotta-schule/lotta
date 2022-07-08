@@ -3,12 +3,13 @@ import {
     List,
     ListItem,
     ListItemSecondaryText,
-} from 'shared/general/list/List';
+    Dialog,
+    DialogContent,
+    CircularProgress,
+} from '@lotta-schule/hubert';
 import { ErrorOutline } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useUploads } from './context/UploadQueueContext';
-import { Dialog, DialogContent } from 'shared/general/dialog/Dialog';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
 import fileExplorerContext from './context/FileExplorerContext';
 
 export const ActiveUploadsModal = React.memo(() => {

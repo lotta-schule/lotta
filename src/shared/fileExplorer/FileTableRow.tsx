@@ -6,10 +6,8 @@ import {
     FileCopyOutlined,
     DeleteOutlineOutlined,
 } from '@material-ui/icons';
-import { Menu, MenuItem, MenuList } from 'shared/general/menu';
-import { ListItemProps } from 'shared/general/list/List';
+import { Checkbox, Menu, MenuItem, MenuList } from '@lotta-schule/hubert';
 import { FileModel, DirectoryModel } from 'model';
-import { Checkbox } from 'shared/general/form/checkbox';
 import { File } from 'util/model/File';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';

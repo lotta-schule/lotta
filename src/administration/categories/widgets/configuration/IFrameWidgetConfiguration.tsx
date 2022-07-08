@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { IFrameWidgetConfig } from 'model';
-import { Label } from 'shared/general/label/Label';
-import { Input } from 'shared/general/form/input/Input';
+import { Input, Label } from '@lotta-schule/hubert';
 
 import styles from './WidgetConfiguration.module.scss';
 

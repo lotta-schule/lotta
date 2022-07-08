@@ -5,19 +5,20 @@ import { animated, useSpring } from 'react-spring';
 import { CategoryModel, WidgetModel, ID } from 'model';
 import { useCategories } from 'util/categories/useCategories';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
-import { Button } from 'shared/general/button/Button';
-import { Divider } from 'shared/general/divider/Divider';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
+import {
+    Button,
+    Checkbox,
+    Divider,
+    ErrorMessage,
+    Input,
+    Label,
+    Select,
+} from '@lotta-schule/hubert';
 import { GroupSelect } from 'shared/edit/GroupSelect';
-import { Input } from 'shared/general/form/input/Input';
-import { Label } from 'shared/general/label/Label';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
-import { Radio, RadioGroup } from 'shared/general/form/radio';
-import { Select } from 'shared/general/form/select/Select';
 import { useServerData } from 'shared/ServerDataContext';
 import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { Category, File, RedirectType } from 'util/model';
-import { Checkbox } from 'shared/general/form/checkbox';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
 import Img from 'react-cloudimage-responsive';

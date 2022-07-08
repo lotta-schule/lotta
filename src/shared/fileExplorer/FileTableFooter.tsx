@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, DirectoryModel } from 'model';
-import { Input } from 'shared/general/form/input/Input';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
+import { CircularProgress, Input } from '@lotta-schule/hubert';
 import fileExplorerContext from './context/FileExplorerContext';
 import clsx from 'clsx';
 

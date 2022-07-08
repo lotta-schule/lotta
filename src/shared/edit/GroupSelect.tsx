@@ -1,11 +1,8 @@
 import * as React from 'react';
-import { NoSsr } from 'shared/general/util/NoSsr';
+import { Button, Checkbox, Input, NoSsr } from '@lotta-schule/hubert';
 import { useAutocomplete } from '@material-ui/lab';
 import { Check, Close } from '@material-ui/icons';
 import { UserGroupModel } from 'model';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox';
-import { Input } from 'shared/general/form/input/Input';
 import { useUserGroups } from 'util/tenant/useUserGroups';
 import clsx from 'clsx';
 

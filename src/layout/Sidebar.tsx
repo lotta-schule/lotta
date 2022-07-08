@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { NoSsr } from 'shared/general/util/NoSsr';
-import { Drawer } from 'shared/general/drawer/Drawer';
+import { Drawer, NoSsr } from '@lotta-schule/hubert';
 import { useIsMobile } from 'util/useIsMobile';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { gql } from '@apollo/client';

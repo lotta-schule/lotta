@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { Table } from 'shared/general/table/Table';
+import {
+    Button,
+    Checkbox,
+    CircularProgress,
+    ErrorMessage,
+    Table,
+} from '@lotta-schule/hubert';
 import { ArrowBackRounded } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
 import { every, range, uniqBy } from 'lodash';
 import { useDropzone } from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { FileModel, FileModelType, DirectoryModel } from 'model';
-import { Button } from 'shared/general/button/Button';
-import { Checkbox } from 'shared/general/form/checkbox/Checkbox';
-import { CircularProgress } from 'shared/general/progress/CircularProgress';
-import { ErrorMessage } from 'shared/general/ErrorMessage';
 import { DirectoryTableRow } from './DirectoryTableRow';
 import { FileTableRow } from './FileTableRow';
 import { FileTableFooter } from './FileTableFooter';
