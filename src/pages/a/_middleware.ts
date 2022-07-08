@@ -1,4 +1,3 @@
-// eslint-disable-next-line @next/next/no-server-import-in-page
 import { NextMiddleware, NextResponse } from 'next/server';
 
 const handler: NextMiddleware = async (req) => {
