@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Tooltip } from '@material-ui/core';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
 import { DirectoryModel } from 'model';
@@ -9,6 +8,7 @@ import {
     DialogActions,
     DialogContent,
     ErrorMessage,
+    Tooltip,
 } from '@lotta-schule/hubert';
 import { DirectoryTree } from './directoryTree/DirectoryTree';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
@@ -95,7 +95,7 @@ export const MoveDirectoryDialog = React.memo(() => {
             <DialogContent>
                 Wähle ein Zielort
                 <ErrorMessage error={error} />
-                <Tooltip title={'Ordner erstellen'}>
+                <Tooltip label={'Ordner erstellen'}>
                     <Button
                         aria-label="Ordner erstellen"
                         onClick={() => setIsCreateNewFolderDialogOpen(true)}
