@@ -16,13 +16,15 @@ describe('shared/dialog/RequestHisecToken', () => {
     });
 
     describe('show/hide', () => {
-        it('should show the shared if isOpen is true', () => {
+        it('should show the shared if isOpen is true', async () => {
             render(
                 <RequestHisecTokenDialog isOpen onRequestClose={() => {}} />,
                 {},
                 { currentUser: SomeUser }
             );
-            expect(screen.queryByRole('dialog')).toBeVisible();
+            await waitFor(() => {
+                expect(screen.queryByRole('dialog')).toBeVisible();
+            });
         });
 
         it('should not show the shared if isOpen is false', () => {

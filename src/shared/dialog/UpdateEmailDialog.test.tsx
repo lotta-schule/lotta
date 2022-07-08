@@ -12,9 +12,11 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
         render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
     });
 
-    it('should show the shared if isOpen is true', () => {
+    it('should show the shared if isOpen is true', async () => {
         render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
-        expect(screen.queryByRole('dialog')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.queryByRole('dialog')).toBeVisible();
+        });
     });
 
     it('should not show the shared if isOpen is false', () => {
@@ -50,7 +52,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
                     result: () => {
                         updateMutationCalled = true;
                         return {
-                            data: { updateEmail: { id: 1 } },
+                            data: { updateEmail: { id: 1, email: 'ab@cd.ef' } },
                         };
                     },
                 },
@@ -90,7 +92,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
 
         it('should clear the form and call onAbort when clicking the "Reset" button', () => {
             render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
-            userEvent.type(screen.getByLabelText('Neue Email:'), '');
+            expect(screen.getByLabelText('Neue Email:')).toHaveValue('');
             userEvent.click(screen.getByRole('button', { name: /ändern/i }));
         });
     });

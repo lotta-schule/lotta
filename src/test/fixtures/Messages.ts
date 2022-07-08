@@ -10,6 +10,7 @@ export const createConversation = (
         updatedAt: '2020-11-28T07:37:02',
         users: user ? [from, user] : [],
         groups: group ? [group] : [],
+        unreadMessages: 0,
         messages: [
             {
                 id: String(Math.floor(Math.random() * 10_000)),

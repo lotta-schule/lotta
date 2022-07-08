@@ -7,21 +7,29 @@ import GetArticlesWithUserFiles from 'api/query/GetArticlesWithUserFiles.graphql
 import DestroyAccountMutation from 'api/mutation/DestroyAccountMutation.graphql';
 
 describe('administration/users/DeleteUserDialog', () => {
-    it('should show a warning on the first page', () => {
+    it('should show a warning on the first page', async () => {
         const screen = render(<DeleteUserDialog user={SomeUser} />);
-        expect(screen.getByText(/nicht rückgängig gemacht werden/));
-        expect(screen.getByRole('button', { name: /weiter/i })).toBeVisible();
-        expect(screen.queryByRole('button', { name: /zurück/i })).toBeNull();
+        await waitFor(() => {
+            expect(screen.getByText(/nicht rückgängig gemacht werden/));
+            expect(
+                screen.getByRole('button', { name: /weiter/i })
+            ).toBeVisible();
+            expect(
+                screen.queryByRole('button', { name: /zurück/i })
+            ).toBeNull();
+        });
     });
 
-    it('close request closing the dialog on first page', () => {
+    it('close request closing the dialog on first page', async () => {
         const onRequestClose = jest.fn();
         const screen = render(
             <DeleteUserDialog onRequestClose={onRequestClose} user={SomeUser} />
         );
-        expect(
-            screen.getByRole('button', { name: /abbrechen/i })
-        ).toBeVisible();
+        await waitFor(() => {
+            expect(
+                screen.getByRole('button', { name: /abbrechen/i })
+            ).toBeVisible();
+        });
         userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
         expect(onRequestClose).toHaveBeenCalled();
     });

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { pick } from 'lodash';
 import { ThemeProvider } from '@material-ui/styles';
+import { HubertProvider, defaultTheme } from '@lotta-schule/hubert';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
@@ -25,7 +26,6 @@ import fileExplorerContext, {
 import DateFnsUtils from '@date-io/date-fns';
 import { createRouter, Router } from 'next/router';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
-import { OverlayProvider } from '@react-aria/overlays';
 
 export type TestSetupOptions = {
     additionalMocks?: MockedResponse[];
@@ -54,6 +54,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
                 initialProps: { ...options?.router?.initialProps },
                 pageLoader: {
                     getPageList: jest.fn(() => []),
+                    getMiddlewareList: jest.fn(() => []),
                     getDataHref: jest.fn(() => '/'),
                     _isSsg: jest.fn(async () => false),
                     loadPage: jest.fn(async () => null),
@@ -85,7 +86,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
                             <CloudimageProvider
                                 config={{ token: 'ABCDEF', lazyLoading: false }}
                             >
-                                <OverlayProvider>
+                                <HubertProvider theme={defaultTheme}>
                                     <MockedProvider
                                         mocks={[
                                             ...defaultMocks,
@@ -98,7 +99,7 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
                                             {children}
                                         </UploadQueueProvider>
                                     </MockedProvider>
-                                </OverlayProvider>
+                                </HubertProvider>
                             </CloudimageProvider>
                         </I18nextProvider>
                     </MuiPickersUtilsProvider>

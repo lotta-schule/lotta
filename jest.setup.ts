@@ -25,6 +25,11 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 Element.prototype.scroll = jest.fn();
+Object.defineProperty(window, 'scrollTo', {
+    writable: false,
+    value: jest.fn(),
+});
+
 jest.mock('next/head', () => {
     const ReactDOMServer = require('react-dom/server');
     return {

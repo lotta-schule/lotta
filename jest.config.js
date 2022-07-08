@@ -19,7 +19,7 @@ module.exports = {
         '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
     },
     transformIgnorePatterns: [
-        '/node_modules/',
+        'node_modules/(?!@lotta-schule)',
         '^.+\\.module\\.(css|sass|scss)$',
     ],
     roots: ['<rootDir>/src'],

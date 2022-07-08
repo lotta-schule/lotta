@@ -37,7 +37,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
             ).toBeNull();
         });
 
-        it('should show the dialog when a group is passed', () => {
+        it('should show the dialog when a group is passed', async () => {
             const screen = render(
                 <EditUserGroupDialog
                     group={lehrerGroup}
@@ -46,11 +46,13 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                 {},
                 { additionalMocks }
             );
-            expect(
-                screen.getByRole('dialog', {
-                    name: 'Gruppe "Lehrer" bearbeiten',
-                })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('dialog', {
+                        name: 'Gruppe "Lehrer" bearbeiten',
+                    })
+                ).toBeVisible();
+            });
         });
     });
 
@@ -82,8 +84,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                             group: {
                                 name: 'Neuer Name',
                                 isAdminGroup: lehrerGroup.isAdminGroup,
-                                enrollmentTokens:
-                                    lehrerGroup.enrollmentTokens
+                                enrollmentTokens: lehrerGroup.enrollmentTokens,
                             },
                         },
                     },
@@ -121,8 +122,7 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                             group: {
                                 name: 'Neuer Name',
                                 isAdminGroup: lehrerGroup.isAdminGroup,
-                                enrollmentTokens:
-                                    lehrerGroup.enrollmentTokens
+                                enrollmentTokens: lehrerGroup.enrollmentTokens,
                             },
                         },
                     },
@@ -246,8 +246,10 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                             group: {
                                 name: 'Lehrer',
                                 isAdminGroup: lehrerGroup.isAdminGroup,
-                                enrollmentTokens: lehrerGroup.enrollmentTokens
-                                    .concat('NeuerToken'),
+                                enrollmentTokens:
+                                    lehrerGroup.enrollmentTokens.concat(
+                                        'NeuerToken'
+                                    ),
                             },
                         },
                     },

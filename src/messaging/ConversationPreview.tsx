@@ -29,7 +29,7 @@ export const ConversationPreview = React.memo<ConversationPreviewProps>(
             <Button
                 onClick={onClick}
                 className={clsx(styles.root, { [styles.selected]: selected })}
-                title={`Unterhaltung mit ${Message.getDestinationName(
+                aria-label={`Unterhaltung mit ${Message.getDestinationName(
                     Message.conversationAsDestination(conversation, currentUser)
                 )}`}
             >

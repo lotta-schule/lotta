@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NewMessageDestination } from 'model';
-import { Button, Box, Tab, Tabbar, Popover } from '@lotta-schule/hubert';
+import { Button, Tab, Tabbar, Popover } from '@lotta-schule/hubert';
 import { Add, ArrowLeft } from '@material-ui/icons';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { useIsMobile } from 'util/useIsMobile';
@@ -27,6 +27,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
         return (
             <div className={styles.root}>
                 <Popover
+                    aria-label={'Empfänger wählen'}
                     className={styles.popover}
                     buttonProps={{
                         'aria-label': 'Neue Nachricht schreiben',

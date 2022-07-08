@@ -90,7 +90,7 @@ describe('shared/widgets/Schedule', () => {
     });
 
     describe("Pupil's Schedule", () => {
-        it('should show an information and a link to profile if userAvatar has no class', () => {
+        it('should show an information and a link to profile if userAvatar has no class', async () => {
             const screen = render(
                 <Schedule widget={VPSchuelerWidget} />,
                 {},
@@ -99,9 +99,11 @@ describe('shared/widgets/Schedule', () => {
                     additionalMocks: mocks,
                 }
             );
-            expect(
-                screen.getByRole('alert', { name: /hast keine klasse/i })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('alert', { name: /hast keine klasse/i })
+                ).toBeVisible();
+            });
             expect(
                 screen.getByRole('link', { name: /mein profil/i })
             ).toBeVisible();
@@ -151,12 +153,14 @@ describe('shared/widgets/Schedule', () => {
                 expect(didLoadNextSchedule).toEqual(true);
             });
             expect(screen.getByText(/16\. november 2020/i)).toBeVisible();
-            expect(
-                screen.getByRole('button', { name: /13\. november 2020/i })
-            ).toBeVisible();
-            expect(
-                screen.getByRole('button', { name: /18\. november 2020/i })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('button', { name: /13\. november 2020/i })
+                ).toBeVisible();
+                expect(
+                    screen.getByRole('button', { name: /18\. november 2020/i })
+                ).toBeVisible();
+            });
         });
     });
 
@@ -229,12 +233,14 @@ describe('shared/widgets/Schedule', () => {
         await waitFor(() => {
             expect(didLoadCurrentSchedule).toEqual(true);
         });
-        expect(screen.getByText(/16\. november 2020/i)).toBeVisible();
-        expect(
-            screen.queryByRole('button', { name: /13\. november 2020/i })
-        ).toBeNull();
-        expect(
-            screen.getByRole('button', { name: /18\. november 2020/i })
-        ).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByText(/16\. november 2020/i)).toBeVisible();
+            expect(
+                screen.queryByRole('button', { name: /13\. november 2020/i })
+            ).toBeNull();
+            expect(
+                screen.getByRole('button', { name: /18\. november 2020/i })
+            ).toBeVisible();
+        });
     });
 });

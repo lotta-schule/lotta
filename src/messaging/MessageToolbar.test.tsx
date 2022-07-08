@@ -19,7 +19,7 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
         );
     });
 
-    it('should open the create popup when clicking on the "add" button', () => {
+    it('should open the create popup when clicking on the "add" button', async () => {
         const screen = render(
             <MessageToolbar
                 onToggle={() => {}}
@@ -32,13 +32,15 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
         userEvent.click(
             screen.getByRole('button', { name: /nachricht schreiben/i })
         );
-        expect(
-            screen.getByRole('presentation', { name: /empfänger wählen/i })
-        ).toBeVisible();
+        await waitFor(() => {
+            expect(
+                screen.getByRole('presentation', { name: /empfänger wählen/i })
+            ).toBeVisible();
+        });
     });
 
     describe('select detination popup', () => {
-        it('should not show the "groups" tab if userAvatar has no groups', () => {
+        it('should not show the "groups" tab if userAvatar has no groups', async () => {
             const screen = render(
                 <MessageToolbar
                     onToggle={() => {}}
@@ -51,9 +53,11 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             userEvent.click(
                 screen.getByRole('button', { name: /nachricht schreiben/i })
             );
-            expect(
-                screen.getByRole('presentation', { name: /empfänger/i })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('presentation', { name: /empfänger/i })
+                ).toBeVisible();
+            });
 
             expect(screen.queryByRole('tab', { name: /gruppe/i })).toBeNull();
         });
@@ -86,9 +90,11 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             userEvent.click(
                 screen.getByRole('button', { name: /nachricht schreiben/i })
             );
-            expect(
-                screen.getByRole('presentation', { name: /empfänger/i })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('presentation', { name: /empfänger/i })
+                ).toBeVisible();
+            });
 
             userEvent.click(screen.getByRole('tab', { name: /nutzer/i }));
             userEvent.type(
@@ -107,7 +113,7 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             expect(onRequestNewMessage).toHaveBeenCalled();
         });
 
-        it('should select a group and create the corresponding thread object', () => {
+        it('should select a group and create the corresponding thread object', async () => {
             const onRequestNewMessage = jest.fn((destination) => {
                 expect(destination.user).not.toBeDefined();
                 expect(destination.group.name).toEqual('Schüler');
@@ -124,9 +130,11 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             userEvent.click(
                 screen.getByRole('button', { name: /nachricht schreiben/i })
             );
-            expect(
-                screen.getByRole('presentation', { name: /empfänger/i })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('presentation', { name: /empfänger/i })
+                ).toBeVisible();
+            });
 
             userEvent.click(screen.getByRole('tab', { name: /gruppe/i }));
             userEvent.click(screen.getByPlaceholderText(/gruppe suchen/i));

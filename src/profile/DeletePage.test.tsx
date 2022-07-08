@@ -264,27 +264,23 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         });
         userEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
-            expect(
-                screen.getByTestId('ProfileDeleteStep2Box')
-            ).toBeInTheDocument();
+            expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
         });
-        userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
+        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
-            expect(
-                screen.getByTestId('ProfileDeleteStep3Box')
-            ).toBeInTheDocument();
+            expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
         });
-        userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
+        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
-            expect(
-                screen.getByTestId('ProfileDeleteStep4Box')
-            ).toBeInTheDocument();
+            expect(screen.getByTestId('ProfileDeleteStep4Box')).toBeVisible();
         });
         userEvent.click(
-            await screen.findByRole('button', { name: /endgültig löschen/i })
+            screen.getByRole('button', { name: /endgültig löschen/i })
         );
 
-        expect(await screen.findByRole('dialog')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByRole('dialog')).toBeVisible();
+        });
 
         userEvent.click(
             await screen.findByRole('button', {

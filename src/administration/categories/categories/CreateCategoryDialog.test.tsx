@@ -62,7 +62,7 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
         );
     });
 
-    it('should have the focus on the input field on open', () => {
+    it('should have the focus on the input field on open', async () => {
         render(
             <CreateCategoryDialog
                 isOpen
@@ -70,7 +70,9 @@ describe('shared/layouts/adminLayout/userManagment/CreateCategoryDialog', () => 
                 onAbort={() => {}}
             />
         );
-        expect(screen.queryByRole('textbox')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.queryByRole('textbox')).toBeVisible();
+        });
         expect(screen.queryByRole('textbox')).toHaveFocus();
     });
 

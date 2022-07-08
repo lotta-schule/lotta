@@ -7,9 +7,10 @@ import {
 } from 'test/fixtures';
 import { render, waitFor } from 'test/util';
 import { CategoryEditor } from './CategoryEditor';
+import userEvent from '@testing-library/user-event';
+
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
-import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
     it('should render CategoryEditor', () => {
@@ -309,7 +310,7 @@ describe('shared/layouts/adminLayout/categoryManagment/CategoryEditor', () => {
     describe('update the category', () => {
         it('should update the category with correct data', async () => {
             const onSave = jest.fn(() => ({
-                data: { category: { ...FaecherCategory } },
+                data: { category: { ...FaecherCategory, widgets: [] } },
             }));
             const screen = render(
                 <CategoryEditor

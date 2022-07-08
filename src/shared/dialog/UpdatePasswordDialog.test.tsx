@@ -12,9 +12,11 @@ describe('shared/layouts/adminLayout/userManagment/UpdatePasswordDialog', () => 
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
     });
 
-    it('should show the shared if isOpen is true', () => {
+    it('should show the shared if isOpen is true', async () => {
         render(<UpdatePasswordDialog isOpen onRequestClose={() => {}} />);
-        expect(screen.queryByRole('dialog')).toBeVisible();
+        await waitFor(() => {
+            expect(screen.queryByRole('dialog')).toBeVisible();
+        });
     });
 
     it('should not show the shared if isOpen is false', () => {
