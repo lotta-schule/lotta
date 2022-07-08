@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Tooltip } from '@material-ui/core';
-import { Checkbox, Table } from '@lotta-schule/hubert';
+import { Checkbox, Table, Tooltip } from '@lotta-schule/hubert';
 import { FileModel } from 'model';
 import { Article, Category, File } from 'util/model';
 import { useServerData } from 'shared/ServerDataContext';
@@ -58,24 +57,25 @@ export const ProfileDeleteFileSelection =
                             const nameTableCell = (() => {
                                 if (previewImageUrl) {
                                     return (
-                                        <Tooltip
-                                            style={{
-                                                backgroundColor: 'transparent',
-                                            }}
-                                            title={
-                                                <img
-                                                    src={previewImageUrl}
-                                                    alt={file.filename}
-                                                />
-                                            }
+                                        <td
+                                            scope="row"
+                                            id={`file-${file.id}-filename`}
                                         >
-                                            <td
-                                                scope="row"
-                                                id={`file-${file.id}-filename`}
+                                            <Tooltip
+                                                style={{
+                                                    backgroundColor:
+                                                        'transparent',
+                                                }}
+                                                label={
+                                                    <img
+                                                        src={previewImageUrl}
+                                                        alt={file.filename}
+                                                    />
+                                                }
                                             >
-                                                {file.filename}
-                                            </td>
-                                        </Tooltip>
+                                                <span>{file.filename}</span>
+                                            </Tooltip>
+                                        </td>
                                     );
                                 } else {
                                     return (
