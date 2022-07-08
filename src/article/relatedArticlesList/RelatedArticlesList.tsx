@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
-import { useTransition, animated } from 'react-spring';
 import { LinearProgress } from '@lotta-schule/hubert';
+import { motion } from 'framer-motion';
 import { ArticlePreviewDensedLayout } from 'article/preview';
 import { ArticleModel } from 'model';
 
@@ -23,14 +23,6 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
             data?.articles.filter(
                 () => true // (a) => a.id !== article.id
             ) ?? [];
-        const transitions = useTransition(relatedArticles, {
-            initial: { opacity: 0, maxHeight: 0 },
-            from: { opacity: 0, maxHeight: 0 },
-            enter: [{ opacity: 1, maxHeight: 100 }],
-            leave: { opacity: 0, height: 0 },
-            key: (a: ArticleModel) => a.id,
-            trail: 1000,
-        });
 
         if (isLoading) {
             return (
@@ -44,23 +36,50 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
         if (!relatedArticles.length) {
             return null;
         }
+
+        const containerVariants = {
+            hidden: {
+                opacity: 0,
+                scaleX: 0,
+            },
+            visible: {
+                opacity: 1,
+                scaleX: 1,
+            },
+        };
+
+        const itemVariants = {
+            visible: (i: number) => ({
+                opacity: 1,
+                y: 0,
+                transition: { delay: i * 0.3 },
+            }),
+            hidden: { opacity: 0, y: -100 },
+        };
+
         return (
-            <section data-testid={'RelatedArticlesList'}>
+            <motion.section
+                data-testid={'RelatedArticlesList'}
+                initial={'hidden'}
+                animate={'visible'}
+                variants={containerVariants}
+            >
                 <h6 className={styles.root}>
                     Weitere Beiträge zum Thema <strong>{tag}</strong>
                 </h6>
-                {transitions((props, article) => {
-                    return (
-                        <animated.div style={props}>
-                            <ArticlePreviewDensedLayout
-                                key={article.id}
-                                article={article}
-                                limitedHeight
-                            />
-                        </animated.div>
-                    );
-                })}
-            </section>
+                {relatedArticles.map((article, i) => (
+                    <motion.div
+                        key={article.id}
+                        variants={itemVariants}
+                        custom={i}
+                    >
+                        <ArticlePreviewDensedLayout
+                            article={article}
+                            limitedHeight
+                        />
+                    </motion.div>
+                ))}
+            </motion.section>
         );
     }
 );

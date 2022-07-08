@@ -3,7 +3,7 @@ import { Button, Label, Input, CircularProgress } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
 import { ArticleModel, CategoryModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
-import { animated, useSpring } from 'react-spring';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
@@ -19,10 +19,6 @@ export const SearchPage = () => {
         React.useState(false);
     const [category, setCategory] = React.useState<CategoryModel | null>(null);
     const debouncedSearchtext = useDebounce(searchText, 500);
-    const springProps = useSpring({
-        maxHeight: isAdvancedSearchFormVisible ? 400 : 0,
-        opacity: isAdvancedSearchFormVisible ? 1 : 0,
-    });
 
     const { data, loading: isLoading } = useQuery(SearchQuery, {
         variables: {
@@ -34,7 +30,7 @@ export const SearchPage = () => {
 
     return (
         <>
-            <Main>
+            <Main className={styles.root}>
                 <Header bannerImageUrl={'/searchBanner.png'}>
                     <h2>Suche</h2>
                 </Header>
@@ -71,17 +67,33 @@ export const SearchPage = () => {
                     >
                         erweiterte Suche
                     </Button>
-                    <animated.div
+                    <motion.div
                         className={styles.advancedSettings}
-                        style={springProps}
+                        initial={'closed'}
+                        animate={
+                            isAdvancedSearchFormVisible ? 'open' : 'closed'
+                        }
+                        variants={{
+                            open: { opacity: 0, height: 0 },
+                            closed: { opacity: 1, height: 'auto' },
+                        }}
                     >
                         <h3>Erweiterte Suche</h3>
                         <CategorySelect
                             selectedCategory={category}
                             onSelectCategory={setCategory}
                         />
-                    </animated.div>
-                    <div className={styles.result}>
+                    </motion.div>
+
+                    <motion.div
+                        className={styles.result}
+                        initial={'closed'}
+                        animate={isLoading || data ? 'open' : 'closed'}
+                        variants={{
+                            open: { opacity: 1, height: 'auto' },
+                            closed: { opacity: 0, height: 0 },
+                        }}
+                    >
                         {isLoading && (
                             <span>
                                 <CircularProgress
@@ -100,16 +112,24 @@ export const SearchPage = () => {
                             </span>
                         )}
                         {!isLoading && !data && <span>&nbsp;</span>}
-                    </div>
+                    </motion.div>
                 </section>
                 <section>
-                    {data?.results.map((article: ArticleModel) => (
-                        <ArticlePreviewDensedLayout
-                            key={article.id}
-                            article={article}
-                            disableEdit
-                            disablePin
-                        />
+                    {data?.results.map((article: ArticleModel, i: number) => (
+                        <AnimatePresence key={article.id}>
+                            <motion.div
+                                initial={{ opacity: 0, y: -50 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                exit={{ opacity: 0, y: -50 }}
+                            >
+                                <ArticlePreviewDensedLayout
+                                    article={article}
+                                    disableEdit
+                                    disablePin
+                                />
+                            </motion.div>
+                        </AnimatePresence>
                     ))}
                 </section>
             </Main>

@@ -90,19 +90,15 @@ export const DeleteCategoryDialog = React.memo<DeleteCategoryDialogProps>(
                         Alle Beiträge, die dieser Kategorie zugeordnet sind,
                         sind dann ohne Kategorie und nur über direkten Link
                         erreichbar.
-                        <br />
-                        <em>
-                            Beiträge:&nbsp;
-                            {isLoadingArticles ? (
-                                <LinearProgress
-                                    isIndeterminate
-                                    label={'Beiträge werden geladen'}
-                                />
-                            ) : (
-                                articlesData && articlesData.articles.length
-                            )}
-                        </em>
                     </p>
+                    {isLoadingArticles ? (
+                        <LinearProgress
+                            isIndeterminate
+                            label={'Beiträge werden geladen'}
+                        />
+                    ) : (
+                        <em>Beiträge: {articlesData?.articles.length ?? 0}</em>
+                    )}
                     {!categoryToDelete.isSidenav && (
                         <p>
                             Unterkategorien, die dieser Kategorie zugeordnet

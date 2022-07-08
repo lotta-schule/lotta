@@ -13,14 +13,12 @@ import { EditToolbarMarkButton } from './EditToolbarMarkButton';
 import { EditToolbarLinkButton } from './EditToolbarLinkButton';
 import { EditToolbarBlockButton } from './EditToolbarBlockButton';
 import { EditToolbarImageButton } from './EditToolbarImageButton';
-import { useSpring, animated } from 'react-spring';
+import { motion } from 'framer-motion';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategory } from 'util/categories/useCategory';
 import { useCategories } from 'util/categories/useCategories';
 
 import styles from './EditToolbar.module.scss';
-
-const AnimatedToolbar = animated(Toolbar);
 
 export const EditToolbar = React.memo(() => {
     const currentCategoryId = useCurrentCategoryId();
@@ -28,58 +26,74 @@ export const EditToolbar = React.memo(() => {
     const currentCategory = useCategory(currentCategoryId ?? undefined);
     const isFocused = useFocused();
 
-    const props = useSpring({
-        maxHeight: isFocused ? 64 : 0,
-        opacity: isFocused ? 1 : 0,
-        tension: 2000,
-        mass: 0.5,
-        friction: 15,
-        top:
-            currentCategory?.category ||
-            allCategories.filter((c) => c.category?.id === currentCategoryId)
-                .length
-                ? 104
-                : 64,
-    });
+    const animate = isFocused ? 'visible' : 'hidden';
+
+    const top =
+        currentCategory?.category ||
+        allCategories.filter((c) => c.category?.id === currentCategoryId).length
+            ? 104
+            : 64;
+
+    const variants = {
+        visible: {
+            opacity: 1,
+            scaleY: 1,
+            y: 0,
+            top,
+        },
+        hidden: {
+            opacity: 0,
+            scaleY: 0,
+            y: -50,
+            top,
+        },
+    };
 
     return (
-        <AnimatedToolbar style={props} className={styles.root}>
-            <ButtonGroup className={styles.toolbarButtonGroup}>
-                <EditToolbarMarkButton mark={'bold'}>
-                    <FormatBold />
-                </EditToolbarMarkButton>
-                <EditToolbarMarkButton mark={'italic'}>
-                    <FormatItalic />
-                </EditToolbarMarkButton>
-                <EditToolbarMarkButton mark={'underline'}>
-                    <FormatUnderlined />
-                </EditToolbarMarkButton>
-            </ButtonGroup>
-            &nbsp;
-            <ButtonGroup className={styles.toolbarButtonGroup}>
-                <EditToolbarLinkButton />
-            </ButtonGroup>
-            &nbsp;
-            <ButtonGroup className={styles.toolbarButtonGroup}>
-                <EditToolbarBlockButton mark={'unordered-list'}>
-                    <FormatListBulleted />
-                </EditToolbarBlockButton>
-                <EditToolbarBlockButton mark={'ordered-list'}>
-                    <FormatListNumbered />
-                </EditToolbarBlockButton>
-            </ButtonGroup>
-            &nbsp;
-            <ButtonGroup className={styles.toolbarButtonGroup}>
-                <EditToolbarImageButton />
-            </ButtonGroup>
-            &nbsp;
-            <ButtonGroup className={styles.toolbarButtonGroup}>
-                <EditToolbarMarkButton mark={'small'}>
-                    <ArrowDropDown />
-                </EditToolbarMarkButton>
-            </ButtonGroup>
-            &nbsp;
-        </AnimatedToolbar>
+        <motion.div
+            className={styles.root}
+            variants={variants}
+            initial={'hidden'}
+            animate={animate}
+        >
+            <Toolbar className={styles.toolbar}>
+                <ButtonGroup className={styles.toolbarButtonGroup}>
+                    <EditToolbarMarkButton mark={'bold'}>
+                        <FormatBold />
+                    </EditToolbarMarkButton>
+                    <EditToolbarMarkButton mark={'italic'}>
+                        <FormatItalic />
+                    </EditToolbarMarkButton>
+                    <EditToolbarMarkButton mark={'underline'}>
+                        <FormatUnderlined />
+                    </EditToolbarMarkButton>
+                </ButtonGroup>
+                &nbsp;
+                <ButtonGroup className={styles.toolbarButtonGroup}>
+                    <EditToolbarLinkButton />
+                </ButtonGroup>
+                &nbsp;
+                <ButtonGroup className={styles.toolbarButtonGroup}>
+                    <EditToolbarBlockButton mark={'unordered-list'}>
+                        <FormatListBulleted />
+                    </EditToolbarBlockButton>
+                    <EditToolbarBlockButton mark={'ordered-list'}>
+                        <FormatListNumbered />
+                    </EditToolbarBlockButton>
+                </ButtonGroup>
+                &nbsp;
+                <ButtonGroup className={styles.toolbarButtonGroup}>
+                    <EditToolbarImageButton />
+                </ButtonGroup>
+                &nbsp;
+                <ButtonGroup className={styles.toolbarButtonGroup}>
+                    <EditToolbarMarkButton mark={'small'}>
+                        <ArrowDropDown />
+                    </EditToolbarMarkButton>
+                </ButtonGroup>
+                &nbsp;
+            </Toolbar>
+        </motion.div>
     );
 });
 EditToolbar.displayName = 'textContentModuleEditToolbar';

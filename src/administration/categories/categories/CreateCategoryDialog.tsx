@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
-import { animated, useSpring } from 'react-spring';
+import { motion } from 'framer-motion';
 import { CategoryModel } from 'model';
 import {
     Button,
@@ -69,10 +69,6 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                 onConfirm(category);
             },
         });
-        const parentCategorySpringProps = useSpring({
-            overflow: 'hidden',
-            height: categoryPosition === CategoryPosition.Sub ? 70 : 0,
-        });
         const resetForm = () => {
             setTitle('');
         };
@@ -88,10 +84,15 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                 title={'Kategorie erstellen'}
             >
                 {isLoading && (
-                    <LinearProgress
-                        isIndeterminate
-                        label={'Kategorie wird erstellt'}
-                    />
+                    <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                    >
+                        <LinearProgress
+                            isIndeterminate
+                            label={'Kategorie wird erstellt'}
+                        />
+                    </motion.div>
                 )}
                 <form
                     onSubmit={(e) => {
@@ -149,7 +150,19 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                     value={CategoryPosition.Sub}
                                     label={'Subnavigation'}
                                 />
-                                <animated.div style={parentCategorySpringProps}>
+                                <motion.div
+                                    initial={'closed'}
+                                    animate={
+                                        categoryPosition ===
+                                        CategoryPosition.Sub
+                                            ? 'open'
+                                            : 'closed'
+                                    }
+                                    variants={{
+                                        open: { opacity: 1, height: 'auto' },
+                                        closed: { opacity: 0, height: 0 },
+                                    }}
+                                >
                                     <CategorySelect
                                         hideSubCategories
                                         className={styles.categorySelect}
@@ -162,7 +175,7 @@ export const CreateCategoryDialog = React.memo<CreateCategoryDialogProps>(
                                         selectedCategory={parentCategory}
                                         onSelectCategory={setParentCategory}
                                     />
-                                </animated.div>
+                                </motion.div>
                                 <Radio
                                     value={CategoryPosition.Side}
                                     label={'Randnavigation'}

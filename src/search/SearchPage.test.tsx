@@ -55,20 +55,20 @@ describe('pages/search', () => {
                 userEvent.click(
                     screen.getByRole('button', { name: /erweitert/i })
                 );
-                await new Promise((resolve) => setTimeout(resolve, 500));
                 await waitFor(() => {
                     expect(
                         screen.getByRole('heading', { name: /erweitert/i })
-                            .parentElement
                     ).toBeVisible();
                 });
+                await new Promise((resolve) => setTimeout(resolve, 1000));
                 userEvent.click(
                     screen.getByRole('button', { name: /erweitert/i })
                 );
-                await new Promise((resolve) => setTimeout(resolve, 750));
-                expect(
-                    await screen.findByRole('heading', { name: /erweitert/i })
-                ).not.toBeVisible();
+                await waitFor(() => {
+                    expect(
+                        screen.getByRole('heading', { name: /erweitert/i })
+                    ).not.toBeVisible();
+                });
             });
 
             it('should add category to filteroptions', async () => {

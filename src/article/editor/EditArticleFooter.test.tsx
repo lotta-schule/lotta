@@ -80,7 +80,7 @@ describe('shared/layouts/editArticleLayout/EditArticleFooter', () => {
         it('show the modal and delete the article on confirmation', async () => {
             const onDelete = jest.fn(() => ({
                 data: {
-                    deleteArticle: { article: { id: Weihnachtsmarkt.id } },
+                    article: { id: Weihnachtsmarkt.id },
                 },
             }));
             const mocks = [

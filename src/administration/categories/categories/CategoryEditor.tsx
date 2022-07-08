@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Delete } from '@material-ui/icons';
 import { useMutation, useQuery } from '@apollo/client';
-import { animated, useSpring } from 'react-spring';
+import { motion } from 'framer-motion';
 import { CategoryModel, WidgetModel, ID } from 'model';
 import { useCategories } from 'util/categories/useCategories';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
@@ -64,7 +64,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
         });
         const { data: currentWidgetsData, error: currentWidgetsError } =
             useQuery(GetCategoryWidgetsQuery, {
-                variables: { categoryId: category?.id ?? null },
+                variables: { categoryId: category?.id },
                 skip: !category?.id,
             });
         React.useEffect(() => {
@@ -97,30 +97,6 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
             });
         }, [category, mutateCategory, selectedCategory, selectedWidgets]);
 
-        const redirectCategoryInternallySpringProps = useSpring({
-            overflow: 'hidden',
-            height:
-                Category.getRedirectType(category) ===
-                RedirectType.InternalCategory
-                    ? 70
-                    : 0,
-        });
-        const redirectArticleInternallySpringProps = useSpring({
-            overflow: 'hidden',
-            height:
-                Category.getRedirectType(category) ===
-                RedirectType.InternalArticle
-                    ? 200
-                    : 0,
-        });
-        const redirectExternallySpringProps = useSpring({
-            overflow: 'hidden',
-            height:
-                Category.getRedirectType(category) === RedirectType.Extern
-                    ? 70
-                    : 0,
-        });
-
         React.useEffect(() => {
             if (selectedCategory === null && category !== null) {
                 setCategory(null);
@@ -136,7 +112,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
         }
 
         return (
-            <>
+            <div className={styles.root}>
                 <h3 className={styles.title}>
                     {selectedCategory
                         ? selectedCategory.title
@@ -279,10 +255,20 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 }
                             />
 
-                            <animated.div
+                            <motion.div
                                 data-testid={'InternalCategoryRedirectWrapper'}
                                 className={styles.input}
-                                style={redirectCategoryInternallySpringProps}
+                                initial={'closed'}
+                                animate={
+                                    Category.getRedirectType(category) ===
+                                    RedirectType.InternalCategory
+                                        ? 'open'
+                                        : 'closed'
+                                }
+                                variants={{
+                                    open: { opacity: 1, height: 'auto' },
+                                    closed: { opacity: 0, height: 0 },
+                                }}
                             >
                                 <Label
                                     label={
@@ -312,7 +298,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                         ))}
                                     </Select>
                                 </Label>
-                            </animated.div>
+                            </motion.div>
 
                             <Radio
                                 value={RedirectType.InternalArticle}
@@ -321,10 +307,19 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 }
                             />
 
-                            <animated.div
+                            <motion.div
                                 data-testid={'InternalArticleRedirectWrapper'}
-                                className={styles.input}
-                                style={redirectArticleInternallySpringProps}
+                                initial={'closed'}
+                                animate={
+                                    Category.getRedirectType(category) ===
+                                    RedirectType.InternalArticle
+                                        ? 'open'
+                                        : 'closed'
+                                }
+                                variants={{
+                                    open: { opacity: 1, height: 'auto' },
+                                    closed: { opacity: 0, height: 0 },
+                                }}
                             >
                                 <CategoryArticleRedirectSelection
                                     redirectPath={category.redirect ?? '/a/'}
@@ -335,7 +330,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                         })
                                     }
                                 />
-                            </animated.div>
+                            </motion.div>
 
                             <Radio
                                 value={RedirectType.Extern}
@@ -344,9 +339,19 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                 }
                             />
 
-                            <animated.div
+                            <motion.div
                                 data-testid={'ExternalRedirectWrapper'}
-                                style={redirectExternallySpringProps}
+                                initial={'closed'}
+                                animate={
+                                    Category.getRedirectType(category) ===
+                                    RedirectType.Extern
+                                        ? 'open'
+                                        : 'closed'
+                                }
+                                variants={{
+                                    open: { opacity: 1, height: 'auto' },
+                                    closed: { opacity: 0, height: 0 },
+                                }}
                             >
                                 <Label label={'Ziel der Weiterleitung:'}>
                                     <Input
@@ -361,7 +366,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                                         }
                                     />
                                 </Label>
-                            </animated.div>
+                            </motion.div>
                         </RadioGroup>
 
                         <p>&nbsp;</p>
@@ -408,7 +413,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                         />
                     </>
                 )}
-            </>
+            </div>
         );
     }
 );

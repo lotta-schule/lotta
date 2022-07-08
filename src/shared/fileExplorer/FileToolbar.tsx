@@ -7,7 +7,6 @@ import {
     Info,
     InfoOutlined,
 } from '@material-ui/icons';
-import { Zoom } from '@material-ui/core';
 import {
     Badge,
     Button,
@@ -15,6 +14,7 @@ import {
     Tooltip,
     Toolbar,
 } from '@lotta-schule/hubert';
+import { motion } from 'framer-motion';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -26,6 +26,8 @@ import fileExplorerContext, {
 } from './context/FileExplorerContext';
 
 import styles from './FileToolbar.module.scss';
+
+const AnimatedButton = motion(Button);
 
 export const FileToolbar = React.memo(() => {
     const isMobile = useIsMobile();
@@ -66,29 +68,32 @@ export const FileToolbar = React.memo(() => {
                     <Tooltip
                         label={`${uploadLength} Dateien werden hochgeladen`}
                     >
-                        <Zoom in={uploadLength > 0}>
-                            <Button
-                                aria-label={`${uploadLength} Dateien werden hochgeladen`}
-                                onClick={() =>
-                                    dispatch({ type: 'showActiveUploads' })
+                        <AnimatedButton
+                            aria-label={`${uploadLength} Dateien werden hochgeladen`}
+                            onClick={() =>
+                                dispatch({ type: 'showActiveUploads' })
+                            }
+                            data-testid="FileExplorerToolbarCurrentUploadsButton"
+                            animate={uploadLength > 0 ? 'visible' : 'hidden'}
+                            variants={{
+                                visible: { opacity: 1, scale: 1 },
+                                hidden: { opacity: 0, scale: 0 },
+                            }}
+                        >
+                            <CircularProgress
+                                aria-label={'Dateien werden hochgeladen.'}
+                                size={20}
+                                value={uploadTotalProgress}
+                            />
+                            {}
+                            <Badge
+                                value={
+                                    uploads.filter((u) => u.error).length
+                                        ? '!'
+                                        : uploadLength
                                 }
-                                data-testid="FileExplorerToolbarCurrentUploadsButton"
-                            >
-                                <CircularProgress
-                                    aria-label={'Dateien werden hochgeladen.'}
-                                    size={20}
-                                    value={uploadTotalProgress}
-                                />
-                                {}
-                                <Badge
-                                    value={
-                                        uploads.filter((u) => u.error).length
-                                            ? '!'
-                                            : uploadLength
-                                    }
-                                />
-                            </Button>
-                        </Zoom>
+                            />
+                        </AnimatedButton>
                     </Tooltip>
                     {File.canEditDirectory(
                         state.currentPath.slice(-1)[0] as DirectoryModel,
@@ -96,38 +101,50 @@ export const FileToolbar = React.memo(() => {
                     ) && (
                         <>
                             <Tooltip label="Dateien verschieben">
-                                <Zoom in={showFileEditingButtons}>
-                                    <Button
-                                        aria-label="Dateien verschieben"
-                                        onClick={() =>
-                                            dispatch({ type: 'showMoveFiles' })
-                                        }
-                                        data-testid="FileExplorerToolbarMoveFileButton"
-                                        icon={
-                                            <FileCopyOutlined
-                                                color={'secondary'}
-                                            />
-                                        }
-                                    />
-                                </Zoom>
+                                <AnimatedButton
+                                    aria-label="Dateien verschieben"
+                                    onClick={() =>
+                                        dispatch({ type: 'showMoveFiles' })
+                                    }
+                                    data-testid="FileExplorerToolbarMoveFileButton"
+                                    icon={
+                                        <FileCopyOutlined color={'secondary'} />
+                                    }
+                                    animate={
+                                        showFileEditingButtons
+                                            ? 'visible'
+                                            : 'hidden'
+                                    }
+                                    variants={{
+                                        visible: { opacity: 1, scale: 1 },
+                                        hidden: { opacity: 0, scale: 0 },
+                                    }}
+                                />
                             </Tooltip>
                             <Tooltip label="Dateien löschen">
-                                <Zoom in={showFileEditingButtons}>
-                                    <Button
-                                        aria-label="Dateien löschen"
-                                        onClick={() =>
-                                            dispatch({
-                                                type: 'showDeleteFiles',
-                                            })
-                                        }
-                                        data-testid="FileExplorerToolbarDeleteFileButton"
-                                        icon={
-                                            <DeleteOutlineOutlined
-                                                color={'secondary'}
-                                            />
-                                        }
-                                    />
-                                </Zoom>
+                                <AnimatedButton
+                                    aria-label="Dateien löschen"
+                                    onClick={() =>
+                                        dispatch({
+                                            type: 'showDeleteFiles',
+                                        })
+                                    }
+                                    data-testid="FileExplorerToolbarDeleteFileButton"
+                                    icon={
+                                        <DeleteOutlineOutlined
+                                            color={'secondary'}
+                                        />
+                                    }
+                                    animate={
+                                        showFileEditingButtons
+                                            ? 'visible'
+                                            : 'hidden'
+                                    }
+                                    variants={{
+                                        visible: { opacity: 1, scale: 1 },
+                                        hidden: { opacity: 0, scale: 0 },
+                                    }}
+                                />
                             </Tooltip>
                         </>
                     )}
@@ -155,38 +172,42 @@ export const FileToolbar = React.memo(() => {
                         currentUser!
                     ) && (
                         <Tooltip label="Dateien hochladen">
-                            <Zoom in={state.currentPath.length > 1}>
-                                <Button
-                                    aria-label="Dateien hochladen"
-                                    data-testid="FileExplorerToolbarNewUploadButton"
-                                    onlyIcon
-                                    icon={
-                                        <CloudUploadOutlined
-                                            color={'secondary'}
-                                        />
-                                    }
-                                >
-                                    <input
-                                        multiple
-                                        type={'file'}
-                                        className={styles.uploadButton}
-                                        onChange={(e) => {
-                                            if (e.target.files) {
-                                                Array.from(
-                                                    e.target.files
-                                                ).forEach((file) =>
+                            <AnimatedButton
+                                aria-label="Dateien hochladen"
+                                data-testid="FileExplorerToolbarNewUploadButton"
+                                onlyIcon
+                                icon={
+                                    <CloudUploadOutlined color={'secondary'} />
+                                }
+                                animate={
+                                    state.currentPath.length > 1
+                                        ? 'visible'
+                                        : 'hidden'
+                                }
+                                variants={{
+                                    visible: { opacity: 1, scale: 1 },
+                                    hidden: { opacity: 0, scale: 0 },
+                                }}
+                            >
+                                <input
+                                    multiple
+                                    type={'file'}
+                                    className={styles.uploadButton}
+                                    onChange={(e) => {
+                                        if (e.target.files) {
+                                            Array.from(e.target.files).forEach(
+                                                (file) =>
                                                     createUpload(
                                                         file,
                                                         state.currentPath.slice(
                                                             -1
                                                         )[0] as DirectoryModel
                                                     )
-                                                );
-                                            }
-                                        }}
-                                    />
-                                </Button>
-                            </Zoom>
+                                            );
+                                        }
+                                    }}
+                                />
+                            </AnimatedButton>
                         </Tooltip>
                     )}
                     {!isMobile && state.mode === FileExplorerMode.ViewAndEdit && (
@@ -197,34 +218,41 @@ export const FileToolbar = React.memo(() => {
                                     : 'einblenden'
                             }`}
                         >
-                            <Zoom in={state.currentPath.length > 1}>
-                                <Button
-                                    data-testid="FileExplorerDetailViewButton"
-                                    aria-label={`Info-Leiste für Dateien und Ordner ${
-                                        state.detailSidebarEnabled
-                                            ? 'ausblenden'
-                                            : 'einblenden'
-                                    }`}
-                                    onClick={() =>
-                                        dispatch({
-                                            type: 'toggleDetailSidebarEnabled',
-                                        })
-                                    }
-                                    icon={
-                                        state.detailSidebarEnabled ? (
-                                            <Info
-                                                color={'secondary'}
-                                                data-testid="enable-detail-sidebar-icon"
-                                            />
-                                        ) : (
-                                            <InfoOutlined
-                                                color={'secondary'}
-                                                data-testid="disable-detail-sidebar-icon"
-                                            />
-                                        )
-                                    }
-                                />
-                            </Zoom>
+                            <AnimatedButton
+                                data-testid="FileExplorerDetailViewButton"
+                                aria-label={`Info-Leiste für Dateien und Ordner ${
+                                    state.detailSidebarEnabled
+                                        ? 'ausblenden'
+                                        : 'einblenden'
+                                }`}
+                                onClick={() =>
+                                    dispatch({
+                                        type: 'toggleDetailSidebarEnabled',
+                                    })
+                                }
+                                icon={
+                                    state.detailSidebarEnabled ? (
+                                        <Info
+                                            color={'secondary'}
+                                            data-testid="enable-detail-sidebar-icon"
+                                        />
+                                    ) : (
+                                        <InfoOutlined
+                                            color={'secondary'}
+                                            data-testid="disable-detail-sidebar-icon"
+                                        />
+                                    )
+                                }
+                                animate={
+                                    state.currentPath.length > 1
+                                        ? 'visible'
+                                        : 'hidden'
+                                }
+                                variants={{
+                                    visible: { opacity: 1, scale: 1 },
+                                    hidden: { opacity: 0, scale: 0 },
+                                }}
+                            />
                         </Tooltip>
                     )}
                 </div>

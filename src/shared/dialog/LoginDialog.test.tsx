@@ -31,7 +31,7 @@ describe('shared/dialog/LoginDialog', () => {
                             password: 'password',
                         },
                     },
-                    result: { data: { login: {} } },
+                    result: { data: { login: { accessToken: 'abc' } } },
                 },
             ];
             const onRequestClose = jest.fn();
@@ -61,7 +61,7 @@ describe('shared/dialog/LoginDialog', () => {
                             password: 'password',
                         },
                     },
-                    result: { data: { login: {} } },
+                    result: { data: { login: { accessToken: 'abc' } } },
                 },
             ];
             const onRequestClose = jest.fn();
