@@ -27,16 +27,18 @@ const unobserveOrCancelIfNeeded = (
     }
 };
 
-const notifierToObservable = (
-    absintheSocket: AbsintheSocket,
-    onError: (error: Error) => void,
-    onStart: (notifier: Notifier<any, any>) => void
-) => (notifier: Notifier<any, any>) =>
-    toObservable(absintheSocket, notifier, {
-        onError,
-        onStart,
-        unsubscribe: unobserveOrCancelIfNeeded,
-    });
+const notifierToObservable =
+    (
+        absintheSocket: AbsintheSocket,
+        onError: (error: Error) => void,
+        onStart: (notifier: Notifier<any, any>) => void
+    ) =>
+    (notifier: Notifier<any, any>) =>
+        toObservable(absintheSocket, notifier, {
+            onError,
+            onStart,
+            unsubscribe: unobserveOrCancelIfNeeded,
+        });
 
 const getRequest = <Var extends Record<string, any> = any>({
     query,

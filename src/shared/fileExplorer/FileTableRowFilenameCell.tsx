@@ -28,7 +28,7 @@ export const FileTableRowFilenameCell =
                 file?.filename ?? directory!.name
             );
 
-            const renamingInputRef = React.useRef<HTMLInputElement>();
+            const renamingInputRef = React.useRef<HTMLInputElement>(null);
 
             React.useLayoutEffect(() => {
                 if (renamingInputRef.current) {

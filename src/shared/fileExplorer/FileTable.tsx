@@ -68,7 +68,7 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
     );
 
     const uploadFile = useCreateUpload();
-    const { getRootProps, draggedFiles, isDragAccept, isDragActive } =
+    const { getRootProps, acceptedFiles, isDragAccept, isDragActive } =
         useDropzone({
             onDrop: (files) => {
                 files.forEach((f) =>
@@ -285,7 +285,7 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
             {isDragAccept && (
                 <div className={styles.dragHelpText}>
                     {t('files.explorer.dropFilesToUpload', {
-                        count: draggedFiles.length,
+                        count: acceptedFiles.length,
                     })}
                 </div>
             )}

@@ -1,7 +1,5 @@
-import { useMediaQuery, Theme } from '@material-ui/core';
+import { useMedia } from 'react-use';
 
-export const useIsMobile = (): boolean => {
-    return useMediaQuery((theme: Theme) => {
-        return theme.breakpoints.down('sm');
-    });
+export const useIsMobile = () => {
+    return useMedia('screen and (max-width: 600px)', false);
 };

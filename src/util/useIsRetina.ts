@@ -1,5 +1,5 @@
-import { useMediaQuery } from '@material-ui/core';
+import { useMedia } from 'react-use';
 
 export const useIsRetina = () => {
-    return useMediaQuery('screen and (-webkit-min-device-pixel-ratio: 2)');
+    return useMedia('screen and (-webkit-min-device-pixel-ratio: 2)', false);
 };
