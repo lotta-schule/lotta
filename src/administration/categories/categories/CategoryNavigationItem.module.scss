@@ -1,0 +1,28 @@
+.root {
+    border-radius: var(--lotta-border-radius);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    border: 1px solid rgb(var(--lotta-divider-color));
+    margin-bottom: var(--lotta-spacing);
+    &:hover {
+        border-color: rgb(var(--lotta-primary-color));
+    }
+    .dragHandle {
+        background: rgb(var(--lotta-primary-color));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3em;
+        .moveCategoryHandlerIcon {
+            vertical-align: bottom;
+        }
+    }
+
+    .titleWrapper {
+        background-color: rgba(var(--lotta-highlight-color), 0.3);
+        padding: var(--lotta-spacing);
+        cursor: pointer;
+        flex: 1;
+    }
+}

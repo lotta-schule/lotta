@@ -1,18 +1,20 @@
 import * as React from 'react';
-import { CategoryModel } from 'model';
-import {
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-} from '@material-ui/core';
-import { DragHandle } from '@lotta-schule/hubert';
-import { useCategories } from 'util/categories/useCategories';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { ID } from 'model/ID';
 import { useMutation } from '@apollo/client';
-import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
+import {
+    DragDropContext,
+    Draggable,
+    Droppable,
+    DropResult,
+    ResponderProvided,
+} from 'react-beautiful-dnd';
+import { motion } from 'framer-motion';
+import { ID, CategoryModel } from 'model';
+import { useCategories } from 'util/categories/useCategories';
+import { CategoryNavigationItem } from './CategoryNavigationItem';
 
 import styles from './CategoryNavigation.module.scss';
+
+import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
 
 export interface CategoryNavigationProps {
     selectedCategory: CategoryModel | null;
@@ -53,18 +55,59 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
         const [updateCategory] = useMutation<
             { category: CategoryModel },
             { id: ID; category: any }
-        >(UpdateCategoryMutation, {
-            optimisticResponse: ({ id, category }) => {
-                return {
-                    __typename: 'Mutation',
-                    category: {
-                        __typename: 'Category',
-                        id,
-                        sortKey: category.sortKey,
-                    },
-                } as any;
-            },
-        });
+        >(UpdateCategoryMutation);
+
+        const onDragEnd = (
+            { destination, source, draggableId }: DropResult,
+            _provided: ResponderProvided
+        ) => {
+            if (!destination) {
+                return;
+            }
+
+            if (destination.droppableId !== source.droppableId) {
+                return;
+            }
+
+            const initialCategoriesArray =
+                destination.droppableId === 'categories-root'
+                    ? mainCategories
+                    : getSubcategoriesForCategory({
+                          id: destination.droppableId,
+                      });
+            const sourceIndex = initialCategoriesArray.findIndex(
+                (category) => category.id === draggableId
+            );
+            const newCategoriesArray = [...initialCategoriesArray];
+            newCategoriesArray.splice(sourceIndex, 1);
+            newCategoriesArray.splice(
+                destination.index,
+                0,
+                initialCategoriesArray[sourceIndex]
+            );
+            newCategoriesArray.forEach((category, index) => {
+                if (category) {
+                    const sortKey = index * 10 + 10;
+                    updateCategory({
+                        variables: {
+                            id: category.id,
+                            category: {
+                                sortKey,
+                            },
+                        },
+                        optimisticResponse: {
+                            __typename: 'Mutation',
+                            category: {
+                                __typename: 'Category',
+                                ...category,
+                                sortKey,
+                                widgets: null,
+                            },
+                        } as any,
+                    });
+                }
+            });
+        };
 
         React.useEffect(() => {
             if (selectedCategory) {
@@ -76,210 +119,149 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
             }
         }, [selectedCategory]);
 
+        const subtitleListMotionProps = (isExpanded: boolean) => ({
+            variants: {
+                open: { opacity: 1, height: 'auto' },
+                closed: { opacity: 0, height: 0 },
+            },
+            initial: 'closed',
+            animate: isExpanded ? 'open' : 'closed',
+        });
+
         return (
             <div className={styles.root}>
                 <h4 className={styles.heading}>Alle Kategorien</h4>
 
                 {homepageCategory && (
-                    <Accordion
+                    <CategoryNavigationItem
+                        data-testid={'main-category-item'}
+                        title={homepageCategory.title}
                         className={styles.before}
-                        expanded={false}
-                        key={homepageCategory.id}
-                    >
-                        <AccordionSummary
-                            className={styles.expansionSummary}
-                            onClick={() => onSelectCategory(homepageCategory)}
-                        >
-                            <b>{homepageCategory.title}</b>
-                        </AccordionSummary>
-                    </Accordion>
+                        onClick={() => onSelectCategory(homepageCategory)}
+                    />
                 )}
 
                 <h6>Hauptnavigation</h6>
-                <DragDropContext
-                    onDragEnd={({ destination, source, draggableId }) => {
-                        if (!destination) {
-                            return;
-                        }
-
-                        if (destination.droppableId !== source.droppableId) {
-                            return;
-                        }
-
-                        const initialCategoriesArray =
-                            destination.droppableId === 'categories-root'
-                                ? mainCategories
-                                : getSubcategoriesForCategory({
-                                      id: destination.droppableId,
-                                  });
-                        const sourceIndex = initialCategoriesArray.findIndex(
-                            (category) => category.id === draggableId
-                        );
-                        const newCategoriesArray = [...initialCategoriesArray];
-                        newCategoriesArray.splice(sourceIndex, 1);
-                        newCategoriesArray.splice(
-                            destination.index,
-                            0,
-                            initialCategoriesArray[sourceIndex]
-                        );
-                        newCategoriesArray.forEach((category, index) => {
-                            if (category) {
-                                updateCategory({
-                                    variables: {
-                                        id: category.id,
-                                        category: {
-                                            sortKey: index * 10 + 10,
-                                        },
-                                    },
-                                });
-                            }
-                        });
-                    }}
-                >
+                <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable
                         droppableId={'categories-root'}
-                        type={'root-categories'}
+                        type={'main-categories'}
                     >
                         {({ droppableProps, innerRef, placeholder }) => (
-                            <div
-                                {...droppableProps}
-                                ref={innerRef}
-                                style={{ paddingBottom: '5em' }}
-                            >
+                            <div {...droppableProps} ref={innerRef}>
                                 {mainCategories.map((category, index) => (
                                     <Draggable
                                         key={category.id}
                                         draggableId={String(category.id)}
                                         index={index}
+                                        disableInteractiveElementBlocking
                                     >
-                                        {({
-                                            innerRef,
-                                            dragHandleProps,
-                                            draggableProps,
-                                        }) => (
-                                            <Accordion
-                                                expanded={Boolean(
-                                                    expandedMainCategoryId &&
-                                                        expandedMainCategoryId ===
-                                                            category.id
-                                                )}
-                                                onChange={(_e, expanded) => {
-                                                    if (expanded) {
-                                                        setExpandedMainCategoryId(
-                                                            category.id
-                                                        );
-                                                    }
-                                                }}
-                                                innerRef={innerRef}
-                                                {...draggableProps}
-                                                className={styles.before}
+                                        {(provided) => (
+                                            <div
+                                                {...provided.draggableProps}
+                                                ref={provided.innerRef}
                                             >
-                                                <AccordionSummary
-                                                    aria-controls={`${category.id}-content`}
-                                                    id={`${category.id}-header`}
-                                                    className={
-                                                        styles.expansionSummary
+                                                <CategoryNavigationItem
+                                                    data-testid={
+                                                        'main-category-item'
                                                     }
-                                                    onClick={() => {
+                                                    onClick={(_e) => {
                                                         onSelectCategory(
                                                             category
                                                         );
+                                                        setExpandedMainCategoryId(
+                                                            (categoryId) =>
+                                                                categoryId ===
+                                                                category.id
+                                                                    ? null
+                                                                    : categoryId
+                                                        );
                                                     }}
+                                                    dragHandleProps={
+                                                        provided.dragHandleProps
+                                                    }
+                                                    title={category.title}
+                                                />
+                                                <Droppable
+                                                    droppableId={String(
+                                                        category.id
+                                                    )}
+                                                    type={'subcategories'}
                                                 >
-                                                    <div>
-                                                        <span
-                                                            {...dragHandleProps}
+                                                    {({
+                                                        droppableProps,
+                                                        innerRef,
+                                                        placeholder,
+                                                    }) => (
+                                                        <motion.nav
+                                                            ref={innerRef}
+                                                            aria-expanded={
+                                                                expandedMainCategoryId ===
+                                                                category.id
+                                                            }
+                                                            {...droppableProps}
+                                                            {...subtitleListMotionProps(
+                                                                expandedMainCategoryId ===
+                                                                    category.id
+                                                            )}
                                                         >
-                                                            <DragHandle
-                                                                className={
-                                                                    styles.moveCategoryHandlerIcon
-                                                                }
-                                                            />
-                                                        </span>
-                                                        <b>{category.title}</b>
-                                                    </div>
-                                                </AccordionSummary>
-                                                <AccordionDetails>
-                                                    <Droppable
-                                                        droppableId={String(
-                                                            category.id
-                                                        )}
-                                                        type={`subcategories-to-${category.id}`}
-                                                    >
-                                                        {({
-                                                            droppableProps,
-                                                            innerRef,
-                                                            placeholder,
-                                                        }) => (
-                                                            <nav
-                                                                ref={innerRef}
-                                                                {...droppableProps}
-                                                            >
-                                                                {getSubcategoriesForCategory(
-                                                                    category
-                                                                ).map(
-                                                                    (
-                                                                        subcategory,
-                                                                        index
-                                                                    ) => (
-                                                                        <Draggable
-                                                                            key={
-                                                                                subcategory.id
-                                                                            }
-                                                                            draggableId={String(
-                                                                                subcategory.id
-                                                                            )}
-                                                                            index={
-                                                                                index
-                                                                            }
-                                                                        >
-                                                                            {({
-                                                                                innerRef,
-                                                                                dragHandleProps,
-                                                                                draggableProps,
-                                                                            }) => (
-                                                                                <li
-                                                                                    ref={
-                                                                                        innerRef
-                                                                                    }
-                                                                                    className={
-                                                                                        styles.subcategories
-                                                                                    }
-                                                                                    style={{
-                                                                                        cursor: 'pointer',
-                                                                                    }}
-                                                                                    onClick={() =>
-                                                                                        onSelectCategory(
-                                                                                            subcategory
-                                                                                        )
-                                                                                    }
-                                                                                    {...draggableProps}
-                                                                                >
-                                                                                    <div>
-                                                                                        <span
-                                                                                            {...dragHandleProps}
-                                                                                        >
-                                                                                            <DragHandle
-                                                                                                className={
-                                                                                                    styles.moveCategoryHandlerIcon
-                                                                                                }
-                                                                                            />
-                                                                                        </span>
-                                                                                        {
-                                                                                            subcategory.title
-                                                                                        }
-                                                                                    </div>
-                                                                                </li>
-                                                                            )}
-                                                                        </Draggable>
-                                                                    )
-                                                                )}
-                                                                {placeholder}
-                                                            </nav>
-                                                        )}
-                                                    </Droppable>
-                                                </AccordionDetails>
-                                            </Accordion>
+                                                            {getSubcategoriesForCategory(
+                                                                category
+                                                            ).map(
+                                                                (
+                                                                    subcategory,
+                                                                    index
+                                                                ) => (
+                                                                    <Draggable
+                                                                        key={
+                                                                            subcategory.id
+                                                                        }
+                                                                        draggableId={String(
+                                                                            subcategory.id
+                                                                        )}
+                                                                        index={
+                                                                            index
+                                                                        }
+                                                                    >
+                                                                        {({
+                                                                            innerRef,
+                                                                            dragHandleProps,
+                                                                            draggableProps,
+                                                                        }) => (
+                                                                            <CategoryNavigationItem
+                                                                                key={
+                                                                                    subcategory.id
+                                                                                }
+                                                                                data-testid={
+                                                                                    'subcategory-item'
+                                                                                }
+                                                                                ref={
+                                                                                    innerRef
+                                                                                }
+                                                                                {...draggableProps}
+                                                                                onClick={(
+                                                                                    _e
+                                                                                ) => {
+                                                                                    onSelectCategory(
+                                                                                        subcategory
+                                                                                    );
+                                                                                }}
+                                                                                dragHandleProps={
+                                                                                    dragHandleProps
+                                                                                }
+                                                                                title={
+                                                                                    subcategory.title
+                                                                                }
+                                                                            />
+                                                                        )}
+                                                                    </Draggable>
+                                                                )
+                                                            )}
+                                                            {placeholder}
+                                                        </motion.nav>
+                                                    )}
+                                                </Droppable>
+                                            </div>
                                         )}
                                     </Draggable>
                                 ))}
@@ -291,18 +273,13 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
 
                 <h5 className={styles.heading}>Randnavigation</h5>
                 {sidenavCategories.map((category) => (
-                    <Accordion
-                        className={styles.before}
-                        expanded={false}
+                    <CategoryNavigationItem
+                        data-testid={'sidenav-category-item'}
                         key={category.id}
-                    >
-                        <AccordionSummary
-                            className={styles.expansionSummary}
-                            onClick={() => onSelectCategory(category)}
-                        >
-                            <b>{category.title}</b>
-                        </AccordionSummary>
-                    </Accordion>
+                        title={category.title}
+                        className={styles.before}
+                        onClick={() => onSelectCategory(category)}
+                    />
                 ))}
             </div>
         );

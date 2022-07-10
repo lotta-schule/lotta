@@ -2,28 +2,12 @@
     .heading {
         margin-bottom: calc(3 * var(--lotta-spacing));
     }
-    .moveCategoryHandlerIcon {
-        vertical-align: bottom;
-        margin-right: calc(3 * var(--lotta-spacing));
-    }
-    .expansionSummary {
-        background-color: rgba(var(--lotta-highlight-color), 0.3);
-        border-radius: var(--lotta-border-radius);
-        border: 1px solid;
-        border-color: rgba(var(--lotta-divider-color), 1);
+    nav {
+        overflow: hidden;
         margin-bottom: var(--lotta-spacing);
-        &:hover {
-            border-color: rgb(var(--lotta-primary-color));
-        }
-    }
-    li.subcategories {
-        border-radius: var(--lotta-border-radius);
-        border: 1px solid;
-        border-color: rgba(var(--lotta-divider-color), 1);
-        margin-bottom: var(--lotta-spacing);
-        background-color: rgba(var(--lotta-box-background-color), 1);
+        background-color: rgb(var(--lotta-box-background-color));
         color: rgb(var(--lotta-text-color));
-        padding: var(--lotta-spacing);
+        padding-left: calc(2 * var(--lotta-spacing));
         &:hover {
             border-color: rgb(var(--lotta-primary-color));
         }

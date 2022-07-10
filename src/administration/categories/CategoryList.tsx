@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Add as AddCircleIcon } from '@material-ui/icons';
 import { CategoryModel } from 'model';
-import { Button } from '@lotta-schule/hubert';
+import { Button, NoSsr } from '@lotta-schule/hubert';
 import { CategoryNavigation } from './categories/CategoryNavigation';
 import { CategoryEditor } from './categories/CategoryEditor';
 import { CreateCategoryDialog } from './categories/CreateCategoryDialog';
@@ -29,10 +29,12 @@ export const CategoryList = React.memo(() => {
 
             <section>
                 <div>
-                    <CategoryNavigation
-                        selectedCategory={selectedCategory}
-                        onSelectCategory={setSelectedCategory}
-                    />
+                    <NoSsr>
+                        <CategoryNavigation
+                            selectedCategory={selectedCategory}
+                            onSelectCategory={setSelectedCategory}
+                        />
+                    </NoSsr>
                 </div>
                 <div>
                     {selectedCategory && (

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render } from 'test/util';
+import { render, waitFor } from 'test/util';
 import {
     allCategories,
     FaecherCategory,
@@ -30,14 +30,26 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
             />,
             {}
         );
-        expect(
-            await screen.findAllByRole('button', { expanded: false })
-        ).toHaveLength(topLevelCategories.length);
+        await waitFor(() => {
+            expect([
+                ...screen
+                    .getAllByRole('button')
+                    .filter((el) => el.dataset.testid === 'main-category-item'),
+                ...screen
+                    .getAllByRole('button')
+                    .filter(
+                        (el) => el.dataset.testid === 'sidenav-category-item'
+                    ),
+            ]).toHaveLength(topLevelCategories.length);
+        });
     });
 
     describe('selected category', () => {
         it('should select a category on click', async () => {
-            const onSelectCategory = jest.fn();
+            let selectedCategory = null;
+            const onSelectCategory = jest.fn(
+                (category) => (selectedCategory = category)
+            );
             const screen = render(
                 <CategoryNavigation
                     selectedCategory={null}
@@ -45,10 +57,19 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
                 />,
                 {}
             );
-            userEvent.click(
-                await screen.findByRole('button', { name: /start/i })
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('button', { name: /start/i })
+                ).toBeVisible();
+            });
+            userEvent.click(screen.getByRole('button', { name: /start/i }));
+            await waitFor(() => {
+                expect(onSelectCategory).toHaveBeenCalled();
+            });
+            expect(selectedCategory).toHaveProperty(
+                'id',
+                StartseiteCategory.id
             );
-            expect(onSelectCategory).toHaveBeenCalledWith(StartseiteCategory);
         });
 
         it('should show subtree when parent-tree is selected', async () => {
@@ -59,12 +80,13 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
                 />,
                 {}
             );
-            expect(
-                await screen.findByRole('button', {
-                    name: /fächer/i,
-                    expanded: true,
-                })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('button', {
+                        name: /fächer/i,
+                    })
+                ).toBeVisible();
+            });
         });
 
         it('should show expanded tree if selected category is in it', async () => {
@@ -75,12 +97,13 @@ describe('shared/layouts/adminLayout/categoryManagment/categories/CategoryNaviga
                 />,
                 {}
             );
-            expect(
-                await screen.findByRole('button', {
-                    name: /fächer/i,
-                    expanded: true,
-                })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('button', {
+                        name: /fächer/i,
+                    })
+                ).toBeVisible();
+            });
         });
     });
 });
