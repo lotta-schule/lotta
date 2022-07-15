@@ -18,9 +18,6 @@ import {
     Dialog,
     DialogContent,
     DialogActions,
-    Menu,
-    MenuItem,
-    MenuList,
     MenuButton,
     Item,
 } from '@lotta-schule/hubert';
