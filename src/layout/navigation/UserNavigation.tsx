@@ -14,9 +14,8 @@ import {
 import {
     Badge,
     NavigationButton,
-    Menu,
-    MenuItem,
-    MenuList,
+    MenuButton,
+    Item,
 } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
 import { ArticleModel } from 'model';
@@ -105,7 +104,9 @@ export const UserNavigation = React.memo(() => {
                             <Badge value={newMessagesBadgeNumber} />{' '}
                         </NavigationButton>
                     </Link>
-                    <Menu
+                    <MenuButton
+                        title={'Nutzermenü'}
+                        placement={'bottom-end'}
                         buttonProps={{
                             icon: <AccountCircle />,
                             children: (
@@ -121,121 +122,75 @@ export const UserNavigation = React.memo(() => {
                                 'usernavigation-button'
                             ),
                         }}
+                        onAction={(action) => {
+                            switch (action) {
+                                case 'profile':
+                                    return router.push('/profile');
+                                case 'files':
+                                    return router.push('/profile/files');
+                                case 'own-articles':
+                                    return router.push('/profile/articles');
+                                case 'administration':
+                                    return router.push('/admin');
+                                case 'unpublished':
+                                    return router.push('/admin/unpublished');
+                                case 'logout':
+                                    return onLogout();
+                            }
+                        }}
                     >
-                        <MenuList className={styles.menuList}>
-                            {[
-                                <Link
-                                    passHref
-                                    href={'/profile'}
-                                    key={'profile'}
-                                >
-                                    <MenuItem
-                                        leftSection={
-                                            <PersonOutlineOutlined
-                                                color={'secondary'}
-                                            />
-                                        }
-                                    >
-                                        Meine Daten
-                                    </MenuItem>
-                                </Link>,
-                                <Link
-                                    passHref
-                                    href={'/profile/files'}
-                                    key={'files'}
-                                >
-                                    <MenuItem
-                                        leftSection={
-                                            <FolderOutlined
-                                                color={'secondary'}
-                                            />
-                                        }
-                                    >
-                                        Meine Dateien und Medien
-                                    </MenuItem>
-                                </Link>,
-                                <Link
-                                    passHref
-                                    href={'/profile/articles'}
-                                    key={'ownArticles'}
-                                >
-                                    <MenuItem
-                                        leftSection={
-                                            <AssignmentOutlined
-                                                color={'secondary'}
-                                            />
-                                        }
-                                    >
-                                        Meine Beiträge
-                                    </MenuItem>
-                                </Link>,
-                                ...(User.isAdmin(currentUser)
-                                    ? [
-                                          <MenuItem
-                                              isDivider
-                                              key={'administration-divider1'}
-                                          />,
-                                          <Link
-                                              passHref
-                                              href={'/admin'}
-                                              key={'administration'}
-                                          >
-                                              <MenuItem
-                                                  leftSection={
-                                                      <SecurityOutlined
-                                                          color={'secondary'}
-                                                      />
-                                                  }
-                                              >
-                                                  Seite administrieren
-                                              </MenuItem>
-                                          </Link>,
-                                          <Link
-                                              passHref
-                                              href={'/admin/unpublished'}
-                                              key={'unpublished'}
-                                          >
-                                              <MenuItem
-                                                  leftSection={
-                                                      <AssignmentOutlined
-                                                          color={'secondary'}
-                                                      />
-                                                  }
-                                              >
-                                                  Beiträge freigeben
-                                                  <Badge
-                                                      value={
-                                                          unpublishedBadgeNumber
-                                                      }
-                                                  />
-                                              </MenuItem>
-                                          </Link>,
-                                      ]
-                                    : []),
-                                <MenuItem isDivider key={'logout-divider'} />,
-                                <MenuItem
-                                    key={'logout'}
-                                    href={'#'}
-                                    leftSection={
-                                        <ExitToAppOutlined
-                                            color={'secondary'}
-                                        />
-                                    }
-                                    onClick={(
-                                        e: React.MouseEvent<
-                                            HTMLLinkElement,
-                                            MouseEvent
-                                        >
-                                    ) => {
-                                        e.preventDefault();
-                                        onLogout();
-                                    }}
-                                >
-                                    Abmelden
-                                </MenuItem>,
-                            ]}
-                        </MenuList>
-                    </Menu>
+                        {[
+                            <Item key={'profile'} textValue={'Meine Daten'}>
+                                <PersonOutlineOutlined color={'secondary'} />
+                                Meine Daten
+                            </Item>,
+                            <Item
+                                key={'files'}
+                                textValue={'Meine Dateien und Medien'}
+                            >
+                                <FolderOutlined color={'secondary'} />
+                                Meine Dateien und Medien
+                            </Item>,
+                            <Item
+                                key={'own-articles'}
+                                textValue={'Meine Beiträge'}
+                            >
+                                <AssignmentOutlined color={'secondary'} />
+                                Meine Beiträge
+                            </Item>,
+                            ...(User.isAdmin(currentUser)
+                                ? [
+                                      <Item
+                                          key={'administration'}
+                                          textValue={'Seite administration'}
+                                      >
+                                          <SecurityOutlined
+                                              color={'secondary'}
+                                          />
+                                          Seite administrieren
+                                      </Item>,
+                                      <Item
+                                          key={'unpublished'}
+                                          textValue={'Beiträge freigeben'}
+                                      >
+                                          <AssignmentOutlined
+                                              color={'secondary'}
+                                          />
+                                          <span>
+                                              Beiträge freigeben
+                                              <Badge
+                                                  value={unpublishedBadgeNumber}
+                                              />
+                                          </span>
+                                      </Item>,
+                                  ]
+                                : []),
+                            <Item key={'logout'} textValue={'Abmelden'}>
+                                <ExitToAppOutlined color={'secondary'} />
+                                Abmelden
+                            </Item>,
+                        ]}
+                    </MenuButton>
                     <CreateArticleDialog
                         isOpen={createArticleModalIsOpen}
                         onAbort={() => setCreateArticleModalIsOpen(false)}

@@ -134,7 +134,18 @@ export const FileTableRowFilenameCell =
 
             const previewImageUrl = File.getPreviewImageLocation(baseUrl, file);
 
-            const tableCell = (
+            const filename = previewImageUrl ? (
+                <Tooltip
+                    className={styles.tooltip}
+                    label={<img src={previewImageUrl} alt={file!.filename} />}
+                >
+                    <span>{file?.filename ?? directory!.name}</span>
+                </Tooltip>
+            ) : (
+                file?.filename ?? directory!.name
+            );
+
+            return (
                 <td
                     scope="row"
                     className={styles.root}
@@ -143,24 +154,9 @@ export const FileTableRowFilenameCell =
                         onSelect?.();
                     }}
                 >
-                    {file?.filename ?? directory!.name}
+                    {filename}
                 </td>
             );
-
-            if (previewImageUrl) {
-                return (
-                    <Tooltip
-                        className={styles.tooltip}
-                        label={
-                            <img src={previewImageUrl} alt={file!.filename} />
-                        }
-                    >
-                        {tableCell}
-                    </Tooltip>
-                );
-            } else {
-                return tableCell;
-            }
         }
     );
 FileTableRowFilenameCell.displayName = 'FileTableRowFilenameCell';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { render, waitFor, fireEvent } from 'test/util';
 import { LehrerListe } from 'test/fixtures';
 import { Edit } from './Edit';
@@ -57,9 +57,9 @@ describe('shared/article/module/table/Edit', () => {
                 screen.getByRole('cell', { name: 'Lehrer E' })
             ).toBeInTheDocument();
             const input = screen.getByDisplayValue('Lehrer E');
-            await userEvent.clear(input);
-            await userEvent.type(input, 'Der Mr Lehrer E');
-            await userEvent.click(screen.getByRole('table')); // blur input
+            userEvent.clear(input);
+            userEvent.type(input, 'Der Mr Lehrer E');
+            userEvent.click(screen.getByRole('table')); // blur input
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
@@ -75,8 +75,8 @@ describe('shared/article/module/table/Edit', () => {
                     />
                 );
                 const input = screen.getByDisplayValue('Kürzel');
-                await userEvent.click(input);
-                await userEvent.type(input, '{enter}');
+                userEvent.click(input);
+                userEvent.type(input, '{enter}');
                 await waitFor(() => {
                     expect(screen.getByDisplayValue('Name')).toHaveFocus();
                 });
@@ -199,7 +199,7 @@ describe('shared/article/module/table/Edit', () => {
                 const button = screen.getByRole('button', {
                     name: /spalte entfernen/i,
                 });
-                await userEvent.click(button);
+                userEvent.click(button);
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
@@ -259,7 +259,7 @@ describe('shared/article/module/table/Edit', () => {
                 const button = screen.getByRole('button', {
                     name: /zeile entfernen/i,
                 });
-                await userEvent.click(button);
+                userEvent.click(button);
                 await waitFor(() => {
                     expect(callback).toHaveBeenCalled();
                 });
@@ -321,8 +321,8 @@ describe('shared/article/module/table/Edit', () => {
                 />
             );
             const upperLeftInput = screen.getByDisplayValue('Kürzel');
-            await userEvent.click(upperLeftInput);
-            await fireEvent.paste(upperLeftInput, {
+            userEvent.click(upperLeftInput);
+            fireEvent.paste(upperLeftInput, {
                 clipboardData: excelPasteTransfer,
             });
             await waitFor(() => {
@@ -351,8 +351,8 @@ describe('shared/article/module/table/Edit', () => {
                 />
             );
             const upperLeftInput = screen.getByDisplayValue('Kürzel');
-            await userEvent.click(upperLeftInput);
-            await fireEvent.paste(upperLeftInput, {
+            userEvent.click(upperLeftInput);
+            fireEvent.paste(upperLeftInput, {
                 clipboardData: numbersPasteTransfer,
             });
             await waitFor(() => {
@@ -422,8 +422,8 @@ describe('shared/article/module/table/Edit', () => {
                 />
             );
             const bottomRightInput = screen.getByDisplayValue('Lehrer E');
-            await userEvent.click(bottomRightInput);
-            await fireEvent.paste(bottomRightInput, {
+            userEvent.click(bottomRightInput);
+            fireEvent.paste(bottomRightInput, {
                 clipboardData: numbersPasteTransfer,
             });
             await waitFor(() => {

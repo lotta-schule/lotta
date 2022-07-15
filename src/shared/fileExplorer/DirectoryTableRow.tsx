@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MoreVert, CreateOutlined, FileCopyOutlined } from '@material-ui/icons';
-import { Menu, MenuItem, MenuList } from '@lotta-schule/hubert';
+import { MenuButton, Item } from '@lotta-schule/hubert';
 import { DirectoryModel } from 'model';
 import { File } from 'util/model/File';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
@@ -66,9 +66,11 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                     <td>
                         {File.canEditDirectory(directory, currentUser) && (
                             <>
-                                <Menu
+                                <MenuButton
+                                    title={'Ordnermenü'}
                                     buttonProps={{
                                         icon: <MoreVert fontSize="inherit" />,
+                                        'aria-label': 'Ordnermenü öffnen',
                                         className: clsx(
                                             'lotta-navigation-button',
                                             'secondary',
@@ -76,29 +78,12 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                                             'usernavigation-button'
                                         ),
                                     }}
-                                >
-                                    <MenuList>
-                                        <MenuItem
-                                            leftSection={
-                                                <CreateOutlined
-                                                    color={'secondary'}
-                                                />
-                                            }
-                                            onClick={(e: React.MouseEvent) => {
-                                                e.stopPropagation();
+                                    onAction={(action) => {
+                                        switch (action) {
+                                            case 'rename':
                                                 setIsRenaming(true);
-                                            }}
-                                        >
-                                            Umbenennen
-                                        </MenuItem>
-                                        <MenuItem
-                                            leftSection={
-                                                <FileCopyOutlined
-                                                    color={'secondary'}
-                                                />
-                                            }
-                                            onClick={(e: React.MouseEvent) => {
-                                                e.stopPropagation();
+                                                break;
+                                            case 'move':
                                                 dispatch({
                                                     type: 'showMoveDirectory',
                                                 });
@@ -106,12 +91,25 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                                                     type: 'setMarkedDirectories',
                                                     directories: [directory],
                                                 });
-                                            }}
-                                        >
-                                            Verschieben
-                                        </MenuItem>
-                                    </MenuList>
-                                </Menu>
+                                                break;
+                                        }
+                                    }}
+                                >
+                                    <Item
+                                        key={'rename'}
+                                        textValue={'Umbenennen'}
+                                    >
+                                        <CreateOutlined color={'secondary'} />
+                                        Umbenennen
+                                    </Item>
+                                    <Item
+                                        key={'move'}
+                                        textValue={'Verschieben'}
+                                    >
+                                        <FileCopyOutlined color={'secondary'} />
+                                        Verschieben
+                                    </Item>
+                                </MenuButton>
                             </>
                         )}
                     </td>

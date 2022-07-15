@@ -6,7 +6,13 @@ import {
     ExpandLess,
     ExpandMore,
 } from '@material-ui/icons';
-import { Button, Input, InputProps, Table, Tooltip } from '@lotta-schule/hubert';
+import {
+    Button,
+    Input,
+    InputProps,
+    Table,
+    Tooltip,
+} from '@lotta-schule/hubert';
 import { ContentModuleModel } from 'model';
 import {
     TableCell as TableCellInterface,

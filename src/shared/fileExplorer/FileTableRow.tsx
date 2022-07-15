@@ -6,9 +6,9 @@ import {
     FileCopyOutlined,
     DeleteOutlineOutlined,
 } from '@material-ui/icons';
-import { Checkbox, Menu, MenuItem, MenuList } from '@lotta-schule/hubert';
+import { Checkbox, MenuButton, Item } from '@lotta-schule/hubert';
 import { FileModel, DirectoryModel } from 'model';
-import { File } from 'util/model/File';
+import { File } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { FileTableRowFilenameCell } from './FileTableRowFilenameCell';
 import { useServerData } from 'shared/ServerDataContext';
@@ -86,74 +86,65 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                 />
                 {filesAreEditable && (
                     <td>
-                        <Menu
+                        <MenuButton
                             buttonProps={{
                                 small: true,
                                 icon: <MoreVert fontSize="inherit" />,
-                                'aria-label': 'delete',
+                                'aria-label': 'Dateimenü öffnen',
                             }}
-                        >
-                            <MenuList>
-                                <MenuItem
-                                    key={'download'}
-                                    onClick={(e: React.MouseEvent) =>
-                                        e.stopPropagation()
+                            title={'Dateimenü'}
+                            onAction={(action) => {
+                                switch (action) {
+                                    case 'download': {
+                                        const downloadUrl =
+                                            File.getFileRemoteLocation(
+                                                baseUrl,
+                                                file
+                                            );
+                                        const anchor =
+                                            document.createElement('a');
+                                        anchor.href = downloadUrl;
+                                        anchor.download = file.filename;
+                                        anchor.click();
+                                        break;
                                     }
-                                    href={File.getFileRemoteLocation(
-                                        baseUrl,
-                                        file
-                                    )}
-                                    download={file.filename}
-                                    leftSection={
-                                        <CloudDownloadOutlined
-                                            color={'secondary'}
-                                        />
-                                    }
-                                >
-                                    Herunterladen
-                                </MenuItem>
-                                <MenuItem isDivider />
-                                <MenuItem
-                                    leftSection={
-                                        <CreateOutlined color={'secondary'} />
-                                    }
-                                    onClick={() => setIsRenaming(true)}
-                                >
-                                    Umbenennen
-                                </MenuItem>
-                                <MenuItem
-                                    onClick={() => {
+                                    case 'rename':
+                                        setIsRenaming(true);
+                                        break;
+                                    case 'move':
                                         dispatch({ type: 'showMoveFiles' });
                                         dispatch({
                                             type: 'setMarkedFiles',
                                             files: [file],
                                         });
-                                    }}
-                                    leftSection={
-                                        <FileCopyOutlined color={'secondary'} />
-                                    }
-                                >
-                                    Verschieben
-                                </MenuItem>
-                                <MenuItem
-                                    leftSection={
-                                        <DeleteOutlineOutlined
-                                            color={'secondary'}
-                                        />
-                                    }
-                                    key={'delete'}
-                                    onClick={() => {
+                                        break;
+                                    case 'delete':
                                         dispatch({ type: 'showDeleteFiles' });
                                         dispatch({
                                             type: 'setMarkedFiles',
                                             files: [file],
                                         });
-                                    }}
-                                >
-                                    Löschen
-                                </MenuItem>
-                            </MenuList>
-                        </Menu>
+                                        break;
+                                }
+                            }}
+                        >
+                            <Item key={'download'} textValue={'Herunterladen'}>
+                                <CloudDownloadOutlined color={'secondary'} />
+                                Herunterladen
+                            </Item>
+                            <Item key={'rename'} textValue={'Umbenennen'}>
+                                <CreateOutlined color={'secondary'} />
+                                Umbenennen
+                            </Item>
+                            <Item key={'move'} textValue={'Verschieben'}>
+                                <FileCopyOutlined color={'secondary'} />
+                                Verschieben
+                            </Item>
+                            <Item key={'delete'} textValue={'Löschen'}>
+                                <DeleteOutlineOutlined color={'secondary'} />
+                                Löschen
+                            </Item>
+                        </MenuButton>
                     </td>
                 )}
             </tr>

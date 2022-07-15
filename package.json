@@ -47,7 +47,7 @@
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@jest/globals": "^28.1.2",
         "@jumpn/utils-graphql": "^0.6.0",
-        "@lotta-schule/hubert": "^0.0.1-alpha.7",
+        "@lotta-schule/hubert": "^0.0.1-alpha.17",
         "@material-ui/core": "^4.12.4",
         "@material-ui/icons": "^4.11.3",
         "@material-ui/lab": "^4.0.0-alpha.51",

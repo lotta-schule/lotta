@@ -4,9 +4,8 @@ import { useQuery, useMutation } from '@apollo/client';
 import {
     ErrorMessage,
     LinearProgress,
-    Menu,
-    MenuItem,
-    MenuList,
+    MenuButton,
+    Item,
 } from '@lotta-schule/hubert';
 import { WidgetModel, WidgetModelType } from 'model';
 import { Widget } from 'util/model';
@@ -70,68 +69,65 @@ export const WidgetList = React.memo(() => {
 
     return (
         <div className={styles.root}>
-            <h3 className={styles.headline}>
-                Marginalen
-                <>
-                    <Menu
-                        buttonProps={{
-                            className: styles.addButton,
-                            disabled: isLoadingCreateWidget,
-                            icon: (
-                                <AddCircleIcon
-                                    className={clsx(
-                                        styles.leftIcon,
-                                        styles.iconSmall
-                                    )}
-                                />
-                            ),
-                            label: 'Marginale erstellen',
-                        }}
-                    >
-                        <MenuList>
-                            <MenuItem
-                                onClick={() => {
-                                    onClickCreateWidget(
-                                        'Kalender',
-                                        WidgetModelType.Calendar
-                                    );
-                                }}
-                                leftSection={Widget.getIconForType(
+            <h3 className={styles.headline}>Marginalen</h3>
+            <div className={styles.addButton}>
+                <MenuButton
+                    buttonProps={{
+                        disabled: isLoadingCreateWidget,
+                        icon: (
+                            <AddCircleIcon
+                                className={clsx(
+                                    styles.leftIcon,
+                                    styles.iconSmall
+                                )}
+                            />
+                        ),
+                        label: 'Marginale erstellen',
+                    }}
+                    onAction={(key) => {
+                        switch (key) {
+                            case 'calendar':
+                                return onClickCreateWidget(
+                                    'Kalender',
                                     WidgetModelType.Calendar
-                                )}
-                            >
-                                Kalender-Marginale erstellen
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => {
-                                    onClickCreateWidget(
-                                        'VPlan',
-                                        WidgetModelType.Schedule
-                                    );
-                                }}
-                                leftSection={Widget.getIconForType(
+                                );
+                            case 'schedule':
+                                return onClickCreateWidget(
+                                    'VPlan',
                                     WidgetModelType.Schedule
-                                )}
-                            >
-                                VPlan-Marginale erstellen
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => {
-                                    onClickCreateWidget(
-                                        'IFrame',
-                                        WidgetModelType.IFrame
-                                    );
-                                }}
-                                leftSection={Widget.getIconForType(
+                                );
+                            case 'iframe':
+                                return onClickCreateWidget(
+                                    'IFrame',
                                     WidgetModelType.IFrame
-                                )}
-                            >
-                                IFrame-Marginale erstellen
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
-                </>
-            </h3>
+                                );
+                        }
+                    }}
+                >
+                    <Item
+                        key={'calendar'}
+                        textValue={'Kalender-Marginale erstellen'}
+                    >
+                        {Widget.getIconForType(WidgetModelType.Calendar)}
+                        <span>Kalender-Marginale erstellen</span>
+                    </Item>
+                    <Item
+                        key={'schedule'}
+                        textValue={'VPlan-Marginale erstellen'}
+                    >
+                        {Widget.getIconForType(WidgetModelType.Schedule)}
+                        <span>VPlan-Marginale erstellen</span>
+                    </Item>
+                    <Item
+                        key={'iframe'}
+                        textValue={'IFrame-Marginale erstellen'}
+                    >
+                        {Widget.getIconForType(WidgetModelType.IFrame)}
+                        <span>IFrame-Marginale erstellen</span>
+                    </Item>
+                </MenuButton>
+            </div>
+            <div className={styles.clearer} />
             <ErrorMessage error={errorCreateWidget} />
             <div className={styles.wrapper}>
                 <aside>

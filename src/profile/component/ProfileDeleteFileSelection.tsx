@@ -5,8 +5,6 @@ import { Article, Category, File } from 'util/model';
 import { useServerData } from 'shared/ServerDataContext';
 import Link from 'next/link';
 
-import styles from './ProfileDeleteFileSelection.module.scss';
-
 export interface ProfileDeleteFileSelectionProps {
     files: FileModel[];
     selectedFiles: FileModel[];

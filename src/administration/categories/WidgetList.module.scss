@@ -5,6 +5,7 @@
 
     .headline {
         margin-bottom: calc(4 * var(--lotta-spacing));
+        float: left;
     }
 
     .addButton {
@@ -31,6 +32,10 @@
 
     aside ~ div {
         flex: 1;
+    }
+
+    .clearer {
+        clear: both;
     }
 
     @media screen and (max-width: $max-sm) {

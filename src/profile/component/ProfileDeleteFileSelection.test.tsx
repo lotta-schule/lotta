@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { FileModel } from 'model';
 import { render, waitFor } from 'test/util';
 import { SomeUser, getPrivateAndPublicFiles } from 'test/fixtures';
@@ -179,7 +179,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                 screen.getByRole('checkbox', { name: 'praesi.ppt' })
             ).not.toBeChecked();
 
-            await userEvent.click(
+            userEvent.click(
                 screen.getByRole('checkbox', { name: 'Amelie.mp4' })
             );
 
@@ -225,7 +225,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                 screen.getByRole('checkbox', { name: 'praesi.ppt' })
             ).not.toBeChecked();
 
-            await userEvent.click(
+            userEvent.click(
                 screen.getByRole('checkbox', { name: 'Animiert.gif' })
             );
 
@@ -307,7 +307,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                 screen.getByRole('checkbox', { name: /alle dateien/i })
             );
 
-            waitFor(() => {
+            await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
             });
         });

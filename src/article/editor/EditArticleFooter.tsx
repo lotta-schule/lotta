@@ -21,6 +21,8 @@ import {
     Menu,
     MenuItem,
     MenuList,
+    MenuButton,
+    Item,
 } from '@lotta-schule/hubert';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
 import { useRouter } from 'next/router';
@@ -156,9 +158,41 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                 </>
                             )}
                             <ButtonGroup fullWidth>
+                                <MenuButton
+                                    title={'Speicheroptionen'}
+                                    buttonProps={{
+                                        icon: <ArrowDropDownIcon />,
+                                        className:
+                                            'is-first-button-group-button',
+                                        variant: 'fill',
+                                    }}
+                                    placement={'top'}
+                                    onAction={(action) => {
+                                        switch (action) {
+                                            case 'save-no-pudated-at':
+                                                return onSave({
+                                                    updatedAt: new Date(
+                                                        article.updatedAt
+                                                    ).toISOString(),
+                                                });
+                                            case 'save-updated-on-created':
+                                                return onSave({
+                                                    updatedAt:
+                                                        article.insertedAt,
+                                                });
+                                        }
+                                    }}
+                                >
+                                    <Item key={'save-no-updated-at'}>
+                                        Ohne Aktualisierszeit zu ändern
+                                    </Item>
+                                    <Item key={'save-updated-on-created'}>
+                                        Aktualisierszeit auf Erstellszeit setzen
+                                    </Item>
+                                </MenuButton>
                                 <Button
                                     fullWidth
-                                    className={'is-first-button-group-button'}
+                                    className={'is-last-button-group-button'}
                                     variant={'fill'}
                                     disabled={isLoading}
                                     onClick={() =>
@@ -169,39 +203,6 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                 >
                                     speichern
                                 </Button>
-                                <Menu
-                                    buttonProps={{
-                                        icon: <ArrowDropDownIcon />,
-                                        className:
-                                            'is-last-button-group-button',
-                                        variant: 'fill',
-                                    }}
-                                >
-                                    <MenuList>
-                                        <MenuItem
-                                            onClick={() =>
-                                                onSave({
-                                                    updatedAt: new Date(
-                                                        article.updatedAt
-                                                    ).toISOString(),
-                                                })
-                                            }
-                                        >
-                                            Ohne Aktualisierszeit zu ändern
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() =>
-                                                onSave({
-                                                    updatedAt:
-                                                        article.insertedAt,
-                                                })
-                                            }
-                                        >
-                                            Aktualisierszeit auf Erstellszeit
-                                            setzen
-                                        </MenuItem>
-                                    </MenuList>
-                                </Menu>
                             </ButtonGroup>
                         </div>
                     </div>

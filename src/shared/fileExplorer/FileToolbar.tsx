@@ -13,8 +13,8 @@ import {
     CircularProgress,
     Tooltip,
     Toolbar,
+    Collapse,
 } from '@lotta-schule/hubert';
-import { motion } from 'framer-motion';
 import { useUploads, useCreateUpload } from './context/UploadQueueContext';
 import { DirectoryModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -26,8 +26,6 @@ import fileExplorerContext, {
 } from './context/FileExplorerContext';
 
 import styles from './FileToolbar.module.scss';
-
-const AnimatedButton = motion(Button);
 
 export const FileToolbar = React.memo(() => {
     const isMobile = useIsMobile();
@@ -65,87 +63,72 @@ export const FileToolbar = React.memo(() => {
                 </div>
                 <div className={styles.spacer} />
                 <div className={styles.actions}>
-                    <Tooltip
-                        label={`${uploadLength} Dateien werden hochgeladen`}
-                    >
-                        <AnimatedButton
-                            aria-label={`${uploadLength} Dateien werden hochgeladen`}
-                            onClick={() =>
-                                dispatch({ type: 'showActiveUploads' })
-                            }
-                            data-testid="FileExplorerToolbarCurrentUploadsButton"
-                            animate={uploadLength > 0 ? 'visible' : 'hidden'}
-                            variants={{
-                                visible: { opacity: 1, scale: 1 },
-                                hidden: { opacity: 0, scale: 0 },
-                            }}
+                    <Collapse visible={uploadLength > 0}>
+                        <Tooltip
+                            label={`${uploadLength} Dateien werden hochgeladen`}
                         >
-                            <CircularProgress
-                                aria-label={'Dateien werden hochgeladen.'}
-                                size={20}
-                                value={uploadTotalProgress}
-                            />
-                            {}
-                            <Badge
-                                value={
-                                    uploads.filter((u) => u.error).length
-                                        ? '!'
-                                        : uploadLength
+                            <Button
+                                aria-label={`${uploadLength} Dateien werden hochgeladen`}
+                                onClick={() =>
+                                    dispatch({ type: 'showActiveUploads' })
                                 }
-                            />
-                        </AnimatedButton>
-                    </Tooltip>
+                                data-testid="FileExplorerToolbarCurrentUploadsButton"
+                            >
+                                <CircularProgress
+                                    aria-label={'Dateien werden hochgeladen.'}
+                                    size={20}
+                                    value={uploadTotalProgress}
+                                />
+                                {}
+                                <Badge
+                                    value={
+                                        uploads.filter((u) => u.error).length
+                                            ? '!'
+                                            : uploadLength
+                                    }
+                                />
+                            </Button>
+                        </Tooltip>
+                    </Collapse>
                     {File.canEditDirectory(
                         state.currentPath.slice(-1)[0] as DirectoryModel,
                         currentUser!
                     ) && (
                         <>
-                            <Tooltip label="Dateien verschieben">
-                                <AnimatedButton
-                                    aria-label="Dateien verschieben"
-                                    onClick={() =>
-                                        dispatch({ type: 'showMoveFiles' })
-                                    }
-                                    data-testid="FileExplorerToolbarMoveFileButton"
-                                    icon={
-                                        <FileCopyOutlined color={'secondary'} />
-                                    }
-                                    animate={
-                                        showFileEditingButtons
-                                            ? 'visible'
-                                            : 'hidden'
-                                    }
-                                    variants={{
-                                        visible: { opacity: 1, scale: 1 },
-                                        hidden: { opacity: 0, scale: 0 },
-                                    }}
-                                />
-                            </Tooltip>
-                            <Tooltip label="Dateien löschen">
-                                <AnimatedButton
-                                    aria-label="Dateien löschen"
-                                    onClick={() =>
-                                        dispatch({
-                                            type: 'showDeleteFiles',
-                                        })
-                                    }
-                                    data-testid="FileExplorerToolbarDeleteFileButton"
-                                    icon={
-                                        <DeleteOutlineOutlined
-                                            color={'secondary'}
-                                        />
-                                    }
-                                    animate={
-                                        showFileEditingButtons
-                                            ? 'visible'
-                                            : 'hidden'
-                                    }
-                                    variants={{
-                                        visible: { opacity: 1, scale: 1 },
-                                        hidden: { opacity: 0, scale: 0 },
-                                    }}
-                                />
-                            </Tooltip>
+                            <Collapse visible={showFileEditingButtons}>
+                                <Tooltip label="Dateien verschieben">
+                                    <Button
+                                        aria-label="Dateien verschieben"
+                                        onClick={() =>
+                                            dispatch({ type: 'showMoveFiles' })
+                                        }
+                                        data-testid="FileExplorerToolbarMoveFileButton"
+                                        icon={
+                                            <FileCopyOutlined
+                                                color={'secondary'}
+                                            />
+                                        }
+                                    />
+                                </Tooltip>
+                            </Collapse>
+                            <Collapse visible={showFileEditingButtons}>
+                                <Tooltip label="Dateien löschen">
+                                    <Button
+                                        aria-label="Dateien löschen"
+                                        onClick={() =>
+                                            dispatch({
+                                                type: 'showDeleteFiles',
+                                            })
+                                        }
+                                        data-testid="FileExplorerToolbarDeleteFileButton"
+                                        icon={
+                                            <DeleteOutlineOutlined
+                                                color={'secondary'}
+                                            />
+                                        }
+                                    />
+                                </Tooltip>
+                            </Collapse>
                         </>
                     )}
                     {File.canCreateDirectory(
@@ -171,89 +154,78 @@ export const FileToolbar = React.memo(() => {
                         state.currentPath.slice(-1)[0] as DirectoryModel,
                         currentUser!
                     ) && (
-                        <Tooltip label="Dateien hochladen">
-                            <AnimatedButton
-                                aria-label="Dateien hochladen"
-                                data-testid="FileExplorerToolbarNewUploadButton"
-                                onlyIcon
-                                icon={
-                                    <CloudUploadOutlined color={'secondary'} />
-                                }
-                                animate={
-                                    state.currentPath.length > 1
-                                        ? 'visible'
-                                        : 'hidden'
-                                }
-                                variants={{
-                                    visible: { opacity: 1, scale: 1 },
-                                    hidden: { opacity: 0, scale: 0 },
-                                }}
-                            >
-                                <input
-                                    multiple
-                                    type={'file'}
-                                    className={styles.uploadButton}
-                                    onChange={(e) => {
-                                        if (e.target.files) {
-                                            Array.from(e.target.files).forEach(
-                                                (file) =>
+                        <Collapse visible={state.currentPath.length > 1}>
+                            <Tooltip label="Dateien hochladen">
+                                <Button
+                                    aria-label="Dateien hochladen"
+                                    data-testid="FileExplorerToolbarNewUploadButton"
+                                    onlyIcon
+                                    icon={
+                                        <CloudUploadOutlined
+                                            color={'secondary'}
+                                        />
+                                    }
+                                >
+                                    <input
+                                        multiple
+                                        type={'file'}
+                                        className={styles.uploadButton}
+                                        onChange={(e) => {
+                                            if (e.target.files) {
+                                                Array.from(
+                                                    e.target.files
+                                                ).forEach((file) =>
                                                     createUpload(
                                                         file,
                                                         state.currentPath.slice(
                                                             -1
                                                         )[0] as DirectoryModel
                                                     )
-                                            );
-                                        }
-                                    }}
-                                />
-                            </AnimatedButton>
-                        </Tooltip>
+                                                );
+                                            }
+                                        }}
+                                    />
+                                </Button>
+                            </Tooltip>
+                        </Collapse>
                     )}
                     {!isMobile && state.mode === FileExplorerMode.ViewAndEdit && (
-                        <Tooltip
-                            label={`Info-Leiste für Dateien und Ordner ${
-                                state.detailSidebarEnabled
-                                    ? 'ausblenden'
-                                    : 'einblenden'
-                            }`}
-                        >
-                            <AnimatedButton
-                                data-testid="FileExplorerDetailViewButton"
-                                aria-label={`Info-Leiste für Dateien und Ordner ${
+                        <Collapse visible={state.currentPath.length > 1}>
+                            <Tooltip
+                                label={`Info-Leiste für Dateien und Ordner ${
                                     state.detailSidebarEnabled
                                         ? 'ausblenden'
                                         : 'einblenden'
                                 }`}
-                                onClick={() =>
-                                    dispatch({
-                                        type: 'toggleDetailSidebarEnabled',
-                                    })
-                                }
-                                icon={
-                                    state.detailSidebarEnabled ? (
-                                        <Info
-                                            color={'secondary'}
-                                            data-testid="enable-detail-sidebar-icon"
-                                        />
-                                    ) : (
-                                        <InfoOutlined
-                                            color={'secondary'}
-                                            data-testid="disable-detail-sidebar-icon"
-                                        />
-                                    )
-                                }
-                                animate={
-                                    state.currentPath.length > 1
-                                        ? 'visible'
-                                        : 'hidden'
-                                }
-                                variants={{
-                                    visible: { opacity: 1, scale: 1 },
-                                    hidden: { opacity: 0, scale: 0 },
-                                }}
-                            />
-                        </Tooltip>
+                            >
+                                <Button
+                                    data-testid="FileExplorerDetailViewButton"
+                                    aria-label={`Info-Leiste für Dateien und Ordner ${
+                                        state.detailSidebarEnabled
+                                            ? 'ausblenden'
+                                            : 'einblenden'
+                                    }`}
+                                    onClick={() =>
+                                        dispatch({
+                                            type: 'toggleDetailSidebarEnabled',
+                                        })
+                                    }
+                                    icon={
+                                        state.detailSidebarEnabled ? (
+                                            <Info
+                                                color={'secondary'}
+                                                data-testid="enable-detail-sidebar-icon"
+                                            />
+                                        ) : (
+                                            <InfoOutlined
+                                                color={'secondary'}
+                                                data-testid="disable-detail-sidebar-icon"
+                                            />
+                                        )
+                                    }
+                                />
+                            </Tooltip>
+                        </Collapse>
                     )}
                 </div>
             </Toolbar>
