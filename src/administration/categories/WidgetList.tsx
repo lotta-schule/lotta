@@ -72,6 +72,7 @@ export const WidgetList = React.memo(() => {
             <h3 className={styles.headline}>Marginalen</h3>
             <div className={styles.addButton}>
                 <MenuButton
+                    title={'Marginale erstellen'}
                     buttonProps={{
                         disabled: isLoadingCreateWidget,
                         icon: (
