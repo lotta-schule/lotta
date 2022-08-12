@@ -130,12 +130,12 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                                     placeholder={'Muster'}
                                     maxLength={50}
                                 />
-                                {!!getFieldError('name') && (
-                                    <ErrorMessage
-                                        error={getFieldError('name') as string}
-                                    />
-                                )}
                             </Label>
+                            {!!getFieldError('name') && (
+                                <ErrorMessage
+                                    error={getFieldError('name') as string}
+                                />
+                            )}
                         </div>
                     </div>
                     <p>
@@ -161,12 +161,12 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                                 setNickname(e.currentTarget.value);
                             }}
                         />
-                        {!!getFieldError('nickname') && (
-                            <ErrorMessage
-                                error={getFieldError('nickname') as string}
-                            />
-                        )}
                     </Label>
+                    {!!getFieldError('nickname') && (
+                        <ErrorMessage
+                            error={getFieldError('nickname') as string}
+                        />
+                    )}
                     <Checkbox
                         isSelected={isHideFullName}
                         onChange={setIsHideFullName}

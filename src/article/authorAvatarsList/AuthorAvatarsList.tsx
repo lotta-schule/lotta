@@ -65,6 +65,7 @@ export const AuthorAvatarsList = React.memo<AuthorAvatarsListProps>(
                 {!!onUpdate && (
                     <SearchUserField
                         label={'Autor hinzufügen'}
+                        selectedUsers={users}
                         onSelectUser={(user) => {
                             if (!users.find((u) => u.id === user.id)) {
                                 onUpdate([...users, user]);

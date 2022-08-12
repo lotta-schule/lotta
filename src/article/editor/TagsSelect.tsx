@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useAutocomplete } from '@material-ui/lab';
-import { useLazyQuery } from '@apollo/client';
-import { Input, Tag } from '@lotta-schule/hubert';
-import uniq from 'lodash/uniq';
+import { Tag, ComboBox } from '@lotta-schule/hubert';
+import { uniq } from 'lodash';
+import { useQuery } from '@apollo/client';
 
 import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 
@@ -13,100 +12,56 @@ export interface TagsSelectProps {
     onChange(value: string[]): void;
 }
 
-export const TagsSelect = React.memo<TagsSelectProps>(({ value, onChange }) => {
-    const [searchtext, setSearchtext] = React.useState('');
-    const [loadTags, { called, data }] = useLazyQuery<{
+export const TagsSelect = React.memo(({ value, onChange }: TagsSelectProps) => {
+    const { data, updateQuery } = useQuery<{
         tags: string[];
     }>(GetTagsQuery);
 
-    const options = data?.tags ?? [];
-
-    React.useEffect(() => {
-        if (searchtext && !called) {
-            loadTags();
-        }
-    }, [called, searchtext, loadTags]);
-
-    const {
-        getRootProps,
-        getInputProps,
-        getListboxProps,
-        getOptionProps,
-        groupedOptions,
-        setAnchorEl,
-    } = useAutocomplete({
-        value,
-        options,
-        freeSolo: true,
-        multiple: true,
-        id: 'tags-select',
-        inputValue: searchtext,
-        filterOptions: (options, { inputValue }) =>
-            options.filter((option) => option.includes(inputValue)),
-        getOptionLabel: (option) => option,
-        getOptionSelected: (option, value) => option === value,
-        onInputChange: (_event, value, reason) => {
-            if (reason !== 'reset') {
-                setSearchtext(value);
-            }
-        },
-        onChange: (_event, value, _reason, _details) => {
-            setSearchtext('');
-            onChangeFn(value);
-        },
-        onClose: (_event, reason) => {
-            if (reason === 'blur') {
-                setSearchtext('');
-            }
-        },
-    });
-
-    const onChangeFn = (tags: string[]) => {
-        onChange(uniq(tags));
-    };
+    const availableTags = [...new Set(data?.tags ?? [])];
 
     return (
-        <div id={'tags-select'} {...getRootProps()} className={styles.root}>
-            {value.map((tag, index) => {
-                const onDelete = () => onChange(value.filter((v) => v !== tag));
-                return (
-                    <Tag
-                        key={tag}
-                        {...getOptionProps({ option: tag, index })}
-                        onClick={onDelete}
-                        onDelete={(e) => {
-                            e.stopPropagation();
-                            onDelete();
-                        }}
-                    >
-                        {tag}
-                    </Tag>
-                );
-            })}
+        <div className={styles.root}>
+            {value.map((tag) => (
+                <Tag
+                    key={tag}
+                    onDelete={() => onChange(value.filter((t) => t !== tag))}
+                >
+                    {tag}
+                </Tag>
+            ))}
+            <ComboBox
+                fullWidth
+                title={'Tag hinzufügen'}
+                className={styles.inputWrapper}
+                items={availableTags.map((tag) => ({
+                    key: tag,
+                    label: tag,
+                    textValue: tag,
+                    selected: value.includes(tag),
+                }))}
+                onSelect={(tag) => {
+                    if (tag) {
+                        if (value.includes(tag.toString())) {
+                            onChange(value.filter((t) => t !== tag));
+                        } else {
+                            onChange([...value, tag.toString()]);
+                        }
 
-            <div ref={setAnchorEl} className={styles.inputWrapper}>
-                <Input
-                    {...getInputProps()}
-                    placeholder={'Tag hinzufügen'}
-                    aria-label={'Tag hinzufügen'}
-                />
-                {groupedOptions.length > 0 ? (
-                    <ul
-                        data-testid={'TagsSelectCombobox'}
-                        className={styles.suggestionsList}
-                        {...getListboxProps()}
-                    >
-                        {groupedOptions.map((option, index) => (
-                            <li
-                                key={option}
-                                {...getOptionProps({ option, index })}
-                            >
-                                {option}
-                            </li>
-                        ))}
-                    </ul>
-                ) : null}
-            </div>
+                        // add tag to availableTags
+                        if (!data?.tags.includes(tag.toString())) {
+                            updateQuery((previousResult) => ({
+                                ...previousResult,
+                                tags: uniq([
+                                    ...(previousResult?.tags ?? []),
+                                    tag.toString(),
+                                ]),
+                            }));
+                        }
+                    }
+                }}
+                hideLabel
+                allowsCustomValue
+            />
         </div>
     );
 });

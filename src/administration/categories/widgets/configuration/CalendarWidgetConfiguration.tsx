@@ -39,8 +39,9 @@ export const CalendarWidgetConfiguration =
                                         })
                                     }
                                 />
-                                <small>Link zu einer *.ics-Datei</small>
                             </Label>
+                            <small>Link zu einer *.ics-Datei</small>
+
                             <Label
                                 label={'Zeit, für die Termine abgerufen werden'}
                             >
@@ -111,11 +112,12 @@ export const CalendarWidgetConfiguration =
                                                     })
                                                 }
                                             />
-                                            <small>
-                                                Kalender einen beschreibenden
-                                                Namen für die Legende zuordnen
-                                            </small>
                                         </Label>
+                                        <small>
+                                            Kalender einen beschreibenden Namen
+                                            für die Legende zuordnen
+                                        </small>
+
                                         <Label label="Farbe des Kalenders">
                                             <Input
                                                 type={'color'}
@@ -141,11 +143,12 @@ export const CalendarWidgetConfiguration =
                                                     })
                                                 }
                                             />
-                                            <small>
-                                                Farbe, die dem Kalender
-                                                zugeordnet wird
-                                            </small>
                                         </Label>
+                                        <small>
+                                            Farbe, die dem Kalender zugeordnet
+                                            wird
+                                        </small>
+
                                         <Button
                                             onClick={() =>
                                                 setConfiguration({

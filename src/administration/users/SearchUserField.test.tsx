@@ -18,7 +18,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
             {}
         );
         expect(
-            screen.getByRole('textbox', { name: /nutzer suchen/i })
+            screen.getByRole('combobox', { name: /nutzer suchen/i })
         ).toBeDisabled();
     });
 
@@ -45,7 +45,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
                 }
             );
             userEvent.type(
-                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
             await waitFor(() => {
@@ -62,7 +62,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
                 { currentUser: SomeUser, additionalMocks }
             );
             userEvent.type(
-                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
             await waitFor(() => {

@@ -181,10 +181,10 @@ export const ProfilePage = () => {
                                 disabled={isLoading}
                                 maxLength={25}
                             />
-                            <ErrorMessage
-                                error={getFieldError('nickname') || null}
-                            />
                         </Label>
+                        <ErrorMessage
+                            error={getFieldError('nickname') || null}
+                        />
 
                         <Checkbox
                             isSelected={isHideFullName!}

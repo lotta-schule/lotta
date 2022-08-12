@@ -25,23 +25,22 @@ export const IFrameWidgetConfiguration =
                                 })
                             }
                         />
-                        <p>
-                            Die URL die im iframe angezeigt werden soll. Dabei
-                            ist zu beachten, dass Internetseiten es auch
-                            verbieten oder beschränken können, in einem iframe
-                            angezeigt zu werden. Weitere Informationen dazu gibt
-                            es bei{' '}
-                            <a
-                                href={
-                                    'https://developer.mozilla.org/de/docs/Web/HTTP/Headers/X-Frame-Options'
-                                }
-                                rel={'noreferrer'}
-                                target={'_blank'}
-                            >
-                                MDN Web Docs (X-Frame Options)
-                            </a>
-                        </p>
                     </Label>
+                    <p>
+                        Die URL die im iframe angezeigt werden soll. Dabei ist
+                        zu beachten, dass Internetseiten es auch verbieten oder
+                        beschränken können, in einem iframe angezeigt zu werden.
+                        Weitere Informationen dazu gibt es bei{' '}
+                        <a
+                            href={
+                                'https://developer.mozilla.org/de/docs/Web/HTTP/Headers/X-Frame-Options'
+                            }
+                            rel={'noreferrer'}
+                            target={'_blank'}
+                        >
+                            MDN Web Docs (X-Frame Options)
+                        </a>
+                    </p>
                 </div>
             );
         }

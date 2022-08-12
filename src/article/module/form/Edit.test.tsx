@@ -47,8 +47,8 @@ describe('shared/article/modules/form/Edit', () => {
             <Edit contentModule={contentModule} onUpdateModule={() => {}} />
         );
         expect(
-            screen.getByRole('textbox', { name: /kontakt/i })
-        ).toBeInTheDocument();
+            screen.queryAllByRole('textbox', { name: /name/i })?.[0]
+        ).toHaveValue('kontakt');
         expect(screen.getByRole('radio', { name: /m/i })).toBeInTheDocument();
 
         expect(

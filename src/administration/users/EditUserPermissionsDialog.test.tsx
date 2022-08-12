@@ -137,7 +137,9 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
             );
             expect(assignedGroups).toHaveTextContent(/Administrator/i);
 
-            userEvent.click(await screen.findByRole('textbox'));
+            userEvent.click(
+                await screen.findByRole('button', { name: /vorschläge/i })
+            );
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });
@@ -193,7 +195,9 @@ describe('shared/layouts/adminLayout/userManagment/EditUserPermissionsDialog', (
             );
             expect(assignedGroups).toHaveTextContent('Administrator');
 
-            userEvent.click(await screen.findByRole('textbox'));
+            userEvent.click(
+                await screen.findByRole('button', { name: /vorschläge/i })
+            );
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
             });

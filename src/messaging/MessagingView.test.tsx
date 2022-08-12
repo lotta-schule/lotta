@@ -97,7 +97,7 @@ describe('src/messaging/MessagingView', () => {
             );
 
             userEvent.type(
-                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Lui'
             );
             userEvent.click(
@@ -116,7 +116,6 @@ describe('src/messaging/MessagingView', () => {
         });
 
         it('should show the new message view when selecting a new user', async () => {
-            let didCallMsgMutation = false;
             const searchUsersMock = [
                 {
                     request: {
@@ -181,7 +180,7 @@ describe('src/messaging/MessagingView', () => {
             );
 
             userEvent.type(
-                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
             userEvent.click(

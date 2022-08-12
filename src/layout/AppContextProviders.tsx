@@ -79,63 +79,59 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
             : requestBaseUrl ?? window.location.origin;
 
     return (
-        <React.StrictMode>
-            <PlausibleProvider
-                selfHosted
-                enabled={!!plausibleEndpoint}
-                domain={tenant.host}
-                customDomain={plausibleEndpoint}
-            >
-                <ServerDataContextProvider value={{ baseUrl }}>
-                    <ApolloProvider client={client}>
-                        <ThemeProvider theme={theme}>
-                            <I18nextProvider i18n={i18n}>
-                                <MuiPickersUtilsProvider
-                                    utils={DateFnsUtils}
-                                    locale={de}
+        <PlausibleProvider
+            selfHosted
+            enabled={!!plausibleEndpoint}
+            domain={tenant.host}
+            customDomain={plausibleEndpoint}
+        >
+            <ServerDataContextProvider value={{ baseUrl }}>
+                <ApolloProvider client={client}>
+                    <ThemeProvider theme={theme}>
+                        <I18nextProvider i18n={i18n}>
+                            <MuiPickersUtilsProvider
+                                utils={DateFnsUtils}
+                                locale={de}
+                            >
+                                <CloudimageProvider
+                                    config={{
+                                        token: cloudimageToken,
+                                    }}
                                 >
-                                    <CloudimageProvider
-                                        config={{
-                                            token: cloudimageToken,
-                                        }}
-                                    >
-                                        <HubertProvider theme={defaultTheme}>
-                                            <Authentication />
-                                            <UploadQueueProvider>
-                                                <ThemeProvider
-                                                    theme={() => {
-                                                        if (
-                                                            tenant.configuration
-                                                                .customTheme
-                                                        ) {
-                                                            return createTheme(
-                                                                merge(
-                                                                    {},
-                                                                    theme,
-                                                                    tenant
-                                                                        .configuration
-                                                                        .customTheme
-                                                                ),
-                                                                deDE
-                                                            );
-                                                        }
-                                                        return theme;
-                                                    }}
-                                                >
-                                                    <AppHead />
-                                                    <AppBody>
-                                                        {children}
-                                                    </AppBody>
-                                                </ThemeProvider>
-                                            </UploadQueueProvider>
-                                        </HubertProvider>
-                                    </CloudimageProvider>
-                                </MuiPickersUtilsProvider>
-                            </I18nextProvider>
-                        </ThemeProvider>
-                    </ApolloProvider>
-                </ServerDataContextProvider>
-            </PlausibleProvider>
-        </React.StrictMode>
+                                    <HubertProvider theme={defaultTheme}>
+                                        <Authentication />
+                                        <UploadQueueProvider>
+                                            <ThemeProvider
+                                                theme={() => {
+                                                    if (
+                                                        tenant.configuration
+                                                            .customTheme
+                                                    ) {
+                                                        return createTheme(
+                                                            merge(
+                                                                {},
+                                                                theme,
+                                                                tenant
+                                                                    .configuration
+                                                                    .customTheme
+                                                            ),
+                                                            deDE
+                                                        );
+                                                    }
+                                                    return theme;
+                                                }}
+                                            >
+                                                <AppHead />
+                                                <AppBody>{children}</AppBody>
+                                            </ThemeProvider>
+                                        </UploadQueueProvider>
+                                    </HubertProvider>
+                                </CloudimageProvider>
+                            </MuiPickersUtilsProvider>
+                        </I18nextProvider>
+                    </ThemeProvider>
+                </ApolloProvider>
+            </ServerDataContextProvider>
+        </PlausibleProvider>
     );
 };

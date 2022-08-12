@@ -259,7 +259,7 @@ describe('shared/article/ArticlePreviewStandardLayout', () => {
                 { currentUser: SomeUser }
             );
             userEvent.type(
-                screen.getByRole('textbox', { name: /tag hinzufügen/i }),
+                screen.getByRole('combobox', { name: /tag hinzufügen/i }),
                 'Neu{enter}'
             );
             await waitFor(() => {
@@ -312,7 +312,7 @@ describe('shared/article/ArticlePreviewStandardLayout', () => {
                     { currentUser: SomeUser }
                 );
                 expect(
-                    screen.getByRole('textbox', { name: /autor hinzufügen/i })
+                    screen.getByRole('combobox', { name: /autor hinzufügen/i })
                 ).toBeVisible();
             });
 

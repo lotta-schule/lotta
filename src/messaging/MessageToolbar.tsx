@@ -62,7 +62,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                             <GroupSelect
                                 className={styles.input}
                                 hidePublicGroupSelection
-                                label={''}
+                                label={'Gruppe wählen'}
                                 selectedGroups={[]}
                                 filterSelection={(group) =>
                                     !!currentUser!.groups.find(

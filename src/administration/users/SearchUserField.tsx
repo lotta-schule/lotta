@@ -1,75 +1,46 @@
 import * as React from 'react';
-import { CircularProgress, Input, NoSsr } from '@lotta-schule/hubert';
-import { useAutocomplete } from '@material-ui/lab';
+import { ComboBox, NoSsr } from '@lotta-schule/hubert';
 import { useLazyQuery } from '@apollo/client';
-import { useDebounce } from 'util/useDebounce';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { UserModel } from 'model';
-import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
+import { User } from 'util/model';
 import clsx from 'clsx';
 
 import styles from './SearchUserField.module.scss';
 
+import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
+
 export interface SearchUserFieldProps {
-    className?: string;
-    label?: string | null;
-    disabled?: boolean;
     style?: React.CSSProperties;
+
+    className?: string;
+
+    label?: string | null;
+
+    disabled?: boolean;
+
+    /**
+     * Only needed when the users should be marked as 'selected'
+     * on the search results listbox.
+     */
+    selectedUsers?: UserModel[];
+
     onSelectUser(user: UserModel): void;
 }
 
-export const SearchUserField = React.memo<SearchUserFieldProps>(
-    ({ className, label, disabled, style, onSelectUser }) => {
-        const [searchtext, setSearchtext] = React.useState('');
-        const [execute, { data, loading: isLoading }] = useLazyQuery<
+export const SearchUserField = React.memo(
+    ({
+        className,
+        style,
+        label,
+        selectedUsers,
+        onSelectUser,
+        disabled,
+    }: SearchUserFieldProps) => {
+        const [execute, { data }] = useLazyQuery<
             { users: UserModel[] },
             { searchtext: string }
         >(SearchUsersQuery);
-        const debouncedSearchtext = useDebounce(searchtext, 500);
-        const selectUser = (user: UserModel | null) => {
-            if (user) {
-                onSelectUser(user);
-            }
-            setSearchtext('');
-        };
-
-        React.useEffect(() => {
-            if (debouncedSearchtext.length >= 2) {
-                execute({ variables: { searchtext: debouncedSearchtext } });
-            }
-        }, [debouncedSearchtext, execute]);
-
-        const {
-            getRootProps,
-            getInputLabelProps,
-            getInputProps,
-            getListboxProps,
-            getOptionProps,
-            groupedOptions,
-            focused,
-            setAnchorEl,
-        } = useAutocomplete({
-            id: 'user-select',
-            value: null,
-            inputValue: searchtext,
-            options: data?.users ?? [],
-            getOptionLabel: (option) => option.nickname || option.name || '',
-            getOptionSelected: (_option, _value) => false,
-            filterOptions: (options, _state) => options,
-            onInputChange: (_event, value, reason) => {
-                if (reason !== 'reset') {
-                    setSearchtext(value);
-                }
-            },
-            onChange: (_event, value, _reason, _details) => {
-                selectUser(value);
-            },
-            onClose: (_event, reason) => {
-                if (reason === 'blur') {
-                    setSearchtext('');
-                }
-            },
-        });
 
         return (
             <NoSsr>
@@ -78,71 +49,36 @@ export const SearchUserField = React.memo<SearchUserFieldProps>(
                     style={style}
                     data-testid="SearchUserField"
                 >
-                    <div
-                        {...getRootProps()}
-                        data-testid="SearchUserFieldSelection"
-                    >
-                        <label
-                            htmlFor={'search-userAvatar-input-field'}
-                            {...getInputLabelProps()}
-                        >
-                            {label || 'Nutzer suchen:'}
-                        </label>
-                        <div
-                            ref={setAnchorEl}
-                            className={clsx(styles.inputWrapper, { focused })}
-                        >
-                            <Input
-                                id={'search-userAvatar-input-field'}
-                                disabled={disabled}
-                                placeholder={'Nutzer suchen ...'}
-                                {...getInputProps()}
-                            />
-                            {isLoading && (
-                                <CircularProgress
-                                    isIndeterminate
-                                    aria-label={'Ergebnisse werden geladen'}
-                                    className={styles.inputLoading}
-                                    size={20}
-                                />
-                            )}
-                        </div>
-                    </div>
-                    {groupedOptions.length > 0 ? (
-                        <ul
-                            className={styles.listBox}
-                            data-testid="UserSearchSelection"
-                            {...getListboxProps()}
-                        >
-                            {groupedOptions.map((option, index) => (
-                                <li
-                                    key={index}
-                                    {...getOptionProps({ option, index })}
-                                >
-                                    <UserAvatar
-                                        className={styles.avatar}
-                                        style={{ width: '2em', height: '2em' }}
-                                        user={option}
-                                        size={40}
-                                    />
-                                    <div>
-                                        {option.name && (
-                                            <>
-                                                {option.name}&nbsp;(
-                                                <strong>
-                                                    {option.nickname}
-                                                </strong>
-                                                )
-                                            </>
-                                        )}
-                                        {!option.name && option.nickname && (
-                                            <strong>{option.nickname}</strong>
-                                        )}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : null}
+                    <ComboBox
+                        fullWidth
+                        hideLabel
+                        disabled={disabled}
+                        title={label ?? 'Nutzer suchen'}
+                        className={styles.comboBox}
+                        items={async (searchtext) => {
+                            const { data } = await execute({
+                                variables: { searchtext },
+                            });
+                            return (data?.users ?? []).map((user) => ({
+                                key: user.id,
+                                label: User.getName(user),
+                                textValue: User.getName(user),
+                                selected: !!selectedUsers?.find(
+                                    (selectedUser) =>
+                                        selectedUser.id === user.id
+                                ),
+                                leftSection: <UserAvatar user={user} />,
+                            }));
+                        }}
+                        onSelect={(userId) => {
+                            const user = data?.users.find(
+                                (user) => user.id === userId
+                            );
+                            if (user) {
+                                onSelectUser?.(user);
+                            }
+                        }}
+                    />
                 </div>
             </NoSsr>
         );

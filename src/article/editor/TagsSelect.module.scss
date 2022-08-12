@@ -9,25 +9,11 @@
         flex: 1 0 8em;
         input {
             width: 100%;
+            padding-top: 0;
+            padding-bottom: 0;
         }
-    }
-
-    .suggestionsList {
-        position: absolute;
-        top: 2em;
-        background-color: rgb(var(--lotta-box-background-color));
-        z-index: 1000;
-        border: 1px solid rgb(var(--lotta-divider-color));
-        width: 100%;
-        max-height: min(50vh, 250px);
-        overflow-y: auto;
-        li {
-            border-bottom: 1px solid rgb(var(--lotta-divider-color));
-            padding: var(--lotta-spacing);
-            word-break: break-word;
-            &[aria-selected='true'] {
-                background-color: rgba(var(--lotta-primary-color), 0.2);
-            }
+        button {
+            min-height: auto;
         }
     }
 }

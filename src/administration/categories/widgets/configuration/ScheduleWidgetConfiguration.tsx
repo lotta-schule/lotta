@@ -34,8 +34,9 @@ export const ScheduleWidgetConfiguration =
                                 Indiware - Lehrer
                             </option>
                         </Select>
-                        <small>Der Typ des Vertretungsplan</small>
                     </Label>
+                    <small>Der Typ des Vertretungsplan</small>
+
                     <Label label={'Schulnummer'}>
                         <Input
                             className={styles.input}

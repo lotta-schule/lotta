@@ -111,11 +111,14 @@ describe('pages/admin/users/list', () => {
                 expect(didCall).toEqual(true);
             });
             userEvent.click(
-                screen.getByRole('textbox', { name: /gruppe suchen/i })
+                screen.getByRole('button', { name: /vorschläge/i })
             );
-            const op = screen.getByRole('option', { name: /lehrer/i });
-            expect(op).toBeVisible();
-            userEvent.click(op);
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('option', { name: /lehrer/i })
+                ).toBeVisible();
+            });
+            userEvent.click(screen.getByRole('option', { name: /lehrer/i }));
 
             expect(await screen.findAllByRole('row')).toHaveLength(2);
             expect(screen.getByRole('cell', { name: /luisa drinalda/i }));
@@ -153,14 +156,14 @@ describe('pages/admin/users/list', () => {
                 }
             );
             expect(
-                screen.getByRole('textbox', { name: /nutzer suchen/i })
+                screen.getByRole('combobox', { name: /nutzer suchen/i })
             ).toBeVisible();
             userEvent.type(
-                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
             expect(
-                screen.getByRole('textbox', { name: /nutzer suchen/i })
+                screen.getByRole('combobox', { name: /nutzer suchen/i })
             ).toHaveFocus();
             await waitFor(() => {
                 expect(screen.queryAllByRole('option')).toHaveLength(1);

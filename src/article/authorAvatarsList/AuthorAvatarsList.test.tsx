@@ -33,7 +33,7 @@ describe('AuthorAvatarsList', () => {
                 <AuthorAvatarsList users={users} onUpdate={fn} />
             );
             expect(
-                screen.getByRole('textbox', { name: /autor hinzufügen/i })
+                screen.getByRole('combobox', { name: /autor hinzufügen/i })
             ).toBeVisible();
         });
     });

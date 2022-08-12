@@ -70,11 +70,7 @@ export const WidgetEditor = React.memo<WidgetEditorProps>(
 
         return (
             <>
-                <h5>
-                    {selectedWidget
-                        ? selectedWidget.title
-                        : widget && widget.title}
-                </h5>
+                <h5>{selectedWidget ? selectedWidget.title : widget.title}</h5>
                 <div>{widget.type}</div>
                 <ErrorMessage error={error} />
                 <Label label="Name des Widget">

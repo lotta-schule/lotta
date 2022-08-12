@@ -76,7 +76,9 @@
             }
         }
         .authorAvatarsList {
-            flex: 1;
+            flex-grow: 1;
+            flex-shrink: 0;
+            width: 10em;
         }
     }
 

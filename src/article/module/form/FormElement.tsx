@@ -30,68 +30,76 @@ export const FormElement = React.memo<FormElementProps>(
                 if (element.type === 'checkbox') {
                     return (
                         <Label label={element.label ?? ''}>
-                            {element.options?.map((option, i) => {
-                                return (
-                                    <Checkbox
-                                        key={i}
-                                        name={element.name}
-                                        value={option.value}
-                                        isDisabled={isEditModeEnabled}
-                                        aria-label={option.label}
-                                        isSelected={
-                                            value instanceof Array
-                                                ? value.indexOf(option.value) >
-                                                  -1
-                                                : false
-                                        }
-                                        onChange={(isSelected) => {
-                                            const values = (
+                            <div>
+                                {element.options?.map((option, i) => {
+                                    return (
+                                        <Checkbox
+                                            key={i}
+                                            name={element.name}
+                                            value={option.value}
+                                            isDisabled={isEditModeEnabled}
+                                            aria-label={option.label}
+                                            isSelected={
                                                 value instanceof Array
-                                                    ? value
-                                                    : [value]
-                                            ).filter(Boolean);
-                                            if (isSelected) {
-                                                onSetValue([
-                                                    ...values,
-                                                    option.value,
-                                                ]);
-                                            } else {
-                                                onSetValue(
-                                                    values.filter(
-                                                        (v) =>
-                                                            v !== option.value
-                                                    )
-                                                );
+                                                    ? value.indexOf(
+                                                          option.value
+                                                      ) > -1
+                                                    : false
                                             }
-                                        }}
-                                    >
-                                        {option.label}
-                                    </Checkbox>
-                                );
-                            })}
+                                            onChange={(isSelected) => {
+                                                const values = (
+                                                    value instanceof Array
+                                                        ? value
+                                                        : [value]
+                                                ).filter(Boolean);
+                                                if (isSelected) {
+                                                    onSetValue([
+                                                        ...values,
+                                                        option.value,
+                                                    ]);
+                                                } else {
+                                                    onSetValue(
+                                                        values.filter(
+                                                            (v) =>
+                                                                v !==
+                                                                option.value
+                                                        )
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            {option.label}
+                                        </Checkbox>
+                                    );
+                                })}
+                            </div>
                         </Label>
                     );
                 } else if (element.type === 'radio') {
                     return (
                         <Label label={element.label ?? ''}>
-                            <RadioGroup
-                                name={element.name}
-                                value={value ?? ''}
-                                onChange={(_e, value) => onSetValue(value)}
-                                required={element.required}
-                            >
-                                {element.options?.map((option, i) => {
-                                    return (
-                                        <Radio
-                                            key={i}
-                                            name={element.name}
-                                            value={option.value}
-                                            label={option.label ?? option.value}
-                                            disabled={isEditModeEnabled}
-                                        />
-                                    );
-                                })}
-                            </RadioGroup>
+                            <div>
+                                <RadioGroup
+                                    name={element.name}
+                                    value={value ?? ''}
+                                    onChange={(_e, value) => onSetValue(value)}
+                                    required={element.required}
+                                >
+                                    {element.options?.map((option, i) => {
+                                        return (
+                                            <Radio
+                                                key={i}
+                                                name={element.name}
+                                                value={option.value}
+                                                label={
+                                                    option.label ?? option.value
+                                                }
+                                                disabled={isEditModeEnabled}
+                                            />
+                                        );
+                                    })}
+                                </RadioGroup>
+                            </div>
                         </Label>
                     );
                 } else if (element.type === 'select') {

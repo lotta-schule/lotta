@@ -98,7 +98,7 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
 
             userEvent.click(screen.getByRole('tab', { name: /nutzer/i }));
             userEvent.type(
-                screen.getByRole('textbox', { name: /nutzer suchen/i }),
+                screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Drinalda'
             );
             await waitFor(() => {
@@ -137,7 +137,15 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             });
 
             userEvent.click(screen.getByRole('tab', { name: /gruppe/i }));
-            userEvent.click(screen.getByPlaceholderText(/gruppe suchen/i));
+
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('combobox', { name: /gruppe wählen/i })
+                ).toBeVisible();
+            });
+            userEvent.click(
+                screen.getByRole('button', { name: /vorschläge/i })
+            );
             expect(screen.getAllByRole('option')).toHaveLength(1);
             userEvent.click(screen.getByRole('option', { name: 'Schüler' }));
             expect(onRequestNewMessage).toHaveBeenCalled();

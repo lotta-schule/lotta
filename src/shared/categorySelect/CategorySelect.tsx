@@ -67,6 +67,7 @@ export const CategorySelect = React.memo<CategorySelectProps>(
                 className={className}
             >
                 <Select
+                    title="Kategorie wählen"
                     disabled={disabled}
                     value={selectedCategory?.id ?? 'null'}
                     onChange={(e) =>

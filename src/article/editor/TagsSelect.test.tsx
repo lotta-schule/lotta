@@ -2,8 +2,9 @@ import * as React from 'react';
 import { render, waitFor } from 'test/util';
 import { TagsSelect } from './TagsSelect';
 import { FetchResult } from '@apollo/client';
-import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 import userEvent from '@testing-library/user-event';
+
+import GetTagsQuery from 'api/query/GetTagsQuery.graphql';
 
 describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
     const getAdditionalMocks = (fn: () => FetchResult) => [
@@ -17,21 +18,6 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
 
     it('should render a TagsSelect without error', async () => {
         render(<TagsSelect value={[]} onChange={() => {}} />, {}, {});
-    });
-
-    it('should show the given tags', () => {
-        const screen = render(
-            <TagsSelect value={['tag1', 'tag2']} onChange={() => {}} />,
-            {},
-            {}
-        );
-        const tagElements = screen.getAllByTestId('Tag');
-        expect(tagElements).toHaveLength(2);
-        ['tag1', 'tag2'].forEach((tag) => {
-            expect(
-                tagElements.find((t) => t.textContent === tag)
-            ).toBeDefined();
-        });
     });
 
     it('should show a delete button for tags', () => {
@@ -56,10 +42,14 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
             {},
             { additionalMocks: getAdditionalMocks(resFn) }
         );
-        expect(screen.getByRole('textbox')).toBeVisible();
-        userEvent.type(screen.getByRole('textbox'), 'ta');
         await waitFor(() => {
             expect(resFn).toHaveBeenCalled();
+        });
+        userEvent.click(
+            screen.getByRole('button', { name: /vorschläge anzeigen/i })
+        );
+        await waitFor(() => {
+            expect(screen.getByRole('listbox')).toBeVisible();
         });
         expect(
             screen.queryAllByRole('option').map((o) => o.textContent)
@@ -76,26 +66,43 @@ describe('shared/layouts/editArticleLayouut/TagsSelect', () => {
             {},
             { additionalMocks: getAdditionalMocks(resFn) }
         );
-        userEvent.click(screen.getByRole('textbox'));
-        userEvent.type(screen.getByRole('textbox'), 'ta');
         await waitFor(() => {
             expect(resFn).toHaveBeenCalled();
+        });
+        userEvent.click(
+            screen.getByRole('button', { name: /vorschläge anzeigen/i })
+        );
+        await waitFor(() => {
+            expect(screen.getByRole('listbox')).toBeVisible();
         });
         userEvent.click(screen.getByRole('option', { name: /noch ein tag/i }));
         expect(onChangeFn).toHaveBeenCalledWith(['noch ein tag']);
     });
 
-    it('should clear the input when a tag is added', async () => {
+    it('should deselect an already selected tag', async () => {
         const resFn = jest.fn(() => ({
             data: { tags: ['tag', 'noch ein tag', 'wieder-tag'] },
         }));
         const onChangeFn = jest.fn();
         const screen = render(
-            <TagsSelect value={[]} onChange={onChangeFn} />,
+            <TagsSelect
+                value={['tag', 'noch ein tag']}
+                onChange={onChangeFn}
+            />,
             {},
             { additionalMocks: getAdditionalMocks(resFn) }
         );
-        userEvent.type(screen.getByRole('textbox'), 'ta{enter}');
-        expect(screen.getByRole('textbox')).toHaveValue('');
+        await waitFor(() => {
+            expect(resFn).toHaveBeenCalled();
+        });
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        userEvent.click(
+            screen.getByRole('button', { name: /vorschläge anzeigen/i })
+        );
+        await waitFor(() => {
+            expect(screen.getByRole('listbox')).toBeVisible();
+        });
+        userEvent.click(screen.getByRole('option', { name: /noch ein tag/i }));
+        expect(onChangeFn).toHaveBeenCalledWith(['tag']);
     });
 });

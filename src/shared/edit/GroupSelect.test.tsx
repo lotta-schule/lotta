@@ -25,19 +25,7 @@ describe('shared/editor/GroupSelect', () => {
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
             );
-            expect(screen.getByText('Sichtbarkeit:')).toBeVisible();
-        });
-
-        it('should show no label if null is given', () => {
-            const screen = render(
-                <GroupSelect
-                    label={null}
-                    selectedGroups={[]}
-                    onSelectGroups={() => {}}
-                />,
-                {}
-            );
-            expect(screen.getByRole('heading')).toBeVisible();
+            expect(screen.getByText('Gruppe suchen')).toBeVisible();
         });
 
         it('should show a given label', () => {
@@ -64,7 +52,9 @@ describe('shared/editor/GroupSelect', () => {
                 {}
             );
 
-            const input = await screen.findByRole('textbox');
+            const input = screen.getByRole('combobox', {
+                name: /gruppe suchen/i,
+            });
             expect(input).toBeVisible();
             expect(input).toBeDisabled();
         });
@@ -79,11 +69,7 @@ describe('shared/editor/GroupSelect', () => {
                 {}
             );
 
-            const removeButton = await screen.findByLabelText(
-                'Gruppe "Schüler" entfernen'
-            );
-            expect(removeButton).toBeVisible();
-            expect(removeButton).toBeDisabled();
+            expect(screen.queryByLabelText(/Schüler löschen/)).toBeNull();
         });
 
         it('should disable the publicly available checkbox', async () => {
@@ -234,10 +220,9 @@ describe('shared/editor/GroupSelect', () => {
     describe('should manipulate selected groups', () => {
         it('should send deselection request when clicking on group\'s "X"', async () => {
             const callback = jest.fn((newGroups) => {
-                expect(newGroups.map((g: UserGroupModel) => g.name)).toEqual([
-                    'Administrator',
-                    'Lehrer',
-                ]);
+                expect(
+                    newGroups.map((g: UserGroupModel) => g.name).sort()
+                ).toEqual(['Administrator', 'Lehrer']);
             });
             const screen = render(
                 <GroupSelect
@@ -247,9 +232,7 @@ describe('shared/editor/GroupSelect', () => {
                 {}
             );
 
-            userEvent.click(
-                await screen.findByLabelText('Gruppe "Schüler" entfernen')
-            );
+            userEvent.click(await screen.findByLabelText(/Schüler löschen/));
 
             await waitFor(() => {
                 expect(callback).toHaveBeenCalled();
@@ -265,12 +248,14 @@ describe('shared/editor/GroupSelect', () => {
             );
 
             userEvent.click(
-                await screen.findByPlaceholderText(/gruppe suchen/i)
+                screen.getByRole('button', { name: /vorschläge/i })
             );
 
-            expect(
-                screen.getByRole('option', { name: 'Administrator' })
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole('option', { name: 'Administrator' })
+                ).toBeVisible();
+            });
             expect(
                 screen.getByRole('option', { name: 'Lehrer' })
             ).toBeVisible();
@@ -284,39 +269,14 @@ describe('shared/editor/GroupSelect', () => {
             await screen.findByRole('listbox');
         });
 
-        it('should filter the groups when entering text into the search field', async () => {
-            const screen = render(
-                <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
-                {}
-            );
-
-            userEvent.type(await screen.findByRole('textbox'), 'Schü');
-
-            await waitFor(() => {
-                expect(screen.getByRole('listbox')).toBeVisible();
-            });
-
-            await waitFor(() => {
-                expect(
-                    screen.queryByRole('option', { name: 'Administrator' })
-                ).toBeNull();
-            });
-
-            expect(screen.queryByRole('option', { name: 'Lehrer' })).toBeNull();
-            expect(screen.queryByRole('option', { name: 'Eltern' })).toBeNull();
-            expect(
-                screen.queryByRole('option', { name: 'Schüler' })
-            ).toBeVisible();
-        });
-
         it('should reset the search filter when searchfield is blurred', async () => {
             const screen = render(
                 <GroupSelect selectedGroups={[]} onSelectGroups={() => {}} />,
                 {}
             );
 
-            const textbox = screen.getByRole('textbox');
-            userEvent.type(textbox, 'Schü');
+            const combobox = screen.getByRole('combobox');
+            userEvent.type(combobox, 'Schü');
 
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeVisible();
@@ -325,7 +285,7 @@ describe('shared/editor/GroupSelect', () => {
             userEvent.tab();
 
             await waitFor(() => {
-                expect(screen.getByRole('textbox')).toHaveValue('');
+                expect(screen.getByRole('combobox')).toHaveValue('');
             });
             await waitFor(() => {
                 expect(screen.queryByRole('listbox')).toBeNull();
@@ -342,15 +302,16 @@ describe('shared/editor/GroupSelect', () => {
             );
 
             userEvent.click(
-                await screen.findByPlaceholderText(/gruppe suchen/i)
+                screen.getByRole('button', { name: /vorschläge/i })
             );
 
             const selectedOption = screen.getByRole('option', {
                 name: 'Lehrer',
-                selected: true,
             });
             expect(selectedOption).not.toBeNull();
-            expect(selectedOption).toBeVisible();
+            await waitFor(() => {
+                expect(selectedOption).toBeVisible();
+            });
         });
 
         describe('selecting a group', () => {
@@ -382,14 +343,15 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(
+                    screen.getByRole('button', { name: /vorschläge/i })
+                );
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
                 });
                 const selectedOption = screen.getByRole('option', {
                     name: 'Schüler',
-                    selected: false,
                 });
 
                 userEvent.click(selectedOption);
@@ -416,14 +378,15 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(
+                    screen.getByRole('button', { name: /vorschläge/i })
+                );
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
                 });
                 const selectedOption = screen.getByRole('option', {
                     name: 'Administrator',
-                    selected: false,
                 });
 
                 userEvent.click(selectedOption);
@@ -449,7 +412,9 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(
+                    screen.getByRole('button', { name: /vorschläge/i })
+                );
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
@@ -457,7 +422,6 @@ describe('shared/editor/GroupSelect', () => {
 
                 const selectedOption = screen.getByRole('option', {
                     name: 'Lehrer',
-                    selected: true,
                 });
 
                 userEvent.click(selectedOption);
@@ -483,7 +447,9 @@ describe('shared/editor/GroupSelect', () => {
                     { userGroups: [...userGroups, secondAdminGroup] }
                 );
 
-                userEvent.click(await screen.findByRole('textbox'));
+                userEvent.click(
+                    screen.getByRole('button', { name: /vorschläge/i })
+                );
 
                 await waitFor(() => {
                     expect(screen.getByRole('listbox')).toBeVisible();
@@ -491,7 +457,6 @@ describe('shared/editor/GroupSelect', () => {
 
                 const selectedOption = screen.getByRole('option', {
                     name: 'Administrator',
-                    selected: true,
                 });
 
                 userEvent.click(selectedOption);
@@ -518,7 +483,9 @@ describe('shared/editor/GroupSelect', () => {
                         {}
                     );
 
-                    userEvent.click(await screen.findByRole('textbox'));
+                    userEvent.click(
+                        screen.getByRole('button', { name: /vorschläge/i })
+                    );
 
                     await waitFor(() => {
                         expect(screen.getByRole('listbox')).toBeVisible();
@@ -526,7 +493,6 @@ describe('shared/editor/GroupSelect', () => {
 
                     const selectedOption = screen.getByRole('option', {
                         name: 'Schüler',
-                        selected: false,
                     });
 
                     userEvent.click(selectedOption);
@@ -552,7 +518,9 @@ describe('shared/editor/GroupSelect', () => {
                         {}
                     );
 
-                    userEvent.click(await screen.findByRole('textbox'));
+                    userEvent.click(
+                        screen.getByRole('button', { name: /vorschläge/i })
+                    );
 
                     await waitFor(() => {
                         expect(screen.getByRole('listbox')).toBeVisible();
@@ -560,7 +528,6 @@ describe('shared/editor/GroupSelect', () => {
 
                     const selectedOption = screen.getByRole('option', {
                         name: 'Administrator',
-                        selected: true,
                     });
 
                     userEvent.click(selectedOption);

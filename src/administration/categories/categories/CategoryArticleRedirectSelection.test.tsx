@@ -32,10 +32,14 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
         );
 
         expect(
-            screen.getByRole('textbox', { name: /beitrag suchen/i })
+            screen.getByRole('combobox', {
+                name: /beitrag als weiterleitungsziel/i,
+            })
         ).toBeVisible();
         userEvent.type(
-            screen.getByRole('textbox', { name: /beitrag suchen/i }),
+            screen.getByRole('combobox', {
+                name: /beitrag als weiterleitungsziel/i,
+            }),
             'Test'
         );
         await waitFor(() => {
@@ -52,25 +56,27 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
                 '/a/1-Computerexperten'
             );
         });
-        expect(
-            screen.getByRole('textbox', { name: /beitrag suchen/i })
-        ).toHaveValue('');
     });
 
     describe('show the currently selected article', () => {
+        const onFetchArticle = jest.fn(() => ({
+            data: { article: ComputerExperten },
+        }));
         const additionalMocks: MockedResponse[] = [
             {
                 request: {
                     query: GetArticleForPreviewQuery,
-                    variables: { id: 1 },
+                    variables: { id: '1' },
                 },
-                result: {
-                    data: { article: ComputerExperten },
-                },
+                result: onFetchArticle,
             },
         ];
 
-        it('should show the path if article has not yet been loaded', () => {
+        afterEach(() => {
+            onFetchArticle.mockClear();
+        });
+
+        it('should show the path if article has not yet been loaded', async () => {
             const screen = render(
                 <CategoryArticleRedirectSelection
                     redirectPath={'/a/1-Computerexperten'}
@@ -79,11 +85,11 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
                 {},
                 { additionalMocks }
             );
-            expect(
-                screen.getByText(
-                    'Kategorie wird zu /a/1-Computerexperten weitergeleitet'
-                )
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    screen.getByText(/\/a\/1-Computerexperten/)
+                ).toBeVisible();
+            });
         });
 
         it('should not show info text when redirect path is default path ("/a/")', () => {
@@ -109,7 +115,14 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
                 {},
                 { additionalMocks }
             );
-
+            await waitFor(() => {
+                expect(
+                    screen.getByText(/\/a\/1-Computerexperten/)
+                ).toBeVisible();
+            });
+            await waitFor(() => {
+                expect(onFetchArticle).toHaveBeenCalled();
+            });
             await waitFor(() => {
                 expect(
                     screen.getByTestId('ArticlePreviewDensedLayout')
