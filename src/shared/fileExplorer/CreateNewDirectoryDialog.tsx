@@ -18,26 +18,37 @@ import CreateDirectoryMutation from 'api/mutation/CreateDirectoryMutation.graphq
 import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphql';
 
 export interface CreateNewFolderDialogProps {
-    basePath?: ({ id: null } | { id: ID; name: string })[];
+    parentDirectoryId: ID | null;
     open: boolean;
     onRequestClose(): void;
 }
 
-export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
-    ({ basePath, open, onRequestClose }) => {
-        const parentDirectoryId = basePath?.[basePath.length - 1].id ?? null;
+export const CreateNewDirectoryDialog = React.memo(
+    ({
+        parentDirectoryId,
+        open,
+        onRequestClose,
+    }: CreateNewFolderDialogProps) => {
         const currentUser = useCurrentUser();
         const [name, setName] = React.useState('');
         const [isPublic, setIsPublic] = React.useState(false);
+
+        const canMakePublic = parentDirectoryId === null;
+
         React.useEffect(() => {
             if (open) {
                 setIsPublic(false);
             }
         }, [open]);
+
         const [createDirectory, { error, loading: isLoading }] = useMutation<{
             directory: DirectoryModel;
         }>(CreateDirectoryMutation, {
-            variables: { name, parentDirectoryId, isPublic },
+            variables: {
+                name,
+                parentDirectoryId,
+                isPublic: isPublic && canMakePublic,
+            },
             update: (cache, { data }) => {
                 const cached = cache.readQuery<{
                     directories: DirectoryModel[];
@@ -89,17 +100,16 @@ export const CreateNewDirectoryDialog = React.memo<CreateNewFolderDialogProps>(
                                 }
                             />
                         </Label>
-                        {User.isAdmin(currentUser) &&
-                            basePath?.slice(-1)[0].id === null && (
-                                <Checkbox
-                                    isSelected={isPublic}
-                                    onChange={setIsPublic}
-                                >
-                                    Diesen Ordner für alle registrierten Nutzer
-                                    sichtbar machen. Administratoren dürfen
-                                    öffentliche Ordner bearbeiten.
-                                </Checkbox>
-                            )}
+                        {User.isAdmin(currentUser) && canMakePublic && (
+                            <Checkbox
+                                isSelected={isPublic}
+                                onChange={setIsPublic}
+                            >
+                                Diesen Ordner für alle registrierten Nutzer
+                                sichtbar machen. Administratoren dürfen
+                                öffentliche Ordner bearbeiten.
+                            </Checkbox>
+                        )}
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => onRequestClose()}>

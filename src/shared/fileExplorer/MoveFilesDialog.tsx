@@ -9,8 +9,8 @@ import {
     ErrorMessage,
     Tooltip,
 } from '@lotta-schule/hubert';
-import { DirectoryModel, FileModel } from 'model';
-import { DirectoryTree } from './directoryTree/DirectoryTree';
+import { DirectoryModel, FileModel, ID } from 'model';
+import { DirectorySelector } from './directorySelector';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import fileExplorerContext from './context/FileExplorerContext';
 
@@ -19,13 +19,8 @@ import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphq
 
 export const MoveFilesDialog = React.memo(() => {
     const [state, dispatch] = React.useContext(fileExplorerContext);
-    const [selectedDirectory, setSelectedDirectory] = React.useState(
-        state.currentPath[state.currentPath.length - 1].id === null
-            ? null
-            : (state.currentPath[
-                  state.currentPath.length - 1
-              ] as DirectoryModel)
-    );
+    const [selectedDirectoryId, setSelectedDirectoryId] =
+        React.useState<ID | null>(null);
     const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
         React.useState(false);
 
@@ -101,16 +96,11 @@ export const MoveFilesDialog = React.memo(() => {
                         icon={<CreateNewFolderOutlined color={'secondary'} />}
                     />
                 </Tooltip>
-                <DirectoryTree
-                    defaultExpandedDirectoryIds={state.currentPath.map((d) =>
-                        String(d.id ?? 'null')
-                    )}
-                    selectedDirectory={selectedDirectory}
-                    onSelectDirectory={setSelectedDirectory}
-                    showOnlyReadOnlyDirectories
+                <DirectorySelector
+                    onSelectDirectoryId={setSelectedDirectoryId}
                 />
                 <CreateNewDirectoryDialog
-                    basePath={state.currentPath}
+                    parentDirectoryId={selectedDirectoryId}
                     open={isCreateNewFolderDialogOpen}
                     onRequestClose={() => setIsCreateNewFolderDialogOpen(false)}
                 />
@@ -123,7 +113,7 @@ export const MoveFilesDialog = React.memo(() => {
                     Abbrechen
                 </Button>
                 <Button
-                    disabled={isLoading || selectedDirectory === null}
+                    disabled={isLoading || selectedDirectoryId === null}
                     onClick={async () => {
                         try {
                             await Promise.all(
@@ -132,7 +122,7 @@ export const MoveFilesDialog = React.memo(() => {
                                         variables: {
                                             id: file.id,
                                             parentDirectoryId:
-                                                selectedDirectory!.id,
+                                                selectedDirectoryId,
                                         },
                                     });
                                     if (data) {

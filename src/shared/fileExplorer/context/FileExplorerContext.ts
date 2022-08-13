@@ -8,15 +8,14 @@ export enum FileExplorerMode {
     SelectMultiple = 20,
 }
 
+export type Path = ({ id: null } | { id: ID; name: string })[];
+
 export const defaultState = {
     mode: FileExplorerMode.ViewAndEdit,
     selectedFiles: [] as FileModel[],
     markedFiles: [] as FileModel[],
     markedDirectories: [] as DirectoryModel[],
-    currentPath: [{ id: null } as any] as (
-        | { id: null }
-        | { id: ID; name: string }
-    )[],
+    currentPath: [{ id: null } as any] as Path,
     searchtext: '',
     showActiveUploads: false,
     showFileUsage: false,

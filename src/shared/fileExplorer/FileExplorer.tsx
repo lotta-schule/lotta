@@ -50,7 +50,7 @@ export const FileExplorer = React.memo<FileExplorerProps>(
                     <FileUsageModal />
                     <CreateNewDirectoryDialog
                         open={state.showCreateNewFolder}
-                        basePath={state.currentPath}
+                        parentDirectoryId={state.currentPath.at(-1)?.id ?? null}
                         onRequestClose={() =>
                             dispatch({ type: 'hideCreateNewFolder' })
                         }
