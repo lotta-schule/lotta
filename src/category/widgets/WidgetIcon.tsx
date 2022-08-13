@@ -19,14 +19,30 @@ import {
     Favorite,
 } from '@material-ui/icons';
 import { WidgetIconModel } from 'model';
-import { SvgIconProps } from '@material-ui/core';
 import clsx from 'clsx';
 
 import styles from './WidgetIcon.module.scss';
 
-export const iconNameMapping: {
-    [key: string]: React.ComponentType<SvgIconProps>;
-} = {
+export const iconNameMapping: Record<
+    string,
+    | typeof Lens
+    | typeof Bookmark
+    | typeof CalendarToday
+    | typeof AccountCircle
+    | typeof CheckCircle
+    | typeof Work
+    | typeof ChatBubble
+    | typeof Folder
+    | typeof School
+    | typeof Cloud
+    | typeof MenuBook
+    | typeof Label
+    | typeof SportsSoccer
+    | typeof InsertDriveFile
+    | typeof Search
+    | typeof Extension
+    | typeof Favorite
+> = {
     lens: Lens,
     bookmark: Bookmark,
     calendartoday: CalendarToday,

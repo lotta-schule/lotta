@@ -1,15 +1,11 @@
 import * as React from 'react';
 import { pick } from 'lodash';
-import { ThemeProvider } from '@material-ui/styles';
 import { HubertProvider, defaultTheme } from '@lotta-schule/hubert';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { de } from 'date-fns/locale';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
-import { theme } from '../theme';
 import {
     ApolloMocksOptions,
     getDefaultApolloMocks,
@@ -19,11 +15,9 @@ import {
     reducer as fileExplorerStateReducer,
     Action as FileExploreerStateAction,
 } from 'shared/fileExplorer/context/reducer';
-import { createTheme } from '@material-ui/core';
 import fileExplorerContext, {
     defaultState as defaultFileExplorerState,
 } from 'shared/fileExplorer/context/FileExplorerContext';
-import DateFnsUtils from '@date-io/date-fns';
 import { createRouter, Router } from 'next/router';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 
@@ -74,36 +68,28 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
             testRouter.replace = options?.router?.onReplace;
         }
 
-        const testTheme = createTheme({
-            ...theme,
-            transitions: { create: () => 'none' },
-        });
         return (
             <RouterContext.Provider value={testRouter}>
-                <ThemeProvider theme={testTheme}>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={de}>
-                        <I18nextProvider i18n={i18n}>
-                            <CloudimageProvider
-                                config={{ token: 'ABCDEF', lazyLoading: false }}
+                <I18nextProvider i18n={i18n}>
+                    <CloudimageProvider
+                        config={{ token: 'ABCDEF', lazyLoading: false }}
+                    >
+                        <HubertProvider theme={defaultTheme}>
+                            <MockedProvider
+                                mocks={[
+                                    ...defaultMocks,
+                                    ...(options.additionalMocks || []),
+                                ]}
+                                addTypename={false}
+                                cache={cache}
                             >
-                                <HubertProvider theme={defaultTheme}>
-                                    <MockedProvider
-                                        mocks={[
-                                            ...defaultMocks,
-                                            ...(options.additionalMocks || []),
-                                        ]}
-                                        addTypename={false}
-                                        cache={cache}
-                                    >
-                                        <UploadQueueProvider>
-                                            {children}
-                                        </UploadQueueProvider>
-                                    </MockedProvider>
-                                </HubertProvider>
-                            </CloudimageProvider>
-                        </I18nextProvider>
-                    </MuiPickersUtilsProvider>
-                </ThemeProvider>
+                                <UploadQueueProvider>
+                                    {children}
+                                </UploadQueueProvider>
+                            </MockedProvider>
+                        </HubertProvider>
+                    </CloudimageProvider>
+                </I18nextProvider>
             </RouterContext.Provider>
         );
     };

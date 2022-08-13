@@ -1,25 +1,17 @@
 import * as React from 'react';
-import { ThemeProvider } from '@material-ui/styles';
 import { HubertProvider, defaultTheme } from '@lotta-schule/hubert';
-import { createTheme } from '@material-ui/core/styles';
-import { deDE } from '@material-ui/core/locale';
 import { CategoryModel, TenantModel, UserModel } from 'model';
-import { theme } from '../theme';
 import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { Authentication } from 'shared/Authentication';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
 import { getApolloClient } from 'api/client';
-import { de } from 'date-fns/locale';
+import { BaseLayout } from './BaseLayout';
 import { i18n } from '../i18n';
-import { AppBody } from './AppBody';
 import PlausibleProvider from 'next-plausible';
-import merge from 'lodash/merge';
-import DateFnsUtils from '@date-io/date-fns';
 import getConfig from 'next/config';
 
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
@@ -87,49 +79,21 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
         >
             <ServerDataContextProvider value={{ baseUrl }}>
                 <ApolloProvider client={client}>
-                    <ThemeProvider theme={theme}>
-                        <I18nextProvider i18n={i18n}>
-                            <MuiPickersUtilsProvider
-                                utils={DateFnsUtils}
-                                locale={de}
-                            >
-                                <CloudimageProvider
-                                    config={{
-                                        token: cloudimageToken,
-                                    }}
-                                >
-                                    <HubertProvider theme={defaultTheme}>
-                                        <Authentication />
-                                        <UploadQueueProvider>
-                                            <ThemeProvider
-                                                theme={() => {
-                                                    if (
-                                                        tenant.configuration
-                                                            .customTheme
-                                                    ) {
-                                                        return createTheme(
-                                                            merge(
-                                                                {},
-                                                                theme,
-                                                                tenant
-                                                                    .configuration
-                                                                    .customTheme
-                                                            ),
-                                                            deDE
-                                                        );
-                                                    }
-                                                    return theme;
-                                                }}
-                                            >
-                                                <AppHead />
-                                                <AppBody>{children}</AppBody>
-                                            </ThemeProvider>
-                                        </UploadQueueProvider>
-                                    </HubertProvider>
-                                </CloudimageProvider>
-                            </MuiPickersUtilsProvider>
-                        </I18nextProvider>
-                    </ThemeProvider>
+                    <I18nextProvider i18n={i18n}>
+                        <CloudimageProvider
+                            config={{
+                                token: cloudimageToken,
+                            }}
+                        >
+                            <HubertProvider theme={defaultTheme}>
+                                <Authentication />
+                                <UploadQueueProvider>
+                                    <AppHead />
+                                    <BaseLayout>{children}</BaseLayout>
+                                </UploadQueueProvider>
+                            </HubertProvider>
+                        </CloudimageProvider>
+                    </I18nextProvider>
                 </ApolloProvider>
             </ServerDataContextProvider>
         </PlausibleProvider>

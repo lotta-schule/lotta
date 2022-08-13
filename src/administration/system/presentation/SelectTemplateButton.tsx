@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { get } from 'lodash';
-import { Theme } from '@material-ui/core/styles';
-import { BaseButton } from '@lotta-schule/hubert';
+import { BaseButton, useTheme } from '@lotta-schule/hubert';
 
 import styles from './SelectTemplateButton.module.scss';
 
 export interface SelectTemplateButtonProps {
     title: string;
-    theme: Partial<Theme>;
+    theme: Partial<ReturnType<typeof useTheme>>;
     onClick?(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void;
 }
 

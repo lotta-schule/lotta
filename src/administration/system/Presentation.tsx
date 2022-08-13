@@ -1,6 +1,12 @@
 import * as React from 'react';
-import { Theme, useTheme } from '@material-ui/core';
-import { Button, Box, ErrorMessage, Label, Select } from '@lotta-schule/hubert';
+import {
+    Button,
+    Box,
+    ErrorMessage,
+    Label,
+    Select,
+    useTheme,
+} from '@lotta-schule/hubert';
 import { get, merge } from 'lodash';
 import { useMutation } from '@apollo/client';
 import { File } from 'util/model';
@@ -11,13 +17,13 @@ import { useServerData } from 'shared/ServerDataContext';
 import { SelectTemplateButton } from './presentation/SelectTemplateButton';
 import { ColorSettingRow } from './presentation/ColorSettingRow';
 import { headerFonts, textFonts } from './presentation/fonts';
-import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 import Img from 'react-cloudimage-responsive';
-import createTypography from '@material-ui/core/styles/createTypography';
 import Head from 'next/head';
 import clsx from 'clsx';
 
 import styles from '../shared.module.scss';
+
+import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
 export const Presentation = React.memo(() => {
     const { baseUrl } = useServerData();
@@ -25,7 +31,7 @@ export const Presentation = React.memo(() => {
     const theme = useTheme();
 
     const [allThemes, setAllThemes] = React.useState<
-        { title: string; theme: Partial<Theme> }[]
+        { title: string; theme: Partial<ReturnType<typeof useTheme>> }[]
     >([{ title: 'Standard', theme: {} }]);
 
     const [customTheme, setCustomTheme] = React.useState<any>(
@@ -275,13 +281,8 @@ export const Presentation = React.memo(() => {
                                 onChange={(e) =>
                                     setCustomTheme(
                                         merge({}, customTheme, {
-                                            typography: createTypography(
-                                                getFromTheme('palette'),
-                                                {
-                                                    fontFamily: e.currentTarget
-                                                        .value as string,
-                                                }
-                                            ),
+                                            textFontFamily: e.currentTarget
+                                                .value as string,
                                         })
                                     )
                                 }
