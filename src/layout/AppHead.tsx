@@ -5,7 +5,7 @@ import { useTenant } from 'util/tenant/useTenant';
 
 export const AppHead = React.memo(() => {
     const tenant = useTenant();
-    const { theme } = useTheme();
+    const theme = useTheme();
 
     const title = tenant.title;
     return (
