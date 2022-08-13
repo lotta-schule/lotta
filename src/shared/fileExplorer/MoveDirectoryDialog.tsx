@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CreateNewFolderOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/client';
-import { DirectoryModel } from 'model';
+import { DirectoryModel, ID } from 'model';
 import {
     Button,
     Dialog,
@@ -10,7 +10,7 @@ import {
     ErrorMessage,
     Tooltip,
 } from '@lotta-schule/hubert';
-import { DirectoryTree } from './directoryTree/DirectoryTree';
+import { DirectorySelector } from './directorySelector/DirectorySelector';
 import { CreateNewDirectoryDialog } from './CreateNewDirectoryDialog';
 import fileExplorerContext from './context/FileExplorerContext';
 
@@ -19,13 +19,8 @@ import GetDirectoriesAndFilesQuery from 'api/query/GetDirectoriesAndFiles.graphq
 
 export const MoveDirectoryDialog = React.memo(() => {
     const [state, dispatch] = React.useContext(fileExplorerContext);
-    const [selectedDirectory, setSelectedDirectory] = React.useState(
-        state.currentPath[state.currentPath.length - 1].id === null
-            ? null
-            : (state.currentPath[
-                  state.currentPath.length - 1
-              ] as DirectoryModel)
-    );
+    const [selectedDirectoryId, setSelectedDirectoryId] =
+        React.useState<ID | null>(null);
     const [isCreateNewFolderDialogOpen, setIsCreateNewFolderDialogOpen] =
         React.useState(false);
 
@@ -102,16 +97,11 @@ export const MoveDirectoryDialog = React.memo(() => {
                         icon={<CreateNewFolderOutlined color={'secondary'} />}
                     />
                 </Tooltip>
-                <DirectoryTree
-                    defaultExpandedDirectoryIds={state.currentPath.map((d) =>
-                        String(d.id ?? 'null')
-                    )}
-                    selectedDirectory={selectedDirectory}
-                    onSelectDirectory={setSelectedDirectory}
-                    showOnlyReadOnlyDirectories
+                <DirectorySelector
+                    onSelectDirectoryId={setSelectedDirectoryId}
                 />
                 <CreateNewDirectoryDialog
-                    basePath={state.currentPath}
+                    parentDirectoryId={selectedDirectoryId}
                     open={isCreateNewFolderDialogOpen}
                     onRequestClose={() => setIsCreateNewFolderDialogOpen(false)}
                 />
@@ -123,7 +113,7 @@ export const MoveDirectoryDialog = React.memo(() => {
                 <Button
                     disabled={
                         isLoading ||
-                        selectedDirectory?.id === state.markedDirectories[0]?.id
+                        selectedDirectoryId === state.markedDirectories[0]?.id
                     }
                     onClick={async () => {
                         try {
@@ -134,8 +124,7 @@ export const MoveDirectoryDialog = React.memo(() => {
                                             variables: {
                                                 id: directory.id,
                                                 parentDirectoryId:
-                                                    selectedDirectory?.id ??
-                                                    null,
+                                                    selectedDirectoryId ?? null,
                                             },
                                         });
                                         if (data) {
