@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Head from 'next/head';
 import {
     Button,
     Box,
@@ -6,9 +7,10 @@ import {
     Label,
     Select,
     useTheme,
+    defaultTheme,
+    Input,
 } from '@lotta-schule/hubert';
-import { get, merge } from 'lodash';
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 import { File } from 'util/model';
 import { useTenant } from 'util/tenant/useTenant';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
@@ -18,35 +20,46 @@ import { SelectTemplateButton } from './presentation/SelectTemplateButton';
 import { ColorSettingRow } from './presentation/ColorSettingRow';
 import { headerFonts, textFonts } from './presentation/fonts';
 import Img from 'react-cloudimage-responsive';
-import Head from 'next/head';
 import clsx from 'clsx';
 
 import styles from '../shared.module.scss';
 
+import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
 
 export const Presentation = React.memo(() => {
     const { baseUrl } = useServerData();
     const tenant = useTenant();
+    const client = useApolloClient();
     const theme = useTheme();
 
     const [allThemes, setAllThemes] = React.useState<
         { title: string; theme: Partial<ReturnType<typeof useTheme>> }[]
     >([{ title: 'Standard', theme: {} }]);
 
-    const [customTheme, setCustomTheme] = React.useState<any>(
-        tenant.configuration.customTheme || {}
+    const setCustomTheme = React.useCallback(
+        (customTheme: Partial<ReturnType<typeof useTheme>>) =>
+            client.writeQuery({
+                query: GetTenantQuery,
+                data: {
+                    tenant: {
+                        ...tenant,
+                        configuration: {
+                            ...tenant.configuration,
+                            customTheme: { ...theme, ...customTheme },
+                        },
+                    },
+                },
+            }),
+        [client, tenant, theme]
     );
+
     const [backgroundImage, setBackgroundImage] = React.useState(
         tenant.configuration.backgroundImageFile
     );
 
     const [updateSystem, { loading: isLoading, error }] =
         useMutation(UpdateTenantMutation);
-
-    const getFromTheme = (key: string): any => {
-        return get(customTheme, key, get(theme, key));
-    };
 
     React.useEffect(() => {
         Promise.all(
@@ -55,11 +68,14 @@ export const Presentation = React.memo(() => {
                 const partialTheme = await fetch(
                     `/theme/${pureName}/theme.json`
                 ).then((res) => res.json());
-                return { title, theme: merge({}, theme, partialTheme) };
+                return { title, theme: { ...defaultTheme, ...partialTheme } };
             })
-        ).then((customThemes) =>
-            setAllThemes([{ title: 'Standard', theme: {} }, ...customThemes])
-        );
+        ).then((customThemes) => {
+            setAllThemes([
+                { title: 'Standard', theme: defaultTheme },
+                ...customThemes,
+            ]);
+        });
     }, [theme]);
 
     return (
@@ -88,83 +104,186 @@ export const Presentation = React.memo(() => {
                 <div className={styles.gridContainer}>
                     <div className={styles.gridItem}>
                         <ColorSettingRow
-                            label={'Primärfarbe'}
+                            label={'Akzente'}
                             hint={
-                                'Hintergrund der Navigationsleiste, Farbe der Links'
+                                'Akzentfarbe für wichtige und interaktive Elemente'
                             }
-                            value={getFromTheme('palette.primary.main')}
-                            onChange={(value) =>
-                                setCustomTheme(
-                                    merge({}, customTheme, {
-                                        palette: {
-                                            primary: { main: value },
-                                        },
-                                    })
-                                )
+                            value={theme.primaryColor}
+                            onChange={(primaryColor) =>
+                                setCustomTheme({ primaryColor })
                             }
                         />
                         <ColorSettingRow
-                            label={'Akzentfarbe'}
+                            label={'Hintergrund der Navigationsleiste'}
                             hint={
-                                'Farbe der Buttons und für Farbakzente im Seitenlayout'
+                                'Farbe für den Hintergrund der Navigationsleiste'
                             }
-                            value={getFromTheme('palette.secondary.main')}
-                            onChange={(value) =>
-                                setCustomTheme(
-                                    merge({}, customTheme, {
-                                        palette: {
-                                            secondary: { main: value },
-                                        },
-                                    })
-                                )
+                            value={theme.navigationBackgroundColor}
+                            onChange={(navigationBackgroundColor) =>
+                                setCustomTheme({
+                                    navigationBackgroundColor,
+                                })
                             }
                         />
                         <ColorSettingRow
-                            label={'Hintergrund'}
-                            hint={'Hintergrund der Seite'}
-                            value={getFromTheme('palette.background.default')}
-                            onChange={(value) =>
-                                setCustomTheme(
-                                    merge({}, customTheme, {
-                                        palette: {
-                                            background: { default: value },
-                                        },
-                                    })
-                                )
+                            label={'Fehler'}
+                            hint={'Farbe für Fehlermeldungen'}
+                            value={theme.errorColor}
+                            onChange={(errorColor) =>
+                                setCustomTheme({
+                                    errorColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Erfolg'}
+                            hint={'Farbe für Erfolgsmeldungen'}
+                            value={theme.successColor}
+                            onChange={(successColor) =>
+                                setCustomTheme({
+                                    successColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Navigation'}
+                            hint={
+                                'Farbe für die Buttons in der Navigationsleiste'
+                            }
+                            value={theme.navigationColor}
+                            onChange={(navigationColor) =>
+                                setCustomTheme({
+                                    navigationColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Deaktiviert'}
+                            hint={'Farbe für den deaktivierte Elemente'}
+                            value={theme.disabledColor}
+                            onChange={(disabledColor) =>
+                                setCustomTheme({
+                                    disabledColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Text'}
+                            hint={'Farbe für Text'}
+                            value={theme.textColor}
+                            onChange={(textColor) =>
+                                setCustomTheme({
+                                    textColor,
+                                })
                             }
                         />
                     </div>
                     <div className={styles.gridItem}>
                         <ColorSettingRow
-                            label={'primäre Textfarbe'}
-                            hint={'Standard-Text und Überschriften'}
-                            value={getFromTheme('palette.text.primary')}
-                            onChange={(value) =>
-                                setCustomTheme(
-                                    merge({}, customTheme, {
-                                        palette: {
-                                            text: { primary: value },
-                                        },
-                                    })
-                                )
+                            label={'Beschriftungen'}
+                            hint={'Farbe für Text in Beschriftungen'}
+                            value={theme.labelTextColor}
+                            onChange={(labelTextColor) =>
+                                setCustomTheme({
+                                    labelTextColor,
+                                })
                             }
                         />
                         <ColorSettingRow
-                            label={'sekundäre Textfarbe'}
-                            hint={'Hinweistext, Vorschautext'}
-                            value={getFromTheme('palette.text.secondary')}
-                            onChange={(value) =>
-                                setCustomTheme(
-                                    merge({}, customTheme, {
-                                        palette: {
-                                            text: { secondary: value },
-                                        },
-                                    })
-                                )
+                            label={'Text-Invert'}
+                            hint={'Alternative Textfarbe für gefüllte Elemente'}
+                            value={theme.contrastTextColor}
+                            onChange={(contrastTextColor) =>
+                                setCustomTheme({
+                                    contrastTextColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Hintergrund'}
+                            hint={
+                                'Farbe für den Hintergrund des Inhaltsbereichs'
+                            }
+                            value={theme.boxBackgroundColor}
+                            onChange={(boxBackgroundColor) =>
+                                setCustomTheme({
+                                    boxBackgroundColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Seitenhintergrund'}
+                            hint={
+                                'Farbe für den Hintergrund des gesamten Seiteninhalts'
+                            }
+                            value={theme.pageBackgroundColor}
+                            onChange={(pageBackgroundColor) =>
+                                setCustomTheme({
+                                    pageBackgroundColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Trennlinien'}
+                            hint={'Farbe für Trennlinien'}
+                            value={theme.dividerColor}
+                            onChange={(dividerColor) =>
+                                setCustomTheme({
+                                    dividerColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Hervorhebung'}
+                            hint={'Farbe für Hervorhebungen'}
+                            value={theme.highlightColor}
+                            onChange={(highlightColor) =>
+                                setCustomTheme({
+                                    highlightColor,
+                                })
+                            }
+                        />
+                        <ColorSettingRow
+                            label={'Bannerhintergrund'}
+                            hint={'Farbe für den Hintergrund des Banner'}
+                            value={theme.bannerBackgroundColor}
+                            onChange={(bannerBackgroundColor) =>
+                                setCustomTheme({
+                                    bannerBackgroundColor,
+                                })
                             }
                         />
                     </div>
                 </div>
+
+                <section className={styles.section}>
+                    <h3>Maße</h3>
+
+                    <div className={styles.gridItem}>
+                        <Label label={'Abstand'}>
+                            <Input
+                                value={theme.spacing}
+                                onChange={(e) =>
+                                    setCustomTheme({
+                                        spacing: e.currentTarget.value,
+                                    })
+                                }
+                            />
+                        </Label>
+                    </div>
+                    <div className={styles.gridItem}>
+                        <Label label={'Rundungen'}>
+                            <Input
+                                value={theme.borderRadius}
+                                onChange={(e) =>
+                                    setCustomTheme({
+                                        borderRadius: e.currentTarget.value,
+                                    })
+                                }
+                            />
+                        </Label>
+                    </div>
+                </section>
 
                 <div className={styles.gridContainer}>
                     <div className={styles.gridItem}>
@@ -210,28 +329,14 @@ export const Presentation = React.memo(() => {
                     <div className={styles.gridItem}>
                         <Label label={'Schriftart Überschriften'}>
                             <Select
-                                value={getFromTheme(
-                                    'overrides.LottaArticlePreview.title.fontFamily'
-                                )}
+                                value={theme.titleFontFamily}
                                 style={{
-                                    fontFamily: getFromTheme(
-                                        'overrides.LottaArticlePreview.title.fontFamily'
-                                    ),
+                                    fontFamily: theme.titleFontFamily,
                                 }}
                                 onChange={(e) =>
-                                    setCustomTheme(
-                                        merge({}, customTheme, {
-                                            overrides: {
-                                                LottaArticlePreview: {
-                                                    title: {
-                                                        fontFamily:
-                                                            e.currentTarget
-                                                                .value,
-                                                    },
-                                                },
-                                            },
-                                        })
-                                    )
+                                    setCustomTheme({
+                                        titleFontFamily: e.currentTarget.value,
+                                    })
                                 }
                             >
                                 {headerFonts
@@ -272,19 +377,14 @@ export const Presentation = React.memo(() => {
                     <div className={styles.gridItem}>
                         <Label label={'Schriftart Fließtext'}>
                             <Select
-                                value={getFromTheme('typography.fontFamily')}
+                                value={theme.textFontFamily}
                                 style={{
-                                    fontFamily: getFromTheme(
-                                        'typography.fontFamily'
-                                    ),
+                                    fontFamily: theme.textFontFamily,
                                 }}
                                 onChange={(e) =>
-                                    setCustomTheme(
-                                        merge({}, customTheme, {
-                                            textFontFamily: e.currentTarget
-                                                .value as string,
-                                        })
-                                    )
+                                    setCustomTheme({
+                                        textFontFamily: e.currentTarget.value,
+                                    })
                                 }
                             >
                                 {textFonts.map(({ name }) => (
@@ -318,8 +418,7 @@ export const Presentation = React.memo(() => {
                                     tenant: {
                                         configuration: {
                                             ...tenant.configuration,
-                                            customTheme:
-                                                JSON.stringify(customTheme),
+                                            customTheme: theme,
                                             backgroundImageFile:
                                                 backgroundImage && {
                                                     id: backgroundImage.id,

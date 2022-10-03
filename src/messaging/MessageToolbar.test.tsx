@@ -5,7 +5,7 @@ import { MessageToolbar } from './MessageToolbar';
 import SearchUsersQuery from 'api/query/SearchUsersQuery.graphql';
 import userEvent from '@testing-library/user-event';
 
-describe('shared/layouts/adminLayout/MessageToolbar', () => {
+describe('src/messaging/MessageToolbar', () => {
     const SomeUserWithGroups = { ...SomeUser, groups: [schuelerGroup] };
 
     it('should render without error', () => {
@@ -104,11 +104,14 @@ describe('shared/layouts/adminLayout/MessageToolbar', () => {
             await waitFor(() => {
                 expect(screen.queryByRole('progressbar')).toBeNull();
             });
-            await waitFor(() => {
-                expect(
-                    screen.getByRole('option', { name: /drinalda/i })
-                ).toBeVisible();
-            });
+            await waitFor(
+                () => {
+                    expect(
+                        screen.getByRole('option', { name: /drinalda/i })
+                    ).toBeVisible();
+                },
+                { timeout: 2000 }
+            );
             userEvent.click(screen.getByRole('option', { name: /drinalda/i }));
             expect(onRequestNewMessage).toHaveBeenCalled();
         });

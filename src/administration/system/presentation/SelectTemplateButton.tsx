@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { get } from 'lodash';
 import { BaseButton, useTheme } from '@lotta-schule/hubert';
 
 import styles from './SelectTemplateButton.module.scss';
@@ -11,28 +10,13 @@ export interface SelectTemplateButtonProps {
 }
 
 export const SelectTemplateButton = React.memo<SelectTemplateButtonProps>(
-    ({ title, theme: partialTheme, onClick }) => {
+    ({ title, theme, onClick }) => {
         const getBackground = (): React.CSSProperties['background'] => {
-            const primaryColor: string = get(
-                partialTheme,
-                'palette.primary.main',
-                get(partialTheme, 'palette.primary.main')
-            );
-            const navigationBackgroundColor: string = get(
-                partialTheme,
-                'palette.secondary.main',
-                get(partialTheme, 'palette.secondary.main')
-            );
-            const backgroundColor: string = get(
-                partialTheme,
-                'palette.background.paper',
-                get(partialTheme, 'palette.background.paper')
-            );
             return `linear-gradient(${[
-                `${primaryColor} 33%`,
-                `${navigationBackgroundColor} 33%`,
-                `${navigationBackgroundColor} 66%`,
-                `${backgroundColor} 66%`,
+                `${theme.primaryColor} 33%`,
+                `${theme.navigationBackgroundColor} 33%`,
+                `${theme.navigationBackgroundColor} 66%`,
+                `${theme.pageBackgroundColor} 66%`,
             ].join(', ')})`;
         };
 
@@ -43,7 +27,12 @@ export const SelectTemplateButton = React.memo<SelectTemplateButtonProps>(
                 onClick={onClick}
             >
                 <span className={styles.imageButton}>
-                    <span className={styles.imageTitle}>{title}</span>
+                    <span
+                        style={{ color: theme.contrastTextColor }}
+                        className={styles.imageTitle}
+                    >
+                        {title}
+                    </span>
                 </span>
             </BaseButton>
         );

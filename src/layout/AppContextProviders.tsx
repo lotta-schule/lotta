@@ -8,6 +8,7 @@ import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { Authentication } from 'shared/Authentication';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
+import { useTenant } from 'util/tenant/useTenant';
 import { getApolloClient } from 'api/client';
 import { BaseLayout } from './BaseLayout';
 import { i18n } from '../i18n';
@@ -28,6 +29,26 @@ export interface AppContextProvidersProps {
     requestBaseUrl: string;
     tenant: TenantModel;
 }
+
+const TenantContextProviders = React.memo(({ children }) => {
+    const tenant = useTenant();
+
+    return (
+        <HubertProvider
+            theme={{
+                ...defaultTheme,
+                ...tenant.configuration.customTheme,
+            }}
+        >
+            <Authentication />
+            <UploadQueueProvider>
+                <AppHead />
+                <BaseLayout>{children}</BaseLayout>
+            </UploadQueueProvider>
+        </HubertProvider>
+    );
+});
+TenantContextProviders.displayName = 'TenantContextProviders';
 
 export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
     tenant,
@@ -85,13 +106,9 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
                                 token: cloudimageToken,
                             }}
                         >
-                            <HubertProvider theme={defaultTheme}>
-                                <Authentication />
-                                <UploadQueueProvider>
-                                    <AppHead />
-                                    <BaseLayout>{children}</BaseLayout>
-                                </UploadQueueProvider>
-                            </HubertProvider>
+                            <TenantContextProviders>
+                                {children}
+                            </TenantContextProviders>
                         </CloudimageProvider>
                     </I18nextProvider>
                 </ApolloProvider>
