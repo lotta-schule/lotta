@@ -22,15 +22,31 @@ defmodule LottaWeb.CalendarResolver do
 
     case result_body do
       {:ok, body} ->
-        ical =
-          body
-          |> ExIcal.parse()
-          |> ExIcal.by_range(
-            DateTime.now!("Europe/Berlin") |> DateTime.add(-60 * 60 * 24, :second),
-            DateTime.now!("Europe/Berlin") |> Timex.shift(days: args[:days] || 90)
-          )
+        try do
+          start_date = DateTime.now!("Europe/Berlin") |> DateTime.add(-60 * 60 * 24, :second)
+          end_date = DateTime.now!("Europe/Berlin") |> Timex.shift(days: args[:days] || 90)
 
-        {:ok, ical}
+          is_in_between = fn
+            nil, _, _ -> true
+            date, start, enddate -> Timex.between?(date, start, enddate, inclusive: true)
+          end
+
+          events =
+            body
+            |> ExIcal.parse()
+            |> ExIcal.Recurrence.add_recurring_events(end_date)
+            |> Enum.filter(fn event ->
+              is_in_between.(event.start, start_date, end_date) &&
+                is_in_between.(event.end, start_date, end_date)
+            end)
+            |> ExIcal.sort_by_date()
+
+          {:ok, events}
+        rescue
+          e ->
+            Logger.error(e)
+            {:error, :invalid_calendar_format}
+        end
 
       error ->
         error
