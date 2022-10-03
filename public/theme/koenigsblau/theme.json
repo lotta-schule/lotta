@@ -1,17 +1,8 @@
 {
-    "palette": {
-        "background": {
-            "default": "#cacdd7"
-        },
-        "primary": {
-            "main": "#092f99"
-        },
-        "secondary": {
-            "main": "#00b4ec"
-        },
-        "text": {
-            "primary": "#394151",
-            "secondary": "#475d68"
-        }
-    }
+  "pageBackgroundColor": "#cacdd7",
+  "primaryColor": "#092f99",
+  "navigationBackgroundColor": "#00b4ec",
+  "textColor": "#394151",
+  "contrastTextColor": "#475d68"
 }
+
