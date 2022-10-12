@@ -101,7 +101,10 @@ export const UserNavigation = React.memo(() => {
                             }
                         >
                             Nachrichten
-                            <Badge value={newMessagesBadgeNumber} />{' '}
+                            <Badge
+                                className={styles.newMessageBadge}
+                                value={newMessagesBadgeNumber}
+                            />{' '}
                         </NavigationButton>
                     </Link>
                     <MenuButton

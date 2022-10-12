@@ -33,6 +33,12 @@
         justify-content: left;
     }
 
+    .newMessageBadge {
+        position: absolute;
+        left: -1em;
+        top: -0.5em;
+    }
+
     .leftIcon {
         margin-right: var(--lotta-spacing);
     }
