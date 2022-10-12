@@ -5,11 +5,13 @@ import {
     lehrerGroup,
     schuelerGroup,
 } from 'test/fixtures';
-import { render, waitFor } from 'test/util';
+import { render, waitFor, within } from 'test/util';
 import { EditUserGroupDialog } from './EditUserGroupDialog';
-import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
-import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
 import userEvent from '@testing-library/user-event';
+
+import GetGroupQuery from 'api/query/GetGroupQuery.graphql';
+import UpdateUserGroupMutation from 'api/mutation/UpdateUserGroupMutation.graphql';
+import DeleteUserGroupMutation from 'api/mutation/DeleteUserGroupMutation.graphql';
 
 const additionalMocks = [
     {
@@ -275,21 +277,52 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
 
         describe('delete group', () => {
             it('should show a delete button for a group and show dialog', async () => {
+                const onRequestClose = jest.fn();
                 const screen = render(
                     <EditUserGroupDialog
                         group={lehrerGroup}
-                        onRequestClose={jest.fn()}
+                        onRequestClose={onRequestClose}
                     />,
                     {},
-                    { additionalMocks }
+                    {
+                        additionalMocks: [
+                            ...additionalMocks,
+                            {
+                                request: {
+                                    query: DeleteUserGroupMutation,
+                                    variables: {
+                                        id: lehrerGroup.id,
+                                    },
+                                },
+                                result: {
+                                    data: {
+                                        deleteGroup: {
+                                            id: lehrerGroup.id,
+                                        },
+                                    },
+                                },
+                            },
+                        ],
+                    }
                 );
                 userEvent.click(
                     await screen.findByRole('button', { name: /löschen/i })
                 );
+                const dialog = await screen.findByRole('dialog', {
+                    name: /löschen/i,
+                });
                 await waitFor(() => {
-                    expect(
-                        screen.getByRole('dialog', { name: /löschen/i })
-                    ).toBeVisible();
+                    expect(dialog).toBeVisible();
+                });
+
+                const deleteButton = within(dialog).getByRole('button', {
+                    name: /löschen/i,
+                });
+
+                userEvent.click(deleteButton);
+
+                await waitFor(() => {
+                    expect(onRequestClose).toHaveBeenCalled();
                 });
             });
 
@@ -302,9 +335,11 @@ describe('shared/layouts/adminLayouts/userManagment/EditUserGroupDialog', () => 
                     {},
                     { additionalMocks }
                 );
-                expect(
-                    await screen.findByPlaceholderText(/einschreibeschlüssel/i)
-                ).toBeVisible();
+                await waitFor(() => {
+                    expect(
+                        screen.getByPlaceholderText(/einschreibeschlüssel/i)
+                    ).toBeVisible();
+                });
                 expect(
                     screen.queryByRole('button', { name: /löschen/i })
                 ).toBeNull();

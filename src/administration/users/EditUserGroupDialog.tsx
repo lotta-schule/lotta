@@ -184,9 +184,10 @@ export const EditUserGroupDialog = React.memo<EditUserGroupDialogProps>(
                                     onRequestClose={() =>
                                         setIsDeleteUserGroupDialogOpen(false)
                                     }
-                                    onConfirm={() =>
-                                        setIsDeleteUserGroupDialogOpen(false)
-                                    }
+                                    onConfirm={() => {
+                                        setIsDeleteUserGroupDialogOpen(false);
+                                        onRequestClose();
+                                    }}
                                 />
                             </>
                         )}
