@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { pick } from 'lodash';
-import { HubertProvider, defaultTheme } from '@lotta-schule/hubert';
+import { HubertProvider } from '@lotta-schule/hubert';
+import { DefaultThemes } from '@lotta-schule/theme';
 import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
@@ -20,6 +21,8 @@ import fileExplorerContext, {
 } from 'shared/fileExplorer/context/FileExplorerContext';
 import { createRouter, Router } from 'next/router';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
+
+const defaultTheme = DefaultThemes.standard;
 
 export type TestSetupOptions = {
     additionalMocks?: MockedResponse[];
