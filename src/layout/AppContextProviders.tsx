@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { HubertProvider, defaultTheme } from '@lotta-schule/hubert';
+import { HubertProvider } from '@lotta-schule/hubert';
+import { DefaultThemes } from '@lotta-schule/theme';
 import { CategoryModel, TenantModel, UserModel } from 'model';
 import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
@@ -18,6 +19,8 @@ import getConfig from 'next/config';
 import GetCategoriesQuery from 'api/query/GetCategoriesQuery.graphql';
 import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
+
+const defaultTheme = DefaultThemes.standard;
 
 const {
     publicRuntimeConfig: { cloudimageToken, plausibleEndpoint },
