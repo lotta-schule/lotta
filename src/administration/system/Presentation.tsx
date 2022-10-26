@@ -7,9 +7,9 @@ import {
     Label,
     Select,
     useTheme,
-    defaultTheme,
     Input,
 } from '@lotta-schule/hubert';
+import { DefaultThemes } from '@lotta-schule/theme';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { File } from 'util/model';
 import { useTenant } from 'util/tenant/useTenant';
@@ -26,6 +26,8 @@ import styles from '../shared.module.scss';
 
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 import UpdateTenantMutation from 'api/mutation/UpdateTenantMutation.graphql';
+
+const defaultTheme = DefaultThemes.standard;
 
 export const Presentation = React.memo(() => {
     const { baseUrl } = useServerData();
