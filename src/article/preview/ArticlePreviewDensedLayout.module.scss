@@ -105,7 +105,7 @@
     }
 
     .articleTitle {
-        font-family: var(--lotta-typography-title-font-family);
+        font-family: var(--lotta-title-font-family);
         word-break: break-word;
         hyphens: auto;
         @media screen and (max-width: $max-sm) {
