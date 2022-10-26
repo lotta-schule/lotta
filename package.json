@@ -47,7 +47,7 @@
         "@jest/globals": "^28.1.2",
         "@jumpn/utils-graphql": "^0.6.0",
         "@lotta-schule/hubert": "^0.0.13",
-        "@lotta-schule/theme": "^0.0.6",
+        "@lotta-schule/theme": "^0.0.7",
         "@material-ui/icons": "^4.11.3",
         "@reach/tooltip": "^0.17.0",
         "@sentry/nextjs": "^7.5.1",
