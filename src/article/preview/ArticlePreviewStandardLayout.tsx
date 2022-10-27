@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Edit, Place } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faLocationDot, faPen } from '@fortawesome/free-solid-svg-icons';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
@@ -343,7 +344,12 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                                                 styles.editButton,
                                                                 'edit-button'
                                                             )}
-                                                            icon={<Edit />}
+                                                            icon={
+                                                                <Icon
+                                                                    icon={faPen}
+                                                                    size={'lg'}
+                                                                />
+                                                            }
                                                         />
                                                     </Link>
                                                 )}
@@ -360,7 +366,14 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                                         onClick={() =>
                                                             toggleArticlePin()
                                                         }
-                                                        icon={<Place />}
+                                                        icon={
+                                                            <Icon
+                                                                icon={
+                                                                    faLocationDot
+                                                                }
+                                                                size={'lg'}
+                                                            />
+                                                        }
                                                     />
                                                 )}
                                         </div>

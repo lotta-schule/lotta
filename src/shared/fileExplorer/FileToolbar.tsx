@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    CloudUploadOutlined,
-    CreateNewFolderOutlined,
-    FileCopyOutlined,
-    DeleteOutlineOutlined,
-    Info,
-    InfoOutlined,
-} from '@material-ui/icons';
+    faFolderPlus,
+    faCircleInfo,
+    faCircleMinus,
+    faCopy,
+    faCloudArrowUp,
+} from '@fortawesome/free-solid-svg-icons';
 import {
     Badge,
     Button,
@@ -104,7 +104,8 @@ export const FileToolbar = React.memo(() => {
                                         }
                                         data-testid="FileExplorerToolbarMoveFileButton"
                                         icon={
-                                            <FileCopyOutlined
+                                            <FontAwesomeIcon icon={faCopy}
+                                        size={'lg'}
                                                 color={'secondary'}
                                             />
                                         }
@@ -122,7 +123,8 @@ export const FileToolbar = React.memo(() => {
                                         }
                                         data-testid="FileExplorerToolbarDeleteFileButton"
                                         icon={
-                                            <DeleteOutlineOutlined
+                                            <FontAwesomeIcon icon={faCircleMinus}
+                                        size={'lg'}
                                                 color={'secondary'}
                                             />
                                         }
@@ -143,7 +145,8 @@ export const FileToolbar = React.memo(() => {
                                 }
                                 data-testid="FileExplorerToolbarCreateDirectoryButton"
                                 icon={
-                                    <CreateNewFolderOutlined
+                                    <FontAwesomeIcon icon={faFolderPlus}
+                                        size={'lg'}
                                         color={'secondary'}
                                     />
                                 }
@@ -161,7 +164,8 @@ export const FileToolbar = React.memo(() => {
                                     data-testid="FileExplorerToolbarNewUploadButton"
                                     onlyIcon
                                     icon={
-                                        <CloudUploadOutlined
+                                        <FontAwesomeIcon icon={faCloudArrowUp}
+                                        size={'lg'}
                                             color={'secondary'}
                                         />
                                     }
@@ -211,17 +215,12 @@ export const FileToolbar = React.memo(() => {
                                         })
                                     }
                                     icon={
-                                        state.detailSidebarEnabled ? (
-                                            <Info
+                                            <FontAwesomeIcon icon={faCircleInfo}
+                                            size={'lg'}
                                                 color={'secondary'}
                                                 data-testid="enable-detail-sidebar-icon"
                                             />
-                                        ) : (
-                                            <InfoOutlined
-                                                color={'secondary'}
-                                                data-testid="disable-detail-sidebar-icon"
-                                            />
-                                        )
+                                
                                     }
                                 />
                             </Tooltip>

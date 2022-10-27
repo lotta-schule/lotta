@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { BarChart } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faChartBar } from '@fortawesome/free-regular-svg-icons';
 import { getApolloClient } from 'api/client';
 import { AdminPage } from 'administration/AdminPage';
 import { Usage } from 'administration/system/Usage';
@@ -15,7 +16,7 @@ const UsageRoute = ({
         <AdminPage
             title={
                 <>
-                    <BarChart /> Nutzung
+                    <Icon icon={faChartBar} /> Nutzung
                 </>
             }
             component={() => <Usage error={error} usage={usage} />}

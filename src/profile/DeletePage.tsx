@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { Icon } from 'shared/Icon';
 import {
-    NavigateNext,
-    NavigateBefore,
-    Warning,
-    DeleteForever,
-} from '@material-ui/icons';
+    faTriangleExclamation,
+    faTrashCan,
+    faAngleLeft,
+    faAngleRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { useQuery, useApolloClient, useMutation } from '@apollo/client';
 import { ArticleModel, FileModel } from 'model';
 import {
@@ -125,7 +126,7 @@ export const DeletePage = React.memo(() => {
                 <Button
                     small
                     disabled={isLoading}
-                    icon={<NavigateNext />}
+                    icon={<Icon icon={faAngleRight} size={'lg'} />}
                     onClick={() => {
                         setCurrentStep((s) => s + 1);
                     }}
@@ -137,7 +138,7 @@ export const DeletePage = React.memo(() => {
                     small
                     className={styles.deleteButton}
                     disabled={isLoading}
-                    icon={<Warning />}
+                    icon={<Icon icon={faTriangleExclamation} />}
                     onClick={() => {
                         setIsConfirmDialogOpen(true);
                     }}
@@ -154,7 +155,7 @@ export const DeletePage = React.memo(() => {
                 >
                     <Button
                         small
-                        icon={<NavigateBefore />}
+                        icon={<Icon icon={faAngleLeft} size={'lg'} />}
                         disabled={currentStep <= ProfileDeleteStep.Start}
                         onClick={() => setCurrentStep((s) => s - 1)}
                         aria-hidden={
@@ -467,7 +468,7 @@ export const DeletePage = React.memo(() => {
                         </Button>
                         <Button
                             onClick={() => destroyAccount()}
-                            icon={<DeleteForever />}
+                            icon={<Icon icon={faTrashCan} size={'lg'} />}
                             className={styles.deleteButton}
                             disabled={isLoading}
                         >

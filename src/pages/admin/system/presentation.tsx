@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Palette } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faPalette } from '@fortawesome/free-solid-svg-icons';
 import { Presentation } from 'administration/system/Presentation';
 import { AdminPage } from 'administration/AdminPage';
 import { GetServerSidePropsContext } from 'next';
@@ -9,7 +10,7 @@ const PresentationRoute = () => {
         <AdminPage
             title={
                 <>
-                    <Palette /> Darstellung
+                    <Icon icon={faPalette} size={'lg'} /> Darstellung
                 </>
             }
             component={Presentation}

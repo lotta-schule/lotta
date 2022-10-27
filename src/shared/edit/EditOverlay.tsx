@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Clear } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
 
 import styles from './EditOverlay.module.scss';
@@ -26,7 +27,7 @@ export const EditOverlay = React.memo<EditOverlayProps>(
                             aria-label={'remove'}
                             className={styles.removeButton}
                             onClick={onClickRemove}
-                            icon={<Clear />}
+                            icon={<Icon icon={faXmark} size={'lg'} />}
                         />
                     )}
                     <Button onClick={onClick}>{label}</Button>

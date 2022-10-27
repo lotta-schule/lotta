@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Category } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faShapes } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from 'administration/AdminPage';
 import { CategoryList } from 'administration/categories/CategoryList';
 import { GetServerSidePropsContext } from 'next';
@@ -9,7 +10,7 @@ const CategoryListRoute = () => {
         <AdminPage
             title={
                 <>
-                    <Category /> Kategorien
+                    <Icon icon={faShapes} size={'lg'} /> Kategorien
                 </>
             }
             component={CategoryList}

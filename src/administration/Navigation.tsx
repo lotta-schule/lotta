@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { Icon } from 'shared/Icon';
 import {
-    AccountCircle,
-    Group,
-    BarChart,
-    CropFree,
-    Palette,
-    Tune,
-    Category,
-    Slideshow,
-} from '@material-ui/icons';
+    faCircleUser,
+    faUserGroup,
+    faChartBar,
+    faExpand,
+    faPalette,
+    faSliders,
+    faShapes,
+    faSquareCaretRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { BaseButton } from '@lotta-schule/hubert';
 import Link from 'next/link';
-
 import styles from './Navigation.module.scss';
 
 export const Navigation = React.memo(() => {
@@ -25,7 +25,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <Tune />
+                            <Icon icon={faSliders} />
                         </span>
                         <span>Grundeinstellungen</span>
                     </BaseButton>
@@ -37,7 +37,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <Palette />
+                            <Icon icon={faPalette} />
                         </span>
                         <span>Darstellung</span>
                     </BaseButton>
@@ -49,7 +49,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <BarChart />
+                            <Icon icon={faChartBar} />
                         </span>
                         <span>Nutzung</span>
                     </BaseButton>
@@ -64,7 +64,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <AccountCircle />
+                            <Icon icon={faCircleUser} />
                         </span>
                         <span>Nutzer</span>
                     </BaseButton>
@@ -76,7 +76,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <Group />
+                            <Icon icon={faUserGroup} />
                         </span>
                         <span>Gruppen</span>
                     </BaseButton>
@@ -88,7 +88,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <CropFree />
+                            <Icon icon={faExpand} />
                         </span>
                         <span>Beschränkungen</span>
                     </BaseButton>
@@ -103,7 +103,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <Category />
+                            <Icon icon={faShapes} />
                         </span>
                         <span>Kategorien</span>
                     </BaseButton>
@@ -115,7 +115,7 @@ export const Navigation = React.memo(() => {
                         className={styles.button}
                     >
                         <span>
-                            <Slideshow />
+                            <Icon icon={faSquareCaretRight} />
                         </span>
                         <span>Marginalen</span>
                     </BaseButton>

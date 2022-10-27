@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { CreateNewFolderOutlined } from '@material-ui/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import {
     Button,
@@ -93,7 +94,9 @@ export const MoveFilesDialog = React.memo(() => {
                     <Button
                         aria-label="Ordner erstellen"
                         onClick={() => setIsCreateNewFolderDialogOpen(true)}
-                        icon={<CreateNewFolderOutlined color={'secondary'} />}
+                        icon={
+                            <FontAwesomeIcon icon={faFolderPlus} size={'lg'} />
+                        }
                     />
                 </Tooltip>
                 <DirectorySelector

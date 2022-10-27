@@ -6,7 +6,7 @@ import {
     ListItem,
     LinearProgress,
 } from '@lotta-schule/hubert';
-import { FiberManualRecord } from '@material-ui/icons';
+
 import { useApolloClient } from '@apollo/client';
 import { format, intervalToDuration, isSameMinute } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -21,6 +21,8 @@ import clsx from 'clsx';
 import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 
 import styles from './Calendar.module.scss';
+import { Icon } from 'shared/Icon';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 export interface CalendarProps {
     widget: WidgetModel<WidgetModelType.Calendar>;
@@ -103,10 +105,15 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                 key={i}
                                 aria-label={`Legende: ${calendar.name}`}
                             >
-                                <FiberManualRecord
+                                <Icon
+                                    icon={faCircle}
                                     fontSize={'inherit'}
-                                    htmlColor={calendar.color || 'red'}
                                     className={styles.calendarColorDot}
+                                    style={{
+                                        color: calendar.color || 'red',
+                                        fontSize: '0.4em',
+                                        verticalAlign: 'baseline',
+                                    }}
                                 />
                                 <figcaption>{calendar.name}</figcaption>
                             </figure>
@@ -154,16 +161,23 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                             >
                                                 <div>
                                                     {calendars.length > 1 && (
-                                                        <FiberManualRecord
+                                                        <Icon
+                                                            icon={faCircle}
                                                             fontSize={'inherit'}
-                                                            htmlColor={
-                                                                event.calendar
-                                                                    .color ||
-                                                                'red'
-                                                            }
                                                             className={
                                                                 styles.calendarColorDot
                                                             }
+                                                            style={{
+                                                                color:
+                                                                    event
+                                                                        .calendar
+                                                                        .color ||
+                                                                    'red',
+                                                                fontSize:
+                                                                    '0.4em',
+                                                                verticalAlign:
+                                                                    'baseline',
+                                                            }}
                                                         />
                                                     )}
                                                     {format(start, 'P', {

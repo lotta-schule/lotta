@@ -4,7 +4,8 @@ import { ConversationModel, MessageModel } from 'model';
 import { User } from 'util/model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { format } from 'date-fns';
-import { Delete } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import de from 'date-fns/locale/de';
 import clsx from 'clsx';
@@ -109,7 +110,7 @@ export const MessageBubble = React.memo<MessageBubbleProps>(
                         {active && (
                             <Button
                                 small
-                                icon={<Delete />}
+                                icon={<Icon icon={faTrash} />}
                                 title={'Nachricht löschen'}
                                 onClick={() => deleteMessage()}
                             />

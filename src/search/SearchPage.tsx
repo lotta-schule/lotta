@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/client';
 import { ArticleModel, CategoryModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ExpandLess, ExpandMore } from '@material-ui/icons';
+
 import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
 import { ArticlePreviewDensedLayout } from 'article/preview';
@@ -12,6 +12,8 @@ import { ArticlePreviewDensedLayout } from 'article/preview';
 import SearchQuery from 'api/query/SearchQuery.graphql';
 
 import styles from './SearchPage.module.scss';
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export const SearchPage = () => {
     const [searchText, setSearchText] = React.useState('');
@@ -59,9 +61,9 @@ export const SearchPage = () => {
                         }
                         icon={
                             isAdvancedSearchFormVisible ? (
-                                <ExpandLess />
+                                <Icon icon={faCaretDown} size={'lg'} />
                             ) : (
-                                <ExpandMore />
+                                <Icon icon={faCaretUp} size={'lg'} />
                             )
                         }
                     >

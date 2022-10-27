@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Send } from '@material-ui/icons';
+
 import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';
 import {
     NewMessageDestination,
@@ -15,6 +15,8 @@ import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 
 import styles from './ComposeMessage.module.scss';
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export interface ComposeMessageProps {
     destination: NewMessageDestination;
@@ -149,7 +151,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                         className={styles.button}
                         type={'submit'}
                         disabled={isLoading}
-                        icon={<Send />}
+                        icon={<Icon icon={faPaperPlane} size={'lg'} />}
                     />
                 </form>
             </div>

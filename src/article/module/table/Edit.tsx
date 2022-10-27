@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { range } from 'lodash';
-import {
-    SkipPrevious,
-    SkipNext,
-    ExpandLess,
-    ExpandMore,
-} from '@material-ui/icons';
+
 import {
     Button,
     Input,
@@ -21,6 +16,15 @@ import {
 } from './Table';
 
 import styles from './Table.module.scss';
+import {
+    faBackwardStep,
+    faCaretDown,
+    faCaretUp,
+    faCircleMinus,
+    faCirclePlus,
+    faForwardStep,
+} from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 interface EditProps {
     contentModule: ContentModuleModel<TableContent, TableConfiguration>;
@@ -248,11 +252,12 @@ export const Edit = React.memo<EditProps>(
         return (
             <div className={styles.edit}>
                 <div className={styles.upperToolbar}>
+                    <div>Spalten</div>
                     <Tooltip label={'letzte Spalte entfernen'}>
                         <span>
                             <Button
                                 small
-                                icon={<SkipPrevious />}
+                                icon={<Icon icon={faCircleMinus} size={'lg'} />}
                                 aria-label={'letzte Spalte entfernen'}
                                 disabled={columnCount <= 1}
                                 onClick={() => {
@@ -275,7 +280,7 @@ export const Edit = React.memo<EditProps>(
                     <Tooltip label={'Spalte hinzufügen'}>
                         <Button
                             small
-                            icon={<SkipNext />}
+                            icon={<Icon icon={faCirclePlus} size={'lg'} />}
                             aria-label={'Spalte hinzufügen'}
                             onClick={() => {
                                 requestFocusOnNextUpdate.current = true;
@@ -294,11 +299,12 @@ export const Edit = React.memo<EditProps>(
                     </Tooltip>
                 </div>
                 <div className={styles.asideToolbar}>
+                    <div> Zeilen</div>
                     <Tooltip label={'Zeile entfernen'}>
                         <span>
                             <Button
                                 small
-                                icon={<ExpandLess />}
+                                icon={<Icon icon={faCircleMinus} size={'lg'} />}
                                 disabled={rowCount <= 1}
                                 aria-label={'Zeile entfernen'}
                                 onClick={() => {
@@ -318,7 +324,7 @@ export const Edit = React.memo<EditProps>(
                     <Tooltip label={'Zeile hinzufügen'}>
                         <Button
                             small
-                            icon={<ExpandMore />}
+                            icon={<Icon icon={faCirclePlus} size={'lg'} />}
                             aria-label={'Zeile hinzufügen'}
                             onClick={() => {
                                 requestFocusOnNextUpdate.current = true;

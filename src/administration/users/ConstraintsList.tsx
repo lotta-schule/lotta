@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { SdStorage } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faSdCard } from '@fortawesome/free-solid-svg-icons';
 import {
     Button,
     Checkbox,
@@ -99,7 +100,7 @@ export const ConstraintList = () => {
                 >
                     <div className={styles.storageSetting}>
                         <div>
-                            <SdStorage />
+                            <Icon icon={faSdCard} />
                         </div>
                         <div className={styles.slider}>
                             <input

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Delete } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { ContentModuleModel, FileModel } from 'model';
 import { Button, DragHandle, Input } from '@lotta-schule/hubert';
@@ -146,7 +147,13 @@ export const Edit = React.memo<EditProps>(
                                                             </div>
                                                         </div>
                                                         <Button
-                                                            icon={<Delete />}
+                                                            icon={
+                                                                <Icon
+                                                                    icon={
+                                                                        faTrash
+                                                                    }
+                                                                />
+                                                            }
                                                             onClick={() =>
                                                                 onUpdateModule({
                                                                     ...contentModule,

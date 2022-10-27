@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Box } from '@lotta-schule/hubert';
-import { Edit, Place, FiberManualRecord } from '@material-ui/icons';
+
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
@@ -17,6 +17,12 @@ import Link from 'next/link';
 import styles from './ArticlePreviewDensedLayout.module.scss';
 
 import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
+import { Icon } from 'shared/Icon';
+import {
+    faCircle,
+    faLocationDot,
+    faPen,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface ArticlePreviewProps {
     article: ArticleModel;
@@ -88,9 +94,13 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                     new Date(currentUser.lastSeen),
                                     new Date(article.updatedAt)
                                 ) && (
-                                    <FiberManualRecord
+                                    <Icon
+                                        icon={faCircle}
                                         color={'secondary'}
-                                        fontSize={'small'}
+                                        style={{
+                                            fontSize: '0.5em',
+                                            verticalAlign: 'baseline',
+                                        }}
                                     />
                                 )}
                             {maybeLinked(article.title)}
@@ -143,7 +153,12 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                                     styles.editButton,
                                                     'edit-button'
                                                 )}
-                                                icon={<Edit />}
+                                                icon={
+                                                    <Icon
+                                                        icon={faPen}
+                                                        size={'lg'}
+                                                    />
+                                                }
                                             />
                                         </Link>
                                     )}
@@ -155,7 +170,12 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                             active: article.isPinnedToTop,
                                         })}
                                         onClick={() => toggleArticlePin()}
-                                        icon={<Place />}
+                                        icon={
+                                            <Icon
+                                                icon={faLocationDot}
+                                                size={'lg'}
+                                            />
+                                        }
                                     />
                                 )}
                             </div>

@@ -1,11 +1,14 @@
 import * as React from 'react';
+
+import { Icon } from 'shared/Icon';
 import {
-    MoreVert,
-    CreateOutlined,
-    CloudDownloadOutlined,
-    FileCopyOutlined,
-    DeleteOutlineOutlined,
-} from '@material-ui/icons';
+    faCircleMinus,
+    faCopy,
+    faPen,
+    faEllipsisVertical,
+    faCloudArrowDown,
+} from '@fortawesome/free-solid-svg-icons';
+
 import { Checkbox, MenuButton, Item } from '@lotta-schule/hubert';
 import { FileModel, DirectoryModel } from 'model';
 import { File } from 'util/model';
@@ -89,7 +92,12 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                         <MenuButton
                             buttonProps={{
                                 small: true,
-                                icon: <MoreVert fontSize="inherit" />,
+                                icon: (
+                                    <Icon
+                                        icon={faEllipsisVertical}
+                                        size={'lg'}
+                                    />
+                                ),
                                 'aria-label': 'Dateimenü öffnen',
                             }}
                             title={'Dateimenü'}
@@ -129,19 +137,35 @@ export const FileTableRow = React.memo<FileTableRowProps>(
                             }}
                         >
                             <Item key={'download'} textValue={'Herunterladen'}>
-                                <CloudDownloadOutlined color={'secondary'} />
+                                <Icon
+                                    icon={faCloudArrowDown}
+                                    size={'lg'}
+                                    color={'secondary'}
+                                />
                                 Herunterladen
                             </Item>
                             <Item key={'rename'} textValue={'Umbenennen'}>
-                                <CreateOutlined color={'secondary'} />
+                                <Icon
+                                    icon={faPen}
+                                    size={'lg'}
+                                    color={'secondary'}
+                                />
                                 Umbenennen
                             </Item>
                             <Item key={'move'} textValue={'Verschieben'}>
-                                <FileCopyOutlined color={'secondary'} />
+                                <Icon
+                                    icon={faCopy}
+                                    size={'lg'}
+                                    color={'secondary'}
+                                />
                                 Verschieben
                             </Item>
                             <Item key={'delete'} textValue={'Löschen'}>
-                                <DeleteOutlineOutlined color={'secondary'} />
+                                <Icon
+                                    icon={faCircleMinus}
+                                    size={'lg'}
+                                    color={'secondary'}
+                                />
                                 Löschen
                             </Item>
                         </MenuButton>

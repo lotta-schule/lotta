@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { Icon } from 'shared/Icon';
 import {
-    Settings,
-    Delete,
-    ArrowUpward,
-    ArrowDownward,
-} from '@material-ui/icons';
+    faTrash,
+    faGear,
+    faArrowUp,
+    faArrowDown,
+} from '@fortawesome/free-solid-svg-icons';
 import {
     Button,
     DragHandle,
@@ -126,7 +127,7 @@ export const ContentModule = React.memo<ContentModuleProps>(
                                             'Modul um eine Stelle nach oben bewegen'
                                         }
                                         className={styles.dragbarButton}
-                                        icon={<ArrowUpward />}
+                                        icon={<Icon icon={faArrowUp} />}
                                         onClick={() => onMoveUp()}
                                     />
                                 )}
@@ -137,7 +138,7 @@ export const ContentModule = React.memo<ContentModuleProps>(
                                             'Modul um eine Stelle nach unten bewegen'
                                         }
                                         className={styles.dragbarButton}
-                                        icon={<ArrowDownward />}
+                                        icon={<Icon icon={faArrowDown} />}
                                         onClick={() => onMoveDown()}
                                     />
                                 )}
@@ -150,7 +151,8 @@ export const ContentModule = React.memo<ContentModuleProps>(
                                         aria-label={'Moduleinstellungen'}
                                         onClick={() => setIsSettingsOpen(true)}
                                         icon={
-                                            <Settings
+                                            <Icon
+                                                icon={faGear}
                                                 className={clsx(
                                                     styles.buttonIcon,
                                                     {
@@ -166,7 +168,8 @@ export const ContentModule = React.memo<ContentModuleProps>(
                                     small
                                     variant={'error'}
                                     icon={
-                                        <Delete
+                                        <Icon
+                                            icon={faTrash}
                                             className={clsx(styles.buttonIcon)}
                                         />
                                     }

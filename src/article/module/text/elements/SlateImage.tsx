@@ -6,13 +6,9 @@ import {
     useSlateStatic,
 } from 'slate-react';
 import { Button, ButtonGroup } from '@lotta-schule/hubert';
-import {
-    FormatAlignRight,
-    FormatAlignLeft,
-    PhotoSizeSelectSmall,
-    PhotoSizeSelectLarge,
-    PhotoSizeSelectActual,
-} from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faAlignLeft, faAlignRight } from '@fortawesome/free-solid-svg-icons';
+
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
 import { Image } from '../SlateCustomTypes';
@@ -116,7 +112,7 @@ export const SlateImage = React.memo<SlateImageProps>(
                                 onMouseDown={setElementOptions({
                                     alignment: 'left',
                                 })}
-                                icon={<FormatAlignLeft />}
+                                icon={<Icon icon={faAlignLeft} />}
                             />
                             <Button
                                 small
@@ -127,7 +123,7 @@ export const SlateImage = React.memo<SlateImageProps>(
                                 onMouseDown={setElementOptions({
                                     alignment: 'right',
                                 })}
-                                icon={<FormatAlignRight />}
+                                icon={<Icon icon={faAlignRight} />}
                             />
                         </ButtonGroup>
                         <ButtonGroup>
@@ -137,8 +133,9 @@ export const SlateImage = React.memo<SlateImageProps>(
                                 onMouseDown={setElementOptions({
                                     size: 'large',
                                 })}
-                                icon={<PhotoSizeSelectActual />}
-                            />
+                            >
+                                XL
+                            </Button>
                             <Button
                                 small
                                 selected={
@@ -148,16 +145,18 @@ export const SlateImage = React.memo<SlateImageProps>(
                                 onMouseDown={setElementOptions({
                                     size: 'middle',
                                 })}
-                                icon={<PhotoSizeSelectLarge />}
-                            />
+                            >
+                                M
+                            </Button>
                             <Button
                                 small
                                 selected={imageElement.size === 'small'}
                                 onMouseDown={setElementOptions({
                                     size: 'small',
                                 })}
-                                icon={<PhotoSizeSelectSmall />}
-                            />
+                            >
+                                S
+                            </Button>
                         </ButtonGroup>
                     </div>
                 )}

@@ -1,0 +1,12 @@
+.root {
+    padding: var(--lotta-spacing);
+
+    &.secondaryColor {
+        color: rgba(var(--lotta-primary-color), 1);
+    }
+}
+
+button .root {
+    padding-top: 0;
+    padding-bottom: 0;
+}

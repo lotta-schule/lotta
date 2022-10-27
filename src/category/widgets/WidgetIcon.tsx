@@ -1,23 +1,25 @@
 import * as React from 'react';
+
+import { Icon } from 'shared/Icon';
+import { faBookmark, faFolder } from '@fortawesome/free-regular-svg-icons';
 import {
-    Lens,
-    Bookmark,
-    CalendarToday,
-    AccountCircle,
-    CheckCircle,
-    Work,
-    ChatBubble,
-    Folder,
-    School,
-    Cloud,
-    MenuBook,
-    Label,
-    SportsSoccer,
-    InsertDriveFile,
-    Search,
-    Extension,
-    Favorite,
-} from '@material-ui/icons';
+    faBookOpen,
+    faBriefcase,
+    faCalendar,
+    faCircle,
+    faCircleCheck,
+    faCircleUser,
+    faCloud,
+    faComment,
+    faFile,
+    faGraduationCap,
+    faHeart,
+    faMagnifyingGlass,
+    faPuzzlePiece,
+    faTag,
+    faVolleyball,
+} from '@fortawesome/free-solid-svg-icons';
+
 import { WidgetIconModel } from 'model';
 import clsx from 'clsx';
 
@@ -25,41 +27,41 @@ import styles from './WidgetIcon.module.scss';
 
 export const iconNameMapping: Record<
     string,
-    | typeof Lens
-    | typeof Bookmark
-    | typeof CalendarToday
-    | typeof AccountCircle
-    | typeof CheckCircle
-    | typeof Work
-    | typeof ChatBubble
-    | typeof Folder
-    | typeof School
-    | typeof Cloud
-    | typeof MenuBook
-    | typeof Label
-    | typeof SportsSoccer
-    | typeof InsertDriveFile
-    | typeof Search
-    | typeof Extension
-    | typeof Favorite
+    | typeof faCircle
+    | typeof faBookmark
+    | typeof faCalendar
+    | typeof faCircleUser
+    | typeof faCircleCheck
+    | typeof faBriefcase
+    | typeof faComment
+    | typeof faFolder
+    | typeof faGraduationCap
+    | typeof faCloud
+    | typeof faBookOpen
+    | typeof faTag
+    | typeof faVolleyball
+    | typeof faFile
+    | typeof faMagnifyingGlass
+    | typeof faPuzzlePiece
+    | typeof faHeart
 > = {
-    lens: Lens,
-    bookmark: Bookmark,
-    calendartoday: CalendarToday,
-    label: Label,
-    accountcircle: AccountCircle,
-    checkcircle: CheckCircle,
-    work: Work,
-    chatbubble: ChatBubble,
-    folder: Folder,
-    cloud: Cloud,
-    menubook: MenuBook,
-    school: School,
-    sportssoccer: SportsSoccer,
-    insertdrivefile: InsertDriveFile,
-    search: Search,
-    extension: Extension,
-    favorite: Favorite,
+    lens: faCircle,
+    bookmark: faBookmark,
+    calendartoday: faCalendar,
+    label: faTag,
+    accountcircle: faCircleUser,
+    checkcircle: faCircleCheck,
+    work: faBriefcase,
+    chatbubble: faComment,
+    folder: faFolder,
+    cloud: faCloud,
+    menubook: faBookOpen,
+    school: faGraduationCap,
+    sportssoccer: faVolleyball,
+    insertdrivefile: faFile,
+    search: faMagnifyingGlass,
+    extension: faPuzzlePiece,
+    favorite: faHeart,
 };
 
 export interface WidgetIconProps {
@@ -70,6 +72,7 @@ export interface WidgetIconProps {
 
 export const WidgetIcon = React.memo<WidgetIconProps>(
     ({ icon, size, className }) => {
+        console.log({ size });
         return (
             <div
                 className={clsx(styles.root, className, {
@@ -77,17 +80,14 @@ export const WidgetIcon = React.memo<WidgetIconProps>(
                     [styles.secondaryColor]:
                         icon?.overlayTextColor === 'secondary',
                 })}
-                style={{ width: size, height: size }}
             >
                 <div className={styles.icon}>
-                    {React.createElement(
-                        iconNameMapping[icon?.iconName ?? 'lens'],
-                        {
-                            color: 'secondary',
-                            className: styles.iconSvg,
-                            style: { height: size, width: size },
-                        }
-                    )}
+                    <Icon
+                        icon={iconNameMapping[icon?.iconName ?? 'lens']}
+                        color={'secondary'}
+                        className={styles.iconSvg}
+                        size={'xl'}
+                    />
                 </div>
                 <div className={styles.overlayText} style={{ fontSize: size }}>
                     <span>{icon?.overlayText}</span>

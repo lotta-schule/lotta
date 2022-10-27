@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { AccountCircle } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from 'administration/AdminPage';
 import { UserList } from 'administration/users/UserList';
 import { GetServerSidePropsContext } from 'next';
@@ -9,7 +10,7 @@ const ListRoute = () => {
         <AdminPage
             title={
                 <>
-                    <AccountCircle /> Nutzer
+                    <Icon icon={faCircleUser} /> Nutzer
                 </>
             }
             hasHomeLink
