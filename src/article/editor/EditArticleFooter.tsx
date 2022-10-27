@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { Icon } from 'shared/Icon';
 import {
-    ArrowDropDown as ArrowDropDownIcon,
-    Event,
-    Warning,
-} from '@material-ui/icons';
+    faCaretDown,
+    faCalendar,
+    faTriangleExclamation,
+} from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import { CategorySelect } from '../../shared/categorySelect/CategorySelect';
 import { ArticleModel, ID } from 'model';
@@ -89,7 +90,8 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                 onClick={() => setIsDeleteModalOpen(true)}
                                 variant={'error'}
                                 icon={
-                                    <Warning
+                                    <Icon
+                                        icon={faTriangleExclamation}
                                         className={clsx(
                                             styles.leftIcon,
                                             styles.iconSmall
@@ -136,7 +138,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                         title={'Daten bearbeiten'}
                                         aria-label={'Edit dates'}
                                     >
-                                        <Event />
+                                        <Icon icon={faCalendar} />
                                     </Button>
                                     <ArticleDatesEditor
                                         isOpen={isDatesEditorOpen}
@@ -158,7 +160,7 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                 <MenuButton
                                     title={'Speicheroptionen'}
                                     buttonProps={{
-                                        icon: <ArrowDropDownIcon />,
+                                        icon: <Icon icon={faCaretDown} />,
                                         className:
                                             'is-first-button-group-button',
                                         variant: 'fill',

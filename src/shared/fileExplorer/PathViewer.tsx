@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { HomeOutlined } from '@material-ui/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faHouse,
+} from '@fortawesome/free-solid-svg-icons';
+
 import { defaultState } from './context/FileExplorerContext';
 
 import styles from './PathViewer.module.scss';
@@ -32,7 +36,7 @@ export const PathViewer = React.memo(({ path, onChange }: PathViewerProps) => {
                         {'name' in component ? (
                             component.name
                         ) : (
-                            <HomeOutlined />
+                            <FontAwesomeIcon icon={faHouse} />
                         )}
                     </a>
                 </React.Fragment>

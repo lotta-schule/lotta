@@ -1,6 +1,10 @@
 import * as React from 'react';
-import { Apps, Error as ErrorIcon } from '@material-ui/icons';
 import { Box } from '@lotta-schule/hubert';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faCircleExclamation,
+    faCubes,
+} from '@fortawesome/free-solid-svg-icons';
 import { Header, Main, Sidebar } from 'layout';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { User } from 'util/model';
@@ -42,12 +46,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                                             'Zurück zum Administrations-Hauptmenü'
                                         }
                                     >
-                                        <Apps />
+                                        <FontAwesomeIcon icon={faCubes} />
                                         Hauptmenü
                                     </a>
                                 </Link>
                             )}
-                            {!hasHomeLink && <Apps />}
+                            {!hasHomeLink && <FontAwesomeIcon icon={faCubes} />}
                             <h2>{title}</h2>
                         </div>
                         <section className={styles.contentSection}>
@@ -59,7 +63,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     <Box>
                         <div className={styles.noAccessMessageContainer}>
                             <div>
-                                <ErrorIcon />
+                                <FontAwesomeIcon icon={faCircleExclamation} />
                                 <span>
                                     Du hast nicht die notwendigen Rechte, diese
                                     Seite zu sehen.

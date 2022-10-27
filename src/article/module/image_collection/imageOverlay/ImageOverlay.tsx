@@ -6,7 +6,6 @@ import { useWindowSize } from 'util/useWindowSize';
 import { useIsRetina } from 'util/useIsRetina';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
 import { useServerData } from 'shared/ServerDataContext';
-import { Close, ChevronLeft, ChevronRight } from '@material-ui/icons';
 import getConfig from 'next/config';
 
 const {
@@ -14,6 +13,12 @@ const {
 } = getConfig();
 
 import styles from './ImageOverlay.module.scss';
+import {
+    faChevronLeft,
+    faChevronRight,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export interface ImageOverlayProps {
     selectedUrl?: string | null;
@@ -84,14 +89,14 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
                 <div className={styles.root}>
                     <Button
                         small
-                        icon={<Close />}
+                        icon={<Icon icon={faXmark} size={'lg'} />}
                         className={styles.closeButton}
                         onClick={onClose}
                     />
                     {onPrevious && (
                         <Button
                             small
-                            icon={<ChevronLeft />}
+                            icon={<Icon icon={faChevronLeft} size={'lg'} />}
                             className={styles.leftButton}
                             onClick={onPrevious}
                         />
@@ -99,7 +104,7 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
                     {onNext && (
                         <Button
                             small
-                            icon={<ChevronRight />}
+                            icon={<Icon icon={faChevronRight} size={'lg'} />}
                             className={styles.rightButton}
                             onClick={onNext}
                         />

@@ -7,7 +7,8 @@ import {
     DialogContent,
     CircularProgress,
 } from '@lotta-schule/hubert';
-import { ErrorOutline } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 import { useUploads } from './context/UploadQueueContext';
 import fileExplorerContext from './context/FileExplorerContext';
@@ -32,7 +33,10 @@ export const ActiveUploadsModal = React.memo(() => {
                             leftSection={
                                 <>
                                     {upload.error && (
-                                        <ErrorOutline color={'error'} />
+                                        <Icon
+                                            icon={faCircleExclamation}
+                                            size={'lg'}
+                                        />
                                     )}
                                     {!upload.error && (
                                         <CircularProgress

@@ -20,13 +20,19 @@ import { useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import { WidgetModel, ScheduleResult, WidgetModelType } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SelectCoursesDialog } from './SelectCoursesDialog';
-import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
+
 import Link from 'next/link';
 import clsx from 'clsx';
 
 import GetScheduleQuery from 'api/query/GetScheduleQuery.graphql';
 
 import styles from './Schedule.module.scss';
+
+import {
+    faChevronLeft,
+    faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export const LOCALSTORAGE_KEY = 'lotta-schedule-courses';
 
@@ -253,7 +259,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                         <Tooltip label={lastScheduleData.schedule.head.date}>
                             <Button
                                 aria-label={lastScheduleData.schedule.head.date}
-                                icon={<ArrowBackIos />}
+                                icon={<Icon icon={faChevronLeft} size="lg" />}
                                 onClick={() =>
                                     setCurrentDate(
                                         dateToDateString(
@@ -277,7 +283,7 @@ export const Schedule = React.memo<ScheduleProps>(({ widget }) => {
                         <Tooltip label={nextScheduleData.schedule.head.date}>
                             <Button
                                 aria-label={nextScheduleData.schedule.head.date}
-                                icon={<ArrowForwardIos />}
+                                icon={<Icon icon={faChevronRight} size="lg" />}
                                 onClick={() =>
                                     setCurrentDate(
                                         dateToDateString(

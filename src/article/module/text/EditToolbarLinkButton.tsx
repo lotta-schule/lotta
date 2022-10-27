@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { useSlate } from 'slate-react';
 import { Range } from 'slate';
-import { Link } from '@material-ui/icons';
+
 import { Button } from '@lotta-schule/hubert';
 import { isLinkActive, unwrapLink, insertLink } from './SlateUtils';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export const EditToolbarLinkButton: React.FC = () => {
     const editor = useSlate();
@@ -11,7 +13,7 @@ export const EditToolbarLinkButton: React.FC = () => {
     return (
         <Button
             selected={isLinkActive(editor)}
-            icon={<Link />}
+            icon={<Icon icon={faLink} />}
             onMouseDown={(e: React.MouseEvent) => {
                 e.preventDefault();
                 if (isLinkActive(editor)) {

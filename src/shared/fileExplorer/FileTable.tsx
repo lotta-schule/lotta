@@ -6,7 +6,8 @@ import {
     ErrorMessage,
     Table,
 } from '@lotta-schule/hubert';
-import { ArrowBackRounded } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@apollo/client';
 import { every, range, uniqBy } from 'lodash';
 import { useDropzone } from 'react-dropzone';
@@ -349,7 +350,12 @@ export const FileTable = React.memo<FileTableProps>(({ fileFilter }) => {
                             {!isLoading && state.currentPath.length > 1 && (
                                 <Button
                                     small
-                                    icon={<ArrowBackRounded />}
+                                    icon={
+                                        <Icon
+                                            icon={faCircleChevronLeft}
+                                            size={'lg'}
+                                        />
+                                    }
                                     onClick={() =>
                                         dispatch({
                                             type: 'setPath',

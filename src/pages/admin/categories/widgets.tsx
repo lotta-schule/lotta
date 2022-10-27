@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Slideshow } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faSquareCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from 'administration/AdminPage';
 import { WidgetList } from 'administration/categories/WidgetList';
 import { GetServerSidePropsContext } from 'next';
@@ -9,7 +10,7 @@ const WidgetsRoute = () => {
         <AdminPage
             title={
                 <>
-                    <Slideshow /> Marginalen
+                    <Icon icon={faSquareCaretRight} /> Marginalen
                 </>
             }
             component={WidgetList}

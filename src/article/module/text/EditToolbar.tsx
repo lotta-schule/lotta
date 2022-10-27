@@ -1,12 +1,15 @@
 import * as React from 'react';
+
+import { Icon } from 'shared/Icon';
 import {
-    FormatBold,
-    FormatItalic,
-    FormatUnderlined,
-    FormatListBulleted,
-    FormatListNumbered,
-    ArrowDropDown,
-} from '@material-ui/icons';
+    faBold,
+    faCaretDown,
+    faDownLeftAndUpRightToCenter,
+    faItalic,
+    faList,
+    faListOl,
+    faUnderline,
+} from '@fortawesome/free-solid-svg-icons';
 import { ButtonGroup, Toolbar } from '@lotta-schule/hubert';
 import { useFocused } from 'slate-react';
 import { EditToolbarMarkButton } from './EditToolbarMarkButton';
@@ -59,13 +62,13 @@ export const EditToolbar = React.memo(() => {
             <Toolbar className={styles.toolbar}>
                 <ButtonGroup className={styles.toolbarButtonGroup}>
                     <EditToolbarMarkButton mark={'bold'}>
-                        <FormatBold />
+                        <Icon icon={faBold} size={'lg'} />
                     </EditToolbarMarkButton>
                     <EditToolbarMarkButton mark={'italic'}>
-                        <FormatItalic />
+                        <Icon icon={faItalic} size={'lg'} />
                     </EditToolbarMarkButton>
                     <EditToolbarMarkButton mark={'underline'}>
-                        <FormatUnderlined />
+                        <Icon icon={faUnderline} size={'lg'} />
                     </EditToolbarMarkButton>
                 </ButtonGroup>
                 &nbsp;
@@ -75,10 +78,10 @@ export const EditToolbar = React.memo(() => {
                 &nbsp;
                 <ButtonGroup className={styles.toolbarButtonGroup}>
                     <EditToolbarBlockButton mark={'unordered-list'}>
-                        <FormatListBulleted />
+                        <Icon icon={faList} size={'lg'} />
                     </EditToolbarBlockButton>
                     <EditToolbarBlockButton mark={'ordered-list'}>
-                        <FormatListNumbered />
+                        <Icon icon={faListOl} size={'lg'} />
                     </EditToolbarBlockButton>
                 </ButtonGroup>
                 &nbsp;
@@ -88,7 +91,7 @@ export const EditToolbar = React.memo(() => {
                 &nbsp;
                 <ButtonGroup className={styles.toolbarButtonGroup}>
                     <EditToolbarMarkButton mark={'small'}>
-                        <ArrowDropDown />
+                        <Icon icon={faDownLeftAndUpRightToCenter} />
                     </EditToolbarMarkButton>
                 </ButtonGroup>
                 &nbsp;

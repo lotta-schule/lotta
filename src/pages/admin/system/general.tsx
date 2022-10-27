@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Tune } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { AdminPage } from 'administration/AdminPage';
 import { GeneralSettings } from 'administration/system/GeneralSettings';
 import { GetServerSidePropsContext } from 'next';
@@ -9,7 +10,7 @@ const GeneralRoute = () => {
         <AdminPage
             title={
                 <>
-                    <Tune /> Grundeinstellungen
+                    <Icon icon={faSliders} /> Grundeinstellungen
                 </>
             }
             component={GeneralSettings}

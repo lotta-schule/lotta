@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { NewMessageDestination } from 'model';
 import { Button, Tab, Tabbar, Popover } from '@lotta-schule/hubert';
-import { Add, ArrowLeft } from '@material-ui/icons';
+
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { useIsMobile } from 'util/useIsMobile';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { SearchUserField } from 'administration/users/SearchUserField';
 
 import styles from './MessageToolbar.module.scss';
+import { faAdd, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export interface MessageToolbarProps {
     onRequestNewMessage(subject: NewMessageDestination): void;
@@ -31,7 +33,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                     className={styles.popover}
                     buttonProps={{
                         'aria-label': 'Neue Nachricht schreiben',
-                        icon: <Add />,
+                        icon: <Icon icon={faAdd} size={'lg'} />,
                     }}
                 >
                     <Tabbar
@@ -83,7 +85,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                         style={{ float: 'right' }}
                         aria-label={'Seitenleiste einklappen'}
                         onClick={onToggle}
-                        icon={<ArrowLeft />}
+                        icon={<Icon icon={faArrowLeft} size={'lg'} />}
                     />
                 )}
             </div>

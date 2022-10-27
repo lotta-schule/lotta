@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { MoreVert, CreateOutlined, FileCopyOutlined } from '@material-ui/icons';
+
+import { Icon } from 'shared/Icon';
+import {
+    faCopy,
+    faEllipsisVertical,
+    faPen,
+} from '@fortawesome/free-solid-svg-icons';
 import { MenuButton, Item } from '@lotta-schule/hubert';
 import { DirectoryModel } from 'model';
 import { File } from 'util/model/File';
@@ -69,7 +75,12 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                                 <MenuButton
                                     title={'Ordnermenü'}
                                     buttonProps={{
-                                        icon: <MoreVert fontSize="inherit" />,
+                                        icon: (
+                                            <Icon
+                                                icon={faEllipsisVertical}
+                                                size={'lg'}
+                                            />
+                                        ),
                                         'aria-label': 'Ordnermenü öffnen',
                                         className: clsx(
                                             'lotta-navigation-button',
@@ -99,14 +110,18 @@ export const DirectoryTableRow = React.memo<FileTableRowProps>(
                                         key={'rename'}
                                         textValue={'Umbenennen'}
                                     >
-                                        <CreateOutlined color={'secondary'} />
+                                        <Icon
+                                            icon={faPen}
+                                            size={'lg'}
+                                            color={'secondary'}
+                                        />
                                         Umbenennen
                                     </Item>
                                     <Item
                                         key={'move'}
                                         textValue={'Verschieben'}
                                     >
-                                        <FileCopyOutlined color={'secondary'} />
+                                        <Icon icon={faCopy} size={'lg'} />
                                         Verschieben
                                     </Item>
                                 </MenuButton>

@@ -1,16 +1,22 @@
 import * as React from 'react';
 import { Badge, BaseButton, Button } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
+
+import { Icon } from 'shared/Icon';
 import {
-    ExitToAppOutlined,
-    AddCircleOutlineOutlined,
-    SecurityOutlined,
-    FolderOutlined,
-    QuestionAnswerOutlined,
-    AssignmentOutlined,
-    PersonOutlineOutlined,
-    SearchOutlined,
-} from '@material-ui/icons';
+    faComments,
+    faFolder,
+    faUser,
+} from '@fortawesome/free-regular-svg-icons';
+import {
+    faMagnifyingGlass,
+    faShieldHalved,
+    faClipboardList,
+    faArrowRightFromBracket,
+    faCaretDown,
+    faCirclePlus,
+} from '@fortawesome/free-solid-svg-icons';
+
 import { useOnLogout } from 'util/user/useOnLogout';
 import { useQuery } from '@apollo/client';
 import { ArticleModel } from 'model';
@@ -56,7 +62,7 @@ export const UserNavigationMobile = React.memo(() => {
                         }}
                         data-testid="LogoutButton"
                     >
-                        <ExitToAppOutlined />
+                        <Icon icon={faArrowRightFromBracket} size="xl" />
                         <span className={styles.label}>Abmelden</span>
                     </BaseButton>
                     <BaseButton
@@ -67,7 +73,7 @@ export const UserNavigationMobile = React.memo(() => {
                         }}
                         data-testid="CreateArticleButton"
                     >
-                        <AddCircleOutlineOutlined color={'secondary'} />
+                        <Icon icon={faCirclePlus} size="lg" />
                         <span className={styles.label}>Beitrag</span>
                     </BaseButton>
                     <Link href={'/search'} passHref>
@@ -76,7 +82,7 @@ export const UserNavigationMobile = React.memo(() => {
                             className={styles.button}
                             data-testid="SearchButton"
                         >
-                            <SearchOutlined color={'secondary'} />
+                            <Icon icon={faMagnifyingGlass} size="xl" />
                             <span className={styles.label}>Suche</span>
                         </BaseButton>
                     </Link>
@@ -86,7 +92,7 @@ export const UserNavigationMobile = React.memo(() => {
                             className={styles.button}
                             data-testid="ProfileButton"
                         >
-                            <PersonOutlineOutlined color={'secondary'} />
+                            <Icon icon={faUser} size="xl" />
                             <span className={styles.label}>Profil</span>
                         </BaseButton>
                     </Link>
@@ -96,7 +102,7 @@ export const UserNavigationMobile = React.memo(() => {
                             className={styles.button}
                             data-testid="ProfileFilesButton"
                         >
-                            <FolderOutlined color={'secondary'} />
+                            <Icon icon={faFolder} size="xl" />
                             <span className={styles.label}>Dateien</span>
                         </BaseButton>
                     </Link>
@@ -106,7 +112,7 @@ export const UserNavigationMobile = React.memo(() => {
                             className={styles.button}
                             data-testid="OwnArticlesButton"
                         >
-                            <AssignmentOutlined color={'secondary'} />
+                            <Icon icon={faClipboardList} size="xl" />
                             <span className={styles.label}>Meine Beiträge</span>
                         </BaseButton>
                     </Link>
@@ -116,7 +122,7 @@ export const UserNavigationMobile = React.memo(() => {
                             className={styles.button}
                             data-testid="MessagingButton"
                         >
-                            <QuestionAnswerOutlined color={'secondary'} />
+                            <Icon icon={faComments} size={'lg'} />
                             <span className={styles.label}>
                                 Nachrichten{' '}
                                 <Badge
@@ -134,7 +140,7 @@ export const UserNavigationMobile = React.memo(() => {
                                     className={styles.button}
                                     data-testid="AdminButton"
                                 >
-                                    <SecurityOutlined color={'secondary'} />
+                                    <Icon icon={faShieldHalved} size="xl" />
                                     <span className={styles.label}>Admin</span>
                                 </BaseButton>
                             </Link>
@@ -143,7 +149,7 @@ export const UserNavigationMobile = React.memo(() => {
                                     variant={'borderless'}
                                     className={styles.button}
                                 >
-                                    <AssignmentOutlined color={'secondary'} />
+                                    <Icon icon={faClipboardList} size="xl" />
                                     <span className={styles.label}>
                                         Beiträge freigeben
                                         <Badge

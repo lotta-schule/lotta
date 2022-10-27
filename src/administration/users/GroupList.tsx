@@ -1,6 +1,7 @@
 import * as React from 'react';
 import chunk from 'lodash/chunk';
-import { AddCircle } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { useMutation } from '@apollo/client';
 import { Button, DragHandle, ErrorMessage } from '@lotta-schule/hubert';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
@@ -47,7 +48,7 @@ export const GroupList = () => {
             <div className={styles.toolBar}>
                 <Button
                     className={styles.createButton}
-                    icon={<AddCircle />}
+                    icon={<Icon icon={faCirclePlus} />}
                     onClick={() => setIsCreateUserGroupDialogOpen(true)}
                 >
                     Gruppe erstellen

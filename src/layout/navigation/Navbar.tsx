@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Menu } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
 import { useCurrentCategoryId } from '../../util/path/useCurrentCategoryId';
 import { useCategories } from 'util/categories/useCategories';
@@ -119,7 +120,7 @@ export const Navbar = React.memo(() => {
                         className={styles.iconButton}
                         onClick={() => openDrawer()}
                         style={{ margin: '0 auto' }}
-                        icon={<Menu className={clsx(styles.menu)} />}
+                        icon={<Icon icon={faBars} size="lg" />}
                     />
                 </div>
             </div>

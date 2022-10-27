@@ -4,6 +4,9 @@
         background: rgb(var(--lotta-box-background-color));
         padding-bottom: calc(0.5 * var(--lotta-spacing));
         border-bottom: 1px solid rgb(var(--lotta-divider-color));
+        svg {
+            padding: var(--lotta-spacing);
+        }
         a {
             display: flex;
             align-items: center;

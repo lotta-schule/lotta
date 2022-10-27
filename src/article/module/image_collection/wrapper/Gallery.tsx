@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, GridList, GridListItem } from '@lotta-schule/hubert';
-import { Delete } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { FileSorter } from '../Config';
@@ -63,7 +64,7 @@ export const Gallery = React.memo<GalleryProps>(
                                             ),
                                         });
                                     }}
-                                    icon={<Delete />}
+                                    icon={<Icon icon={faTrash} />}
                                 />
                             )}
                             <ImageImage

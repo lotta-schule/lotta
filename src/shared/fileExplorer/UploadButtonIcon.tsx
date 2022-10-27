@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { AddBox } from '@material-ui/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faSquarePlus,
+} from '@fortawesome/free-solid-svg-icons';
+
 
 export interface UploadButtonIconProps {
     onClick?: React.MouseEventHandler<HTMLDivElement>;
@@ -27,7 +31,7 @@ export const UploadButtonIcon = React.memo<UploadButtonIconProps>(
                     opacity: 0.5,
                 }}
             />
-            <AddBox />
+            <FontAwesomeIcon icon={faSquarePlus} />
         </div>
     )
 );

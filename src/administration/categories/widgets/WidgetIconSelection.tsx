@@ -4,6 +4,7 @@ import { iconNameMapping, WidgetIcon } from 'category/widgets/WidgetIcon';
 import { Button, Input, Label, Select } from '@lotta-schule/hubert';
 
 import styles from './WidgetIconSelection.module.scss';
+import { Icon } from 'shared/Icon';
 
 export interface WidgetIconSelectionProps {
     icon: WidgetIconModel;
@@ -24,7 +25,7 @@ export const WidgetIconSelection = React.memo<WidgetIconSelectionProps>(
                                     onClick={() =>
                                         onSelectIcon({ ...icon, iconName })
                                     }
-                                    icon={React.createElement(IconClass)}
+                                    icon={<Icon icon={IconClass} />}
                                 />
                             )
                         )}

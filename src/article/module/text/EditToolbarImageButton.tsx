@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Image as ImageIcon } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 import { Range } from 'slate';
 import { useSlate } from 'slate-react';
 import { FileModel } from 'model';
@@ -37,7 +38,7 @@ export const EditToolbarImageButton: React.FC<EditToolbarImageButtonProps> = ({
 
     return (
         <SelectFileButton
-            label={<ImageIcon />}
+            label={<Icon icon={faImage} />}
             buttonComponent={Button}
             buttonComponentProps={{ size: 'small', value: 'select-file' }}
             onSelect={onClickImage}

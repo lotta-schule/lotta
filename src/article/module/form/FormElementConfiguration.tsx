@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { PlusOne } from '@material-ui/icons';
+
 import { Button, Checkbox, Input, Label, Select } from '@lotta-schule/hubert';
 import { FormElement, FormElementOption } from './Form';
 
 import styles from './FormElementConfiguration.module.scss';
+import { Icon } from 'shared/Icon';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 
 export interface FormElementConfigurationProps {
     element: FormElement;
@@ -229,7 +231,7 @@ export const FormElementConfiguration =
                             </section>
                         ))}
                         <Button
-                            icon={<PlusOne />}
+                            icon={<Icon icon={faCirclePlus} size={'lg'} />}
                             onClick={() =>
                                 updateElement({
                                     options: [

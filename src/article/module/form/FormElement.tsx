@@ -12,8 +12,10 @@ import {
 import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { FormElement as FormElementInterface } from './Form';
 import { FileModel } from 'model';
-import { Close } from '@material-ui/icons';
+
 import { useCurrentUser } from 'util/user/useCurrentUser';
+import { Icon } from 'shared/Icon';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 export interface FormElementProps {
     element: FormElementInterface;
@@ -245,7 +247,9 @@ export const FormElement = React.memo<FormElementProps>(
                                     <Button
                                         title={'Auswahl entfernen'}
                                         onClick={() => onSetValue('')}
-                                        icon={<Close />}
+                                        icon={
+                                            <Icon icon={faXmark} size={'lg'} />
+                                        }
                                     />
                                 </p>
                             )}
@@ -263,7 +267,7 @@ export const FormElement = React.memo<FormElementProps>(
                                 <Button
                                     title={'Auswahl entfernen'}
                                     onClick={() => onSetValue('')}
-                                    icon={<Close />}
+                                    icon={<Icon icon={faXmark} size={'lg'} />}
                                 />
                             </p>
                         )}

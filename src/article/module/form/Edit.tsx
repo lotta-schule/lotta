@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Add, Delete } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+
 import {
     Button,
     Checkbox,
@@ -111,7 +113,13 @@ export const Edit = React.memo<EditProps>(
                                                                     }
                                                                 )
                                                             }
-                                                            icon={<Delete />}
+                                                            icon={
+                                                                <Icon
+                                                                    icon={
+                                                                        faTrash
+                                                                    }
+                                                                />
+                                                            }
                                                         />
                                                     </div>
                                                     <div
@@ -232,7 +240,7 @@ export const Edit = React.memo<EditProps>(
                 </div>
                 <Button
                     style={{ float: 'right' }}
-                    icon={<Add />}
+                    icon={<Icon icon={faPlus} size={'lg'} />}
                     onClick={() =>
                         updateConfiguration({
                             elements: [

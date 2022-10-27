@@ -108,7 +108,7 @@ describe('shared/widgets/Calendar', () => {
                 screen
                     .getByRole('figure', { name: 'Legende: Kalender' })
                     .querySelector<SVGElement>('svg')
-            ).toHaveAttribute('color', 'red');
+            ).toHaveStyle({ color: 'red' });
             expect(
                 screen.getByRole('figure', { name: 'Legende: Kalender 2' })
             ).toBeVisible();
@@ -116,7 +116,7 @@ describe('shared/widgets/Calendar', () => {
                 screen
                     .getByRole('figure', { name: 'Legende: Kalender 2' })
                     .querySelector<SVGElement>('svg')
-            ).toHaveAttribute('color', 'green');
+            ).toHaveStyle({ color: 'green' });
         });
     });
 });

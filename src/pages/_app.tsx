@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { AppContext, AppProps } from 'next/app';
+import { config } from '@fortawesome/fontawesome-svg-core';
 import { ServerDownError } from 'error/ServerDownError';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
@@ -11,6 +12,9 @@ import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 
 import 'nprogress/nprogress.css';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+
+config.autoAddCss = false;
 
 const TopProgressBar = dynamic(() => import('shared/TopProgressBar'), {
     ssr: false,

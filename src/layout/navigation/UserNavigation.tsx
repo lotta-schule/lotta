@@ -1,16 +1,20 @@
 import * as React from 'react';
+import { faCirclePlus, faCircleUser } from '@fortawesome/free-solid-svg-icons';
+
+import { Icon } from 'shared/Icon';
 import {
-    AddCircle,
-    PersonOutlineOutlined,
-    AssignmentOutlined,
-    ExitToAppOutlined,
-    FolderOutlined,
-    SecurityOutlined,
-    AccountCircle,
-    SearchRounded,
-    Forum,
-    ExpandMore,
-} from '@material-ui/icons';
+    faComments,
+    faFolder,
+    faUser,
+} from '@fortawesome/free-regular-svg-icons';
+import {
+    faMagnifyingGlass,
+    faShieldHalved,
+    faClipboardList,
+    faArrowRightFromBracket,
+    faCaretDown,
+} from '@fortawesome/free-solid-svg-icons';
+
 import {
     Badge,
     NavigationButton,
@@ -68,7 +72,7 @@ export const UserNavigation = React.memo(() => {
                 <nav>
                     <NavigationButton
                         onClick={() => setCreateArticleModalIsOpen(true)}
-                        icon={<AddCircle />}
+                        icon={<Icon icon={faCirclePlus} size={'xl'} />}
                         label={'neuer Beitrag'}
                         className={clsx(
                             'secondary',
@@ -78,7 +82,7 @@ export const UserNavigation = React.memo(() => {
                     ></NavigationButton>
                     <Link href={'/search'} passHref>
                         <NavigationButton
-                            icon={<SearchRounded />}
+                            icon={<Icon icon={faMagnifyingGlass} size="xl" />}
                             label={'Suche'}
                             className={clsx(
                                 'secondary',
@@ -96,7 +100,11 @@ export const UserNavigation = React.memo(() => {
                             )}
                             icon={
                                 <span>
-                                    <Forum color={'secondary'} />
+                                    <Icon
+                                        icon={faComments}
+                                        color={'secondary'}
+                                        size="xl"
+                                    />
                                 </span>
                             }
                         >
@@ -111,11 +119,14 @@ export const UserNavigation = React.memo(() => {
                         title={'Nutzermenü'}
                         placement={'bottom-end'}
                         buttonProps={{
-                            icon: <AccountCircle />,
+                            icon: <Icon icon={faCircleUser} size={'xl'} />,
                             children: (
                                 <>
                                     Mein Profil{' '}
-                                    <ExpandMore color={'secondary'} />
+                                    <Icon
+                                        icon={faCaretDown}
+                                        color="secondary"
+                                    />
                                 </>
                             ),
                             className: clsx(
@@ -144,21 +155,24 @@ export const UserNavigation = React.memo(() => {
                     >
                         {[
                             <Item key={'profile'} textValue={'Meine Daten'}>
-                                <PersonOutlineOutlined color={'secondary'} />
+                                <Icon icon={faUser} color="secondary" />
                                 Meine Daten
                             </Item>,
                             <Item
                                 key={'files'}
                                 textValue={'Meine Dateien und Medien'}
                             >
-                                <FolderOutlined color={'secondary'} />
+                                <Icon icon={faFolder} color="secondary" />
                                 Meine Dateien und Medien
                             </Item>,
                             <Item
                                 key={'own-articles'}
                                 textValue={'Meine Beiträge'}
                             >
-                                <AssignmentOutlined color={'secondary'} />
+                                <Icon
+                                    icon={faClipboardList}
+                                    color="secondary"
+                                />
                                 Meine Beiträge
                             </Item>,
                             ...(User.isAdmin(currentUser)
@@ -167,8 +181,9 @@ export const UserNavigation = React.memo(() => {
                                           key={'administration'}
                                           textValue={'Seite administration'}
                                       >
-                                          <SecurityOutlined
-                                              color={'secondary'}
+                                          <Icon
+                                              icon={faShieldHalved}
+                                              color="secondary"
                                           />
                                           Seite administrieren
                                       </Item>,
@@ -176,8 +191,9 @@ export const UserNavigation = React.memo(() => {
                                           key={'unpublished'}
                                           textValue={'Beiträge freigeben'}
                                       >
-                                          <AssignmentOutlined
-                                              color={'secondary'}
+                                          <Icon
+                                              icon={faClipboardList}
+                                              color="secondary"
                                           />
                                           <span>
                                               Beiträge freigeben
@@ -189,7 +205,10 @@ export const UserNavigation = React.memo(() => {
                                   ]
                                 : []),
                             <Item key={'logout'} textValue={'Abmelden'}>
-                                <ExitToAppOutlined color={'secondary'} />
+                                <Icon
+                                    icon={faArrowRightFromBracket}
+                                    color="secondary"
+                                />
                                 Abmelden
                             </Item>,
                         ]}

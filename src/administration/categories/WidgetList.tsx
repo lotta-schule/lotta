@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Add as AddCircleIcon } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { useQuery, useMutation } from '@apollo/client';
 import {
     ErrorMessage,
@@ -75,14 +76,7 @@ export const WidgetList = React.memo(() => {
                     title={'Marginale erstellen'}
                     buttonProps={{
                         disabled: isLoadingCreateWidget,
-                        icon: (
-                            <AddCircleIcon
-                                className={clsx(
-                                    styles.leftIcon,
-                                    styles.iconSmall
-                                )}
-                            />
-                        ),
+                        icon: <Icon icon={faCirclePlus} />,
                         label: 'Marginale erstellen',
                     }}
                     onAction={(key) => {

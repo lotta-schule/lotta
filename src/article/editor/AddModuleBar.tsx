@@ -1,16 +1,17 @@
 import * as React from 'react';
+import { Icon } from 'shared/Icon';
 import {
-    Audiotrack,
-    BurstMode,
-    Feedback,
-    FileCopyOutlined,
-    FormatAlignLeft,
-    Image as ImageIcon,
-    MovieCreation,
-    RemoveOutlined,
-    TableChart,
-    TextFormat,
-} from '@material-ui/icons';
+    faMusic,
+    faImages,
+    faCommentDots,
+    faCopy,
+    faAlignLeft,
+    faImage,
+    faFilm,
+    faCircleMinus,
+    faTable,
+    faFont,
+} from '@fortawesome/free-solid-svg-icons';
 import { ContentModuleModel, ContentModuleType, ID } from 'model';
 import { AddModuleButton } from './AddModuleButton';
 import { useCurrentUser } from 'util/user/useCurrentUser';
@@ -44,7 +45,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
             <div className={styles.buttonList}>
                 <AddModuleButton
                     label={'Text'}
-                    icon={<FormatAlignLeft />}
+                    icon={<Icon icon={faAlignLeft} size={'xl'} />}
                     onClick={() => {
                         createModule({
                             type: ContentModuleType.TEXT,
@@ -61,7 +62,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                 />
                 <AddModuleButton
                     label={'Titel'}
-                    icon={<TextFormat />}
+                    icon={<Icon icon={faFont} size={'xl'} />}
                     onClick={() => {
                         createModule({
                             type: ContentModuleType.TITLE,
@@ -71,14 +72,14 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                 />
                 <AddModuleButton
                     label={'Bild'}
-                    icon={<ImageIcon />}
+                    icon={<Icon icon={faImage} size={'xl'} />}
                     onClick={() => {
                         createModule({ type: ContentModuleType.IMAGE });
                     }}
                 />
                 <AddModuleButton
                     label={'Galerie'}
-                    icon={<BurstMode />}
+                    icon={<Icon icon={faImages} size={'xl'} />}
                     onClick={() => {
                         createModule({
                             type: ContentModuleType.IMAGE_COLLECTION,
@@ -87,21 +88,21 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                 />
                 <AddModuleButton
                     label={'Dateien'}
-                    icon={<FileCopyOutlined />}
+                    icon={<Icon icon={faCopy} size={'xl'} />}
                     onClick={() => {
                         createModule({ type: ContentModuleType.DOWNLOAD });
                     }}
                 />
                 <AddModuleButton
                     label={'Trennlinie'}
-                    icon={<RemoveOutlined />}
+                    icon={<Icon icon={faCircleMinus} size={'xl'} />}
                     onClick={() => {
                         createModule({ type: ContentModuleType.DIVIDER });
                     }}
                 />
                 <AddModuleButton
                     label={'Tabelle'}
-                    icon={<TableChart />}
+                    icon={<Icon icon={faTable} size={'xl'} />}
                     onClick={() => {
                         createModule({
                             type: ContentModuleType.TABLE,
@@ -127,7 +128,7 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                 />
                 <AddModuleButton
                     label={'Formular'}
-                    icon={<Feedback />}
+                    icon={<Icon icon={faCommentDots} size={'xl'} />}
                     onClick={() => {
                         createModule({
                             type: ContentModuleType.FORM,
@@ -141,14 +142,14 @@ export const AddModuleBar = React.memo<AddModuleBarProps>(({ onAddModule }) => {
                 />
                 <AddModuleButton
                     label={'Video'}
-                    icon={<MovieCreation />}
+                    icon={<Icon icon={faFilm} size={'xl'} />}
                     onClick={() => {
                         createModule({ type: ContentModuleType.VIDEO });
                     }}
                 />
                 <AddModuleButton
                     label={'Audio'}
-                    icon={<Audiotrack />}
+                    icon={<Icon icon={faMusic} size={'xl'} />}
                     onClick={() => {
                         createModule({ type: ContentModuleType.AUDIO });
                     }}

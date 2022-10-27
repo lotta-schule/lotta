@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { BackgroundImg } from 'react-cloudimage-responsive';
-import { CloudDownload } from '@material-ui/icons';
+
 import { Button } from '@lotta-schule/hubert';
 import { useServerData } from 'shared/ServerDataContext';
 import { File } from 'util/model';
 import { FileSize } from 'util/FileSize';
 
 import styles from './Download.module.scss';
+import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export interface ShowProps {
     contentModule: ContentModuleModel;
@@ -59,7 +61,9 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                     'download'
                                 )}
                                 target={'_blank'}
-                                icon={<CloudDownload />}
+                                icon={
+                                    <Icon icon={faCloudArrowDown} size={'lg'} />
+                                }
                                 role={'link'}
                             >
                                 download

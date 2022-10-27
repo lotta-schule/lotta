@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Button } from '@lotta-schule/hubert';
-import { MoveToInbox } from '@material-ui/icons';
+
 import { ContentModuleModel } from 'model';
 import { FormResultsDialog } from './FormResultsDialog';
 import { Show } from './Show';
 import { Edit } from './Edit';
+import { faInbox } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
 
 export interface FormProps {
     contentModule: ContentModuleModel;
@@ -55,7 +57,7 @@ export const Form = React.memo<FormProps>(
                     <>
                         <Button
                             onClick={() => setIsFormResultsDialogOpen(true)}
-                            icon={<MoveToInbox />}
+                            icon={<Icon icon={faInbox} size={'lg'} />}
                             style={{
                                 marginLeft: 'auto',
                                 marginRight:

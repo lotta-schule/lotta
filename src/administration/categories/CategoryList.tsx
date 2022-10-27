@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Add as AddCircleIcon } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { CategoryModel } from 'model';
 import { Button, NoSsr } from '@lotta-schule/hubert';
 import { CategoryNavigation } from './categories/CategoryNavigation';
@@ -21,7 +22,7 @@ export const CategoryList = React.memo(() => {
                 <Button
                     className={styles.button}
                     onClick={() => setIsCreateCategoryDialogOpen(true)}
-                    icon={<AddCircleIcon />}
+                    icon={<Icon icon={faCirclePlus} />}
                 >
                     Kategorie erstellen
                 </Button>

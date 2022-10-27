@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Delete } from '@material-ui/icons';
+import { Icon } from 'shared/Icon';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery } from '@apollo/client';
 import { motion } from 'framer-motion';
 import { CategoryModel, WidgetModel, ID } from 'model';
@@ -395,7 +396,7 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     <>
                         <Divider className={styles.deleteDivider} />
                         <Button
-                            icon={<Delete />}
+                            icon={<Icon icon={faTrash} />}
                             onClick={() => setIsDeleteCategoryDialogOpen(true)}
                         >
                             Kategorie löschen

@@ -7,7 +7,10 @@ import {
     ListItem,
     ListItemSecondaryText,
 } from '@lotta-schule/hubert';
-import { OpenInNew } from '@material-ui/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faUpRightFromSquare,
+} from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, ID, FileModelUsageLocation } from 'model';
@@ -121,7 +124,7 @@ export const FileUsageModal = React.memo(() => {
                                         onClick={getSecondaryActionCallback(
                                             usage
                                         )}
-                                        icon={<OpenInNew />}
+                                        icon={<FontAwesomeIcon icon={faUpRightFromSquare} />}
                                     />
                                 )
                             }
