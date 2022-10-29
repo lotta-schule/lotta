@@ -2,6 +2,7 @@ import * as React from 'react';
 import { render } from 'test/util';
 import { CalendarKlassenarbeiten, CalendarResponse } from 'test/fixtures';
 import { Calendar } from './Calendar';
+
 import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 
 describe('shared/widgets/Calendar', () => {

@@ -1,22 +1,13 @@
 import * as React from 'react';
-import {
-    Divider,
-    ErrorMessage,
-    List,
-    ListItem,
-    LinearProgress,
-} from '@lotta-schule/hubert';
-
+import { ErrorMessage, List, LinearProgress } from '@lotta-schule/hubert';
 import { useApolloClient } from '@apollo/client';
-import { format, intervalToDuration, isSameMinute } from 'date-fns';
-import { de } from 'date-fns/locale';
 import { CalendarEventModel } from 'model/CalendarEventModel';
 import {
     WidgetModel,
     CalendarWidgetCalendarConfig,
     WidgetModelType,
 } from 'model';
-import clsx from 'clsx';
+import { CalendarEntry } from './CalendarEntry';
 
 import GetCalendarQuery from 'api/query/GetCalendarQuery.graphql';
 
@@ -49,6 +40,15 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
     );
 
     React.useEffect(() => {
+        if (events?.length) {
+            console.log(events);
+            const startDate = new Date(events[0].start);
+            const endDate = new Date(events[0].end);
+            startDate.getUTCHours() == 0;
+        }
+    }, [events]);
+
+    React.useEffect(() => {
         setIsLoading(true);
         setError(null);
         Promise.all(
@@ -75,12 +75,6 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                 }
             });
     }, [apolloClient, calendars]);
-
-    const stripHtml = (html: string) => {
-        const div = document.createElement('div');
-        div.innerHTML = html;
-        return div.textContent || div.innerText || '';
-    };
 
     if (isLoading) {
         return (
@@ -128,117 +122,16 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
                                 new Date(ev2.start).getTime()
                         )
                         .map((event, i) => {
-                            const summary = stripHtml(event.summary);
-                            const description = stripHtml(event.description);
-                            const start = new Date(event.start);
-                            const end = new Date(event.end);
-
-                            const duration = intervalToDuration({
-                                start,
-                                end,
-                            });
-                            const isMultipleDays =
-                                (duration.days && duration.days >= 1) ||
-                                (duration.months && duration.months > 0) ||
-                                (duration.years && duration.years > 0) ||
-                                false;
-
                             return (
-                                <React.Fragment key={i}>
-                                    <ListItem
-                                        className={styles.tableline}
-                                        aria-label={`Ereignis: ${summary}`}
-                                        leftSection={
-                                            <div
-                                                className={clsx([
-                                                    styles.listItemTextDate,
-                                                    {
-                                                        'has-dot':
-                                                            calendars.length >
-                                                            1,
-                                                    },
-                                                ])}
-                                            >
-                                                <div>
-                                                    {calendars.length > 1 && (
-                                                        <Icon
-                                                            icon={faCircle}
-                                                            fontSize={'inherit'}
-                                                            className={
-                                                                styles.calendarColorDot
-                                                            }
-                                                            style={{
-                                                                color:
-                                                                    event
-                                                                        .calendar
-                                                                        .color ||
-                                                                    'red',
-                                                                fontSize:
-                                                                    '0.4em',
-                                                                verticalAlign:
-                                                                    'baseline',
-                                                            }}
-                                                        />
-                                                    )}
-                                                    {format(start, 'P', {
-                                                        locale: de,
-                                                    })}
-                                                    {isMultipleDays && (
-                                                        <>
-                                                            {' '}
-                                                            -{' '}
-                                                            {format(end, 'P', {
-                                                                locale: de,
-                                                            })}
-                                                        </>
-                                                    )}
-                                                </div>
-                                                {!isMultipleDays && (
-                                                    <div
-                                                        className={styles.time}
-                                                    >
-                                                        {format(start, 'p', {
-                                                            locale: de,
-                                                        })}
-                                                        {!isSameMinute(
-                                                            start,
-                                                            end
-                                                        ) && (
-                                                            <>
-                                                                {' '}
-                                                                -{' '}
-                                                                {format(
-                                                                    end,
-                                                                    'p',
-                                                                    {
-                                                                        locale: de,
-                                                                    }
-                                                                )}
-                                                            </>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        }
-                                        rightSection={
-                                            <div
-                                                className={
-                                                    styles.listItemTextEventDescription
-                                                }
-                                            >
-                                                {summary}
-                                            </div>
-                                        }
-                                    ></ListItem>
-                                    {description && (
-                                        <ListItem
-                                            className={styles.description}
-                                        >
-                                            {description}
-                                        </ListItem>
-                                    )}
-                                    <Divider />
-                                </React.Fragment>
+                                <CalendarEntry
+                                    event={event}
+                                    dot={
+                                        calendars.length > 1
+                                            ? event.calendar.color || 'red'
+                                            : null
+                                    }
+                                    key={i}
+                                />
                             );
                         })}
                 </List>
