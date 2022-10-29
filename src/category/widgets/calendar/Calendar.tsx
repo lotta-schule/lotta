@@ -40,15 +40,6 @@ export const Calendar = React.memo<CalendarProps>(({ widget }) => {
     );
 
     React.useEffect(() => {
-        if (events?.length) {
-            console.log(events);
-            const startDate = new Date(events[0].start);
-            const endDate = new Date(events[0].end);
-            startDate.getUTCHours() == 0;
-        }
-    }, [events]);
-
-    React.useEffect(() => {
         setIsLoading(true);
         setError(null);
         Promise.all(

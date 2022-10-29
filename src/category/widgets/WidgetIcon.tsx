@@ -72,7 +72,6 @@ export interface WidgetIconProps {
 
 export const WidgetIcon = React.memo<WidgetIconProps>(
     ({ icon, size, className }) => {
-        console.log({ size });
         return (
             <div
                 className={clsx(styles.root, className, {
