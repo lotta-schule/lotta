@@ -30,20 +30,26 @@ const createHeaders = (headers?: any) => {
     if (!headers) {
         return headers;
     }
-    const h = Object.assign(
+    return Object.assign(
         {},
         {
             ...(process.env.SKIP_HOST_HEADER_FORWARDING
-                ? (omit(headers ?? {}, ['host']) as Record<string, string>)
-                : (headers as Record<string, string>)),
+                ? (omit(headers ?? {}, ['host', 'content-type']) as Record<
+                      string,
+                      string
+                  >)
+                : (omit(headers ?? {}, ['content-type']) as Record<
+                      string,
+                      string
+                  >)),
         },
         {
             ...(tenantSlugOverwrite && {
                 tenant: `slug:${tenantSlugOverwrite}`,
             }),
+            'Content-Type': 'application/json',
         }
     );
-    return h;
 };
 
 const sendRefreshRequest = async () => {
@@ -104,7 +110,9 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
         };
         const axiosResponse = await axios(config);
         return new Response(JSON.stringify(axiosResponse.data), {
-            headers: new Headers(axiosResponse.headers),
+            headers: new Headers(
+                Object.entries(axiosResponse.headers) as string[][]
+            ),
             status: axiosResponse.status,
             statusText: axiosResponse.statusText,
         });
