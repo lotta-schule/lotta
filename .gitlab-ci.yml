@@ -14,7 +14,7 @@ cache:
 
 test:
   stage: test
-  image: node:16.14
+  image: node:19.0
   script:
     - npm ci
     - npm run test:ci -- --coverage
@@ -36,7 +36,7 @@ semgrep-sast:
 
 lint:
   stage: test
-  image: node:16.14
+  image: node:19.0
   script:
     - npm ci
     - npm run lint -- --max-warnings=0
