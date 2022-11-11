@@ -24,6 +24,7 @@ export const WidgetsList = React.memo<WidgetsListProps>(
         const isMobile =
             typeof window !== 'undefined' &&
             window.matchMedia('(max-width: 959px)').matches;
+
         const wrapperRef = React.useRef<HTMLDivElement | null>(null);
 
         const currentUser = useCurrentUser();
@@ -38,12 +39,14 @@ export const WidgetsList = React.memo<WidgetsListProps>(
         const [currentTabIndex, setCurrentTabIndex] = React.useState<
             number | null
         >(null);
+
         React.useEffect(() => {
             const storedIndex = localStorage.getItem(
                 'widgetlist-last-selected-item-index'
             );
             setCurrentTabIndex(storedIndex ? parseInt(storedIndex) : 0);
         }, []);
+
         React.useEffect(() => {
             if (currentTabIndex !== null) {
                 localStorage.setItem(

@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { Icon } from 'shared/Icon';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
-import { useCurrentCategoryId } from '../../util/path/useCurrentCategoryId';
-import { useCategories } from 'util/categories/useCategories';
-import { useApolloClient } from '@apollo/client';
-import { gql } from '@apollo/client';
 import { Button, NavigationButton } from '@lotta-schule/hubert';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from 'shared/Icon';
+import { useCategoriesAncestorsForItem } from 'util/categories/useCategoriesAncestorsForItem';
+import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
+import { useCategories } from 'util/categories/useCategories';
 import { Category } from 'util/model';
+import { isMobileDrawerOpenVar } from 'api/cache';
 import { useRouter } from 'next/router';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -17,7 +16,6 @@ import styles from './Navbar.module.scss';
 export const Navbar = React.memo(() => {
     const wrapperRef = React.useRef<HTMLElement>(null);
 
-    const apolloClient = useApolloClient();
     const router = useRouter();
     const path = router.asPath;
 
@@ -29,16 +27,7 @@ export const Navbar = React.memo(() => {
         currentCategoryId || '0'
     );
 
-    const openDrawer = React.useCallback(() => {
-        apolloClient.writeQuery({
-            query: gql`
-                {
-                    isMobileDrawerOpen
-                }
-            `,
-            data: { isMobileDrawerOpen: true },
-        });
-    }, [apolloClient]);
+    const openDrawer = () => isMobileDrawerOpenVar(true);
 
     const categoriesHierarchy = [...categoriesAncestors, currentCategoryId];
 

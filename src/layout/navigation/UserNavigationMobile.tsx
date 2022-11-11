@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useQuery } from '@apollo/client';
 import { Badge, BaseButton, Button } from '@lotta-schule/hubert';
 import { useCurrentUser } from 'util/user/useCurrentUser';
-
 import { Icon } from 'shared/Icon';
 import {
     faComments,
@@ -13,20 +13,19 @@ import {
     faShieldHalved,
     faClipboardList,
     faArrowRightFromBracket,
-    faCaretDown,
     faCirclePlus,
 } from '@fortawesome/free-solid-svg-icons';
-
-import { useOnLogout } from 'util/user/useOnLogout';
-import { useQuery } from '@apollo/client';
 import { ArticleModel } from 'model';
 import { User, Article } from 'util/model';
+import { useOnLogout } from 'util/user/useOnLogout';
+import { isMobileDrawerOpenVar } from 'api/cache';
 import { CreateArticleDialog } from 'shared/dialog/CreateArticleDialog';
 import { LoginDialog } from 'shared/dialog/LoginDialog';
 import { RegisterDialog } from 'shared/dialog/RegisterDialog';
 import { useRouter } from 'next/router';
-import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
 import Link from 'next/link';
+
+import GetUnpublishedArticlesQuery from 'api/query/GetUnpublishedArticles.graphql';
 
 import styles from './UserNavigationMobile.module.scss';
 
@@ -49,6 +48,16 @@ export const UserNavigationMobile = React.memo(() => {
     const [registerModalIsOpen, setRegisterModalIsOpen] = React.useState(false);
     const [createArticleModalIsOpen, setCreateArticleModalIsOpen] =
         React.useState(false);
+
+    React.useEffect(() => {
+        if (
+            loginModalIsOpen ||
+            registerModalIsOpen ||
+            createArticleModalIsOpen
+        ) {
+            isMobileDrawerOpenVar(false);
+        }
+    }, [createArticleModalIsOpen, loginModalIsOpen, registerModalIsOpen]);
 
     if (currentUser) {
         return (

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Drawer, NoSsr } from '@lotta-schule/hubert';
 import { useIsMobile } from 'util/useIsMobile';
-import { useQuery, useApolloClient } from '@apollo/client';
-import { gql } from '@apollo/client';
+import { useReactiveVar } from '@apollo/client';
 import { Footer } from './navigation/Footer';
 import { WidgetsList } from 'category/widgetsList/WidgetsList';
+import { isMobileDrawerOpenVar } from 'api/cache';
 import { useRouter } from 'next/router';
 
 import styles from './Sidebar.module.scss';
@@ -17,37 +17,20 @@ export interface SidebarProps {
 export const Sidebar = React.memo<SidebarProps>(({ children, isEmpty }) => {
     const router = useRouter();
     const isMobile = useIsMobile();
-    const client = useApolloClient();
 
-    const { data } = useQuery<{ isMobileDrawerOpen: boolean }>(
-        gql`
-            {
-                isMobileDrawerOpen @client
-            }
-        `
-    );
-    const isMobileDrawerOpen = !!data?.isMobileDrawerOpen;
-    const closeDrawer = React.useCallback(() => {
-        client.writeQuery({
-            query: gql`
-                {
-                    isMobileDrawerOpen
-                }
-            `,
-            data: { isMobileDrawerOpen: false },
-        });
-    }, [client]);
+    const isMobileDrawerOpen = useReactiveVar(isMobileDrawerOpenVar);
+    const closeMobileDrawer = () => isMobileDrawerOpenVar(false);
 
     React.useEffect(() => {
-        closeDrawer();
-    }, [closeDrawer, router.pathname]);
+        closeMobileDrawer();
+    }, [router.pathname]);
 
     if (isMobile) {
         return (
             <Drawer
                 data-testid={'BaseLayoutSidebar'}
                 isOpen={isMobileDrawerOpen}
-                onClose={() => closeDrawer()}
+                onClose={closeMobileDrawer}
             >
                 {isEmpty ? (
                     <NoSsr>

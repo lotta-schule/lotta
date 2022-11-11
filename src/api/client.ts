@@ -1,14 +1,12 @@
 import * as AbsintheSocket from '@absinthe/socket';
-import { createLink } from 'apollo-v3-absinthe-upload-link';
 import { onError } from '@apollo/link-error';
 import {
     ApolloClient,
     ApolloLink,
-    InMemoryCache,
-    gql,
     split,
     NormalizedCacheObject,
 } from '@apollo/client';
+import { createLink } from 'apollo-v3-absinthe-upload-link';
 import { Socket as PhoenixSocket } from 'phoenix';
 // @ts-ignore
 import { hasSubscription } from '@jumpn/utils-graphql';
@@ -19,6 +17,7 @@ import { createAbsintheSocketLink } from './createAbsintheSocketLink';
 import { omit } from 'lodash';
 import axios, { AxiosRequestConfig } from 'axios';
 import getConfig from 'next/config';
+import { createCache } from './cache';
 
 const {
     publicRuntimeConfig: { socketUrl, tenantSlugOverwrite },
@@ -257,23 +256,9 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
         ssrMode: !isBrowser,
         link,
         resolvers: {},
-        cache: new InMemoryCache({}),
+        cache: createCache(),
     });
 
-    const writeDefaults = () => {
-        apolloClient?.writeQuery({
-            query: gql`
-                {
-                    isMobileDrawerOpen
-                }
-            `,
-            data: { isMobileDrawerOpen: false },
-        });
-    };
-    writeDefaults();
-    apolloClient.onResetStore(async () => {
-        writeDefaults();
-    });
     if (isBrowser) {
         cachedApolloClient = apolloClient;
     }
