@@ -5,17 +5,12 @@ import { User, Article, Category, File } from 'util/model';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
-import { useIsRetina } from 'util/useIsRetina';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { useServerData } from 'shared/ServerDataContext';
 import Link from 'next/link';
-import getConfig from 'next/config';
 
 import styles from './ArticlesList.module.scss';
 import clsx from 'clsx';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export interface ArticlesListProps {
     articles: ArticleModel[];
@@ -23,7 +18,6 @@ export interface ArticlesListProps {
 
 export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
     const { baseUrl } = useServerData();
-    const retinaMultiplier = useIsRetina() ? 2 : 1;
 
     const articleSorter = React.useCallback(
         (article1, article2) =>
@@ -75,16 +69,14 @@ export const ArticlesList = React.memo<ArticlesListProps>(({ articles }) => {
                                     title={`Beitrag "${article.title}" bearbeiten`}
                                 >
                                     {article.previewImageFile && (
-                                        <img
+                                        <ResponsiveImage
                                             className={styles.previewImage}
-                                            src={`https://${cloudimageToken}.cloudimg.io/cover/${
-                                                60 * retinaMultiplier
-                                            }x${
-                                                40 * retinaMultiplier
-                                            }/foil1/${File.getFileRemoteLocation(
+                                            width={60}
+                                            aspectRatio={'4:3'}
+                                            src={File.getFileRemoteLocation(
                                                 baseUrl,
                                                 article.previewImageFile
-                                            )}`}
+                                            )}
                                             alt={`Vorschaubild zum Beitrag "${article.title}"`}
                                         />
                                     )}

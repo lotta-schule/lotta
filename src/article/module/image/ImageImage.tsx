@@ -6,7 +6,7 @@ import { ImageCaption } from './ImageCaption';
 
 import styles from './ImageImage.module.scss';
 
-interface ImageImageProps extends Omit<ImageContentProps, 'onClick'> {
+interface ImageImageProps extends Omit<ImageContentProps, 'onClick' | 'alt'> {
     isEditModeEnabled: boolean;
     file?: FileModel | null;
     caption: string;
@@ -31,10 +31,15 @@ export const ImageImage = React.memo<ImageImageProps>(
                 fileFilter={(f) => f.fileType === FileModelType.Image}
                 onSelectFile={onUpdateFile}
             >
-                <ImageContent file={file} {...otherProps} />
+                <ImageContent alt={caption} file={file} {...otherProps} />
             </SelectFileOverlay>
         ) : (
-            <ImageContent onClick={onSelect} file={file} {...otherProps} />
+            <ImageContent
+                alt={caption}
+                onClick={onSelect}
+                file={file}
+                {...otherProps}
+            />
         );
         return (
             <figure className={styles.root}>

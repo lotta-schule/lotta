@@ -6,6 +6,7 @@
     padding: var(--lotta-spacing);
     background-color: rgba(var(--lotta-box-background-color), 1);
     display: flex;
+
     h2 {
         color: rgba(var(--lotta-text-color));
         padding: var(--lotta-spacing);
@@ -14,6 +15,7 @@
         letter-spacing: calc(0.5 * var(--lotta-spacing));
         text-transform: uppercase;
     }
+
     .subheader {
         flex: 1 1 66%;
         min-height: 120px;
@@ -25,32 +27,37 @@
         flex-shrink: 1;
         flex-grow: 1;
         position: relative;
-        &::after {
-            position: absolute;
-            display: none;
-            content: '';
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to right,
-                rgba(var(--lotta-box-background-color), 0) 75%,
-                rgba(var(--lotta-box-background-color), 1) 98%
-            );
-        }
-    }
-    &.hasBannerImage .subheader::after {
-        display: block;
     }
 
-    .bannerheading {
-        text-transform: uppercase;
-        letter-spacing: 5px;
-        font-size: 1.5em;
-        text-shadow: 1px 1px 15px #fff;
-        padding: 0.6em;
-        color: rgba(var(--lotta-contrast-text-color), 1);
+    &.hasBannerImage {
+        .subheader {
+            img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                object-fit: cover;
+            }
+            &::after {
+                position: absolute;
+                display: block;
+                content: '';
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    to right,
+                    rgba(var(--lotta-box-background-color), 0) 75%,
+                    rgba(var(--lotta-box-background-color), 1) 98%
+                );
+            }
+        }
+        .headerContent {
+            position: absolute;
+        }
     }
 
     .userNavigationGridItem {

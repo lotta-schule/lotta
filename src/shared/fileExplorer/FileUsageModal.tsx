@@ -8,18 +8,16 @@ import {
     ListItemSecondaryText,
 } from '@lotta-schule/hubert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faUpRightFromSquare,
-} from '@fortawesome/free-solid-svg-icons';
+import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { FileModel, ID, FileModelUsageLocation } from 'model';
 import { UserAvatar } from 'shared/userAvatar/UserAvatar';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, Category, File, User } from 'util/model';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { useServerData } from 'shared/ServerDataContext';
 import fileExplorerContext from './context/FileExplorerContext';
-import Img from 'react-cloudimage-responsive';
 
 import GetFileDetailsQuery from 'api/query/GetFileDetailsQuery.graphql';
 
@@ -87,9 +85,10 @@ export const FileUsageModal = React.memo(() => {
                             leftSection={
                                 <>
                                     {usage.article?.previewImageFile && (
-                                        <Img
-                                            operation={'cover'}
-                                            size={'150x100'}
+                                        <ResponsiveImage
+                                            resize={'cover'}
+                                            width={100}
+                                            aspectRatio={'4:3'}
                                             src={File.getFileRemoteLocation(
                                                 baseUrl,
                                                 usage.article.previewImageFile
@@ -99,9 +98,9 @@ export const FileUsageModal = React.memo(() => {
                                     )}
                                     {usage.tenant?.configuration
                                         .logoImageFile && (
-                                        <Img
-                                            operation={'cover'}
-                                            size={'150x100'}
+                                        <ResponsiveImage
+                                            resize={'fit'}
+                                            height={75}
                                             src={File.getFileRemoteLocation(
                                                 baseUrl,
                                                 usage.tenant.configuration
@@ -124,7 +123,11 @@ export const FileUsageModal = React.memo(() => {
                                         onClick={getSecondaryActionCallback(
                                             usage
                                         )}
-                                        icon={<FontAwesomeIcon icon={faUpRightFromSquare} />}
+                                        icon={
+                                            <FontAwesomeIcon
+                                                icon={faUpRightFromSquare}
+                                            />
+                                        }
                                     />
                                 )
                             }

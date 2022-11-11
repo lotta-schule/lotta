@@ -4,14 +4,10 @@ import { Stepper } from '@lotta-schule/hubert';
 import { FileSorter } from '../Config';
 import { ContentModuleModel, FileModel } from 'model';
 import { useServerData } from 'shared/ServerDataContext';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import SwipeableViews from 'react-swipeable-views';
-import getConfig from 'next/config';
 
 import styles from './ImageCarousel.module.scss';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export interface ImageCarouselProps {
     contentModule: ContentModuleModel;
@@ -73,11 +69,15 @@ export const ImageCarousel = React.memo<ImageCarouselProps>(
                                 </span>
                             )}
                             {Math.abs(activeStep - index) <= 2 ? (
-                                <img
-                                    src={`https://${cloudimageToken}.cloudimg.io/fit/800x500/foil1/${File.getFileRemoteLocation(
+                                <ResponsiveImage
+                                    width={1600}
+                                    sizes={'(max-width: 600px) 100vw, 80vw'}
+                                    aspectRatio={'16:9'}
+                                    resize={'bound'}
+                                    src={File.getFileRemoteLocation(
                                         baseUrl,
                                         file
-                                    )}`}
+                                    )}
                                     alt={
                                         getConfiguration(file).caption ||
                                         File.getFileRemoteLocation(

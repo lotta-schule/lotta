@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { ContentModuleModel, FileModel, FileModelType } from 'model';
-import { BackgroundImg } from 'react-cloudimage-responsive';
-
+import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@lotta-schule/hubert';
+import { ContentModuleModel, FileModel, FileModelType } from 'model';
 import { useServerData } from 'shared/ServerDataContext';
 import { File } from 'util/model';
 import { FileSize } from 'util/FileSize';
+import { Icon } from 'shared/Icon';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 
 import styles from './Download.module.scss';
-import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
 
 export interface ShowProps {
     contentModule: ContentModuleModel;
@@ -72,19 +71,19 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                         {!contentModule.configuration?.hidePreviews &&
                             hasPreviewImage(file) && (
                                 <div className={styles.previewWrapper}>
-                                    <BackgroundImg
+                                    <ResponsiveImage
+                                        alt={'Bildvorschau'}
+                                        width={400}
+                                        resize={'bound'}
+                                        sizes={'150px'}
                                         style={{
-                                            width: '100%',
-                                            height: '100%',
+                                            width: '30%',
                                             borderRadius: 4,
-                                            background:
-                                                'transparent 50% 50% / cover no-repeat',
                                         }}
                                         src={File.getFileRemoteLocation(
                                             baseUrl,
                                             file
                                         )}
-                                        params="func=crop&gravity=auto"
                                     />
                                 </div>
                             )}

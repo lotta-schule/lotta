@@ -2,14 +2,10 @@ import * as React from 'react';
 import { Article, File } from 'util/model';
 import { ArticleModel } from 'model';
 import { useTenant } from 'util/tenant/useTenant';
+import { useCloudimageUrl } from 'util/image/useCloudimageUrl';
 import { useServerData } from 'shared/ServerDataContext';
 import { Tenant } from 'util/model/Tenant';
 import Head from 'next/head';
-import getConfig from 'next/config';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export interface ArticleHeadProps {
     article: ArticleModel;
@@ -18,6 +14,13 @@ export interface ArticleHeadProps {
 export const ArticleHead = React.memo<ArticleHeadProps>(({ article }) => {
     const { baseUrl } = useServerData();
     const tenant = useTenant();
+
+    const { url: twitterImageUrl } = useCloudimageUrl(
+        article?.previewImageFile &&
+            File.getFileRemoteLocation(baseUrl, article.previewImageFile),
+        { width: 1200, height: 630, resize: 'fit' }
+    );
+
     return (
         <Head>
             <title>
@@ -46,13 +49,7 @@ export const ArticleHead = React.memo<ArticleHeadProps>(({ article }) => {
             />
             <meta property={'twitter:card'} content={article.preview} />
             {article.previewImageFile && (
-                <meta
-                    property={'og:image'}
-                    content={`https://${cloudimageToken}.cloudimg.io/cover/1800x945/foil1/${File.getFileRemoteLocation(
-                        baseUrl,
-                        article.previewImageFile
-                    )}`}
-                />
+                <meta property={'og:image'} content={twitterImageUrl ?? ''} />
             )}
             <meta property={'og:image:width'} content={'1800'} />
             <meta property={'og:image:height'} content={'945'} />

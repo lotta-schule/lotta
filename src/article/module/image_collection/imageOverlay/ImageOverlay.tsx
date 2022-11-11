@@ -1,24 +1,20 @@
 import * as React from 'react';
 import { Button } from '@lotta-schule/hubert';
+import {
+    faChevronLeft,
+    faChevronRight,
+    faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { FileModel } from 'model';
 import { File } from 'util/model';
 import { useWindowSize } from 'util/useWindowSize';
 import { useIsRetina } from 'util/useIsRetina';
 import { useLockBodyScroll } from 'util/useLockBodyScroll';
 import { useServerData } from 'shared/ServerDataContext';
-import getConfig from 'next/config';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
+import { Icon } from 'shared/Icon';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 
 import styles from './ImageOverlay.module.scss';
-import {
-    faChevronLeft,
-    faChevronRight,
-    faXmark,
-} from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
 
 export interface ImageOverlayProps {
     selectedUrl?: string | null;
@@ -56,14 +52,11 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
             const onKeyDown: React.KeyboardEventHandler<Window> =
                 React.useCallback(
                     (event) => {
-                        if (event.keyCode === 27) {
-                            // ESC
+                        if (event.code === 'Escape') {
                             onClose(event);
-                        } else if (event.keyCode === 37 && onPrevious) {
-                            // <-
+                        } else if (event.code === 'ArrowLeft' && onPrevious) {
                             onPrevious(event);
-                        } else if (event.keyCode === 39 && onNext) {
-                            // ->
+                        } else if (event.code === 'ArrowRight' && onNext) {
                             onNext(event);
                         }
                     },
@@ -80,11 +73,7 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
             if (!selectedFile && !selectedUrl) {
                 return null;
             }
-            const imgUrl = `https://${cloudimageToken}.cloudimg.io/bound/${width}x${height}/foil1/${
-                selectedFile
-                    ? File.getFileRemoteLocation(baseUrl, selectedFile)
-                    : selectedUrl
-            }`;
+
             return (
                 <div className={styles.root}>
                     <Button
@@ -109,7 +98,22 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
                             onClick={onNext}
                         />
                     )}
-                    <img src={imgUrl} alt={''} />
+                    <ResponsiveImage
+                        src={
+                            (selectedFile
+                                ? File.getFileRemoteLocation(
+                                      baseUrl,
+                                      selectedFile
+                                  )
+                                : selectedUrl)!
+                        }
+                        alt={caption ?? ''}
+                        width={width}
+                        height={height}
+                        className={styles.image}
+                        resize={'fit'}
+                        sizes={'80vw'}
+                    />
                     {caption && (
                         <div className={styles.subtitles}>{caption}</div>
                     )}

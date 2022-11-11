@@ -2,10 +2,6 @@ import * as React from 'react';
 import { Icon } from 'shared/Icon';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useMutation, useQuery } from '@apollo/client';
-import { motion } from 'framer-motion';
-import { CategoryModel, WidgetModel, ID } from 'model';
-import { useCategories } from 'util/categories/useCategories';
-import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import {
     Button,
     Checkbox,
@@ -17,6 +13,11 @@ import {
     RadioGroup,
     Select,
 } from '@lotta-schule/hubert';
+import { motion } from 'framer-motion';
+import { CategoryModel, WidgetModel, ID } from 'model';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
+import { useCategories } from 'util/categories/useCategories';
+import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { GroupSelect } from 'shared/edit/GroupSelect';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useServerData } from 'shared/ServerDataContext';
@@ -24,7 +25,6 @@ import { DeleteCategoryDialog } from './DeleteCategoryDialog';
 import { Category, File, RedirectType } from 'util/model';
 import { CategoryWidgetSelector } from './CategoryWidgetSelector';
 import { CategoryArticleRedirectSelection } from './CategoryArticleRedirectSelection';
-import Img from 'react-cloudimage-responsive';
 import clsx from 'clsx';
 
 import UpdateCategoryMutation from 'api/mutation/UpdateCategoryMutation.graphql';
@@ -156,9 +156,12 @@ export const CategoryEditor = React.memo<CategoryEditorProps>(
                     allowDeletion
                 >
                     {category.bannerImageFile ? (
-                        <Img
-                            operation={'cover'}
-                            size={'900x150'}
+                        <ResponsiveImage
+                            style={{ width: '100%' }}
+                            alt={`Banner für ${category.title}`}
+                            width={900}
+                            aspectRatio={'6:1'}
+                            sizes={'80vw'}
                             src={File.getFileRemoteLocation(
                                 baseUrl,
                                 category.bannerImageFile

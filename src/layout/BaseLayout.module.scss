@@ -31,6 +31,10 @@
         background-size: cover;
         text-align: right;
         display: flex;
+
+        img {
+            height: 80px;
+        }
     }
 
     .main {

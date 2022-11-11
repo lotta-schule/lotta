@@ -5,7 +5,6 @@ import { CategoryModel, TenantModel, UserModel } from 'model';
 import { AppHead } from './AppHead';
 import { ApolloProvider } from '@apollo/client';
 import { I18nextProvider } from 'react-i18next';
-import { CloudimageProvider } from 'react-cloudimage-responsive';
 import { Authentication } from 'shared/Authentication';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
@@ -23,7 +22,7 @@ import GetTenantQuery from 'api/query/GetTenantQuery.graphql';
 const defaultTheme = DefaultThemes.standard;
 
 const {
-    publicRuntimeConfig: { cloudimageToken, plausibleEndpoint },
+    publicRuntimeConfig: { plausibleEndpoint },
 } = getConfig();
 
 export interface AppContextProvidersProps {
@@ -104,15 +103,9 @@ export const AppContextProviders: React.FC<AppContextProvidersProps> = ({
             <ServerDataContextProvider value={{ baseUrl }}>
                 <ApolloProvider client={client}>
                     <I18nextProvider i18n={i18n}>
-                        <CloudimageProvider
-                            config={{
-                                token: cloudimageToken,
-                            }}
-                        >
-                            <TenantContextProviders>
-                                {children}
-                            </TenantContextProviders>
-                        </CloudimageProvider>
+                        <TenantContextProviders>
+                            {children}
+                        </TenantContextProviders>
                     </I18nextProvider>
                 </ApolloProvider>
             </ServerDataContextProvider>
