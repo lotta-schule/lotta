@@ -24,7 +24,7 @@ import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useServerData } from 'shared/ServerDataContext';
 import { TagsSelect } from '../editor/TagsSelect';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
-import Img from 'react-cloudimage-responsive';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import Link from 'next/link';
 import getConfig from 'next/config';
 import clsx from 'clsx';
@@ -116,13 +116,15 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                                 }
                             >
                                 {article.previewImageFile ? (
-                                    <Img
-                                        operation={'width'}
-                                        size={'300x200'}
+                                    <ResponsiveImage
+                                        className={styles.previewImage}
+                                        width={400}
+                                        aspectRatio={'4:3'}
                                         src={File.getFileRemoteLocation(
                                             baseUrl,
                                             article.previewImageFile
                                         )}
+                                        alt={`Vorschaubild zu ${article.title}`}
                                     />
                                 ) : (
                                     <PlaceholderImage
@@ -135,17 +137,14 @@ export const ArticlePreviewStandardLayout = React.memo<ArticlePreviewProps>(
                         {!onUpdateArticle &&
                             maybeLinked(
                                 article.previewImageFile && (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img
+                                    <ResponsiveImage
                                         className={styles.previewImage}
-                                        src={`https://${cloudimageToken}.cloudimg.io/bound/${
-                                            400 * retinaMultiplier
-                                        }x${
-                                            300 * retinaMultiplier
-                                        }/foil1/${File.getFileRemoteLocation(
+                                        width={400}
+                                        aspectRatio={'4:3'}
+                                        src={File.getFileRemoteLocation(
                                             baseUrl,
                                             article.previewImageFile
-                                        )}`}
+                                        )}
                                         alt={`Vorschaubild zu ${article.title}`}
                                     />
                                 )

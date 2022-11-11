@@ -6,7 +6,6 @@ import { render, RenderOptions } from '@testing-library/react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { I18nextProvider } from 'react-i18next';
-import { CloudimageProvider } from 'react-cloudimage-responsive';
 import {
     ApolloMocksOptions,
     getDefaultApolloMocks,
@@ -74,24 +73,20 @@ const ProviderFactory = (options: TestSetupOptions): React.FC => {
         return (
             <RouterContext.Provider value={testRouter}>
                 <I18nextProvider i18n={i18n}>
-                    <CloudimageProvider
-                        config={{ token: 'ABCDEF', lazyLoading: false }}
-                    >
-                        <HubertProvider theme={defaultTheme}>
-                            <MockedProvider
-                                mocks={[
-                                    ...defaultMocks,
-                                    ...(options.additionalMocks || []),
-                                ]}
-                                addTypename={false}
-                                cache={cache}
-                            >
-                                <UploadQueueProvider>
-                                    {children}
-                                </UploadQueueProvider>
-                            </MockedProvider>
-                        </HubertProvider>
-                    </CloudimageProvider>
+                    <HubertProvider theme={defaultTheme}>
+                        <MockedProvider
+                            mocks={[
+                                ...defaultMocks,
+                                ...(options.additionalMocks || []),
+                            ]}
+                            addTypename={false}
+                            cache={cache}
+                        >
+                            <UploadQueueProvider>
+                                {children}
+                            </UploadQueueProvider>
+                        </MockedProvider>
+                    </HubertProvider>
                 </I18nextProvider>
             </RouterContext.Provider>
         );

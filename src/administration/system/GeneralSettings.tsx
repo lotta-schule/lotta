@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Button, Box, ErrorMessage, Input, Table } from '@lotta-schule/hubert';
+import { useMutation } from '@apollo/client';
 import { File } from 'util/model';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useTenant } from 'util/tenant/useTenant';
-import { useMutation } from '@apollo/client';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { useServerData } from 'shared/ServerDataContext';
-import Img from 'react-cloudimage-responsive';
 import Link from 'next/link';
 
 import styles from '../shared.module.scss';
@@ -44,16 +44,17 @@ export const GeneralSettings = () => {
                             allowDeletion
                         >
                             {logo ? (
-                                <Img
-                                    operation={'height'}
-                                    size={'300'}
+                                <ResponsiveImage
+                                    resize={'fit'}
+                                    height={80}
                                     src={File.getFileRemoteLocation(
                                         baseUrl,
                                         logo
                                     )}
+                                    alt={`Logo ${title}`}
                                 />
                             ) : (
-                                <PlaceholderImage width={300} height={80} />
+                                <PlaceholderImage width={160} height={80} />
                             )}
                         </SelectFileOverlay>
                     </Box>

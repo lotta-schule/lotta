@@ -1,15 +1,11 @@
 import * as React from 'react';
-import { Category, File } from 'util/model';
 import { CategoryModel } from 'model';
+import { Category, File } from 'util/model';
+import { Tenant } from 'util/model/Tenant';
 import { useTenant } from 'util/tenant/useTenant';
 import { useServerData } from 'shared/ServerDataContext';
-import { Tenant } from 'util/model/Tenant';
+import { useCloudimageUrl } from 'util/image/useCloudimageUrl';
 import Head from 'next/head';
-import getConfig from 'next/config';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export interface CategoryHeadProps {
     category: CategoryModel;
@@ -27,30 +23,35 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
         ? tenant.title
         : `${category.title} bei ${tenant.title}`;
 
+    const { url: logoImageUrl } = useCloudimageUrl(
+        tenant.configuration.logoImageFile &&
+            File.getFileRemoteLocation(
+                baseUrl,
+                tenant.configuration.logoImageFile
+            ),
+        { width: 320 }
+    );
+    const { url: bannerImageUrl } = useCloudimageUrl(
+        category.bannerImageFile &&
+            File.getFileRemoteLocation(baseUrl, category.bannerImageFile),
+        { width: 900, height: 150, resize: 'cover' }
+    );
+
     const image = React.useMemo<
-        [url: string, width: number, height: number] | null
+        [url: string, width: number, height: number | null] | null
     >(() => {
-        if (category.isHomepage && tenant.configuration.logoImageFile) {
-            return [
-                `https://${cloudimageToken}.cloudimg.io/height/320x240/foil1/${File.getFileRemoteLocation(
-                    baseUrl,
-                    tenant.configuration.logoImageFile
-                )}`,
-                320,
-                240,
-            ];
-        } else if (category.bannerImageFile) {
-            return [
-                `https://${cloudimageToken}.cloudimg.io/cover/950x120/foil1/${File.getFileRemoteLocation(
-                    baseUrl,
-                    category.bannerImageFile
-                )}`,
-                950,
-                120,
-            ];
+        if (category.isHomepage && logoImageUrl) {
+            return [logoImageUrl, 320, null];
+        } else if (category.bannerImageFile && bannerImageUrl) {
+            return [bannerImageUrl, 900, 150];
         }
         return null;
-    }, [baseUrl, category, tenant]);
+    }, [
+        bannerImageUrl,
+        category.bannerImageFile,
+        category.isHomepage,
+        logoImageUrl,
+    ]);
 
     return (
         <Head>
@@ -75,10 +76,12 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
                         property={'og:image:width'}
                         content={String(image[1])}
                     />
-                    <meta
-                        property={'og:image:height'}
-                        content={String(image[2])}
-                    />
+                    {image[2] && (
+                        <meta
+                            property={'og:image:height'}
+                            content={String(image[2])}
+                        />
+                    )}
                 </>
             )}
         </Head>

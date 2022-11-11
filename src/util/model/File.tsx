@@ -1,12 +1,4 @@
 import * as React from 'react';
-import { User } from './User';
-import {
-    FileModel,
-    FileModelType,
-    DirectoryModel,
-    UserModel,
-    FileConversionModel,
-} from 'model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFile,
@@ -18,11 +10,15 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import { faUser, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from '@lotta-schule/hubert';
-import getConfig from 'next/config';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
+import {
+    FileModel,
+    FileModelType,
+    DirectoryModel,
+    UserModel,
+    FileConversionModel,
+} from 'model';
+import { createCloudimageUrl } from 'util/image/useCloudimageUrl';
+import { User } from './User';
 
 export const File = {
     getIconForDirectory(directory: DirectoryModel) {
@@ -105,26 +101,25 @@ export const File = {
         }
     },
 
-    getPreviewImageLocation(
-        baseUrl: string,
-        file?: FileModel,
-        size: string = '200x200'
-    ) {
+    getPreviewImageLocation(baseUrl: string, file?: FileModel, size = 200) {
         if (file) {
             if (file.fileType === FileModelType.Image) {
-                return `https://${cloudimageToken}.cloudimg.io/bound/${size}/foil1/${File.getFileRemoteLocation(
-                    baseUrl,
-                    file
-                )}`;
+                return createCloudimageUrl(
+                    File.getFileRemoteLocation(baseUrl, file),
+                    { width: size, aspectRatio: '4:3', resize: 'cover' }
+                );
             } else {
                 const imageConversionFile = file.fileConversions?.find((fc) =>
                     /^gif/.test(fc.format)
                 );
                 if (imageConversionFile) {
-                    return `https://${cloudimageToken}.cloudimg.io/bound/${size}/foil1/${File.getFileConversionRemoteLocation(
-                        baseUrl,
-                        imageConversionFile
-                    )}`;
+                    return createCloudimageUrl(
+                        File.getFileConversionRemoteLocation(
+                            baseUrl,
+                            imageConversionFile
+                        ),
+                        { width: size, aspectRatio: '4:3', resize: 'cover' }
+                    );
                 }
             }
         }

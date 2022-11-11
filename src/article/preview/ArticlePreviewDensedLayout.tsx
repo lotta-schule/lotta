@@ -1,28 +1,27 @@
 import * as React from 'react';
 import { Button, Box } from '@lotta-schule/hubert';
-
+import { useMutation } from '@apollo/client';
+import {
+    faCircle,
+    faLocationDot,
+    faPen,
+} from '@fortawesome/free-solid-svg-icons';
 import { format, isBefore } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ArticleModel, ID } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, File, User } from 'util/model';
-import { useMutation } from '@apollo/client';
+import { Icon } from 'shared/Icon';
 import { useIsMobile } from 'util/useIsMobile';
-import { BackgroundImg } from 'react-cloudimage-responsive';
 import { useServerData } from 'shared/ServerDataContext';
 import { AuthorAvatarsList } from 'article/authorAvatarsList/AuthorAvatarsList';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import clsx from 'clsx';
 import Link from 'next/link';
 
 import styles from './ArticlePreviewDensedLayout.module.scss';
 
 import ToggleArticlePinMutation from 'api/mutation/ToggleArticlePin.graphql';
-import { Icon } from 'shared/Icon';
-import {
-    faCircle,
-    faLocationDot,
-    faPen,
-} from '@fortawesome/free-solid-svg-icons';
 
 interface ArticlePreviewProps {
     article: ArticleModel;
@@ -73,14 +72,16 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                     {article.previewImageFile && (
                         <div className={styles.previewImageWrapper}>
                             {maybeLinked(
-                                <BackgroundImg
-                                    height={'100%'}
+                                <ResponsiveImage
+                                    width={250}
+                                    alt={`Vorschaubild zu ${article.title}`}
+                                    aspectRatio={'4:3'}
                                     src={File.getFileRemoteLocation(
                                         baseUrl,
                                         article.previewImageFile
                                     )}
+                                    sizes="(max-width: 500px) 100px, 100%"
                                     className={styles.articlePreviewImage}
-                                    params="func=crop&gravity=auto"
                                 />
                             )}
                         </div>
@@ -125,7 +126,6 @@ export const ArticlePreviewDensedLayout = React.memo<ArticlePreviewProps>(
                                 <>
                                     &nbsp;
                                     <AuthorAvatarsList users={article.users} />
-                                    &nbsp;
                                 </>
                             )}
                         </span>

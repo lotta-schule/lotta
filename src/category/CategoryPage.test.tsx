@@ -74,9 +74,9 @@ describe('shared/article/CategoryLayout', () => {
                 }
             );
             const headerContent = await screen.findByTestId('HeaderContent');
-            expect(getComputedStyle(headerContent).backgroundImage).toContain(
-                '/storage/f/123'
-            );
+            const image = headerContent.querySelector('img');
+            expect(image).toBeVisible();
+            expect(image!.src).toMatch(/\/storage\/f\/123$/);
         });
 
         it('should render the widgets list', async () => {

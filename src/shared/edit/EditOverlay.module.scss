@@ -1,4 +1,5 @@
 .root {
+    display: inline-block;
     border: 2px solid var(--lotta-color-secondary);
     position: relative;
     &:hover > div {

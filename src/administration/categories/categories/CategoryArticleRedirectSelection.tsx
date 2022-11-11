@@ -5,14 +5,10 @@ import { useServerData } from 'shared/ServerDataContext';
 import { ArticlePreviewDensedLayout } from 'article/preview';
 import { ArticleModel, ID } from 'model';
 import { Article, File } from 'util/model';
-import getConfig from 'next/config';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 
 import SearchQuery from 'api/query/SearchQuery.graphql';
 import GetArticleForPreviewQuery from 'api/query/GetArticleForPreviewQuery.graphql';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export interface CategoryArticleRedirectSelection {
     redirectPath: string;
@@ -66,12 +62,14 @@ export const CategoryArticleRedirectSelection =
                                     selected: article.id === articleId,
                                     textValue: article.title,
                                     leftSection: article.previewImageFile && (
-                                        <img
-                                            src={`https://${cloudimageToken}.cloudimg.io/cover/80x60/foil1/${File.getFileRemoteLocation(
+                                        <ResponsiveImage
+                                            src={File.getFileRemoteLocation(
                                                 baseUrl,
                                                 article.previewImageFile
-                                            )}`}
+                                            )}
                                             alt={`Vorschaubild zum Beitrag "${article.title}"`}
+                                            width={80}
+                                            aspectRatio={'4:3'}
                                         />
                                     ),
                                     description: (

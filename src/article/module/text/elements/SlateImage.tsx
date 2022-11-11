@@ -8,20 +8,15 @@ import {
 import { Button, ButtonGroup } from '@lotta-schule/hubert';
 import { Icon } from 'shared/Icon';
 import { faAlignLeft, faAlignRight } from '@fortawesome/free-solid-svg-icons';
-
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
+import { useCloudimageUrl } from 'util/image/useCloudimageUrl';
 import { Image } from '../SlateCustomTypes';
 import { File } from 'util/model';
 import { useServerData } from 'shared/ServerDataContext';
-import getConfig from 'next/config';
 import clsx from 'clsx';
 
 import styles from './SlateImage.module.scss';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export type SlateImageProps = Omit<RenderElementProps, 'children'> & {
     children: any;
@@ -41,7 +36,23 @@ export const SlateImage = React.memo<SlateImageProps>(
             File.getFileRemoteLocation(baseUrl, {
                 id: imageElement.fileId,
             } as any);
-        const imageUrl = `https://${cloudimageToken}.cloudimg.io/width/400/foil1/${src}`;
+
+        const imageWidth = React.useMemo(() => {
+            switch (imageElement.size) {
+                case 'large':
+                    return 500;
+                case 'small':
+                    return 200;
+                default:
+                    // case 'middle'
+                    return 300;
+            }
+        }, [imageElement.size]);
+
+        const { url: imageUrl } = useCloudimageUrl(src, {
+            width: 400,
+            resize: 'fit',
+        });
 
         const setElementOptions = React.useCallback(
             (options: Partial<Image>) => {
@@ -57,17 +68,7 @@ export const SlateImage = React.memo<SlateImageProps>(
 
         const style: React.CSSProperties = {
             float: imageElement.alignment === 'left' ? 'left' : 'right',
-            maxWidth: (() => {
-                switch (imageElement.size) {
-                    case 'large':
-                        return '50%';
-                    case 'small':
-                        return '20%';
-                    default:
-                        // case 'middle'
-                        return '30%';
-                }
-            })(),
+            width: imageWidth,
         };
 
         return (
@@ -81,7 +82,7 @@ export const SlateImage = React.memo<SlateImageProps>(
             >
                 <span contentEditable={false}>
                     <img
-                        src={imageUrl}
+                        src={imageUrl ?? ''}
                         alt={src}
                         onClick={
                             isEditing ? undefined : () => setShowOverlay(true)

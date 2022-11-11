@@ -13,13 +13,13 @@ import { DefaultThemes } from '@lotta-schule/theme';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { File } from 'util/model';
 import { useTenant } from 'util/tenant/useTenant';
+import { ResponsiveImage } from 'util/image/ResponsiveImage';
 import { SelectFileOverlay } from 'shared/edit/SelectFileOverlay';
 import { PlaceholderImage } from 'shared/placeholder/PlaceholderImage';
 import { useServerData } from 'shared/ServerDataContext';
 import { SelectTemplateButton } from './presentation/SelectTemplateButton';
 import { ColorSettingRow } from './presentation/ColorSettingRow';
 import { headerFonts, textFonts } from './presentation/fonts';
-import Img from 'react-cloudimage-responsive';
 import clsx from 'clsx';
 
 import styles from '../shared.module.scss';
@@ -298,13 +298,16 @@ export const Presentation = React.memo(() => {
                                 allowDeletion
                             >
                                 {backgroundImage ? (
-                                    <Img
-                                        operation={'height'}
-                                        size={'400x200'}
+                                    <ResponsiveImage
+                                        resize={'cover'}
+                                        width={400}
+                                        aspectRatio={'4:3'}
+                                        style={{ width: '100%' }}
                                         src={File.getFileRemoteLocation(
                                             baseUrl,
                                             backgroundImage
                                         )}
+                                        alt={'Hintergrundbild der Seite'}
                                     />
                                 ) : (
                                     <PlaceholderImage

@@ -13,16 +13,11 @@ import { useScrollEvent } from 'util/useScrollEvent';
 import { CategoryHead } from './CategoryHead';
 import { PREFETCH_COUNT } from 'pages/c/[slug]';
 import clsx from 'clsx';
-import getConfig from 'next/config';
 
 import GetCategoryWidgetsQuery from 'api/query/GetCategoryWidgetsQuery.graphql';
 import GetArticlesQuery from 'api/query/GetArticlesQuery.graphql';
 
 import styles from './CategoryPage.module.scss';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export interface CategoryPageProps {
     categoryId: ID | null;
@@ -185,19 +180,19 @@ export const CategoryPage = React.memo<CategoryPageProps>(({ categoryId }) => {
           )
         : loadedArticles;
 
-    const bannerImageUrl =
-        (category.bannerImageFile &&
-            `https://${cloudimageToken}.cloudimg.io/crop/950x120/foil1/${File.getFileRemoteLocation(
-                baseUrl,
-                category.bannerImageFile
-            )}`) ||
-        undefined;
-
     return (
         <>
             <CategoryHead category={category} />
             <Main>
-                <Header bannerImageUrl={bannerImageUrl}>
+                <Header
+                    bannerImageUrl={
+                        category.bannerImageFile &&
+                        File.getFileRemoteLocation(
+                            baseUrl,
+                            category.bannerImageFile
+                        )
+                    }
+                >
                     <h2 data-testid="title">{category.title}</h2>
                 </Header>
                 <div className={styles.articles}>

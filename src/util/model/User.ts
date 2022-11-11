@@ -1,10 +1,6 @@
 import { UserModel, ArticleModel } from 'model';
+import { createCloudimageUrl } from 'util/image/useCloudimageUrl';
 import { File } from './File';
-import getConfig from 'next/config';
-
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
 
 export const User = {
     getName(user?: UserModel | null) {
@@ -20,10 +16,10 @@ export const User = {
 
     getAvatarUrl(baseUrl: string, user?: UserModel | null, size: number = 100) {
         return user?.avatarImageFile
-            ? `https://${cloudimageToken}.cloudimg.io/bound/${size}x${size}/foil1/${File.getFileRemoteLocation(
-                  baseUrl,
-                  user.avatarImageFile
-              )}`
+            ? createCloudimageUrl(
+                  File.getFileRemoteLocation(baseUrl, user.avatarImageFile),
+                  { width: size, aspectRatio: '1:1', resize: 'cover' }
+              )
             : User.getDefaultAvatarUrl(user);
     },
 
@@ -38,9 +34,7 @@ export const User = {
     },
 
     isAuthor(user: UserModel | null | undefined, article: ArticleModel) {
-        return Boolean(
-            user && article.users?.find((u) => u.id === user.id)
-        );
+        return Boolean(user && article.users?.find((u) => u.id === user.id));
     },
 
     canEditArticle(user: UserModel | null | undefined, article: ArticleModel) {
