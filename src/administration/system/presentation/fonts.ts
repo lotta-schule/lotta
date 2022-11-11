@@ -1,69 +1,69 @@
 export const headerFonts = [
     {
         name: 'Schoolbell',
-        url: 'https://fonts.googleapis.com/css2?family=Schoolbell&display=fallback',
+        url: '/font/schoolbell/style.css',
     },
     {
         name: 'DM Serif Display',
-        url: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=fallback',
+        url: '/font/dm-serif-display/style.css',
     },
     {
         name: 'Roboto Slab',
-        url: 'https://fonts.googleapis.com/css2?family=Roboto+Slab&display=fallback',
+        url: '/font/roboto-slab/style.css',
     },
     {
         name: 'Ubuntu Condensed',
-        url: 'https://fonts.googleapis.com/css2?family=Ubuntu+Condensed&display=fallback',
+        url: '/font/ubuntu-condensed/style.css',
     },
     {
         name: 'Quicksand',
-        url: 'https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=fallback',
+        url: '/font/quicksand/style.css',
     },
     {
         name: 'Vollkorn',
-        url: 'https://fonts.googleapis.com/css2?family=Vollkorn&display=fallback',
+        url: '/font/vollkorn/style.css',
     },
     {
         name: 'Patrick Hand SC',
-        url: 'https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&display=fallback',
+        url: '/font/patrick-hand-sc/style.css',
     },
     {
         name: 'Julius Sans One',
-        url: 'https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=fallback',
+        url: '/font/julius-sans-one/style.css',
     },
     {
         name: 'Oranienbaum',
-        url: 'https://fonts.googleapis.com/css2?family=Oranienbaum&display=fallback',
+        url: '/font/oranienbaum/style.css',
     },
 ];
 
 export const textFonts = [
     {
         name: 'Muli',
-        url: 'https://fonts.googleapis.com/css2?family=Muli:ital,wght@0,300;0,600;1,300&display=fallback',
+        url: '/font/muli/style.css',
     },
     {
         name: 'Balloo 2',
-        url: 'https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=fallback',
+        url: '/font/baloo-2/style.css',
     },
     {
         name: 'Be Vietnam',
-        url: 'https://fonts.googleapis.com/css2?family=Be+Vietnam:ital,wght@0,400;0,600;1,400&display=fallback',
+        url: '/font/be-vietnam/style.css',
     },
     {
         name: 'IBM Plex Serif',
-        url: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,600;1,300&display=fallback',
+        url: '/font/ibm-plex-serif/style.css',
     },
     {
         name: 'Krub',
-        url: 'https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,200;0,600;1,200&display=fallback',
+        url: '/font/krub/style.css',
     },
     {
         name: 'Montserrat',
-        url: 'https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,600;1,300&display=fallback',
+        url: '/font/montserrat/style.css',
     },
     {
         name: 'Spectral',
-        url: 'https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,500;1,200&display=fallback',
+        url: '/font/spectral/style.css',
     },
 ];
