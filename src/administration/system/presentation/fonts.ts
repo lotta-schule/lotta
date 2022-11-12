@@ -67,3 +67,5 @@ export const textFonts = [
         url: '/font/spectral/style.css',
     },
 ];
+
+export const fonts = [...headerFonts, ...textFonts];

@@ -8,6 +8,7 @@ import { I18nextProvider } from 'react-i18next';
 import { Authentication } from 'shared/Authentication';
 import { UploadQueueProvider } from 'shared/fileExplorer/context/UploadQueueContext';
 import { ServerDataContextProvider } from 'shared/ServerDataContext';
+import { fonts } from 'administration/system/presentation/fonts';
 import { useTenant } from 'util/tenant/useTenant';
 import { getApolloClient } from 'api/client';
 import { BaseLayout } from './BaseLayout';
@@ -41,6 +42,7 @@ const TenantContextProviders = React.memo(({ children }) => {
                 ...defaultTheme,
                 ...tenant.configuration.customTheme,
             }}
+            supportedFonts={fonts}
         >
             <Authentication />
             <UploadQueueProvider>
