@@ -109,8 +109,13 @@ export const getApolloClient = ({ tenant }: { tenant?: TenantModel } = {}) => {
         };
         const axiosResponse = await axios(config);
         return new Response(JSON.stringify(axiosResponse.data), {
-            headers: new Headers(
-                Object.entries(axiosResponse.headers) as string[][]
+            headers: Object.entries(axiosResponse.headers).map(
+                ([key, value]) => {
+                    return [
+                        key,
+                        Array.isArray(value) ? value.join(',') : value || '',
+                    ] as [string, string];
+                }
             ),
             status: axiosResponse.status,
             statusText: axiosResponse.statusText,
