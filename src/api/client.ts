@@ -46,7 +46,7 @@ const createHeaders = (headers?: any) => {
             ...(tenantSlugOverwrite && {
                 tenant: `slug:${tenantSlugOverwrite}`,
             }),
-            'Content-Type': 'application/json',
+            'Content-Type': headers['content-type'],
         }
     );
 };
