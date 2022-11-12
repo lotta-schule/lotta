@@ -22,9 +22,11 @@ export const ActiveUploadsModal = React.memo(() => {
         <Dialog
             open={state.showActiveUploads && uploads.length > 0}
             onRequestClose={() => dispatch({ type: 'hideActiveUploads' })}
-            title={t('files.explorer.filesAreBeingUploaded', {
-                count: uploads.length,
-            })}
+            title={
+                t('files.explorer.filesAreBeingUploaded', {
+                    count: uploads.length,
+                })!
+            }
         >
             <DialogContent>
                 <List>
