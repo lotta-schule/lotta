@@ -73,14 +73,15 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
             `${getProtocol()}://${context.ctx.req.headers.host}`);
 
     const headers = context.ctx.req?.headers ?? {};
+
+    await maybeChangeRefreshToken(context);
+
     const additionalAuthHeader = context.ctx.res?.getHeader('authorization') as
         | string
         | undefined;
     if (additionalAuthHeader) {
         headers.authorization = additionalAuthHeader;
     }
-
-    await maybeChangeRefreshToken(context);
 
     const { data, error } = await getApolloClient().query({
         query: GetTenantQuery,
@@ -174,7 +175,6 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
     // We'll make an auth token from it and swap the refreshToken
     // in order to authenticate the request
     try {
-        const refreshUrl = `${process.env.API_URL}`;
         const refreshResponse = await axios.request({
             baseURL: process.env.API_URL,
             url: '/auth/token/refresh',
@@ -182,6 +182,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
             headers: request.headers,
         });
         const refreshResponseData = refreshResponse?.data;
+
         if (refreshResponseData?.accessToken) {
             response.setHeader(
                 'authorization',
