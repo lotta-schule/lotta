@@ -31,7 +31,9 @@ export type ListItem = {
 export type Image = {
     type: 'image';
     fileId?: string;
-    /* deprecated, as the use of the file id is encouraged in future */
+    /** @deprecated
+     * use fileId instead
+     **/
     src?: string;
     alignment?: string;
     size?: string;

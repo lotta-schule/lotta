@@ -9,6 +9,7 @@ import {
     withImages,
     withLinks,
     getNormalizedSlateState,
+    onKeyDownFactory,
 } from './SlateUtils';
 import { EditToolbar } from './EditToolbar';
 
@@ -28,6 +29,9 @@ export const Edit = React.memo<EditProps>(
             []
         );
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        const onKeyDown = React.useCallback(onKeyDownFactory(editor), [editor]);
+
         return (
             <Slate
                 editor={editor}
@@ -42,6 +46,7 @@ export const Edit = React.memo<EditProps>(
             >
                 <EditToolbar />
                 <Editable
+                    onKeyDown={onKeyDown}
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}
                 />

@@ -1,9 +1,7 @@
 import * as React from 'react';
-
 import { Icon } from 'shared/Icon';
 import {
     faBold,
-    faCaretDown,
     faDownLeftAndUpRightToCenter,
     faItalic,
     faList,
@@ -12,14 +10,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ButtonGroup, Toolbar } from '@lotta-schule/hubert';
 import { useFocused } from 'slate-react';
-import { EditToolbarMarkButton } from './EditToolbarMarkButton';
-import { EditToolbarLinkButton } from './EditToolbarLinkButton';
-import { EditToolbarBlockButton } from './EditToolbarBlockButton';
-import { EditToolbarImageButton } from './EditToolbarImageButton';
 import { motion } from 'framer-motion';
 import { useCurrentCategoryId } from 'util/path/useCurrentCategoryId';
 import { useCategory } from 'util/categories/useCategory';
 import { useCategories } from 'util/categories/useCategories';
+import { EditToolbarMarkButton } from './EditToolbarMarkButton';
+import { EditToolbarLinkButton } from './EditToolbarLinkButton';
+import { EditToolbarBlockButton } from './EditToolbarBlockButton';
+import { EditToolbarImageButton } from './EditToolbarImageButton';
 
 import styles from './EditToolbar.module.scss';
 
