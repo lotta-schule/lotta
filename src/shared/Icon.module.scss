@@ -4,9 +4,14 @@
     &.secondaryColor {
         color: rgba(var(--lotta-primary-color), 1);
     }
+
+    &.errorColor {
+        color: rgba(var(--lotta-error-color), 1);
+    }
 }
 
-button .root {
+button .root,
+[role='button'] .root {
     padding-top: 0;
     padding-bottom: 0;
 }

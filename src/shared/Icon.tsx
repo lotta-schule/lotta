@@ -9,7 +9,7 @@ import styles from './Icon.module.scss';
 
 export type IconProps = Omit<FontAwesomeIconProps, 'size'> & {
     size?: FontAwesomeIconProps['size'] | 'xl';
-    color?: 'primary' | 'secondary';
+    color?: 'primary' | 'secondary' | 'error';
 };
 
 export const Icon = React.memo<IconProps>((props) => {
@@ -17,6 +17,7 @@ export const Icon = React.memo<IconProps>((props) => {
         <span
             className={clsx(styles.root, {
                 [styles.secondaryColor]: props.color == 'secondary',
+                [styles.errorColor]: props.color == 'error',
             })}
         >
             <FontAwesomeIcon {...(props as FontAwesomeIconProps)} />

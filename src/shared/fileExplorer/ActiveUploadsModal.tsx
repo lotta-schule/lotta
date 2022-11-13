@@ -37,6 +37,7 @@ export const ActiveUploadsModal = React.memo(() => {
                                     {upload.error && (
                                         <Icon
                                             icon={faCircleExclamation}
+                                            color={'error'}
                                             size={'lg'}
                                         />
                                     )}

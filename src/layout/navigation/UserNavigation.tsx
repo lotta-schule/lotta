@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { faCirclePlus, faCircleUser } from '@fortawesome/free-solid-svg-icons';
-
-import { Icon } from 'shared/Icon';
 import {
     faComments,
     faFolder,
@@ -14,7 +12,6 @@ import {
     faArrowRightFromBracket,
     faCaretDown,
 } from '@fortawesome/free-solid-svg-icons';
-
 import {
     Badge,
     NavigationButton,
@@ -22,6 +19,7 @@ import {
     Item,
 } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
+import { Icon } from 'shared/Icon';
 import { ArticleModel } from 'model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Article, User } from 'util/model';
