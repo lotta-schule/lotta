@@ -40,7 +40,8 @@ export const SelectFileButton = React.memo<SelectFileButtonProps>(
                 {React.createElement<ButtonProps>(
                     buttonComponent || Button,
                     {
-                        onClick: (e: React.MouseEvent) => {
+                        onMouseDown: (e: React.MouseEvent) => {
+                            e.stopPropagation();
                             e.preventDefault();
                             setIsSelectFileDialogOpen(true);
                         },
