@@ -1,25 +1,29 @@
 .root {
     display: inline-block;
+    width: 100%;
     border: 2px solid var(--lotta-color-secondary);
     position: relative;
+
     &:hover > div {
         display: flex;
     }
-}
-.overlay {
-    background-color: rgba(var(--lotta-highlight-color), 0.4);
-    backdrop-filter: blur(10px);
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-.removeButton {
-    border: none;
-    position: absolute;
-    top: var(--lotta-spacing);
-    right: var(--lotta-spacing);
+
+    .overlay {
+        background-color: rgba(var(--lotta-highlight-color), 0.4);
+        backdrop-filter: blur(10px);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+    }
+
+    .removeButton {
+        border: none;
+        position: absolute;
+        top: var(--lotta-spacing);
+        right: var(--lotta-spacing);
+    }
 }
