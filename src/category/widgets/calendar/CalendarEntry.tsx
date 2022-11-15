@@ -7,7 +7,7 @@ import clsx from 'clsx';
 
 import styles from './CalendarEntry.module.scss';
 import { Icon } from 'shared/Icon';
-import { faCircle } from '@fortawesome/free-regular-svg-icons';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 export type CalendarEntryProps = {
     event: CalendarEventModel;
@@ -55,6 +55,7 @@ export const CalendarEntry = React.memo<CalendarEntryProps>(
                                 {!!dot && (
                                     <Icon
                                         icon={faCircle}
+                                        size="xl"
                                         style={{ color: dot }}
                                         className={styles.calendarColorDot}
                                     />
