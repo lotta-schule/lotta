@@ -5,8 +5,8 @@
         margin: 0;
         padding: 0;
         font-family: sans-serif;
-        background-color: <%= theme_prop(@tenant, "palette.background.default", "#ffffff") %>;
-        color: <%= theme_prop(@tenant, "palette.text.primary", "#333333") %>;
+        background-color: <%= theme_prop(@tenant, "pageBackgroundColor", "#ffffff") %>;
+        color: <%= theme_prop(@tenant, "textColor", "#333333") %>;
       }
       header {
         min-height: 7.5em;
@@ -21,7 +21,7 @@
       }
       main {
         padding: 2em 4em;
-        border-color: <%= theme_prop(@tenant, "palette.secondary.main", "#333333") %>;
+        border-color: <%= theme_prop(@tenant, "primaryColor", "#333333") %>;
         border-style: solid;
         border-width: 4px 0 5px 0;
       }
@@ -30,7 +30,7 @@
         min-height: 3.75em;
       }
       a {
-        color: <%= theme_prop(@tenant, "palette.primary.main", "#333") %>;
+        color: <%= theme_prop(@tenant, "textColor", "#333") %>;
         font-weight: bolder;
         text-decoration: none;
       }
@@ -41,7 +41,7 @@
   </head>
   <body>
     <header>
-      <%= img_tag(logo_url(@tenant)) %>
+      <%= img_tag(logo_url(@tenant), style: "height: 80px; width: auto") %>
     </header>
     <main>
       <%= @inner_content %>
