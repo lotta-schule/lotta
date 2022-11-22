@@ -104,6 +104,13 @@ describe('src/messaging/MessagingView', () => {
                 await screen.findByRole('option', { name: /Lui/i })
             );
 
+            await waitFor(() => {
+                expect(screen.getByTestId('message-destination')).toBeVisible();
+            });
+            userEvent.click(
+                screen.getByRole('button', { name: 'Nachricht verfassen' })
+            );
+
             expect(screen.getByTestId('MessagesThread')).toBeVisible();
 
             const conversationButtons = await screen.findAllByRole('button', {
@@ -185,6 +192,13 @@ describe('src/messaging/MessagingView', () => {
             );
             userEvent.click(
                 await screen.findByRole('option', { name: /Michel/i })
+            );
+
+            await waitFor(() => {
+                expect(screen.getByTestId('message-destination')).toBeVisible();
+            });
+            userEvent.click(
+                screen.getByRole('button', { name: 'Nachricht verfassen' })
             );
 
             expect(screen.queryByTestId('MessagesThread')).toBeNull();
