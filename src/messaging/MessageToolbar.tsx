@@ -1,15 +1,12 @@
 import * as React from 'react';
+import { Button } from '@lotta-schule/hubert';
+import { faAdd, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { NewMessageDestination } from 'model';
-import { Button, Tab, Tabbar, Popover } from '@lotta-schule/hubert';
-
-import { GroupSelect } from 'shared/edit/GroupSelect';
+import { Icon } from 'shared/Icon';
 import { useIsMobile } from 'util/useIsMobile';
-import { useCurrentUser } from 'util/user/useCurrentUser';
-import { SearchUserField } from 'administration/users/SearchUserField';
+import { CreateMessageDialog } from './CreateMessageDialog';
 
 import styles from './MessageToolbar.module.scss';
-import { faAdd, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
 
 export interface MessageToolbarProps {
     onRequestNewMessage(subject: NewMessageDestination): void;
@@ -20,66 +17,16 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
     ({ onToggle, onRequestNewMessage }) => {
         const isMobile = useIsMobile();
 
-        const currentUser = useCurrentUser();
-
-        const [newMessageType, setNewMessageType] = React.useState<
-            'user' | 'group'
-        >('user');
+        const [isCreateMessageDialogOpen, setIsCreateMessageDialogOpen] =
+            React.useState(false);
 
         return (
             <div className={styles.root}>
-                <Popover
-                    aria-label={'Empfänger wählen'}
-                    className={styles.popover}
-                    buttonProps={{
-                        'aria-label': 'Neue Nachricht schreiben',
-                        icon: <Icon icon={faAdd} size={'lg'} />,
-                    }}
-                >
-                    <Tabbar
-                        value={newMessageType}
-                        onChange={(value) => {
-                            setNewMessageType(value as 'group' | 'user');
-                        }}
-                    >
-                        <Tab value={'user'} label={'Nutzer'} />
-                        {currentUser!.groups.length > 0 && (
-                            <Tab
-                                key={'group'}
-                                value={'group'}
-                                label={'Gruppe'}
-                            />
-                        )}
-                    </Tabbar>
-                    <div className={styles.tabsPanel}>
-                        {newMessageType === 'user' && (
-                            <SearchUserField
-                                className={styles.input}
-                                onSelectUser={(user) => {
-                                    onRequestNewMessage({ user });
-                                }}
-                            />
-                        )}
-                        {newMessageType === 'group' && (
-                            <GroupSelect
-                                className={styles.input}
-                                hidePublicGroupSelection
-                                label={'Gruppe wählen'}
-                                selectedGroups={[]}
-                                filterSelection={(group) =>
-                                    !!currentUser!.groups.find(
-                                        (g) => g.id === group.id
-                                    )
-                                }
-                                onSelectGroups={([group]) => {
-                                    if (group) {
-                                        onRequestNewMessage({ group });
-                                    }
-                                }}
-                            />
-                        )}
-                    </div>
-                </Popover>
+                <Button
+                    icon={<Icon icon={faAdd} size={'lg'} />}
+                    title={'Neue Nachricht schreiben'}
+                    onClick={() => setIsCreateMessageDialogOpen(true)}
+                ></Button>
                 {isMobile && onToggle && (
                     <Button
                         style={{ float: 'right' }}
@@ -88,6 +35,14 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                         icon={<Icon icon={faArrowLeft} size={'lg'} />}
                     />
                 )}
+                <CreateMessageDialog
+                    isOpen={isCreateMessageDialogOpen}
+                    onConfirm={(subject: NewMessageDestination) => {
+                        onRequestNewMessage(subject);
+                        setIsCreateMessageDialogOpen(false);
+                    }}
+                    onAbort={() => setIsCreateMessageDialogOpen(false)}
+                />
             </div>
         );
     }

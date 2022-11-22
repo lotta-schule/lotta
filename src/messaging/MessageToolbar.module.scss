@@ -10,19 +10,3 @@
         width: 100%;
     }
 }
-
-.popover {
-    overflow: visible;
-    min-height: 30vh;
-    width: 100%;
-    top: 5em;
-    z-index: 5000;
-
-    .tabsPanel {
-        margin-top: var(--lotta-spacing);
-    }
-
-    .input {
-        width: 100%;
-    }
-}

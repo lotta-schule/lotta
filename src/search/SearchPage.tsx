@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Button, Label, Input, CircularProgress } from '@lotta-schule/hubert';
 import { useQuery } from '@apollo/client';
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArticleModel, CategoryModel } from 'model';
 import { useDebounce } from 'util/useDebounce';
-import { AnimatePresence, motion } from 'framer-motion';
-
+import { Icon } from 'shared/Icon';
 import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
 import { ArticlePreviewDensedLayout } from 'article/preview';
@@ -12,8 +13,6 @@ import { ArticlePreviewDensedLayout } from 'article/preview';
 import SearchQuery from 'api/query/SearchQuery.graphql';
 
 import styles from './SearchPage.module.scss';
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-import { Icon } from 'shared/Icon';
 
 export const SearchPage = () => {
     const [searchText, setSearchText] = React.useState('');
