@@ -48,7 +48,6 @@
         "@jumpn/utils-graphql": "^0.6.0",
         "@lotta-schule/hubert": "^0.0.21",
         "@lotta-schule/theme": "^0.0.7",
-        "@material-ui/icons": "^4.11.3",
         "@reach/tooltip": "^0.18.0",
         "@sentry/nextjs": "^7.19.0",
         "apollo-v3-absinthe-upload-link": "^1.5.0",
