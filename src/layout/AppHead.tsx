@@ -25,7 +25,6 @@ export const AppHead = React.memo(() => {
             <meta name="theme-color" content={theme.primaryColor} />
             <meta name="apple-mobile-web-app-title" content={title} />
             <meta name="application-name" content={title} />
-            <link rel={'preconnect'} href={'https://fonts.gstatic.com'} />
         </Head>
     );
 });
