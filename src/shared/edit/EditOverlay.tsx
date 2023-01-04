@@ -7,6 +7,7 @@ import styles from './EditOverlay.module.scss';
 
 interface EditOverlayProps {
     label: string;
+    description?: string;
     style?: React.CSSProperties;
     onClick(event: React.MouseEvent<HTMLButtonElement>): void;
     onClickRemove?(event: React.MouseEvent<HTMLButtonElement>): void;
@@ -14,7 +15,7 @@ interface EditOverlayProps {
 }
 
 export const EditOverlay = React.memo<EditOverlayProps>(
-    ({ children, label, onClickRemove, style, onClick }) => {
+    ({ children, label, description, onClickRemove, style, onClick }) => {
         return (
             <div
                 className={styles.root}
@@ -31,6 +32,11 @@ export const EditOverlay = React.memo<EditOverlayProps>(
                         />
                     )}
                     <Button onClick={onClick}>{label}</Button>
+                    {description && (
+                        <span className={styles.imageDescription}>
+                            {description}
+                        </span>
+                    )}
                 </div>
                 {children}
             </div>
