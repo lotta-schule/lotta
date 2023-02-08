@@ -62,9 +62,10 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
                 data-testid={'RelatedArticlesList'}
                 initial={'hidden'}
                 animate={'visible'}
+                className={styles.root}
                 variants={containerVariants}
             >
-                <h6 className={styles.root}>
+                <h6 className={styles.title}>
                     Weitere Beiträge zum Thema <strong>{tag}</strong>
                 </h6>
                 {relatedArticles.map((article, i) => (

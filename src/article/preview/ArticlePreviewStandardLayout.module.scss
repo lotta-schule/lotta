@@ -70,6 +70,9 @@
             flex-grow: 1;
             flex-shrink: 0;
             width: 10em;
+            @media print {
+                display: none;
+            }
         }
     }
 
@@ -96,7 +99,7 @@
             width: 30%;
         }
         @media print {
-            width: 30%;
+            width: 20%;
         }
     }
     &.narrow .imageSection {
@@ -113,6 +116,9 @@
             font-size: 1.2rem;
             line-height: 1.05;
         }
+        @media print {
+            font-size: 2rem;
+        }
     }
 
     .previewSection {
@@ -122,6 +128,9 @@
         text-overflow: ellipsis;
         min-height: 3.2em;
         display: flex;
+        @media print {
+            color: rgb(var(--lotta-text-color));
+        }
         @media screen and (max-width: $max-xs) {
             padding: calc(0.5 * var(--lotta-spacing));
         }
