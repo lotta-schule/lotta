@@ -26,4 +26,11 @@
         top: var(--lotta-spacing);
         right: var(--lotta-spacing);
     }
+
+    .description {
+        position: absolute;
+        bottom: 0;
+        font-size: 0.7em;
+        color: rgba(var(--lotta-text-color), 0.4);
+    }
 }
