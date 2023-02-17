@@ -1,0 +1,36 @@
+---
+name: Tag production image
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+  build:
+    needs:
+      - setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker Login
+        uses: docker/login-action@v1.10.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: pull current image
+        run: |
+          docker pull ghcr.io/lotta-schule/core:$GITHUB_SHA
+
+      - name: push tagged image
+        run: |
+          docker tag ghcr.io/lotta-schule/core:$GITHUB_SHA ghcr.io/lotta-schule/core:$GITHUB_REF_NAME
+          docker tag ghcr.io/lotta-schule/core:$GITHUB_SHA ghcr.io/lotta-schule/core:latest
+          docker push ghcr.io/lotta-schule/core:$GITHUB_REF_NAME
+          docker push ghcr.io/lotta-schule/core:latest
