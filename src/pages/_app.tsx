@@ -194,8 +194,15 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
         const refreshResponse = await axios.request({
             baseURL: process.env.API_URL,
             url: '/auth/token/refresh',
+            data: {
+                token: refreshToken,
+            },
             method: 'POST',
-            headers: request.headers,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Forwarded-Host': request.headers.host,
+                Accept: 'application/json',
+            },
         });
         console.log({ refreshResponse });
         const refreshResponseData = refreshResponse?.data;
