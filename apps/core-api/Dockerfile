@@ -1,7 +1,7 @@
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.16
+ARG ALPINE_VERSION=3.17
 
-FROM elixir:1.14-alpine AS builder
+FROM elixir:1.14.3-alpine AS builder
 
 ENV MIX_ENV=prod
 
