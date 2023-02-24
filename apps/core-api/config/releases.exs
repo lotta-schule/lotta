@@ -88,24 +88,36 @@ config :ex_aws, :s3,
   region: System.fetch_env!("UGC_S3_COMPAT_REGION"),
   scheme: "https://"
 
-sentry_environment = System.get_env("SENTRY_ENVIRONMENT") || env || "staging"
-
 config :lotta, :admin_api_key,
   username: "admin",
   password: System.get_env("COCKPIT_ADMIN_API_KEY", "")
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
-  environment_name: sentry_environment,
+  environment_name: String.to_atom(env || "development"),
+  included_environments: ~w(production staging),
   release:
-    (case(sentry_environment) do
-       "production" ->
-         to_string(Application.spec(:my_app, :vsn))
-
-       _ ->
-         System.get_env("APP_RELEASE")
-     end)
+    (if env == "production" do
+       to_string(Application.spec(:my_app, :vsn))
+     end),
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!(),
+  enable_source_code_context: true,
+  root_source_code_paths: [File.cwd!()],
+  filter: Lotta.SentryFilter,
 
 config :lager,
   error_logger_redirect: false,
-  handlers: [level: :debug]
+  handlers: [
+    level: :info,
+    lager_console_backend: [
+      format: "$time $metadata[$level] $message"
+    ]
+  ]
+
+config :logger,
+  backends: [:console, Sentry.LoggerBackend],
+  level: :warn,
+  compile_time_purge_level: :info,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]

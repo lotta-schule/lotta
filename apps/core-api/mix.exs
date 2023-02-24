@@ -125,7 +125,8 @@ defmodule Lotta.MixProject do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.reset", "test"]
+      test: ["ecto.reset", "test"],
+      sentry_recompile: ["compile", "deps.compile sentry --force"]
     ]
   end
 end

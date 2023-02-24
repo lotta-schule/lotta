@@ -18,6 +18,7 @@ defmodule LottaWeb.TokenController do
 
     if is_nil(token) do
       Logger.error("token is nil")
+
       conn
       |> put_status(400)
       |> put_view(LottaWeb.ErrorView)

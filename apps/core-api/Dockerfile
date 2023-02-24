@@ -2,11 +2,11 @@
 ARG ALPINE_VERSION=3.17
 
 FROM elixir:1.14.3-alpine AS builder
+WORKDIR /app
 
 ENV MIX_ENV=prod
 
 RUN mkdir -p /app
-WORKDIR /app
 
 # This step installs all the build tools we'll need
 RUN apk update && \
@@ -27,6 +27,7 @@ COPY mix.exs mix.lock ./
 COPY config config
 RUN mix deps.get --only prod
 RUN mix deps.compile
+RUN mix deps.compile sentry --force
 
 # build project
 COPY priv priv
@@ -39,6 +40,7 @@ RUN mix release
 
 # From this line onwards, we're in a new image, which will be the image used in production
 FROM alpine:${ALPINE_VERSION}
+WORKDIR /app
 
 EXPOSE 4000
 
@@ -53,10 +55,10 @@ RUN apk update && \
     libstdc++
 
 RUN mkdir -p /app
-WORKDIR /app
 
 COPY --from=builder /app/_build/prod/rel/lotta ./
 RUN chown -R nobody: /app
+
 USER nobody
 
 ENV HOME=/app
