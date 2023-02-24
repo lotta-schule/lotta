@@ -51,6 +51,7 @@ jobs:
       - name: Run tests
         run: mix test --cover
         env:
+          CI: 1
           MIX_ENV: test
 
       - name: Codecov
