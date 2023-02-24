@@ -61,11 +61,8 @@ config :argon2_elixir,
   argon2_type: 1
 
 config :sentry,
-  filter: Lotta.SentryFilter,
   included_environments: ~w(production staging),
-  environment_name: Atom.to_string(Mix.env()),
-  enable_source_code_context: true,
-  root_source_code_paths: [File.cwd!()]
+  environment_name: Atom.to_string(Mix.env())
 
 # Configures Elixir's Logger
 config :logger,
