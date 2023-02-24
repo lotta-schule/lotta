@@ -15,23 +15,23 @@ defmodule LottaWeb.SearchResolver do
      from(a in Article, where: a.id in ^[3240, 3239, 1312, 249, 248, 2548])
      |> Repo.all()}
 
-    # current_user
-    # |> Article.get_published_articles_query()
-    # |> Search.filter_articles_search_query(
-    #   t,
-    #   searchtext,
-    #   construct_options(args[:options])
-    # )
-    # |> case do
-    #   {:error, msg} ->
-    #     {:error, msg}
+    current_user
+    |> Article.get_published_articles_query()
+    |> Search.filter_articles_search_query(
+      t,
+      searchtext,
+      construct_options(args[:options])
+    )
+    |> case do
+      {:error, msg} ->
+        {:error, msg}
 
-    #   query ->
-    #     {:ok,
-    #      query
-    #      |> Repo.all()
-    #      |> Enum.uniq_by(& &1.id)}
-    # end
+      query ->
+        {:ok,
+         query
+         |> Repo.all()
+         |> Enum.uniq_by(& &1.id)}
+    end
   end
 
   defp construct_options(nil), do: construct_options(%{})
