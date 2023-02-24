@@ -38,23 +38,26 @@ jobs:
     services:
       postgres:
         image: postgres:latest
+        options: >-
+          -e POSTGRES_USER=lotta
+          -e POSTGRES_PASSWORD=lotta
       rabbitmq:
         image: rabbitmq:latest
       redis:
         image: bitnami/redis:latest
+        options: >-
+          -e REDIS_PASSWORD=lotta
       minio:
-        image: minio/minio:latest
-        # entrypoint: ["sh"]
-        # command:
-        #   [
-        #     "-c",
-        #     "mkdir -p /export/lotta-dev-ugc && /opt/bin/minio server /export",
-        #   ]
+        image: bitnami/minio:latest
+        options: >-
+          -e MINIO_SERVER_ACCESS_KEY="AKIAIOSFODNN7EXAMPLE"
+          -e MINIO_SERVER_SECRET_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+          -e MINIO_DEFAULT_BUCKETS="lotta-dev-ugc"
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
         options: >-
-          -Ediscovery.type=single-node
-          -Expack.security.enabled=false
+          -e discovery.type=single-node
+          -e xpack.security.enabled=false
 
     steps:
       - uses: actions/checkout@v3
@@ -70,6 +73,8 @@ jobs:
 
       - name: Run tests
         run: mix test --cover
+        env:
+          MIX_ENV: test
 
       - name: Codecov
         uses: codecov/codecov-action@v3
@@ -86,11 +91,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - uses: erlef/setup-beam@v1
+        name: Setup Elixir
         with:
-          node-version: 19
-          cache: npm
+          otp-version: "25.2"
+          elixir-version: "1.14.2"
 
       - name: Install Dependencies
         run: npm ci
