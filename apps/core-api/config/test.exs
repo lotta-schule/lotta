@@ -1,7 +1,7 @@
 import Config
 
 ci_or_localhost = fn host ->
-  if is_nil(System.get_env("CI")), do: "127.0.0.1", else: host
+  host
 end
 
 # Configure your database
