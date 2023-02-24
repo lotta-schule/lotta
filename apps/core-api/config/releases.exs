@@ -24,7 +24,7 @@ config :lotta, :rabbitmq,
       scheme: "amqp",
       userinfo:
         if System.get_env("RABBITMQ_PASSWORD") do
-          "#{URI.encode_www_form(System.get_env("RABBITMQ_USER"))}:#{URI.encode_www_form(System.get_env("RABBITMQ_PASSWORD"))}"
+          "#{URI.encode_www_form(System.get_env("RABBITMQ_USER") || "")}:#{URI.encode_www_form(System.get_env("RABBITMQ_PASSWORD"))}"
         else
           System.get_env("RABBITMQ_USER")
         end
