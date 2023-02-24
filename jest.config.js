@@ -23,7 +23,7 @@ module.exports = {
         '^.+\\.module\\.(css|sass|scss)$',
     ],
     roots: ['<rootDir>/src'],
-    reporters: ['default'],
+    reporters: process.env.CI ? ['default'] : ['default', 'jest-junit'],
     moduleDirectories: ['node_modules', '<rootDir>/src'],
     testEnvironment: 'jsdom',
     collectCoverageFrom: [
