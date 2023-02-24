@@ -101,10 +101,8 @@ config :sentry,
        to_string(Application.spec(:my_app, :vsn))
      end),
   enable_source_code_context: true,
-  root_source_code_path: File.cwd!(),
-  enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()],
-  filter: Lotta.SentryFilter,
+  filter: Lotta.SentryFilter
 
 config :lager,
   error_logger_redirect: false,
