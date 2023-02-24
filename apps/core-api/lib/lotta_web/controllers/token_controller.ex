@@ -17,7 +17,7 @@ defmodule LottaWeb.TokenController do
     token = params["token"] || conn.cookies["SignInRefreshToken"]
 
     if is_nil(token) do
-      IO.inspect("token is nil"))
+      IO.inspect("token is nil")
       conn
       |> put_status(400)
       |> put_view(LottaWeb.ErrorView)
