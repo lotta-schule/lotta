@@ -1,7 +1,7 @@
 import Config
 
 ci_or_localhost = fn host ->
-  host
+  "127.0.0.1"
 end
 
 # Configure your database
