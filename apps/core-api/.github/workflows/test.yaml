@@ -16,23 +16,33 @@ jobs:
     services:
       postgres:
         image: postgres:latest
+        ports:
+          - 5432:5432
         options: >-
           -e POSTGRES_USER=lotta
           -e POSTGRES_PASSWORD=lotta
       rabbitmq:
         image: rabbitmq:latest
+        ports:
+          - 5672:5672
       redis:
         image: bitnami/redis:latest
+        ports:
+          - 6379:6379
         options: >-
           -e REDIS_PASSWORD=lotta
       minio:
         image: bitnami/minio:latest
+        ports:
+          - 9000:9000
         options: >-
           -e MINIO_SERVER_ACCESS_KEY="AKIAIOSFODNN7EXAMPLE"
           -e MINIO_SERVER_SECRET_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
           -e MINIO_DEFAULT_BUCKETS="lotta-dev-ugc"
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+        ports:
+          - 9200:9200
         options: >-
           -e discovery.type=single-node
           -e xpack.security.enabled=false
