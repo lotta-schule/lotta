@@ -11,7 +11,6 @@ defmodule LottaWeb.SearchResolver do
   def search(%{search_text: searchtext} = args, %{
         context: %Context{current_user: current_user, tenant: t}
       }) do
-
     current_user
     |> Article.get_published_articles_query()
     |> Search.filter_articles_search_query(
