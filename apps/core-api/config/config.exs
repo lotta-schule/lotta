@@ -35,8 +35,8 @@ config :lotta, Lotta.Elasticsearch.Cluster,
       settings: "priv/elasticsearch/articles.json",
       store: Lotta.Elasticsearch.Store,
       sources: [Lotta.Content.Article],
-      bulk_page_size: 150,
-      bulk_wait_interval: 20_000
+      bulk_page_size: 1000,
+      bulk_wait_interval: 15_000
     }
   },
   default_options: [

@@ -11,9 +11,6 @@ defmodule LottaWeb.SearchResolver do
   def search(%{search_text: searchtext} = args, %{
         context: %Context{current_user: current_user, tenant: t}
       }) do
-    {:ok,
-     from(a in Article, where: a.id in ^[3240, 3239, 1312, 249, 248, 2548])
-     |> Repo.all()}
 
     current_user
     |> Article.get_published_articles_query()
