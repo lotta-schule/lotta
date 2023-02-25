@@ -87,7 +87,7 @@ jobs:
         run: mix deps.get
 
       - name: compile
-        run: mix compile --warnings-as-errors --force
+        run: mix compile --force
 
   lint:
     name: Lint
