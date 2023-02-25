@@ -8,6 +8,8 @@ defmodule Lotta.TenantsTest do
   @prefix "tenant_test"
 
   setup do
+    Code.put_compiler_option(:ignore_module_conflict, true)
+
     :ok
   end
 
@@ -33,7 +35,10 @@ defmodule Lotta.TenantsTest do
       assert %Tenant{slug: "test"} = Tenants.get_by_custom_domain("test-domain.com")
     end
 
+    @tag creates_tenant: true
     test "should create a new tenant" do
+      Code.purge_compiler_modules()
+
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},
@@ -46,7 +51,10 @@ defmodule Lotta.TenantsTest do
                Lotta.Repo.all(Lotta.Accounts.User, prefix: tenant.prefix)
     end
 
+    @tag creates_tenant: true
     test "should delete a given tenant" do
+      Code.purge_compiler_modules()
+
       assert {:ok, tenant} =
                Tenants.create_tenant(
                  user_params: %{name: "Salvador Allende", email: "salvador.allende@einsa.net"},

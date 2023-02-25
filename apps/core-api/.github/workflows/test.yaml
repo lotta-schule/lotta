@@ -59,7 +59,12 @@ jobs:
         run: mix deps.get --only test
 
       - name: Run tests
-        run: mix test --cover
+        run: |
+          mix test --only creates_tenant --cover
+          for i in {1..3}; do
+            rm -rf _build
+            MIX_TEST_PARTITION=$i mix test --only creates_tenant --partitions $i
+          done
         env:
           MIX_ENV: test
 

@@ -14,6 +14,8 @@ defmodule Lotta.Tenants.DefaultContentTest do
   alias Lotta.Accounts.Authentication
 
   setup do
+    Code.purge_compiler_modules()
+
     {:ok, tenant} =
       Tenants.create_tenant(
         user_params: %{
@@ -29,6 +31,7 @@ defmodule Lotta.Tenants.DefaultContentTest do
     {:ok, %{tenant: tenant}}
   end
 
+  @tag creates_tenant: true
   describe "default content" do
     test "should create a default admin user and send him or her a mail with his or her password",
          %{tenant: t} do
