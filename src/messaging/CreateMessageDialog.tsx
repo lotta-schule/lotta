@@ -113,8 +113,9 @@ export const CreateMessageDialog = React.memo<CreateMessageDialogProps>(
                                 <em>
                                     <UserAvatar
                                         user={messageDestination.user}
-                                        size={16}
+                                        size={20}
                                     />
+                                    &nbsp;
                                     {messageDestination.user.name}
                                 </em>
                             ) : (
