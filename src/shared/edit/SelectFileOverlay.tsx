@@ -6,6 +6,7 @@ import FileExplorer from 'shared/fileExplorer/FileExplorer';
 
 interface SelectFileOverlayProps {
     label: string;
+    description?: string;
     allowDeletion?: boolean;
     style?: React.CSSProperties;
     fileFilter?(file: FileModel): boolean;
@@ -17,6 +18,7 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
         ({
             children,
             label,
+            description,
             allowDeletion,
             fileFilter,
             style,
@@ -32,6 +34,7 @@ export const SelectFileOverlay: React.FunctionComponent<SelectFileOverlayProps> 
                     <EditOverlay
                         style={style}
                         label={label}
+                        description={description}
                         onClick={() => setIsSelectFileDialogOpen(true)}
                         onClickRemove={onClickRemove}
                     >

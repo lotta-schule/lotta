@@ -29,6 +29,7 @@
 
     .previewText {
         font-size: 0.85em;
+        padding-bottom: calc(0.5 * var(--lotta-spacing));
         @media screen and (max-width: $max-sm) {
             line-height: 1.1;
         }
