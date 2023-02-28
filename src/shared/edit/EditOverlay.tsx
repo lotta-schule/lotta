@@ -33,7 +33,9 @@ export const EditOverlay = React.memo<EditOverlayProps>(
                     )}
                     <Button onClick={onClick}>{label}</Button>
                     {description && (
-                        <p className={styles.description}>{description}</p>
+                        <span className={styles.imageDescription}>
+                            {description}
+                        </span>
                     )}
                 </div>
                 {children}

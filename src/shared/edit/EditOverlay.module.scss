@@ -27,10 +27,9 @@
         right: var(--lotta-spacing);
     }
 
-    .description {
+    .imageDescription {
         position: absolute;
-        bottom: 0;
-        font-size: 0.7em;
-        color: rgba(var(--lotta-text-color), 0.4);
+        bottom: var(--lotta-spacing);
+        font-size: 0.8rem;
     }
 }
