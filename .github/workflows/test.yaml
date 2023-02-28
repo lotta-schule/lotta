@@ -1,0 +1,105 @@
+---
+name: Test
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    setup:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 19
+                  cache: npm
+
+            - name: Install Dependencies
+              run: npm ci
+
+    test:
+        runs-on: ubuntu-latest
+        needs: ['setup']
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 19
+                  cache: npm
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Run tests
+              run: npm test -- --coverage
+
+            - name: Codecov
+              uses: codecov/codecov-action@v3
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  directory: coverage
+                  fail_ci_if_error: true
+
+    build:
+        runs-on: ubuntu-latest
+        needs: ['setup']
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 19
+                  cache: npm
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: build
+              run: npm run build
+
+            - uses: actions/upload-artifact@v3
+              with:
+                  name: ${{ github.sha }}-build_output
+                  path: .next
+                  retention-days: 1
+
+    codeQL:
+        runs-on: ubuntu-latest
+        needs: ['build']
+
+        permissions:
+            security-events: write
+            actions: read
+            contents: read
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Initialize CodeQL
+              uses: github/codeql-action/init@v2
+              with:
+                  languages: javascript
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - uses: actions/download-artifact@v3
+              with:
+                  name: ${{ github.sha }}-build_output
+
+            - name: Perform CodeQL Analysis
+              uses: github/codeql-action/analyze@v2

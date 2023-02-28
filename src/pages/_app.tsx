@@ -126,6 +126,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
 };
 
 const maybeChangeRefreshToken = async (context: AppContext) => {
+    console.log('maybeChangeRefreshToken');
     const request = context.ctx.req;
     const response = context.ctx.res;
 
@@ -134,15 +135,24 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
     }
 
     const jwt = request.headers.authorization?.replace(/^Bearer /, '');
+    console.log({ jwt });
     if (jwt) {
         const decoded = JwtDecode(jwt, { header: false });
+        console.log({ decoded });
         const expires = new Date((decoded as any).exp * 1000);
         if (expires.getTime() > new Date().getTime() + 30_000) {
+            console.log(
+                'token seems legit and does not expire in next 30 seconds'
+            );
             // If token seems legit and does not expire in next 30 seconds,
             // keep it and go on.
             // A more thorough validation will be made on API side
             return;
         }
+        console.log(
+            'token seems to be expired or expires in next 30s- ',
+            expires
+        );
     }
 
     if (!response) {
@@ -153,6 +163,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
     // Following code executes when there is no (up-to-date)
     // jwt token available on the request Authorization header
     const refreshToken = Cookies.get('SignInRefreshToken');
+    console.log({ refreshToken });
 
     if (!refreshToken) {
         return;
@@ -160,7 +171,11 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
 
     const decoded = JwtDecode(refreshToken, { header: false });
     const expires = new Date((decoded as any).exp * 1000);
+    console.log({ decoded, expires });
     if (expires.getTime() < new Date().getTime() + 10_000) {
+        console.log(
+            'token has/will expire in next 10 seconds, so dont bother refreshing it, could be too late, let the user just sign in again'
+        );
         // token has/will expire in next 10 seconds, so don't
         // bother refreshing it, could be too late, let the
         // user just sign in again
@@ -171,6 +186,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
         return;
     }
 
+    console.log('refreshing token');
     // We made it here so it seems we have a valid refresh token.
     // We'll make an auth token from it and swap the refreshToken
     // in order to authenticate the request
@@ -178,9 +194,17 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
         const refreshResponse = await axios.request({
             baseURL: process.env.API_URL,
             url: '/auth/token/refresh',
+            data: {
+                token: refreshToken,
+            },
             method: 'POST',
-            headers: request.headers,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Forwarded-Host': request.headers.host,
+                Accept: 'application/json',
+            },
         });
+        console.log({ refreshResponse });
         const refreshResponseData = refreshResponse?.data;
 
         if (refreshResponseData?.accessToken) {
