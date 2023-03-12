@@ -69,8 +69,8 @@ const nextConfig = {
         return config;
     },
     publicRuntimeConfig: {
-        appEnvironment: process.env.APP_ENVIRONMENT,
-        imageName: process.env.IMAGE_NAME,
+        appEnvironment: process.env.APP_ENVIRONMENT || process.env.NODE_ENV || 'development',
+        imageName: process.env.IMAGE_NAME || 'test',
         sentryDsn: process.env.SENTRY_DSN,
         socketUrl: process.env.API_SOCKET_URL,
         cloudimageToken: process.env.CLOUDIMG_TOKEN,
