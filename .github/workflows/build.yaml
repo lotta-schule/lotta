@@ -21,7 +21,7 @@ jobs:
 
       - name: Build docker image
         env:
-          IMAGE_NAME: ghcr.io/${{ github.repository }}:$GITHUB_SHA
+          IMAGE_NAME: ghcr.io/${{ github.repository }}:${{ github.sha }}
         run: docker build --build-arg IMAGE_NAME -t $IMAGE_NAME .
 
       - name: Docker Login
