@@ -34,3 +34,13 @@ jobs:
           docker tag ghcr.io/lotta-schule/core:$GITHUB_SHA ghcr.io/lotta-schule/core:latest
           docker push ghcr.io/lotta-schule/core:$GITHUB_REF_NAME
           docker push ghcr.io/lotta-schule/core:latest
+
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: core
+        with:
+          environment: production
+          version: ${{ github.ref_name }}
