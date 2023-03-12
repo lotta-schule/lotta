@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build docker image
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}:$GITHUB_SHA
         run: docker build -t ghcr.io/${{ github.repository }}:$GITHUB_SHA .
 
       - name: Docker Login

@@ -1,4 +1,5 @@
 ARG SENTRY_AUTH_TOKEN
+ARG IMAGE_NAME
 
 FROM node:19.0-alpine AS deps
 RUN apk add --no-cache libc6-compat
