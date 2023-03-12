@@ -46,7 +46,7 @@
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@jest/globals": "^29.3.1",
         "@jumpn/utils-graphql": "^0.6.0",
-        "@lotta-schule/hubert": "^0.0.27",
+        "@lotta-schule/hubert": "^0.0.28",
         "@lotta-schule/theme": "^0.0.7",
         "@reach/tooltip": "^0.18.0",
         "@sentry/nextjs": "^7.19.0",
