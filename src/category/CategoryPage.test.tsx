@@ -76,7 +76,8 @@ describe('shared/article/CategoryLayout', () => {
             const headerContent = await screen.findByTestId('HeaderContent');
             const image = headerContent.querySelector('img');
             expect(image).toBeVisible();
-            expect(image!.src).toMatch(/\/storage\/f\/123$/);
+            const imageUrl = new URL(image!.src);
+            expect(imageUrl.pathname).toEqual('//storage/f/123');
         });
 
         it('should render the widgets list', async () => {
