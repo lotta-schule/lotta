@@ -2,6 +2,12 @@ import Config
 
 env = System.get_env("APP_ENVIRONMENT")
 
+image_tag =
+  case String.split(System.get_env("IMAGE_NAME", ""), ":") do
+    [image, tag] -> tag
+    _ -> nil
+  end
+
 if env do
   config :lotta, :environment, env
 else
@@ -107,10 +113,7 @@ if config_env() == :prod do
     dsn: System.get_env("SENTRY_DSN"),
     environment_name: String.to_atom(env || "development"),
     included_environments: ~w(production staging),
-    release:
-      (if env == "production" do
-         to_string(Application.spec(:my_app, :vsn))
-       end),
+    release: image_tag,
     enable_source_code_context: true,
     root_source_code_paths: [File.cwd!()],
     filter: Lotta.SentryFilter
