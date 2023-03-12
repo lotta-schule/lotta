@@ -6,12 +6,14 @@ import * as Sentry from '@sentry/nextjs';
 import getConfig from 'next/config';
 
 const {
-    publicRuntimeConfig: { appEnvironment, sentryDsn },
+    publicRuntimeConfig: { appEnvironment, imageName, sentryDsn },
 } = getConfig();
 
 Sentry.init({
     dsn: sentryDsn,
     environment: appEnvironment,
+    enabled: appEnvironment && appEnvironment !== 'development',
+    release: imageName.split(':')[1],
     // Adjust this value in production, or use tracesSampler for greater control
     tracesSampleRate: 0.01,
     // ...
