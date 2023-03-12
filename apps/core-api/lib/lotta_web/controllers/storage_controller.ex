@@ -18,11 +18,12 @@ defmodule LottaWeb.StorageController do
     else
       conn
       |> redirect(
-        external: Storage.get_http_url(
-          file,
-          download: !is_nil(params["download"]),
-          processing: build_processing_options(params)
-        )
+        external:
+          Storage.get_http_url(
+            file,
+            download: !is_nil(params["download"]),
+            processing: build_processing_options(params)
+          )
       )
     end
   end
@@ -38,11 +39,12 @@ defmodule LottaWeb.StorageController do
     else
       conn
       |> redirect(
-        external: Storage.get_http_url(
-          file_conversion,
-          download: !is_nil(params["download"]),
-          processing: build_processing_options(params)
-        )
+        external:
+          Storage.get_http_url(
+            file_conversion,
+            download: !is_nil(params["download"]),
+            processing: build_processing_options(params)
+          )
       )
     end
   end
@@ -54,6 +56,7 @@ defmodule LottaWeb.StorageController do
         %{},
         fn key, acc ->
           value = params[to_string(key)]
+
           if value != nil do
             Map.put(acc, key, value)
           else
@@ -63,6 +66,5 @@ defmodule LottaWeb.StorageController do
       )
 
     processing_options
-
   end
 end

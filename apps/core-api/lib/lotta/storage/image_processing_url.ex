@@ -4,10 +4,10 @@ defmodule Lotta.Storage.ImageProcessingUrl do
   """
 
   @type processing_options :: %{
-    width: integer(),
-    height: integer(),
-    fn: :cover | :fit | :bound,
-  }
+          width: integer(),
+          height: integer(),
+          fn: :cover | :fit | :bound
+        }
 
   @doc """
   Given the http URL of an asset, return the http url to the transformed asset, as per the options
@@ -15,6 +15,7 @@ defmodule Lotta.Storage.ImageProcessingUrl do
   @spec get_url(String.t() | nil, processing_options() | nil) :: String.t() | nil
   def get_url(nil, _), do: nil
   def get_url(url, nil), do: url
+
   def get_url(url, processing_opts) do
     uri = URI.parse(url)
 
@@ -50,10 +51,14 @@ defmodule Lotta.Storage.ImageProcessingUrl do
     |> Enum.member?(host)
   end
 
-  defp add_width(params, %{width: width}) when not is_nil(width), do: Keyword.put(params, :width, width)
+  defp add_width(params, %{width: width}) when not is_nil(width),
+    do: Keyword.put(params, :width, width)
+
   defp add_width(params, _), do: params
 
-  defp add_height(params, %{height: height}) when not is_nil(height), do: Keyword.put(params, :height, height)
+  defp add_height(params, %{height: height}) when not is_nil(height),
+    do: Keyword.put(params, :height, height)
+
   defp add_height(params, _), do: params
 
   defp add_fit(params, %{fn: :fit}), do: Keyword.put(params, :fit, "contain")

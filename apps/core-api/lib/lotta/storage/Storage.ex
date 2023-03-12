@@ -396,7 +396,6 @@ defmodule Lotta.Storage do
       |> RemoteStorage.get_http_url(opts)
       |> ImageProcessingUrl.get_url(opts[:processing])
     end
-
   end
 
   @doc """

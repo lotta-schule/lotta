@@ -22,8 +22,7 @@ config :lotta, :redis_connection,
 
 config :lotta, Lotta.Mailer, adapter: Bamboo.TestAdapter
 
-config :lotta, Lotta.Elasticsearch.Cluster,
-  url: "http://localhost:9200"
+config :lotta, Lotta.Elasticsearch.Cluster, url: "http://localhost:9200"
 
 config :ex_aws, :s3,
   http_client: ExAws.Request.Hackney,
@@ -45,8 +44,7 @@ config :lotta, Lotta.Storage.RemoteStorage,
     }
   }
 
-config :lotta, Lotta.Storage.ImageProcessingUrl,
-  hosts: ["ugc.lotta.schule"]
+config :lotta, Lotta.Storage.ImageProcessingUrl, hosts: ["ugc.lotta.schule"]
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
