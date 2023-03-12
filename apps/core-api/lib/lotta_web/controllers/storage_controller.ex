@@ -16,7 +16,14 @@ defmodule LottaWeb.StorageController do
       |> put_view(LottaWeb.ErrorView)
       |> render(:"404")
     else
-      redirect(conn, external: Storage.get_http_url(file, download: !is_nil(params["download"])))
+      conn
+      |> redirect(
+        external: Storage.get_http_url(
+          file,
+          download: !is_nil(params["download"]),
+          processing: build_processing_options(params)
+        )
+      )
     end
   end
 
@@ -29,9 +36,33 @@ defmodule LottaWeb.StorageController do
       |> put_view(LottaWeb.ErrorView)
       |> render(:"404")
     else
-      redirect(conn,
-        external: Storage.get_http_url(file_conversion, download: !is_nil(params["download"]))
+      conn
+      |> redirect(
+        external: Storage.get_http_url(
+          file_conversion,
+          download: !is_nil(params["download"]),
+          processing: build_processing_options(params)
+        )
       )
     end
+  end
+
+  defp build_processing_options(params) do
+    processing_options =
+      Enum.reduce(
+        [:width, :height, :fn],
+        %{},
+        fn key, acc ->
+          value = params[to_string(key)]
+          if value != nil do
+            Map.put(acc, key, value)
+          else
+            acc
+          end
+        end
+      )
+
+    processing_options
+
   end
 end

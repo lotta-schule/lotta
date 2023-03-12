@@ -2,7 +2,6 @@
 version: "3.8"
 
 services:
-
   postgres:
     image: postgres:11.12
     volumes:
@@ -15,7 +14,6 @@ services:
       POSTGRES_USER: lotta
       POSTGRES_PASSWORD: lotta
       POSTGRES_DB: lotta
-
 
   redis:
     image: bitnami/redis:latest
@@ -60,6 +58,14 @@ services:
       - MINIO_ROOT_PASSWORD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
     ports:
       - 9000:9000
+
+  minio-console:
+    image: minio/console
+    command: server
+    environment:
+      - CONSOLE_MINIO_SERVER=http://minio:9000
+    ports:
+      - 9090:9090
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.7.0

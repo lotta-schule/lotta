@@ -71,6 +71,12 @@ config :lotta, Lotta.Storage.RemoteStorage,
       })
     end)
 
+config :lotta, Lotta.Storage.ImageProcessingUrl,
+  hosts:
+    System.get_env("IMAGE_PROCESSING_HOSTS", "")
+    |> String.split(",")
+    |> Enum.filter(&String.length(&1))
+
 config :lotta, Lotta.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),

@@ -12,7 +12,7 @@ defmodule Lotta.Storage do
   alias Lotta.Repo
   alias Lotta.Accounts.User
   alias Lotta.Queue.MediaConversionRequestPublisher
-  alias Lotta.Storage.{Directory, RemoteStorage}
+  alias Lotta.Storage.{Directory, ImageProcessingUrl, RemoteStorage}
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -24,7 +24,7 @@ defmodule Lotta.Storage do
 
   @doc """
   Upload a file to a given directory for a given user.
-  Creates the file object in the database and stores the data in the 
+  Creates the file object in the database and stores the data in the
   default RemoteStorage.
   """
   @doc since: "2.5.0"
@@ -391,7 +391,12 @@ defmodule Lotta.Storage do
       |> Repo.preload(:remote_storage_entity)
       |> Map.get(:remote_storage_entity)
 
-    if entity, do: RemoteStorage.get_http_url(entity, opts)
+    if entity do
+      entity
+      |> RemoteStorage.get_http_url(opts)
+      |> ImageProcessingUrl.get_url(opts[:processing])
+    end
+
   end
 
   @doc """

@@ -11,7 +11,7 @@ defmodule Lotta.Storage.RemoteStorage do
           config: map()
         }
 
-  @type get_http_url_options :: [{:download, boolean()}]
+  @type get_http_url_options :: [download: boolean()]
 
   @doc """
   Get the config for a given store (identified by name). Returns an :error-Tuple if the store is not available
