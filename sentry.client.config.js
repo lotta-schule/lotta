@@ -12,7 +12,7 @@ const {
 Sentry.init({
     dsn: sentryDsn,
     environment: appEnvironment,
-    enabled: appEnvironment && appEnvironment !== 'development',
+    enabled: appEnvironment && !['test', 'development'].includes(appEnvironment),
     release: imageName.split(':')[1],
     // Adjust this value in production, or use tracesSampler for greater control
     tracesSampleRate: 0.01,
