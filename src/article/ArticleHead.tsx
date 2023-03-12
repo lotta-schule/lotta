@@ -18,7 +18,7 @@ export const ArticleHead = React.memo<ArticleHeadProps>(({ article }) => {
     const { url: twitterImageUrl } = useImageUrl(
         article?.previewImageFile &&
             File.getFileRemoteLocation(baseUrl, article.previewImageFile),
-        { width: 1200, height: 630, resize: 'fit' }
+        { width: 1200, height: 630, resize: 'cover' }
     );
 
     return (

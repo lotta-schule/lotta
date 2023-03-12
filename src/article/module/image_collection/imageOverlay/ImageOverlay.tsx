@@ -111,7 +111,7 @@ export const ImageOverlay: React.FunctionComponent<ImageOverlayProps> =
                         width={width}
                         height={height}
                         className={styles.image}
-                        resize={'fit'}
+                        resize={'inside'}
                         sizes={'80vw'}
                     />
                     {caption && (

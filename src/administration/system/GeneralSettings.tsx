@@ -45,7 +45,7 @@ export const GeneralSettings = () => {
                         >
                             {logo ? (
                                 <ResponsiveImage
-                                    resize={'fit'}
+                                    resize={'inside'}
                                     height={80}
                                     src={File.getFileRemoteLocation(
                                         baseUrl,

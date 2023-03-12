@@ -48,7 +48,7 @@ export const BaseLayout = React.memo(({ children }) => {
                         <Link href={'/'} passHref>
                             <a title={'Startseite'}>
                                 <ResponsiveImage
-                                    resize={'fit'}
+                                    resize={'inside'}
                                     height={80}
                                     src={File.getFileRemoteLocation(
                                         baseUrl,

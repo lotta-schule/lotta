@@ -86,7 +86,7 @@ export const FileUsageModal = React.memo(() => {
                                 <>
                                     {usage.article?.previewImageFile && (
                                         <ResponsiveImage
-                                            resize={'cover'}
+                                            resize={'contain'}
                                             width={100}
                                             aspectRatio={'4:3'}
                                             src={File.getFileRemoteLocation(
@@ -99,7 +99,7 @@ export const FileUsageModal = React.memo(() => {
                                     {usage.tenant?.configuration
                                         .logoImageFile && (
                                         <ResponsiveImage
-                                            resize={'fit'}
+                                            resize={'inside'}
                                             height={75}
                                             src={File.getFileRemoteLocation(
                                                 baseUrl,
