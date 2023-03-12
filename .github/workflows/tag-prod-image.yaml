@@ -43,4 +43,4 @@ jobs:
           SENTRY_PROJECT: web
         with:
           environment: production
-          version: ${{ github.ref.name }}
+          version: ${{ github.ref_name }}
