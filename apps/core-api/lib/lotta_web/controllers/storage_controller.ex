@@ -17,6 +17,7 @@ defmodule LottaWeb.StorageController do
       |> render(:"404")
     else
       conn
+      |> put_resp_header("cache-control", "max-age=604800")
       |> redirect(
         external:
           Storage.get_http_url(
@@ -38,6 +39,7 @@ defmodule LottaWeb.StorageController do
       |> render(:"404")
     else
       conn
+      |> put_resp_header("cache-control", "max-age=604800")
       |> redirect(
         external:
           Storage.get_http_url(

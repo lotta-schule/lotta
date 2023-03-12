@@ -24,6 +24,15 @@ defmodule LottaWeb.StorageControllerTest do
   end
 
   describe "File / FileConversion proxy" do
+    test "Should return a cache-control header", %{f: file} do
+      conn =
+        build_conn()
+        |> put_req_header("tenant", "slug:test")
+        |> get("/storage/f/#{file.id}")
+
+      assert ["max-age=604800"] = Plug.Conn.get_resp_header(conn, "cache-control")
+    end
+
     test "Should redirect to the file when requested", %{f: file} do
       conn =
         build_conn()
