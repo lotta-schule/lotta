@@ -66,6 +66,6 @@ defmodule Lotta.Storage.ImageProcessingUrl do
   defp add_fit(params, %{fn: :cover}), do: Keyword.put(params, :crop, "smart")
   defp add_fit(params, _), do: params
 
-  defp add_defaults(params = [_ | _]), do: Keyword.put(params, :metadata, 1)
+  defp add_defaults([_ | _] = params), do: Keyword.put(params, :metadata, 1)
   defp add_defaults(_), do: []
 end

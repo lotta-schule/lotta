@@ -7,8 +7,6 @@
 # General application configuration
 import Config
 
-config :lotta, :environment, Mix.env()
-
 config :lotta,
   ecto_repos: [Lotta.Repo]
 
