@@ -35,7 +35,6 @@ defmodule LottaWeb.ScheduleResolver do
 
         case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
           {:ok, 200, _headers, client_ref} ->
-            :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}])
             {:ok, body} = :hackney.body(client_ref)
             {:ok, Poison.decode!(body)}
 
