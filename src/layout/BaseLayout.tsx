@@ -3,7 +3,7 @@ import { Navbar } from './navigation/Navbar';
 import { File } from 'util/model';
 import { Box, NoSsr, ScrollToTopButton } from '@lotta-schule/hubert';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
-import { useCloudimageUrl } from 'util/image/useCloudimageUrl';
+import { useImageUrl } from 'util/image/useImageUrl';
 import { useTenant } from 'util/tenant/useTenant';
 import { useServerData } from 'shared/ServerDataContext';
 import Link from 'next/link';
@@ -20,10 +20,10 @@ export const BaseLayout = React.memo(({ children }) => {
             baseUrl,
             tenant.configuration.backgroundImageFile
         );
-    const { url: imageUrlSimple } = useCloudimageUrl(backgroundImageUrl, {
+    const { url: imageUrlSimple } = useImageUrl(backgroundImageUrl, {
         width: 3000,
     });
-    const { url: imageUrlRetina } = useCloudimageUrl(backgroundImageUrl, {
+    const { url: imageUrlRetina } = useImageUrl(backgroundImageUrl, {
         width: 1500,
     });
     return (

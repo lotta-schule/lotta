@@ -1,5 +1,5 @@
 import { UserModel, ArticleModel } from 'model';
-import { createCloudimageUrl } from 'util/image/useCloudimageUrl';
+import { createImageUrl } from 'util/image/useImageUrl';
 import { File } from './File';
 
 export const User = {
@@ -16,7 +16,7 @@ export const User = {
 
     getAvatarUrl(baseUrl: string, user?: UserModel | null, size: number = 100) {
         return user?.avatarImageFile
-            ? createCloudimageUrl(
+            ? createImageUrl(
                   File.getFileRemoteLocation(baseUrl, user.avatarImageFile),
                   { width: size, aspectRatio: '1:1', resize: 'cover' }
               )

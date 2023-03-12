@@ -4,7 +4,7 @@ import { Category, File } from 'util/model';
 import { Tenant } from 'util/model/Tenant';
 import { useTenant } from 'util/tenant/useTenant';
 import { useServerData } from 'shared/ServerDataContext';
-import { useCloudimageUrl } from 'util/image/useCloudimageUrl';
+import { useImageUrl } from 'util/image/useImageUrl';
 import Head from 'next/head';
 
 export interface CategoryHeadProps {
@@ -23,7 +23,7 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
         ? tenant.title
         : `${category.title} bei ${tenant.title}`;
 
-    const { url: logoImageUrl } = useCloudimageUrl(
+    const { url: logoImageUrl } = useImageUrl(
         tenant.configuration.logoImageFile &&
             File.getFileRemoteLocation(
                 baseUrl,
@@ -31,7 +31,7 @@ export const CategoryHead = React.memo<CategoryHeadProps>(({ category }) => {
             ),
         { width: 320 }
     );
-    const { url: bannerImageUrl } = useCloudimageUrl(
+    const { url: bannerImageUrl } = useImageUrl(
         category.bannerImageFile &&
             File.getFileRemoteLocation(baseUrl, category.bannerImageFile),
         { width: 900, height: 150, resize: 'cover' }

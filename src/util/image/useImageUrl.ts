@@ -1,65 +1,48 @@
 import * as React from 'react';
-import getConfig from 'next/config';
 
-const {
-    publicRuntimeConfig: { cloudimageToken },
-} = getConfig();
-
-export type CloudImageOptions = {
+export type ProcessingOptions = {
     width?: number;
     height?: number;
     aspectRatio?: '1:1' | '4:3' | '16:9' | '6:1';
-    resize?: 'crop' | 'fit' | 'bound' | 'cover';
+    resize?: 'fit' | 'bound' | 'cover';
 };
 
-export const createCloudimageUrl = (
+export const createImageUrl = (
     src: string,
-    { resize, width, height, aspectRatio }: CloudImageOptions
+    { resize, width, height, aspectRatio }: ProcessingOptions
 ) => {
     if (!src) {
-        return '';
-    }
-
-    if (cloudimageToken) {
-        const srcWithoutProtocol = src.replace(/^https?:\/\//, '');
-        const url = new URL(
-            `https://${cloudimageToken}.cloudimg.io/v7/${srcWithoutProtocol}`
-        );
-        url.searchParams.set('sharp', String(1));
-        if (width) {
-            url.searchParams.set('width', String(width));
-        }
-        if (height) {
-            url.searchParams.set('height', String(height));
-        }
-        if (resize) {
-            url.searchParams.set('func', resize);
-            url.searchParams.set('gravity', 'auto');
-            if (['fit', 'bound'].includes(resize) && width && aspectRatio) {
-                const [wr, hr] = aspectRatio.split(':').map(Number);
-                const ratio = wr / hr;
-                if (wr > hr) {
-                    url.searchParams.set(
-                        'height',
-                        String(Math.floor(width / ratio))
-                    );
-                } else {
-                    url.searchParams.set('width', String(width * ratio));
-                }
-            }
-        }
-        if (aspectRatio) {
-            url.searchParams.set('aspect_ratio', aspectRatio);
-        }
-        return url.toString();
-    } else {
         return src;
     }
+
+    const url = new URL(src);
+    if (width) {
+        url.searchParams.set('width', String(width));
+        if (aspectRatio) {
+            const [wr, hr] = aspectRatio.split(':').map(Number);
+            const ratio = wr / hr;
+            if (wr > hr) {
+                url.searchParams.set(
+                    'height',
+                    String(Math.floor(width / ratio))
+                );
+            } else {
+                url.searchParams.set('width', String(width * ratio));
+            }
+        }
+    }
+    if (height) {
+        url.searchParams.set('height', String(height));
+    }
+    if (resize) {
+        url.searchParams.set('fn', resize);
+    }
+    return url.toString();
 };
 
-export const useCloudimageUrl = (
+export const useImageUrl = (
     imageUrl: string | null | undefined,
-    { width, height, aspectRatio, resize = 'cover' }: CloudImageOptions = {}
+    { width, height, aspectRatio, resize = 'cover' }: ProcessingOptions = {}
 ) => {
     const getUrlForDimensions = React.useCallback(
         (dimensions: { width?: number; height?: number }) => {
@@ -67,7 +50,7 @@ export const useCloudimageUrl = (
                 return null;
             }
 
-            return createCloudimageUrl(imageUrl, {
+            return createImageUrl(imageUrl, {
                 width: dimensions.width,
                 height: dimensions.height,
                 aspectRatio,

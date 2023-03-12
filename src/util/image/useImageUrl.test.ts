@@ -1,17 +1,11 @@
-jest.mock('next/config', () => () => ({
-    publicRuntimeConfig: {
-        cloudimageToken: 'test',
-    },
-}));
-
 import { renderHook } from '@testing-library/react-hooks';
-import { useCloudimageUrl } from './useCloudimageUrl';
+import { useImageUrl } from './useImageUrl';
 
-describe('useCloudimageUrl', () => {
+describe('useImageUrl', () => {
     describe('with cloudimage config', () => {
         it('with given width and height', () => {
             const screen = renderHook(() =>
-                useCloudimageUrl('https://my.image/on-path', {
+                useImageUrl('https://my.image/on-path', {
                     width: 200,
                     height: 100,
                     resize: 'cover',
@@ -19,17 +13,17 @@ describe('useCloudimageUrl', () => {
             );
 
             expect(screen.result.current.url).toEqual(
-                'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=200&height=100&func=cover&gravity=auto'
+                'https://my.image/on-path?width=200&height=100&fn=cover'
             );
             expect(screen.result.current.sizeMap).toEqual({
-                '200w': 'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=200&height=300&func=cover&gravity=auto',
+                '200w': 'https://my.image/on-path?width=200&height=300&fn=cover',
             });
             expect(screen.result.current.customStyle).toEqual({});
         });
 
         it('with width and aspectRatio', () => {
             const screen = renderHook(() =>
-                useCloudimageUrl('https://my.image/on-path', {
+                useImageUrl('https://my.image/on-path', {
                     width: 500,
                     aspectRatio: '4:3',
                     resize: 'cover',
@@ -37,12 +31,12 @@ describe('useCloudimageUrl', () => {
             );
 
             expect(screen.result.current.url).toEqual(
-                'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=500&func=cover&gravity=auto&aspect_ratio=4%3A3'
+                'https://my.image/on-path?width=500&height=375&fn=cover'
             );
             expect(screen.result.current.sizeMap).toEqual({
-                '300w': 'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=300&func=cover&gravity=auto&aspect_ratio=4%3A3',
-                '500w': 'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=500&func=cover&gravity=auto&aspect_ratio=4%3A3',
-                '700w': 'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=700&func=cover&gravity=auto&aspect_ratio=4%3A3',
+                '300w': 'https://my.image/on-path?width=300&height=225&fn=cover',
+                '500w': 'https://my.image/on-path?width=500&height=375&fn=cover',
+                '700w': 'https://my.image/on-path?width=700&height=525&fn=cover',
             });
             expect(screen.result.current.customStyle).toEqual({
                 aspectRatio: '1.3333333333333333',
@@ -51,23 +45,23 @@ describe('useCloudimageUrl', () => {
 
         it('with only height', () => {
             const screen = renderHook(() =>
-                useCloudimageUrl('https://my.image/on-path', {
+                useImageUrl('https://my.image/on-path', {
                     height: 200,
                 })
             );
 
             expect(screen.result.current.url).toEqual(
-                'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&height=200&func=cover&gravity=auto'
+                'https://my.image/on-path?height=200&fn=cover'
             );
             expect(screen.result.current.sizeMap).toEqual({
-                '200h': 'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&height=200&func=cover&gravity=auto',
+                '200h': 'https://my.image/on-path?height=200&fn=cover',
             });
             expect(screen.result.current.customStyle).toEqual({});
         });
 
         it('should compute height with width and aspectRatio', () => {
             const screen = renderHook(() =>
-                useCloudimageUrl('https://my.image/on-path', {
+                useImageUrl('https://my.image/on-path', {
                     width: 200,
                     aspectRatio: '6:1',
                     resize: 'fit',
@@ -75,10 +69,10 @@ describe('useCloudimageUrl', () => {
             );
 
             expect(screen.result.current.url).toEqual(
-                'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=200&func=fit&gravity=auto&height=33&aspect_ratio=6%3A1'
+                'https://my.image/on-path?width=200&height=33&fn=fit'
             );
             expect(screen.result.current.sizeMap).toEqual({
-                '200w': 'https://test.cloudimg.io/v7/my.image/on-path?sharp=1&width=200&func=fit&gravity=auto&height=33&aspect_ratio=6%3A1',
+                '200w': 'https://my.image/on-path?width=200&height=33&fn=fit',
             });
             expect(screen.result.current.customStyle).toEqual({});
         });

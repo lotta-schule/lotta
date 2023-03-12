@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Article, File } from 'util/model';
 import { ArticleModel } from 'model';
 import { useTenant } from 'util/tenant/useTenant';
-import { useCloudimageUrl } from 'util/image/useCloudimageUrl';
+import { useImageUrl } from 'util/image/useImageUrl';
 import { useServerData } from 'shared/ServerDataContext';
 import { Tenant } from 'util/model/Tenant';
 import Head from 'next/head';
@@ -15,7 +15,7 @@ export const ArticleHead = React.memo<ArticleHeadProps>(({ article }) => {
     const { baseUrl } = useServerData();
     const tenant = useTenant();
 
-    const { url: twitterImageUrl } = useCloudimageUrl(
+    const { url: twitterImageUrl } = useImageUrl(
         article?.previewImageFile &&
             File.getFileRemoteLocation(baseUrl, article.previewImageFile),
         { width: 1200, height: 630, resize: 'fit' }

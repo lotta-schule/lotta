@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CloudImageOptions, useCloudimageUrl } from './useCloudimageUrl';
+import { ProcessingOptions, useImageUrl } from './useImageUrl';
 
 export type ResponsiveImageProps = {
     src: string;
@@ -13,7 +13,7 @@ export type ResponsiveImageProps = {
     >,
     'src' | 'alt' | 'width'
 > &
-    Omit<CloudImageOptions, 'width' | 'height'>;
+    Omit<ProcessingOptions, 'width' | 'height'>;
 
 export const ResponsiveImage = React.memo<ResponsiveImageProps>(
     ({
@@ -28,7 +28,7 @@ export const ResponsiveImage = React.memo<ResponsiveImageProps>(
         sizes,
         ...imgProps
     }) => {
-        const { customStyle, sizeMap, url } = useCloudimageUrl(src, {
+        const { customStyle, sizeMap, url } = useImageUrl(src, {
             width,
             height,
             aspectRatio,

@@ -17,7 +17,7 @@ import {
     UserModel,
     FileConversionModel,
 } from 'model';
-import { createCloudimageUrl } from 'util/image/useCloudimageUrl';
+import { createImageUrl } from 'util/image/useImageUrl';
 import { User } from './User';
 
 export const File = {
@@ -104,7 +104,7 @@ export const File = {
     getPreviewImageLocation(baseUrl: string, file?: FileModel, size = 200) {
         if (file) {
             if (file.fileType === FileModelType.Image) {
-                return createCloudimageUrl(
+                return createImageUrl(
                     File.getFileRemoteLocation(baseUrl, file),
                     { width: size, aspectRatio: '4:3', resize: 'cover' }
                 );
@@ -113,7 +113,7 @@ export const File = {
                     /^gif/.test(fc.format)
                 );
                 if (imageConversionFile) {
-                    return createCloudimageUrl(
+                    return createImageUrl(
                         File.getFileConversionRemoteLocation(
                             baseUrl,
                             imageConversionFile

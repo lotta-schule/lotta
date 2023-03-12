@@ -10,7 +10,7 @@ import { Icon } from 'shared/Icon';
 import { faAlignLeft, faAlignRight } from '@fortawesome/free-solid-svg-icons';
 import { Element, Transforms } from 'slate';
 import { ImageOverlay } from '../../image_collection/imageOverlay/ImageOverlay';
-import { useCloudimageUrl } from 'util/image/useCloudimageUrl';
+import { useImageUrl } from 'util/image/useImageUrl';
 import { Image } from '../SlateCustomTypes';
 import { File } from 'util/model';
 import { useServerData } from 'shared/ServerDataContext';
@@ -49,7 +49,7 @@ export const SlateImage = React.memo<SlateImageProps>(
             }
         }, [imageElement.size]);
 
-        const { url: imageUrl } = useCloudimageUrl(src, {
+        const { url: imageUrl } = useImageUrl(src, {
             width: 400,
             resize: 'fit',
         });
