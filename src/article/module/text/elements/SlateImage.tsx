@@ -51,7 +51,7 @@ export const SlateImage = React.memo<SlateImageProps>(
 
         const { url: imageUrl } = useImageUrl(src, {
             width: 400,
-            resize: 'fit',
+            resize: 'inside',
         });
 
         const setElementOptions = React.useCallback(

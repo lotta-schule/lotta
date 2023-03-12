@@ -4,7 +4,7 @@ export type ProcessingOptions = {
     width?: number;
     height?: number;
     aspectRatio?: '1:1' | '4:3' | '16:9' | '6:1';
-    resize?: 'fit' | 'bound' | 'cover';
+    resize?: 'contain' | 'cover' | 'inside' | 'outside';
 };
 
 export const createImageUrl = (
@@ -27,7 +27,7 @@ export const createImageUrl = (
                     String(Math.floor(width / ratio))
                 );
             } else {
-                url.searchParams.set('width', String(width * ratio));
+                url.searchParams.set('height', String(width * ratio));
             }
         }
     }

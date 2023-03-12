@@ -74,7 +74,7 @@ export const Show = React.memo<ShowProps>(({ contentModule }) => {
                                     <ResponsiveImage
                                         alt={'Bildvorschau'}
                                         width={400}
-                                        resize={'bound'}
+                                        resize={'inside'}
                                         sizes={'150px'}
                                         style={{
                                             width: '30%',
