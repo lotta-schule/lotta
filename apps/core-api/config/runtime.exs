@@ -4,7 +4,7 @@ env = System.get_env("APP_ENVIRONMENT")
 
 image_tag =
   case String.split(System.get_env("IMAGE_NAME", ""), ":") do
-    [image, tag] -> tag
+    [_image, tag] -> tag
     _ -> nil
   end
 
