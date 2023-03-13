@@ -18,7 +18,7 @@ defmodule Lotta.ImageProcessingUrlTest do
         ImageProcessingUrl.get_url("http://ugc.lotta.schule/abc875aaj42h", %{
           width: 500,
           height: 400,
-          fn: :contain
+          fn: "contain"
         })
 
       assert "http://ugc.lotta.schule/abc875aaj42h?metadata=1&fit=contain&height=400&width=500" =

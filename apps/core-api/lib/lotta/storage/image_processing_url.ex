@@ -61,10 +61,10 @@ defmodule Lotta.Storage.ImageProcessingUrl do
 
   defp add_height(params, _), do: params
 
-  defp add_fit(params, %{fn: :cover}), do: Keyword.put(params, :fit, "cover")
-  defp add_fit(params, %{fn: :contain}), do: Keyword.put(params, :fit, "contain")
-  defp add_fit(params, %{fn: :inside}), do: Keyword.put(params, :fit, "inside")
-  defp add_fit(params, %{fn: :outside}), do: Keyword.put(params, :fit, "outside")
+  defp add_fit(params, %{fn: "cover"}), do: Keyword.put(params, :fit, "cover")
+  defp add_fit(params, %{fn: "contain"}), do: Keyword.put(params, :fit, "contain")
+  defp add_fit(params, %{fn: "inside"}), do: Keyword.put(params, :fit, "inside")
+  defp add_fit(params, %{fn: "outside"}), do: Keyword.put(params, :fit, "outside")
   defp add_fit(params, _), do: params
 
   defp add_defaults([_ | _] = params), do: Keyword.put(params, :metadata, 1)
