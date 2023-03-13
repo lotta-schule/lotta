@@ -118,6 +118,16 @@ if config_env() == :prod do
     root_source_code_paths: [File.cwd!()],
     filter: Lotta.SentryFilter
 
+  config :opentelemetry, :resource, service: %{name: System.get_env("SERVICE_NAME", "core")}
+
+  config :opentelemetry, :processors,
+    otel_batch_processor: %{
+      exporter: {
+        :opentelemetry_exporter,
+        %{endpoints: ["http://tempo.monitoring"]}
+      }
+    }
+
   config :lager,
     error_logger_redirect: false,
     handlers: [

@@ -73,7 +73,7 @@ defmodule Lotta.MixProject do
       {:absinthe, "~> 1.6.3", override: true},
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},
-      {:dataloader, "~> 1.0.7"},
+      {:dataloader, "~> 1.0"},
       {:corsica, "~> 1.1.3"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.18.0"},
@@ -91,13 +91,14 @@ defmodule Lotta.MixProject do
       {:uuid, "~> 1.1.8"},
       {:bamboo, "~> 2.0"},
       {:bamboo_phoenix, "~> 1.0"},
-      {:gen_rmq, "~> 3.0.0"},
+      {:gen_rmq, "~> 4.0"},
       {:ex_ical, "~> 0.2.0"},
       {:timex, "~> 3.7"},
       {:sentry, "~> 8.0"},
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:elasticsearch, "~> 1.0"},
+      {:lager, "~> 3.9"},
       # Test
       {:mock, "~> 0.3", only: :test},
       {:excoveralls, "~> 0.14", only: :test},
@@ -109,9 +110,15 @@ defmodule Lotta.MixProject do
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       # live dashboard
-      {:telemetry_poller, "~> 0.5"},
+      {:telemetry_poller, "~> 1.0"},
       {:telemetry_metrics, "~> 0.6"},
-      {:phoenix_live_dashboard, "~> 0.4"}
+      {:phoenix_live_dashboard, "~> 0.4"},
+      # OpenTelemetry
+      {:opentelemetry, "~> 1.2"},
+      {:opentelemetry_api, "~> 1.2"},
+      {:opentelemetry_exporter, "~> 1.4"},
+      {:opentelemetry_phoenix, "~> 1.1"},
+      {:opentelemetry_ecto, "~> 1.1"}
     ]
   end
 
