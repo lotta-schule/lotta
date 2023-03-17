@@ -9,7 +9,7 @@ defmodule Lotta.Application do
     environment = Application.fetch_env!(:lotta, :environment)
 
     OpentelemetryPhoenix.setup()
-    OpentelemetryEcto.setup([:core, :repo])
+    OpentelemetryEcto.setup([:lotta, :repo])
 
     # List all child processes to be supervised
     children =

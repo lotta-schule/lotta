@@ -19,7 +19,6 @@ config :lotta, Lotta.Repo, start_apps_before_migration: [:httpoison]
 # Configures the endpoints
 config :lotta, LottaWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "FD8SUUCERwNAgJwXIkOt4cGC4FFe1WHhmG2KBj4xgsgafzMqJgUO8yTGsNkCHG2B",
   render_errors: [view: LottaWeb.ErrorView, accepts: ~w(json)],
   pubsub_server: Lotta.PubSub,
   live_view: [signing_salt: "abcdefghijklmnopqrstuvwxyz1234567890"]
@@ -79,7 +78,3 @@ config :gettext, :default_locale, "de"
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
-
-config :lager,
-  error_logger_redirect: false,
-  handlers: [level: :critical]

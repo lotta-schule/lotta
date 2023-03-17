@@ -67,7 +67,8 @@ defmodule Lotta.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.6"},
-      {:phoenix_pubsub, "~> 2.0.0"},
+      {:phoenix_pubsub, "~> 2.1"},
+      {:phoenix_live_dashboard, "~> 0.5"},
       {:phoenix_ecto, "~> 4.2"},
       {:ecto_sql, "~> 3.6"},
       {:ecto_psql_extras, "~> 0.6"},
@@ -78,11 +79,11 @@ defmodule Lotta.MixProject do
       {:corsica, "~> 1.1.3"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.18.0"},
-      {:jason, "~> 1.2.0"},
+      {:jason, "~> 1.4.0"},
       {:plug_cowboy, "~> 2.4"},
       {:comeonin, "~> 5.3.1"},
-      {:argon2_elixir, "~> 2.4.0"},
-      {:bcrypt_elixir, "~> 2.3.0"},
+      {:argon2_elixir, "~> 3.0"},
+      {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
@@ -110,14 +111,9 @@ defmodule Lotta.MixProject do
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
-      # live dashboard
-      {:telemetry_poller, "~> 1.0"},
-      {:telemetry_metrics, "~> 0.6"},
-      {:phoenix_live_dashboard, "~> 0.4"},
       # OpenTelemetry
-      {:opentelemetry_exporter, "~> 1.4"},
       {:opentelemetry, "~> 1.2"},
-      {:opentelemetry_api, "~> 1.2"},
+      {:opentelemetry_exporter, "~> 1.4"},
       {:opentelemetry_phoenix, "~> 1.1"},
       {:opentelemetry_ecto, "~> 1.1"}
     ]
