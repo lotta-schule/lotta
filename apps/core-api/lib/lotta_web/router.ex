@@ -59,9 +59,7 @@ defmodule LottaWeb.Router do
   scope "/admin" do
     pipe_through([:admin_auth])
 
-    live_dashboard("/dashboard",
-      metrics: LottaWeb.Telemetry
-    )
+    live_dashboard("/dashboard")
   end
 
   scope "/_debug" do

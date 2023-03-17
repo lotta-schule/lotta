@@ -15,7 +15,6 @@ defmodule Lotta.Application do
     children =
       prepanded_apps(environment) ++
         [
-          LottaWeb.Telemetry,
           {Phoenix.PubSub, name: Lotta.PubSub, adapter: Phoenix.PubSub.PG2},
           Lotta.Repo,
           LottaWeb.Endpoint,
