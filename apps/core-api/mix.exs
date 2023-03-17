@@ -66,7 +66,7 @@ defmodule Lotta.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6"},
+      {:phoenix, "~> 1.6.0"},
       {:phoenix_pubsub, "~> 2.1"},
       {:phoenix_live_dashboard, "~> 0.5"},
       {:phoenix_ecto, "~> 4.2"},
