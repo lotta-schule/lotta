@@ -28,6 +28,18 @@
         justify-content: center;
         align-items: flex-end;
     }
+
+    .navigationButton {
+        svg {
+            color: rgba(var(--lotta-primary-color), 1);
+            margin-right: calc(var(--lotta-spacing) * 1);
+        }
+        padding-right: 0;
+        & > span span {
+            padding-right: 0;
+        }
+    }
+
     .button {
         width: 100%;
         justify-content: left;

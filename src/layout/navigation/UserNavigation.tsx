@@ -69,33 +69,24 @@ export const UserNavigation = React.memo(() => {
                 </div>
                 <nav>
                     <NavigationButton
+                        secondary
                         onClick={() => setCreateArticleModalIsOpen(true)}
                         icon={<Icon icon={faCirclePlus} size={'xl'} />}
                         label={'neuer Beitrag'}
-                        className={clsx(
-                            'secondary',
-                            'small',
-                            'usernavigation-button'
-                        )}
+                        className={styles.navigationButton}
                     ></NavigationButton>
                     <Link href={'/search'} passHref>
                         <NavigationButton
+                            secondary
                             icon={<Icon icon={faMagnifyingGlass} size="xl" />}
                             label={'Suche'}
-                            className={clsx(
-                                'secondary',
-                                'small',
-                                'usernavigation-button'
-                            )}
+                            className={styles.navigationButton}
                         ></NavigationButton>
                     </Link>
                     <Link href={'/messaging'} passHref>
                         <NavigationButton
-                            className={clsx(
-                                'secondary',
-                                'small',
-                                'usernavigation-button'
-                            )}
+                            secondary
+                            className={styles.navigationButton}
                             icon={
                                 <span>
                                     <Icon
@@ -118,21 +109,20 @@ export const UserNavigation = React.memo(() => {
                         placement={'bottom-end'}
                         buttonProps={{
                             icon: <Icon icon={faCircleUser} size={'xl'} />,
+                            variant: 'borderless',
                             children: (
                                 <>
                                     Mein Profil{' '}
                                     <Icon
                                         icon={faCaretDown}
-                                        color="secondary"
+                                        style={{ paddingRight: 0 }}
+                                        className={
+                                            styles.navigationButtonInnerIcon
+                                        }
                                     />
                                 </>
                             ),
-                            className: clsx(
-                                'lotta-navigation-button',
-                                'secondary',
-                                'small',
-                                'usernavigation-button'
-                            ),
+                            className: styles.navigationButton,
                         }}
                         onAction={(action) => {
                             switch (action) {
