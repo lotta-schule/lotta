@@ -19,6 +19,16 @@ if config_env() == :prod do
     host: System.get_env("BASE_URI_HOST", "lotta.schule"),
     scheme: "https"
 
+  config :opentelemetry, :resource, service: %{name: System.get_env("SERVICE_NAME", "core")}
+
+  config :opentelemetry, :processors,
+    otel_batch_processor: %{
+      exporter: {
+        :opentelemetry_exporter,
+        %{endpoints: ["http://tempo.monitoring:4318"]}
+      }
+    }
+
   config :lotta,
          Lotta.Repo,
          username: System.fetch_env!("POSTGRES_USER"),
@@ -117,16 +127,6 @@ if config_env() == :prod do
     enable_source_code_context: true,
     root_source_code_paths: [File.cwd!()],
     filter: Lotta.SentryFilter
-
-  config :opentelemetry, :resource, service: %{name: System.get_env("SERVICE_NAME", "core")}
-
-  config :opentelemetry, :processors,
-    otel_batch_processor: %{
-      exporter: {
-        :opentelemetry_exporter,
-        %{endpoints: ["http://tempo.monitoring"]}
-      }
-    }
 
   config :lager,
     error_logger_redirect: false,
