@@ -23,10 +23,7 @@ if config_env() == :prod do
 
   config :opentelemetry, :processors,
     otel_batch_processor: %{
-      exporter: {
-        :opentelemetry_exporter,
-        %{endpoints: ["http://tempo.monitoring:4318"]}
-      }
+      exporter: {:opentelemetry_exporter, %{endpoints: [{:http, 'tempo.monitoring', 4318, []}]}}
     }
 
   config :lotta,
