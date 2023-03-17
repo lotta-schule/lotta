@@ -114,9 +114,9 @@ defmodule Lotta.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:phoenix_live_dashboard, "~> 0.4"},
       # OpenTelemetry
+      {:opentelemetry_exporter, "~> 1.4"},
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_api, "~> 1.2"},
-      {:opentelemetry_exporter, "~> 1.4"},
       {:opentelemetry_phoenix, "~> 1.1"},
       {:opentelemetry_ecto, "~> 1.1"}
     ]
