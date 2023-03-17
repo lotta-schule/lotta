@@ -16,7 +16,8 @@ defmodule Lotta.MixProject do
       deps: deps(),
       releases: [
         lotta: [
-          include_executables_for: [:unix]
+          include_executables_for: [:unix],
+          applications: [opentelemetry_exporter: :permanent, opentelemetry: :temporary]
         ]
       ],
       test_coverage: [tool: ExCoveralls],
