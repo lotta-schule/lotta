@@ -43,7 +43,6 @@ defmodule Lotta.MixProject do
     [
       mod: {Lotta.Application, []},
       extra_applications: [
-        :lager,
         :logger,
         :runtime_tools,
         :amqp,
@@ -100,7 +99,6 @@ defmodule Lotta.MixProject do
       {:redix, "~> 1.0"},
       {:con_cache, "~> 1.0"},
       {:elasticsearch, "~> 1.0"},
-      {:lager, "~> 3.9"},
       # Test
       {:mock, "~> 0.3", only: :test},
       {:excoveralls, "~> 0.14", only: :test},

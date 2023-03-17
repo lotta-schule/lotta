@@ -142,15 +142,6 @@ if config_env() == :prod do
     root_source_code_paths: [File.cwd!()],
     filter: Lotta.SentryFilter
 
-  config :lager,
-    error_logger_redirect: false,
-    handlers: [
-      level: :info,
-      lager_console_backend: [
-        format: "$time $metadata[$level] $message"
-      ]
-    ]
-
   config :logger,
     backends: [:console, Sentry.LoggerBackend],
     level: :warn,
