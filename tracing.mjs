@@ -16,6 +16,8 @@ const sdk = new NodeSDK({
     resource: new Resource({
         [SemanticResourceAttributes.SERVICE_NAME]:
             process.env.SERVICE_NAME || 'web',
+        [SemanticResourceAttributes.SERVICE_NAMESPACE]:
+            process.env.SERVICE_NAMESPACE,
     }),
     traceExporter,
     instrumentations: [
