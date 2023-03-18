@@ -19,7 +19,11 @@ if config_env() == :prod do
     host: System.get_env("BASE_URI_HOST", "lotta.schule"),
     scheme: "https"
 
-  config :opentelemetry, :resource, service: %{name: System.get_env("SERVICE_NAME", "core")}
+  config :opentelemetry, :resource,
+    service: %{
+      name: System.get_env("SERVICE_NAME", "core"),
+      namespace: System.get_env("SERVICE_NAME")
+    }
 
   config :opentelemetry, :processors,
     otel_batch_processor: %{
