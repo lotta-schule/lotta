@@ -6,6 +6,7 @@ import { ServerDownError } from 'error/ServerDownError';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
 import { AppContextProviders } from 'layout/AppContextProviders';
+import opentelemetry from '@opentelemetry/api';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import JwtDecode from 'jwt-decode';
@@ -126,98 +127,108 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
 };
 
 const maybeChangeRefreshToken = async (context: AppContext) => {
-    const request = context.ctx.req;
-    const response = context.ctx.res;
+    const tracer = opentelemetry.trace.getTracer('lotta-web-app');
 
-    if (!request) {
-        return;
-    }
+    tracer.startActiveSpan('maybeChangeRefreshToken', async (span) => {
+        const request = context.ctx.req;
+        const response = context.ctx.res;
 
-    const jwt = request.headers.authorization?.replace(/^Bearer /, '');
-    if (jwt) {
-        const decoded = JwtDecode(jwt, { header: false });
-        const expires = new Date((decoded as any).exp * 1000);
-        if (expires.getTime() > new Date().getTime() + 30_000) {
-            // If token seems legit and does not expire in next 30 seconds,
-            // keep it and go on.
-            // A more thorough validation will be made on API side
+        if (!request) {
             return;
         }
-    }
 
-    if (!response) {
-        return;
-    }
-
-    const Cookies = (await import('cookies')).default(request, response);
-    // Following code executes when there is no (up-to-date)
-    // jwt token available on the request Authorization header
-    const refreshToken = Cookies.get('SignInRefreshToken');
-
-    if (!refreshToken) {
-        return;
-    }
-
-    const decoded = JwtDecode(refreshToken, { header: false });
-    const expires = new Date((decoded as any).exp * 1000);
-    if (expires.getTime() < new Date().getTime() + 10_000) {
-        // token has/will expire in next 10 seconds, so don't
-        // bother refreshing it, could be too late, let the
-        // user just sign in again
-        Cookies.set('SignInRefreshToken', '', {
-            httpOnly: true,
-            expires: new Date(0),
-        });
-        return;
-    }
-
-    // We made it here so it seems we have a valid refresh token.
-    // We'll make an auth token from it and swap the refreshToken
-    // in order to authenticate the request
-    try {
-        const refreshResponse = await axios.request({
-            baseURL: process.env.API_URL,
-            url: '/auth/token/refresh',
-            data: {
-                token: refreshToken,
-            },
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Forwarded-Host': request.headers.host,
-                Accept: 'application/json',
-            },
-        });
-        const refreshResponseData = refreshResponse?.data;
-
-        if (refreshResponseData?.accessToken) {
-            response.setHeader(
-                'authorization',
-                `Bearer ${refreshResponseData.accessToken}`
-            );
-            Cookies.set('AuthToken', refreshResponseData.accessToken, {
-                expires: add(new Date(), { minutes: 2 }),
-                httpOnly: false,
-            });
+        const jwt = request.headers.authorization?.replace(/^Bearer /, '');
+        if (jwt) {
+            const decoded = JwtDecode(jwt, { header: false });
+            const expires = new Date((decoded as any).exp * 1000);
+            if (expires.getTime() > new Date().getTime() + 30_000) {
+                // If token seems legit and does not expire in next 30 seconds,
+                // keep it and go on.
+                // A more thorough validation will be made on API side
+                span.end();
+                return;
+            }
         }
-        const refreshCookieValue =
-            refreshResponse?.headers?.['set-cookie']?.[0];
 
-        // set new refresh token on response
-        const signInRefreshToken = refreshCookieValue?.match(
-            /signinrefreshtoken=(.+);/gi
-        )?.[1];
-        if (signInRefreshToken) {
-            Cookies.set('SignInRefreshToken', signInRefreshToken, {
+        if (!response) {
+            span.end();
+            return;
+        }
+
+        const Cookies = (await import('cookies')).default(request, response);
+        // Following code executes when there is no (up-to-date)
+        // jwt token available on the request Authorization header
+        const refreshToken = Cookies.get('SignInRefreshToken');
+
+        if (!refreshToken) {
+            return;
+        }
+
+        const decoded = JwtDecode(refreshToken, { header: false });
+        const expires = new Date((decoded as any).exp * 1000);
+        if (expires.getTime() < new Date().getTime() + 10_000) {
+            // token has/will expire in next 10 seconds, so don't
+            // bother refreshing it, could be too late, let the
+            // user just sign in again
+            Cookies.set('SignInRefreshToken', '', {
                 httpOnly: true,
-                expires,
+                expires: new Date(0),
             });
+            span.end();
+            return;
         }
-    } catch (e) {
-        console.error('User Token handling eror: ', e);
-    } finally {
-        return;
-    }
+
+        // We made it here so it seems we have a valid refresh token.
+        // We'll make an auth token from it and swap the refreshToken
+        // in order to authenticate the request
+        tracer.startActiveSpan('refreshToken', async (parentSpan) => {
+            try {
+                const refreshResponse = await axios.request({
+                    baseURL: process.env.API_URL,
+                    url: '/auth/token/refresh',
+                    data: {
+                        token: refreshToken,
+                    },
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Forwarded-Host': request.headers.host,
+                        Accept: 'application/json',
+                    },
+                });
+                const refreshResponseData = refreshResponse?.data;
+
+                if (refreshResponseData?.accessToken) {
+                    response.setHeader(
+                        'authorization',
+                        `Bearer ${refreshResponseData.accessToken}`
+                    );
+                    Cookies.set('AuthToken', refreshResponseData.accessToken, {
+                        expires: add(new Date(), { minutes: 2 }),
+                        httpOnly: false,
+                    });
+                }
+                const refreshCookieValue =
+                    refreshResponse?.headers?.['set-cookie']?.[0];
+
+                // set new refresh token on response
+                const signInRefreshToken = refreshCookieValue?.match(
+                    /signinrefreshtoken=(.+);/gi
+                )?.[1];
+                if (signInRefreshToken) {
+                    Cookies.set('SignInRefreshToken', signInRefreshToken, {
+                        httpOnly: true,
+                        expires,
+                    });
+                }
+            } catch (e) {
+                console.error('User Token handling eror: ', e);
+            } finally {
+                parentSpan.end();
+            }
+        });
+        span.end();
+    });
 };
 
 export default LottaWebApp;
