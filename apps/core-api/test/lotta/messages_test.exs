@@ -81,8 +81,9 @@ defmodule Lotta.MessagesTest do
           date =
             DateTime.add(
               base_time,
-              :timer.hours(delta),
-              :millisecond,
+              # delta hours
+              delta,
+              :hour,
               Calendar.UTCOnlyTimeZoneDatabase
             )
 

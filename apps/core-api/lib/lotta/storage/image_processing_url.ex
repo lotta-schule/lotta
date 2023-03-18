@@ -25,6 +25,7 @@ defmodule Lotta.Storage.ImageProcessingUrl do
         |> add_width(processing_opts)
         |> add_height(processing_opts)
         |> add_fit(processing_opts)
+        |> add_format(processing_opts)
         |> add_defaults()
 
       uri
@@ -66,6 +67,11 @@ defmodule Lotta.Storage.ImageProcessingUrl do
   defp add_fit(params, %{fn: "inside"}), do: Keyword.put(params, :fit, "inside")
   defp add_fit(params, %{fn: "outside"}), do: Keyword.put(params, :fit, "outside")
   defp add_fit(params, _), do: params
+
+  defp add_format(params, %{format: format}) when not is_nil(format),
+    do: Keyword.put(params, :format, format)
+
+  defp add_format(params, _), do: params
 
   defp add_defaults([_ | _] = params), do: Keyword.put(params, :metadata, 1)
   defp add_defaults(_), do: []

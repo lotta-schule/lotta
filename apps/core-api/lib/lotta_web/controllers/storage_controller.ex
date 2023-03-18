@@ -54,7 +54,7 @@ defmodule LottaWeb.StorageController do
   defp build_processing_options(params) do
     processing_options =
       Enum.reduce(
-        [:width, :height, :fn],
+        [:width, :height, :format, :fn],
         %{},
         fn key, acc ->
           value = params[to_string(key)]
