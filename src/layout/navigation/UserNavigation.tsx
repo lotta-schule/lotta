@@ -69,6 +69,7 @@ export const UserNavigation = React.memo(() => {
                 </div>
                 <nav>
                     <NavigationButton
+                        small
                         secondary
                         onClick={() => setCreateArticleModalIsOpen(true)}
                         icon={<Icon icon={faCirclePlus} size={'xl'} />}
@@ -77,6 +78,7 @@ export const UserNavigation = React.memo(() => {
                     ></NavigationButton>
                     <Link href={'/search'} passHref>
                         <NavigationButton
+                            small
                             secondary
                             icon={<Icon icon={faMagnifyingGlass} size="xl" />}
                             label={'Suche'}
@@ -85,6 +87,7 @@ export const UserNavigation = React.memo(() => {
                     </Link>
                     <Link href={'/messaging'} passHref>
                         <NavigationButton
+                            small
                             secondary
                             className={styles.navigationButton}
                             icon={
