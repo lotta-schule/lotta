@@ -71,8 +71,8 @@ export const PrivacyPage = () => {
                                 Geräte-Informationen, IP-Adressen).
                             </li>
                             <li>
-                                Nutzungsdaten (z.B. besuchte Webseiten,
-                                Interesse an Inhalten, Zugriffszeiten).
+                                Nutzungsdaten (z.B. besuchte Seiten,
+                                Zugriffszeiten).
                             </li>
                         </ul>
                     </p>
@@ -90,11 +90,22 @@ export const PrivacyPage = () => {
                     <h5>Zwecke der Verarbeitung</h5>
                     <p>
                         <ul>
-                            <li>Content Delivery Network (CDN).</li>
-                            <li>Sicherheitsmaßnahmen.</li>
+                            <li>
+                                Content Delivery Network (optimale Auslieferung
+                                von Daten).
+                            </li>
+                            <li>
+                                Logspeicherung zum aufspüren von Fehlern oder
+                                sicherheitsrelevanten Ereignissen.
+                            </li>
                             <li>
                                 Vertragliche Leistungen und Service für die
                                 Administratoren.
+                            </li>
+                            <li>
+                                Um Nutzer wiederzuerkennen und ihnen die
+                                passenden Ansichten anzubieten (Vertretungsplan,
+                                eigene Beiträge, u.s.w.)
                             </li>
                             <li>Verwaltung und Beantwortung von Anfragen.</li>
                         </ul>
@@ -240,28 +251,38 @@ export const PrivacyPage = () => {
                         ).
                     </p>
                     <p>
-                        Alle von Nutzern hochgeladenen Daten werden von uns beim
-                        Unternehmen
+                        Alle von Nutzern hochgeladenen Daten werden von uns bei
+                        den Unternehmen
                         <a
-                            href="https://www.digitalocean.com/"
+                            href="https://www.ionos.de/terms-gtc/fileadmin/pdf/terms-gtc/DE/AVV/DE_AVV_TOM_v1.0.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            digitalocean
+                            1&1 IONOS
+                        </a>{' '}
+                        und
+                        <a
+                            href="https://www.scaleway.com/en/privacy-policy/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Scaleway
                         </a>
-                        auf Servern mit Standorten innerhalb der EU gespeichert.
+                        auf Servern mit Standorten innerhalb der EU (Deutschland
+                        und Frankreich) gespeichert.
                     </p>
                     <p>
-                        Alle von Nutzern hochgeladenen Bilder werden zum
-                        Schnelleren Abruf zum Unternehmen
+                        Zusätzlich werden die von Nutzern hochgeladenen Inhalte
+                        zum schnelleren Abruf auf einem sogenannten CDN
+                        ("Centent Delivery Network") vom schweizer Unternehmen
                         <a
-                            href="https://privacy.scaleflex.it/go/scaleflex-privacy-center/en/privacy-by-design"
+                            href="https://www.keycdn.com/privacy"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            Scaleflex
+                            keycdn
                         </a>
-                        hochgeladen und von auch von dort wieder bezogen.
+                        bei Bedarf zwischengespeichert und ausgeliefert.
                     </p>
                     <p>
                         Alle von Nutzern hochgeladenen Video und Audiodateien
@@ -273,8 +294,33 @@ export const PrivacyPage = () => {
                         >
                             Coconut
                         </a>
-                        zur Umwandlung hochgeladen. Sie werden aber bei
-                        Digitalocean auf Servern innerhalb der EU gespeichert.
+                        zur Umwandlung hochgeladen. Sie werden aber bei ionos
+                        und scaleway auf Servern innerhalb der EU gespeichert.
+                    </p>
+                    <p>
+                        Zum Auffinden von Fehlern nutzen wir die Cloud-Software
+                        <a
+                            href="https://sentry.io/security/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Sentry
+                        </a>
+                        , die bei Auftreten eines Fehlers damit im Zusammenhang
+                        stehende Informationen speichert und für uns
+                        aufbereitet. Hier könnten unter Umständen einige
+                        persönliche Daten wie IP-Adresse oder Email durch Sentry
+                        verarbeitet werden. Diese Daten werden ausschließlich
+                        zum Zweck der Fehlererkennung genutzt und nach 2 Wochen
+                        gelöscht.
+                    </p>
+                    <p>
+                        Wir erstellen momentan ein tägliches Backup unserer
+                        Datenbank, das wir für 2 Wochen aufheben.
+                    </p>
+                    <p>
+                        Bei uns kommt kein Analytics-Tool von Drittanbietern zum
+                        Einsatz.
                     </p>
                 </Box>
 
@@ -467,22 +513,53 @@ export const PrivacyPage = () => {
                     <p>
                         <ul>
                             <li>
-                                <strong>DigitalOcean:</strong>{' '}
-                                Content-Delivery-Network (CDN); Dienstanbieter:
-                                DigitalOcean, LLC, 101 Avenue of the Americas,
-                                New York, New York 10013, USA; Website:
-                                https://www.digitalocean.com;
+                                <strong>Scaleway:</strong> Cloud;
+                                Dienstanbieter: SCALEWAY, Simplified joint stock
+                                company with a capital of 214 410,50 Euros
+                                SIREN: 433 115 904 RCS Paris Registered office:
+                                8 rue de la Ville l’Evêque, 75008 Paris,
+                                Frankreich VAT number: FR 35 433115904 Director
+                                of publication: Arnaud Brindejonc de Bermingham
+                                Hosted by: SCALEWAY SAS BP 438 75366 PARIS CEDEX
+                                08 FRANCE; Website: https://scaleway.org;
                                 Datenschutzerklärung:
-                                https://www.digitalocean.com/legal/privacy-policy;
-                                Privacy Shield (Gewährleistung Datenschutzniveau
-                                bei Verarbeitung von Daten in den USA):
-                                https://www.privacyshield.gov/participant?id=a2zt0000000TQNgAAO&status=Active.
+                                https://www.scaleway.com/en/privacy-policy/;
                             </li>
                             <li>
-                                <strong>CloudImage:</strong>{' '}
-                                Content-Delivery-Network (CDN); Dienstanbieter
-                                Scaleflex,
-                                https://privacy.scaleflex.it/go/scaleflex-privacy-center/en/data-privacy-addendum
+                                <strong>1&1 IONOS:</strong> Cloud;
+                                Dienstanbieter: IONOS SE, Elgendorfer Str. 57,
+                                56410 Montabaur, Deutschland. Vorstand: Hüseyin
+                                Dogan, Dr. Martin Endreß, Claudia Frese,
+                                Hans-Henning Kettler, Arthur Mai, Britta
+                                Schmidt, Achim Weiß; Handelsregister:
+                                Amtsgericht Montabaur / HRB 24498;
+                                https://www.ionos.de/terms-gtc/AVV/
+                            </li>
+                            <li>
+                                <strong>Coconut:</strong> Medienumwandlung
+                                (Video+Audio); Dienstanbieter: PARTICLES
+                                S.A.R.L, Siret N°: 49195540700011, 148 Rue
+                                Breteuil 13006 MARSEILLE, Frankreich ; VAT
+                                Number : FR78491955407 ; Datenschutz:
+                                https://www.coconut.co/tos
+                            </li>
+                            <li>
+                                <strong>Sentry:</strong> Exception Logging
+                                Dienstanbieter: Functional Software, Inc., 45
+                                Fremont Street, 8th Floor, San Francisco, CA
+                                94105, Vereinigte Staaten von Amerika
+                                Datenschutz: https://sentry.io/privacy/ ;
+                                Security und Compliance:
+                                https://sentry.io/security/
+                            </li>
+                            <li>
+                                <strong>Mailgun:</strong> Transactional Emails
+                                Dienstanbieter: Mailgun Technologies Inc, 112 E
+                                Pecan St. #1135 San Antonio Texas 78205,
+                                Vereinigte Staaten von Amerika Datenschutz:
+                                https://www.mailgun.com/legal/privacy-policy/ ;
+                                DSGVO
+                                https://www.mailgun.com/resources/learn/gdpr/
                             </li>
                         </ul>
                     </p>
