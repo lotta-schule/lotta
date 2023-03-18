@@ -113,7 +113,9 @@ defmodule Lotta.MixProject do
       {:opentelemetry, "~> 1.2"},
       {:opentelemetry_exporter, "~> 1.4"},
       {:opentelemetry_phoenix, "~> 1.1"},
-      {:opentelemetry_ecto, "~> 1.1"}
+      {:opentelemetry_absinthe, "~> 2.0"},
+      {:opentelemetry_ecto, "~> 1.1"},
+      {:opentelemetry_redix, "~> 0.1"}
     ]
   end
 
