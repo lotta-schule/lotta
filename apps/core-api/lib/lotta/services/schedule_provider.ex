@@ -34,7 +34,7 @@ defmodule Lotta.Services.ScheduleProvider do
   def get_schedule(
         client,
         class,
-        date = nil
+        date \\ nil
       ) do
     Tesla.get(client, "/schedule.json", query: get_query_params(class, date))
   end
