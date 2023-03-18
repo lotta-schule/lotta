@@ -5,11 +5,12 @@ export type ProcessingOptions = {
     height?: number;
     aspectRatio?: '1:1' | '4:3' | '16:9' | '6:1';
     resize?: 'contain' | 'cover' | 'inside' | 'outside';
+    format?: 'jpg' | 'png' | 'webp' | 'tiff';
 };
 
 export const createImageUrl = (
     src: string,
-    { resize, width, height, aspectRatio }: ProcessingOptions
+    { resize, width, height, aspectRatio, format }: ProcessingOptions
 ) => {
     if (!src) {
         return src;
@@ -37,12 +38,21 @@ export const createImageUrl = (
     if (resize) {
         url.searchParams.set('fn', resize);
     }
+    if (format) {
+        url.searchParams.set('format', format);
+    }
     return url.toString();
 };
 
 export const useImageUrl = (
     imageUrl: string | null | undefined,
-    { width, height, aspectRatio, resize = 'cover' }: ProcessingOptions = {}
+    {
+        width,
+        height,
+        aspectRatio,
+        resize = 'cover',
+        format,
+    }: ProcessingOptions = {}
 ) => {
     const getUrlForDimensions = React.useCallback(
         (dimensions: { width?: number; height?: number }) => {
@@ -55,9 +65,10 @@ export const useImageUrl = (
                 height: dimensions.height,
                 aspectRatio,
                 resize,
+                format,
             });
         },
-        [aspectRatio, imageUrl, resize]
+        [aspectRatio, imageUrl, resize, format]
     );
 
     const sizeMap = React.useMemo(() => {

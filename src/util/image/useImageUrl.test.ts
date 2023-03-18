@@ -9,14 +9,15 @@ describe('useImageUrl', () => {
                     width: 200,
                     height: 100,
                     resize: 'cover',
+                    format: 'webp',
                 })
             );
 
             expect(screen.result.current.url).toEqual(
-                'https://my.image/on-path?width=200&height=100&fn=cover'
+                'https://my.image/on-path?width=200&height=100&fn=cover&format=webp'
             );
             expect(screen.result.current.sizeMap).toEqual({
-                '200w': 'https://my.image/on-path?width=200&height=300&fn=cover',
+                '200w': 'https://my.image/on-path?width=200&height=300&fn=cover&format=webp',
             });
             expect(screen.result.current.customStyle).toEqual({});
         });

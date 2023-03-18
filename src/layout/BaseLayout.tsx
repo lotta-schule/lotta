@@ -21,10 +21,12 @@ export const BaseLayout = React.memo(({ children }) => {
             tenant.configuration.backgroundImageFile
         );
     const { url: imageUrlSimple } = useImageUrl(backgroundImageUrl, {
-        width: 3000,
+        width: 1250,
+        format: 'webp',
     });
     const { url: imageUrlRetina } = useImageUrl(backgroundImageUrl, {
-        width: 1500,
+        width: 2500,
+        format: 'webp',
     });
     return (
         <Box className={styles.root}>
