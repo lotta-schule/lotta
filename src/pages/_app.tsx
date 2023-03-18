@@ -6,7 +6,7 @@ import { ServerDownError } from 'error/ServerDownError';
 import { TenantNotFoundError } from 'error/TenantNotFoundError';
 import { getApolloClient } from 'api/client';
 import { AppContextProviders } from 'layout/AppContextProviders';
-import opentelemetry from '@opentelemetry/api';
+import opentelemetry, { SpanStatusCode } from '@opentelemetry/api';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import JwtDecode from 'jwt-decode';
@@ -129,7 +129,7 @@ LottaWebApp.getInitialProps = async (context: AppContext) => {
 const maybeChangeRefreshToken = async (context: AppContext) => {
     const tracer = opentelemetry.trace.getTracer('lotta-web-app');
 
-    tracer.startActiveSpan('maybeChangeRefreshToken', async (span) => {
+    await tracer.startActiveSpan('maybeChangeRefreshToken', async (span) => {
         const request = context.ctx.req;
         const response = context.ctx.res;
 
@@ -181,7 +181,7 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
         // We made it here so it seems we have a valid refresh token.
         // We'll make an auth token from it and swap the refreshToken
         // in order to authenticate the request
-        tracer.startActiveSpan('refreshToken', async (parentSpan) => {
+        await tracer.startActiveSpan('refreshToken', async (childSpan) => {
             try {
                 const refreshResponse = await axios.request({
                     baseURL: process.env.API_URL,
@@ -221,10 +221,21 @@ const maybeChangeRefreshToken = async (context: AppContext) => {
                         expires,
                     });
                 }
+                childSpan.setStatus({
+                    code: SpanStatusCode.OK,
+                    message: 'Token refreshed',
+                });
             } catch (e) {
                 console.error('User Token handling eror: ', e);
+                childSpan.setStatus({
+                    code: SpanStatusCode.ERROR,
+                    message:
+                        e instanceof Error
+                            ? e.message
+                            : 'Unknown error: ' + String(e),
+                });
             } finally {
-                parentSpan.end();
+                childSpan.end();
             }
         });
         span.end();
