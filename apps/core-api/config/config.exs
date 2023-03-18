@@ -61,6 +61,8 @@ config :sentry,
   included_environments: ~w(production staging),
   environment_name: Atom.to_string(Mix.env())
 
+config :tesla, adapter: Tesla.Adapter.Hackney
+
 # Configures Elixir's Logger
 config :logger,
   backends: [:console, Sentry.LoggerBackend]

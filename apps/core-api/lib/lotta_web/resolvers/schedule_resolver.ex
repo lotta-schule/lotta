@@ -6,43 +6,21 @@ defmodule LottaWeb.ScheduleResolver do
 
   alias LottaWeb.Context
   alias Lotta.Tenants
+  alias Lotta.Services.ScheduleProvider
 
   def get(%{widget_id: widget_id} = args, %{context: %Context{current_user: %{class: class}}}) do
     widget = Tenants.get_widget(widget_id)
 
-    schedule_provider_url = Application.fetch_env!(:lotta, :schedule_provider_url)
-
     case widget.configuration do
       %{"username" => username, "password" => password, "schoolId" => school_id, "type" => type} ->
-        query_params = %{
-          class: class,
-          source: type,
-          schoolId: school_id,
-          username: username,
-          password: password
-        }
+        ScheduleProvider.client(type, username, password, school_id)
+        |> ScheduleProvider.get_schedule(class, args[:date])
+        |> case do
+          {:ok, %{status: 200} = response} ->
+            {:ok, response.body}
 
-        url = "#{schedule_provider_url}/schedule.json?#{URI.encode_query(query_params)}"
-
-        url =
-          case args[:date] do
-            nil ->
-              url
-
-            date ->
-              "#{url}&date=#{Date.to_iso8601(date, :basic)}"
-          end
-
-        case :hackney.request(:get, url, [{<<"Accept-Charset">>, <<"utf-8">>}]) do
-          {:ok, 200, _headers, client_ref} ->
-            {:ok, body} = :hackney.body(client_ref)
-            {:ok, Poison.decode!(body)}
-
-          {:ok, 400, _headers, _client_ref} ->
+          {_, _response} ->
             {:error, "Ungültige Daten"}
-
-          error ->
-            error
         end
 
       _ ->

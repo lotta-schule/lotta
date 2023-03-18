@@ -87,6 +87,7 @@ defmodule Lotta.MixProject do
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.1"},
       {:hackney, "~> 1.15"},
+      {:tesla, "~> 1.5"},
       {:sweet_xml, "~> 0.7"},
       {:poison, "~> 5.0"},
       {:uuid, "~> 1.1.8"},
@@ -115,7 +116,8 @@ defmodule Lotta.MixProject do
       {:opentelemetry_phoenix, "~> 1.1"},
       {:opentelemetry_absinthe, "~> 2.0"},
       {:opentelemetry_ecto, "~> 1.1"},
-      {:opentelemetry_redix, "~> 0.1"}
+      {:opentelemetry_redix, "~> 0.1"},
+      {:opentelemetry_tesla, "~> 2.2"}
     ]
   end
 
