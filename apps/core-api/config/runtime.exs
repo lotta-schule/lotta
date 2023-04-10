@@ -111,10 +111,7 @@ if config_env() == :prod do
       end)
 
   config :lotta, Lotta.Storage.ImageProcessingUrl,
-    hosts:
-      System.get_env("IMAGE_PROCESSING_HOSTS", "")
-      |> String.split(",")
-      |> Enum.filter(&String.length(&1))
+    cloudimage_token: System.get_env("CLOUDIMAGE_TOKEN")
 
   config :lotta, Lotta.Mailer,
     adapter: Bamboo.MailgunAdapter,

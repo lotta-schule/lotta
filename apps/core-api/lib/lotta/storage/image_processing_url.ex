@@ -17,39 +17,52 @@ defmodule Lotta.Storage.ImageProcessingUrl do
   def get_url(url, nil), do: url
 
   def get_url(url, processing_opts) do
-    uri = URI.parse(url)
+    api_url = cloudimage_url()
 
-    if should_be_processed?(uri) do
+    if is_nil(api_url) do
+      url
+    else
       params =
         []
         |> add_width(processing_opts)
         |> add_height(processing_opts)
         |> add_fit(processing_opts)
-        |> add_format(processing_opts)
-        |> add_defaults()
 
-      uri
-      |> Map.put(
-        :query,
-        if Enum.empty?(params) do
-          nil
-        else
-          URI.encode_query(params)
-        end
-      )
-      |> URI.to_string()
-    else
-      url
+      if length(params) > 0 do
+        api_url
+        |> Map.put(
+          :query,
+          if Enum.empty?(params) do
+            nil
+          else
+            URI.encode_query(params)
+          end
+        )
+        |> Map.put(
+          :path,
+          Enum.join([api_url.path, url], "/")
+        )
+        |> URI.to_string()
+      else
+        url
+      end
     end
   end
 
-  defp should_be_processed?(%{host: host}) do
+  defp cloudimage_token() do
     Keyword.get(
       Application.get_env(:lotta, __MODULE__, []),
-      :hosts,
-      []
+      :cloudimage_token,
+      nil
     )
-    |> Enum.member?(host)
+  end
+
+  defp cloudimage_url() do
+    token = cloudimage_token()
+
+    unless is_nil(token) do
+      URI.parse("https://#{cloudimage_token()}.cloudimg.io/v7")
+    end
   end
 
   defp add_width(params, %{width: width}) when not is_nil(width),
@@ -62,17 +75,8 @@ defmodule Lotta.Storage.ImageProcessingUrl do
 
   defp add_height(params, _), do: params
 
-  defp add_fit(params, %{fn: "cover"}), do: Keyword.put(params, :fit, "cover")
-  defp add_fit(params, %{fn: "contain"}), do: Keyword.put(params, :fit, "contain")
-  defp add_fit(params, %{fn: "inside"}), do: Keyword.put(params, :fit, "inside")
-  defp add_fit(params, %{fn: "outside"}), do: Keyword.put(params, :fit, "outside")
+  defp add_fit(params, %{fn: "cover"}), do: Keyword.put(params, :func, "cover")
+  defp add_fit(params, %{fn: "contain"}), do: Keyword.put(params, :func, "cropfit")
+  defp add_fit(params, %{fn: "inside"}), do: Keyword.put(params, :func, "bound")
   defp add_fit(params, _), do: params
-
-  defp add_format(params, %{format: format}) when not is_nil(format),
-    do: Keyword.put(params, :format, format)
-
-  defp add_format(params, _), do: params
-
-  defp add_defaults([_ | _] = params), do: Keyword.put(params, :metadata, 1)
-  defp add_defaults(_), do: []
 end

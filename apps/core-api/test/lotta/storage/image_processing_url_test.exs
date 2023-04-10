@@ -22,19 +22,8 @@ defmodule Lotta.ImageProcessingUrlTest do
           format: "webp"
         })
 
-      assert "http://ugc.lotta.schule/abc875aaj42h?metadata=1&format=webp&fit=contain&height=400&width=500" =
+      assert "https://123.cloudimg.io/v7/http://ugc.lotta.schule/abc875aaj42h?func=cropfit&height=400&width=500" =
                url
-    end
-
-    test "get_url/1 should return the original url when host is not registered" do
-      url =
-        ImageProcessingUrl.get_url("http://something.lotta.schule/abc875aaj42h", %{
-          width: 500,
-          height: 400,
-          fn: :fit
-        })
-
-      assert "http://something.lotta.schule/abc875aaj42h" = url
     end
   end
 end
