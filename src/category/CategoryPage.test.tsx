@@ -99,8 +99,7 @@ describe('shared/article/CategoryLayout', () => {
             );
             await waitFor(() => {
                 expect([
-                    ...screen.queryAllByTestId('ArticlePreviewDensedLayout'),
-                    ...screen.queryAllByTestId('ArticlePreviewStandardLayout'),
+                    ...screen.queryAllByTestId('ArticlePreview'),
                 ]).toHaveLength(2);
             });
         });

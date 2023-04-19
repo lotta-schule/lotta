@@ -7,6 +7,7 @@
     .gridItem {
         display: flex;
         flex: 1 1 100%;
+        min-width: 260px;
         &.two-columns {
             flex: 1 1 50%;
             &:nth-child(2n) {
@@ -14,6 +15,12 @@
             }
             &:nth-child(2n + 1) {
                 padding-right: calc(var(--lotta-spacing) / 2);
+            }
+            @media screen and (max-width: 520px) {
+                &:nth-child(n) {
+                    padding-left: 0;
+                    padding-right: 0;
+                }
             }
         }
         & > * {

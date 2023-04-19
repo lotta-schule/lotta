@@ -8,7 +8,7 @@
     padding-left: 0;
     padding-right: 0;
     @media screen and (min-width: $min-md) {
-        max-width: $min-md;
+        max-width: calc(100% - 2rem);
     }
     @media screen and (min-width: $min-lg) {
         max-width: $min-lg;

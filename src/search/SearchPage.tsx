@@ -8,7 +8,7 @@ import { useDebounce } from 'util/useDebounce';
 import { Icon } from 'shared/Icon';
 import { Header, Main, Sidebar } from 'layout';
 import { CategorySelect } from 'shared/categorySelect/CategorySelect';
-import { ArticlePreviewDensedLayout } from 'article/preview';
+import { ArticlePreview } from 'article/preview';
 
 import SearchQuery from 'api/query/SearchQuery.graphql';
 
@@ -124,7 +124,8 @@ export const SearchPage = () => {
                                 transition={{ delay: i * 0.1 }}
                                 exit={{ opacity: 0, y: -50 }}
                             >
-                                <ArticlePreviewDensedLayout
+                                <ArticlePreview
+                                    layout={'densed'}
                                     article={article}
                                     disableEdit
                                     disablePin

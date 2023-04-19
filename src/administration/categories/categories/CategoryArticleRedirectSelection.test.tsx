@@ -124,9 +124,7 @@ describe('administration/categories/categories/CategoryArticleRedirectSelection'
                 expect(onFetchArticle).toHaveBeenCalled();
             });
             await waitFor(() => {
-                expect(
-                    screen.getByTestId('ArticlePreviewDensedLayout')
-                ).toBeVisible();
+                expect(screen.getByTestId('ArticlePreview')).toBeVisible();
             });
             expect(screen.getByRole('heading')).toHaveTextContent(
                 'Computerexperten'
