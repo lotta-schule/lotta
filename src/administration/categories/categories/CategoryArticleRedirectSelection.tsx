@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ComboBox, LinearProgress } from '@lotta-schule/hubert';
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { useServerData } from 'shared/ServerDataContext';
-import { ArticlePreviewDensedLayout } from 'article/preview';
+import { ArticlePreview } from 'article/preview';
 import { ArticleModel, ID } from 'model';
 import { Article, File } from 'util/model';
 import { ResponsiveImage } from 'util/image/ResponsiveImage';
@@ -113,7 +113,7 @@ export const CategoryArticleRedirectSelection =
                             />
                         )}
                         {articleData?.article && (
-                            <ArticlePreviewDensedLayout
+                            <ArticlePreview
                                 article={articleData?.article}
                                 disablePin
                                 isEmbedded

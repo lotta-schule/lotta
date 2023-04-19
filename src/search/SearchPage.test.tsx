@@ -41,9 +41,7 @@ describe('pages/search', () => {
             );
             userEvent.type(screen.getByLabelText('Suchbegriff'), 'Test');
             await waitFor(() => {
-                const articlePreviews = screen.getAllByTestId(
-                    'ArticlePreviewDensedLayout'
-                );
+                const articlePreviews = screen.getAllByTestId('ArticlePreview');
                 expect(articlePreviews).toHaveLength(1);
                 expect(screen.getByText('Computerexperten')).not.toBeNull();
             });

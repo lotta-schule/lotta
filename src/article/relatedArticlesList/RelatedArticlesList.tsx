@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useQuery } from '@apollo/client';
 import { LinearProgress } from '@lotta-schule/hubert';
 import { motion } from 'framer-motion';
-import { ArticlePreviewDensedLayout } from 'article/preview';
+import { ArticlePreview } from 'article/preview';
 import { ArticleModel } from 'model';
 
 import styles from './RelatedArticlesList.module.scss';
@@ -73,7 +73,8 @@ export const RelatedArticlesList = React.memo<RelatedArticlesListProps>(
                         variants={itemVariants}
                         custom={i}
                     >
-                        <ArticlePreviewDensedLayout
+                        <ArticlePreview
+                            layout="densed"
                             article={article}
                             limitedHeight
                         />

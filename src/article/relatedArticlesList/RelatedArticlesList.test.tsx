@@ -85,8 +85,6 @@ describe('shared/article/RelatedArticlesList', () => {
             expect(resFn).toHaveBeenCalled();
         });
 
-        expect(
-            screen.queryAllByTestId('ArticlePreviewDensedLayout')
-        ).toHaveLength(3);
+        expect(screen.queryAllByTestId('ArticlePreview')).toHaveLength(3);
     });
 });

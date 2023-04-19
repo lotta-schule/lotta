@@ -4,7 +4,7 @@ import { Header } from 'layout';
 import { User } from 'util/model';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Box } from '@lotta-schule/hubert';
-import { ArticlePreviewStandardLayout } from 'article/preview/ArticlePreviewStandardLayout';
+import { ArticlePreview } from 'article/preview/ArticlePreview';
 
 export interface ArticleTitleProps {
     article: ArticleModel;
@@ -22,7 +22,7 @@ export const ArticleTitle = React.memo<ArticleTitleProps>(
         return (
             <Box>
                 <Header>
-                    <ArticlePreviewStandardLayout
+                    <ArticlePreview
                         article={article}
                         isEmbedded
                         disableLink
