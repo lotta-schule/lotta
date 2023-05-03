@@ -151,6 +151,7 @@ export const MessagingView = React.memo(() => {
                         {selectedConversation?.messages?.length ? (
                             <MessagesThread
                                 conversation={selectedConversation}
+                                key={selectedConversation.id}
                             />
                         ) : (
                             <div className={styles.noMessagesWrapper}>

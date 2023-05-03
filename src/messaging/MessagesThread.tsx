@@ -51,6 +51,17 @@ export const MessagesThread = React.memo<MessagesThreadProps>(
 
         const wrapperRef = React.useRef<HTMLDivElement>(null);
 
+        React.useLayoutEffect(() => {
+            if (wrapperRef.current) {
+                wrapperRef.current.scroll({
+                    behavior: 'auto',
+                    top:
+                        wrapperRef.current.scrollHeight -
+                        wrapperRef.current.clientHeight,
+                });
+            }
+        }, []);
+
         React.useEffect(() => {
             let n: number | null = null;
             if (wrapperRef.current) {

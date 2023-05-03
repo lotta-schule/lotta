@@ -1,5 +1,6 @@
 import * as React from 'react';
-
+import { useMutation } from '@apollo/client';
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';
 import {
     NewMessageDestination,
@@ -7,16 +8,15 @@ import {
     ConversationModel,
     ID,
 } from 'model';
-import { useMutation } from '@apollo/client';
+import { Icon } from 'shared/Icon';
 import pick from 'lodash/pick';
+import uniqBy from 'lodash/uniqBy';
 
 import SendMessageMutation from 'api/mutation/SendMessageMutation.graphql';
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 import GetConversationQuery from 'api/query/GetConversationQuery.graphql';
 
 import styles from './ComposeMessage.module.scss';
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
-import { Icon } from 'shared/Icon';
 
 export interface ComposeMessageProps {
     destination: NewMessageDestination;
@@ -64,11 +64,14 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                     const conversation = {
                         ...data.message.conversation,
                         ...readConversationResult?.conversation,
-                        messages: [
-                            data.message,
-                            ...(readConversationResult?.conversation.messages ??
-                                []),
-                        ],
+                        messages: uniqBy(
+                            [
+                                data.message,
+                                ...(readConversationResult?.conversation
+                                    .messages ?? []),
+                            ],
+                            'id'
+                        ),
                     };
                     cache.writeQuery({
                         query: GetConversationQuery,
