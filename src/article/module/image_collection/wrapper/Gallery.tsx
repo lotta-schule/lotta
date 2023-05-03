@@ -51,7 +51,11 @@ export const Gallery = React.memo<GalleryProps>(
                         <GridListItem
                             cols={1}
                             key={file.id}
-                            style={{ position: 'relative', height: '100%' }}
+                            style={{
+                                position: 'relative',
+                                height: '100%',
+                                overflow: 'inherit',
+                            }}
                         >
                             {isEditModeEnabled && onUpdateModule && (
                                 <Button
