@@ -160,10 +160,10 @@ export const EditArticleFooter = React.memo<EditArticleFooterProps>(
                                 <MenuButton
                                     title={'Speicheroptionen'}
                                     buttonProps={{
-                                        icon: <Icon icon={faCaretDown} />,
                                         className:
                                             'is-first-button-group-button',
                                         variant: 'fill',
+                                        children: <Icon icon={faCaretDown} />,
                                     }}
                                     placement={'top'}
                                     onAction={(action) => {
