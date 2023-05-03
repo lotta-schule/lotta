@@ -162,10 +162,15 @@
             }
 
             .editButton {
-                color: rgb(var(--lotta-highlight-color));
+                width: 25px;
+                height: 25px;
+                min-height: 25px;
             }
 
             .pinButton {
+                width: 25px;
+                height: 25px;
+                min-height: 25px;
                 &.active {
                     svg {
                         color: rgb(var(--lotta-primary-color));
