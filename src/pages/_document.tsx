@@ -15,7 +15,7 @@ class LottaWebDocument extends Document {
 
     render() {
         return (
-            <Html>
+            <Html lang="de">
                 <Head>
                     <meta charSet="utf-8" />
                     <link
