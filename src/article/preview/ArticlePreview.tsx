@@ -318,9 +318,6 @@ export const ArticlePreview = React.memo(
                                         >
                                             <Button
                                                 aria-label="Beitrag bearbeiten"
-                                                style={{
-                                                    width: '3em' /* I dont know why this is necessary */,
-                                                }}
                                                 className={clsx(
                                                     styles.editButton,
                                                     'edit-button'
