@@ -7,7 +7,7 @@
 
     .sideView {
         position: relative;
-        flex: 0 0 20em;
+        flex: 20em;
         overflow: auto;
         @media screen and (max-width: $max-sm) {
             display: none;
@@ -15,6 +15,9 @@
                 display: block;
                 margin-right: var(--lotta-spacing);
             }
+        }
+        @media screen and (max-width: $max-xs) {
+            flex: 0 0 100%;
         }
     }
 
@@ -28,6 +31,10 @@
         flex-direction: column;
         @media screen and (max-width: $max-sm) {
             margin-left: 0;
+        }
+        @media screen and (max-width: $max-xs) {
+            padding-left: 0px;
+            padding-right: 0px;
         }
     }
 

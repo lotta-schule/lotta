@@ -19,6 +19,7 @@ import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
 
 import { faComments } from '@fortawesome/free-regular-svg-icons';
 import { Icon } from 'shared/Icon';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 
 export const MessagingView = React.memo(() => {
     const isMobile = useIsMobile();
@@ -141,7 +142,7 @@ export const MessagingView = React.memo(() => {
             <div className={styles.messageView}>
                 {isMobile && !isSidebarActive && (
                     <Button
-                        icon={<Icon icon={faComments} />}
+                        icon={<Icon icon={faAngleLeft} />}
                         style={{ width: 40 }}
                         onClick={() => setIsSidebarActive(true)}
                     />
