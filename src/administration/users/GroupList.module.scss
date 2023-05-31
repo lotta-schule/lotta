@@ -15,6 +15,12 @@
             li {
                 display: flex;
                 align-items: center;
+                cursor: pointer;
+                &:hover,
+                &:focus {
+                    background-color: rgba(var(--lotta-primary-color), 0.1);
+                    border-radius: var(--lotta-border-radius);
+                }
                 span {
                     .draghandleIcon {
                         fill: rgba(var(--lotta-text-color), 0.7);
