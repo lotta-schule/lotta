@@ -15,6 +15,7 @@
         width: 7.5em;
         @media screen and (max-width: $max-sm) {
             width: 100%;
+            border-radius: var(--lotta-border-radius);
         }
     }
     .description {
