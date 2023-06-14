@@ -3,7 +3,6 @@ import { Button } from '@lotta-schule/hubert';
 import {
     faAdd,
     faAngleRight,
-    faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import { NewMessageDestination } from 'model';
 import { Icon } from 'shared/Icon';
