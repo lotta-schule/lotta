@@ -130,17 +130,14 @@ export const Navbar = React.memo(() => {
                         >
                             <NavigationButton
                                 key={category.id}
-                                className={clsx(
-                                    styles.navButtonSecond,
-                                    'secondary',
-                                    'small',
-                                    {
-                                        selected:
-                                            categoriesHierarchy.indexOf(
-                                                category.id
-                                            ) > -1,
-                                    }
-                                )}
+                                small
+                                secondary
+                                className={clsx(styles.navButtonSecond, {
+                                    selected:
+                                        categoriesHierarchy.indexOf(
+                                            category.id
+                                        ) > -1,
+                                })}
                             >
                                 {category.title}
                             </NavigationButton>
