@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Button } from '@lotta-schule/hubert';
-import { faAdd, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import {
+    faAdd,
+    faAngleRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { NewMessageDestination } from 'model';
 import { Icon } from 'shared/Icon';
 import { useIsMobile } from 'util/useIsMobile';
@@ -23,6 +26,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
         return (
             <div className={styles.root}>
                 <Button
+                    className={styles.plusButton}
                     icon={<Icon icon={faAdd} size={'lg'} />}
                     title={'Neue Nachricht schreiben'}
                     onClick={() => setIsCreateMessageDialogOpen(true)}
@@ -32,7 +36,7 @@ export const MessageToolbar = React.memo<MessageToolbarProps>(
                         style={{ float: 'right' }}
                         aria-label={'Seitenleiste einklappen'}
                         onClick={onToggle}
-                        icon={<Icon icon={faArrowLeft} size={'lg'} />}
+                        icon={<Icon icon={faAngleRight} size={'lg'} />}
                     />
                 )}
                 <CreateMessageDialog

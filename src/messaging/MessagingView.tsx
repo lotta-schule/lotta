@@ -3,6 +3,8 @@ import { useQuery } from '@apollo/client';
 
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Button, ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
+import { Icon } from 'shared/Icon';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ConversationModel, MessageModel, NewMessageDestination } from 'model';
 import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
@@ -16,9 +18,6 @@ import clsx from 'clsx';
 import styles from './MessagingView.module.scss';
 
 import GetConversationsQuery from 'api/query/GetConversationsQuery.graphql';
-
-import { faComments } from '@fortawesome/free-regular-svg-icons';
-import { Icon } from 'shared/Icon';
 
 export const MessagingView = React.memo(() => {
     const isMobile = useIsMobile();
@@ -141,7 +140,7 @@ export const MessagingView = React.memo(() => {
             <div className={styles.messageView}>
                 {isMobile && !isSidebarActive && (
                     <Button
-                        icon={<Icon icon={faComments} />}
+                        icon={<Icon icon={faAngleLeft} />}
                         style={{ width: 40 }}
                         onClick={() => setIsSidebarActive(true)}
                     />
