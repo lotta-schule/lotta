@@ -220,17 +220,20 @@ export const UserNavigation = React.memo(() => {
         nav = (
             <nav>
                 <NavigationButton
+                    secondary
                     onClick={() => setLoginModalIsOpen(true)}
                     label={'Anmelden'}
                     className={clsx('secondary', 'small')}
                 ></NavigationButton>
                 <NavigationButton
+                    secondary
                     onClick={() => setRegisterModalIsOpen(true)}
                     label={'Registrieren'}
                     className={clsx('secondary', 'small')}
                 ></NavigationButton>
                 <Link href={'/search'} passHref>
                     <NavigationButton
+                        secondary
                         onClick={() => router.push('/search')}
                         label={'Suche'}
                         className={clsx('secondary', 'small')}

@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - 'hotfix/**'
 
 jobs:
   setup:
@@ -35,8 +36,16 @@ jobs:
         run: |
           docker tag ghcr.io/${{ github.repository }}:$GITHUB_SHA ghcr.io/${{ github.repository }}:develop
           docker push ghcr.io/${{ github.repository }}:$GITHUB_SHA
-          docker push ghcr.io/${{ github.repository }}:develop
+          if [[ "${{ github.ref_name }}" = hotfix/* ]]; then
+            docker push ghcr.io/${{ github.repository }}:develop
+          fi
 
+  sentry:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'main'
+    steps:
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         env:
