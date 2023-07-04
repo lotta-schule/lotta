@@ -27,41 +27,6 @@ export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
         return (
             <NoSsr>
                 <div data-testid="UserEnrollmentTokensInput">
-                    <ul>
-                        {tokens.map((token, i) => (
-                            <AnimatePresence key={token}>
-                                <AnimatedTag
-                                    key={token}
-                                    className={styles.tag}
-                                    role={'listitem'}
-                                    initial={{
-                                        opacity: 0,
-                                        height: 0,
-                                        y: -50,
-                                        borderWidth: 0,
-                                    }}
-                                    animate={{
-                                        opacity: 1,
-                                        height: 'auto',
-                                        y: 0,
-                                        borderWidth: 1,
-                                    }}
-                                    transition={{ delay: i * 0.1 }}
-                                    exit={{
-                                        opacity: 0,
-                                        borderWidth: 0,
-                                    }}
-                                    onDelete={() => {
-                                        setTokens(
-                                            tokens.filter((t) => t !== token)
-                                        );
-                                    }}
-                                >
-                                    {token}
-                                </AnimatedTag>
-                            </AnimatePresence>
-                        ))}
-                    </ul>
                     <div>
                         <Label label={'Neue Einschreibeschlüssel eintragen'}>
                             <Input
@@ -120,6 +85,41 @@ export const EnrollmentTokensEditor = React.memo<EnrollmentTokensEditorProps>(
                             />
                         </Label>
                     </div>
+                    <ul>
+                        {tokens.map((token, i) => (
+                            <AnimatePresence key={token}>
+                                <AnimatedTag
+                                    key={token}
+                                    className={styles.tag}
+                                    role={'listitem'}
+                                    initial={{
+                                        opacity: 0,
+                                        height: 0,
+                                        y: -50,
+                                        borderWidth: 0,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        height: 'auto',
+                                        y: 0,
+                                        borderWidth: 1,
+                                    }}
+                                    transition={{ delay: i * 0.1 }}
+                                    exit={{
+                                        opacity: 0,
+                                        borderWidth: 0,
+                                    }}
+                                    onDelete={() => {
+                                        setTokens(
+                                            tokens.filter((t) => t !== token)
+                                        );
+                                    }}
+                                >
+                                    {token}
+                                </AnimatedTag>
+                            </AnimatePresence>
+                        ))}
+                    </ul>
                 </div>
             </NoSsr>
         );

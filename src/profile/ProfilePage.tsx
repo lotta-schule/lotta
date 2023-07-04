@@ -102,7 +102,6 @@ export const ProfilePage = () => {
                                 setAvatarImageFile(file)
                             }
                         />
-                        <Divider className={styles.divider} />
                         <Label
                             className={styles.subheader}
                             label={'Meine Gruppen'}
@@ -120,6 +119,7 @@ export const ProfilePage = () => {
                                     ))}
                             </List>
                         </Label>
+
                         <section className={styles.dangerSection}>
                             <Divider className={styles.divider} />
                             <Link href={'/profile/delete'} passHref>
@@ -194,13 +194,20 @@ export const ProfilePage = () => {
                         </Checkbox>
 
                         <div>
-                            Verstecke deinen vollständigen Namen, damit er nur
-                            vom Administrator deiner Schule gesehen werden kann.
-                            Dein Name taucht nicht in den von dir erstellten
-                            Artikeln oder in deinem Profil auf. Stattdessen wird
-                            dein Spitzname angezeigt.
+                            <small>
+                                Verstecke deinen vollständigen Namen, damit er
+                                nur vom Administrator deiner Schule gesehen
+                                werden kann. Dein Name taucht nicht in den von
+                                dir erstellten Artikeln oder in deinem Profil
+                                auf. Stattdessen wird dein Spitzname angezeigt.
+                            </small>
                         </div>
-
+                        <Divider className={styles.divider} />
+                        <h5>Meine Klasse / Mein Kürzel</h5>
+                        <p>
+                            Gib hier deine Klasse oder dein Kürzel ein. Damit
+                            kannst du Zugriff auf deinen Stundenplan
+                        </p>
                         <Label label="Deine Klasse / Dein Kürzel:">
                             <Input
                                 autoFocus
@@ -215,28 +222,20 @@ export const ProfilePage = () => {
                             />
                         </Label>
                         <ErrorMessage error={getFieldError('class') || null} />
-                        <p>
-                            <small>
-                                Gib hier deine Klasse oder dein Kürzel ein.
-                                Damit kannst du Zugriff auf deinen Stundenplan
-                                erhalten.
-                            </small>
-                        </p>
-
-                        <Divider className={styles.divider} />
 
                         <h5>Meine Einschreibeschlüssel</h5>
-                        <EnrollmentTokensEditor
-                            disabled={isLoading}
-                            tokens={enrollmentTokens}
-                            setTokens={setEnrollmentTokens}
-                        />
                         <p>
                             <small>
                                 Nutze Einschreibeschlüssel, um dich selbst in
                                 Gruppen einzutragen.
                             </small>
                         </p>
+                        <EnrollmentTokensEditor
+                            disabled={isLoading}
+                            tokens={enrollmentTokens}
+                            setTokens={setEnrollmentTokens}
+                        />
+                        <Divider className={styles.divider} />
 
                         <Button
                             type={'submit'}
