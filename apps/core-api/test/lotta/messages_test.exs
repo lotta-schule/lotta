@@ -41,14 +41,16 @@ defmodule Lotta.MessagesTest do
       datetime = ~N[2023-07-09 03:58:07.000000]
       assert :ok = Messages.set_user_has_last_seen_conversation(user1, conversation, datetime)
 
-      assert(datetime ==
-               from(culs in "conversation_user_last_seen",
-                 where: culs.user_id == ^user1.id,
-                 where: culs.conversation_id == ^UUID.string_to_binary!(conversation.id),
-                 select: culs.last_seen
-               )
-               |> Repo.all(prefix: @prefix)
-               |> List.first())
+      assert(
+        datetime ==
+          from(culs in "conversation_user_last_seen",
+            where: culs.user_id == ^user1.id,
+            where: culs.conversation_id == ^UUID.string_to_binary!(conversation.id),
+            select: culs.last_seen
+          )
+          |> Repo.all(prefix: @prefix)
+          |> List.first()
+      )
     end
 
     test "get_user_has_last_seen_conversation" do
@@ -112,7 +114,6 @@ defmodule Lotta.MessagesTest do
 
       assert 6 = Messages.count_unread_messages(user1)
     end
-
   end
 
   describe "create a message" do
@@ -121,12 +122,12 @@ defmodule Lotta.MessagesTest do
       to = Fixtures.fixture(:registered_user, %{email: "erol@hogwarts.de"})
 
       assert {:error, %Ecto.Changeset{errors: errors, valid?: false}} =
-        Messages.create_message(
-          from,
-          to,
-          "",
-          []
-        )
+               Messages.create_message(
+                 from,
+                 to,
+                 "",
+                 []
+               )
 
       assert {"can't be blank", [validation: :required]} = Keyword.fetch!(errors, :content)
     end
@@ -137,19 +138,19 @@ defmodule Lotta.MessagesTest do
       files = [Fixtures.fixture(:file, from), Fixtures.fixture(:file, from)]
 
       assert {:ok, message} =
-              Messages.create_message(
-                from,
-                to,
-                Fixtures.fixture(:message_content),
-                files
-              )
+               Messages.create_message(
+                 from,
+                 to,
+                 Fixtures.fixture(:message_content),
+                 files
+               )
 
       assert %Message{
-              id: _id,
-              content: "Das ist die Nachricht",
-              user: %{id: from_id},
-              files: ^files
-            } = Lotta.Repo.preload(message, [:user, :files])
+               id: _id,
+               content: "Das ist die Nachricht",
+               user: %{id: from_id},
+               files: ^files
+             } = Lotta.Repo.preload(message, [:user, :files])
 
       assert from_id == from.id
       # assert to_id == to.id
@@ -160,19 +161,19 @@ defmodule Lotta.MessagesTest do
       to = Fixtures.fixture(:registered_user, %{email: "erol@hogwarts.de"})
 
       assert {:ok, message} =
-        Messages.create_message(
-          from,
-          to,
-          "This is text",
-          nil
-        )
+               Messages.create_message(
+                 from,
+                 to,
+                 "This is text",
+                 nil
+               )
 
       assert %Message{
-        id: _id,
-        content: "This is text",
-        user: %{id: from_id},
-        files: []
-      } = Lotta.Repo.preload(message, [:user, :files])
+               id: _id,
+               content: "This is text",
+               user: %{id: from_id},
+               files: []
+             } = Lotta.Repo.preload(message, [:user, :files])
 
       assert from_id == from.id
       # assert to_id == to.id
@@ -184,19 +185,19 @@ defmodule Lotta.MessagesTest do
       files = [Fixtures.fixture(:file, from), Fixtures.fixture(:file, from)]
 
       assert {:ok, message} =
-        Messages.create_message(
-          from,
-          to,
-          nil,
-          files
-        )
+               Messages.create_message(
+                 from,
+                 to,
+                 nil,
+                 files
+               )
 
       assert %Message{
-        id: _id,
-        content: nil,
-        user: %{id: from_id},
-        files: ^files
-      } = Lotta.Repo.preload(message, [:user, :files])
+               id: _id,
+               content: nil,
+               user: %{id: from_id},
+               files: ^files
+             } = Lotta.Repo.preload(message, [:user, :files])
 
       assert from_id == from.id
       # assert to_id == to.id

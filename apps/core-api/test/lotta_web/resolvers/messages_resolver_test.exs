@@ -34,7 +34,10 @@ defmodule LottaWeb.MessagesResolverTest do
         {user, jwt}
       end)
 
-    user2_file = Lotta.Repo.get_by!(Lotta.Storage.File, [user_id: user2.id, filename: "wieartig1.jpg"], prefix: tenant.prefix)
+    user2_file =
+      Lotta.Repo.get_by!(Lotta.Storage.File, [user_id: user2.id, filename: "wieartig1.jpg"],
+        prefix: tenant.prefix
+      )
 
     lehrer_group =
       Repo.one!(
@@ -416,7 +419,11 @@ defmodule LottaWeb.MessagesResolverTest do
     }
     """
 
-    test "send a message to another user", %{user2: user2, user_jwt: user_jwt, user2_file: user2_file} do
+    test "send a message to another user", %{
+      user2: user2,
+      user_jwt: user_jwt,
+      user2_file: user2_file
+    } do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -424,7 +431,11 @@ defmodule LottaWeb.MessagesResolverTest do
         |> post("/api",
           query: @query,
           variables: %{
-            message: %{content: "Hallo.", recipient_user: %{id: user2.id}, files: [%{id: user2_file.id}]}
+            message: %{
+              content: "Hallo.",
+              recipient_user: %{id: user2.id},
+              files: [%{id: user2_file.id}]
+            }
           }
         )
         |> json_response(200)
@@ -451,14 +462,24 @@ defmodule LottaWeb.MessagesResolverTest do
              }
     end
 
-    test "send a message to a group", %{user2_jwt: user2_jwt, user2_file: user2_file, lehrer_group: lehrer_group} do
+    test "send a message to a group", %{
+      user2_jwt: user2_jwt,
+      user2_file: user2_file,
+      lehrer_group: lehrer_group
+    } do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{message: %{content: "Hallo.", recipient_group: %{id: lehrer_group.id}, files: [%{id: user2_file.id}]}}
+          variables: %{
+            message: %{
+              content: "Hallo.",
+              recipient_group: %{id: lehrer_group.id},
+              files: [%{id: user2_file.id}]
+            }
+          }
         )
         |> json_response(200)
 

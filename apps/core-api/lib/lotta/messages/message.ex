@@ -15,10 +15,11 @@ defmodule Lotta.Messages.Message do
 
     belongs_to :user, User
     belongs_to :conversation, Conversation, type: :binary_id, on_replace: :delete
+
     many_to_many :files,
-      File,
-      join_through: "message_file",
-      on_replace: :delete
+                 File,
+                 join_through: "message_file",
+                 on_replace: :delete
 
     timestamps()
   end
@@ -41,8 +42,9 @@ defmodule Lotta.Messages.Message do
     case get_field(changeset, :files) do
       files when is_nil(files) or length(files) < 1 ->
         validate_required(changeset, :content)
+
       _ ->
-      changeset
+        changeset
     end
   end
 
@@ -50,12 +52,10 @@ defmodule Lotta.Messages.Message do
   defp put_assoc_attachments(message, attrs) do
     files =
       (attrs.files || [])
-      |> Enum.map(&(Storage.get_file(&1.id)))
+      |> Enum.map(&Storage.get_file(&1.id))
       |> Enum.filter(&(not is_nil(&1)))
 
     message
     |> put_assoc(:files, files)
   end
-
 end
-

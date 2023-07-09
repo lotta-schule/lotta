@@ -22,5 +22,4 @@ defmodule LottaWeb.Schema.Messages.Message do
     field :inserted_at, :datetime
     field :updated_at, :datetime
   end
-
 end
