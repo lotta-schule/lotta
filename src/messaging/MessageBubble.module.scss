@@ -48,12 +48,12 @@
         }
         .previewWrapper {
             grid-row: 1 / span 2;
+            margin: var(--lotta-spacing);
             img {
                 max-height: 5em;
                 width: auto;
                 height: auto;
-                padding: var(--lotta-spacing);
-                borderRadius: 4;
+                border-radius: 4px;
             }
         }
         .filename {

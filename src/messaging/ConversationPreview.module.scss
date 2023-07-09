@@ -18,10 +18,10 @@
         position: initial;
         top: calc(65px + calc(0.5 * var(--lotta-spacing)));
         z-index: 1;
-        border: 1px solid rgb(var(--lotta-secondary-color));
+        border: 1px solid rgb(var(--lotta-primary-color));
         border-left-width: calc(0.5 * var(--lotta-spacing));
         border-left-style: solid;
-        border-left-color: rgb(var(--lotta-secondary-color));
+        border-left-color: rgb(var(--lotta-primary-color));
         background-color: rgb(var(--lotta-box-background-color));
     }
 }
