@@ -11,7 +11,7 @@ defmodule Lotta.Storage.File do
   alias Lotta.Content.ContentModule
   alias Lotta.Storage.{Directory, FileConversion, RemoteStorageEntity}
 
-  @type id() :: pos_integer()
+  @type id() :: binary()
 
   @type t() :: %__MODULE__{
           id: id(),

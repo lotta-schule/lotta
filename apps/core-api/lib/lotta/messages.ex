@@ -10,6 +10,8 @@ defmodule Lotta.Messages do
   alias Lotta.Repo
   alias Lotta.Accounts.{User, UserGroup}
   alias Lotta.Messages.{Conversation, Message}
+  alias Lotta.Storage
+  alias Lotta.Storage.File
 
   def data() do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -187,18 +189,18 @@ defmodule Lotta.Messages do
   @doc """
   Create (= "send") a message
   """
-  @spec create_message(User.t(), User.t() | UserGroup.t(), String.t()) ::
+  @spec create_message(User.t(), User.t() | UserGroup.t(), String.t(), list(File.t())) ::
           {:ok, Message.t()} | {:error, Ecto.Changeset.t()}
-  def create_message(from, to, content) do
-    add_message = fn conversation, user, content ->
+  def create_message(from, to, content, files) do
+    add_message = fn conversation, user, content, files ->
       conversation
       |> Ecto.build_assoc(:messages)
-      |> Message.changeset(%{user_id: user.id, content: content})
+      |> Message.changeset(%{user_id: user.id, content: content, files: files})
       |> Repo.insert(prefix: Repo.get_prefix())
     end
 
     with {:ok, conversation} <- get_or_create_conversation(from, to),
-         {:ok, message} <- add_message.(conversation, from, content) do
+         {:ok, message} <- add_message.(conversation, from, content, files) do
       Repo.update(
         Ecto.Changeset.change(conversation),
         force: true

@@ -405,7 +405,8 @@ defmodule Lotta.Repo.Seeder do
         user_id: alexis.id,
         inserted_at: ~U[2020-11-01 10:00:00Z],
         updated_at: ~U[2020-11-01 10:00:00Z],
-        content: "OK, alles bereit?"
+        content: "OK, alles bereit?",
+        files: [List.first(alexis_files)]
       },
       %Message{
         user_id: eike.id,
