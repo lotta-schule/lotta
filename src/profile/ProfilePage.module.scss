@@ -27,10 +27,11 @@
     .divider {
         margin-top: calc(2 * var(--lotta-spacing));
         margin-bottom: calc(2 * var(--lotta-spacing));
-        width: 80%;
-        @media screen and (max-width: $max-sm) {
-            width: 100%;
-        }
+        width: 100%;
+    }
+
+    .subheader {
+        margin-top: calc(4 * var(--lotta-spacing));
     }
 
     .groupList {
@@ -66,5 +67,8 @@
                 width: 100%;
             }
         }
+    }
+    h5 {
+        margin-top: calc(3 * var(--lotta-spacing));
     }
 }
