@@ -70,9 +70,8 @@ export const Navbar = React.memo(() => {
                             <Link href={'/'} passHref>
                                 <NavigationButton
                                     key={'home'}
-                                    className={clsx(styles.navButton, {
-                                        selected: isHomepage,
-                                    })}
+                                    selected={isHomepage}
+                                    className={clsx(styles.navButton, {selected: isHomepage})}
                                 >
                                     {homepageCategory.title}
                                 </NavigationButton>
@@ -89,12 +88,13 @@ export const Navbar = React.memo(() => {
                                 passHref
                             >
                                 <NavigationButton
+                                    selected={categoriesHierarchy.indexOf(
+                                        category.id
+                                    ) > -1}
                                     className={clsx(styles.navButton, {
-                                        selected:
-                                            categoriesHierarchy.indexOf(
-                                                category.id
-                                            ) > -1,
-                                    })}
+                                        selected: categoriesHierarchy.indexOf(
+                                            category.id
+                                        ) > -1 })}
                                 >
                                     {category.title}
                                 </NavigationButton>
@@ -132,6 +132,9 @@ export const Navbar = React.memo(() => {
                                 key={category.id}
                                 small
                                 secondary
+                                selected={categoriesHierarchy.indexOf(
+                                    category.id
+                                ) > -1}
                                 className={clsx(styles.navButtonSecond, {
                                     selected:
                                         categoriesHierarchy.indexOf(
