@@ -55,7 +55,8 @@ defmodule LottaWeb.MessagesResolver do
       Messages.create_message(
         current_user,
         recipient_user || recipient_group,
-        message[:content]
+        message[:content],
+        message[:files]
       )
       |> format_errors("Nachricht konnte nicht versandt werden.")
   end

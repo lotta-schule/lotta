@@ -5,6 +5,7 @@ defmodule LottaWeb.Schema.Messages.Message do
 
   input_object :message_input do
     field :content, :string
+    field :files, list_of(:select_file_input)
     field :recipient_user, :select_user_input
     field :recipient_group, :select_user_group_input
   end
@@ -17,6 +18,7 @@ defmodule LottaWeb.Schema.Messages.Message do
       resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Messages)
 
     field :content, :string
+    field :files, list_of(:file), resolve: Absinthe.Resolution.Helpers.dataloader(Lotta.Storage)
     field :inserted_at, :datetime
     field :updated_at, :datetime
   end

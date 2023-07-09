@@ -64,7 +64,7 @@ defmodule LottaWeb.Schema.Messages do
           prefix = Ecto.get_meta(message, :prefix)
           tenant = Tenants.get_tenant_by_prefix(prefix)
 
-          message = Repo.preload(message, [:conversation, :user])
+          message = Repo.preload(message, [:conversation, :user, :files])
           conversation = Repo.preload(message.conversation, [:users, :groups])
 
           if tenant do

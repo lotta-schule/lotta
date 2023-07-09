@@ -34,6 +34,11 @@ defmodule LottaWeb.MessagesResolverTest do
         {user, jwt}
       end)
 
+    user2_file =
+      Lotta.Repo.get_by!(Lotta.Storage.File, [user_id: user2.id, filename: "wieartig1.jpg"],
+        prefix: tenant.prefix
+      )
+
     lehrer_group =
       Repo.one!(
         from(ug in UserGroup, where: ug.name == ^"Lehrer"),
@@ -60,6 +65,7 @@ defmodule LottaWeb.MessagesResolverTest do
         ),
         prefix: tenant.prefix
       )
+      |> Repo.preload(:files)
 
     {:ok,
      %{
@@ -67,6 +73,7 @@ defmodule LottaWeb.MessagesResolverTest do
        user_jwt: user_jwt,
        user2: user2,
        user2_jwt: user2_jwt,
+       user2_file: user2_file,
        lehrer_group: lehrer_group,
        schueler_group: schueler_group,
        all_conversations: all_conversations,
@@ -173,6 +180,9 @@ defmodule LottaWeb.MessagesResolverTest do
           user {
             name
           }
+          files {
+            filename
+          }
         }
       }
     }
@@ -206,19 +216,23 @@ defmodule LottaWeb.MessagesResolverTest do
                    "messages" => [
                      %{
                        "content" => "Ich frag mal in die Gruppe",
-                       "user" => %{"name" => "Eike Wiewiorra"}
+                       "user" => %{"name" => "Eike Wiewiorra"},
+                       "files" => []
                      },
                      %{
                        "content" => "Bereit für das Deployment",
-                       "user" => %{"name" => "Alexis Rinaldoni"}
+                       "user" => %{"name" => "Alexis Rinaldoni"},
+                       "files" => []
                      },
                      %{
                        "user" => %{"name" => "Eike Wiewiorra"},
-                       "content" => "Was meinst du damit?"
+                       "content" => "Was meinst du damit?",
+                       "files" => []
                      },
                      %{
                        "user" => %{"name" => "Alexis Rinaldoni"},
-                       "content" => "OK, alles bereit?"
+                       "content" => "OK, alles bereit?",
+                       "files" => [%{"filename" => "ich_schoen.jpg"}]
                      }
                    ]
                  }
@@ -258,7 +272,8 @@ defmodule LottaWeb.MessagesResolverTest do
                    "messages" => [
                      %{
                        "user" => %{"name" => "Eike Wiewiorra"},
-                       "content" => "Alles bereit hier? Wir würden deployen."
+                       "content" => "Alles bereit hier? Wir würden deployen.",
+                       "files" => []
                      }
                    ]
                  }
@@ -386,6 +401,9 @@ defmodule LottaWeb.MessagesResolverTest do
     mutation CreateMessage($message: MessageInput) {
       createMessage(message: $message) {
         content
+        files {
+          filename
+        }
         user {
           email
         }
@@ -401,7 +419,11 @@ defmodule LottaWeb.MessagesResolverTest do
     }
     """
 
-    test "send a message to another user", %{user2: user2, user_jwt: user_jwt} do
+    test "send a message to another user", %{
+      user2: user2,
+      user_jwt: user_jwt,
+      user2_file: user2_file
+    } do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
@@ -409,7 +431,11 @@ defmodule LottaWeb.MessagesResolverTest do
         |> post("/api",
           query: @query,
           variables: %{
-            message: %{content: "Hallo.", recipient_user: %{id: user2.id}}
+            message: %{
+              content: "Hallo.",
+              recipient_user: %{id: user2.id},
+              files: [%{id: user2_file.id}]
+            }
           }
         )
         |> json_response(200)
@@ -418,6 +444,7 @@ defmodule LottaWeb.MessagesResolverTest do
                "data" => %{
                  "createMessage" => %{
                    "content" => "Hallo.",
+                   "files" => [%{"filename" => user2_file.filename}],
                    "user" => %{"email" => "alexis.rinaldoni@lotta.schule"},
                    "conversation" => %{
                      "users" => [
@@ -435,14 +462,24 @@ defmodule LottaWeb.MessagesResolverTest do
              }
     end
 
-    test "send a message to a group", %{user2_jwt: user2_jwt, lehrer_group: lehrer_group} do
+    test "send a message to a group", %{
+      user2_jwt: user2_jwt,
+      user2_file: user2_file,
+      lehrer_group: lehrer_group
+    } do
       res =
         build_conn()
         |> put_req_header("tenant", "slug:test")
         |> put_req_header("authorization", "Bearer #{user2_jwt}")
         |> post("/api",
           query: @query,
-          variables: %{message: %{content: "Hallo.", recipient_group: %{id: lehrer_group.id}}}
+          variables: %{
+            message: %{
+              content: "Hallo.",
+              recipient_group: %{id: lehrer_group.id},
+              files: [%{id: user2_file.id}]
+            }
+          }
         )
         |> json_response(200)
 
@@ -450,6 +487,7 @@ defmodule LottaWeb.MessagesResolverTest do
                "data" => %{
                  "createMessage" => %{
                    "content" => "Hallo.",
+                   "files" => [%{"filename" => user2_file.filename}],
                    "user" => %{"email" => "eike.wiewiorra@lotta.schule"},
                    "conversation" => %{
                      "users" => [],
