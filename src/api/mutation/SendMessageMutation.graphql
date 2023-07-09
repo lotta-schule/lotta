@@ -12,6 +12,9 @@ mutation SendMessage($message: MessageInput) {
                 id
             }
         }
+        files {
+          id
+        }
         conversation {
             id
             insertedAt

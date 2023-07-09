@@ -13,8 +13,8 @@ export interface MessagesThreadProps {
     conversation: ConversationModel;
 }
 
-export const MessagesThread = React.memo<MessagesThreadProps>(
-    ({ conversation }) => {
+export const MessagesThread = React.memo(
+    ({ conversation }: MessagesThreadProps) => {
         const currentUser = useCurrentUser()!;
         const apolloClient = useApolloClient();
         const { data, error } = useQuery<{ conversation: ConversationModel }>(
