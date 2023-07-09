@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { useQuery } from '@apollo/client';
-
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { useCurrentUser } from 'util/user/useCurrentUser';
 import { Button, ErrorMessage, LinearProgress } from '@lotta-schule/hubert';
-import { Icon } from 'shared/Icon';
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ConversationModel, MessageModel, NewMessageDestination } from 'model';
-import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { ComposeMessage } from './ComposeMessage';
 import { ConversationPreview } from './ConversationPreview';
 import { MessagesThread } from './MessagesThread';
 import { MessageToolbar } from './MessageToolbar';
+import { useSetWindowHeight } from 'util/useSetWindowHeight';
 import { useIsMobile } from 'util/useIsMobile';
 import { Message } from 'util/model/Message';
+import { Icon } from 'shared/Icon';
 import clsx from 'clsx';
 
 import styles from './MessagingView.module.scss';

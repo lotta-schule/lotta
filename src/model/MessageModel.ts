@@ -1,6 +1,7 @@
 import { UserGroupModel } from './UserGroupModel';
 import { UserModel } from './UserModel';
 import { ID } from './ID';
+import { FileModel } from './FileModel';
 
 export type NewMessageDestination =
     | { group: UserGroupModel; user?: never }
@@ -21,6 +22,7 @@ export interface MessageModel {
     insertedAt: string;
     updatedAt: string;
     content: string;
+    files?: FileModel[];
     user: UserModel;
     conversation?: ConversationModel;
 }

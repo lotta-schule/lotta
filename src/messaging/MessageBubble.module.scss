@@ -40,6 +40,41 @@
         white-space: pre-wrap;
     }
 
+    .files {
+        .file {
+            display: grid;
+            grid-template-columns: auto 1fr 7.5em;
+            grid-template-rows: 1.5em auto;
+        }
+        .previewWrapper {
+            grid-row: 1 / span 2;
+            img {
+                max-height: 5em;
+                width: auto;
+                height: auto;
+                padding: var(--lotta-spacing);
+                borderRadius: 4;
+            }
+        }
+        .filename {
+            grid-column: 2 / span 2;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .downloadButton {
+            grid-column: 2;
+            & > * {
+                display: inline-flex;
+            }
+        }
+        .filesize {
+            grid-column: 3;
+            padding-top: calc(1.5 * var(--lotta-spacing));
+            padding-left: var(--lotta-spacing);
+        }
+    }
+
     .senderUser {
         display: flex;
         flex-direction: column;

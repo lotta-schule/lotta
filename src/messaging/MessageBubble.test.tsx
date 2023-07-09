@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { render, waitFor } from 'test/util';
-import { SomeUser, SomeUserin, createConversation } from 'test/fixtures';
+import { SomeUser, SomeUserin, createConversation, imageFile, documentFile } from 'test/fixtures';
+import { FileModel } from 'model';
 import { MessageBubble } from './MessageBubble';
 import userEvent from '@testing-library/user-event';
 
@@ -21,6 +22,22 @@ describe('messaging/MessageBubble', () => {
         expect(screen.getByText('Hallo!')).toBeVisible();
         expect(screen.getByText(/Che \(Ernesto Guevara\)/)).toBeVisible();
     });
+
+    describe('attached files', () => {
+        it('should not show the files section if no file is given', () => {
+            const screen = render(<MessageBubble message={message} />);
+            expect(screen.queryByTestId("message-attachments")).toBeNull();
+        });
+
+        it('should show download button and image preview if file is given', () => {
+            const messageWithFiles = { ...message, files: ([imageFile, documentFile] as any as FileModel[])};
+            const screen = render(<MessageBubble message={messageWithFiles} />);
+            expect(screen.getByTestId("message-attachments")).toBeVisible();
+
+            expect(screen.getAllByRole('link', { name: /herunterladen/})).toHaveLength(2);
+        });
+    });
+
 
     describe('delete button', () => {
         it('should show delete button for own messages', async () => {

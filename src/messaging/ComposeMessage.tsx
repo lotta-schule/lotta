@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { useMutation } from '@apollo/client';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
-import { Button, ErrorMessage, Input } from '@lotta-schule/hubert';
+import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { Button, ErrorMessage, Input, Tooltip } from '@lotta-schule/hubert';
 import {
     NewMessageDestination,
     MessageModel,
     ConversationModel,
     ID,
+    FileModel,
 } from 'model';
+import { SelectFileButton } from 'shared/edit/SelectFileButton';
 import { Icon } from 'shared/Icon';
 import pick from 'lodash/pick';
 import uniqBy from 'lodash/uniqBy';
@@ -64,6 +67,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                     const conversation = {
                         ...data.message.conversation,
                         ...readConversationResult?.conversation,
+                        unreadMessages: 0,
                         messages: uniqBy(
                             [
                                 data.message,
@@ -120,7 +124,35 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
         return (
             <div className={styles.root}>
                 <form className={styles.form} onSubmit={onSubmit}>
-                    <div>
+                    <SelectFileButton
+                        multiple
+                        buttonComponentProps={{
+                            icon: <Icon icon={faPaperclip} size="lg" />,
+                            className: styles.button,
+                            disabled: isLoading,
+                        }}
+                        onSelect={(files: FileModel[]) => {
+                            createMessage({
+                                variables: {
+                                    message: {
+                                        content: '',
+                                        files: files.map((file) => ({
+                                            id: file.id,
+                                        })),
+
+                                        recipientUser:
+                                            destination.user &&
+                                            pick(destination.user, 'id'),
+                                        recipientGroup:
+                                            destination.group &&
+                                            pick(destination.group, 'id'),
+                                    },
+                                },
+                            });
+                        }}
+                        label={''}
+                    />
+                    <div className={styles.textInputWrapper}>
                         <Input
                             multiline
                             ref={inputRef}
@@ -153,7 +185,8 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                     <Button
                         className={styles.button}
                         type={'submit'}
-                        disabled={isLoading}
+                        disabled={!content || isLoading}
+                        title={'Nachricht senden'}
                         icon={<Icon icon={faPaperPlane} size={'lg'} />}
                     />
                 </form>

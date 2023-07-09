@@ -26,8 +26,31 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                 }}
             />
         );
-        expect(screen.queryByRole('textbox')).toBeVisible();
-        expect(screen.queryByRole('textbox')).toHaveFocus();
+        expect(screen.getByRole('textbox')).toBeVisible();
+        expect(screen.getByRole('textbox')).toHaveFocus();
+    });
+
+    it('should have a disabled send button when textbox is empty', () => {
+        const screen = render(
+            <ComposeMessage
+                destination={{
+                    user: SomeUserin,
+                }}
+            />
+        );
+        expect(screen.getByRole('button', { name: /senden/ })).toBeDisabled();
+    });
+
+    it('should enable the send button when text is entered', () => {
+        const screen = render(
+            <ComposeMessage
+                destination={{
+                    user: SomeUserin,
+                }}
+            />
+        );
+        userEvent.type(screen.getByRole('textbox'), 'Hallo!');
+        expect(screen.getByRole('button', { name: /senden/ })).not.toBeDisabled();
     });
 
     describe('send form', () => {
@@ -52,6 +75,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                                 message: {
                                     id: 1,
                                     content: 'Hallo!',
+                                    files: [],
                                     user: SomeUser,
                                     recipientGroup: null,
                                     insertedAt: new Date().toString(),
@@ -81,7 +105,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                 { currentUser: SomeUser, additionalMocks }
             );
             userEvent.type(screen.getByRole('textbox'), 'Hallo!');
-            userEvent.click(screen.getByRole('button'));
+            userEvent.click(screen.getByRole('button', { name: /senden/ }));
 
             await waitFor(() => {
                 expect(didCallMutation).toEqual(true);
@@ -111,6 +135,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                                 message: {
                                     id: 1,
                                     content: 'Hallo!',
+                                    files: [],
                                     user: SomeUser,
                                     insertedAt: new Date().toString(),
                                     updatedAt: new Date().toString(),

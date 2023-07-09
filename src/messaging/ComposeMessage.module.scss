@@ -7,14 +7,14 @@
     .form {
         display: flex;
         flex-direction: row;
-        align-items: baseline;
+        align-items: center;
         width: 100%;
-        & > div:first-child {
-            /* text input wrapper */
-            flex-grow: 1;
-        }
     }
 
+    .textInputWrapper {
+        /* text input wrapper */
+        flex-grow: 1;
+    }
     .textField {
         resize: none;
         @media screen and (max-width: $max-xs) {
