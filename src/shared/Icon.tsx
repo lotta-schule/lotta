@@ -12,10 +12,10 @@ export type IconProps = Omit<FontAwesomeIconProps, 'size'> & {
     color?: 'primary' | 'secondary' | 'error';
 };
 
-export const Icon = React.memo<IconProps>((props) => {
+export const Icon = React.memo(({className, ...props}: IconProps) => {
     return (
         <span
-            className={clsx(styles.root, {
+            className={clsx(styles.root, className, {
                 [styles.secondaryColor]: props.color == 'secondary',
                 [styles.errorColor]: props.color == 'error',
             })}
