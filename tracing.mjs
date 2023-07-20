@@ -1,10 +1,18 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
-import { ConnectInstrumentation } from '@opentelemetry/instrumentation-connect';
+import OpenTelemetryNode from '@opentelemetry/sdk-node';
+import OpentelemetryExporterTraceHttp from '@opentelemetry/exporter-trace-otlp-http';
+import OpenTelemetryResources from '@opentelemetry/resources';
+import OpenTelemetrySemanticConventions from '@opentelemetry/semantic-conventions';
+import OpenTelemetryInstrumentationHttp from '@opentelemetry/instrumentation-http';
+import OpenTelemetryInstrumentationFetch from '@opentelemetry/instrumentation-fetch';
+import OpenTelemetryInstrumentationConnect from '@opentelemetry/instrumentation-connect';
+
+const { SemanticResourceAttributes } = OpenTelemetrySemanticConventions;
+const { Resource } = OpenTelemetryResources;
+const { OTLPTraceExporter } = OpentelemetryExporterTraceHttp;
+const { NodeSDK } = OpenTelemetryNode;
+const { HttpInstrumentation } = OpenTelemetryInstrumentationHttp;
+const { FetchInstrumentation } = OpenTelemetryInstrumentationFetch;
+const { ConnectInstrumentation } = OpenTelemetryInstrumentationConnect;
 
 // configure the SDK to export telemetry data to the console
 // enable all auto-instrumentations from the meta package
