@@ -104,7 +104,8 @@ export const ArticleEditable = React.memo<ArticleEditableProps>(
                                                             ...draggableProps,
                                                         }}
                                                         dragbarProps={
-                                                            dragHandleProps
+                                                            dragHandleProps ??
+                                                            undefined
                                                         }
                                                         isDragging={
                                                             snapshot.isDragging

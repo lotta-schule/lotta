@@ -178,7 +178,8 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                         );
                                                     }}
                                                     dragHandleProps={
-                                                        provided.dragHandleProps
+                                                        provided.dragHandleProps ??
+                                                        undefined
                                                     }
                                                     title={category.title}
                                                 />
@@ -247,7 +248,8 @@ export const CategoryNavigation = React.memo<CategoryNavigationProps>(
                                                                                     );
                                                                                 }}
                                                                                 dragHandleProps={
-                                                                                    dragHandleProps
+                                                                                    dragHandleProps ??
+                                                                                    undefined
                                                                                 }
                                                                                 title={
                                                                                     subcategory.title
