@@ -27,7 +27,7 @@
         .WidgetTab {
             border-radius: 0 !important;
             margin-bottom: 0;
-            &:not(:global(.selected)) {
+            &:not([aria-selected='true']) {
                 filter: grayscale(0.9);
                 opacity: 0.5;
             }
