@@ -10,7 +10,11 @@ import Link from 'next/link';
 
 import styles from './BaseLayout.module.scss';
 
-export const BaseLayout = React.memo(({ children }) => {
+export type BaseLayoutProps = {
+    children: React.ReactNode | React.ReactNode[];
+};
+
+export const BaseLayout = React.memo(({ children }: BaseLayoutProps) => {
     const tenant = useTenant();
     const { baseUrl } = useServerData();
 

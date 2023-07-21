@@ -1,4 +1,4 @@
-import React, { createContext, FC, useState, useRef, useContext } from 'react';
+import * as React from 'react';
 import { DirectoryModel, UploadModel } from 'model';
 import { Waiter } from 'util/Waiter';
 import { Upload } from './Upload';
@@ -45,13 +45,17 @@ export class UploadQueue {
     }
 }
 
-export const UploadQueueContext = createContext<
+export const UploadQueueContext = React.createContext<
     [UploadModel[], (f: File, pd: DirectoryModel) => void]
 >([[], () => {}]);
 
-export const UploadQueueProvider: FC = ({ children }) => {
-    const [uploads, setUploads] = useState<UploadModel[]>([]);
-    const uploadQueue = useRef(new UploadQueue(setUploads));
+export type UploadQueueProviderProps = {
+    children: React.ReactNode;
+};
+
+export const UploadQueueProvider = ({ children }: UploadQueueProviderProps) => {
+    const [uploads, setUploads] = React.useState([] as UploadModel[]);
+    const uploadQueue = React.useRef(new UploadQueue(setUploads));
 
     return (
         <UploadQueueContext.Provider
@@ -66,11 +70,11 @@ export const UploadQueueProvider: FC = ({ children }) => {
 };
 
 export const useUploads = () => {
-    const [uploads] = useContext(UploadQueueContext);
+    const [uploads] = React.useContext(UploadQueueContext);
     return uploads;
 };
 
 export const useCreateUpload = () => {
-    const [, dispatch] = useContext(UploadQueueContext);
+    const [, dispatch] = React.useContext(UploadQueueContext);
     return dispatch;
 };

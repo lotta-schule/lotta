@@ -6,6 +6,7 @@ import styles from './Main.module.scss';
 export interface MainProps {
     className?: string;
     style?: React.CSSProperties;
+    children?: React.ReactNode | React.ReactNode[];
 }
 
 export const Main: React.FC<MainProps> = ({ className, children, style }) => {

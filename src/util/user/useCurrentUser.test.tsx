@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { FunctionComponent } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
 import { UserModel } from 'model';
@@ -10,7 +9,7 @@ import GetCurrentUserQuery from 'api/query/GetCurrentUser.graphql';
 
 describe('util/userAvatar/useCurrentUser', () => {
     const createWrapperForUser = (currentUser: UserModel | null = null) => {
-        return ({ children }: { children: any }) => (
+        const WrapperComponent = ({ children }: { children: any }) => (
             <MockedProvider
                 mocks={[
                     {
@@ -23,6 +22,8 @@ describe('util/userAvatar/useCurrentUser', () => {
                 <div>{children}</div>
             </MockedProvider>
         );
+        WrapperComponent.displayName = 'WrapperComponent';
+        return WrapperComponent;
     };
 
     it('should return null if the userAvatar is not logged in', async () => {
