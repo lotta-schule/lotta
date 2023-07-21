@@ -21,6 +21,7 @@ describe('administration/users/DeleteUserDialog', () => {
     });
 
     it('close request closing the dialog on first page', async () => {
+        const fireEvent = userEvent.setup();
         const onRequestClose = jest.fn();
         const screen = render(
             <DeleteUserDialog onRequestClose={onRequestClose} user={SomeUser} />
@@ -30,11 +31,14 @@ describe('administration/users/DeleteUserDialog', () => {
                 screen.getByRole('button', { name: /abbrechen/i })
             ).toBeVisible();
         });
-        userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+        await fireEvent.click(
+            screen.getByRole('button', { name: /abbrechen/i })
+        );
         expect(onRequestClose).toHaveBeenCalled();
     });
 
     it("should show the user's used files in the second step if he has any in use", async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <DeleteUserDialog user={SomeUser} />,
             {},
@@ -52,7 +56,7 @@ describe('administration/users/DeleteUserDialog', () => {
             }
         );
 
-        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByText(/folgende beiträge/i)).toBeVisible();
         });
@@ -64,6 +68,7 @@ describe('administration/users/DeleteUserDialog', () => {
     });
 
     it('should inform that the user has no files used in public articles if that is the case', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <DeleteUserDialog user={SomeUser} />,
             {},
@@ -81,7 +86,7 @@ describe('administration/users/DeleteUserDialog', () => {
             }
         );
 
-        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByText(/keine dateien/i)).toBeVisible();
         });
@@ -91,6 +96,7 @@ describe('administration/users/DeleteUserDialog', () => {
     });
 
     it('should show a last warning and a delete button on the last step', async () => {
+        const fireEvent = userEvent.setup();
         const onConfirm = jest.fn();
         const deleteMutationFn = jest.fn(() => ({ data: { user: SomeUser } }));
         const screen = render(
@@ -120,11 +126,11 @@ describe('administration/users/DeleteUserDialog', () => {
             }
         );
 
-        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByText(/keine dateien/i)).toBeVisible();
         });
-        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByText(/endgültig gelöscht/)).toBeVisible();
         });
@@ -133,7 +139,7 @@ describe('administration/users/DeleteUserDialog', () => {
         expect(
             screen.getByRole('button', { name: /endgültig löschen/i })
         ).toBeVisible();
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /endgültig löschen/i })
         );
         await waitFor(() => {

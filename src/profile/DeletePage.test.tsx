@@ -41,6 +41,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     });
 
     it('should be able to go to second page and see own articles when clicking on button', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <DeletePage />,
             {},
@@ -77,7 +78,9 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         expect(
             await screen.findByRole('heading', { name: /daten löschen/i })
         ).toBeInTheDocument();
-        userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
+        await fireEvent.click(
+            await screen.findByRole('button', { name: /weiter/i })
+        );
 
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
@@ -85,6 +88,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
     }, 10_000);
 
     it('should be able to go to third page after having seen the first and the second one', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <DeletePage />,
             {},
@@ -122,20 +126,22 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
             }
         );
 
-        userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
+        await fireEvent.click(
+            await screen.findByRole('button', { name: /weiter/i })
+        );
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
         });
-        userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
-        await waitFor(() => {
-            expect(screen.getByRole('progressbar')).toBeVisible();
-        });
+        await fireEvent.click(
+            await screen.findByRole('button', { name: /weiter/i })
+        );
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
         });
     }, 10_000);
 
     it('The third page should not show the DeleteFileSelection or the tab bar if userAvatar has no files', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <DeletePage />,
             {},
@@ -173,26 +179,38 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
             }
         );
 
-        userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
+        fireEvent.click(await screen.findByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByRole('progressbar')).toBeVisible();
         });
-        userEvent.click(await screen.findByRole('button', { name: /weiter/i }));
-        expect(
-            await screen.findByTestId('ProfileDeleteStep3Box')
-        ).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.queryByRole('progressbar')).toBeNull();
+        });
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
+
+        await waitFor(() => {
+            expect(
+                screen.getByTestId('ProfileDeleteStep3Box')
+            ).toBeInTheDocument();
+        });
         expect(screen.queryByRole('tablist')).toBeNull();
         expect(
             screen.queryByRole('tabpanel', {
                 name: /dateien aus beiträgen übergeben/i,
             })
         ).toBeNull();
-        expect(
-            screen.queryByRole('tabpanel', { name: /alle dateien überprüfen/i })
-        ).toBeVisible();
+
+        await waitFor(() => {
+            expect(
+                screen.getByRole('tabpanel', {
+                    name: /alle dateien überprüfen/i,
+                })
+            ).toBeVisible();
+        });
     }, 10_000);
 
     it('The fourth page should show a "definitly delete account" button, which upon click should show a modal with another "definitly delete account" button', async () => {
+        const fireEvent = userEvent.setup();
         let didCallDeleteMutation = false;
         const onPushLocation = jest.fn(async (url: any) => {
             expect(url).toEqual('/');
@@ -262,19 +280,19 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
         await waitFor(() => {
             screen.getByRole('button', { name: /weiter/i });
         });
-        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep2Box')).toBeVisible();
         });
-        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep3Box')).toBeVisible();
         });
-        userEvent.click(screen.getByRole('button', { name: /weiter/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /weiter/i }));
         await waitFor(() => {
             expect(screen.getByTestId('ProfileDeleteStep4Box')).toBeVisible();
         });
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /endgültig löschen/i })
         );
 
@@ -282,7 +300,7 @@ describe('shared/layouts/profileLayout/ProfileDelete', () => {
             expect(screen.getByRole('dialog')).toBeVisible();
         });
 
-        userEvent.click(
+        await fireEvent.click(
             await screen.findByRole('button', {
                 name: /jetzt alle daten endgültig löschen/i,
             })

@@ -41,7 +41,8 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         expect(screen.getByRole('button', { name: /senden/ })).toBeDisabled();
     });
 
-    it('should enable the send button when text is entered', () => {
+    it('should enable the send button when text is entered', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <ComposeMessage
                 destination={{
@@ -49,12 +50,15 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                 }}
             />
         );
-        userEvent.type(screen.getByRole('textbox'), 'Hallo!');
-        expect(screen.getByRole('button', { name: /senden/ })).not.toBeDisabled();
+        await fireEvent.type(screen.getByRole('textbox'), 'Hallo!');
+        expect(
+            screen.getByRole('button', { name: /senden/ })
+        ).not.toBeDisabled();
     });
 
     describe('send form', () => {
         it('should send a user a message', async () => {
+            const fireEvent = userEvent.setup();
             let didCallMutation = false;
             const additionalMocks = [
                 {
@@ -104,8 +108,10 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(screen.getByRole('textbox'), 'Hallo!');
-            userEvent.click(screen.getByRole('button', { name: /senden/ }));
+            await fireEvent.type(screen.getByRole('textbox'), 'Hallo!');
+            await fireEvent.click(
+                screen.getByRole('button', { name: /senden/ })
+            );
 
             await waitFor(() => {
                 expect(didCallMutation).toEqual(true);
@@ -115,6 +121,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         });
 
         it('should send form on ENTER', async () => {
+            const fireEvent = userEvent.setup();
             let didCallMutation = false;
             const additionalMocks = [
                 {
@@ -167,7 +174,7 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(screen.getByRole('textbox'), 'Hallo!{enter}');
+            await fireEvent.type(screen.getByRole('textbox'), 'Hallo!{enter}');
             await waitFor(() => {
                 expect(didCallMutation).toEqual(true);
             });
@@ -175,6 +182,8 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
         });
 
         it('should not send form on ENTER when SHIFT modifier is pressed', async () => {
+            const fireEvent = userEvent.setup();
+            const onSent = jest.fn();
             const screen = render(
                 <ComposeMessage
                     destination={{
@@ -184,13 +193,14 @@ describe('shared/layouts/messagingLayout/ComposeMessage', () => {
                 {},
                 { currentUser: SomeUser }
             );
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('textbox'),
-                'Hallo!{shift}{enter}Zweite Zeile'
+                'Hallo!{Shift>}{Enter}{/Shift}Zweite Zeile'
             );
             expect(screen.getByRole('textbox')).toHaveValue(
                 'Hallo!\nZweite Zeile'
             );
+            expect(onSent).not.toHaveBeenCalled();
         });
     });
 });

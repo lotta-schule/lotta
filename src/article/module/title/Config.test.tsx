@@ -51,6 +51,7 @@ describe('shared/article/module/title/Config', () => {
     });
 
     it('should change the size configuration', async () => {
+        const fireEvent = userEvent.setup();
         const callback = jest.fn((cm) => {
             expect(cm.configuration.level).toEqual(6);
         });
@@ -62,7 +63,7 @@ describe('shared/article/module/title/Config', () => {
             />
         );
 
-        userEvent.selectOptions(
+        await fireEvent.selectOptions(
             screen.getByRole('combobox'),
             'Überschrift klein'
         );

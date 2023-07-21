@@ -69,14 +69,17 @@ describe('article/EditArticlePage', () => {
             expect(screen.getByTestId('AddModuleBar')).toBeVisible();
         });
 
-        it('should add a contentmodule', () => {
+        it('should add a contentmodule', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
                 { currentUser: SomeUser }
             );
             expect(screen.queryAllByTestId('ContentModule')).toHaveLength(3);
-            userEvent.click(screen.getByRole('button', { name: /titel/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /titel/i })
+            );
             expect(screen.queryAllByTestId('ContentModule')).toHaveLength(4);
         });
     });
@@ -92,6 +95,7 @@ describe('article/EditArticlePage', () => {
         });
 
         it('should call saveArticle endpoint with updated content modules', async () => {
+            const fireEvent = userEvent.setup();
             const variables = {
                 id: Weihnachtsmarkt.id,
                 article: {
@@ -147,14 +151,19 @@ describe('article/EditArticlePage', () => {
                     ],
                 }
             );
-            userEvent.click(screen.getByRole('button', { name: /titel/i }));
-            userEvent.click(screen.getByRole('button', { name: /speichern/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /titel/i })
+            );
+            await fireEvent.click(
+                screen.getByRole('button', { name: /speichern/i })
+            );
             await waitFor(() => {
                 expect(onSave).toHaveBeenCalled();
             });
         }, 20000);
 
         it('should redirect to article page after saving', async () => {
+            const fireEvent = userEvent.setup();
             const onPushLocation = jest.fn(async (url: any) => {
                 expect(url).toMatch(/^\/a\//);
                 return true;
@@ -219,8 +228,12 @@ describe('article/EditArticlePage', () => {
                     },
                 }
             );
-            userEvent.click(screen.getByRole('button', { name: /titel/i }));
-            userEvent.click(screen.getByRole('button', { name: /speichern/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /titel/i })
+            );
+            await fireEvent.click(
+                screen.getByRole('button', { name: /speichern/i })
+            );
             await waitFor(() => {
                 expect(onPushLocation).toHaveBeenCalled();
             });
@@ -271,6 +284,7 @@ describe('article/EditArticlePage', () => {
         }, 20000);
 
         it('should update the preview when receiving update via subscription after adding a content module', async () => {
+            const fireEvent = userEvent.setup();
             let didReceiveUpdate = false;
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
@@ -304,7 +318,9 @@ describe('article/EditArticlePage', () => {
             ).toHaveValue(
                 'lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit. lorem ipsum dolor sit.'
             );
-            userEvent.click(screen.getByRole('button', { name: /titel/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /titel/i })
+            );
             await waitFor(
                 () => {
                     expect(didReceiveUpdate).toEqual(true);
@@ -319,6 +335,7 @@ describe('article/EditArticlePage', () => {
         }, 30_000);
 
         it('should show a dialog when receiving update including content-module change via subscription after adding a content module', async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
                 {},
@@ -330,7 +347,7 @@ describe('article/EditArticlePage', () => {
                                 query: ArticleIsUpdatedSubscription,
                                 variables: { id: Weihnachtsmarkt.id },
                             },
-                            delay: 500,
+                            delay: 2000,
                             result: () => {
                                 const article = {
                                     ...Weihnachtsmarkt,
@@ -361,14 +378,23 @@ describe('article/EditArticlePage', () => {
                     ],
                 }
             );
-            userEvent.click(screen.getByRole('button', { name: /titel/i }));
-            await waitFor(() => {
-                expect(screen.getByRole('dialog')).toBeInTheDocument();
-                expect(screen.getByRole('dialog')).toHaveTextContent(
-                    /beitrag.*aktualisiert/i
-                );
-            });
-        }, 30_000);
+
+            // add a heading
+            await fireEvent.click(
+                screen.getByRole('button', { name: /titel/i })
+            );
+
+            // wait for subscription
+            await waitFor(
+                () => {
+                    expect(screen.getByRole('dialog')).toBeInTheDocument();
+                    expect(screen.getByRole('dialog')).toHaveTextContent(
+                        /beitrag.*aktualisiert/i
+                    );
+                },
+                { timeout: 4_000, interval: 250 }
+            );
+        }, 10_000);
     });
 
     describe('issue warning when userAvatar navigates away', () => {
@@ -380,6 +406,7 @@ describe('article/EditArticlePage', () => {
             global.confirm = originalConfirm;
         });
         it('should show a prompt if userAvatar has made a change', async () => {
+            const fireEvent = userEvent.setup();
             let router: Router;
             const screen = render(
                 <EditArticlePage article={Weihnachtsmarkt} />,
@@ -394,7 +421,7 @@ describe('article/EditArticlePage', () => {
                     },
                 }
             );
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('textbox', { name: /title/i }),
                 'Bla'
             );

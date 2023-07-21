@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { useImageUrl } from './useImageUrl';
 
 describe('useImageUrl', () => {
@@ -65,17 +65,19 @@ describe('useImageUrl', () => {
                 useImageUrl('https://my.image/on-path', {
                     width: 200,
                     aspectRatio: '6:1',
-                    resize: 'fit',
+                    resize: 'contain',
                 })
             );
 
             expect(screen.result.current.url).toEqual(
-                'https://my.image/on-path?width=200&height=33&fn=fit'
+                'https://my.image/on-path?width=200&height=33&fn=contain'
             );
             expect(screen.result.current.sizeMap).toEqual({
-                '200w': 'https://my.image/on-path?width=200&height=33&fn=fit',
+                '200w': 'https://my.image/on-path?width=200&height=33&fn=contain',
             });
-            expect(screen.result.current.customStyle).toEqual({});
+            expect(screen.result.current.customStyle).toEqual({
+                aspectRatio: '6',
+            });
         });
     });
 });

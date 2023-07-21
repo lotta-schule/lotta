@@ -143,6 +143,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
 
     describe('request selection change', () => {
         it('should call change function including new file requested upon click', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(4);
                 expect(
@@ -179,7 +180,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                 screen.getByRole('checkbox', { name: 'praesi.ppt' })
             ).not.toBeChecked();
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('checkbox', { name: 'Amelie.mp4' })
             );
 
@@ -189,6 +190,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
         });
 
         it('should call change function without file unchecked upon click', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(2);
                 expect(
@@ -225,7 +227,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                 screen.getByRole('checkbox', { name: 'praesi.ppt' })
             ).not.toBeChecked();
 
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('checkbox', { name: 'Animiert.gif' })
             );
 
@@ -235,6 +237,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
         }, 15_000);
 
         it('should call change function requesting all files when "select all" checkbox is click in off state', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(7);
                 expect(newSelection.map((f) => f.filename).sort()).toEqual([
@@ -254,7 +257,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                     onSelectFiles={callback}
                 />
             );
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('checkbox', { name: /alle dateien/i })
             );
 
@@ -264,6 +267,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
         });
 
         it('should call change function requesting no files when "select all" checkbox is clicked in on state', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(0);
             });
@@ -274,7 +278,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                     onSelectFiles={callback}
                 />
             );
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('checkbox', { name: /alle dateien/i })
             );
 
@@ -284,6 +288,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
         });
 
         it('should call change function requesting all files when "select all" checkbox is click in mixed state', async () => {
+            const fireEvent = userEvent.setup();
             const callback = jest.fn((newSelection: FileModel[]) => {
                 expect(newSelection).toHaveLength(7);
                 expect(newSelection.map((f) => f.filename).sort()).toEqual([
@@ -303,7 +308,7 @@ describe('shared/article/ProfileDeleteFileSelection', () => {
                     onSelectFiles={callback}
                 />
             );
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('checkbox', { name: /alle dateien/i })
             );
 

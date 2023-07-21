@@ -1,6 +1,7 @@
 import '@jest/globals';
 import '@testing-library/jest-dom';
 import 'whatwg-fetch';
+import { TextEncoder, TextDecoder } from 'util';
 
 self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ } as any;
 
@@ -8,6 +9,8 @@ self.__NEXT_DATA__ = { ...self.__NEXT_DATA__ } as any;
 const dialogContainer = document.createElement('div');
 dialogContainer.setAttribute('id', 'dialogContainer');
 document.body.appendChild(dialogContainer);
+
+Object.assign(global, { TextDecoder, TextEncoder });
 
 // window.matchMedia mock
 Object.defineProperty(window, 'matchMedia', {

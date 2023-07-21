@@ -110,6 +110,7 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
     });
 
     it('should generate and download a csv when the button is clicked', async () => {
+        const fireEvent = userEvent.setup();
         global.URL.createObjectURL = jest.fn(() => 'http://localhost/0');
 
         const screen = render(
@@ -137,7 +138,7 @@ describe('src/shared/article/module/form/FormResultsDialog', () => {
             data = _data;
             filename = _filename;
         });
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /csv herunterladen/i })
         );
         expect(saveAs).toHaveBeenCalled();

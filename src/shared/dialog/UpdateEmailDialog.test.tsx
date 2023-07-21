@@ -29,10 +29,14 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
         expect(screen.getByLabelText('Neue Email:')).toHaveFocus();
     });
 
-    it('should start with a disabled submit button, but should enable the button when emails have been entered', () => {
+    it('should start with a disabled submit button, but should enable the button when emails have been entered', async () => {
+        const fireEvent = userEvent.setup();
         render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
         expect(screen.getByRole('button', { name: /ändern/ })).toBeDisabled();
-        userEvent.type(screen.getByLabelText('Neue Email:'), 'abc@def.gh');
+        await fireEvent.type(
+            screen.getByLabelText('Neue Email:'),
+            'abc@def.gh'
+        );
         expect(
             screen.getByRole('button', { name: /ändern/ })
         ).not.toBeDisabled();
@@ -40,6 +44,7 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
 
     describe('send form', () => {
         it('change the email and then close the dialog', async () => {
+            const fireEvent = userEvent.setup();
             let updateMutationCalled = false;
             const additionalMocks: MockedResponse[] = [
                 {
@@ -72,15 +77,22 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(screen.getByLabelText('Neue Email:'), 'ab@cd.ef');
-            userEvent.click(screen.getByRole('button', { name: /ändern/ }));
+            await fireEvent.type(
+                screen.getByLabelText('Neue Email:'),
+                'ab@cd.ef'
+            );
+            await fireEvent.click(
+                screen.getByRole('button', { name: /ändern/ })
+            );
             await waitFor(() => {
                 expect(
                     screen.getByTestId('RequestHisecTokenDialog')
                 ).toBeVisible();
             });
-            userEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
-            userEvent.click(screen.getByRole('button', { name: /senden/i }));
+            await fireEvent.type(screen.getByLabelText('Passwort:'), 'pw123');
+            await fireEvent.click(
+                screen.getByRole('button', { name: /senden/i })
+            );
 
             await waitFor(() => {
                 expect(updateMutationCalled).toEqual(true);
@@ -90,10 +102,13 @@ describe('shared/layouts/adminLayout/userManagment/UpdateEmailDialog', () => {
             });
         });
 
-        it('should clear the form and call onAbort when clicking the "Reset" button', () => {
+        it('should clear the form and call onAbort when clicking the "Reset" button', async () => {
+            const fireEvent = userEvent.setup();
             render(<UpdateEmailDialog isOpen onRequestClose={() => {}} />);
             expect(screen.getByLabelText('Neue Email:')).toHaveValue('');
-            userEvent.click(screen.getByRole('button', { name: /ändern/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /ändern/i })
+            );
         });
     });
 });

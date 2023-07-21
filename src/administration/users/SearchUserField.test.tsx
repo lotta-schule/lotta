@@ -34,6 +34,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
         ];
 
         it('should show the correct search results for a search term', async () => {
+            const fireEvent = userEvent.setup();
             const [{ request, result }] = additionalMocks;
             const networkFn = jest.fn(() => ({ ...result }));
             const screen = render(
@@ -44,7 +45,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
                     additionalMocks: [{ request, result: networkFn }],
                 }
             );
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
@@ -55,13 +56,14 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
         });
 
         it('should call "onSelectUser" with the correct userAvatar when selected', async () => {
+            const fireEvent = userEvent.setup();
             const selectUserFn = jest.fn();
             const screen = render(
                 <SearchUserField onSelectUser={selectUserFn} />,
                 {},
                 { currentUser: SomeUser, additionalMocks }
             );
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('combobox', { name: /nutzer suchen/i }),
                 'Michel'
             );
@@ -70,7 +72,7 @@ describe('shared/layouts/userManagment/SearchUserField', () => {
                     screen.getByRole('option', { name: /michel dupond/i })
                 ).toHaveTextContent('Michel Dupond');
             });
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('option', { name: /michel dupond/i })
             );
             expect(selectUserFn).toHaveBeenCalledWith(

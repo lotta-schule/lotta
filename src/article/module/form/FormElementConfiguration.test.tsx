@@ -12,6 +12,7 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
             name: 'blabla',
         };
         it('should provide element, type, name, label, descriptionText, required and multiline options', async () => {
+            const fireEvent = userEvent.setup();
             const updateElementFn = jest.fn();
             const screen = render(
                 <FormElementConfiguration
@@ -22,41 +23,47 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
             expect(
                 screen.getByRole('combobox', { name: /art der eingabe/i })
             ).toHaveValue('input');
-            userEvent.selectOptions(
+            await fireEvent.selectOptions(
                 screen.getByRole('combobox', { name: /texteingabevariation/i }),
                 'color'
             );
             expect(updateElementFn).toHaveBeenLastCalledWith({ type: 'color' });
-            expect(
-                screen.getByRole('textbox', { name: /name/i })
-            ).toBeVisible();
-            userEvent.type(
-                screen.getByRole('textbox', { name: /name/i }),
-                '{selectall}1'
-            );
+            const nameInput = screen.getByRole('textbox', {
+                name: /name/i,
+            }) as HTMLInputElement;
+            expect(nameInput).toBeVisible();
+            await fireEvent.type(nameInput, '1', {
+                initialSelectionStart: 0,
+                initialSelectionEnd: nameInput.value.length,
+            });
             expect(updateElementFn).toHaveBeenLastCalledWith({ name: '1' });
-            expect(
-                screen.getByRole('textbox', { name: /aufschrift/i })
-            ).toBeVisible();
-            userEvent.type(
-                screen.getByRole('textbox', { name: /aufschrift/i }),
-                '{selectall}2'
-            );
+
+            const aufschriftInput = screen.getByRole('textbox', {
+                name: /aufschrift/i,
+            }) as HTMLInputElement;
+            expect(aufschriftInput).toBeVisible();
+            await fireEvent.type(aufschriftInput, '2', {
+                initialSelectionStart: 0,
+                initialSelectionEnd: aufschriftInput.value.length,
+            });
             expect(updateElementFn).toHaveBeenLastCalledWith({ label: '2' });
-            expect(
-                screen.getByRole('textbox', { name: /beschriftung/i })
-            ).toBeVisible();
-            userEvent.type(
-                screen.getByRole('textbox', { name: /beschriftung/i }),
-                '{selectall}3'
-            );
+
+            const descriptionTextInput = screen.getByRole('textbox', {
+                name: /beschriftung/i,
+            }) as HTMLInputElement;
+            expect(descriptionTextInput).toBeVisible();
+            await fireEvent.type(descriptionTextInput, '3', {
+                initialSelectionStart: 0,
+                initialSelectionEnd: descriptionTextInput.value.length,
+            });
             expect(updateElementFn).toHaveBeenLastCalledWith({
                 descriptionText: '3',
             });
+
             expect(
                 screen.getByRole('checkbox', { name: /mehrzeilig/i })
             ).toBeInTheDocument();
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('checkbox', { name: /mehrzeilig/i })
             );
             expect(updateElementFn).toHaveBeenLastCalledWith({
@@ -81,7 +88,8 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
             type: 'checkbox',
             name: 'blabla',
         };
-        it('should provide element, type, name, label, descriptionText, required and options options', () => {
+        it('should provide element, type, name, label, descriptionText, required and options options', async () => {
+            const fireEvent = userEvent.setup();
             const updateElementFn = jest.fn();
             const screen = render(
                 <FormElementConfiguration
@@ -95,7 +103,7 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
             expect(
                 screen.getByRole('combobox', { name: /auswahlfeldvariation/i })
             ).toHaveValue('checkbox');
-            userEvent.selectOptions(
+            await fireEvent.selectOptions(
                 screen.getByRole('combobox', { name: /auswahlfeldvariation/i }),
                 'radio'
             );
@@ -111,7 +119,7 @@ describe('shared/article/module/form/FormElementConfiguration', () => {
             ).toBeVisible();
 
             // Antwort hinzufügen
-            userEvent.click(
+            await fireEvent.click(
                 screen.getByRole('button', { name: /antwort hinzufügen/i })
             );
             expect(updateElementFn).toHaveBeenLastCalledWith({

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import userEvent from '@testing-library/user-event';
 import { Weihnachtsmarkt } from 'test/fixtures';
 import { render } from 'test/util';
 import { ArticleDatesEditor } from './ArticleDatesEditor';
+import userEvent from '@testing-library/user-event';
 
 describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
     it('should render without error', () => {
@@ -44,7 +44,8 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
         ).toHaveValue('2020-10-11');
     });
 
-    it('should call onAbort when cancel button is clicked', () => {
+    it('should call onAbort when cancel button is clicked', async () => {
+        const fireEvent = userEvent.setup();
         const onAbort = jest.fn();
         const screen = render(
             <ArticleDatesEditor
@@ -54,11 +55,14 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
                 onAbort={onAbort}
             />
         );
-        userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+        await fireEvent.click(
+            screen.getByRole('button', { name: /abbrechen/i })
+        );
         expect(onAbort).toHaveBeenCalled();
     });
 
-    it('should call onUpdate when save button is clicked', () => {
+    it('should call onUpdate when save button is clicked', async () => {
+        const fireEvent = userEvent.setup();
         const onUpdate = jest.fn();
         const screen = render(
             <ArticleDatesEditor
@@ -68,11 +72,15 @@ describe('shared/layouts/editArticleLayout/ArticleDatesEditor', () => {
                 onAbort={jest.fn()}
             />
         );
-        userEvent.type(
-            screen.getByRole('textbox', { name: /erstellt/i, hidden: true }),
-            '1999-01-01'
-        );
-        userEvent.click(screen.getByRole('button', { name: /OK/i }));
+        const createdInput = screen.getByRole('textbox', {
+            name: /erstellt/i,
+            hidden: true,
+        }) as HTMLInputElement;
+        await fireEvent.type(createdInput, '1999-01-01', {
+            initialSelectionStart: 0,
+            initialSelectionEnd: createdInput.value.length,
+        });
+        await fireEvent.click(screen.getByRole('button', { name: /OK/i }));
         expect(onUpdate).toHaveBeenCalledWith({
             insertedAt: '1999-01-01T00:00:00.000Z',
         });

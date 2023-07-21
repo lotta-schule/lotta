@@ -1,6 +1,6 @@
-import userEvent from '@testing-library/user-event';
 import { render } from 'test/util';
 import { PathViewer } from './PathViewer';
+import userEvent from '@testing-library/user-event';
 
 describe('fileExplorer/PathViewer', () => {
     it('should render correctly on home path', () => {
@@ -29,7 +29,8 @@ describe('fileExplorer/PathViewer', () => {
         expect(links[2]).toHaveTextContent('Test 2');
     });
 
-    it('should select a path on click', () => {
+    it('should select a path on click', async () => {
+        const fireEvent = userEvent.setup();
         const onChange = jest.fn();
         const screen = render(
             <PathViewer
@@ -42,7 +43,7 @@ describe('fileExplorer/PathViewer', () => {
                 onChange={onChange}
             />
         );
-        userEvent.click(screen.getByRole('link', { name: 'Test 2' }));
+        await fireEvent.click(screen.getByRole('link', { name: 'Test 2' }));
         expect(onChange).toHaveBeenCalledWith([
             { id: null },
             { id: '123', name: 'Test 1' },

@@ -10,18 +10,22 @@ describe('shared/dialog/LoginDialog', () => {
         render(<LoginDialog isOpen={true} onRequestClose={() => {}} />, {});
     });
 
-    it('should close the dialog when clicking on cancel', () => {
+    it('should close the dialog when clicking on cancel', async () => {
+        const fireEvent = userEvent.setup();
         const onRequestClose = jest.fn();
         const screen = render(
             <LoginDialog isOpen={true} onRequestClose={onRequestClose} />,
             {}
         );
-        userEvent.click(screen.getByRole('button', { name: /abbrechen/i }));
+        await fireEvent.click(
+            screen.getByRole('button', { name: /abbrechen/i })
+        );
         expect(onRequestClose).toHaveBeenCalled();
     });
 
     describe('fields', () => {
         it('should send a complete login, then show a confirm message', async () => {
+            const fireEvent = userEvent.setup();
             const additionalMocks = [
                 {
                     request: {
@@ -40,18 +44,24 @@ describe('shared/dialog/LoginDialog', () => {
                 {},
                 { additionalMocks, currentUser: SomeUser }
             );
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('textbox', { name: /email/i }),
                 'nutzer@email.de'
             );
-            userEvent.type(screen.getByLabelText(/passwort/i), 'password');
-            userEvent.click(screen.getByRole('button', { name: /anmelden/i }));
+            await fireEvent.type(
+                screen.getByLabelText(/passwort/i),
+                'password'
+            );
+            await fireEvent.click(
+                screen.getByRole('button', { name: /anmelden/i })
+            );
             await waitFor(() => {
                 expect(onRequestClose).toHaveBeenCalled();
             });
         });
 
         it('should send a complete login, then show the password change dialog if the userAvatar logs in for the first time', async () => {
+            const fireEvent = userEvent.setup();
             const additionalMocks = [
                 {
                     request: {
@@ -76,12 +86,17 @@ describe('shared/dialog/LoginDialog', () => {
                     },
                 }
             );
-            userEvent.type(
+            await fireEvent.type(
                 screen.getByRole('textbox', { name: /email/i }),
                 'nutzer@email.de'
             );
-            userEvent.type(screen.getByLabelText(/passwort/i), 'password');
-            userEvent.click(screen.getByRole('button', { name: /anmelden/i }));
+            await fireEvent.type(
+                screen.getByLabelText(/passwort/i),
+                'password'
+            );
+            await fireEvent.click(
+                screen.getByRole('button', { name: /anmelden/i })
+            );
             await waitFor(() => {
                 expect(
                     screen.queryByRole('heading', { name: /passwort ändern/i })

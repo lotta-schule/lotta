@@ -66,7 +66,8 @@ describe('shared/article/ArticleStateEditor', () => {
                 ).toBeDisabled();
             });
 
-            it('should call onUpdate with "readyToPublish" set to true when "submitted" option is selected', () => {
+            it('should call onUpdate with "readyToPublish" set to true when "submitted" option is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const onUpdate = jest.fn();
                 const screen = render(
                     <ArticleStateEditor
@@ -76,7 +77,7 @@ describe('shared/article/ArticleStateEditor', () => {
                     {},
                     { currentUser: SomeUserin }
                 );
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('radio', { name: /submitted/i })
                 );
                 expect(onUpdate).toHaveBeenCalledWith({
@@ -116,7 +117,8 @@ describe('shared/article/ArticleStateEditor', () => {
                 ).toBeEnabled();
             });
 
-            it('should call onUpdate with "publisehd" set to true when "published" option is selected', () => {
+            it('should call onUpdate with "publisehd" set to true when "published" option is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const onUpdate = jest.fn();
                 const screen = render(
                     <ArticleStateEditor
@@ -126,7 +128,7 @@ describe('shared/article/ArticleStateEditor', () => {
                     {},
                     { currentUser: adminUser }
                 );
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('radio', { name: /published/i })
                 );
                 expect(onUpdate).toHaveBeenCalledWith({
@@ -185,7 +187,8 @@ describe('shared/article/ArticleStateEditor', () => {
                 ).toBeDisabled();
             });
 
-            it('should call onUpdate with "readyToPublish" set to false when "draft" option is selected', () => {
+            it('should call onUpdate with "readyToPublish" set to false when "draft" option is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const onUpdate = jest.fn();
                 const screen = render(
                     <ArticleStateEditor
@@ -195,7 +198,9 @@ describe('shared/article/ArticleStateEditor', () => {
                     {},
                     { currentUser: SomeUserin }
                 );
-                userEvent.click(screen.getByRole('radio', { name: /draft/i }));
+                await fireEvent.click(
+                    screen.getByRole('radio', { name: /draft/i })
+                );
                 expect(onUpdate).toHaveBeenCalledWith({
                     ...article,
                     readyToPublish: false,
@@ -233,7 +238,8 @@ describe('shared/article/ArticleStateEditor', () => {
                 ).toBeEnabled();
             });
 
-            it('should call onUpdate with "published" set to true when "published" option is selected', () => {
+            it('should call onUpdate with "published" set to true when "published" option is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const onUpdate = jest.fn();
                 const screen = render(
                     <ArticleStateEditor
@@ -243,7 +249,7 @@ describe('shared/article/ArticleStateEditor', () => {
                     {},
                     { currentUser: adminUser }
                 );
-                userEvent.click(
+                await fireEvent.click(
                     screen.getByRole('radio', { name: /published/i })
                 );
                 expect(onUpdate).toHaveBeenCalledWith({
@@ -333,7 +339,8 @@ describe('shared/article/ArticleStateEditor', () => {
                 ).toBeDisabled();
             });
 
-            it('should call onUpdate with "draft" set to true when "draft" option is selected', () => {
+            it('should call onUpdate with "draft" set to true when "draft" option is selected', async () => {
+                const fireEvent = userEvent.setup();
                 const onUpdate = jest.fn();
                 const screen = render(
                     <ArticleStateEditor
@@ -343,7 +350,9 @@ describe('shared/article/ArticleStateEditor', () => {
                     {},
                     { currentUser: adminUser }
                 );
-                userEvent.click(screen.getByRole('radio', { name: /draft/i }));
+                await fireEvent.click(
+                    screen.getByRole('radio', { name: /draft/i })
+                );
                 expect(onUpdate).toHaveBeenCalledWith({
                     ...article,
                     readyToPublish: false,

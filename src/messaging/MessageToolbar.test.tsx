@@ -19,6 +19,7 @@ describe('src/messaging/MessageToolbar', () => {
     });
 
     it('should open the create popup when clicking on the "add" button', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <MessageToolbar
                 onToggle={() => {}}
@@ -28,7 +29,7 @@ describe('src/messaging/MessageToolbar', () => {
             { currentUser: SomeUserWithGroups }
         );
 
-        userEvent.click(
+        await fireEvent.click(
             screen.getByRole('button', { name: /nachricht schreiben/i })
         );
         await waitFor(() => {

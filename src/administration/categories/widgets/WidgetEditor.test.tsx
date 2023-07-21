@@ -126,6 +126,7 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
             })),
         };
         it("should update the widget's properties", async () => {
+            const fireEvent = userEvent.setup();
             const screen = render(
                 <WidgetEditor
                     selectedWidget={VPSchuelerWidget}
@@ -134,15 +135,20 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
                 {},
                 { additionalMocks: [mock] }
             );
-            userEvent.type(
-                screen.getByRole('textbox', { name: /name des widget/i }),
-                '{selectall}Neuer Name'
-            );
-            userEvent.click(
+            const widgetNameInput = screen.getByRole('textbox', {
+                name: /name des widget/i,
+            }) as HTMLInputElement;
+            await fireEvent.type(widgetNameInput, 'Neuer Name', {
+                initialSelectionStart: 0,
+                initialSelectionEnd: widgetNameInput.value.length,
+            });
+            await fireEvent.click(
                 screen.getByRole('checkbox', { name: /für alle/i })
             );
 
-            userEvent.click(screen.getByRole('button', { name: /speichern/i }));
+            await fireEvent.click(
+                screen.getByRole('button', { name: /speichern/i })
+            );
             await waitFor(() => {
                 expect(mock.result).toHaveBeenCalled();
             });
@@ -150,13 +156,14 @@ describe('layouts/adminLayout/categoryManagment/widgets/WidgetEditor', () => {
     });
 
     it('should open a confirm dialog when "delete" button is clicked', async () => {
+        const fireEvent = userEvent.setup();
         const screen = render(
             <WidgetEditor
                 selectedWidget={VPSchuelerWidget}
                 onSelectWidget={jest.fn()}
             />
         );
-        userEvent.click(screen.getByRole('button', { name: /löschen/ }));
+        await fireEvent.click(screen.getByRole('button', { name: /löschen/ }));
         await waitFor(() => {
             expect(
                 screen.getByRole('dialog', { name: /marginale löschen/i })
