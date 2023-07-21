@@ -8,6 +8,7 @@ import {
     ErrorMessage,
     Label,
     Input,
+    LoadingButton,
 } from '@lotta-schule/hubert';
 import { UserModel } from 'model';
 import { UpdatePasswordDialog } from './UpdatePasswordDialog';
@@ -87,6 +88,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                                     disabled={isLoading}
                                     placeholder={'beispiel@medienportal.org'}
                                     type={'email'}
+                                    autoComplete={'email'}
                                 />
                             </Label>
                             <Label label={'Dein Passwort:'}>
@@ -99,6 +101,7 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                                     }
                                     disabled={isLoading}
                                     placeholder={'Passwort'}
+                                    autoComplete={'current-password'}
                                 />
                             </Label>
                             <Link href={`/password/request-reset`}>
@@ -111,10 +114,13 @@ export const LoginDialog = React.memo<LoginDialogProps>(
                                     resetForm();
                                     onRequestClose();
                                 }}
+                                disabled={isLoading}
                             >
                                 Abbrechen
                             </Button>
-                            <Button type={'submit'}>Anmelden</Button>
+                            <LoadingButton type={'submit'} loading={isLoading}>
+                                Anmelden
+                            </LoadingButton>
                         </DialogActions>
                     </form>
                 </Dialog>

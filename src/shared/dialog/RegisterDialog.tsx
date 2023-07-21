@@ -9,6 +9,7 @@ import {
     ErrorMessage,
     Input,
     Label,
+    LoadingButton,
 } from '@lotta-schule/hubert';
 import { useGetFieldError } from 'util/useGetFieldError';
 
@@ -84,6 +85,7 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.currentTarget.value)}
+                            autoComplete="email"
                             disabled={isLoading}
                             placeholder="beispiel@medienportal.org"
                             type="email"
@@ -102,6 +104,7 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                                     required
                                     id="first_name"
                                     value={firstName}
+                                    autoComplete="given-name"
                                     onChange={(e) =>
                                         setFirstName(e.currentTarget.value)
                                     }
@@ -122,6 +125,7 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                                     required
                                     id="last_name"
                                     value={lastName}
+                                    autoComplete="family-name"
                                     onChange={(e) =>
                                         setLastName(e.currentTarget.value)
                                     }
@@ -149,6 +153,7 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                             id="nickname"
                             disabled={isLoading}
                             placeholder={'Mäxchen'}
+                            autoComplete="nickname"
                             value={nickname}
                             maxLength={25}
                             onChange={(e) => {
@@ -202,12 +207,13 @@ export const RegisterDialog = React.memo<RegisterDialogProps>(
                         onClick={() => {
                             onRequestClose();
                         }}
+                        disabled={isLoading}
                     >
                         Abbrechen
                     </Button>
-                    <Button type={'submit'} disabled={isLoading}>
+                    <LoadingButton type={'submit'} loading={isLoading}>
                         Registrieren
-                    </Button>
+                    </LoadingButton>
                 </DialogActions>
             </form>
         );
