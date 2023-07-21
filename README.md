@@ -3,7 +3,7 @@
 Web Client for Lotta Project
 
 [![pipeline status](https://github.com/lotta-schule/web/actions/workflows/build.yaml/badge.svg)](https://github.com/lotta-schule/web/actions/)
-[![coverage report](<[![codecov](https://codecov.io/gh/lotta-schule/web/branch/main/graph/badge.svg?token=FAT99O6QKV)](https://codecov.io/gh/lotta-schule/web)>)](https://app.codecov.io/gh/lotta-schule/web)
+[![codecov](https://codecov.io/gh/lotta-schule/web/branch/main/graph/badge.svg?token=FAT99O6QKV)](https://codecov.io/gh/lotta-schule/web)
 
 ## What is Lotta
 
