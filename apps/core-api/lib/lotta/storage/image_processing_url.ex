@@ -30,14 +30,7 @@ defmodule Lotta.Storage.ImageProcessingUrl do
 
       if length(params) > 0 do
         api_url
-        |> Map.put(
-          :query,
-          if Enum.empty?(params) do
-            nil
-          else
-            URI.encode_query(params)
-          end
-        )
+        |> Map.put(:query, encode_params_as_query(params))
         |> Map.put(
           :path,
           Enum.join([api_url.path, url], "/")
@@ -48,6 +41,9 @@ defmodule Lotta.Storage.ImageProcessingUrl do
       end
     end
   end
+
+  defp encode_params_as_query([]), do: nil
+  defp encode_params_as_query(params), do: URI.encode_query(params)
 
   defp cloudimage_token() do
     Keyword.get(
