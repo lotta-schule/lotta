@@ -118,7 +118,7 @@ export const MessageBubble = React.memo(
                 </div>
                 <div className={styles.messageWrapper}>
                     <div className={styles.message}>
-                        {message.files?.length && (
+                        {!!message.files?.length && (
                             <div className={styles.files} data-testid="message-attachments">
                                 {message.files.map(file => (
                                     <div className={styles.file} key={file.id}>
