@@ -6,6 +6,7 @@ FROM elixir:1.15-alpine AS builder
 ENV MIX_ENV=prod
 
 RUN mkdir -p /app
+WORKDIR /app
 
 # This step installs all the build tools we'll need
 RUN apk update && \
