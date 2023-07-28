@@ -20,10 +20,11 @@ defmodule LottaWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      alias LottaWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint LottaWeb.Endpoint
+
+      use LottaWeb, :verified_routes
     end
   end
 

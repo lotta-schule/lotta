@@ -19,6 +19,7 @@ defmodule Lotta.Release do
   def migrate do
     for repo <- repos() do
       Logger.notice("Migrating public schema ...")
+
       {:ok, _, _} =
         Migrator.with_repo(
           repo,
@@ -37,10 +38,14 @@ defmodule Lotta.Release do
 
     customers = Repo.all(Tenant, prefix: "public")
     Logger.notice("Migrating #{Enum.count(customers)} customer schemas ...")
+
     Enum.each(
       customers,
       fn tenant ->
-        Logger.notice("Customer #{tenant.title} with schema #{tenant.prefix} is being migrated ...")
+        Logger.notice(
+          "Customer #{tenant.title} with schema #{tenant.prefix} is being migrated ..."
+        )
+
         TenantSelector.run_migrations(prefix: tenant.prefix, dynamic_repo: pid)
       end
     )
@@ -67,6 +72,7 @@ defmodule Lotta.Release do
     load_app()
 
     Logger.info("Building search indexes...")
+
     Enum.each(@elasticsearch_clusters, fn cluster ->
       Enum.each(
         @elasticsearch_indexes,

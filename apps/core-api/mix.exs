@@ -10,7 +10,6 @@ defmodule Lotta.MixProject do
       homepage_url: "https://lotta.schule",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -67,8 +66,9 @@ defmodule Lotta.MixProject do
     [
       {:phoenix, "~> 1.7.7"},
       {:phoenix_pubsub, "~> 2.1"},
-      {:phoenix_live_dashboard, "~> 0.5"},
+      {:phoenix_live_dashboard, "~> 0.8"},
       {:phoenix_ecto, "~> 4.2"},
+      {:phoenix_view, "~> 2.0"},
       {:ecto_sql, "~> 3.6"},
       {:ecto_psql_extras, "~> 0.6"},
       {:absinthe, "~> 1.7.5"},

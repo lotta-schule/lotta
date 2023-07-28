@@ -17,13 +17,15 @@ defmodule LottaWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: LottaWeb
 
       import Plug.Conn
       import LottaWeb.Gettext
-      alias LottaWeb.Router.Helpers, as: Routes
+      unquote(verified_routes())
     end
   end
 
@@ -40,7 +42,7 @@ defmodule LottaWeb do
       import Phoenix.HTML.Link
       import LottaWeb.ErrorHelpers
       import LottaWeb.Gettext
-      alias LottaWeb.Router.Helpers, as: Routes
+      unquote(verified_routes())
     end
   end
 
@@ -56,6 +58,15 @@ defmodule LottaWeb do
     quote do
       use Phoenix.Channel
       import LottaWeb.Gettext
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: LottaWeb.Endpoint,
+        router: LottaWeb.Router,
+        statics: LottaWeb.static_paths()
     end
   end
 
