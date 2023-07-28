@@ -151,7 +151,7 @@ export const MessageBubble = React.memo(
                                                 small
                                                 target={'_blank'}
                                                 icon={
-                                                    <Icon icon={faCloudArrowDown} size={'lg'} />
+                                                    <Icon icon={faCloudArrowDown} className={styles.downloadIcon} size={'lg'} />
                                                 }
                                                 role={'link'}
                                                 title={`${file.filename} herunterladen`}
