@@ -866,7 +866,7 @@ defmodule LottaWeb.FileResolverTest do
 
   describe "upload file mutation" do
     @mutation """
-    mutation uploadFile($file: Upload, $parentDirectoryId: ID!) {
+    mutation uploadFile($file: Upload!, $parentDirectoryId: ID!) {
       uploadFile(file: $file, parentDirectoryId: $parentDirectoryId) {
         filename
       }

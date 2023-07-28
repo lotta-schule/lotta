@@ -8,6 +8,7 @@ defmodule LottaWeb.TenantPlug do
   by domain (matching a custom domain setup for the tenant), or by
   slug, matching <slug>.<base-domain> (eg <slug>.lotta.schule).
   """
+  require OpenTelemetry.Tracer
   import Plug.Conn
 
   alias Lotta.{Repo, Tenants}
@@ -19,14 +20,23 @@ defmodule LottaWeb.TenantPlug do
 
   @impl true
   def call(conn, _opts) do
+    OpenTelemetry.Tracer.start_span("TenantPlug", %{})
+    conn = put_tenant(conn)
+
+    OpenTelemetry.Tracer.end_span("TenantPlug")
     conn
-    |> put_tenant()
   end
 
   defp put_tenant(conn) do
     tenant = tenant_by_slug_header(conn) || tenant_by_host_header(conn)
 
     if tenant do
+      OpenTelemetry.Tracer.set_attributes(%{
+        tenant_id: tenant.id,
+        tenant_slug: tenant.slug,
+        tenant_prefix: tenant.prefix
+      })
+
       Repo.put_prefix(tenant.prefix)
       put_private(conn, :lotta_tenant, tenant)
     else

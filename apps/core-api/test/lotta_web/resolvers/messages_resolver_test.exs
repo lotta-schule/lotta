@@ -398,7 +398,7 @@ defmodule LottaWeb.MessagesResolverTest do
 
   describe "create message mutation" do
     @query """
-    mutation CreateMessage($message: MessageInput) {
+    mutation CreateMessage($message: MessageInput!) {
       createMessage(message: $message) {
         content
         files {

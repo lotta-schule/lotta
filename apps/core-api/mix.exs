@@ -112,7 +112,9 @@ defmodule Lotta.MixProject do
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       # OpenTelemetry
       {:opentelemetry, "~> 1.2"},
+      {:opentelemetry_api, "~> 1.2"},
       {:opentelemetry_absinthe, "~> 2.0"},
+      {:opentelemetry_cowboy, "~> 0.1"},
       {:opentelemetry_ecto, "~> 1.1"},
       {:opentelemetry_exporter, "~> 1.6"},
       {:opentelemetry_phoenix, "~> 1.1"},

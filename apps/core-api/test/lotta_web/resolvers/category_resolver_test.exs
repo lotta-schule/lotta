@@ -480,7 +480,7 @@ defmodule LottaWeb.CategoryResolverTest do
 
   describe "updateCategory mutation" do
     @query """
-    mutation UpdateCategory($id: ID!, $category: CategoryInput!) {
+    mutation UpdateCategory($id: ID!, $category: UpdateCategoryInput!) {
       updateCategory(id: $id, category: $category) {
         title
       }

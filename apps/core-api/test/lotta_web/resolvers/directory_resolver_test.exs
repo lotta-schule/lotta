@@ -419,7 +419,7 @@ defmodule LottaWeb.DirectoryResolverTest do
 
   describe "create directory mutation" do
     @query """
-    mutation createDirectory($parentDirectoryId: ID, $name: String, $isPublic: Boolean) {
+    mutation createDirectory($parentDirectoryId: ID, $name: String!, $isPublic: Boolean) {
       createDirectory(parentDirectoryId: $parentDirectoryId, name: $name, isPublic: $isPublic) {
         name
         parentDirectory {

@@ -8,7 +8,8 @@ defmodule Lotta.Application do
   def start(_type, _args) do
     environment = Application.fetch_env!(:lotta, :environment)
 
-    OpentelemetryPhoenix.setup()
+    :opentelemetry_cowboy.setup()
+    OpentelemetryPhoenix.setup(adapter: :cowboy2)
     OpentelemetryAbsinthe.setup()
     OpentelemetryEcto.setup([:lotta, :repo])
     OpentelemetryRedix.setup()
