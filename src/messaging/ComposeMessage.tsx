@@ -105,7 +105,9 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                 }
             },
             onCompleted: ({ message }) => {
-                setContent('');
+                if (!message.files?.length) {
+                    setContent('');
+                }
                 inputRef.current?.focus();
                 onSent?.(message as MessageModel);
             },
@@ -130,6 +132,7 @@ export const ComposeMessage = React.memo<ComposeMessageProps>(
                             icon: <Icon icon={faPaperclip} size="lg" />,
                             className: styles.button,
                             disabled: isLoading,
+                            ['aria-label']: 'Datei anhängen.'
                         }}
                         onSelect={(files: FileModel[]) => {
                             createMessage({
